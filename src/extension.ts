@@ -26,6 +26,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposableHelloWorld);
 	context.subscriptions.push(createModCommand);
+
+	const addListenerCommand = vscode.commands.registerCommand('hytale-devtools.addListener', () => {
+		const { addListener } = require('./commands/addListener');
+		addListener(context);
+	});
+	context.subscriptions.push(addListenerCommand);
 }
 
 // This method is called when your extension is deactivated

@@ -2,7 +2,7 @@ package {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands;
 
 import javax.annotation.Nonnull;
 
-import com.example.plugin.utils.ServerUtil;
+import {{GROUP}}.{{MOD_NAME_SQUASHED}}.utils.ServerUtil;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;

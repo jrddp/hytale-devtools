@@ -20,6 +20,10 @@
       {
         "command": "hytale-devtools.createMod",
         "title": "Create New Hytale Mod"
+      },
+      {
+        "command": "hytale-devtools.addListener",
+        "title": "Add new event listener"
       }
     ],
     "configuration": {

@@ -21,7 +21,7 @@ public class {{MOD_NAME_PASCAL}} extends JavaPlugin {
     // ####### Config ######## //
     private final Config<{{MOD_NAME_PASCAL}}Config> config;
 
-    public ExamplePlugin(@Nonnull JavaPluginInit init) {
+    public {{MOD_NAME_PASCAL}}(@Nonnull JavaPluginInit init) {
         super(init);
 
         // ####### Config ######## //
