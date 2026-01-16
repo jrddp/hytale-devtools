@@ -1,7 +1,0 @@
-{
-    "name": "{{MOD_NAME}}",
-    "id": "{{MOD_NAME_KEBAB}}",
-    "version": "1.0.0",
-    "description": "A Hytale mod named {{MOD_NAME}}",
-    "entryPoint": "scripts/{{MOD_NAME_CAMEL}}.js"
-}

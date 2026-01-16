@@ -11,6 +11,15 @@ export function toKebabCase(str: string): string {
         .toLowerCase();
 }
 
+export function toPascalCase(str: string): string {
+    const camel = toCamelCase(str);
+    return camel.charAt(0).toUpperCase() + camel.slice(1);
+}
+
+export function toSquashedCase(str: string): string {
+    return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+}
+
 export function replaceTokens(content: string, replacements: Record<string, string>): string {
     let result = content;
     for (const [key, value] of Object.entries(replacements)) {

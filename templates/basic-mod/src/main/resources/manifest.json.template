@@ -1,0 +1,18 @@
+{
+    "Group": "{{GROUP}}",
+    "Name": "{{MOD_NAME_PASCAL}}",
+    "Version": "0.0.1",
+    "Description": "An example plugin for Hytale!",
+    "Authors": [
+        {
+            "Name": "{{AUTHOR}}"
+        }
+    ],
+    "Website": "{{WEBSITE}}",
+    "ServerVersion": "*",
+    "Dependencies": {},
+    "OptionalDependencies": {},
+    "DisabledByDefault": false,
+    "Main": "{{GROUP}}.{{MOD_NAME_SQUASHED}}.{{MOD_NAME_PASCAL}}",
+    "IncludesAssetPack": true
+}

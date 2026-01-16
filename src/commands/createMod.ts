@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { toCamelCase, toKebabCase, replaceTokens } from '../utils/stringUtils';
+import { toCamelCase, toKebabCase, toPascalCase, toSquashedCase, replaceTokens } from '../utils/stringUtils';
 
 const TEMPLATE_DIR_NAME = 'templates/basic-mod';
-const REPLACEMENT_WHITELIST = ['mod.json'];
+
 
 export async function createMod(context: vscode.ExtensionContext) {
     // 1. Prompt for Mod Name
@@ -22,7 +22,7 @@ export async function createMod(context: vscode.ExtensionContext) {
         canSelectFiles: false,
         canSelectFolders: true,
         canSelectMany: false,
-        openLabel: 'Select Destination'
+        openLabel: 'Select Parent Folder'
     });
 
     if (!folderResult || folderResult.length === 0) {
@@ -31,39 +31,84 @@ export async function createMod(context: vscode.ExtensionContext) {
 
     const destinationRoot = folderResult[0].fsPath;
     const modNameKebab = toKebabCase(modName);
-    const modNameCamel = toCamelCase(modName);
-    const destinationPath = path.join(destinationRoot, modNameKebab);
+    const modNamePascal = toPascalCase(modName);
+    const modNameSquashed = toSquashedCase(modName);
+    const destinationPath = path.join(destinationRoot, modNamePascal);
 
     if (fs.existsSync(destinationPath)) {
-        vscode.window.showErrorMessage(`Directory ${modNameKebab} already exists in the selected location.`);
+        vscode.window.showErrorMessage(`Directory ${modNamePascal} already exists in the selected location.`);
         return;
     }
 
-    // 3. Copy Template and Replace Tokens
-    const templatePath = context.asAbsolutePath(TEMPLATE_DIR_NAME);
+    // 3. Get Configuration & Prompt for Missing Values
+    const config = vscode.workspace.getConfiguration('hytale-devtools');
 
-    try {
-        await copyRecursive(templatePath, destinationPath, {
-            '{{MOD_NAME}}': modName,
-            '{{MOD_NAME_CAMEL}}': modNameCamel,
-            '{{MOD_NAME_KEBAB}}': modNameKebab
+    let author = config.get<string>('defaultAuthor') || '';
+    let group = config.get<string>('defaultGroup') || '';
+    let website = config.get<string>('defaultWebsite') || '';
+
+    let updateConfig = false;
+
+    if (!author) {
+        author = await vscode.window.showInputBox({
+            prompt: 'Author Name',
+            placeHolder: 'e.g., John Doe'
+        }) || 'Unknown';
+        updateConfig = true;
+    }
+
+    if (!group) {
+        group = await vscode.window.showInputBox({
+            prompt: 'Group Name (for package)',
+            placeHolder: 'e.g., org.example'
+        }) || 'org.example';
+        updateConfig = true;
+    }
+
+    if (!website) {
+        website = await vscode.window.showInputBox({
+            prompt: 'Website',
+            placeHolder: 'e.g., example.com'
+        }) || 'example.com';
+        updateConfig = true;
+    }
+
+    if (updateConfig) {
+        const remember = await vscode.window.showQuickPick(['Yes', 'No'], {
+            placeHolder: 'Remember these settings for future mods?'
         });
 
-        // 4. Rename entry point file if it exists in the new location
-        // The template has a placeholder name, but we might want to rename files too?
-        // For now, let's just stick to content replacement as per plan, 
-        // effectively 'scripts/{{MOD_NAME_CAMEL}}.js' isn't supported by simple copy.
-        // Wait, the plan said: "this name will be used as the folder name and also replace some tokens in specified files"
-        // It didn't explicitly say we rename files, but the mod.json I created points to scripts/{{MOD_NAME_CAMEL}}.js
-        // So I should probably manually rename that file if I put a placeholder in the template.
-        // User asked for: "name will be used as the folder name and also replace some tokens in specified files"
+        if (remember === 'Yes') {
+            await config.update('defaultAuthor', author, vscode.ConfigurationTarget.Global);
+            await config.update('defaultGroup', group, vscode.ConfigurationTarget.Global);
+            await config.update('defaultWebsite', website, vscode.ConfigurationTarget.Global);
+        }
+    }
+
+    // 4. Copy Template and Replace Tokens
+    const templatePath = context.asAbsolutePath(TEMPLATE_DIR_NAME);
+    const replacements = {
+        '{{MOD_NAME}}': modName,
+        '{{MOD_NAME_CAMEL}}': toCamelCase(modName),
+        '{{MOD_NAME_PASCAL}}': modNamePascal,
+        '{{MOD_NAME_SQUASHED}}': modNameSquashed,
+        '{{AUTHOR}}': author,
+        '{{GROUP}}': group,
+        '{{WEBSITE}}': website
+    };
+
+    try {
+        await copyRecursive(templatePath, destinationPath, replacements);
+
+        // 5. Restructure Java Package
+        await restructureJavaPackage(destinationPath, group, modNameSquashed, modNamePascal);
 
         vscode.window.showInformationMessage(`Hytale Mod "${modName}" created successfully!`);
 
         // Open the created folder
-        // Logic: Open in new window if we already have a folder open, otherwise reuse this window
-        const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
-        const openInNewWindow = isWorkspaceOpen;
+        // const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
+        // const openInNewWindow = isWorkspaceOpen;
+        const openInNewWindow = false;
 
         await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(destinationPath), openInNewWindow);
 
@@ -87,13 +132,73 @@ async function copyRecursive(src: string, dest: string, replacements: Record<str
             await copyRecursive(path.join(src, file), path.join(dest, file), replacements);
         }
     } else {
-        const fileName = path.basename(src);
-        if (REPLACEMENT_WHITELIST.includes(fileName)) {
+        const hasTemplateExtension = src.endsWith('.template');
+        let destPath = dest;
+
+        // Strip .template extension from destination path if present in source
+        if (hasTemplateExtension) {
+            destPath = dest.substring(0, dest.length - '.template'.length);
+        }
+
+        if (hasTemplateExtension) {
             const content = fs.readFileSync(src, 'utf8');
             const newContent = replaceTokens(content, replacements);
-            fs.writeFileSync(dest, newContent, 'utf8');
+            fs.writeFileSync(destPath, newContent, 'utf8');
         } else {
-            fs.copyFileSync(src, dest);
+            fs.copyFileSync(src, destPath);
+        }
+    }
+}
+
+async function restructureJavaPackage(root: string, group: string, modSquashed: string, mainClass: string) {
+    const oldPath = path.join(root, 'src', 'main', 'java', 'org', 'example', 'plugin');
+
+    // Construct new path: src/main/java + group (split by .) + mod (raw squashed)
+    const groupParts = group.split('.');
+    // const modParts = modDot.split('.'); // Old logic
+    const newPath = path.join(root, 'src', 'main', 'java', ...groupParts, modSquashed);
+
+    if (fs.existsSync(oldPath)) {
+        // Create new directory structure
+        fs.mkdirSync(newPath, { recursive: true });
+
+        // Move files
+        const files = fs.readdirSync(oldPath);
+        for (const file of files) {
+            let targetName = file;
+            if (file === 'ExamplePlugin.java') {
+                targetName = `${mainClass}.java`;
+            }
+            fs.renameSync(path.join(oldPath, file), path.join(newPath, targetName));
+        }
+
+        // Cleanup empty old directories
+        // We can just delete the entire org/example/plugin structure since we moved everything
+        // But we should act carefully. The template starts with org/example/plugin.
+        // If the user's group is 'org.example.plugin', we might have just moved files to the same place or subfolder.
+        // Assuming the new path is different enough or we handle it.
+        // If we move to org/example/plugin/something, the old path is still valid until we delete.
+        // Simplest strategy: Delete known template path `org/example/plugin`.
+        // Then walk up and delete empty parents.
+
+        try {
+            // Only delete if empty? The files loop moved everything.
+            // fs.renameSync handles moves fine.
+            fs.rmdirSync(oldPath); // Removed the leaf 'plugin'
+
+            // Try removing 'example'
+            const examplePath = path.join(root, 'src', 'main', 'java', 'org', 'example');
+            if (fs.existsSync(examplePath) && fs.readdirSync(examplePath).length === 0) {
+                fs.rmdirSync(examplePath);
+            }
+
+            // Try removing 'org'
+            const orgPath = path.join(root, 'src', 'main', 'java', 'org');
+            if (fs.existsSync(orgPath) && fs.readdirSync(orgPath).length === 0) {
+                fs.rmdirSync(orgPath);
+            }
+        } catch (e) {
+            // Ignore clean up errors
         }
     }
 }

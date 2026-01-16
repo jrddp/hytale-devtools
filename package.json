@@ -21,7 +21,27 @@
         "command": "hytale-devtools.createMod",
         "title": "Create New Hytale Mod"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Hytale Devtools",
+      "properties": {
+        "hytale-devtools.defaultAuthor": {
+          "type": "string",
+          "default": "",
+          "description": "Default author name for new mods."
+        },
+        "hytale-devtools.defaultGroup": {
+          "type": "string",
+          "default": "",
+          "description": "Default group name for new mods."
+        },
+        "hytale-devtools.defaultWebsite": {
+          "type": "string",
+          "default": "",
+          "description": "Default website for new mods."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",

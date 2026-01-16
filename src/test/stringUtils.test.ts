@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { toCamelCase, toKebabCase, replaceTokens } from '../utils/stringUtils';
+import { toCamelCase, toKebabCase, toPascalCase, toSquashedCase, replaceTokens } from '../utils/stringUtils';
 
 suite('String Utils Test Suite', () => {
 
@@ -10,11 +10,25 @@ suite('String Utils Test Suite', () => {
         assert.strictEqual(toCamelCase('FooBar'), 'fooBar');
     });
 
+    test('toSquashedCase', () => {
+        assert.strictEqual(toSquashedCase('Hello World'), 'helloworld');
+        assert.strictEqual(toSquashedCase('Super Sword'), 'supersword');
+        assert.strictEqual(toSquashedCase('My-Mod'), 'mymod');
+        assert.strictEqual(toSquashedCase('  Fancy   Mod  '), 'fancymod');
+    });
+
     test('toKebabCase', () => {
         assert.strictEqual(toKebabCase('Foo Bar'), 'foo-bar');
         assert.strictEqual(toKebabCase('fooBar'), 'foo-bar');
         assert.strictEqual(toKebabCase('FooBar'), 'foo-bar');
         assert.strictEqual(toKebabCase('foo_bar'), 'foo-bar');
+    });
+
+    test('toPascalCase', () => {
+        assert.strictEqual(toPascalCase('Foo Bar'), 'FooBar');
+        assert.strictEqual(toPascalCase('foo-bar'), 'FooBar');
+        assert.strictEqual(toPascalCase('foo_bar'), 'FooBar');
+        assert.strictEqual(toPascalCase('fooBar'), 'FooBar');
     });
 
     test('replaceTokens', () => {
