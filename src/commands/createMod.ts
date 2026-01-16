@@ -103,6 +103,9 @@ export async function createMod(context: vscode.ExtensionContext) {
         // 5. Restructure Java Package
         await restructureJavaPackage(destinationPath, group, modNameSquashed, modNamePascal);
 
+        // 6. Git Init
+        await initGit(destinationPath);
+
         vscode.window.showInformationMessage(`Hytale Mod "${modName}" created successfully!`);
 
         // Open the created folder
@@ -114,6 +117,21 @@ export async function createMod(context: vscode.ExtensionContext) {
 
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to create mod: ${error}`);
+    }
+}
+
+async function initGit(root: string) {
+    try {
+        const exec = require('child_process').exec;
+        const util = require('util');
+        const execAsync = util.promisify(exec);
+
+        await execAsync('git init', { cwd: root });
+        await execAsync('git add .', { cwd: root });
+        await execAsync('git -c user.name="Kokeria" -c user.email="code@jareds.computer" commit -m "Hytale mod initialized using Hytale Devtools VSCode Extension"', { cwd: root });
+    } catch (error) {
+        console.error('Failed to initialize git repository:', error);
+        vscode.window.showWarningMessage('Mod created, but failed to initialize git repository.');
     }
 }
 
