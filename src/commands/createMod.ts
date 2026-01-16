@@ -190,6 +190,12 @@ async function restructureJavaPackage(root: string, group: string, modSquashed: 
             fs.renameSync(path.join(oldPath, file), path.join(newPath, targetName));
         }
 
+        // Rename config file if it exists
+        const configPath = path.join(newPath, 'config', 'ExampleConfig.java');
+        if (fs.existsSync(configPath)) {
+            fs.renameSync(configPath, path.join(newPath, 'config', `${mainClass}Config.java`));
+        }
+
         // Cleanup empty old directories
         // We can just delete the entire org/example/plugin structure since we moved everything
         // But we should act carefully. The template starts with org/example/plugin.

@@ -1,0 +1,44 @@
+package {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands;
+
+import javax.annotation.Nonnull;
+
+import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
+import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+
+import java.awt.Color;
+
+public class MsgCommand extends CommandBase {
+    @Nonnull
+    private final RequiredArg<PlayerRef> playerArg;
+
+    @Nonnull
+    private final RequiredArg<String> messageArg;
+
+    public MsgCommand() {
+        super("example_msg", "Send a private message to a player", false);
+        this.playerArg = this.withRequiredArg("player", "{{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.msg.arg.player",
+                ArgTypes.PLAYER_REF);
+        this.messageArg = this.withRequiredArg("message", "{{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.msg.arg.message",
+                ArgTypes.STRING);
+
+        // Add alias
+        this.addAliases("emsg");
+    }
+
+    @Override
+    protected void executeSync(@Nonnull CommandContext ctx) {
+        PlayerRef target = (PlayerRef) ctx.get(this.playerArg);
+
+        String author = ctx.sender().getDisplayName();
+        String message = (String) ctx.get(this.messageArg);
+
+        target.sendMessage(Message.join(
+                Message.raw("[MSG] ").color(Color.ORANGE),
+                Message.raw(author).color(Color.GREEN),
+                Message.raw(" > " + message).color(Color.WHITE)));
+    }
+}
