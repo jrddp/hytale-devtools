@@ -4,7 +4,7 @@
   "description": "Hytale modding made easy",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.108.0"
+    "vscode": "^1.104.0"
   },
   "categories": [
     "Other"
@@ -16,6 +16,10 @@
       {
         "command": "hytale-devtools.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "hytale-devtools.createMod",
+        "title": "Create New Hytale Mod"
       }
     ]
   },
