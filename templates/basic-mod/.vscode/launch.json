@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Hytale Server",
+            "request": "launch",
+            "mainClass": "com.hypixel.hytale.Main",
+            "args": [
+                "--allow-op",
+                "--assets=${userHome}/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip",
+                "--mods=${workspaceFolder}/src/main"
+            ],
+            "cwd": "${workspaceFolder}/run"
+        }
+    ]
+}
