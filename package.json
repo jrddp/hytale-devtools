@@ -9,15 +9,14 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:json",
+    "onCommand:hytale-devtools.createMod",
+    "onCommand:hytale-devtools.addListener"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "hytale-devtools.helloWorld",
-        "title": "Hello World",
-        "category": "Hytale Devtools"
-      },
       {
         "command": "hytale-devtools.createMod",
         "title": "Create New Hytale Mod",
