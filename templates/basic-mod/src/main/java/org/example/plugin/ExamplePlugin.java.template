@@ -1,57 +1,22 @@
 package {{GROUP}}.{{MOD_NAME_SQUASHED}};
 
-import com.hypixel.hytale.server.core.event.events.player.PlayerChatEvent;
-import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import com.hypixel.hytale.server.core.util.Config;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.CameraCommand;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.ExampleCommand;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.MsgCommand;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.SendCommand;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.commands.TitleCommand;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.config.{{MOD_NAME_PASCAL}}Config;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.listeners.PlayerChatListener;
-import {{GROUP}}.{{MOD_NAME_SQUASHED}}.listeners.PlayerReadyListener;
 
 import javax.annotation.Nonnull;
 
 public class {{MOD_NAME_PASCAL}} extends JavaPlugin {
 
-    // ####### Config ######## //
-    private final Config<{{MOD_NAME_PASCAL}}Config> config;
+    public static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     public {{MOD_NAME_PASCAL}}(@Nonnull JavaPluginInit init) {
         super(init);
-
-        // ####### Config ######## //
-        this.config = this.withConfig("{{MOD_NAME_PASCAL}}", {{MOD_NAME_PASCAL}}Config.CODEC);
-    }
-
-    // ####### Config ######## //
-    public {{MOD_NAME_PASCAL}}Config get{{MOD_NAME_PASCAL}}Config() {
-        return this.config.get();
     }
 
     @Override
     protected void setup() {
-        // ####### Commands ######## //
-        // Move camera
-        this.getCommandRegistry().registerCommand(new CameraCommand());
-        // An example command
-        this.getCommandRegistry().registerCommand(new ExampleCommand());
-        // Send a private message to a player
-        this.getCommandRegistry().registerCommand(new MsgCommand());
-        // Send player to another server
-        this.getCommandRegistry().registerCommand(new SendCommand());
-        // Display a title to all players
-        this.getCommandRegistry().registerCommand(new TitleCommand());
-
-        // ######## Events ######## //
-        // Format chat messages
-        this.getEventRegistry().registerGlobal(PlayerChatEvent.class, PlayerChatListener::onPlayerChat);
-        // Send welcome message
-        this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, PlayerReadyListener::onPlayerReady);
+        // Register event listeners here - try using the "Hytale Devtools: Add new event listener" command
     }
 
 }
