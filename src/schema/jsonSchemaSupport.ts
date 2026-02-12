@@ -1,6 +1,8 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { getHytaleHome, resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
+import { ensureEnrichedSchemaBundle, toPathKey } from './assetRefSchemaEnrichment';
 import {
     buildManagedSchemaAssociations,
     collectManagedUrls,
@@ -11,6 +13,7 @@ import {
 const MANAGED_SCHEMA_URLS_STATE_KEY = 'hytale-devtools.managedJsonSchemaUrls';
 const SCHEMA_EXPORTS_DIRECTORY = 'schemas';
 const SCHEMA_MAPPINGS_FILE_NAME = 'schemaMappings.json';
+const STORE_INFO_FILE_CANDIDATES = ['stores_info.json', 'stores-info.json'] as const;
 const REFRESH_DEBOUNCE_MS = 250;
 
 export function initializeJsonSchemaSupport(context: vscode.ExtensionContext): vscode.Disposable {
@@ -56,12 +59,29 @@ export function initializeJsonSchemaSupport(context: vscode.ExtensionContext): v
 
     const watchPatterns = [
         new vscode.RelativePattern(storageRootPath, `${SCHEMA_EXPORTS_DIRECTORY}/${SCHEMA_MAPPINGS_FILE_NAME}`),
+        ...STORE_INFO_FILE_CANDIDATES.map(fileName =>
+            new vscode.RelativePattern(storageRootPath, `${SCHEMA_EXPORTS_DIRECTORY}/${fileName}`)
+        ),
         new vscode.RelativePattern(storageRootPath, `${SCHEMA_EXPORTS_DIRECTORY}/Schema/*.json`),
         new vscode.RelativePattern(storageRootPath, `${SCHEMA_EXPORTS_DIRECTORY}/Schemas/*.json`)
     ];
 
     for (const watchPattern of watchPatterns) {
         const watcher = vscode.workspace.createFileSystemWatcher(watchPattern);
+        disposables.push(
+            watcher,
+            watcher.onDidCreate(scheduleRefresh),
+            watcher.onDidChange(scheduleRefresh),
+            watcher.onDidDelete(scheduleRefresh)
+        );
+    }
+
+    const workspaceWatchPatterns = [
+        '**/src/main/resources/Server/**/*',
+        '**/gradle.properties'
+    ];
+    for (const workspaceWatchPattern of workspaceWatchPatterns) {
+        const watcher = vscode.workspace.createFileSystemWatcher(workspaceWatchPattern);
         disposables.push(
             watcher,
             watcher.onDidCreate(scheduleRefresh),
@@ -89,13 +109,16 @@ export function initializeJsonSchemaSupport(context: vscode.ExtensionContext): v
 }
 
 async function refreshJsonSchemaAssociations(context: vscode.ExtensionContext, schemaRootPath: string): Promise<void> {
-    const hasWorkspace = Array.isArray(vscode.workspace.workspaceFolders) && vscode.workspace.workspaceFolders.length > 0;
-    if (!hasWorkspace) {
+    const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
+    if (workspaceFolders.length === 0) {
         return;
     }
 
     const previousManagedUrls = context.globalState.get<string[]>(MANAGED_SCHEMA_URLS_STATE_KEY, []);
-    const managedSchemas = await loadManagedSchemaSettings(schemaRootPath);
+    const managedSchemas = await loadManagedSchemaSettings({
+        schemaRootPath,
+        workspaceRootPaths: workspaceFolders.map(folder => folder.uri.fsPath)
+    });
     if (!managedSchemas) {
         return;
     }
@@ -122,8 +145,11 @@ async function refreshJsonSchemaAssociations(context: vscode.ExtensionContext, s
     await context.globalState.update(MANAGED_SCHEMA_URLS_STATE_KEY, nextManagedUrls);
 }
 
-async function loadManagedSchemaSettings(schemaRootPath: string): Promise<JsonSchemaSettingEntry[] | undefined> {
-    const mappingFilePath = path.join(schemaRootPath, SCHEMA_MAPPINGS_FILE_NAME);
+async function loadManagedSchemaSettings(options: {
+    schemaRootPath: string;
+    workspaceRootPaths: readonly string[];
+}): Promise<JsonSchemaSettingEntry[] | undefined> {
+    const mappingFilePath = path.join(options.schemaRootPath, SCHEMA_MAPPINGS_FILE_NAME);
     const mappingFileContents = await readMappingFileSafely(mappingFilePath);
     if (mappingFileContents === undefined) {
         return undefined;
@@ -131,12 +157,36 @@ async function loadManagedSchemaSettings(schemaRootPath: string): Promise<JsonSc
 
     const managedAssociations = buildManagedSchemaAssociations({
         rawMappings: mappingFileContents,
-        schemaRootPath
+        schemaRootPath: options.schemaRootPath
     });
+
+    const primaryWorkspaceRoot = options.workspaceRootPaths[0];
+    let schemaPathOverrides = new Map<string, string>();
+    if (primaryWorkspaceRoot) {
+        const patchline = resolvePatchlineFromWorkspace(primaryWorkspaceRoot);
+        const assetsZipPath = path.join(getHytaleHome(), 'install', patchline, 'package', 'game', 'latest', 'Assets.zip');
+
+        try {
+            const enrichmentResult = await ensureEnrichedSchemaBundle({
+                schemaRootPath: options.schemaRootPath,
+                workspaceRootPaths: options.workspaceRootPaths,
+                patchline,
+                assetsZipPath
+            });
+            if (enrichmentResult) {
+                schemaPathOverrides = enrichmentResult.schemaPathOverrides;
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            console.warn(`Failed to generate enriched JSON schemas for hytaleAssetRef suggestions: ${message}`);
+        }
+    }
 
     return managedAssociations.map(association => ({
         fileMatch: association.fileMatch,
-        url: vscode.Uri.file(association.schemaFilePath).toString()
+        url: vscode.Uri.file(
+            schemaPathOverrides.get(toPathKey(association.schemaFilePath)) ?? association.schemaFilePath
+        ).toString()
     }));
 }
 
