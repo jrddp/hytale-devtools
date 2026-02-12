@@ -2,9 +2,13 @@ package dev.hytale.devtools.companion.assets;
 
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.AssetStore;
+import com.hypixel.hytale.builtin.asseteditor.AssetEditorPlugin;
+import com.hypixel.hytale.builtin.asseteditor.assettypehandler.AssetStoreTypeHandler;
+import com.hypixel.hytale.builtin.asseteditor.assettypehandler.AssetTypeHandler;
 import com.hypixel.hytale.codec.EmptyExtraInfo;
 import com.hypixel.hytale.codec.schema.SchemaContext;
 import com.hypixel.hytale.codec.schema.config.Schema;
+import com.hypixel.hytale.protocol.packets.asseteditor.AssetEditorAssetType;
 import com.hypixel.hytale.server.core.asset.AssetRegistryLoader;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.util.BsonUtil;
@@ -14,6 +18,7 @@ import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.BsonNull;
 import org.bson.BsonString;
+import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -23,12 +28,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
 public final class AssetRegistryExportService {
     private static final String STORES_INFO_FILE = "stores_info";
+    private static final String ASSET_TYPES_INFO_FILE = "asset_types_info";
     private static final String SCHEMA_MAPPINGS_FILE = "schemaMappings";
     private static final String SCHEMAS_DIRECTORY = "Schema";
     private static final Path EXPORT_DIRECTORY = Path.of("{{COMPANION_SCHEMA_OUTPUT_PATH}}");
@@ -59,7 +66,10 @@ public final class AssetRegistryExportService {
             storesInfo.put("totalLoadedAssets", new BsonInt32(totalAssetCount));
             storesInfo.put("stores", storeArray);
 
+            BsonDocument assetTypesInfo = buildAssetTypesInfo();
+
             writeJsonAndBson(STORES_INFO_FILE, storesInfo);
+            writeJsonAndBson(ASSET_TYPES_INFO_FILE, assetTypesInfo);
             writeJsonAndBson(SCHEMA_MAPPINGS_FILE, vscodeConfig);
             deleteLegacySchemasBundle();
             writeSchemas(schemas);
@@ -113,6 +123,70 @@ public final class AssetRegistryExportService {
         Files.deleteIfExists(EXPORT_DIRECTORY.resolve("schemas.bson"));
     }
 
+    private static BsonDocument buildAssetTypesInfo() {
+        BsonDocument document = new BsonDocument();
+        BsonArray assetTypeArray = new BsonArray();
+        document.put("assetTypes", assetTypeArray);
+
+        AssetEditorPlugin assetEditorPlugin = AssetEditorPlugin.get();
+        if (assetEditorPlugin == null) {
+            document.put("assetTypeCount", new BsonInt32(0));
+            document.put("assetEditorPluginPresent", BsonBoolean.FALSE);
+            return document;
+        }
+
+        List<Entry<String, AssetTypeHandler>> entries = assetEditorPlugin.getAssetTypeRegistry()
+                .getRegisteredAssetTypeHandlers()
+                .entrySet()
+                .stream()
+                .sorted(Entry.comparingByKey())
+                .toList();
+
+        for (Entry<String, AssetTypeHandler> entry : entries) {
+            assetTypeArray.add(toAssetTypeDocument(assetEditorPlugin, entry.getValue()));
+        }
+
+        document.put("assetTypeCount", new BsonInt32(entries.size()));
+        document.put("assetEditorPluginPresent", BsonBoolean.TRUE);
+        return document;
+    }
+
+    private static BsonDocument toAssetTypeDocument(@Nonnull AssetEditorPlugin assetEditorPlugin, @Nonnull AssetTypeHandler handler) {
+        BsonDocument document = new BsonDocument();
+        AssetEditorAssetType config = handler.getConfig();
+
+        document.put("id", nullableString(config.id));
+        document.put("icon", nullableString(config.icon));
+        document.put("isColoredIcon", BsonBoolean.valueOf(config.isColoredIcon));
+        document.put("path", nullableString(config.path));
+        document.put("fileExtension", nullableString(config.fileExtension));
+        document.put("editorType", config.editorType == null ? BsonNull.VALUE : new BsonString(config.editorType.name()));
+        document.put("handlerClass", new BsonString(handler.getClass().getName()));
+        document.put("rootPath", new BsonString(handler.getRootPath().toString()));
+        document.put("isAssetStoreTypeHandler", BsonBoolean.valueOf(handler instanceof AssetStoreTypeHandler));
+
+        if (config.id != null) {
+            Schema schema = assetEditorPlugin.getSchema(config.id + ".json");
+            document.put("hasSchema", BsonBoolean.valueOf(schema != null));
+            if (schema != null) {
+                document.put("schemaFile", new BsonString(config.id + ".json"));
+            }
+        } else {
+            document.put("hasSchema", BsonBoolean.FALSE);
+        }
+
+        if (handler instanceof AssetStoreTypeHandler assetStoreTypeHandler) {
+            AssetStore<?, ?, ?> store = assetStoreTypeHandler.getAssetStore();
+            document.put("assetStoreAssetClass", new BsonString(store.getAssetClass().getName()));
+            document.put("assetStoreAssetSimpleName", new BsonString(store.getAssetClass().getSimpleName()));
+            document.put("assetStorePath", store.getPath() == null ? BsonNull.VALUE : new BsonString(store.getPath()));
+            document.put("assetStoreExtension", new BsonString(store.getExtension()));
+            document.put("assetStoreAssetCount", new BsonInt32(store.getAssetMap().getAssetCount()));
+        }
+
+        return document;
+    }
+
     private static BsonDocument toStoreDocument(@Nonnull AssetStore<?, ?, ?> store) {
         BsonDocument document = new BsonDocument();
         document.put("assetClass", new BsonString(store.getAssetClass().getName()));
@@ -151,5 +225,9 @@ public final class AssetRegistryExportService {
         Function keyFunction = store.getKeyFunction();
         Object key = keyFunction.apply(asset);
         return key == null ? "null" : key.toString();
+    }
+
+    private static BsonValue nullableString(String value) {
+        return value == null ? BsonNull.VALUE : new BsonString(value);
     }
 }
