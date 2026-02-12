@@ -15,15 +15,18 @@
     "commands": [
       {
         "command": "hytale-devtools.helloWorld",
-        "title": "Hello World"
+        "title": "Hello World",
+        "category": "Hytale Devtools"
       },
       {
         "command": "hytale-devtools.createMod",
-        "title": "Create New Hytale Mod"
+        "title": "Create New Hytale Mod",
+        "category": "Hytale Devtools"
       },
       {
         "command": "hytale-devtools.addListener",
-        "title": "Add new event listener"
+        "title": "Add new event listener",
+        "category": "Hytale Devtools"
       }
     ],
     "configuration": {
@@ -62,7 +65,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.108.0",
+    "@types/vscode": "^1.104.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^7.14.1",

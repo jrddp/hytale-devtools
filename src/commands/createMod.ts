@@ -135,12 +135,45 @@ async function initGit(root: string) {
     }
 }
 
-async function copyRecursive(src: string, dest: string, replacements: Record<string, string>) {
-    const exists = fs.existsSync(src);
-    const stats = exists && fs.statSync(src);
-    const isDirectory = stats && stats.isDirectory();
+function getSymlinkType(src: string, linkTarget: string): 'file' | 'junction' | undefined {
+    if (process.platform !== 'win32') {
+        return undefined;
+    }
 
-    if (isDirectory) {
+    const resolvedTarget = path.resolve(path.dirname(src), linkTarget);
+
+    try {
+        if (fs.statSync(resolvedTarget).isDirectory()) {
+            return 'junction';
+        }
+    } catch {
+        // Keep default type when target cannot be resolved.
+    }
+
+    return 'file';
+}
+
+async function copyRecursive(src: string, dest: string, replacements: Record<string, string>) {
+    if (!fs.existsSync(src)) {
+        return;
+    }
+
+    const stats = fs.lstatSync(src);
+
+    if (stats.isSymbolicLink()) {
+        const linkTarget = fs.readlinkSync(src);
+        const symlinkType = getSymlinkType(src, linkTarget);
+
+        const parentDir = path.dirname(dest);
+        if (!fs.existsSync(parentDir)) {
+            fs.mkdirSync(parentDir, { recursive: true });
+        }
+
+        fs.symlinkSync(linkTarget, dest, symlinkType);
+        return;
+    }
+
+    if (stats.isDirectory()) {
         if (!fs.existsSync(dest)) {
             fs.mkdirSync(dest);
         }
@@ -149,22 +182,23 @@ async function copyRecursive(src: string, dest: string, replacements: Record<str
         for (const file of files) {
             await copyRecursive(path.join(src, file), path.join(dest, file), replacements);
         }
+        return;
+    }
+
+    const hasTemplateExtension = src.endsWith('.template');
+    let destPath = dest;
+
+    // Strip .template extension from destination path if present in source
+    if (hasTemplateExtension) {
+        destPath = dest.substring(0, dest.length - '.template'.length);
+    }
+
+    if (hasTemplateExtension) {
+        const content = fs.readFileSync(src, 'utf8');
+        const newContent = replaceTokens(content, replacements);
+        fs.writeFileSync(destPath, newContent, 'utf8');
     } else {
-        const hasTemplateExtension = src.endsWith('.template');
-        let destPath = dest;
-
-        // Strip .template extension from destination path if present in source
-        if (hasTemplateExtension) {
-            destPath = dest.substring(0, dest.length - '.template'.length);
-        }
-
-        if (hasTemplateExtension) {
-            const content = fs.readFileSync(src, 'utf8');
-            const newContent = replaceTokens(content, replacements);
-            fs.writeFileSync(destPath, newContent, 'utf8');
-        } else {
-            fs.copyFileSync(src, destPath);
-        }
+        fs.copyFileSync(src, destPath);
     }
 }
 
