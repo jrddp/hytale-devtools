@@ -2,7 +2,9 @@
   "name": "hytale-devtools",
   "displayName": "Hytale Devtools",
   "publisher": "jrddp",
+  "icon": "media/icon.png",
   "description": "Hytale modding made easy",
+  "repository": "https://github.com/jrddp/hytale-devtools",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.104.0"
