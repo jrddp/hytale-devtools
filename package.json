@@ -12,7 +12,8 @@
   "activationEvents": [
     "onLanguage:json",
     "onCommand:hytale-devtools.createMod",
-    "onCommand:hytale-devtools.addListener"
+    "onCommand:hytale-devtools.addListener",
+    "onCommand:hytale-devtools.copyBaseGameAsset"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -25,6 +26,11 @@
       {
         "command": "hytale-devtools.addListener",
         "title": "Add new event listener",
+        "category": "Hytale Devtools"
+      },
+      {
+        "command": "hytale-devtools.copyBaseGameAsset",
+        "title": "Copy Base Game Asset",
         "category": "Hytale Devtools"
       }
     ],

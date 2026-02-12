@@ -4,19 +4,7 @@ import * as fs from 'fs';
 import * as cp from 'child_process';
 import * as os from 'os';
 import { toPascalCase } from '../utils/stringUtils';
-
-// Helper to resolve Hytale Home Directory
-function getHytaleHome(): string {
-    const home = os.homedir();
-    if (process.platform === 'win32') {
-        return path.join(home, 'AppData', 'Roaming', 'Hytale');
-    } else if (process.platform === 'darwin') {
-        return path.join(home, 'Library', 'Application Support', 'Hytale');
-    } else {
-        // Fallback or Linux support if needed
-        return path.join(home, '.hytale');
-    }
-}
+import { getHytaleHome } from '../utils/hytalePaths';
 
 // Java Source for Event Scanner
 const EVENT_SCANNER_SOURCE = `

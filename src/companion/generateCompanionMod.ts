@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as cp from 'child_process';
-import * as os from 'os';
 import * as util from 'util';
 import { replaceTokens } from '../utils/stringUtils';
 import { getCompanionPaths } from '../utils/companionPaths';
+import { getHytaleHome } from '../utils/hytalePaths';
 
 const COMPANION_TEMPLATE_DIR_NAME = 'templates/companion-mod';
 const execFileAsync = util.promisify(cp.execFile);
@@ -127,19 +127,6 @@ function detectInstalledPatchline(): Patchline | undefined {
     }
 
     return undefined;
-}
-
-function getHytaleHome(): string {
-    const home = os.homedir();
-    if (process.platform === 'win32') {
-        return path.join(home, 'AppData', 'Roaming', 'Hytale');
-    }
-
-    if (process.platform === 'darwin') {
-        return path.join(home, 'Library', 'Application Support', 'Hytale');
-    }
-
-    return path.join(home, '.hytale');
 }
 
 async function buildCompanionMod(projectPath: string, artifactDirectory: string): Promise<string> {

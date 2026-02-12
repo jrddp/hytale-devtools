@@ -24,6 +24,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		addListener(context);
 	});
 	context.subscriptions.push(addListenerCommand);
+
+	const copyBaseGameAssetCommand = vscode.commands.registerCommand('hytale-devtools.copyBaseGameAsset', () => {
+		const { copyBaseGameAsset } = require('./commands/copyBaseGameAsset');
+		copyBaseGameAsset(context);
+	});
+	context.subscriptions.push(copyBaseGameAssetCommand);
+
 	context.subscriptions.push(initializeJsonSchemaSupport(context));
 
 	void ensureCompanionModGenerated(context).catch((error) => {
