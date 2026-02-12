@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +36,6 @@ import java.util.stream.Stream;
 
 public final class AssetRegistryExportService {
     private static final String STORES_INFO_FILE = "stores_info";
-    private static final String ASSET_TYPES_INFO_FILE = "asset_types_info";
     private static final String SCHEMA_MAPPINGS_FILE = "schemaMappings";
     private static final String SCHEMAS_DIRECTORY = "Schema";
     private static final Path EXPORT_DIRECTORY = Path.of("{{COMPANION_SCHEMA_OUTPUT_PATH}}");
@@ -61,17 +61,23 @@ public final class AssetRegistryExportService {
                 totalAssetCount += store.getAssetMap().getAssetCount();
             }
 
+            BsonArray assetTypeOnlyStores = buildAssetTypeOnlyStores();
+            for (BsonValue assetTypeStore : assetTypeOnlyStores) {
+                storeArray.add(assetTypeStore);
+            }
+
+            int assetRegistryStoreCount = stores.length;
+            int assetTypeOnlyStoreCount = assetTypeOnlyStores.size();
             BsonDocument storesInfo = new BsonDocument();
-            storesInfo.put("storeCount", new BsonInt32(stores.length));
+            storesInfo.put("assetRegistryStoreCount", new BsonInt32(assetRegistryStoreCount));
+            storesInfo.put("assetTypeOnlyStoreCount", new BsonInt32(assetTypeOnlyStoreCount));
+            storesInfo.put("storeCount", new BsonInt32(assetRegistryStoreCount + assetTypeOnlyStoreCount));
             storesInfo.put("totalLoadedAssets", new BsonInt32(totalAssetCount));
             storesInfo.put("stores", storeArray);
 
-            BsonDocument assetTypesInfo = buildAssetTypesInfo();
-
-            writeJsonAndBson(STORES_INFO_FILE, storesInfo);
-            writeJsonAndBson(ASSET_TYPES_INFO_FILE, assetTypesInfo);
-            writeJsonAndBson(SCHEMA_MAPPINGS_FILE, vscodeConfig);
-            deleteLegacySchemasBundle();
+            writeJson(STORES_INFO_FILE, storesInfo);
+            writeJson(SCHEMA_MAPPINGS_FILE, vscodeConfig);
+            deleteLegacySchemaJsonFiles();
             writeSchemas(schemas);
             plugin.getLogger().at(Level.INFO).log("Exported asset registry snapshot files to %s", EXPORT_DIRECTORY.toAbsolutePath());
         } catch (Throwable throwable) {
@@ -79,11 +85,9 @@ public final class AssetRegistryExportService {
         }
     }
 
-    private static void writeJsonAndBson(@Nonnull String baseFileName, @Nonnull BsonDocument document) {
+    private static void writeJson(@Nonnull String baseFileName, @Nonnull BsonDocument document) {
         Path jsonPath = EXPORT_DIRECTORY.resolve(baseFileName + ".json");
-        Path bsonPath = EXPORT_DIRECTORY.resolve(baseFileName + ".bson");
         BsonUtil.writeDocument(jsonPath, document, false).join();
-        BsonUtil.writeDocumentBytes(bsonPath, document).join();
     }
 
     private static void writeSchemas(@Nonnull Map<String, Schema> schemas) throws IOException {
@@ -95,9 +99,7 @@ public final class AssetRegistryExportService {
             BsonDocument schemaDocument = Schema.CODEC.encode(entry.getValue(), EmptyExtraInfo.EMPTY).asDocument();
             String fileName = entry.getKey().endsWith(".json") ? entry.getKey() : entry.getKey() + ".json";
             Path jsonPath = schemaDirectory.resolve(fileName);
-            Path bsonPath = schemaDirectory.resolve(fileName.replace(".json", ".bson"));
             BsonUtil.writeDocument(jsonPath, schemaDocument, false).join();
-            BsonUtil.writeDocumentBytes(bsonPath, schemaDocument).join();
         });
     }
 
@@ -106,7 +108,7 @@ public final class AssetRegistryExportService {
             stream.filter(Files::isRegularFile)
                     .filter(path -> {
                         String fileName = path.getFileName().toString().toLowerCase();
-                        return fileName.endsWith(".json") || fileName.endsWith(".bson");
+                        return fileName.endsWith(".json");
                     })
                     .forEach(path -> {
                         try {
@@ -118,53 +120,54 @@ public final class AssetRegistryExportService {
         }
     }
 
-    private static void deleteLegacySchemasBundle() throws IOException {
+    private static void deleteLegacySchemaJsonFiles() throws IOException {
         Files.deleteIfExists(EXPORT_DIRECTORY.resolve("schemas.json"));
-        Files.deleteIfExists(EXPORT_DIRECTORY.resolve("schemas.bson"));
+        Files.deleteIfExists(EXPORT_DIRECTORY.resolve("asset_types_info.json"));
     }
 
-    private static BsonDocument buildAssetTypesInfo() {
-        BsonDocument document = new BsonDocument();
-        BsonArray assetTypeArray = new BsonArray();
-        document.put("assetTypes", assetTypeArray);
-
+    private static BsonArray buildAssetTypeOnlyStores() {
+        BsonArray stores = new BsonArray();
         AssetEditorPlugin assetEditorPlugin = AssetEditorPlugin.get();
         if (assetEditorPlugin == null) {
-            document.put("assetTypeCount", new BsonInt32(0));
-            document.put("assetEditorPluginPresent", BsonBoolean.FALSE);
-            return document;
+            return stores;
         }
 
-        List<Entry<String, AssetTypeHandler>> entries = assetEditorPlugin.getAssetTypeRegistry()
-                .getRegisteredAssetTypeHandlers()
-                .entrySet()
-                .stream()
-                .sorted(Entry.comparingByKey())
-                .toList();
-
+        List<Entry<String, AssetTypeHandler>> entries = new ArrayList<>(
+                assetEditorPlugin.getAssetTypeRegistry().getRegisteredAssetTypeHandlers().entrySet()
+        );
+        entries.sort(Comparator.comparing(Entry::getKey));
         for (Entry<String, AssetTypeHandler> entry : entries) {
-            assetTypeArray.add(toAssetTypeDocument(assetEditorPlugin, entry.getValue()));
+            if (!(entry.getValue() instanceof AssetStoreTypeHandler)) {
+                stores.add(toAssetTypeOnlyStoreDocument(assetEditorPlugin, entry.getValue()));
+            }
         }
-
-        document.put("assetTypeCount", new BsonInt32(entries.size()));
-        document.put("assetEditorPluginPresent", BsonBoolean.TRUE);
-        return document;
+        return stores;
     }
 
-    private static BsonDocument toAssetTypeDocument(@Nonnull AssetEditorPlugin assetEditorPlugin, @Nonnull AssetTypeHandler handler) {
+    private static BsonDocument toAssetTypeOnlyStoreDocument(@Nonnull AssetEditorPlugin assetEditorPlugin, @Nonnull AssetTypeHandler handler) {
         BsonDocument document = new BsonDocument();
         AssetEditorAssetType config = handler.getConfig();
 
-        document.put("id", nullableString(config.id));
-        document.put("icon", nullableString(config.icon));
-        document.put("isColoredIcon", BsonBoolean.valueOf(config.isColoredIcon));
+        document.put("assetClass", BsonNull.VALUE);
+        document.put("assetSimpleName", nullableString(config.id));
+        document.put("keyClass", BsonNull.VALUE);
         document.put("path", nullableString(config.path));
-        document.put("fileExtension", nullableString(config.fileExtension));
-        document.put("editorType", config.editorType == null ? BsonNull.VALUE : new BsonString(config.editorType.name()));
+        document.put("extension", nullableString(config.fileExtension));
+        document.put("codecClass", BsonNull.VALUE);
+        document.put("assetMapClass", BsonNull.VALUE);
+        document.put("assetCount", new BsonInt32(-1));
+        document.put("unmodifiable", BsonNull.VALUE);
+        document.put("idProvider", BsonNull.VALUE);
+        document.put("loadsAfter", new BsonArray());
+        document.put("preAddedAssetCount", new BsonInt32(0));
+        document.put("source", new BsonString("AssetTypeRegistry"));
+
+        document.put("assetTypeId", nullableString(config.id));
         document.put("handlerClass", new BsonString(handler.getClass().getName()));
         document.put("rootPath", new BsonString(handler.getRootPath().toString()));
-        document.put("isAssetStoreTypeHandler", BsonBoolean.valueOf(handler instanceof AssetStoreTypeHandler));
-
+        document.put("icon", nullableString(config.icon));
+        document.put("isColoredIcon", BsonBoolean.valueOf(config.isColoredIcon));
+        document.put("editorType", config.editorType == null ? BsonNull.VALUE : new BsonString(config.editorType.name()));
         if (config.id != null) {
             Schema schema = assetEditorPlugin.getSchema(config.id + ".json");
             document.put("hasSchema", BsonBoolean.valueOf(schema != null));
@@ -174,16 +177,6 @@ public final class AssetRegistryExportService {
         } else {
             document.put("hasSchema", BsonBoolean.FALSE);
         }
-
-        if (handler instanceof AssetStoreTypeHandler assetStoreTypeHandler) {
-            AssetStore<?, ?, ?> store = assetStoreTypeHandler.getAssetStore();
-            document.put("assetStoreAssetClass", new BsonString(store.getAssetClass().getName()));
-            document.put("assetStoreAssetSimpleName", new BsonString(store.getAssetClass().getSimpleName()));
-            document.put("assetStorePath", store.getPath() == null ? BsonNull.VALUE : new BsonString(store.getPath()));
-            document.put("assetStoreExtension", new BsonString(store.getExtension()));
-            document.put("assetStoreAssetCount", new BsonInt32(store.getAssetMap().getAssetCount()));
-        }
-
         return document;
     }
 
@@ -198,6 +191,7 @@ public final class AssetRegistryExportService {
         document.put("assetMapClass", new BsonString(store.getAssetMap().getClass().getName()));
         document.put("assetCount", new BsonInt32(store.getAssetMap().getAssetCount()));
         document.put("unmodifiable", BsonBoolean.valueOf(store.isUnmodifiable()));
+        document.put("source", new BsonString("AssetRegistry"));
 
         Class<?> idProvider = store.getIdProvider();
         if (idProvider != null) {
@@ -220,7 +214,7 @@ public final class AssetRegistryExportService {
         return document;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static String keyToString(@Nonnull AssetStore<?, ?, ?> store, @Nonnull Object asset) {
         Function keyFunction = store.getKeyFunction();
         Object key = keyFunction.apply(asset);

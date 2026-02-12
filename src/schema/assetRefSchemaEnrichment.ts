@@ -193,7 +193,9 @@ export function parseStoreInfoEntries(document: unknown): StoreInfoEntry[] {
         }
 
         const assetSimpleName = typeof candidate.assetSimpleName === 'string' ? candidate.assetSimpleName.trim() : '';
-        const storePath = typeof candidate.path === 'string' ? normalizeZipPath(candidate.path) : '';
+        const storePath = typeof candidate.path === 'string'
+            ? normalizeStorePath(candidate.path, hasDefinedRootPath(candidate))
+            : '';
         const extension = typeof candidate.extension === 'string' ? normalizeStoreExtension(candidate.extension) : '';
         const assetCount = typeof candidate.assetCount === 'number' ? candidate.assetCount : undefined;
 
@@ -382,8 +384,8 @@ async function listWorkspaceServerFiles(workspaceRootPaths: readonly string[]): 
         for (const workspaceFilePath of workspaceFiles) {
             const serverRelativePath = normalizeZipPath(path.relative(serverRootPath, workspaceFilePath));
             files.push({
-                serverRelativePath,
-                signatureToken: `${normalizeZipPath(path.resolve(workspaceRootPath))}|${serverRelativePath}`
+                serverRelativePath: `Server/${serverRelativePath}`,
+                signatureToken: `${normalizeZipPath(path.resolve(workspaceRootPath))}|Server/${serverRelativePath}`
             });
         }
     }
@@ -439,15 +441,13 @@ async function loadBaseGameAssetIndex(
         return new Map<string, string[]>();
     }
 
-    const serverRelativePaths = stdout
+    const archiveRelativePaths = stdout
         .split(/\r?\n/)
         .map(line => line.trim())
         .filter(line => line.length > 0)
-        .filter(line => line.startsWith('Server/'))
-        .filter(line => !line.endsWith('/'))
-        .map(line => line.substring('Server/'.length));
+        .filter(line => !line.endsWith('/'));
 
-    return mapServerRelativePathsToAssetIdsWithDescriptors(serverRelativePaths, storeDescriptors);
+    return mapServerRelativePathsToAssetIdsWithDescriptors(archiveRelativePaths, storeDescriptors);
 }
 
 function mapServerRelativePathsToAssetIdsWithDescriptors(
@@ -749,6 +749,28 @@ function normalizeZipPath(value: string): string {
     return value.replace(/\\/g, '/').replace(/^\/+/, '').replace(/\/+$/, '');
 }
 
+function normalizeStorePath(rawPath: string, hasRootPath: boolean): string {
+    const normalizedPath = normalizeZipPath(rawPath);
+    if (!normalizedPath) {
+        return '';
+    }
+
+    if (hasRootPath) {
+        return normalizedPath;
+    }
+
+    const normalizedPathLower = normalizedPath.toLowerCase();
+    if (
+        normalizedPathLower.startsWith('server/') ||
+        normalizedPathLower.startsWith('servers/') ||
+        normalizedPathLower.startsWith('common/')
+    ) {
+        return normalizedPath;
+    }
+
+    return `Server/${normalizedPath}`;
+}
+
 function normalizeStoreExtension(extension: string): string {
     const trimmedExtension = extension.trim().toLowerCase();
     if (!trimmedExtension) {
@@ -777,4 +799,8 @@ function toUnzipErrorMessage(error: unknown): string {
 
 function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null;
+}
+
+function hasDefinedRootPath(value: Record<string, unknown>): boolean {
+    return Object.prototype.hasOwnProperty.call(value, 'rootPath');
 }

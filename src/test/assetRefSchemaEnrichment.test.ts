@@ -27,6 +27,18 @@ suite('Asset Ref Schema Enrichment Test Suite', () => {
                     extension: '.particlesystem'
                 },
                 {
+                    assetSimpleName: 'AssetTypeOnlyThing',
+                    path: 'Server/Audio/GeneratedTypes',
+                    rootPath: '/Server',
+                    extension: '.json'
+                },
+                {
+                    assetSimpleName: 'CommonAssetType',
+                    path: 'Common/Audio/GeneratedTypes',
+                    rootPath: '/Common',
+                    extension: '.json'
+                },
+                {
                     assetSimpleName: 'InvalidNoPath',
                     path: '',
                     extension: '.json'
@@ -36,14 +48,26 @@ suite('Asset Ref Schema Enrichment Test Suite', () => {
 
         assert.deepStrictEqual(stores, [
             {
+                assetSimpleName: 'AssetTypeOnlyThing',
+                path: 'Server/Audio/GeneratedTypes',
+                extension: '.json',
+                assetCount: undefined
+            },
+            {
+                assetSimpleName: 'CommonAssetType',
+                path: 'Common/Audio/GeneratedTypes',
+                extension: '.json',
+                assetCount: undefined
+            },
+            {
                 assetSimpleName: 'ParticleSystem',
-                path: 'Particles',
+                path: 'Server/Particles',
                 extension: '.particlesystem',
                 assetCount: undefined
             },
             {
                 assetSimpleName: 'SoundEvent',
-                path: 'Audio/SoundEvents',
+                path: 'Server/Audio/SoundEvents',
                 extension: '.json',
                 assetCount: undefined
             }
@@ -54,32 +78,39 @@ suite('Asset Ref Schema Enrichment Test Suite', () => {
         const stores = [
             {
                 assetSimpleName: 'RootInteraction',
-                path: 'Item/RootInteractions',
+                path: 'Server/Item/RootInteractions',
                 extension: '.json'
             },
             {
                 assetSimpleName: 'SoundEvent',
-                path: 'Audio/SoundEvents',
+                path: 'Server/Audio/SoundEvents',
                 extension: '.json'
             },
             {
                 assetSimpleName: 'ParticleSystem',
-                path: 'Particles',
+                path: 'Server/Particles',
                 extension: '.particlesystem'
+            },
+            {
+                assetSimpleName: 'CommonAssetType',
+                path: 'Common/Audio/GeneratedTypes',
+                extension: '.json'
             }
         ];
 
         const indexedValues = mapServerRelativePathsToAssetIds([
-            'Item/RootInteractions/Combat/Basic.json',
-            'Audio/SoundEvents/Player/Jump.json',
-            'Audio/SoundEvents/NotJson.txt',
-            'Particles/Fireball.particlesystem',
-            'Particles/WrongExt.json'
+            'Server/Item/RootInteractions/Combat/Basic.json',
+            'Server/Audio/SoundEvents/Player/Jump.json',
+            'Server/Audio/SoundEvents/NotJson.txt',
+            'Server/Particles/Fireball.particlesystem',
+            'Server/Particles/WrongExt.json',
+            'Common/Audio/GeneratedTypes/Alpha.json'
         ], stores);
 
         assert.deepStrictEqual(indexedValues.get('RootInteraction'), ['Combat/Basic']);
         assert.deepStrictEqual(indexedValues.get('SoundEvent'), ['Player/Jump']);
         assert.deepStrictEqual(indexedValues.get('ParticleSystem'), ['Fireball']);
+        assert.deepStrictEqual(indexedValues.get('CommonAssetType'), ['Alpha']);
     });
 
     test('enrichSchemaDocumentForAssetRefs injects known-value refs while remaining permissive', () => {

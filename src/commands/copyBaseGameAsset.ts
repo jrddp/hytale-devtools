@@ -24,7 +24,7 @@ interface StoreInfoEntry {
 
 interface ZipAssetEntry {
     zipEntryPath: string;
-    serverRelativePath: string;
+    archiveRelativePath: string;
     relativePath: string;
 }
 
@@ -73,7 +73,8 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
     }
 
     if (candidateFiles.length === 0) {
-        vscode.window.showWarningMessage(`No matching files found in Assets.zip for Server/${normalizeZipPath(selectedStore.path)}.`);
+        const storePathLabel = normalizeZipPath(selectedStore.path) || '(all assets)';
+        vscode.window.showWarningMessage(`No matching files found in Assets.zip for ${storePathLabel}.`);
         return;
     }
 
@@ -98,8 +99,7 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
         'src',
         'main',
         'resources',
-        'Server',
-        ...normalizeZipPath(selectedStore.path).split('/')
+        ...normalizeZipPath(selectedStore.path).split('/').filter(segment => segment.length > 0)
     );
 
     const destinationPath = path.resolve(destinationDirectory, ...destinationRelativePath.split('/'));
@@ -168,7 +168,9 @@ function parseStoreInfoEntries(document: StoreInfoDocument): StoreInfoEntry[] {
         }
 
         const assetSimpleName = typeof candidate.assetSimpleName === 'string' ? candidate.assetSimpleName.trim() : '';
-        const storePath = typeof candidate.path === 'string' ? normalizeZipPath(candidate.path) : '';
+        const storePath = typeof candidate.path === 'string'
+            ? normalizeStorePath(candidate.path, hasDefinedRootPath(candidate))
+            : '';
         const extension = typeof candidate.extension === 'string' ? normalizeStoreExtension(candidate.extension) : '';
         const assetCount = typeof candidate.assetCount === 'number' ? candidate.assetCount : undefined;
 
@@ -204,8 +206,6 @@ function parseStoreInfoEntries(document: StoreInfoDocument): StoreInfoEntry[] {
 async function pickStore(stores: StoreInfoEntry[]): Promise<StoreInfoEntry | undefined> {
     const quickPickItems = [{
         label: 'Search all assets',
-        description: '/Server',
-        detail: 'Search across all Server assets',
         store: {
             assetSimpleName: 'Search all assets',
             path: '',
@@ -213,8 +213,7 @@ async function pickStore(stores: StoreInfoEntry[]): Promise<StoreInfoEntry | und
         } satisfies StoreInfoEntry
     }, ...stores.map(store => ({
         label: store.assetSimpleName,
-        description: `/${store.path}`,
-        detail: `Server/${store.path} | extension: ${store.extension || '(any)'}${typeof store.assetCount === 'number' ? ` | assets: ${store.assetCount}` : ''}`,
+        detail: `${store.path}/*${store.extension}`,
         store
     }))];
 
@@ -234,9 +233,9 @@ async function pickAssetFile(
     const quickPickItems = files.map(file => ({
         label: path.posix.basename(file.relativePath),
         description: isAllAssetsSearch
-            ? resolveAssetStoreDescription(file.serverRelativePath, allStores)
+            ? resolveAssetStoreDescription(file.archiveRelativePath, allStores)
             : toQuickPickPathDescription(file.relativePath),
-        detail: `Server/${file.serverRelativePath}`,
+        detail: file.archiveRelativePath,
         file
     }));
 
@@ -250,7 +249,7 @@ async function pickAssetFile(
 async function listZipEntriesForStore(assetsZipPath: string, store: StoreInfoEntry): Promise<ZipAssetEntry[]> {
     const normalizedStorePath = normalizeZipPath(store.path);
     const normalizedExtension = normalizeStoreExtension(store.extension);
-    const zipPrefix = normalizedStorePath ? `Server/${normalizedStorePath}/` : 'Server/';
+    const zipPrefix = normalizedStorePath ? `${normalizedStorePath}/` : '';
 
     let stdout: string;
     try {
@@ -268,12 +267,12 @@ async function listZipEntriesForStore(assetsZipPath: string, store: StoreInfoEnt
         .filter(line => line.length > 0);
 
     const files: ZipAssetEntry[] = entries
-        .filter(entry => entry.startsWith(zipPrefix))
+        .filter(entry => !zipPrefix || entry.startsWith(zipPrefix))
         .filter(entry => !entry.endsWith('/'))
         .filter(entry => !normalizedExtension || entry.toLowerCase().endsWith(normalizedExtension))
         .map(entry => ({
             zipEntryPath: entry,
-            serverRelativePath: entry.substring('Server/'.length),
+            archiveRelativePath: entry,
             relativePath: entry.substring(zipPrefix.length)
         }));
 
@@ -328,13 +327,35 @@ function normalizeZipPath(value: string): string {
     return value.trim().replace(/\\/g, '/').replace(/^\/+/, '').replace(/\/+$/, '');
 }
 
+function normalizeStorePath(rawPath: string, hasRootPath: boolean): string {
+    const normalizedPath = normalizeZipPath(rawPath);
+    if (!normalizedPath) {
+        return '';
+    }
+
+    if (hasRootPath) {
+        return normalizedPath;
+    }
+
+    const normalizedPathLower = normalizedPath.toLowerCase();
+    if (
+        normalizedPathLower.startsWith('server/') ||
+        normalizedPathLower.startsWith('servers/') ||
+        normalizedPathLower.startsWith('common/')
+    ) {
+        return normalizedPath;
+    }
+
+    return `Server/${normalizedPath}`;
+}
+
 function toQuickPickPathDescription(relativePath: string): string {
     const directoryPath = path.posix.dirname(relativePath);
     return directoryPath === '.' ? '/' : directoryPath;
 }
 
-function resolveAssetStoreDescription(serverRelativePath: string, stores: StoreInfoEntry[]): string {
-    const matchedStore = resolveStoreForServerPath(serverRelativePath, stores);
+function resolveAssetStoreDescription(archiveRelativePath: string, stores: StoreInfoEntry[]): string {
+    const matchedStore = resolveStoreForArchivePath(archiveRelativePath, stores);
     if (!matchedStore) {
         return '(unknown asset store)';
     }
@@ -342,8 +363,8 @@ function resolveAssetStoreDescription(serverRelativePath: string, stores: StoreI
     return matchedStore.assetSimpleName;
 }
 
-function resolveStoreForServerPath(serverRelativePath: string, stores: StoreInfoEntry[]): StoreInfoEntry | undefined {
-    const normalizedPath = normalizeZipPath(serverRelativePath).toLowerCase();
+function resolveStoreForArchivePath(archiveRelativePath: string, stores: StoreInfoEntry[]): StoreInfoEntry | undefined {
+    const normalizedPath = normalizeZipPath(archiveRelativePath).toLowerCase();
 
     let bestMatch: StoreInfoEntry | undefined;
     let bestPathLength = -1;
@@ -400,6 +421,10 @@ function toZipCommandError(error: unknown, action: string): Error {
 
 function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null;
+}
+
+function hasDefinedRootPath(value: Record<string, unknown>): boolean {
+    return Object.prototype.hasOwnProperty.call(value, 'rootPath');
 }
 
 function isErrnoException(value: unknown): value is NodeJS.ErrnoException {
