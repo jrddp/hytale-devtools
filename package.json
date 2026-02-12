@@ -1,19 +1,17 @@
 {
   "name": "hytale-devtools",
   "displayName": "Hytale Devtools",
+  "publisher": "jrddp",
   "description": "Hytale modding made easy",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.104.0"
   },
   "categories": [
-    "Other"
+    "Extension Packs", "Language Packs"
   ],
   "activationEvents": [
-    "onLanguage:json",
-    "onCommand:hytale-devtools.createMod",
-    "onCommand:hytale-devtools.addListener",
-    "onCommand:hytale-devtools.copyBaseGameAsset"
+    "onLanguage:json"
   ],
   "main": "./dist/extension.js",
   "contributes": {
