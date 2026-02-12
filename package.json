@@ -46,6 +46,16 @@
           "type": "string",
           "default": "",
           "description": "Default website for new mods."
+        },
+        "hytale-devtools.companionPatchline": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "release",
+            "pre-release"
+          ],
+          "default": "auto",
+          "description": "Patchline used when generating the companion mod. Auto detects an installed patchline."
         }
       }
     }

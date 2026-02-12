@@ -1,0 +1,20 @@
+{
+    "Group": "hytale-devtools",
+    "Name": "Hytale Devtools Companion",
+    "Version": "0.0.1",
+    "Description": "Exports asset schema data from the server for the Hytale Devtools VSCode extension.",
+    "Authors": [
+        {
+            "Name": "Kokeria"
+        }
+    ],
+    "Website": "",
+    "ServerVersion": "*",
+    "Dependencies": {
+    },
+    "OptionalDependencies": {
+    },
+    "DisabledByDefault": false,
+    "Main": "dev.hytale.devtools.companion.HytaleDevtoolsCompanion",
+    "IncludesAssetPack": false
+}

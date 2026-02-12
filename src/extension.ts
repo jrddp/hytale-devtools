@@ -1,10 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { ensureCompanionModGenerated } from './companion/generateCompanionMod';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -32,6 +33,12 @@ export function activate(context: vscode.ExtensionContext) {
 		addListener(context);
 	});
 	context.subscriptions.push(addListenerCommand);
+
+	void ensureCompanionModGenerated(context).catch((error) => {
+		const message = error instanceof Error ? error.message : String(error);
+		console.error('Failed to generate and build companion mod in extension storage:', message);
+		vscode.window.showWarningMessage(`Hytale Devtools could not build companion mod: ${message}`);
+	});
 }
 
 // This method is called when your extension is deactivated

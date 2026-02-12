@@ -9,7 +9,8 @@
             "args": [
                 "--allow-op",
                 "--assets=${userHome}/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip",
-                "--mods=${workspaceFolder}/src/main"
+                "--mods=${workspaceFolder}/src/main",
+                "--mods={{COMPANION_BUILT_MODS_PATH}}"
             ],
             "cwd": "${workspaceFolder}/run"
         }

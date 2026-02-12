@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { toCamelCase, toKebabCase, toPascalCase, toSquashedCase, replaceTokens } from '../utils/stringUtils';
+import { toCamelCase, toPascalCase, toSquashedCase, replaceTokens } from '../utils/stringUtils';
+import { getCompanionPaths } from '../utils/companionPaths';
+import { ensureCompanionModGenerated } from '../companion/generateCompanionMod';
 
 const TEMPLATE_DIR_NAME = 'templates/basic-mod';
 
@@ -30,7 +32,6 @@ export async function createMod(context: vscode.ExtensionContext) {
     }
 
     const destinationRoot = folderResult[0].fsPath;
-    const modNameKebab = toKebabCase(modName);
     const modNamePascal = toPascalCase(modName);
     const modNameSquashed = toSquashedCase(modName);
     const destinationPath = path.join(destinationRoot, modNamePascal);
@@ -46,6 +47,16 @@ export async function createMod(context: vscode.ExtensionContext) {
     let author = config.get<string>('defaultAuthor') || '';
     let group = config.get<string>('defaultGroup') || '';
     let website = config.get<string>('defaultWebsite') || '';
+
+    const companionPaths = getCompanionPaths(context);
+    if (!fs.existsSync(companionPaths.companionModArtifactPath)) {
+        try {
+            await ensureCompanionModGenerated(context);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            vscode.window.showWarningMessage(`Companion mod artifacts are unavailable and build failed: ${message}`);
+        }
+    }
 
     let updateConfig = false;
 
@@ -94,7 +105,8 @@ export async function createMod(context: vscode.ExtensionContext) {
         '{{MOD_NAME_SQUASHED}}': modNameSquashed,
         '{{AUTHOR}}': author,
         '{{GROUP}}': group,
-        '{{WEBSITE}}': website
+        '{{WEBSITE}}': website,
+        '{{COMPANION_BUILT_MODS_PATH}}': normalizePathForTemplate(companionPaths.companionModArtifactPath)
     };
 
     try {
@@ -175,7 +187,7 @@ async function copyRecursive(src: string, dest: string, replacements: Record<str
 
     if (stats.isDirectory()) {
         if (!fs.existsSync(dest)) {
-            fs.mkdirSync(dest);
+            fs.mkdirSync(dest, { recursive: true });
         }
 
         const files = fs.readdirSync(src);
@@ -259,4 +271,8 @@ async function restructureJavaPackage(root: string, group: string, modSquashed: 
             // Ignore clean up errors
         }
     }
+}
+
+function normalizePathForTemplate(value: string): string {
+    return value.replace(/\\/g, '/');
 }

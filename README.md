@@ -6,6 +6,15 @@ This extension provides tools to make Hytale modding easier.
 
 ### Create New Hytale Mod
 - In the selected destination, creates a new mod project.
+- Includes the generated companion mod artifact folder in launch `--mods` (`.../companion/HytaleDevtoolsCompanion/build/libs`).
+
+## Companion Mod Generation
+
+On extension activation, the extension generates and builds `HytaleDevtoolsCompanion` from `templates/companion-mod` into extension global storage and injects the schema export path dynamically.
+Command registration is not blocked while this companion build runs.
+
+The companion patchline can be configured with `hytale-devtools.companionPatchline` (`auto`, `release`, `pre-release`).
+`auto` checks installed Hytale patchlines and falls back to `release`.
 
 ## Planned Features
 
