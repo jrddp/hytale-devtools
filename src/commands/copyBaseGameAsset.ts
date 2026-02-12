@@ -28,6 +28,19 @@ interface ZipAssetEntry {
     relativePath: string;
 }
 
+interface SearchableQuickPickItem extends vscode.QuickPickItem {
+    searchableText: string;
+    alwaysShow: true;
+}
+
+interface StoreQuickPickItem extends SearchableQuickPickItem {
+    store: StoreInfoEntry;
+}
+
+interface AssetFileQuickPickItem extends SearchableQuickPickItem {
+    file: ZipAssetEntry;
+}
+
 export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promise<void> {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -204,23 +217,40 @@ function parseStoreInfoEntries(document: StoreInfoDocument): StoreInfoEntry[] {
 }
 
 async function pickStore(stores: StoreInfoEntry[]): Promise<StoreInfoEntry | undefined> {
-    const quickPickItems = [{
-        label: 'Search all assets',
-        store: {
-            assetSimpleName: 'Search all assets',
-            path: '',
-            extension: ''
-        } satisfies StoreInfoEntry
-    }, ...stores.map(store => ({
-        label: store.assetSimpleName,
-        detail: `${store.path}/*${store.extension}`,
-        store
-    }))];
+    const searchAllStore: StoreInfoEntry = {
+        assetSimpleName: 'Search all assets',
+        path: '',
+        extension: ''
+    };
 
-    const selectedItem = await vscode.window.showQuickPick(quickPickItems, {
-        placeHolder: 'Choose asset store'
+    const searchAllItem: StoreQuickPickItem = {
+        label: 'Search all assets',
+        store: searchAllStore,
+        searchableText: buildStoreSearchText(
+            searchAllStore,
+            '',
+            '',
+            ''
+        ),
+        alwaysShow: true
+    };
+
+    const storeItems: StoreQuickPickItem[] = stores.map(store => {
+        const label = store.assetSimpleName;
+        const description = `/${store.path}`;
+        const detail = `${store.path}/*${store.extension}`;
+
+        return {
+            label,
+            description,
+            detail,
+            store,
+            searchableText: buildStoreSearchText(store, label, description, detail),
+            alwaysShow: true
+        };
     });
 
+    const selectedItem = await showSearchableQuickPick([searchAllItem, ...storeItems], 'Choose asset store');
     return selectedItem?.store;
 }
 
@@ -230,20 +260,69 @@ async function pickAssetFile(
     allStores: StoreInfoEntry[]
 ): Promise<ZipAssetEntry | undefined> {
     const isAllAssetsSearch = normalizeZipPath(selectedStore.path).length === 0;
-    const quickPickItems = files.map(file => ({
-        label: path.posix.basename(file.relativePath),
-        description: isAllAssetsSearch
+    const quickPickItems: AssetFileQuickPickItem[] = files.map(file => {
+        const label = path.posix.basename(file.relativePath);
+        const description = isAllAssetsSearch
             ? resolveAssetStoreDescription(file.archiveRelativePath, allStores)
-            : toQuickPickPathDescription(file.relativePath),
-        detail: file.archiveRelativePath,
-        file
-    }));
+            : toQuickPickPathDescription(file.relativePath);
+        const detail = file.archiveRelativePath;
 
-    const selectedItem = await vscode.window.showQuickPick(quickPickItems, {
-        placeHolder: 'Select a base-game asset file'
+        return {
+            label,
+            description,
+            detail,
+            file,
+            searchableText: buildAssetFileSearchText(file, label, description, detail),
+            alwaysShow: true
+        };
     });
 
+    const selectedItem = await showSearchableQuickPick(quickPickItems, 'Select a base-game asset file');
     return selectedItem?.file;
+}
+
+async function showSearchableQuickPick<T extends SearchableQuickPickItem>(
+    allItems: readonly T[],
+    placeHolder: string
+): Promise<T | undefined> {
+    return await new Promise<T | undefined>((resolve) => {
+        const quickPick = vscode.window.createQuickPick<T>();
+        quickPick.placeholder = placeHolder;
+        quickPick.matchOnDescription = true;
+        quickPick.matchOnDetail = true;
+
+        let isResolved = false;
+        const finalize = (value: T | undefined): void => {
+            if (isResolved) {
+                return;
+            }
+
+            isResolved = true;
+            resolve(value);
+            quickPick.dispose();
+        };
+
+        const applyFilter = (query: string): void => {
+            const searchTerms = tokenizeSearchQuery(query);
+            const filteredItems = searchTerms.length === 0
+                ? [...allItems]
+                : allItems.filter(item => matchesAllSearchTerms(item.searchableText, searchTerms));
+
+            quickPick.items = filteredItems;
+            quickPick.activeItems = filteredItems.length > 0 ? [filteredItems[0]] : [];
+        };
+
+        quickPick.onDidChangeValue(applyFilter);
+        quickPick.onDidAccept(() => {
+            finalize(quickPick.selectedItems[0]);
+        });
+        quickPick.onDidHide(() => {
+            finalize(undefined);
+        });
+
+        applyFilter('');
+        quickPick.show();
+    });
 }
 
 async function listZipEntriesForStore(assetsZipPath: string, store: StoreInfoEntry): Promise<ZipAssetEntry[]> {
@@ -354,6 +433,49 @@ function toQuickPickPathDescription(relativePath: string): string {
     return directoryPath === '.' ? '/' : directoryPath;
 }
 
+export function tokenizeSearchQuery(query: string): string[] {
+    return query
+        .split(/\s+/)
+        .map(term => normalizeSearchText(term))
+        .filter(term => term.length > 0);
+}
+
+export function matchesAllSearchTerms(searchableText: string, searchTerms: readonly string[]): boolean {
+    const normalizedSearchableText = normalizeSearchText(searchableText);
+    return searchTerms.every(searchTerm => normalizedSearchableText.includes(searchTerm));
+}
+
+export function buildStoreSearchText(
+    store: Pick<StoreInfoEntry, 'assetSimpleName' | 'path' | 'extension'>,
+    label: string,
+    description: string,
+    detail: string
+): string {
+    return normalizeSearchText([
+        label,
+        description,
+        detail,
+        store.assetSimpleName,
+        normalizeZipPath(store.path),
+        normalizeStoreExtension(store.extension)
+    ].join('\n'));
+}
+
+export function buildAssetFileSearchText(
+    file: Pick<ZipAssetEntry, 'relativePath' | 'archiveRelativePath'>,
+    label: string,
+    description: string,
+    detail: string
+): string {
+    return normalizeSearchText([
+        label,
+        description,
+        detail,
+        normalizeZipPath(file.relativePath),
+        normalizeZipPath(file.archiveRelativePath)
+    ].join('\n'));
+}
+
 function resolveAssetStoreDescription(archiveRelativePath: string, stores: StoreInfoEntry[]): string {
     const matchedStore = resolveStoreForArchivePath(archiveRelativePath, stores);
     if (!matchedStore) {
@@ -397,6 +519,10 @@ function normalizeStoreExtension(extension: string): string {
     }
 
     return trimmedExtension.startsWith('.') ? trimmedExtension : `.${trimmedExtension}`;
+}
+
+function normalizeSearchText(value: string): string {
+    return value.trim().replace(/\\/g, '/').toLowerCase();
 }
 
 function isPathWithin(rootPath: string, candidatePath: string): boolean {
