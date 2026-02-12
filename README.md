@@ -4,21 +4,27 @@ This extension provides tools to make Hytale modding easier.
 
 ## Features
 
-### Create New Hytale Mod
-- In the selected destination, creates a new mod project.
-- Includes the generated companion mod artifact folder in launch `--mods` (`.../companion/HytaleDevtoolsCompanion/build/libs`).
+### Command: Create New Hytale Mod
+- Select a parent folder and a fully-configured basic mod template will be generated that you can immediately start working on.
+- Automatically respects the author, group, and mod title in the template.
 
-## Companion Mod Generation
+## Command: Copy Base Game Asset
+- Select an asset type to search or search all assets, then automatically copy it to the correct destination.
 
-On extension activation, the extension generates and builds `HytaleDevtoolsCompanion` from `templates/companion-mod` into extension global storage and injects the schema export path dynamically.
-Command registration is not blocked while this companion build runs.
+### Command: Add Listener
+- Easily select from all available base game event listeners and generate a function to handle it in your code.
 
-The companion patchline can be configured with `hytale-devtools.companionPatchline` (`auto`, `release`, `pre-release`).
-`auto` checks installed Hytale patchlines and falls back to `release`.
+### Auto-Completion and Hints
+- When editing asset JSON files, full auto-completion and description tooltips are now provided for all assets types.
+- Dynamically generated using the same in-game data that the asset editor gets its information from, so it is always up to date.
+- More advanced completion than the base game's asset editor, including dynamically populated auto-completion of other asset IDs.
 
 ## Planned Features
 
-- New Command: Hytale: Overwrite existing asset
-    - Will prompt for type of asset, then dynamically use the list of available Vanilla assets to overwrite, then create the asset file in the correct directory.
-- New Command: Hytale: Create new asset
-    - Will prompt for type of asset, an existing asset to copy from, and a name of the asset, then create the asset file in the correct directory.
+- Asset JSON auto-completion support for Common Asset paths such as setting texture pngs or blockymodels.
+- Improve the experience of opening blockymodels/animations in blockbench from VSCode.
+- Custom node editor for world generation and behavior tree configuration.
+- Custom key-value editor similar to the base game's asset editor to show and edit the full list of available properties and inherited values of an asset.
+
+## Attribution
+- The base template used for creating new mods is based on Build-9's [Hytale Example Project](https://github.com/Build-9/Hytale-Example-Project).
