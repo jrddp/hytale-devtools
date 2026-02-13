@@ -63,15 +63,29 @@
           "description": "Patchline used when generating the companion mod. Auto detects an installed patchline."
         }
       }
-    }
+    },
+    "customEditors": [
+      {
+        "viewType": "hytale-devtools.hytaleGeneratorEditor",
+        "displayName": "Hytale Generator Editor",
+        "selector": [
+          {
+            "filenamePattern": "**/HytaleGenerator/**/*.json"
+          }
+        ],
+        "priority": "default"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
-    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "compile": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
+    "watch:webview": "vite build --watch --config webview/hytale-generator-editor/vite.config.mjs",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production",
+    "build:webview": "vite build --config webview/hytale-generator-editor/vite.config.mjs",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
@@ -85,10 +99,13 @@
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "eslint": "^8.57.0",
     "esbuild": "^0.21.5",
     "npm-run-all": "^4.1.5",
+    "svelte": "^4.2.18",
     "typescript": "^5.4.5",
+    "vite": "^5.4.10",
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0"
   }

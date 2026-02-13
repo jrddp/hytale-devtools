@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { ensureCompanionModGenerated } from './companion/generateCompanionMod';
+import { registerHytaleGeneratorEditorProvider } from './editors/hytaleGeneratorEditorProvider';
 import { initializeJsonSchemaSupport } from './schema/jsonSchemaSupport';
 
 // This method is called when your extension is activated
@@ -32,6 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(copyBaseGameAssetCommand);
 
 	context.subscriptions.push(initializeJsonSchemaSupport(context));
+	context.subscriptions.push(registerHytaleGeneratorEditorProvider(context));
 
 	void ensureCompanionModGenerated(context).catch((error) => {
 		const message = error instanceof Error ? error.message : String(error);
