@@ -10,7 +10,8 @@
     "vscode": "^1.104.0"
   },
   "categories": [
-    "Extension Packs", "Language Packs"
+    "Extension Packs",
+    "Language Packs"
   ],
   "activationEvents": [
     "onLanguage:json"
@@ -94,21 +95,24 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@tailwindcss/vite": "^4.1.13",
-    "@types/vscode": "^1.104.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/vscode": "^1.104.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
-    "eslint": "^8.57.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
     "esbuild": "^0.21.5",
+    "eslint": "^8.57.0",
     "npm-run-all": "^4.1.5",
-    "svelte": "^4.2.18",
+    "svelte": "^5.25.0",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.4.5",
-    "vite": "^5.4.10",
-    "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "@xyflow/svelte": "^1.5.0"
   }
 }
