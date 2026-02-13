@@ -143,7 +143,7 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 	${styleTags}
 </head>
 <body>
-	<div id="app">Loading Hytale Generator Editor...</div>
+	<div id="app"></div>
 	<script type="module" src="${assets.scriptUri}"></script>
 </body>
 </html>`;
@@ -201,7 +201,7 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Hytale Generator Editor</title>
+	<title>Hytale Node Editor</title>
 </head>
 <body>
 	<h3>Hytale Generator Editor could not load</h3>

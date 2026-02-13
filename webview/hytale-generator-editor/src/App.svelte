@@ -54,16 +54,18 @@
 	});
 </script>
 
-<main>
-	<h3>Hytale Generator Editor (Svelte Test)</h3>
-	<div>Status: {status}</div>
+<main class="p-3">
+	<h3 class="text-base font-semibold">Hytale Generator Editor (Svelte Test)</h3>
+	<div class="mt-1 text-red-500">Status: {status}</div>
 	<div>Version: {sourceVersion}</div>
 
 	{#if extensionError}
-		<div class="error">{extensionError}</div>
+		<div class="mt-2 text-[var(--vscode-errorForeground)]">{extensionError}</div>
 	{/if}
 
 	<textarea
+		class="mt-2 w-full box-border border border-[var(--vscode-panel-border)] bg-[var(--vscode-input-background)] p-2 text-[var(--vscode-input-foreground)]"
+		style="font-family: var(--vscode-editor-font-family, monospace); font-size: var(--vscode-editor-font-size, 13px);"
 		bind:value={editorText}
 		on:input={onInput}
 		spellcheck="false"
@@ -72,43 +74,12 @@
 	/>
 
 	<div>
-		<button type="button" on:click={applyChanges}>Apply to File</button>
+		<button
+			class="mt-2 border border-[var(--vscode-button-border,transparent)] bg-[var(--vscode-button-background)] px-2.5 py-1.5 text-[var(--vscode-button-foreground)]"
+			type="button"
+			on:click={applyChanges}
+		>
+			Apply to File
+		</button>
 	</div>
 </main>
-
-<style>
-	:global(body) {
-		margin: 0;
-		font-family: var(--vscode-font-family, sans-serif);
-		color: var(--vscode-editor-foreground);
-		background: var(--vscode-editor-background);
-	}
-
-	main {
-		padding: 12px;
-	}
-
-	textarea {
-		width: 100%;
-		box-sizing: border-box;
-		margin-top: 8px;
-		background: var(--vscode-input-background);
-		color: var(--vscode-input-foreground);
-		border: 1px solid var(--vscode-panel-border);
-		font-family: var(--vscode-editor-font-family, monospace);
-		font-size: var(--vscode-editor-font-size, 13px);
-	}
-
-	button {
-		margin-top: 8px;
-		background: var(--vscode-button-background);
-		color: var(--vscode-button-foreground);
-		border: 1px solid var(--vscode-button-border, transparent);
-		padding: 6px 10px;
-	}
-
-	.error {
-		margin-top: 8px;
-		color: var(--vscode-errorForeground);
-	}
-</style>
