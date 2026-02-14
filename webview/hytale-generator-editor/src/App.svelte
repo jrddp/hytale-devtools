@@ -14,6 +14,7 @@
     "$Groups",
     "$Comments",
   ];
+  const LEGACY_INLINE_ROOT_METADATA_KEYS = ["$WorkspaceID", "$Groups", "$Comments"];
 
   const initialState = parseDocumentText("");
 
@@ -110,13 +111,16 @@
       throw new Error("The flow file must be a JSON object.");
     }
 
-    if (Array.isArray(parsed.nodes) || Array.isArray(parsed.edges)) {
-      if (!isObject(parsed[NODE_EDITOR_METADATA_KEY])) {
-        return buildStateFromLegacyFlowDocument(parsed);
-      }
+    const hasMetadataContainer = isObject(parsed[NODE_EDITOR_METADATA_KEY]);
+    if (!hasMetadataContainer && (Array.isArray(parsed.nodes) || Array.isArray(parsed.edges))) {
+      return buildStateFromLegacyFlowDocument(parsed);
     }
 
-    const metadataRoot = isObject(parsed[NODE_EDITOR_METADATA_KEY]) ? parsed[NODE_EDITOR_METADATA_KEY] : {};
+    if (!hasMetadataContainer && looksLikeLegacyInlineTemplate(parsed)) {
+      return buildStateFromLegacyInlineTemplateDocument(parsed);
+    }
+
+    const metadataRoot = hasMetadataContainer ? parsed[NODE_EDITOR_METADATA_KEY] : {};
     const runtime = omitKeys(parsed, [NODE_EDITOR_METADATA_KEY]);
     return buildStateFromMetadataDocument(runtime, metadataRoot);
   }
@@ -252,6 +256,141 @@
       runtimeFields: runtime,
       metadataContext: serialized.metadataContext,
       serializedText: serialized.text,
+    };
+  }
+
+  function buildStateFromLegacyInlineTemplateDocument(root) {
+    const context = createEmptyMetadataContext();
+    context.workspaceId = typeof root.$WorkspaceID === "string" ? root.$WorkspaceID : undefined;
+    context.groups = Array.isArray(root.$Groups) ? root.$Groups : [];
+    context.comments = Array.isArray(root.$Comments) ? root.$Comments : [];
+
+    const runtimeTemplateRoot = omitKeys(root, LEGACY_INLINE_ROOT_METADATA_KEYS);
+    const conversion = convertLegacyInlineRuntimeTree(runtimeTemplateRoot);
+    context.nodeMetadataById = conversion.nodeMetadataById;
+    context.nodePayloadById = conversion.nodePayloadById;
+    context.runtimeTreeNodeIds = conversion.runtimeTreeNodeIds;
+
+    const runtime = isObject(conversion.runtimeRoot) ? conversion.runtimeRoot : {};
+    const flowState = {
+      nodes: conversion.flowNodes,
+      edges: [],
+    };
+
+    const serialized = buildSerializedState({
+      nodes: flowState.nodes,
+      edges: flowState.edges,
+      runtimeFields: runtime,
+      metadataContext: context,
+    });
+
+    return {
+      nodes: serialized.nodes,
+      edges: serialized.edges,
+      runtimeFields: runtime,
+      metadataContext: serialized.metadataContext,
+      serializedText: serialized.text,
+    };
+  }
+
+  function convertLegacyInlineRuntimeTree(runtimeRootCandidate) {
+    const nodeMetadataById = {};
+    const nodePayloadById = {};
+    const runtimeTreeNodeIds = new Set();
+    const flowNodes = [];
+
+    let fallbackIndex = 0;
+
+    const visit = (candidate, keyHint, forceNode = false) => {
+      if (Array.isArray(candidate)) {
+        return candidate.map((item, index) => visit(item, `${keyHint}${index}`, false));
+      }
+
+      if (!isObject(candidate)) {
+        return candidate;
+      }
+
+      const shouldBeNode =
+        forceNode ||
+        (typeof candidate.$NodeId === "string" && candidate.$NodeId.trim()) ||
+        isPositionCandidate(candidate.$Position);
+
+      if (!shouldBeNode) {
+        return Object.fromEntries(
+          Object.entries(candidate).map(([childKey, childValue]) => [
+            childKey,
+            visit(childValue, childKey, false),
+          ])
+        );
+      }
+
+      const nodeIndex = fallbackIndex;
+      fallbackIndex += 1;
+      const typeHint =
+        typeof candidate.Type === "string" && candidate.Type.trim() ? candidate.Type.trim() : keyHint;
+      const nodeId = normalizeNodeId(candidate.$NodeId, typeHint, nodeIndex);
+      const position = normalizePosition(candidate.$Position, nodeIndex);
+      const title =
+        typeof candidate.$Title === "string" && candidate.$Title.trim() ? candidate.$Title.trim() : undefined;
+      const comment =
+        typeof candidate.$Comment === "string" && candidate.$Comment.trim()
+          ? candidate.$Comment.trim()
+          : undefined;
+
+      const transformedNode = {};
+      for (const [childKey, childValue] of Object.entries(candidate)) {
+        if (childKey === "$NodeId" || childKey === "$Position" || childKey === "$Title") {
+          continue;
+        }
+
+        transformedNode[childKey] = visit(childValue, childKey, false);
+      }
+      transformedNode.$NodeId = nodeId;
+
+      nodeMetadataById[nodeId] = {
+        $Position: {
+          $x: position.x,
+          $y: position.y,
+        },
+        ...(title ? { $Title: title } : {}),
+      };
+      nodePayloadById[nodeId] = transformedNode;
+      runtimeTreeNodeIds.add(nodeId);
+      flowNodes.push({
+        id: nodeId,
+        data: {
+          label: readNodeLabel(nodeId, nodeMetadataById[nodeId], undefined, transformedNode),
+          ...(comment !== undefined ? { $comment: comment } : {}),
+        },
+        position,
+      });
+
+      return transformedNode;
+    };
+
+    const runtimeRoot = visit(runtimeRootCandidate, "Root", true);
+
+    if (flowNodes.length === 0) {
+      const fallbackNode = createDefaultFlowNode();
+      runtimeTreeNodeIds.add(fallbackNode.id);
+      nodeMetadataById[fallbackNode.id] = {
+        $Position: {
+          $x: fallbackNode.position.x,
+          $y: fallbackNode.position.y,
+        },
+      };
+      nodePayloadById[fallbackNode.id] = {
+        $NodeId: fallbackNode.id,
+      };
+      flowNodes.push(fallbackNode);
+    }
+
+    return {
+      runtimeRoot,
+      nodeMetadataById,
+      nodePayloadById,
+      runtimeTreeNodeIds,
+      flowNodes,
     };
   }
 
@@ -719,6 +858,70 @@
 
   function isObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function isPositionCandidate(value) {
+    if (!isObject(value)) {
+      return false;
+    }
+
+    return Number.isFinite(Number(value.$x)) || Number.isFinite(Number(value.$y));
+  }
+
+  function looksLikeLegacyInlineTemplate(root) {
+    if (!isObject(root)) {
+      return false;
+    }
+
+    if (
+      Number.isFinite(Number(root?.$Position?.$x)) ||
+      Number.isFinite(Number(root?.$Position?.$y))
+    ) {
+      return true;
+    }
+
+    if (typeof root.$Title === "string" && root.$Title.trim()) {
+      return true;
+    }
+
+    let foundInlinePosition = false;
+    const scan = (candidate) => {
+      if (foundInlinePosition) {
+        return;
+      }
+
+      if (Array.isArray(candidate)) {
+        for (const item of candidate) {
+          scan(item);
+          if (foundInlinePosition) {
+            return;
+          }
+        }
+        return;
+      }
+
+      if (!isObject(candidate)) {
+        return;
+      }
+
+      if (isPositionCandidate(candidate.$Position)) {
+        foundInlinePosition = true;
+        return;
+      }
+
+      for (const [key, value] of Object.entries(candidate)) {
+        if (key === NODE_EDITOR_METADATA_KEY || key === "$Groups") {
+          continue;
+        }
+        scan(value);
+        if (foundInlinePosition) {
+          return;
+        }
+      }
+    };
+
+    scan(root);
+    return foundInlinePosition;
   }
 
   function collectRuntimeNodePayloadById(runtimeRoot) {
