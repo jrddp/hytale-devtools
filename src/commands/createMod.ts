@@ -11,7 +11,7 @@ const TEMPLATE_DIR_NAME = 'templates/basic-mod';
 export async function createMod(context: vscode.ExtensionContext) {
     // 1. Prompt for Mod Name
     const modName = await vscode.window.showInputBox({
-        placeHolder: 'Enter the name of your Hytale mod (e.g., Super Sword)',
+        placeHolder: 'Enter the name of your Hytale mod',
         prompt: 'Mod Name'
     });
 

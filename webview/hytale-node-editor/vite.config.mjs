@@ -14,7 +14,7 @@ export default defineConfig({
 		tailwindcss()
 	],
 	build: {
-		outDir: path.resolve(currentDir, '../../media/hytaleGeneratorEditor'),
+		outDir: path.resolve(currentDir, '../../media/hytaleNodeEditor'),
 		emptyOutDir: true,
 		manifest: true,
 		sourcemap: true,

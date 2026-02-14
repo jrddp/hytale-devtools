@@ -19,16 +19,16 @@ type WebviewAssetUris =
 	| { ok: true; scriptUri: vscode.Uri; styleUris: vscode.Uri[] }
 	| { ok: false; reason: string };
 
-const VIEW_TYPE = 'hytale-devtools.hytaleGeneratorEditor';
+const VIEW_TYPE = 'hytale-devtools.hytaleNodeEditor';
 
-export function registerHytaleGeneratorEditorProvider(
+export function registerHytaleNodeEditorProvider(
 	context: vscode.ExtensionContext
 ): vscode.Disposable {
-	const provider = new HytaleGeneratorEditorProvider(context);
+	const provider = new HytaleNodeEditorProvider(context);
 	return vscode.window.registerCustomEditorProvider(VIEW_TYPE, provider);
 }
 
-class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
+class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 	constructor(private readonly context: vscode.ExtensionContext) { }
 
 	public resolveCustomTextEditor(
@@ -39,7 +39,7 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 			webviewPanel.webview.options = {
 				enableScripts: true,
 				localResourceRoots: [
-					vscode.Uri.joinPath(this.context.extensionUri, 'media', 'hytaleGeneratorEditor')
+					vscode.Uri.joinPath(this.context.extensionUri, 'media', 'hytaleNodeEditor')
 				]
 			};
 
@@ -80,9 +80,9 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 			updateWebview();
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			console.error('Failed to resolve Hytale Generator custom editor:', message);
-			void vscode.window.showErrorMessage(`Hytale Generator editor failed to load: ${message}`);
-			webviewPanel.webview.html = `<html><body><h3>Hytale Generator editor failed to load</h3><pre>${escapeHtml(message)}</pre></body></html>`;
+			console.error('Failed to resolve Hytale Node custom editor:', message);
+			void vscode.window.showErrorMessage(`Hytale Node editor failed to load: ${message}`);
+			webviewPanel.webview.html = `<html><body><h3>Hytale Node editor failed to load</h3><pre>${escapeHtml(message)}</pre></body></html>`;
 		}
 	}
 
@@ -139,7 +139,7 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 		http-equiv="Content-Security-Policy"
 		content="default-src 'none'; img-src ${webview.cspSource} https: data:; font-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src ${webview.cspSource};"
 	/>
-	<title>Hytale Generator Editor</title>
+	<title>Hytale Node Editor</title>
 	${styleTags}
 </head>
 <body>
@@ -150,7 +150,7 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 	}
 
 	private getSvelteWebviewAssets(webview: vscode.Webview): WebviewAssetUris {
-		const mediaRoot = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'hytaleGeneratorEditor');
+		const mediaRoot = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'hytaleNodeEditor');
 		const manifestUri = vscode.Uri.joinPath(mediaRoot, '.vite', 'manifest.json');
 
 		if (fs.existsSync(manifestUri.fsPath)) {
@@ -204,7 +204,7 @@ class HytaleGeneratorEditorProvider implements vscode.CustomTextEditorProvider {
 	<title>Hytale Node Editor</title>
 </head>
 <body>
-	<h3>Hytale Generator Editor could not load</h3>
+	<h3>Hytale Node Editor could not load</h3>
 	<p>${escapeHtml(reason)}</p>
 </body>
 </html>`;
