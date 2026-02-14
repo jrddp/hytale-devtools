@@ -84,6 +84,7 @@
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:webview": "vite build --watch --config webview/hytale-node-editor/vite.config.mjs",
+    "dev:webview": "vite --config webview/hytale-node-editor/vite.config.mjs",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production",
     "build:webview": "vite build --config webview/hytale-node-editor/vite.config.mjs",
@@ -113,6 +114,7 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
-    "@xyflow/svelte": "^1.5.0"
+    "@xyflow/svelte": "^1.5.0",
+    "lucide-svelte": "^0.564.0"
   }
 }

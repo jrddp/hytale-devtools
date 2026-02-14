@@ -6,6 +6,7 @@
     getListElementType,
     normalizeFieldOptions,
   } from '../node-editor/fieldValueUtils.js';
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
 
   export let field;
   export let value;
@@ -73,6 +74,17 @@
       return '{}';
     }
   }
+
+  function handleEnterNavigation(event) {
+    if (!isPlainEnterNavigationEvent(event)) {
+      return;
+    }
+
+    event.preventDefault();
+    if (!focusNextEditableInNode(event.currentTarget)) {
+      event.currentTarget.blur();
+    }
+  }
 </script>
 
 <div class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2">
@@ -107,6 +119,7 @@
                 type="number"
                 value={Number.isFinite(Number(item)) ? Number(item) : 0}
                 oninput={(event) => updateNumberItem(index, event.currentTarget.value)}
+                onkeydown={handleEnterNavigation}
               />
             {:else if elementType === 'Object'}
               <textarea
@@ -121,6 +134,7 @@
                 type="text"
                 value={typeof item === 'string' ? item : String(item ?? '')}
                 oninput={(event) => updateTextItem(index, event.currentTarget.value)}
+                onkeydown={handleEnterNavigation}
               />
             {/if}
           </div>

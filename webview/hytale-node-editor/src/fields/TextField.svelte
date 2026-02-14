@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { getFieldLabel, normalizeFieldOptions } from '../node-editor/fieldValueUtils.js';
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
 
   export let field;
   export let value;
@@ -17,6 +18,17 @@
     dispatch('change', { value: nextValue });
   }
 
+  function handleSingleLineEnter(event) {
+    if (!isPlainEnterNavigationEvent(event)) {
+      return;
+    }
+
+    event.preventDefault();
+    if (!focusNextEditableInNode(event.currentTarget)) {
+      event.currentTarget.blur();
+    }
+  }
+
   function sanitizeId(candidate) {
     if (typeof candidate !== 'string' || !candidate.trim()) {
       return 'field';
@@ -30,7 +42,7 @@
   {#if field?.type === 'String' || Number(options.Height) > 0}
     <textarea
       id={inputId}
-      class="nodrag min-h-10 w-full resize-y rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+      class="nodrag min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg h-20"
       rows={rows}
       value={inputValue}
       oninput={(event) => emitValue(event.currentTarget.value)}
@@ -42,6 +54,7 @@
       type="text"
       value={inputValue}
       oninput={(event) => emitValue(event.currentTarget.value)}
+      onkeydown={handleSingleLineEnter}
     />
   {/if}
 </div>

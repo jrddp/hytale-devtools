@@ -11,6 +11,9 @@ importers:
       '@xyflow/svelte':
         specifier: ^1.5.0
         version: 1.5.0(svelte@5.51.0)
+      lucide-svelte:
+        specifier: ^0.564.0
+        version: 0.564.0(svelte@5.51.0)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.1.2
@@ -1516,6 +1519,11 @@ packages:
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
+
+  lucide-svelte@0.564.0:
+    resolution: {integrity: sha512-jeubFecyzbeze/Zwu5pFHHrv/u8OtiZ7VesXXus4cAnfRQlmb8TDtiC5gb485z8e4aAqe8FF7I0OVB/TDFAggg==}
+    peerDependencies:
+      svelte: ^3 || ^4 || ^5.0.0-next.42
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -3616,6 +3624,10 @@ snapshots:
       is-unicode-supported: 1.3.0
 
   lru-cache@10.4.3: {}
+
+  lucide-svelte@0.564.0(svelte@5.51.0):
+    dependencies:
+      svelte: 5.51.0
 
   magic-string@0.30.21:
     dependencies:

@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { getFieldLabel, normalizeFieldOptions } from '../node-editor/fieldValueUtils.js';
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
 
   export let field;
   export let value;
@@ -17,6 +18,17 @@
 
   function emitValue(nextValue) {
     dispatch('change', { value: nextValue });
+  }
+
+  function handleEnterNavigation(event) {
+    if (!isPlainEnterNavigationEvent(event)) {
+      return;
+    }
+
+    event.preventDefault();
+    if (!focusNextEditableInNode(event.currentTarget)) {
+      event.currentTarget.blur();
+    }
   }
 
   function sanitizeId(candidate) {
@@ -38,5 +50,6 @@
     {min}
     {max}
     oninput={(event) => emitValue(event.currentTarget.value)}
+    onkeydown={handleEnterNavigation}
   />
 </div>
