@@ -620,6 +620,7 @@
       if (templateDefinition && (typeof basePayload.Type !== "string" || !basePayload.Type.trim())) {
         basePayload.Type = templateDefinition.defaultTypeName;
       }
+      applyFieldValuesToPayload(basePayload, templateDefinition, fieldValues);
 
       nextNodeMetadataById[nodeId] = baseMeta;
       nextNodePayloadById[nodeId] = basePayload;
@@ -686,8 +687,9 @@
         continue;
       }
 
-      preservedFloatingRoots.push(floatingRoot);
-      collectNodeIdsFromPayload(floatingRoot, floatingCoveredNodeIds);
+      const rewrittenFloatingRoot = rewriteNodePayloadTree(floatingRoot, nextNodePayloadById);
+      preservedFloatingRoots.push(rewrittenFloatingRoot);
+      collectNodeIdsFromPayload(rewrittenFloatingRoot, floatingCoveredNodeIds);
     }
 
     for (const normalizedNode of normalizedNodes) {
@@ -709,9 +711,10 @@
         newFloatingRoot.Type = fallbackType;
       }
 
-      preservedFloatingRoots.push(newFloatingRoot);
-      collectNodeIdsFromPayload(newFloatingRoot, floatingCoveredNodeIds);
-      nextNodePayloadById[nodeId] = newFloatingRoot;
+      const rewrittenFloatingRoot = rewriteNodePayloadTree(newFloatingRoot, nextNodePayloadById);
+      preservedFloatingRoots.push(rewrittenFloatingRoot);
+      collectNodeIdsFromPayload(rewrittenFloatingRoot, floatingCoveredNodeIds);
+      nextNodePayloadById[nodeId] = rewrittenFloatingRoot;
     }
 
     const normalizedEdges = [];
@@ -775,8 +778,9 @@
       $Comments: nextMetadataContext.comments,
     };
 
+    const rewrittenRuntimeFields = rewriteNodePayloadTree(state.runtimeFields, nextNodePayloadById);
     const root = {
-      ...state.runtimeFields,
+      ...(isObject(rewrittenRuntimeFields) ? rewrittenRuntimeFields : {}),
       [NODE_EDITOR_METADATA_KEY]: metadata,
     };
 
@@ -906,12 +910,55 @@
     }
 
     const templateId = readTemplateId(undefined, payload);
-    if (templateId === undefined) {
+    const template =
+      (templateId !== undefined ? getTemplateById(templateId) : undefined) ??
+      findTemplateByTypeName(payload?.Type);
+    const extractedFieldValues = extractFieldValuesFromPayload(payload, template);
+    if (extractedFieldValues !== undefined) {
+      return extractedFieldValues;
+    }
+
+    return template?.buildInitialValues();
+  }
+
+  function extractFieldValuesFromPayload(payload, template) {
+    if (!isObject(payload) || !Array.isArray(template?.fields)) {
       return undefined;
     }
 
-    const template = getTemplateById(templateId);
-    return template?.buildInitialValues();
+    let hasAnyValue = false;
+    const extracted = {};
+    for (const field of template.fields) {
+      const fieldId = typeof field?.id === "string" ? field.id.trim() : "";
+      if (!fieldId || !Object.prototype.hasOwnProperty.call(payload, fieldId)) {
+        continue;
+      }
+
+      extracted[fieldId] = payload[fieldId];
+      hasAnyValue = true;
+    }
+
+    return hasAnyValue ? extracted : undefined;
+  }
+
+  function applyFieldValuesToPayload(payload, templateDefinition, fieldValues) {
+    if (!isObject(payload) || !isObject(fieldValues)) {
+      return;
+    }
+
+    if (!Array.isArray(templateDefinition?.fields)) {
+      Object.assign(payload, fieldValues);
+      return;
+    }
+
+    for (const field of templateDefinition.fields) {
+      const fieldId = typeof field?.id === "string" ? field.id.trim() : "";
+      if (!fieldId || !Object.prototype.hasOwnProperty.call(fieldValues, fieldId)) {
+        continue;
+      }
+
+      payload[fieldId] = fieldValues[fieldId];
+    }
   }
 
   function normalizeFieldValuesObject(candidateValue) {
@@ -1107,6 +1154,48 @@
     };
 
     visit(rootPayload);
+  }
+
+  function rewriteNodePayloadTree(candidate, payloadById) {
+    if (Array.isArray(candidate)) {
+      let changed = false;
+      const rewrittenArray = candidate.map((item) => {
+        const rewrittenItem = rewriteNodePayloadTree(item, payloadById);
+        if (rewrittenItem !== item) {
+          changed = true;
+        }
+        return rewrittenItem;
+      });
+      return changed ? rewrittenArray : candidate;
+    }
+
+    if (!isObject(candidate)) {
+      return candidate;
+    }
+
+    const nodeId =
+      typeof candidate.$NodeId === "string" && candidate.$NodeId.trim()
+        ? candidate.$NodeId.trim()
+        : undefined;
+    const source =
+      nodeId && isObject(payloadById?.[nodeId]) ? payloadById[nodeId] : candidate;
+
+    let changed = source !== candidate;
+    const rewrittenObject = {};
+    for (const [key, value] of Object.entries(source)) {
+      if (key === NODE_EDITOR_METADATA_KEY) {
+        rewrittenObject[key] = value;
+        continue;
+      }
+
+      const rewrittenValue = rewriteNodePayloadTree(value, payloadById);
+      if (rewrittenValue !== value) {
+        changed = true;
+      }
+      rewrittenObject[key] = rewrittenValue;
+    }
+
+    return changed ? rewrittenObject : source;
   }
 
   function createUuid() {
