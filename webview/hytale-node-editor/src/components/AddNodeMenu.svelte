@@ -10,6 +10,7 @@
 
   let searchQuery = '';
   let searchInput;
+  let menuElement;
   let activeIndex = 0;
   let lastSearchQuery = '';
   let lastFocusedOpenVersion = -1;
@@ -26,8 +27,10 @@
     return haystack.includes(searchQuery.trim().toLowerCase());
   });
 
-  $: groupedTemplates = groupTemplates(filteredTemplates);
-  $: flatTemplates = groupedTemplates.flatMap((group) => group.items);
+  $: groupedTemplateEntries = annotateGroupedTemplates(groupTemplates(filteredTemplates));
+  $: flatTemplates = groupedTemplateEntries.flatMap((group) =>
+    group.items.map((item) => item.template)
+  );
 
   $: if (searchQuery !== lastSearchQuery) {
     lastSearchQuery = searchQuery;
@@ -36,6 +39,12 @@
 
   $: if (activeIndex >= flatTemplates.length) {
     activeIndex = Math.max(0, flatTemplates.length - 1);
+  }
+
+  $: if (open && flatTemplates.length > 0) {
+    tick().then(() => {
+      scrollActiveTemplateIntoView();
+    });
   }
 
   function groupTemplates(sourceTemplates) {
@@ -60,6 +69,17 @@
       }));
   }
 
+  function annotateGroupedTemplates(groups) {
+    let nextFlatIndex = 0;
+    return groups.map((group) => ({
+      category: group.category,
+      items: group.items.map((template) => ({
+        template,
+        flatIndex: nextFlatIndex++,
+      })),
+    }));
+  }
+
   function selectTemplate(template) {
     dispatch('select', { template });
   }
@@ -69,49 +89,74 @@
   }
 
   function handleKeyDown(event) {
+    if (!open) {
+      return;
+    }
+
     if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
       closeMenu();
       return;
     }
 
-    if (event.key === 'ArrowDown' && flatTemplates.length > 0) {
+    if (flatTemplates.length === 0) {
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
       event.preventDefault();
+      event.stopPropagation();
       activeIndex = (activeIndex + 1) % flatTemplates.length;
       return;
     }
 
-    if (event.key === 'ArrowUp' && flatTemplates.length > 0) {
+    if (event.key === 'ArrowUp') {
       event.preventDefault();
+      event.stopPropagation();
       activeIndex = (activeIndex - 1 + flatTemplates.length) % flatTemplates.length;
       return;
     }
 
-    if (event.key === 'Enter' && flatTemplates.length > 0) {
+    if (event.key === 'Enter') {
       event.preventDefault();
+      event.stopPropagation();
       selectTemplate(flatTemplates[activeIndex] ?? flatTemplates[0]);
     }
   }
 
-  function isActiveTemplate(template) {
-    return (flatTemplates[activeIndex]?.templateId ?? '') === template?.templateId;
-  }
-
-  function setActiveTemplate(template) {
-    const nextIndex = flatTemplates.findIndex(
-      (entry) => entry?.templateId && entry.templateId === template?.templateId
+  function scrollActiveTemplateIntoView() {
+    const activeItemElement = menuElement?.querySelector?.(
+      '[data-add-node-menu-item="true"][data-active="true"]'
     );
 
-    if (nextIndex >= 0) {
-      activeIndex = nextIndex;
+    if (typeof activeItemElement?.scrollIntoView === 'function') {
+      activeItemElement.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function isActiveTemplate(flatIndex) {
+    return activeIndex === flatIndex;
+  }
+
+  function setActiveTemplate(flatIndex) {
+    if (flatIndex >= 0 && flatIndex < flatTemplates.length) {
+      activeIndex = flatIndex;
     }
   }
 </script>
 
 {#if open}
   <div
-    class="absolute z-40 w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
+    bind:this={menuElement}
+    data-add-node-menu="true"
+    role="dialog"
+    aria-label="Add node menu"
+    tabindex="-1"
+    class="absolute z-[3001] w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
     style:left={`${position.x}px`}
     style:top={`${position.y}px`}
+    onkeydown={handleKeyDown}
   >
     <input
       bind:this={searchInput}
@@ -122,27 +167,33 @@
       placeholder="Search nodes..."
     />
 
-    <div class="mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-auto pr-0.5">
-      {#if groupedTemplates.length === 0}
+    <div class="mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-auto pr-0.5" role="listbox">
+      {#if groupedTemplateEntries.length === 0}
         <div class="text-xs text-vsc-muted">No matching node types</div>
       {:else}
-        {#each groupedTemplates as group}
+        {#each groupedTemplateEntries as group}
           <div class="flex flex-col gap-1.5">
             <div class="text-xs uppercase tracking-wide text-vsc-muted">
               {group.category}
             </div>
-            {#each group.items as template}
+            {#each group.items as item (item.flatIndex)}
               <button
-                class="flex w-full cursor-pointer flex-col gap-0.5 rounded-md border border-vsc-editor-widget-border bg-vsc-button-secondary-bg px-2 py-1.5 text-left text-vsc-fg hover:border-vsc-focus hover:bg-vsc-list-hover data-[active=true]:border-vsc-focus data-[active=true]:bg-vsc-list-active-bg data-[active=true]:text-vsc-list-active-fg"
-                data-active={isActiveTemplate(template)}
+                data-add-node-menu-item="true"
+                class="flex w-full cursor-pointer flex-col gap-0.5 rounded-md border border-vsc-editor-widget-border bg-vsc-button-secondary-bg px-2 py-1.5 text-left text-vsc-fg"
+                class:border-vsc-focus={isActiveTemplate(item.flatIndex)}
+                class:bg-vsc-list-active-bg={isActiveTemplate(item.flatIndex)}
+                class:text-vsc-list-active-fg={isActiveTemplate(item.flatIndex)}
+                data-active={isActiveTemplate(item.flatIndex)}
+                aria-selected={isActiveTemplate(item.flatIndex)}
+                role="option"
                 type="button"
-                onmouseenter={() => setActiveTemplate(template)}
-                onclick={() => selectTemplate(template)}
+                onmouseenter={() => setActiveTemplate(item.flatIndex)}
+                onclick={() => selectTemplate(item.template)}
               >
-                <span class="text-xs font-semibold">{template.label}</span>
-                {#if template.subtitle}
+                <span class="text-xs font-semibold">{item.template.label}</span>
+                {#if item.template.subtitle}
                   <span class="text-xs text-vsc-muted">
-                    {template.subtitle}
+                    {item.template.subtitle}
                   </span>
                 {/if}
               </button>

@@ -174,7 +174,7 @@
           </div>
 
           <button
-            class="inline-flex items-center justify-center border rounded-md nodrag size-5 border-vsc-button-border hover:backdrop-brightness-90 p-0.5"
+            class="inline-flex items-center justify-center rounded-md nodrag size-5 hover:backdrop-brightness-90 p-0.5"
             type="button"
             title="Edit node title"
             aria-label="Edit node title"

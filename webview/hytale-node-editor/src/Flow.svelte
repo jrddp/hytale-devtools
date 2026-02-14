@@ -117,6 +117,32 @@
     pendingConnectionSourceId = undefined;
   }
 
+  function didEventOccurInsideAddMenu(event) {
+    if (typeof event?.composedPath !== "function") {
+      return false;
+    }
+
+    return event.composedPath().some(target => {
+      if (typeof target?.getAttribute !== "function") {
+        return false;
+      }
+
+      return target.getAttribute("data-add-node-menu") === "true";
+    });
+  }
+
+  function handleWindowPointerDown(event) {
+    if (!addMenuOpen) {
+      return;
+    }
+
+    if (didEventOccurInsideAddMenu(event)) {
+      return;
+    }
+
+    closeAddNodeMenu();
+  }
+
   function openAddNodeMenu(pointerEvent, sourceNodeId = undefined) {
     const { clientX, clientY } = readPointerCoordinates(pointerEvent);
     const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
@@ -323,6 +349,8 @@
   }
 </script>
 
+<svelte:window on:pointerdown|capture={handleWindowPointerDown} />
+
 <div
   class="relative w-full h-full overflow-hidden"
   class:invisible={!initialViewportReady}
@@ -331,6 +359,7 @@
   <SvelteFlow
     bind:nodes
     bind:edges
+    disableKeyboardA11y={addMenuOpen}
     {nodeTypes}
     onconnect={handleConnect}
     onconnectstart={handleConnectStart}
