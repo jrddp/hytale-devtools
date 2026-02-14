@@ -2,6 +2,16 @@
   import { onMount } from "svelte";
   import { SvelteFlowProvider } from "@xyflow/svelte";
   import Flow from "./Flow.svelte";
+  import {
+    CUSTOM_NODE_TYPE,
+    PAYLOAD_EDITOR_FIELDS_KEY,
+    PAYLOAD_TEMPLATE_ID_KEY,
+  } from "./node-editor/types.js";
+  import {
+    findTemplateByTypeName,
+    getDefaultTemplate,
+    getTemplateById,
+  } from "./node-editor/sampleNodeTemplates.js";
 
   export let vscode;
 
@@ -15,6 +25,8 @@
     "$Comments",
   ];
   const LEGACY_INLINE_ROOT_METADATA_KEYS = ["$WorkspaceID", "$Groups", "$Comments"];
+  const NODE_TEMPLATE_DATA_KEY = "$templateId";
+  const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
 
   const initialState = parseDocumentText("");
 
@@ -177,6 +189,9 @@
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
           : undefined;
+      const basePayload = isObject(candidate?.data?.$nodePayload) ? { ...candidate.data.$nodePayload } : {};
+      const templateId = readTemplateId(candidate?.data?.[NODE_TEMPLATE_DATA_KEY], basePayload);
+      const fieldValues = readFieldValues(candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY], basePayload);
 
       context.nodeMetadataById[nodeId] = {
         $Position: { $x: position.x, $y: position.y },
@@ -186,17 +201,26 @@
         context.nodeMetadataById[nodeId].$Title = label;
       }
 
-      const payload = isObject(candidate?.data?.$nodePayload) ? { ...candidate.data.$nodePayload } : {};
+      const payload = basePayload;
       payload.$NodeId = nodeId;
       if (comment !== undefined) {
         payload.$Comment = comment;
+      }
+      if (templateId !== undefined) {
+        payload[PAYLOAD_TEMPLATE_ID_KEY] = templateId;
+      }
+      if (fieldValues !== undefined) {
+        payload[PAYLOAD_EDITOR_FIELDS_KEY] = fieldValues;
       }
       context.nodePayloadById[nodeId] = payload;
 
       nextNodes.push({
         id: nodeId,
+        type: CUSTOM_NODE_TYPE,
         data: {
           label,
+          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
+          ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
         position,
@@ -240,6 +264,8 @@
       };
       context.nodePayloadById[fallbackNode.id] = {
         $NodeId: fallbackNode.id,
+        [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
+        [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
       };
     }
 
@@ -356,10 +382,15 @@
       };
       nodePayloadById[nodeId] = transformedNode;
       runtimeTreeNodeIds.add(nodeId);
+      const templateId = readTemplateId(undefined, transformedNode);
+      const fieldValues = readFieldValues(undefined, transformedNode);
       flowNodes.push({
         id: nodeId,
+        type: CUSTOM_NODE_TYPE,
         data: {
           label: readNodeLabel(nodeId, nodeMetadataById[nodeId], undefined, transformedNode),
+          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
+          ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
         position,
@@ -381,6 +412,8 @@
       };
       nodePayloadById[fallbackNode.id] = {
         $NodeId: fallbackNode.id,
+        [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
+        [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
       };
       flowNodes.push(fallbackNode);
     }
@@ -410,6 +443,8 @@
     };
     nextContext.nodePayloadById[fallbackNode.id] = {
       $NodeId: fallbackNode.id,
+      [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
+      [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
     };
 
     return nextContext;
@@ -449,11 +484,16 @@
         typeof payload.$Comment === "string" && payload.$Comment.trim()
           ? payload.$Comment.trim()
           : undefined;
+      const templateId = readTemplateId(undefined, payload);
+      const fieldValues = readFieldValues(undefined, payload);
 
       flowNodes.push({
         id: nodeId,
+        type: CUSTOM_NODE_TYPE,
         data: {
           label,
+          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
+          ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
         position,
@@ -542,6 +582,8 @@
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
           : undefined;
+      const templateId = readTemplateId(candidate?.data?.[NODE_TEMPLATE_DATA_KEY], basePayload);
+      const fieldValues = readFieldValues(candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY], basePayload);
 
       baseMeta.$Position = {
         $x: position.x,
@@ -560,13 +602,34 @@
       } else {
         delete basePayload.$Comment;
       }
+      if (templateId !== undefined) {
+        basePayload[PAYLOAD_TEMPLATE_ID_KEY] = templateId;
+      } else {
+        delete basePayload[PAYLOAD_TEMPLATE_ID_KEY];
+      }
+      if (fieldValues !== undefined) {
+        basePayload[PAYLOAD_EDITOR_FIELDS_KEY] = fieldValues;
+      } else {
+        delete basePayload[PAYLOAD_EDITOR_FIELDS_KEY];
+      }
+
+      const templateDefinition =
+        (templateId !== undefined ? getTemplateById(templateId) : undefined) ??
+        findTemplateByTypeName(basePayload.Type) ??
+        findTemplateByTypeName(label);
+      if (templateDefinition && (typeof basePayload.Type !== "string" || !basePayload.Type.trim())) {
+        basePayload.Type = templateDefinition.defaultTypeName;
+      }
 
       nextNodeMetadataById[nodeId] = baseMeta;
       nextNodePayloadById[nodeId] = basePayload;
       normalizedNodes.push({
         id: nodeId,
+        type: CUSTOM_NODE_TYPE,
         data: {
           label,
+          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
+          ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
         position,
@@ -590,6 +653,8 @@
           ...nextNodePayloadById,
           [fallbackNode.id]: {
             $NodeId: fallbackNode.id,
+            [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
+            [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
           },
         },
       };
@@ -775,9 +840,15 @@
 
   function createDefaultFlowNode() {
     const nodeId = "Node-00000000-0000-0000-0000-000000000000";
+    const defaultTemplate = getDefaultTemplate();
     return {
       id: nodeId,
-      data: { label: defaultLabelForNodeId(nodeId) },
+      type: CUSTOM_NODE_TYPE,
+      data: {
+        label: defaultLabelForNodeId(nodeId),
+        [NODE_TEMPLATE_DATA_KEY]: defaultTemplate.templateId,
+        [NODE_FIELD_VALUES_DATA_KEY]: defaultTemplate.buildInitialValues(),
+      },
       position: { x: 0, y: 50 },
     };
   }
@@ -803,6 +874,52 @@
     }
 
     return defaultLabelForNodeId(nodeId);
+  }
+
+  function readTemplateId(candidateTemplateId, payload) {
+    if (typeof candidateTemplateId === "string" && candidateTemplateId.trim()) {
+      return candidateTemplateId.trim();
+    }
+
+    const payloadTemplateId = payload?.[PAYLOAD_TEMPLATE_ID_KEY];
+    if (typeof payloadTemplateId === "string" && payloadTemplateId.trim()) {
+      return payloadTemplateId.trim();
+    }
+
+    const inferredTemplate = findTemplateByTypeName(payload?.Type);
+    if (inferredTemplate) {
+      return inferredTemplate.templateId;
+    }
+
+    return undefined;
+  }
+
+  function readFieldValues(candidateFieldValues, payload) {
+    const candidateObject = normalizeFieldValuesObject(candidateFieldValues);
+    if (candidateObject !== undefined) {
+      return candidateObject;
+    }
+
+    const payloadFieldValues = normalizeFieldValuesObject(payload?.[PAYLOAD_EDITOR_FIELDS_KEY]);
+    if (payloadFieldValues !== undefined) {
+      return payloadFieldValues;
+    }
+
+    const templateId = readTemplateId(undefined, payload);
+    if (templateId === undefined) {
+      return undefined;
+    }
+
+    const template = getTemplateById(templateId);
+    return template?.buildInitialValues();
+  }
+
+  function normalizeFieldValuesObject(candidateValue) {
+    if (!isObject(candidateValue)) {
+      return undefined;
+    }
+
+    return { ...candidateValue };
   }
 
   function defaultLabelForNodeId(nodeId) {
@@ -1002,7 +1119,7 @@
 
 <main class="flex flex-col h-screen min-h-0 p-3">
   {#if extensionError}
-    <div class="mb-2 text-sm text-[var(--vscode-errorForeground)]">{extensionError}</div>
+    <div class="mb-2 text-sm text-vsc-error">{extensionError}</div>
   {/if}
   <SvelteFlowProvider>
     <Flow bind:nodes bind:edges loadVersion={graphLoadVersion} on:flowchange={handleFlowChange} />
