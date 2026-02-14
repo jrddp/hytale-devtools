@@ -1,0 +1,29 @@
+﻿{
+  "Id": "SetDensity",
+  "Title": "Density",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "Density",
+      "Type": "Int",
+      "Options": {
+        "Label": "Density",
+        "Min": 1,
+        "Max": 100
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "density",
+    "Density": "Density"
+  }
+}
+

@@ -1,0 +1,71 @@
+{
+  "Id": "FieldFunctionPositions",
+  "Title": "FieldFunction Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PositionsConnection",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions"
+    },
+    {
+      "Id": "DensityConnection",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Multiple" : false,
+      "Label" : "Density"
+    },
+    {
+      "Id": "DelimiterConnections",
+      "Type": "PositionsDelimiterConnection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Delimiters"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "FieldFunction",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "FieldFunction" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityConnection"
+    },
+    "Delimiters" : {
+      "Node" : "Delimiter",
+      "Pin" : "DelimiterConnections"
+    },
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

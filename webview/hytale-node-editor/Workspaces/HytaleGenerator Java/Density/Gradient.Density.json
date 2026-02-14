@@ -1,0 +1,69 @@
+{
+  "Id": "Gradient.Density",
+  "Title": "[DEPRECATED] Gradient Density",
+  "Color": "255,0,0",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "SampleRange",
+      "Type": "Float",
+      "Options": {
+        "Label": "SampleRange",
+        "Default" : 1,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "DensityInputs",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    },
+    {
+      "Id": "Axis",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Axis"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Gradient",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "SampleRange" : "SampleRange",
+    "Axis" : {
+      "Node" : "Point3D",
+      "Pin" : "Axis"
+    },
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+﻿{
+  "Id": "HistoryMask",
+  "Title": "History Mask",
+  "Color": "green",
+  "Content": [
+    {
+      "Id": "HistoryMask",
+      "Type": "Enum",
+      "Options": {
+        "Label": "History Mask",
+        "Width": 100,
+        "Values": [
+          "None",
+          "Only",
+          "Not"
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "historymask",
+    "HistoryMask": "HistoryMask"
+  }
+}
+

@@ -1,0 +1,102 @@
+{
+  "Id": "PondFiller.Prop",
+  "Title": "PondFiller Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "BoundingMin",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "BoundingMin",
+      "Multiple" : false
+    },
+    {
+      "Id": "BoundingMax",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "BoundingMax",
+      "Multiple" : false
+    },
+    {
+      "Id": "BarrierBlockSet",
+      "Type": "BlockSet.BlockMask.Connection",
+      "Color": "Yellow",
+      "Label" : "BarrierBlockSet",
+      "Multiple" : false
+    },
+    {
+      "Id": "FillMaterial",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Label" : "FillMaterial",
+      "Multiple" : false
+    },
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "PondFiller",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "BoundingMin" : {
+      "Node" : "Point3D",
+      "Pin" : "BoundingMin"
+    },
+    "BoundingMax" : {
+      "Node" : "Point3D",
+      "Pin" : "BoundingMax"
+    },
+    "BarrierBlockSet" : {
+      "Node" : "BlockSet.BlockMask",
+      "Pin" : "BarrierBlockSet"
+    },
+    "FillMaterial" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "FillMaterial"
+    },
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    }
+  }
+}

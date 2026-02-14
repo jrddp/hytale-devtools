@@ -1,0 +1,18 @@
+{
+  "Id": "ActionTimeout",
+  "Title": "Action Timeout",
+  "Color": "Aqua",
+  "Inputs": [
+    {
+      "Id": "ActionPin",
+      "Type": "Action",
+      "Color": "Aqua",
+      "Multiple": false
+    }
+  ],
+  "Content": [
+  ],
+  "Schema": {
+    "Type": "Timeout"
+  }
+}

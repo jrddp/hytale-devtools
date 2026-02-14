@@ -1,0 +1,28 @@
+{
+  "Id": "ImportedCurve",
+  "Title": "Imported Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Name",
+        "Default" : "",
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Imported",
+    "Name" : "Name"  }
+}

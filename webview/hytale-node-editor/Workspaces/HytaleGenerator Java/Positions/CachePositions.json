@@ -1,0 +1,69 @@
+{
+  "Id": "CachePositions",
+  "Title": "Cache Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "SectionsSize",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "SectionsSize",
+        "Default" : 32,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "CacheSize",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "CacheSize",
+        "Default" : 50,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PositionsConnection",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Cache",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "SectionsSize" : "SectionsSize",
+    "CacheSize" : "CacheSize",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

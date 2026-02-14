@@ -1,0 +1,59 @@
+{
+  "Id": "Cache2D.Density",
+  "Title": "[DEPRECATED] Cache2D Density",
+  "Color": "255,00,00",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Y",
+      "Type": "Float",
+      "Options": {
+        "Label": "Y",
+        "Default" : 0,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Cache2D",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Y" : "Y",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

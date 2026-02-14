@@ -1,0 +1,59 @@
+{
+  "Id": "CurveMapper.Density",
+  "Title": "CurveMapper Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    },
+    {
+      "Id": "Curve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curve"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "CurveMapper",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    },
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "Id": "Decimal.Range",
+  "Title": "Decimal Range",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "MinInclusive",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MinInclusive",
+        "Default" : 0.0,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "MaxExclusive",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MaxExclusive",
+        "Default" : 1.0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Decimal.Range.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "MinInclusive" : "MinInclusive",
+    "MaxExclusive" : "MaxExclusive"
+  }
+}

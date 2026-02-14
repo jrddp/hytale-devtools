@@ -1,0 +1,79 @@
+{
+  "Id": "Slider.Density",
+  "Title": "Slider Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "SlideX",
+      "Type": "Float",
+      "Options": {
+        "Label": "SlideX",
+        "Default" : 0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "SlideY",
+      "Type": "Float",
+      "Options": {
+        "Label": "SlideY",
+        "Default" : 0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "SlideZ",
+      "Type": "Float",
+      "Options": {
+        "Label": "SlideZ",
+        "Default" : 0,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Slider",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "SlideX" : "SlideX",
+    "SlideY" : "SlideY",
+    "SlideZ" : "SlideZ",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

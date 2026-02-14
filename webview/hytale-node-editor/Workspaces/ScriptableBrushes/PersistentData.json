@@ -1,0 +1,53 @@
+﻿{
+  "Id": "PersistentData",
+  "Title": "Persistent Data",
+  "Color": "aqua",
+  "Content": [
+    {
+      "Id": "StoredName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "Operation",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Operation",
+        "Width": 120,
+        "Values": [
+          "ADD",
+          "SUBTRACT",
+          "MULTIPLY",
+          "DIVIDE",
+          "MODULUS",
+          "SET"
+        ]
+      }
+    },
+    {
+      "Id": "Modifier",
+      "Type": "Int",
+      "Options": {
+        "Label": "Modifier"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "persistentdata",
+    "StoredName": "StoredName",
+    "Operation": "Operation",
+    "Modifier": "Modifier"
+  }
+}
+

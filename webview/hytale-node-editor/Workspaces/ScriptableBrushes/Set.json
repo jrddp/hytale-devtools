@@ -1,0 +1,16 @@
+﻿{
+  "Id": "Set",
+  "Title": "Set Blocks",
+  "Color": "green",
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "set"
+  }
+}

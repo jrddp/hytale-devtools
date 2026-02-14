@@ -1,0 +1,107 @@
+{
+  "Id": "PositionsTwist.Density",
+  "Title": "PositionsTwist Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "MaxDistance",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MaxDistance",
+        "Default" : 10,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "NormalizeDistance",
+      "Type" : "Checkbox",
+      "Options" : {
+        "Label" : "NormalizeDistance",
+        "Default" : true
+      }
+    },
+    {
+      "Id" : "ZeroPositionsY",
+      "Type" : "Checkbox",
+      "Options" : {
+        "Label" : "ZeroPositionsY",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    },
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Label" : "Positions"
+    },
+    {
+      "Id": "TwistCurve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "TwistCurve"
+    },
+    {
+      "Id": "TwistAxis",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "TwistAxis"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "PositionsTwist",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "MaxDistance" : "MaxDistance",
+    "ZeroPositionsY" : "ZeroPositionsY",
+    "NormalizeDistance" : "NormalizeDistance",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Positions"
+    },
+    "TwistAxis" : {
+      "Node" : "Point3D",
+      "Pin" : "TwistAxis"
+    },
+    "TwistCurve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "TwistCurve"
+    },
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

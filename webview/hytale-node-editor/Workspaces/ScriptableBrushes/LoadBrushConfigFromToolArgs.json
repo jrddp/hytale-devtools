@@ -1,0 +1,49 @@
+{
+  "Id": "LoadBrushConfigFromToolArgs",
+  "Title": "Load Brush Config From Tool Args",
+  "Color": "aqua",
+  "Content": [
+    {
+      "Id": "ToolArgId",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Tool Arg ID",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "LoadAsSnapshotName",
+      "Type": "Bool",
+      "Options": {
+        "Label": "Load As Snapshot Name",
+        "DefaultValue": true
+      }
+    },
+    {
+      "Id": "ParametersToLoad",
+      "Type": "List",
+      "Options": {
+        "Label": "Parameters To Load",
+        "ArrayElementType": "DataSettingFlags"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loadbrushconfigfromtoolargs",
+    "ToolArgId": "ToolArgId",
+    "LoadAsSnapshotName": "LoadAsSnapshotName",
+    "ParametersToLoad": "ParametersToLoad"
+  }
+}
+
+
+
+

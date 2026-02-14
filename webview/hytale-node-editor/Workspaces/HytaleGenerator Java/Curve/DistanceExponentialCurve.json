@@ -1,0 +1,49 @@
+{
+  "Id": "DistanceExponentialCurve",
+  "Title": "DistanceExponential Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Exponent",
+      "Type": "Float",
+      "Options": {
+        "Label": "Exponent",
+        "Default" : 1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Options": {
+        "Label": "Range",
+        "Default" : 10,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "DistanceExponential",
+    "ExportAs" : "ExportAs",
+    "Exponent" : "Exponent",
+    "Range" : "Range"
+  }
+}

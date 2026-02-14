@@ -1,0 +1,79 @@
+{
+  "Id": "OffsetPositions",
+  "Title": "Offset Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "OffsetX",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "OffsetX",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "OffsetY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "OffsetY",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "OffsetZ",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "OffsetZ",
+        "Default" : 0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PositionsConnection",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Offset",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "OffsetX" : "OffsetX",
+    "OffsetY" : "OffsetY",
+    "OffsetZ" : "OffsetZ",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

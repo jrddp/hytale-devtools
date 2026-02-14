@@ -1,0 +1,16 @@
+{
+  "Id": "Reference",
+  "Title": "Reference",
+  "Color": "Olive",
+  "IsReference": true,
+  "FileRefKey": "AssetRef",
+  "FileRefValue": "Id",
+  "ModifyKey": "Modify",
+  "Inputs": [
+    {
+      "Id": "ReferencePin",
+      "Type": "Reference",
+      "Color": "Olive"
+    }
+  ]
+}

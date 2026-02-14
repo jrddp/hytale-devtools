@@ -1,0 +1,38 @@
+{
+  "Id": "WeightedThicknessLayerSADMP",
+  "Title": "WeightedThickness SADMP",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "Weight",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Weight",
+        "Default" : 1.0,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "Thickness",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Thickness",
+        "Default" : 1,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "ThicknessSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Weight" : "Weight",
+    "Thickness" : "Thickness"
+  }
+}

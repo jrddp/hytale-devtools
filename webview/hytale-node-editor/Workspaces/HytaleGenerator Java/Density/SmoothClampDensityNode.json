@@ -1,0 +1,79 @@
+{
+  "Id": "SmoothClampDensityNode",
+  "Title": "SmoothClamp Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "WallA",
+      "Type": "Float",
+      "Options": {
+        "Label": "WallA",
+        "Default" : -1.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "WallB",
+      "Type": "Float",
+      "Options": {
+        "Label": "WallB",
+        "Default" : 1.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Options": {
+        "Label": "Range",
+        "Default" : 0.2,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "SmoothClamp",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "WallA" : "WallA",
+    "WallB" : "WallB",
+    "Range" : "Range",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "Id": "SensorBeacon",
+  "Title": "Beacon Sensor",
+  "Color": "Green",
+  "Inputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Multiple": false,
+      "Color": "Green"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "MessageField",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Message",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Target Slot",
+        "Width": 150
+      }
+    }
+  ],
+  "Schema": {
+    "Type": "Beacon",
+    "Message": "MessageField",
+    "TargetSlot": "TargetSlot"
+  }
+}

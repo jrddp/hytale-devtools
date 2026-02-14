@@ -1,0 +1,61 @@
+{
+  "Id": "DebugBrush",
+  "Title": "Debug",
+  "Color": "red",
+  "Content": [
+    {
+      "Id": "PrintOperations",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Print Operations"
+      }
+    },
+    {
+      "Id": "StepThrough",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Step Through"
+      }
+    },
+    {
+      "Id": "EnableBreakpoints",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Enable Breakpoints"
+      }
+    },
+    {
+      "Id": "OutputTarget",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Output Target",
+        "Width": 120,
+        "Values": ["Chat", "Console", "Both"]
+      }
+    },
+    {
+      "Id": "BreakOnError",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Break On Error"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "debug",
+    "PrintOperations": "PrintOperations",
+    "StepThrough": "StepThrough",
+    "EnableBreakpoints": "EnableBreakpoints",
+    "OutputTarget": "OutputTarget",
+    "BreakOnError": "BreakOnError"
+  }
+}
+

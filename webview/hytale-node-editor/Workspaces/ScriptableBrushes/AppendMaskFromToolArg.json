@@ -1,0 +1,68 @@
+{
+  "Id": "AppendMaskFromToolArg",
+  "Title": "Append Mask From Tool Arg",
+  "Color": "green",
+  "Content": [
+    {
+      "Id": "ArgName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Arg Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "FilterType",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Filter Type",
+        "Width": 150,
+        "Values": [
+          "TargetBlock",
+          "AboveBlock",
+          "BelowBlock",
+          "AdjacentBlock",
+          "NeighborBlock",
+          "NorthBlock",
+          "EastBlock",
+          "SouthBlock",
+          "WestBlock",
+          "DiagonalXy",
+          "DiagonalXz",
+          "DiagonalZy",
+          "Selection"
+        ]
+      }
+    },
+    {
+      "Id": "Invert",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Invert"
+      }
+    },
+    {
+      "Id": "AdditionalBlocks",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Additional Blocks",
+        "Width": 200
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "appendmaskfromtoolarg",
+    "ArgName": "ArgName",
+    "FilterType": "FilterType",
+    "Invert": "Invert",
+    "AdditionalBlocks": "AdditionalBlocks"
+  }
+}

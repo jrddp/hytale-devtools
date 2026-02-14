@@ -1,0 +1,59 @@
+{
+  "Id": "Offset.Prop",
+  "Title": "Offset Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Offset",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Offset"
+    },
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Label" : "Prop"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Offset",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    
+    "Offset" : {
+      "Node" : "Point3D",
+      "Pin" : "Offset"
+    },
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    }
+  }
+}

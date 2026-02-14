@@ -1,0 +1,69 @@
+{
+  "Id": "ClampDensityNode",
+  "Title": "Clamp Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "WallA",
+      "Type": "Float",
+      "Options": {
+        "Label": "WallA",
+        "Default" : -1.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "WallB",
+      "Type": "Float",
+      "Options": {
+        "Label": "WallB",
+        "Default" : 1.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Clamp",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "WallA" : "WallA",
+    "WallB" : "WallB",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

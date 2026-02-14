@@ -1,0 +1,40 @@
+{
+  "Id": "Sandwich.Assignments",
+  "Title": "Sandwich Assignments",
+  "Color": "Aqua",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Delimiters.Pin",
+      "Multiple": true,
+      "Type": "Delimiter.Sandwich.Assignments.Connection",
+      "Color": "Orange",
+      "Label" : "Delimiters"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "AssignmentsConnection",
+      "Color": "Aqua"
+    }
+  ],
+  "Schema": {
+    "Type" : "Sandwich",
+    "ExportAs" : "ExportAs",
+    "Delimiters" : {
+      "Node" : "Delimiter.Sandwich.Assignments",
+      "Pin" : "Delimiters.Pin"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "Id": "DistanceSCurve",
+  "Title": "DistanceS Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "ExponentA",
+      "Type": "Float",
+      "Options": {
+        "Label": "ExponentA",
+        "Default" : 1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "ExponentB",
+      "Type": "Float",
+      "Options": {
+        "Label": "ExponentB",
+        "Default" : 1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Options": {
+        "Label": "Range",
+        "Default" : 10,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Transition",
+      "Type": "Float",
+      "Options": {
+        "Label": "Transition",
+        "Default" : 1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "TransitionSmooth",
+      "Type": "Float",
+      "Options": {
+        "Label": "TransitionSmooth",
+        "Default" : 1,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "DistanceS",
+    "ExportAs" : "ExportAs",
+    "ExponentA" : "ExponentA",
+    "ExponentB" : "ExponentB",
+    "Range" : "Range",
+    "Transition" : "Transition",
+    "TransitionSmooth" : "TransitionSmooth"
+  }
+}

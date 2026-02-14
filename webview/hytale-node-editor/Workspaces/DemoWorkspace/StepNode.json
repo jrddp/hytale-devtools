@@ -1,0 +1,54 @@
+{
+  "Id": "Step",
+  "Title": "Step",
+  "Color": "Blue",
+  "Inputs": [
+    {
+      "Id": "SelectorInputPin",
+      "Type": "Step",
+      "Color": "Blue"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Color": "Green"
+    },
+    {
+      "Id": "SelectorPin",
+      "Type": "Selector",
+      "Color": "Olive"
+    },
+    {
+      "Id": "ActionsPin",
+      "Type": "Action",
+      "Multiple": true,
+      "Color": "Aqua"
+    },
+    {
+      "Id": "BodyMotionPin",
+      "Type": "BodyMotion",
+      "Multiple": true,
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Sensor": {
+      "Pin": "SensorPin",
+      "Node": "SensorVariants"
+    },
+    "BodyMotion": {
+      "Pin": "BodyMotionPin",
+      "Node": "BodyMotionVariants"
+    },
+    "Actions": {
+      "Pin": "ActionsPin",
+      "Node": "ActionVariants"
+    },
+    "Selector": {
+      "Pin": "SelectorPin",
+      "Node": "Selector"
+    }
+  }
+}

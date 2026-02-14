@@ -1,0 +1,91 @@
+{
+  "Id": "SimplexNoise2DDensityNode",
+  "Title": "SimplexNoise2D Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Lacunarity",
+      "Type": "Float",
+      "Options": {
+        "Label": "Lacunarity",
+        "Default" : 2.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Persistence",
+      "Type": "Float",
+      "Options": {
+        "Label": "Persistence",
+        "Default" : 0.5,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Scale",
+      "Type": "Float",
+      "Options": {
+        "Label": "Scale",
+        "Default" : 50,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Octaves",
+      "Type": "IntSlider",
+      "Options": {
+        "Label": "Octaves",
+        "Default" : 1,
+        "TickFrequency" : 1,
+        "Width" : 150,
+        "Min" : 1,
+        "Max" : 10
+      }
+    },
+    {
+      "Id": "Seed",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Seed",
+        "Default" : "A",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "SimplexNoise2D",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Lacunarity" : "Lacunarity",
+    "Persistence" : "Persistence",
+    "Octaves" : "Octaves",
+    "Scale" : "Scale",
+    "Seed" : "Seed"
+  }
+}

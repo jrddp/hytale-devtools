@@ -1,0 +1,17 @@
+﻿{
+  "Id": "Delete",
+  "Title": "Delete Blocks",
+  "Color": "blue",
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "delete"
+  }
+}
+

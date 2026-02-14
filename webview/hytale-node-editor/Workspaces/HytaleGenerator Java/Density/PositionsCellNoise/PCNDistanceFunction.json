@@ -1,0 +1,28 @@
+{
+  "Id": "PCNDistanceFunction",
+  "Title": "Distance Function",
+  "Color": "Olive",
+  "Content": [
+    {
+      "Id" : "Type",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Type",
+        "Default" : "Euclidean",
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "PCN",
+      "Type": "DistanceFunctionPCNConnection",
+      "Color": "Olive"
+    }
+  ],
+  "Schema": {
+    "Type" : "Type"
+  }
+}

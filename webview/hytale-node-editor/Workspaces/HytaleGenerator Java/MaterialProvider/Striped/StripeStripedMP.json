@@ -1,0 +1,38 @@
+{
+  "Id": "StripeStripedMP",
+  "Title": "Stripe",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "TopY",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "TopY",
+        "Default" : 1,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "BottomY",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "BottomY",
+        "Default" : 0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "StripedMPStripeConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "TopY" : "TopY",
+    "BottomY" : "BottomY"
+  }
+}

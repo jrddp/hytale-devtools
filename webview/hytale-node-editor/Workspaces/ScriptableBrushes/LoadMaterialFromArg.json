@@ -1,0 +1,28 @@
+{
+  "Id": "LoadMaterial",
+  "Title": "Load Material from Arg",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "ArgName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "ArgName",
+        "Width": 200
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loadmaterial",
+    "ArgName": "ArgName"
+  }
+}
+

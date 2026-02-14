@@ -1,0 +1,26 @@
+{
+  "Id": "Selector",
+  "Title": "Selector",
+  "Color": "Olive",
+  "Inputs": [
+    {
+      "Id": "SelectorInputPin",
+      "Type": "Selector",
+      "Color": "Olive"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "StepsPin",
+      "Type": "Step",
+      "Color": "Blue",
+      "Multiple": true
+    }
+  ],
+  "Schema": {
+    "Steps": {
+      "Node": "Step",
+      "Pin": "StepsPin"
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "Id": "Surface.Pattern",
+  "Title": "Surface Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "SurfaceRadius",
+      "Type": "Float",
+      "Options": {
+        "Label": "SurfaceRadius",
+        "Default" : 1.0
+      }
+    },
+    {
+      "Id": "MediumRadius",
+      "Type": "Float",
+      "Options": {
+        "Label": "MediumRadius",
+        "Default" : 1.0
+      }
+    },
+    {
+      "Id": "SurfaceGap",
+      "Type": "Int",
+      "Options": {
+        "Label": "SurfaceGap",
+        "Default" : 0
+      }
+    },
+    {
+      "Id": "MediumGap",
+      "Type": "Int",
+      "Options": {
+        "Label": "MediumGap",
+        "Default" : 0
+      }
+    },
+    {
+      "Id": "Facings",
+      "Type": "List",
+      "Options": {
+        "Label": "Facings",
+        "Type" : "String",
+        "Width" : 40
+      }
+    },
+    {
+      "Id": "RequireAllFacings",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "RequireAllFacings",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Surface",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Surface"
+    },
+    {
+      "Id": "Medium",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Medium"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Surface",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Surface" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Surface"
+    },
+    "Medium" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Medium"
+    },
+    "SurfaceRadius" : "SurfaceRadius",
+    "MediumRadius" : "MediumRadius",
+    "SurfaceGap" : "SurfaceGap",
+    "MediumGap" : "MediumGap",
+    "Facings" : "Facings",
+    "RequireAllFacings" : "RequireAllFacings"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "Id": "Breakpoint",
+  "Title": "Breakpoint",
+  "Color": "red",
+  "Content": [
+    {
+      "Id": "Label",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Label",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "PrintMessage",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Print Message"
+      }
+    },
+    {
+      "Id": "PrintState",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Print State"
+      }
+    },
+    {
+      "Id": "EnterStepMode",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Enter Step Mode"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ComparisonPin",
+      "Type": "Comparison",
+      "Multiple": false,
+      "Color": "purple",
+      "Label": "Condition"
+    }
+  ],
+  "Schema": {
+    "Id": "breakpoint",
+    "Label": "Label",
+    "PrintMessage": "PrintMessage",
+    "PrintState": "PrintState",
+    "EnterStepMode": "EnterStepMode",
+    "Condition$Pin": {
+      "node": "BrushConfigIntegerComparison",
+      "pin": "ComparisonPin"
+    }
+  }
+}

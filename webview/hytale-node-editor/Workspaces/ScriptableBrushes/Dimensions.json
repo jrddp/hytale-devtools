@@ -1,0 +1,42 @@
+﻿{
+  "Id": "Dimensions",
+  "Title": "Modify Dimensions",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "Width",
+      "Type": "Object",
+      "Options": {
+        "Label": "Width",
+        "Fields": [
+          { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 20 } },
+          { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+        ]
+      }
+    },
+    {
+      "Id": "Height",
+      "Type": "Object",
+      "Options": {
+        "Label": "Height",
+        "Fields": [
+          { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 20 } },
+          { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "dimensions",
+    "Width": "Width",
+    "Height": "Height"
+  }
+}

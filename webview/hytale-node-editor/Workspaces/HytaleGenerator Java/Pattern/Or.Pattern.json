@@ -1,0 +1,49 @@
+{
+  "Id": "Or.Pattern",
+  "Title": "Or Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Patterns",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Multiple" : true,
+      "Label" : "Patterns"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Or",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Patterns" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Patterns"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "Id": "Exported.Density",
+  "Title": "Exported Density",
+  "Color": "184,71,222",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 350
+      }
+    },
+    {
+      "Id": "SingleInstance",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "SingleInstance",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "DensityInputs",
+      "Type": "DensityConnection",
+      "Multiple" : true,
+      "Color": "Purple"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Exported",
+    "ExportAs" : "ExportAs",
+    "SingleInstance" : "SingleInstance",
+    "Skip" : "Skip",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

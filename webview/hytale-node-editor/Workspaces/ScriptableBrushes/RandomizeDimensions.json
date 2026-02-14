@@ -1,0 +1,82 @@
+﻿{
+  "Id": "RandomizeDimensions",
+  "Title": "Randomize Dimensions",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "WidthRange",
+      "Type": "Object",
+      "Options": {
+        "Label": "Width Range",
+        "Fields": [
+          {
+            "Id": "Min",
+            "Type": "Object",
+            "Options": {
+              "Label": "Min",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 1 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Max",
+            "Type": "Object",
+            "Options": {
+              "Label": "Max",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 5 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Id": "HeightRange",
+      "Type": "Object",
+      "Options": {
+        "Label": "Height Range",
+        "Fields": [
+          {
+            "Id": "Min",
+            "Type": "Object",
+            "Options": {
+              "Label": "Min",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 1 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Max",
+            "Type": "Object",
+            "Options": {
+              "Label": "Max",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 5 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "randomdimensions",
+    "WidthRange": "WidthRange",
+    "HeightRange": "HeightRange"
+  }
+}

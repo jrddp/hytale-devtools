@@ -1,0 +1,27 @@
+﻿{
+  "Id": "UseOperationMask",
+  "Title": "Use Operation Mask",
+  "Color": "green",
+  "Content": [
+    {
+      "Id": "UseOperationMask",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Use Operation Mask"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "useoperationmask",
+    "UseOperationMask": "UseOperationMask"
+  }
+}
+

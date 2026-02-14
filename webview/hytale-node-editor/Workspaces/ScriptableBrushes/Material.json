@@ -1,0 +1,28 @@
+﻿{
+  "Id": "Material",
+  "Title": "Material",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "BlockType",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Block Type",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "material",
+    "BlockType": "BlockType"
+  }
+}
+

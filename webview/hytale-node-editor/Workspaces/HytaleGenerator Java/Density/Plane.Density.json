@@ -1,0 +1,67 @@
+{
+  "Id": "Plane.Density",
+  "Title": "Plane Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "IsAnchored",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "IsAnchored",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Curve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curve"
+    },
+    {
+      "Id": "PlaneNormal",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "PlaneNormal"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Plane",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "IsAnchored" : "IsAnchored",
+    "PlaneNormal" : {
+      "Node" : "Point3D",
+      "Pin" : "PlaneNormal"
+    },
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    }
+  }
+}

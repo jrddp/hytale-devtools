@@ -1,0 +1,59 @@
+{
+  "Id": "SmoothMin.Curve",
+  "Title": "SmoothMin Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Options": {
+        "Label": "Range",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "CurveA",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "CurveA"
+    },
+    {
+      "Id": "CurveB",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "CurveB"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "SmoothMin",
+    "ExportAs" : "ExportAs",
+    "Range" : "Range",
+    "CurveA" : {
+      "Node" : "CurveVariants",
+      "Pin" : "CurveA"
+    },
+    "CurveB" : {
+      "Node" : "CurveVariants",
+      "Pin" : "CurveB"
+    }
+  }
+}

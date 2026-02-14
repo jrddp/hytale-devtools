@@ -1,0 +1,60 @@
+{
+  "Id": "RangeThicknessLayerSADMP",
+  "Title": "RangeThickness Layer SADMP",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "RangeMax",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "RangeMax",
+        "Default" : 3,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "RangeMin",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "RangeMin",
+        "Default" : 1,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "A",
+        "Width" : 150
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Multiple" : false,
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "LayerSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "RangeThickness",
+    "RangeMax" : "RangeMax",
+    "RangeMin" : "RangeMin",
+    "Seed" : "Seed",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    }
+  }
+}

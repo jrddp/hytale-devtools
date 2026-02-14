@@ -1,0 +1,57 @@
+{
+  "Id": "Anchor.Positions",
+  "Title": "Anchor Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Reversed",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Reversed",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Label" : "Positions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Anchor",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Reversed" : "Reversed",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Positions"
+    }
+  }
+}

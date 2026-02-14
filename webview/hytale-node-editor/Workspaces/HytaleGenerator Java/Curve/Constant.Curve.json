@@ -1,0 +1,39 @@
+{
+  "Id": "Constant.Curve",
+  "Title": "Constant Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Value",
+      "Type": "Float",
+      "Options": {
+        "Label": "Value",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Constant",
+    "ExportAs" : "ExportAs",
+    "Value" : "Value"
+  }
+}

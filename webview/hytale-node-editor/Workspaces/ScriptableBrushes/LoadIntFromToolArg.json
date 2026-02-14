@@ -1,0 +1,61 @@
+{
+  "Id": "LoadIntFromToolArg",
+  "Title": "Load Int From Tool Arg",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "ArgName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Arg Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "TargetField",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Target Field",
+        "Width": 120,
+        "Values": [
+          "Width",
+          "Height",
+          "Density",
+          "Thickness",
+          "OffsetX",
+          "OffsetY",
+          "OffsetZ"
+        ]
+      }
+    },
+    {
+      "Id": "Relative",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Relative"
+      }
+    },
+    {
+      "Id": "Negate",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Negate"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loadint",
+    "ArgName": "ArgName",
+    "TargetField": "TargetField",
+    "Relative": "Relative",
+    "Negate": "Negate"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "Id": "Distance2SubPCNReturnType",
+  "Title": "Distance2Sub ReturnType",
+  "Color": "DarkPink",
+  "Content": [
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "PCN",
+      "Type": "ReturnTypePCNConnection",
+      "Color": "DarkPink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Distance2Sub"
+  }
+}

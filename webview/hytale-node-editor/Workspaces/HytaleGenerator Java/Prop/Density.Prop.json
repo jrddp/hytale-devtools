@@ -1,0 +1,100 @@
+{
+  "Id": "Density.Prop",
+  "Title": "Density Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner"
+    },
+    {
+      "Id": "Density",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Label" : "Density"
+    },
+    {
+      "Id": "Material",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Multiple" : false,
+      "Label" : "Material"
+    },
+    {
+      "Id": "PlacementMask",
+      "Type": "BlockMask.Connection",
+      "Color": "Olive",
+      "Multiple" : false,
+      "Label" : "PlacementMask"
+    },
+    {
+      "Id": "Range",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Range"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Density",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    },
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "Material"
+    },
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    },
+    "PlacementMask" : {
+      "Node" : "BlockMask",
+      "Pin" : "PlacementMask"
+    },
+    "Range" : {
+      "Node" : "Point3D",
+      "Pin" : "Range"
+    }
+  }
+}

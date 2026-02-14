@@ -1,0 +1,79 @@
+{
+  "Id": "BaseHeight.Positions",
+  "Title": "BaseHeight Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "BedName",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "BedName",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "MaxYRead",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MaxYRead",
+        "Default" : 1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "MinYRead",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MinYRead",
+        "Default" : -1,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PositionsConnection",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "BaseHeight",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "BedName" : "BedName",
+    "MinYRead" : "MinYRead",
+    "MaxYRead" : "MaxYRead",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

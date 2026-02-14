@@ -1,0 +1,119 @@
+{
+  "Id": "Demo",
+  "Title": "Demo",
+  "Color": "100,100,100",
+  "Inputs": [
+    {
+      "Id": "DemoInputPin",
+      "Type": "Demo",
+      "Color": "Olive"
+    }
+  ],
+  "Content": [
+	  {
+      "Id": "External",
+      "Type": "FilePath",
+      "Options": {
+        "Label": "External",
+        "UseUUID": true,
+        "Width": 350
+      }
+    },
+    {
+      "Id": "DemoString",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Message",
+        "Default": "Hello World",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "DemoList",
+      "Type": "List",
+      "Options": {
+        "Label": "Message",
+        "Type": "String",
+        "Width": 350
+      }
+    },
+    {
+      "Id": "DemoFloat",
+      "Type": "Float",
+      "Options": {
+        "Label": "Float",
+        "Default": 5.5,
+        "Width": 100
+      }
+    },
+    {
+      "Id": "DemoCheckbox",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Checkbox",
+        "Default": true
+      }
+    },
+    {
+      "Id": "DemoInt",
+      "Type": "Int",
+      "Options": {
+        "Label": "Integer",
+        "Default": 25,
+        "SmallChange": 2,
+        "LargeChange": 25
+      }
+    },
+    {
+      "Id": "DemoIntSlider",
+      "Type": "IntSlider",
+      "Options": {
+        "Label": "Slider",
+        "Default": 25,
+        "LargeChange": 25,
+        "Max": 200,
+        "Min": 25,
+        "Width": 125,
+        "TickFrequency": 25
+      }
+    },
+    {
+      "Id": "DemoStringTest",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Message",
+        "Default": "Hello World",
+        "Width": 150
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ReferencePin",
+      "Type": "Reference",
+      "Color": "Magenta"
+    },
+    {
+      "Id": "ExternalPin",
+      "Type": "Demo",
+      "Color": "Magenta",
+      "Multiple": true
+    }
+  ],
+  "Schema": {
+    "External$Ref": "DemoList",
+    "External$Pin": {
+      "Pin": "ExternalPin",
+      "Node": "Demo"
+    },
+    "String": "DemoString",
+    "Float": "DemoFloat",
+    "Checkbox": "DemoCheckbox",
+    "DemoInt": "DemoIntSlider",
+    "DemoStringTest": "DemoStringText",
+    "Reference": {
+      "Pin": "ReferencePin",
+      "Node": "Reference"
+    }
+  }
+}

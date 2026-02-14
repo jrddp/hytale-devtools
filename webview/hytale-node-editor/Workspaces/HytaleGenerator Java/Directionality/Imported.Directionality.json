@@ -1,0 +1,29 @@
+{
+  "Id": "Imported.Directionality",
+  "Title": "Imported Directionality",
+  "Color": "Magenta",
+  "Content" : [
+    {
+      "Id" : "Name",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Name",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Directionality.Connection",
+      "Color": "Magenta"
+    }
+  ],
+  "Schema": {
+    "Type" : "Imported",
+    "Name" : "Name"
+  }
+}

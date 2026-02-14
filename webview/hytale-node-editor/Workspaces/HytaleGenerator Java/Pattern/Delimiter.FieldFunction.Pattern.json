@@ -1,0 +1,38 @@
+{
+  "Id": "Delimiter.FieldFunction.Pattern",
+  "Title": "FieldFunction Delimiter",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Min",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Min",
+        "Default" : 0.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id" : "Max",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Max",
+        "Default" : 1.0,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Delimiter.FieldFunction.Pattern.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Min" : "Min",
+    "Max" : "Max"
+  }
+}

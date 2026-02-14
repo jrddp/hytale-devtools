@@ -1,0 +1,77 @@
+{
+  "Id": "Wall.Pattern",
+  "Title": "Wall Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Directions",
+      "Type": "List",
+      "Options": {
+        "Label": "Directions",
+        "Type" : "String",
+        "Width" : 40
+      }
+    },
+    {
+      "Id": "RequireAllDirections",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "RequireAllDirections",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Wall",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Wall"
+    },
+    {
+      "Id": "Origin",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Origin"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Wall",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Wall" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Wall"
+    },
+    "Origin" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Origin"
+    },
+    "Directions" : "Directions",
+    "RequireAllDirections" : "RequireAllDirections"
+  }
+}

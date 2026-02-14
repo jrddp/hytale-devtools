@@ -1,0 +1,49 @@
+{
+  "Id": "Delimiter.DensityPCNReturnType",
+  "Title": "Delimiter",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "From",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "From",
+        "Default" : -1,
+        "Width" : 70
+      }
+    },
+    {
+      "Id" : "To",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "To",
+        "Default" : 1,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Density",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Label" : "Density",
+      "Multiple" : false
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Delimiter.DensityReturnType",
+      "Type": "Delimiter.DensityReturnType.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "From" : "From",
+    "To" : "To",
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    }
+  }
+}

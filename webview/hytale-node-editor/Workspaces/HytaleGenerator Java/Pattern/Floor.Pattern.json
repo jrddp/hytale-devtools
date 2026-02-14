@@ -1,0 +1,58 @@
+{
+  "Id": "Floor.Pattern",
+  "Title": "Floor Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Origin",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Origin"
+    },
+    {
+      "Id": "Floor",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Floor"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Floor",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Origin" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Origin"
+    },
+    "Floor" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Floor"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+﻿{
+  "Id": "Shape",
+  "Title": "Shape",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "Shape",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Shape",
+        "Width": 150,
+        "Values": [
+          "Cube",
+          "Sphere",
+          "Cylinder",
+          "Cone",
+          "InvertedCone",
+          "Pyramid",
+          "InvertedPyramid"
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "shape",
+    "Shape": "Shape"
+  }
+}
+

@@ -1,0 +1,34 @@
+{
+  "Id": "BodyMotionSeek",
+  "Title": "Body Motion Seek",
+  "Color": "Purple",
+  "Inputs": [
+    {
+      "Id": "BodyMotionPin",
+      "Type": "BodyMotion",
+      "Multiple": false,
+      "Color": "Purple"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "SlowDownDistance",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Slow Distance"
+      }
+    },
+    {
+      "Id": "StopDistance",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stop Distance"
+      }
+    }
+  ],
+  "Schema": {
+    "Type": "Seek",
+    "SlowDownDistance": "SlowDownDistance",
+    "StopDistance": "StopDistance"
+  }
+}

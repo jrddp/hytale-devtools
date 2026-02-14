@@ -1,0 +1,51 @@
+{
+  "Id": "FieldFunctionMaterialProvider",
+  "Title": "FieldFunction MaterialProvider",
+  "Color": "110,63,16",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "FieldFunctionPin",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Multiple" : false,
+      "Label" : "FieldFunction"
+    },
+    {
+      "Id": "DelimitersPin",
+      "Type": "DelimiterFFMPConnection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Delimiters"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16"
+    }
+  ],
+  "Schema": {
+    "Type" : "FieldFunction",
+    "ExportAs" : "ExportAs",
+    "FieldFunction" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "FieldFunctionPin"
+    },
+    "Delimiters" : {
+      "Node" : "DelimiterFieldFunctionMP",
+      "Pin" : "DelimitersPin"
+    }
+  }
+}

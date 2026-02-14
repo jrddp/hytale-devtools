@@ -1,0 +1,18 @@
+{
+  "Id": "ActionDespawn",
+  "Title": "Action Despawn",
+  "Color": "Aqua",
+  "Inputs": [
+    {
+      "Id": "ActionPin",
+      "Type": "Action",
+      "Color": "Aqua",
+      "Multiple": false
+    }
+  ],
+  "Content": [
+  ],
+  "Schema": {
+    "Type": "Despawn"
+  }
+}

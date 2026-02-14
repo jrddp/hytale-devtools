@@ -1,0 +1,31 @@
+{
+  "Id": "Terrain",
+  "Title": "Terrain",
+  "Color": "Grey",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id" : "Density",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Label" : "Density",
+      "Multiple" : false
+    }
+  ],
+  "Inputs": [
+    {
+      "Id" : "Output",
+      "Type" : "Terrain.Connection",
+      "Color" : "Grey",
+      "Multiple" : false
+    }
+  ],
+  "Schema": {
+    "Type" : "DAOTerrain",
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    }
+  }
+}

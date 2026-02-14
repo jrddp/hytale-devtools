@@ -1,0 +1,46 @@
+﻿{
+  "Id": "JumpIfStringMatch",
+  "Title": "Jump If String Matches",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "LeftSideOfStatement",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Left Side Of Statement",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "RightSideOfStatement",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Right Side Of Statement",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "jumpifequal",
+    "StoredIndexName": "StoredIndexName",
+    "LeftSideOfStatement": "LeftSideOfStatement",
+    "RightSideOfStatement": "RightSideOfStatement"
+  }
+}
+

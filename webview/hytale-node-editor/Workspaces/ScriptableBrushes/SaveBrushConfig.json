@@ -1,0 +1,28 @@
+﻿{
+  "Id": "SaveBrushConfig",
+  "Title": "Save Brush Config Snapshot",
+  "Color": "aqua",
+  "Content": [
+    {
+      "Id": "StoredName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Name",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "savebrushconfig",
+    "StoredName": "StoredName"
+  }
+}
+

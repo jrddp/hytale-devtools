@@ -1,0 +1,38 @@
+{
+  "Id": "BlockSet.BlockMask",
+  "Title": "BlockSet BlockMask",
+  "Color": "Yellow",
+  "Content" : [
+    {
+      "Id": "Inclusive",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Inclusive",
+        "Default": true
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Materials",
+      "Type": "Material.Connection",
+      "Color": "Yellow",
+      "Multiple" : true,
+      "Label" : "Materials"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "BlockSet.BlockMask.Connection",
+      "Color": "Yellow"
+    }
+  ],
+  "Schema": {
+    "Inclusive" : "Inclusive",
+    "Materials" : {
+      "Node" : "Material",
+      "Pin" : "Materials"
+    }
+  }
+}

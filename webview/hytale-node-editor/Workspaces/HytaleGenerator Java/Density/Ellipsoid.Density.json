@@ -1,0 +1,77 @@
+{
+  "Id": "Ellipsoid.Density",
+  "Title": "Ellipsoid Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Spin",
+      "Type": "Float",
+      "Options": {
+        "Label": "Spin",
+        "Default" : 0.0
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Curve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curve"
+    },
+    {
+      "Id": "Scale",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Scale"
+    },
+    {
+      "Id": "NewYAxis",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "NewYAxis"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Ellipsoid",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Spin" : "Spin",
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    },
+    "Scale" : {
+      "Node" : "Point3D",
+      "Pin" : "Scale"
+    },
+    "NewYAxis" : {
+      "Node" : "Point3D",
+      "Pin" : "NewYAxis"
+    }
+  }
+}

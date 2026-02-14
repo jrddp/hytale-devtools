@@ -1,0 +1,39 @@
+﻿{
+  "Id": "JumpIfCompare",
+  "Title": "Jump If Int Comparison",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ComparisonPin",
+      "Type": "Comparison",
+      "Multiple": true,
+      "Color": "purple"
+    }
+  ],
+  "Schema": {
+    "Id": "jumpifcompare",
+    "Comparisons$Pin": {
+      "node": "BrushConfigIntegerComparison",
+      "pin": "ComparisonPin"
+    },
+    "StoredIndexName": "StoredIndexName"
+  }
+}

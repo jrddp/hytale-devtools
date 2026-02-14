@@ -1,0 +1,37 @@
+{
+  "Id": "Entry.Weighted.Prop",
+  "Title": "Entry - Weighted Prop",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id": "Weight",
+      "Type": "Float",
+      "Options": {
+        "Label": "Weight",
+        "Default" : 1.0
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Label" : "Prop"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Entry.Weighted.Prop.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    },
+    "Weight" : "Weight"
+  }
+}

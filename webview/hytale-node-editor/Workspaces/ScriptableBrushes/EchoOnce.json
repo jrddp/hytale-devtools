@@ -1,0 +1,28 @@
+{
+  "Id": "EchoOnce",
+  "Title": "Echo Once to Chat",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "Message",
+      "Type": "String",
+      "Options": {
+        "Label": "Message",
+        "Width": 350,
+        "Height": 100
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "echoonce",
+    "Message": "Message"
+  }
+}

@@ -1,0 +1,28 @@
+﻿{
+  "Id": "AppendMask",
+  "Title": "Append Mask",
+  "Color": "green",
+  "Content": [
+    {
+      "Id": "AppendMask",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Append Mask",
+        "Width": 200
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "appendmask",
+    "AppendMask": "AppendMask"
+  }
+}
+

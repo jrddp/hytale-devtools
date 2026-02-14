@@ -1,0 +1,60 @@
+{
+  "Id": "JumpIfToolArg",
+  "Title": "Jump If Tool Arg",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "ArgName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Arg Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "ComparisonType",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Comparison Type",
+        "Width": 120,
+        "Values": [
+          "Equals",
+          "NotEquals",
+          "Contains"
+        ]
+      }
+    },
+    {
+      "Id": "ComparisonValue",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Comparison Value",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "jumpiftoolarg",
+    "ArgName": "ArgName",
+    "ComparisonType": "ComparisonType",
+    "ComparisonValue": "ComparisonValue",
+    "StoredIndexName": "StoredIndexName"
+  }
+}
+

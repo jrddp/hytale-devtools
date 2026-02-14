@@ -1,0 +1,77 @@
+{
+  "Id": "Cylinder.Density",
+  "Title": "Cylinder Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Spin",
+      "Type": "Float",
+      "Options": {
+        "Label": "Spin",
+        "Default" : 0.0
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "AxialCurve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "AxialCurve"
+    },
+    {
+      "Id": "RadialCurve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "RadialCurve"
+    },
+    {
+      "Id": "NewYAxis",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "NewYAxis"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Cylinder",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Spin" : "Spin",
+    "RadialCurve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "RadialCurve"
+    },
+    "AxialCurve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "AxialCurve"
+    },
+    "NewYAxis" : {
+      "Node" : "Point3D",
+      "Pin" : "NewYAxis"
+    }
+  }
+}

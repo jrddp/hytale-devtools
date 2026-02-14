@@ -1,0 +1,104 @@
+{
+  "Id": "ColumnRandom.Scanner",
+  "Title": "ColumnRandom Scanner",
+  "Color": "LightPurple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "MaxY",
+      "Type": "Int",
+      "Options": {
+        "Label": "MaxY",
+        "Default" : 120
+      }
+    },
+    {
+      "Id": "MinY",
+      "Type": "Int",
+      "Options": {
+        "Label": "MinY",
+        "Default" : 60
+      }
+    },
+    {
+      "Id": "Strategy",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Strategy",
+        "Default" : "DART_THROW",
+        "Width" : 150
+      }
+    },
+    {
+      "Id": "Seed",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Seed",
+        "Default" : "A",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "RelativeToPosition",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "RelativeToPosition",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "BaseHeightName",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "BaseHeightName",
+        "Default" : "Base",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "ResultCap",
+      "Type": "Int",
+      "Options": {
+        "Label": "ResultCap",
+        "Default" : 1
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple"
+    }
+  ],
+  "Schema": {
+    "Type" : "ColumnRandom",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "MaxY" : "MaxY",
+    "MinY" : "MinY",
+    "Strategy" : "Strategy",
+    "Seed" : "Seed",
+    "RelativeToPosition" : "RelativeToPosition",
+    "BaseHeightName" : "BaseHeightName",
+    "ResultCap" : "ResultCap"
+  }
+}

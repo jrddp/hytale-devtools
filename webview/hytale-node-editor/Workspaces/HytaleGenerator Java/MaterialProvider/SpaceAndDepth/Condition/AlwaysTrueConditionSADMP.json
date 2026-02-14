@@ -1,0 +1,19 @@
+{
+  "Id": "AlwaysTrueConditionSADMP",
+  "Title": "AlwaysTrue Condition SADMP",
+  "Color": "Orange",
+  "Content": [
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "AlwaysTrueCondition"
+  }
+}

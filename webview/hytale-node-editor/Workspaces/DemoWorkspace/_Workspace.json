@@ -1,0 +1,53 @@
+{
+  "WorkspaceName": "Demo Workspace",
+  "Roots": {
+    "DemoWorkspace": {
+      "RootNodeType": "Selectors",
+      "MenuName": "Demo Workspace"
+    }
+  },
+  "NodeCategories": {
+    "Demo": [
+      "Demo",
+      "Reference"
+    ],
+    "General": [
+      "Selector"
+    ],
+    "Sensors": [
+      "SensorBeacon", "SensorIdle", "SensorTarget"
+    ],
+    "Actions": [
+      "ActionSetLeashPosition", "ActionState", "ActionTimeout"
+    ],
+    "BodyMotion": [
+      "BodyMotionSeek"
+    ]
+  },
+  "Variants": {
+    "ActionVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "SetLeashPosition": "ActionSetLeashPositionNode",
+        "State": "ActionState",
+        "Despawn": "ActionDespawn",
+        "Timeout": "ActionTimeout"
+      }
+    },
+    "SensorVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Beacon": "SensorBeacon",
+        "Eval": "SensorEval",
+        "State": "SensorState",
+        "Target": "SensorTarget"
+      }
+    },
+    "BodyMotionVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Seek": "BodyMotionSeek"
+      }
+    }
+  }
+}

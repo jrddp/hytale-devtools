@@ -1,0 +1,89 @@
+{
+  "Id": "Pattern.Directionality",
+  "Title": "Pattern Directionality",
+  "Color": "Magenta",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "InitialDirection",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "InitialDirection",
+        "Default" : "N",
+        "Width" : 40
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "A",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "NorthPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "NorthPattern"
+    },
+    {
+      "Id": "SouthPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "SouthPattern"
+    },
+    {
+      "Id": "EastPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "EastPattern"
+    },
+    {
+      "Id": "WestPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "WestPattern"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Directionality.Connection",
+      "Color": "Magenta"
+    }
+  ],
+  "Schema": {
+    "Type" : "Pattern",
+    "ExportAs" : "ExportAs",
+    "Seed" : "Seed",
+    "InitialDirection" : "InitialDirection",
+    "NorthPattern": {
+      "Node": "Pattern.Variants",
+      "Pin": "NorthPattern"
+    },
+    "SouthPattern": {
+      "Node": "Pattern.Variants",
+      "Pin": "SouthPattern"
+    },
+    "EastPattern": {
+      "Node": "Pattern.Variants",
+      "Pin": "EastPattern"
+    },
+    "WestPattern": {
+      "Node": "Pattern.Variants",
+      "Pin": "WestPattern"
+    }
+  }
+}

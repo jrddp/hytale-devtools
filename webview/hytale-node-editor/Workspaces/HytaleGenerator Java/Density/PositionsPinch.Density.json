@@ -1,0 +1,117 @@
+{
+  "Id": "PositionsPinch.Density",
+  "Title": "PositionsPinch Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "MaxDistance",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MaxDistance",
+        "Default" : 10,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "NormalizeDistance",
+      "Type" : "Checkbox",
+      "Options" : {
+        "Label" : "NormalizeDistance",
+        "Default" : true
+      }
+    },
+    {
+      "Id" : "HorizontalPinch",
+      "Type" : "Checkbox",
+      "Options" : {
+        "Label" : "HorizontalPinch",
+        "Default" : true
+      }
+    },
+    {
+      "Id" : "PositionsMaxY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "PositionsMaxY",
+        "Default" : 0.0001,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "PositionsMinY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "PositionsMinY",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    },
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Label" : "Positions"
+    },
+    {
+      "Id": "PinchCurve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "PinchCurve"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "PositionsPinch",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "MaxDistance" : "MaxDistance",
+    "NormalizeDistance" : "NormalizeDistance",
+    "PositionsMaxY" : "PositionsMaxY",
+    "PositionsMinY" : "PositionsMinY",
+    "HorizontalPinch" : "HorizontalPinch",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Positions"
+    },
+    "PinchCurve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "PinchCurve"
+    },
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

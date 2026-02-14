@@ -1,0 +1,84 @@
+{
+  "Id": "Column.Prop",
+  "Title": "Column Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ColumnBlocks",
+      "Type": "Block.Column.Prop.Connection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "ColumnBlocks"
+    },
+    {
+      "Id": "Directionality",
+      "Type": "Directionality.Connection",
+      "Color": "Magenta",
+      "Label" : "Directionality"
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner"
+    },
+    {
+      "Id": "BlockMask",
+      "Type": "BlockMask.Connection",
+      "Color": "Olive",
+      "Label" : "BlockMask"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    },
+    {
+      "Id": "Restricted.Output",
+      "Type": "Column.Prop.Connection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Column",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "ColumnBlocks" : {
+      "Node" : "Block.Column.Prop",
+      "Pin" : "ColumnBlocks"
+    },
+    "Directionality" : {
+      "Node" : "Directionality.Variants",
+      "Pin" : "Directionality"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    },
+    "BlockMask" : {
+      "Node" : "BlockMask",
+      "Pin" : "BlockMask"
+    }
+  }
+}

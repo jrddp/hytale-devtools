@@ -1,0 +1,135 @@
+{
+  "Id": "Prefab.Prop",
+  "Title": "Prefab Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "LegacyPath",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "LegacyPath",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "MoldingDirection",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "MoldingDirection",
+        "Default" : "NONE"
+      }
+    },
+    {
+      "Id": "MoldingChildren",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "MoldingChildren",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "LoadEntities",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "LoadEntities",
+        "Default" : true
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "WeightedPrefabPaths",
+      "Type": "WeightedPath.Prefab.Prop.Connection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "WeightedPrefabPaths"
+    },
+    {
+      "Id": "Directionality",
+      "Type": "Directionality.Connection",
+      "Color": "Magenta",
+      "Label" : "Directionality"
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner"
+    },
+    {
+      "Id": "BlockMask",
+      "Type": "BlockMask.Connection",
+      "Color": "Olive",
+      "Label" : "BlockMask"
+    },
+    {
+      "Id": "MoldingScanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "MoldingScanner"
+    },
+    {
+      "Id": "MoldingPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "MoldingPattern"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Prefab",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "WeightedPrefabPaths" : {
+      "Node" : "WeightedPath.Prefab.Prop",
+      "Pin" : "WeightedPrefabPaths"
+    },
+    "LegacyPath" : "LegacyPath",
+    "LoadEntities" : "LoadEntities",
+    "Directionality" : {
+      "Node" : "Directionality.Variants",
+      "Pin" : "Directionality"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    },
+    "BlockMask" : {
+      "Node" : "BlockMask",
+      "Pin" : "BlockMask"
+    },
+    "MoldingDirection" : "MoldingDirection",
+    "MoldingChildren" : "MoldingChildren",
+    "MoldingScanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "MoldingScanner"
+    },
+    "MoldingPattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "MoldingPattern"
+    }
+  }
+}

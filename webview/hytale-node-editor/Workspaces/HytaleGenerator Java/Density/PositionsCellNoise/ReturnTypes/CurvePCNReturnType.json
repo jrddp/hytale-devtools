@@ -1,0 +1,29 @@
+{
+  "Id": "CurvePCNReturnType",
+  "Title": "Curve ReturnType",
+  "Color": "DarkPink",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id" : "Curve",
+      "Type" : "CurveConnection",
+      "Color" : "Orange",
+      "Label" : "Curve"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "PCN",
+      "Type": "ReturnTypePCNConnection",
+      "Color": "DarkPink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Curve",
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    }
+  }
+}

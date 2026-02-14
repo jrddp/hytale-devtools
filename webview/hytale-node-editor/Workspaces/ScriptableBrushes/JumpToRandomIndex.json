@@ -1,0 +1,29 @@
+﻿{
+  "Id": "JumpToRandomIndex",
+  "Title": "Jump to Random Stored Index",
+  "Color": "purple",
+  "Content": [],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "WeightedIndexPin",
+      "Type": "WeightedIndex",
+      "Multiple": true,
+      "Color": "grey"
+    }
+  ],
+  "Schema": {
+    "Id": "jumprandom",
+    "WeightedListOfIndexNames$Pin": {
+      "node": "IntegerStringPair",
+      "pin": "WeightedIndexPin"
+    }
+  }
+}

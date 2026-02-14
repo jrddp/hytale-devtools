@@ -1,0 +1,101 @@
+{
+  "Id": "CellNoise2DDensityNode",
+  "Title": "CellNoise2D Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Jitter",
+      "Type": "Float",
+      "Options": {
+        "Label": "Jitter",
+        "Default" : 0.3,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "CellType",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "CellType",
+        "Default" : "Distance2Div",
+        "Width" : 150
+      }
+    },
+    {
+      "Id": "ScaleX",
+      "Type": "Float",
+      "Options": {
+        "Label": "ScaleX",
+        "Default" : 20,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "ScaleZ",
+      "Type": "Float",
+      "Options": {
+        "Label": "ScaleZ",
+        "Default" : 20,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Octaves",
+      "Type": "IntSlider",
+      "Options": {
+        "Label": "Octaves",
+        "Default" : 1,
+        "TickFrequency" : 1,
+        "Width" : 150,
+        "Min" : 0,
+        "Max" : 20
+      }
+    },
+    {
+      "Id": "Seed",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Seed",
+        "Default" : "A",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "CellNoise2D",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "ScaleX" : "ScaleX",
+    "ScaleZ" : "ScaleZ",
+    "Jitter" : "Jitter",
+    "CellType" : "CellType",
+    "Octaves" : "Octaves",
+    "Seed" : "Seed"
+  }
+}

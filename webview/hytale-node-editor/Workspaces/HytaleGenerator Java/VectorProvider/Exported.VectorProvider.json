@@ -1,0 +1,48 @@
+{
+  "Id": "Exported.VectorProvider",
+  "Title": "Exported VectorProvider",
+  "Color": "Green",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "SingleInstance",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "SingleInstance",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "VectorProvider",
+      "Type": "VectorProvider.Connection",
+      "Color": "Green",
+      "Label" : "VectorProvider"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "VectorProvider.Connection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Exported",
+    "ExportAs" : "ExportAs",
+    "SingleInstance" : "SingleInstance",
+    "VectorProvider" : {
+      "Node" : "VectorProvider.Variants",
+      "Pin" : "VectorProvider"
+    }
+  }
+}

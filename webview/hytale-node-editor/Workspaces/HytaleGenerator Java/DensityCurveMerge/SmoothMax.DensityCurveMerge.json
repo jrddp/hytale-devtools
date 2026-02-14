@@ -1,0 +1,29 @@
+{
+  "Id": "SmoothMax.DensityCurveMerge",
+  "Title": "SmoothMax - DensityCurveMerge",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Range",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Range",
+        "Default" : 0.0,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "DensityCurveMerge.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "SmoothMax",
+    "Range" : "Range"
+  }
+}

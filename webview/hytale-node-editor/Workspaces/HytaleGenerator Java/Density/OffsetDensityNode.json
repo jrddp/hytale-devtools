@@ -1,0 +1,59 @@
+{
+  "Id": "OffsetDensityNode",
+  "Title": "[DEPRECATED] Offset Density",
+  "Color": "255,00,00",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    },
+    {
+      "Id": "FunctionForY",
+      "Type": "FunctionForYConnection",
+      "Color": "Orange",
+      "Label" : "FunctionForY"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Offset",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "FunctionForY" : {
+      "Node" : "FunctionForY",
+      "Pin" : "FunctionForY"
+    },
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

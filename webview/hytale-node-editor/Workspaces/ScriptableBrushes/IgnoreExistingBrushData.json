@@ -1,0 +1,18 @@
+{
+  "Id": "IgnoreExistingBrushData",
+  "Title": "Ignore Existing Brush Settings",
+  "Color": "red",
+  "Content": [],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "ignoreexistingbrushdata"
+  }
+}
+

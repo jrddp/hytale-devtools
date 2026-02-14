@@ -11,9 +11,11 @@
     findTemplateByTypeName,
     getDefaultTemplate,
     getTemplateById,
-  } from "./node-editor/sampleNodeTemplates.js";
+    setActiveTemplateSourceMode,
+  } from "./node-editor/templateCatalog.js";
 
   export let vscode;
+  export let templateSourceMode = "workspace-hg-java";
 
   const NODE_EDITOR_METADATA_KEY = "$NodeEditorMetadata";
   const METADATA_RESERVED_KEYS = [
@@ -27,6 +29,10 @@
   const LEGACY_INLINE_ROOT_METADATA_KEYS = ["$WorkspaceID", "$Groups", "$Comments"];
   const NODE_TEMPLATE_DATA_KEY = "$templateId";
   const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
+  const DEFAULT_WORKSPACE_ROOT_TYPE = "Biome";
+
+  setActiveTemplateSourceMode(templateSourceMode);
+  $: setActiveTemplateSourceMode(templateSourceMode);
 
   const initialState = parseDocumentText("");
 
@@ -140,7 +146,12 @@
   function buildStateFromMetadataDocument(runtime, metadataRoot) {
     const runtimeNodePayloadById = collectRuntimeNodePayloadById(runtime);
     const runtimeTreeNodeIds = new Set(Object.keys(runtimeNodePayloadById));
-    const context = parseMetadataContext(metadataRoot, runtimeNodePayloadById, runtimeTreeNodeIds);
+    const context = parseMetadataContext(
+      metadataRoot,
+      runtimeNodePayloadById,
+      runtimeTreeNodeIds,
+      readRuntimeRootNodeId(runtime)
+    );
     let flowState = buildFlowStateFromMetadata(context);
 
     if (flowState.nodes.length === 0) {
@@ -298,6 +309,7 @@
     context.runtimeTreeNodeIds = conversion.runtimeTreeNodeIds;
 
     const runtime = isObject(conversion.runtimeRoot) ? conversion.runtimeRoot : {};
+    context.rootNodeId = readRuntimeRootNodeId(runtime);
     const flowState = {
       nodes: conversion.flowNodes,
       edges: [],
@@ -446,6 +458,9 @@
       [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
       [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
     };
+    if (!nextContext.rootNodeId) {
+      nextContext.rootNodeId = fallbackNode.id;
+    }
 
     return nextContext;
   }
@@ -478,14 +493,15 @@
       const payload = isObject(context.nodePayloadById[nodeId])
         ? context.nodePayloadById[nodeId]
         : {};
+      const payloadForTemplate = withImplicitRootType(payload, nodeId, context);
       const position = normalizePosition(nodeMeta?.$Position, index);
-      const label = readNodeLabel(nodeId, nodeMeta, undefined, payload);
+      const label = readNodeLabel(nodeId, nodeMeta, undefined, payloadForTemplate);
       const comment =
-        typeof payload.$Comment === "string" && payload.$Comment.trim()
-          ? payload.$Comment.trim()
+        typeof payloadForTemplate.$Comment === "string" && payloadForTemplate.$Comment.trim()
+          ? payloadForTemplate.$Comment.trim()
           : undefined;
-      const templateId = readTemplateId(undefined, payload);
-      const fieldValues = readFieldValues(undefined, payload);
+      const templateId = readTemplateId(undefined, payloadForTemplate);
+      const fieldValues = readFieldValues(undefined, payloadForTemplate);
 
       flowNodes.push({
         id: nodeId,
@@ -509,7 +525,8 @@
   function parseMetadataContext(
     metadataRoot,
     runtimeNodePayloadById = {},
-    runtimeTreeNodeIds = new Set()
+    runtimeTreeNodeIds = new Set(),
+    runtimeRootNodeId = undefined
   ) {
     const context = createEmptyMetadataContext();
     context.workspaceId = metadataRoot.$WorkspaceID;
@@ -519,6 +536,7 @@
     context.metadataExtraFields = omitKeys(metadataRoot, METADATA_RESERVED_KEYS);
     context.nodePayloadById = { ...runtimeNodePayloadById };
     context.runtimeTreeNodeIds = runtimeTreeNodeIds;
+    context.rootNodeId = runtimeRootNodeId;
 
     const nodesRoot = isObject(metadataRoot.$Nodes) ? metadataRoot.$Nodes : {};
     for (const [nodeId, nodeMeta] of Object.entries(nodesRoot)) {
@@ -546,6 +564,16 @@
         continue;
       }
       context.linkById[linkId] = { ...linkValue };
+    }
+
+    if (!context.rootNodeId) {
+      const rootMetadataNodeId = Object.entries(context.nodeMetadataById).find(
+        ([, nodeMeta]) =>
+          typeof nodeMeta?.$Title === "string" && nodeMeta.$Title.trim().startsWith("[ROOT]")
+      )?.[0];
+      if (rootMetadataNodeId) {
+        context.rootNodeId = rootMetadataNodeId;
+      }
     }
 
     return context;
@@ -576,14 +604,15 @@
 
       const baseMeta = isObject(knownNodeMetadata[nodeId]) ? { ...knownNodeMetadata[nodeId] } : {};
       const basePayload = isObject(knownNodePayload[nodeId]) ? { ...knownNodePayload[nodeId] } : {};
+      const payloadForTemplate = withImplicitRootType(basePayload, nodeId, state.metadataContext);
       const position = normalizePosition(candidate?.position, index);
-      const label = readNodeLabel(nodeId, baseMeta, candidate?.data?.label);
+      const label = readNodeLabel(nodeId, baseMeta, candidate?.data?.label, payloadForTemplate);
       const comment =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
           : undefined;
-      const templateId = readTemplateId(candidate?.data?.[NODE_TEMPLATE_DATA_KEY], basePayload);
-      const fieldValues = readFieldValues(candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY], basePayload);
+      const templateId = readTemplateId(candidate?.data?.[NODE_TEMPLATE_DATA_KEY], payloadForTemplate);
+      const fieldValues = readFieldValues(candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY], payloadForTemplate);
 
       baseMeta.$Position = {
         $x: position.x,
@@ -597,6 +626,9 @@
       }
 
       basePayload.$NodeId = nodeId;
+      if (typeof payloadForTemplate.Type === "string" && payloadForTemplate.Type.trim()) {
+        basePayload.Type = payloadForTemplate.Type.trim();
+      }
       if (comment !== undefined) {
         basePayload.$Comment = comment;
       } else {
@@ -754,6 +786,7 @@
 
     const nextMetadataContext = {
       workspaceId: state.metadataContext.workspaceId,
+      rootNodeId: state.metadataContext.rootNodeId,
       groups: Array.isArray(state.metadataContext.groups) ? state.metadataContext.groups : [],
       comments: Array.isArray(state.metadataContext.comments) ? state.metadataContext.comments : [],
       floatingNodes: preservedFloatingRoots,
@@ -831,6 +864,7 @@
   function createEmptyMetadataContext() {
     return {
       workspaceId: undefined,
+      rootNodeId: undefined,
       groups: [],
       comments: [],
       floatingNodes: [],
@@ -845,6 +879,17 @@
   function createDefaultFlowNode() {
     const nodeId = "Node-00000000-0000-0000-0000-000000000000";
     const defaultTemplate = getDefaultTemplate();
+    if (!defaultTemplate) {
+      return {
+        id: nodeId,
+        type: CUSTOM_NODE_TYPE,
+        data: {
+          label: defaultLabelForNodeId(nodeId),
+        },
+        position: { x: 0, y: 50 },
+      };
+    }
+
     return {
       id: nodeId,
       type: CUSTOM_NODE_TYPE,
@@ -1009,6 +1054,39 @@
       x: Number.isFinite(x) ? x : Number.isFinite(metaX) ? metaX : fallbackX,
       y: Number.isFinite(y) ? y : Number.isFinite(metaY) ? metaY : fallbackY,
     };
+  }
+
+  function readRuntimeRootNodeId(runtimeRoot) {
+    if (!isObject(runtimeRoot)) {
+      return undefined;
+    }
+
+    if (typeof runtimeRoot.$NodeId === "string" && runtimeRoot.$NodeId.trim()) {
+      return runtimeRoot.$NodeId.trim();
+    }
+
+    return undefined;
+  }
+
+  function withImplicitRootType(payload, nodeId, context) {
+    const normalizedPayload = isObject(payload) ? payload : {};
+    if (typeof normalizedPayload.Type === "string" && normalizedPayload.Type.trim()) {
+      return normalizedPayload;
+    }
+
+    if (
+      typeof nodeId === "string" &&
+      nodeId &&
+      typeof context?.rootNodeId === "string" &&
+      context.rootNodeId === nodeId
+    ) {
+      return {
+        ...normalizedPayload,
+        Type: DEFAULT_WORKSPACE_ROOT_TYPE,
+      };
+    }
+
+    return normalizedPayload;
   }
 
   function omitKeys(source, keysToOmit) {
@@ -1211,6 +1289,12 @@
     <div class="mb-2 text-sm text-vsc-error">{extensionError}</div>
   {/if}
   <SvelteFlowProvider>
-    <Flow bind:nodes bind:edges loadVersion={graphLoadVersion} on:flowchange={handleFlowChange} />
+    <Flow
+      bind:nodes
+      bind:edges
+      loadVersion={graphLoadVersion}
+      templateSourceMode={templateSourceMode}
+      on:flowchange={handleFlowChange}
+    />
   </SvelteFlowProvider>
 </main>

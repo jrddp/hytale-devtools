@@ -1,0 +1,17 @@
+﻿{
+  "Id": "ClearOperationMask",
+  "Title": "Clear Operation Mask",
+  "Color": "green",
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "clearoperationmask"
+  }
+}
+

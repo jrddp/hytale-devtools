@@ -1,0 +1,27 @@
+﻿{
+  "Id": "Smooth",
+  "Title": "Smooth Blocks",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "SmoothStrength",
+      "Type": "Int",
+      "Options": {
+        "Label": "Smooth Strength"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "smooth",
+    "SmoothStrength": "SmoothStrength"
+  }
+}
+

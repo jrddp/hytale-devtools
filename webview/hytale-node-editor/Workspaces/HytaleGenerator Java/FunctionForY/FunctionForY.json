@@ -1,0 +1,29 @@
+{
+  "Id": "FunctionForY",
+  "Title": "FunctionForY",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id" : "Points",
+      "Type" : "FunctionForYPointConnection",
+      "Color" : "Orange",
+      "Multiple" : true,
+      "Label" : "Points"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Connection",
+      "Type": "FunctionForYConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Points" : {
+      "Node" : "FunctionForYPoint",
+      "Pin" : "Points"
+    }
+  }
+}

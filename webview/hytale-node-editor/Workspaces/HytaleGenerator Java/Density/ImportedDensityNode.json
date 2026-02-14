@@ -1,0 +1,38 @@
+{
+  "Id": "ImportedDensityNode",
+  "Title": "Imported Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Name",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Imported",
+    "Skip" : "Skip",
+    "Name" : "Name"
+  }
+}

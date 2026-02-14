@@ -1,0 +1,38 @@
+{
+  "Id": "Block.Column.Prop",
+  "Title": "Column Block",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Y",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Y",
+        "Default" : 0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Material",
+      "Type": "Material.Connection",
+      "Color": "Yellow",
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Block.Column.Prop.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Y" : "Y",
+    "Material" : {
+      "Node" : "Material",
+      "Pin" : "Material"
+    }
+  }
+}

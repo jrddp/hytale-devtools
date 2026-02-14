@@ -1,0 +1,49 @@
+{
+  "Id": "Switch.Density",
+  "Title": "Switch Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "SwitchCases",
+      "Type" : "Case.Switch.Density.Connection",
+      "Color" : "Orange",
+      "Multiple" : true,
+      "Label" : "SwitchCases"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Switch",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "SwitchCases" : {
+      "Node" : "Case.Switch.Density",
+      "Pin" : "SwitchCases"
+    }
+  }
+}

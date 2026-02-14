@@ -1,0 +1,37 @@
+﻿{
+  "Id": "Replace",
+  "Title": "Replace Blocks",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "FromBlockType",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "From Block Type",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "ToBlockPattern",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "To Block Pattern",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "replace",
+    "FromBlockType": "FromBlockType",
+    "ToBlockPattern": "ToBlockPattern"
+  }
+}
+

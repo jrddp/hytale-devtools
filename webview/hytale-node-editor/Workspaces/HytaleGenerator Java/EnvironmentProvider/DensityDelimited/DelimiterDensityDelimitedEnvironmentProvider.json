@@ -1,0 +1,38 @@
+{
+  "Id": "Delimiter.DensityDelimited.EnvironmentProvider",
+  "Title": "Delimiter DDEP",
+  "Color": "Orange",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id": "Environment",
+      "Type": "EnvironmentProvider.Connection",
+      "Color": "110,63,16",
+      "Label" : "Environment"
+    },
+    {
+      "Id": "Range",
+      "Type": "Decimal.Range.Connection",
+      "Color": "110,63,16",
+      "Label" : "Range"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Delimiter.DensityDelimited.EnvironmentProvider.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Environment" : {
+      "Node" : "EnvironmentProvider.Variants",
+      "Pin" : "Environment"
+    },
+    "Range" : {
+      "Node" : "Decimal.Range",
+      "Pin" : "Range"
+    }
+  }
+}

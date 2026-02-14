@@ -1,0 +1,30 @@
+{
+  "Id": "AndConditionSADMP",
+  "Title": "And Condition SADMP",
+  "Color": "Orange",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id": "ConditionsPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Conditions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "AndCondition",
+    "Conditions" : {
+      "Node" : "ConditionSADMPVariants",
+      "Pin" : "ConditionsPin"
+    }
+  }
+}

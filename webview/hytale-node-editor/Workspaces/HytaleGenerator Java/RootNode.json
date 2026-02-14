@@ -1,0 +1,24 @@
+{
+  "Id": "RootNode",
+  "Title": "Output",
+  "Color": "Grey",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id" : "Outputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Label" : "RootNode"
+    }
+  ],
+  "Inputs": [
+  ],
+  "Schema": {
+    "Type" : "RootNode",
+    "RootNode" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Outputs"
+    }
+  }
+}

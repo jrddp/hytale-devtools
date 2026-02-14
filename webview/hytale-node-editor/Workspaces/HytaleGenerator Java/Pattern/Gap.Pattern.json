@@ -1,0 +1,118 @@
+{
+  "Id": "Gap.Pattern",
+  "Title": "Gap Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "GapSize",
+      "Type": "Float",
+      "Options": {
+        "Label": "GapSize",
+        "Default" : 3.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "AnchorSize",
+      "Type": "Float",
+      "Options": {
+        "Label": "AnchorSize",
+        "Default" : 1.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "AnchorRoughness",
+      "Type": "Float",
+      "Options": {
+        "Label": "AnchorRoughness",
+        "Default" : 1.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "DepthDown",
+      "Type": "Int",
+      "Options": {
+        "Label": "DepthDown",
+        "Default" : 0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "DepthUp",
+      "Type": "Int",
+      "Options": {
+        "Label": "DepthUp",
+        "Default" : 0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "Angles",
+      "Type": "List",
+      "Options": {
+        "Label": "Angles",
+        "Type" : "Float",
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "GapPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "GapPattern"
+    },
+    {
+      "Id": "AnchorPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "AnchorPattern"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Gap",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "GapSize" : "GapSize",
+    "AnchorSize" : "AnchorSize",
+    "AnchorRoughness" : "AnchorRoughness",
+    "DepthDown" : "DepthDown",
+    "DepthUp" : "DepthUp",
+    "Angles" : "Angles",
+    "GapPattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "GapPattern"
+    },
+    "AnchorPattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "AnchorPattern"
+    }
+  }
+}

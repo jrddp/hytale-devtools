@@ -1,0 +1,38 @@
+{
+  "Id": "Weighted.Cluster.Prop",
+  "Title": "Weight",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Weight",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Weight",
+        "Default" : 1.0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ColumnProp",
+      "Type": "Column.Prop.Connection",
+      "Color": "Green",
+      "Label" : "ColumnProp"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Weighted.Cluster.Prop.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Weight" : "Weight",
+    "ColumnProp" : {
+      "Node" : "Column.Prop",
+      "Pin" : "ColumnProp"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+﻿{
+  "Id": "BlockPattern",
+  "Title": "Block Pattern",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "BlockPattern",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Block Pattern",
+        "Width": 300
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "pattern",
+    "BlockPattern": "BlockPattern"
+  }
+}
+

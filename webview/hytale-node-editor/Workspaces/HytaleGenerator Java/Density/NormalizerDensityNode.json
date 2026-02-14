@@ -1,0 +1,89 @@
+{
+  "Id": "NormalizerDensityNode",
+  "Title": "Normalizer Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "FromMin",
+      "Type": "Float",
+      "Options": {
+        "Label": "FromMin",
+        "Default" : -1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "FromMax",
+      "Type": "Float",
+      "Options": {
+        "Label": "FromMax",
+        "Default" : 1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "ToMin",
+      "Type": "Float",
+      "Options": {
+        "Label": "ToMin",
+        "Default" : -1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "ToMax",
+      "Type": "Float",
+      "Options": {
+        "Label": "ToMax",
+        "Default" : 1,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Normalizer",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "FromMin" : "FromMin",
+    "FromMax" : "FromMax",
+    "ToMin" : "ToMin",
+    "ToMax" : "ToMax",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

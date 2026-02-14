@@ -1,0 +1,77 @@
+{
+  "Id": "Shell.Density",
+  "Title": "Shell Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Mirror",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Mirror",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "AngleCurve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "AngleCurve"
+    },
+    {
+      "Id": "DistanceCurve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "DistanceCurve"
+    },
+    {
+      "Id": "Axis",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Axis"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Shell",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Mirror" : "Mirror",
+    "Axis" : {
+      "Node" : "Point3D",
+      "Pin" : "Axis"
+    },
+    "AngleCurve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "AngleCurve"
+    },
+    "DistanceCurve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "DistanceCurve"
+    }
+  }
+}

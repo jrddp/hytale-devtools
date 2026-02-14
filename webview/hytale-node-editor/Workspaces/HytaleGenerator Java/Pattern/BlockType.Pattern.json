@@ -1,0 +1,48 @@
+{
+  "Id": "BlockType.Pattern",
+  "Title": "BlockType Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Material",
+      "Type": "Material.Connection",
+      "Color": "Yellow",
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "BlockType",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Material" : {
+      "Node" : "Material",
+      "Pin" : "Material"
+    }
+  }
+}

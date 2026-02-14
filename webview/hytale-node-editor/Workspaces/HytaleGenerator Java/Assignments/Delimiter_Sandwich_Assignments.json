@@ -1,0 +1,48 @@
+{
+  "Id": "Delimiter.Sandwich.Assignments",
+  "Title": "Sandwich Delimiter",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "MinY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MinY",
+        "Default" : 0.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id" : "MaxY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MaxY",
+        "Default" : 100,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Assignments",
+      "Type": "AssignmentsConnection",
+      "Color": "Aqua",
+      "Label" : "Assignments"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Delimiter.Sandwich.Assignments.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "MaxY" : "MaxY",
+    "MinY" : "MinY",
+    "Assignments" : {
+      "Node" : "AssignmentsVariants",
+      "Pin" : "Assignments"
+    }
+  }
+}

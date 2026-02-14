@@ -1,0 +1,19 @@
+{
+  "Id": "Mul.DensityCurveMerge",
+  "Title": "Mul - DensityCurveMerge",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "DensityCurveMerge.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Mul"
+  }
+}

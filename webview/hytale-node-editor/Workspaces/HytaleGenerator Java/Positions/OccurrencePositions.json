@@ -1,0 +1,70 @@
+{
+  "Id": "OccurrencePositions",
+  "Title": "Occurrence Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "A",
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PositionsConnection",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions"
+    },
+    {
+      "Id": "DensityConnection",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Multiple" : false,
+      "Label" : "FieldFunction"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Occurrence",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Seed" : "Seed",
+    "FieldFunction" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityConnection"
+    },
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

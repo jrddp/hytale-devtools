@@ -1,0 +1,19 @@
+{
+  "Id": "Max.DensityCurveMerge",
+  "Title": "Max - DensityCurveMerge",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "DensityCurveMerge.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Max"
+  }
+}

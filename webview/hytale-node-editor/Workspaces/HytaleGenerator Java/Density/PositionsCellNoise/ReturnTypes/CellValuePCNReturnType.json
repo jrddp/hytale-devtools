@@ -1,0 +1,40 @@
+{
+  "Id": "CellValuePCNReturnType",
+  "Title": "CellValue ReturnType",
+  "Color": "DarkPink",
+  "Content": [
+    {
+      "Id" : "DefaultValue",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "DefaultValue",
+        "Default" : 0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Density",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Label" : "Density",
+      "Multiple" : false
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "PCN",
+      "Type": "ReturnTypePCNConnection",
+      "Color": "DarkPink"
+    }
+  ],
+  "Schema": {
+    "Type" : "CellValue",
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    },
+    "DefaultValue" : "DefaultValue"
+  }
+}

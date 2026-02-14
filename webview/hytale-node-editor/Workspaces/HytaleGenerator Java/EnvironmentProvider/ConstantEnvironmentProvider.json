@@ -1,0 +1,39 @@
+{
+  "Id": "Constant.EnvironmentProvider",
+  "Title": "Constant EmvironmentProvider",
+  "Color": "110,63,16",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "Environment",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Environment",
+        "Default" : "Unknown",
+        "Width" : 150
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "EnvironmentProvider.Connection",
+      "Color": "110,63,16"
+    }
+  ],
+  "Schema": {
+    "Type" : "Constant",
+    "ExportAs" : "ExportAs",
+    "Environment" : "Environment"
+  }
+}

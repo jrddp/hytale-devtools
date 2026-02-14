@@ -1,0 +1,39 @@
+﻿{
+  "Id": "LoopRandom",
+  "Title": "Loop Operations Random Amount",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "RangeOfAdditionalRepetitions",
+      "Type": "Object",
+      "Options": {
+        "Label": "Range Of Additional Repetitions",
+        "Fields": [
+          { "Id": "Left", "Type": "Int", "Options": { "Label": "Min", "Default": 1 } },
+          { "Id": "Right", "Type": "Int", "Options": { "Label": "Max", "Default": 5 } }
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "looprandom",
+    "StoredIndexName": "StoredIndexName",
+    "RangeOfAdditionalRepetitions": "RangeOfAdditionalRepetitions"
+  }
+}

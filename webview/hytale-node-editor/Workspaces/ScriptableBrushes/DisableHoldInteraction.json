@@ -1,0 +1,18 @@
+{
+  "Id": "DisableHoldInteraction",
+  "Title": "Disable Activate-On-Hold",
+  "Color": "red",
+  "Content": [],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "disableonhold"
+  }
+}
+

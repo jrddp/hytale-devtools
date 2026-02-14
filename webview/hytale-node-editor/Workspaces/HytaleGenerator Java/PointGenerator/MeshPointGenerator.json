@@ -1,0 +1,69 @@
+{
+  "Id": "MeshPointGenerator",
+  "Title": "Mesh Point Generator",
+  "Color": "LightBlue",
+  "Content" : [
+    {
+      "Id" : "Jitter",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Jitter",
+        "Width" : 100,
+        "Default" : 0.4
+      }
+    },
+    {
+      "Id" : "ScaleX",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "ScaleX",
+        "Width" : 100,
+        "Default" : 40
+      }
+    },
+    {
+      "Id" : "ScaleY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "ScaleY",
+        "Width" : 100,
+        "Default" : 40
+      }
+    },
+    {
+      "Id" : "ScaleZ",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "ScaleZ",
+        "Width" : 100,
+        "Default" : 40
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Width" : 100,
+        "Default" : "A"
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Connection",
+      "Type": "PointGeneratorConnection",
+      "Color": "LightBlue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Mesh",
+    "Jitter" : "Jitter",
+    "ScaleX" : "ScaleX",
+    "ScaleY" : "ScaleY",
+    "ScaleZ" : "ScaleZ",
+    "Seed" : "Seed"
+  }
+}

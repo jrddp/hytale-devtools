@@ -1,0 +1,37 @@
+{
+  "Id": "Key.MultiMix.Density",
+  "Title": "Key MultiMix Density",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id": "Value",
+      "Type": "Float",
+      "Options": {
+        "Label": "Value",
+        "Default": 0.0,
+        "Width": 100
+      }
+    },
+    {
+      "Id": "DensityIndex",
+      "Type": "Int",
+      "Options": {
+        "Label": "DensityIndex",
+        "Default": -1,
+        "Width": 40
+      }
+    }
+  ],
+  "Outputs": [],
+  "Inputs": [
+    {
+      "Id": "Key.MultiMix.Output",
+      "Type": "Key.MultiMix.Density.Connection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Value": "Value",
+    "DensityIndex": "DensityIndex"
+  }
+}

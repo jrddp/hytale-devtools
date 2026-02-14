@@ -1,0 +1,19 @@
+{
+  "Id": "Min.DensityCurveMerge",
+  "Title": "Min - DensityCurveMerge",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "DensityCurveMerge.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Min"
+  }
+}

@@ -1,0 +1,36 @@
+﻿{
+  "Id": "LoadLoopFromToolArg",
+  "Title": "Load Loop From Tool Arg",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "ArgName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Arg Name",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loadloop",
+    "StoredIndexName": "StoredIndexName",
+    "ArgName": "ArgName"
+  }
+}

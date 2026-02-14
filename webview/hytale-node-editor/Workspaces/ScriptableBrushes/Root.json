@@ -1,0 +1,23 @@
+﻿{
+  "Id": "Root",
+  "Title": "Root",
+  "Color": "grey",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": true,
+      "Color": "blue",
+      "Label": "Operations"
+    }
+  ],
+  "Schema": {
+    "Operations$Pin": {
+      "node": "OperationVariants",
+      "pin": "OperationPin"
+    }
+  }
+}
+

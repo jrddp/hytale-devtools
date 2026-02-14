@@ -1,0 +1,49 @@
+{
+  "Id": "SolidityMaterialProvider",
+  "Title": "Solidity MaterialProvider",
+  "Color": "110,63,16",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "SolidPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Label" : "Solid"
+    },
+    {
+      "Id": "EmptyPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Label" : "Empty"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16"
+    }
+  ],
+  "Schema": {
+    "Type" : "Solidity",
+    "ExportAs" : "ExportAs",
+    "Solid" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "SolidPin"
+    },
+    "Empty" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "EmptyPin"
+    }
+  }
+}

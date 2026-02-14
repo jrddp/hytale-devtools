@@ -1,0 +1,69 @@
+{
+  "Id": "SmoothClamp.Curve",
+  "Title": "SmoothClamp Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "WallA",
+      "Type": "Float",
+      "Options": {
+        "Label": "WallA",
+        "Default" : 1.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "WallB",
+      "Type": "Float",
+      "Options": {
+        "Label": "WallB",
+        "Default" : -1.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Options": {
+        "Label": "Range",
+        "Default" : 0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Curve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curve"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "SmoothClamp",
+    "ExportAs" : "ExportAs",
+    "WallA" : "WallA",
+    "WallB" : "WallB",
+    "Range" : "Range",
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "Id": "LoadBrushConfig",
+  "Title": "Load Brush Config Snapshot",
+  "Color": "aqua",
+  "Content": [
+    {
+      "Id": "StoredName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "ParametersToLoad",
+      "Type": "List",
+      "Options": {
+        "Label": "Parameters To Load",
+        "ArrayElementType": "DataSettingFlags"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loadbrushconfig",
+    "StoredName": "StoredName",
+    "ParametersToLoad": "ParametersToLoad"
+  }
+}
+

@@ -1,0 +1,38 @@
+{
+  "Id": "Material",
+  "Title": "Material",
+  "Color": "Yellow",
+  "Content" : [
+    {
+      "Id" : "Solid",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Solid",
+        "Default" : "",
+        "Width" : 350
+      }
+    },
+    {
+      "Id" : "Fluid",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Fluid",
+        "Default" : "",
+        "Width" : 350
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Material.Connection",
+      "Color": "Yellow"
+    }
+  ],
+  "Schema": {
+    "Solid" : "Solid",
+    "Fluid" : "Fluid"
+  }
+}

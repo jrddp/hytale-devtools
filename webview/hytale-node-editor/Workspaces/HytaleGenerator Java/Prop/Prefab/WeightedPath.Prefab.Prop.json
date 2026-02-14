@@ -1,0 +1,37 @@
+{
+  "Id": "WeightedPath.Prefab.Prop",
+  "Title": "Weighted Path",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Path",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Path",
+        "Default" : "",
+        "Width" : 700
+      }
+    },
+    {
+      "Id": "Weight",
+      "Type": "Float",
+      "Options": {
+        "Label": "Weight",
+        "Default" : 1.0
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "WeightedPath.Prefab.Prop.Connection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Path" : "Path",
+    "Weight" : "Weight"
+  }
+}

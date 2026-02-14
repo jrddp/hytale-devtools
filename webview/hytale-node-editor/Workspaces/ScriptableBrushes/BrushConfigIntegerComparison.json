@@ -1,0 +1,45 @@
+{
+  "Id": "BrushConfigIntegerComparison",
+  "Title": "Integer Comparison",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "DataGettingFlag",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Data Source",
+        "Width": 120,
+        "Values": ["OffsetX", "OffsetY", "OffsetZ", "Height", "Width", "Density"]
+      }
+    },
+    {
+      "Id": "IntegerComparisonOperator",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Operator",
+        "Width": 180,
+        "Values": ["GreaterThan", "GreaterThanEqualTo", "LessThan", "LessThanEqualTo", "ModEqualZero", "ModNotEqualZero", "EqualTo", "NotEqualTo"]
+      }
+    },
+    {
+      "Id": "ValueToCompareTo",
+      "Type": "Int",
+      "Options": {
+        "Label": "Compare Value",
+        "Default": 0
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "ComparisonPin",
+      "Type": "Comparison",
+      "Color": "purple"
+    }
+  ],
+  "Schema": {
+    "DataGettingFlag": "DataGettingFlag",
+    "IntegerComparisonOperator": "IntegerComparisonOperator",
+    "ValueToCompareTo": "ValueToCompareTo"
+  }
+}

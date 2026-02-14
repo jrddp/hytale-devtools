@@ -1,0 +1,60 @@
+{
+  "Id": "WeightedMaterialProvider",
+  "Title": "Weighted MaterialProvider",
+  "Color": "110,63,16",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "",
+        "Width" : 150
+      }
+    },
+    {
+      "Id" : "SkipChance",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "SkipChance",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "WeightedMaterialsPin",
+      "Type": "WeightedMaterialConnection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "WeightedMaterials"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16"
+    }
+  ],
+  "Schema": {
+    "Type" : "Weighted",
+    "ExportAs" : "ExportAs",
+    "Seed" : "Seed",
+    "SkipChance" : "SkipChance",
+    "WeightedMaterials" : {
+      "Node" : "WeightedMaterial",
+      "Pin" : "WeightedMaterialsPin"
+    }
+  }
+}

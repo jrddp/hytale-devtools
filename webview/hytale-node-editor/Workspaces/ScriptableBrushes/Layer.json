@@ -1,0 +1,30 @@
+﻿{
+  "Id": "Layer",
+  "Title": "Layer",
+  "Color": "blue",
+  "Content": [],
+  "Outputs": [
+    {
+      "Id": "LayersPin",
+      "Type": "LayerEntry",
+      "Multiple": true,
+      "Label": "Layers",
+      "Color": "aqua"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "layer",
+    "Layers$Pin": {
+      "node": "LayerEntry",
+      "pin": "LayersPin"
+    }
+  }
+}

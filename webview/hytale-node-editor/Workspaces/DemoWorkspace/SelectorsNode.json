@@ -1,0 +1,33 @@
+{
+  "Id": "Selectors",
+  "Title": "Selectors Root",
+  "Color": "Purple",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "DemoPinMap",
+      "Type": "Demo",
+      "Color": "Olive",
+      "Multiple": true,
+      "Label": "Map",
+      "IsMap": true
+    },
+	{
+      "Id": "SelectorsPinList",
+      "Type": "Selector",
+      "Color": "Olive",
+      "Multiple": true,
+      "Label": "List"
+    }
+  ],
+  "Schema": {
+    "DemoMap": {
+      "Node": "Demo",
+      "Pin": "DemoPinMap"
+    },
+    "SelectorsList": {
+      "Node": "Selector",
+      "Pin": "SelectorsPinList"
+    }
+  }
+}

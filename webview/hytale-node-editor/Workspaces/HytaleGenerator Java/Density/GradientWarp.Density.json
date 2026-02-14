@@ -1,0 +1,87 @@
+{
+  "Id": "GradientWarp.Density",
+  "Title": "GradientWarp Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "SampleRange",
+      "Type": "Float",
+      "Options": {
+        "Label": "SampleRange",
+        "Default" : 1,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "WarpFactor",
+      "Type": "Float",
+      "Options": {
+        "Label": "WarpFactor",
+        "Default" : 1,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "2D",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "2D Output",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "YFor2D",
+      "Type": "Float",
+      "Options": {
+        "Label": "Y for 2D",
+        "Default" : 0
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "GradientWarp",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "SampleRange" : "SampleRange",
+    "WarpFactor" : "WarpFactor",
+    "2D" : "2D",
+    "YFor2D" : "YFor2D",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

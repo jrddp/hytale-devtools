@@ -1,0 +1,36 @@
+﻿{
+  "Id": "Loop",
+  "Title": "Loop Operations",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "AdditionalRepetitions",
+      "Type": "Int",
+      "Options": {
+        "Label": "Additional Repetitions"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loop",
+    "StoredIndexName": "StoredIndexName",
+    "AdditionalRepetitions": "AdditionalRepetitions"
+  }
+}
+

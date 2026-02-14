@@ -1,0 +1,40 @@
+{
+  "Id": "ConstantThicknessLayerSADMP",
+  "Title": "ConstantThickness Layer SADMP",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "Thickness",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Thickness",
+        "Default" : 1,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Multiple" : false,
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "LayerSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "ConstantThickness",
+    "Thickness" : "Thickness",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    }
+  }
+}

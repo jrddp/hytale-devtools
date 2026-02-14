@@ -1,0 +1,139 @@
+{
+  "WorkspaceName": "Scriptable Brushes",
+  "FileFormat": "json",
+  "Roots": {
+    "DropList": {
+      "RootNodeType": "Root",
+      "MenuName": "Scriptable Brush"
+    }
+  },
+  "NodeCategories": {
+    "General": [
+      "Root",
+      "IntegerStringPair",
+      "BrushConfigIntegerComparison",
+      "LayerEntry"
+    ],
+    "Basic Operations": [
+      "Set",
+      "Shape",
+      "BlockPattern",
+      "Dimensions",
+      "RandomizeDimensions",
+      "Offset",
+      "RandomOffset",
+      "SetDensity",
+      "Melt",
+      "Smooth",
+      "Delete",
+      "Lift",
+      "Erode",
+      "Replace"
+    ],
+    "Masks": [
+      "Mask",
+      "HistoryMask",
+      "ClearOperationMask",
+      "UseBrushMask",
+      "UseOperationMask",
+      "AppendMask",
+      "AppendMaskFromToolArg"
+    ],
+    "Flow Control": [
+      "SaveIndex",
+      "Loop",
+      "LoopRandom",
+      "LoopCircle",
+      "LoadLoopFromToolArg",
+      "LoopCircleFromArg",
+      "JumpToIndex",
+      "JumpToRandomIndex",
+      "JumpIfStringMatch",
+      "JumpIfClickType",
+      "JumpIfCompare",
+      "JumpIfBlockType",
+      "JumpIfToolArg",
+      "Exit"
+    ],
+    "Save/Load": [
+      "SaveBrushConfig",
+      "LoadBrushConfig",
+      "LoadOperationsFromAsset",
+      "LoadMaterial",
+      "PersistentData",
+      "LoadIntFromToolArg"
+    ],
+    "Other": [
+      "Echo",
+      "EchoOnce",
+      "RunCommand",
+      "Layer",
+      "HeightmapLayer",
+      "Material",
+      "PastePrefab",
+      "DebugBrush",
+      "Breakpoint",
+      "DisableHoldInteraction",
+      "IgnoreExistingBrushData"
+    ]
+  },
+  "Variants": {
+    "OperationVariants": {
+      "VariantFieldName": "Id",
+      "Variants": {
+        "loadmaterial": "LoadMaterial",
+        "set": "Set",
+        "shape": "Shape",
+        "pattern": "BlockPattern",
+        "dimensions": "Dimensions",
+        "randomdimensions": "RandomizeDimensions",
+        "offset": "Offset",
+        "randomoffset": "RandomOffset",
+        "density": "SetDensity",
+        "melt": "Melt",
+        "smooth": "Smooth",
+        "delete": "Delete",
+        "lift": "Lift",
+        "erode": "Erode",
+        "replace": "Replace",
+        "mask": "Mask",
+        "historymask": "HistoryMask",
+        "clearoperationmask": "ClearOperationMask",
+        "usebrushmask": "UseBrushMask",
+        "useoperationmask": "UseOperationMask",
+        "appendmask": "AppendMask",
+        "appendmaskfromtoolarg": "AppendMaskFromToolArg",
+        "saveindex": "SaveIndex",
+        "loop": "Loop",
+        "loadloop": "LoadLoopFromToolArg",
+        "loopcirclefromarg": "LoopCircleFromArg",
+        "looprandom": "LoopRandom",
+        "loopcircle": "LoopCircle",
+        "jump": "JumpToIndex",
+        "jumprandom": "JumpToRandomIndex",
+        "jumpifequal": "JumpIfStringMatch",
+        "jumpifclicktype": "JumpIfClickType",
+        "jumpifcompare": "JumpIfCompare",
+        "jumpifblocktype": "JumpIfBlockType",
+        "exit": "Exit",
+        "echo": "Echo",
+        "runcommand": "RunCommand",
+        "layer": "Layer",
+        "heightmaplayer": "HeightmapLayer",
+        "material": "Material",
+        "pasteprefab": "PastePrefab",
+        "savebrushconfig": "SaveBrushConfig",
+        "loadbrushconfig": "LoadBrushConfig",
+        "persistentdata": "PersistentData",
+        "loadoperationsfromasset": "LoadOperationsFromAsset",
+        "jumpiftoolarg": "JumpIfToolArg",
+        "echoonce": "EchoOnce",
+        "debug": "DebugBrush",
+        "breakpoint": "Breakpoint",
+        "disableonhold": "DisableHoldInteraction",
+        "ignorebrushsettings": "IgnoreExistingBrushData",
+        "loadint": "LoadIntFromToolArg"
+      }
+    }
+  }
+}

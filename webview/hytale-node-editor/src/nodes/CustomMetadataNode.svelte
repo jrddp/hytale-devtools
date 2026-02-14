@@ -7,7 +7,7 @@
     getDefaultTemplate,
     getTemplateById,
     findTemplateByTypeName,
-  } from "../node-editor/sampleNodeTemplates.js";
+  } from "../node-editor/templateCatalog.js";
   import {
     buildFieldValueMap,
     getFieldLabel,

@@ -1,0 +1,38 @@
+{
+  "Id": "CurvePoint",
+  "Title": "Curve Point",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id": "In",
+      "Type": "Float",
+      "Options": {
+        "Label": "In",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Out",
+      "Type": "Float",
+      "Options": {
+        "Label": "Out",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurvePointConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "In" : "In",
+    "Out" : "Out"  
+  }
+}

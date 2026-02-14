@@ -1,0 +1,28 @@
+﻿{
+  "Id": "Echo",
+  "Title": "Echo to Chat",
+  "Color": "orange",
+  "Content": [
+    {
+      "Id": "Message",
+      "Type": "String",
+      "Options": {
+        "Label": "Message",
+        "Width": 350,
+        "Height": 100
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "echo",
+    "Message": "Message"
+  }
+}

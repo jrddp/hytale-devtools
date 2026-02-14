@@ -1,0 +1,48 @@
+{
+  "Id": "DensityGradient.VectorProvider",
+  "Title": "DensityGradient VectorProvider",
+  "Color": "Green",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "SampleDistance",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "SampleDistance",
+        "Default" : 1.0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Density",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Label" : "Density"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "VectorProvider.Connection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "DensityGradient",
+    "ExportAs" : "ExportAs",
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "Id": "SpaceAndDepthMaterialProvider",
+  "Title": "SpaceAndDepth MaterialProvider",
+  "Color": "110,63,16",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "LayerContext",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "LayerContext",
+        "Default" : "DEPTH_INTO_FLOOR",
+        "Width" : 200
+      }
+    },
+    {
+      "Id" : "MaxExpectedDepth",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "MaxExpectedDepth",
+        "Default" : 3,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ConditionPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange",
+      "Multiple" : false,
+      "Label" : "Condition"
+    },
+    {
+      "Id": "LayersPin",
+      "Type": "LayerSADMPConnection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Layers"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16"
+    }
+  ],
+  "Schema": {
+    "Type" : "SpaceAndDepth",
+    "ExportAs" : "ExportAs",
+    "LayerContext" : "LayerContext",
+    "MaxExpectedDepth" : "MaxExpectedDepth",
+    "Condition" : {
+      "Node" : "ConditionSADMPVariants",
+      "Pin" : "ConditionPin"
+    },
+    "Layers" : {
+      "Node" : "LayerSADMPVariants",
+      "Pin" : "LayersPin"
+    }
+  }
+}

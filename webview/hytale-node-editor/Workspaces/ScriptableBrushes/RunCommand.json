@@ -1,0 +1,28 @@
+﻿{
+  "Id": "RunCommand",
+  "Title": "Run Command",
+  "Color": "orange",
+  "Content": [
+    {
+      "Id": "CommandToRun",
+      "Type": "String",
+      "Options": {
+        "Label": "Command To Run",
+        "Width": 350,
+        "Height": 60
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "runcommand",
+    "CommandToRun": "CommandToRun"
+  }
+}

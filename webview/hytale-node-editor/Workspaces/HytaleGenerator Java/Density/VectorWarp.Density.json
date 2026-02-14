@@ -1,0 +1,69 @@
+{
+  "Id": "VectorWarp.Density",
+  "Title": "VectorWarp Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "WarpFactor",
+      "Type": "Float",
+      "Options": {
+        "Label": "WarpFactor",
+        "Default" : 1,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    },
+    {
+      "Id" : "WarpVector",
+      "Type" : "Point3D.Connection",
+      "Color" : "Orange",
+      "Label" : "WarpVector"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "VectorWarp",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "WarpFactor" : "WarpFactor",
+    "WarpVector" : {
+      "Node" : "Point3D",
+      "Pin" : "WarpVector"
+    },
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

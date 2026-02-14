@@ -1,0 +1,38 @@
+{
+  "Id": "Weight.Weighted.Assignments",
+  "Title": "Weight",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Weight",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Weight",
+        "Default" : 1.0,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Assignments",
+      "Type": "AssignmentsConnection",
+      "Color": "Aqua",
+      "Label" : "Assignments"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Weight.Weighted.Assignments.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Weight" : "Weight",
+    "Assignments" : {
+      "Node" : "AssignmentsVariants",
+      "Pin" : "Assignments"
+    }
+  }
+}

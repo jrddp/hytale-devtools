@@ -1,0 +1,33 @@
+{
+  "Id": "IntegerStringPair",
+  "Title": "Weighted Index Entry",
+  "Color": "grey",
+  "Content": [
+    {
+      "Id": "Left",
+      "Type": "Int",
+      "Options": {
+        "Label": "Weight"
+      }
+    },
+    {
+      "Id": "Right",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Index Name",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "WeightedIndexPin",
+      "Type": "WeightedIndex",
+      "Color": "grey"
+    }
+  ],
+  "Schema": {
+    "Left": "Left",
+    "Right": "Right"
+  }
+}

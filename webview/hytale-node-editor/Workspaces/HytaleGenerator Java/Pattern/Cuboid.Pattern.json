@@ -1,0 +1,68 @@
+{
+  "Id": "Cuboid.Pattern",
+  "Title": "Cuboid Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Max",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Max"
+    },
+    {
+      "Id": "Min",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Min"
+    },
+    {
+      "Id": "SubPattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "SubPattern"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Cuboid",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Max" : {
+      "Node" : "Point3D",
+      "Pin" : "Max"
+    },
+    "Min" : {
+      "Node" : "Point3D",
+      "Pin" : "Min"
+    },
+    "SubPattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "SubPattern"
+    }
+  }
+}

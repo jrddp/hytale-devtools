@@ -1,0 +1,29 @@
+{
+  "Id": "Imported.Assignments",
+  "Title": "Imported Assignments",
+  "Color": "Aqua",
+  "Content" : [
+    {
+      "Id" : "Name",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Name",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "AssignmentsConnection",
+      "Color": "Aqua"
+    }
+  ],
+  "Schema": {
+    "Type" : "Imported",
+    "Name" : "Name"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "Id": "BlockMask",
+  "Title": "BlockMask",
+  "Color": "Olive",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "Import",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Import",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "DontPlace",
+      "Type": "BlockSet.BlockMask.Connection",
+      "Color": "Yellow",
+      "Label" : "DontPlace"
+    },
+    {
+      "Id": "DontReplace",
+      "Type": "BlockSet.BlockMask.Connection",
+      "Color": "Yellow",
+      "Label" : "DontReplace"
+    },
+    {
+      "Id": "Advanced",
+      "Type": "Rule.BlockMask.Connection",
+      "Color": "Orange",
+      "Label" : "Advanced",
+      "Multiple" : true
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "BlockMask.Connection",
+      "Color": "Olive"
+    }
+  ],
+  "Schema": {
+    "ExportAs" : "ExportAs",
+    "Import" : "Import",
+    "DontPlace" : {
+      "Node" : "BlockSet.BlockMask",
+      "Pin" : "DontPlace"
+    },
+    "DontReplace" : {
+      "Node" : "BlockSet.BlockMask",
+      "Pin" : "DontReplace"
+    },
+    "Advanced" : {
+      "Node" : "Rule.BlockMask",
+      "Pin" : "Advanced"
+    }
+  }
+}

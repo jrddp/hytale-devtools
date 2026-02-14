@@ -12,12 +12,17 @@
 
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
-  import { SAMPLE_NODE_TEMPLATES } from "./node-editor/sampleNodeTemplates.js";
+  import {
+    getDefaultTemplate,
+    getTemplates,
+    setActiveTemplateSourceMode,
+  } from "./node-editor/templateCatalog.js";
   import { CUSTOM_NODE_TYPE } from "./node-editor/types.js";
 
   export let nodes = createDefaultNodes();
   export let edges = [];
   export let loadVersion = 0;
+  export let templateSourceMode = "workspace-hg-java";
 
   const dispatch = createEventDispatcher();
 
@@ -40,6 +45,12 @@
   let hasAppliedInitialFit = false;
   let initialFitInProgress = false;
   let initialViewportReady = false;
+  let availableTemplates = [];
+
+  $: if (templateSourceMode) {
+    setActiveTemplateSourceMode(templateSourceMode);
+    availableTemplates = getTemplates();
+  }
 
   $: if (loadVersion !== lastNormalizedLoadVersion) {
     lastNormalizedLoadVersion = loadVersion;
@@ -249,7 +260,10 @@
   }
 
   function createDefaultNodes() {
-    const defaultTemplate = SAMPLE_NODE_TEMPLATES[0];
+    const defaultTemplate = getDefaultTemplate();
+    if (!defaultTemplate) {
+      return [];
+    }
 
     return [
       {
@@ -375,7 +389,7 @@
     open={addMenuOpen}
     openVersion={addMenuOpenVersion}
     position={addMenuPosition}
-    templates={SAMPLE_NODE_TEMPLATES}
+    templates={availableTemplates}
     on:close={closeAddNodeMenu}
     on:select={handleMenuSelect}
   />

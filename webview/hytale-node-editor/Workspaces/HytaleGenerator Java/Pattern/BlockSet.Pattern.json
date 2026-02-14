@@ -1,0 +1,48 @@
+{
+  "Id": "BlockSet.Pattern",
+  "Title": "BlockSet Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "BlockSet",
+      "Type" : "BlockSet.BlockMask.Connection",
+      "Color" : "Yellow",
+      "Label" : "BlockSet"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "BlockSet",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "BlockSet" : {
+      "Node" : "BlockSet.BlockMask",
+      "Pin" : "BlockSet"
+    }
+  }
+}

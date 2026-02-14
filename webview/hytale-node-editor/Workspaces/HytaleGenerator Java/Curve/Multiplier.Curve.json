@@ -1,0 +1,40 @@
+{
+  "Id": "Multiplier.Curve",
+  "Title": "Multiplier Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Curves",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curves",
+      "Multiple" : true
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Multiplier",
+    "ExportAs" : "ExportAs",
+    "Curves" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curves"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+﻿{
+  "Id": "UseBrushMask",
+  "Title": "Use Brush Mask",
+  "Color": "green",
+  "Content": [
+    {
+      "Id": "UseBrushMask",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Use Brush Mask"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "usebrushmask",
+    "UseBrushMask": "UseBrushMask"
+  }
+}
+

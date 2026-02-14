@@ -1,0 +1,39 @@
+{
+  "Id": "Case.Switch.Density",
+  "Title": "Switch Case",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "CaseState",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "CaseState",
+        "Default" : "Default",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "Density",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : false,
+      "Label" : "Density"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Case.Switch.Density.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "CaseState" : "CaseState",
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    }
+  }
+}

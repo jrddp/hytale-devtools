@@ -1,0 +1,58 @@
+{
+  "Id": "Ceiling.Pattern",
+  "Title": "Ceiling Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Ceiling",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Ceiling"
+    },
+    {
+      "Id": "Origin",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Origin"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Ceiling",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Ceiling" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Ceiling"
+    },
+    "Origin" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Origin"
+    }
+  }
+}

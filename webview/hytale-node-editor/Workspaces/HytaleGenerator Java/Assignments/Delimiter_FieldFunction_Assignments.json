@@ -1,0 +1,48 @@
+{
+  "Id": "Delimiter.FieldFunction.Assignments",
+  "Title": "FieldFunction Delimiter",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Min",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Min",
+        "Default" : 0.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id" : "Max",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Max",
+        "Default" : 0.0,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Assignments",
+      "Type": "AssignmentsConnection",
+      "Color": "Aqua",
+      "Label" : "Assignments"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Delimiter.FieldFunction.Assignments.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Max" : "Max",
+    "Min" : "Min",
+    "Assignments" : {
+      "Node" : "AssignmentsVariants",
+      "Pin" : "Assignments"
+    }
+  }
+}

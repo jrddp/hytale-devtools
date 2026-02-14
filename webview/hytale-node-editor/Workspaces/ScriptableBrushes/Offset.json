@@ -1,0 +1,83 @@
+﻿{
+  "Id": "Offset",
+  "Title": "Modify Offset",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "Offset",
+      "Type": "Object",
+      "Options": {
+        "Label": "Offset",
+        "Fields": [
+          {
+            "Id": "X",
+            "Type": "Object",
+            "Options": {
+              "Label": "X",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Y",
+            "Type": "Object",
+            "Options": {
+              "Label": "Y",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Z",
+            "Type": "Object",
+            "Options": {
+              "Label": "Z",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Id": "TargetField",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Relative To Field",
+        "Width": 120,
+        "Default": "None",
+        "Values": [
+          "None",
+          "Width",
+          "Height",
+          "Density",
+          "Thickness",
+          "OffsetX",
+          "OffsetY",
+          "OffsetZ"
+        ]
+      }
+    },
+    { "Id": "Negate", "Type": "Checkbox", "Options": { "Label": "Negate" } }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "offset",
+    "Offset": "Offset",
+    "TargetField": "TargetField",
+    "Negate": "Negate"
+  }
+}

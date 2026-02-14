@@ -1,0 +1,28 @@
+{
+  "Id": "LoadOperationsFromAsset",
+  "Title": "Load Operations From Asset",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "AssetId",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Asset Id",
+        "Width": 200
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loadoperationsfromasset",
+    "AssetId": "AssetId"
+  }
+}
+

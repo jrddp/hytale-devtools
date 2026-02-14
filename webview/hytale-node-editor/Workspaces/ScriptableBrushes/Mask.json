@@ -1,0 +1,28 @@
+﻿{
+  "Id": "Mask",
+  "Title": "Set Operation Mask",
+  "Color": "green",
+  "Content": [
+    {
+      "Id": "Mask",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Mask",
+        "Width": 300
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "mask",
+    "Mask": "Mask"
+  }
+}
+

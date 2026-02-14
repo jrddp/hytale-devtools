@@ -1,0 +1,41 @@
+﻿{
+  "Id": "JumpIfClickType",
+  "Title": "Jump If Click Type",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "ClickType",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Click Type",
+        "Width": 100,
+        "Values": [
+          "Left",
+          "Right"
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "jumpifclicktype",
+    "StoredIndexName": "StoredIndexName",
+    "ClickType": "ClickType"
+  }
+}
+

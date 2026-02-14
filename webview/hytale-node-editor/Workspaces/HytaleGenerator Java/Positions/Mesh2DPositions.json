@@ -1,0 +1,58 @@
+{
+  "Id": "Mesh2DPositions",
+  "Title": "Mesh2D Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "PointsY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "PointsY",
+        "Width" : 100,
+        "Default" : 0
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PointGeneratorConnection",
+      "Type": "PointGeneratorConnection",
+      "Color": "LightBlue",
+      "Label" : "PointGenerator"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Mesh2D",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "PointsY" : "PointsY",
+    "PointGenerator" : {
+      "Node" : "PointGeneratorVariants",
+      "Pin" : "PointGeneratorConnection"
+    }
+  }
+}

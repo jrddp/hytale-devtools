@@ -1,0 +1,47 @@
+{
+  "Id": "Delimiter",
+  "Title": "Delimiter",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "Min",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Min",
+        "Default" : -1,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "Max",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Max",
+        "Default" : 1,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "PositionsDelimiterConnection",
+      "Type": "PositionsDelimiterConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Min" : "Min",
+    "Max" : "Max"
+  }
+}

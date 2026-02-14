@@ -1,0 +1,39 @@
+{
+  "Id": "Inverter.Curve",
+  "Title": "Inverter Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Curve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curve"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Inverter",
+    "ExportAs" : "ExportAs",
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    }
+  }
+}

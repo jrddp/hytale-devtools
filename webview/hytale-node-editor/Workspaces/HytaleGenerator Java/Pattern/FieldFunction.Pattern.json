@@ -1,0 +1,59 @@
+{
+  "Id": "FieldFunction.Pattern",
+  "Title": "FieldFunction Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "FieldFunction",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Label" : "FieldFunction"
+    },
+    {
+      "Id": "Delimiters",
+      "Type": "Delimiter.FieldFunction.Pattern.Connection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Delimiters"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "FieldFunction",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "FieldFunction" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "FieldFunction"
+    },
+    "Delimiters" : {
+      "Node" : "Delimiter.FieldFunction.Pattern",
+      "Pin" : "Delimiters"
+    }
+  }
+}

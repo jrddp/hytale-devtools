@@ -1,0 +1,26 @@
+{
+  "Id": "ActionSetLeashPosition",
+  "Title": "Set Leash Position",
+  "Color": "Aqua",
+  "Inputs": [
+    {
+      "Id": "ActionPin",
+      "Type": "Action",
+      "Color": "Aqua",
+      "Multiple": false
+    }
+  ],
+  "Content": [
+    {
+      "Id": "ToTargetField",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "To Target"
+      }
+    }
+  ],
+  "Schema": {
+    "Type": "SetLeashPosition",
+    "ToTarget": "ToTargetField"
+  }
+}

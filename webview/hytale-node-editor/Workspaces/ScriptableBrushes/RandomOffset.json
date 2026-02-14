@@ -1,0 +1,114 @@
+﻿{
+  "Id": "RandomOffset",
+  "Title": "Randomize Offset",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "XOffsetRange",
+      "Type": "Object",
+      "Options": {
+        "Label": "X Offset Range",
+        "Fields": [
+          {
+            "Id": "Min",
+            "Type": "Object",
+            "Options": {
+              "Label": "Min",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Max",
+            "Type": "Object",
+            "Options": {
+              "Label": "Max",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Id": "YOffsetRange",
+      "Type": "Object",
+      "Options": {
+        "Label": "Y Offset Range",
+        "Fields": [
+          {
+            "Id": "Min",
+            "Type": "Object",
+            "Options": {
+              "Label": "Min",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Max",
+            "Type": "Object",
+            "Options": {
+              "Label": "Max",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Id": "ZOffsetRange",
+      "Type": "Object",
+      "Options": {
+        "Label": "Z Offset Range",
+        "Fields": [
+          {
+            "Id": "Min",
+            "Type": "Object",
+            "Options": {
+              "Label": "Min",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          },
+          {
+            "Id": "Max",
+            "Type": "Object",
+            "Options": {
+              "Label": "Max",
+              "Fields": [
+                { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 0 } },
+                { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "randomoffset",
+    "XOffsetRange": "XOffsetRange",
+    "YOffsetRange": "YOffsetRange",
+    "ZOffsetRange": "ZOffsetRange"
+  }
+}

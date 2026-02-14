@@ -1,0 +1,78 @@
+{
+  "Id": "Biome",
+  "Title": "Biome",
+  "Color": "Grey",
+  "Content" : [
+    {
+      "Id" : "Name",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Name",
+        "Default" : "",
+        "Width" : 200
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "TerrainPin",
+      "Type" : "Terrain.Connection",
+      "Color" : "Grey",
+      "Label" : "Terrain",
+      "Multiple" : false
+    },
+    {
+      "Id" : "MaterialProviderPin",
+      "Type" : "MaterialProviderConnection",
+      "Color" : "110,63,16",
+      "Label" : "MaterialProvider",
+      "Multiple" : false
+    },
+    {
+      "Id" : "PropsPin",
+      "Type" : "RuntimeConnection",
+      "Color" : "Grey",
+      "Label" : "Props",
+      "Multiple" : true
+    },
+    {
+      "Id" : "EnvironmentProviderPin",
+      "Type" : "EnvironmentProvider.Connection",
+      "Color" : "110,63,16",
+      "Label" : "EnvironmentProvider",
+      "Multiple" : false
+    },
+    {
+      "Id" : "TintProviderPin",
+      "Type" : "TintProvider.Connection",
+      "Color" : "110,63,16",
+      "Label" : "TintProvider",
+      "Multiple" : false
+    }
+  ],
+  "Inputs": [
+  ],
+  "Schema": {
+    "Name" : "Name",
+    "Terrain" : {
+      "Node" : "Terrain",
+      "Pin" : "TerrainPin"
+    },
+    "MaterialProvider" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialProviderPin"
+    },
+    "Props" : {
+      "Node" : "Runtime",
+      "Pin" : "PropsPin"
+    },
+    "EnvironmentProvider" : {
+      "Node" : "EnvironmentProvider.Variants",
+      "Pin" : "EnvironmentProviderPin"
+    },
+    "TintProvider" : {
+      "Node" : "TintProvider.Variants",
+      "Pin" : "TintProviderPin"
+    }
+  }
+}

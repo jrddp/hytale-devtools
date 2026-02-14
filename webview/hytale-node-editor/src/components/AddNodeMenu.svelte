@@ -61,12 +61,10 @@
       grouped.get(category).push(template);
     }
 
-    return Array.from(grouped.entries())
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([category, items]) => ({
-        category,
-        items: items.sort((left, right) => left.label.localeCompare(right.label)),
-      }));
+    return Array.from(grouped.entries()).map(([category, items]) => ({
+      category,
+      items,
+    }));
   }
 
   function annotateGroupedTemplates(groups) {
@@ -153,7 +151,7 @@
     role="dialog"
     aria-label="Add node menu"
     tabindex="-1"
-    class="absolute z-[3001] w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
+    class="absolute z-3001 w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
     style:left={`${position.x}px`}
     style:top={`${position.y}px`}
     onkeydown={handleKeyDown}

@@ -1,0 +1,58 @@
+{
+  "Id": "Offset.Pattern",
+  "Title": "Offset Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    },
+    {
+      "Id": "Offset.Pin",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Offset"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Offset",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Offset" : {
+      "Node" : "Point3D",
+      "Pin" : "Offset.Pin"
+    }
+  }
+}

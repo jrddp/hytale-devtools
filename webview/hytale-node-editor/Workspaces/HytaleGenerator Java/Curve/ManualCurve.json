@@ -1,0 +1,45 @@
+{
+  "Id": "ManualCurve",
+  "Title": "Manual Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "Points",
+      "Type" : "CurvePointConnection",
+      "Color" : "Yellow",
+      "Label" : "Points",
+      "Multiple" : true
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    },
+    {
+      "Id": "Restricted.Input",
+      "Type": "Manual.Curve.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Manual",
+    "ExportAs" : "ExportAs",
+    "Points" : {
+      "Node" : "CurvePoint",
+      "Pin" : "Points"
+    }
+  }
+}

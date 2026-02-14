@@ -1,0 +1,61 @@
+﻿{
+  "Id": "LoopCircleFromArg",
+  "Title": "Loop Previous And Set Offset In Circle From Arg",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "NumberCirclePointsArg",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Number of Circle Points Arg",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "CircleRadiusArg",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Circle Radius Arg",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "FlipDirection",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Flip Direction"
+      }
+    },
+    {
+      "Id": "RotateDirection",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Rotate Direction"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "loopcirclefromarg",
+    "StoredIndexName": "StoredIndexName",
+    "NumberCirclePointsArg": "NumberCirclePointsArg",
+    "CircleRadiusArg": "CircleRadiusArg",
+    "FlipDirection": "FlipDirection",
+    "RotateDirection": "RotateDirection"
+  }
+}

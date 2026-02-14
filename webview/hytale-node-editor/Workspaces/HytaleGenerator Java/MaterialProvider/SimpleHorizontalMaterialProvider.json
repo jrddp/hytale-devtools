@@ -1,0 +1,80 @@
+{
+  "Id": "SimpleHorizontalMaterialProvider",
+  "Title": "SimpleHorizontal MaterialProvider",
+  "Color": "110,63,16",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "TopY",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "TopY",
+        "Default" : "64",
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "TopBaseHeight",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Top BaseHeight",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "BottomY",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "BottomY",
+        "Default" : "0",
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "BottomBaseHeight",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Bottom BaseHeight",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Multiple" : false,
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16"
+    }
+  ],
+  "Schema": {
+    "Type" : "SimpleHorizontal",
+    "ExportAs" : "ExportAs",
+    "TopY" : "TopY",
+    "TopBaseHeight" : "TopBaseHeight",
+    "BottomY" : "BottomY",
+    "BottomBaseHeight" : "BottomBaseHeight",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "Id": "Distance2AddPCNReturnType",
+  "Title": "Distance2Add ReturnType",
+  "Color": "DarkPink",
+  "Content": [
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "PCN",
+      "Type": "ReturnTypePCNConnection",
+      "Color": "DarkPink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Distance2Add"
+  }
+}

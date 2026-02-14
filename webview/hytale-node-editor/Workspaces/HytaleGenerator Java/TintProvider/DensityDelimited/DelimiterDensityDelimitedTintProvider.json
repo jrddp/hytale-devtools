@@ -1,0 +1,38 @@
+{
+  "Id": "Delimiter.DensityDelimited.TintProvider",
+  "Title": "Delimiter DDTP",
+  "Color": "Orange",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id": "Tint",
+      "Type": "TintProvider.Connection",
+      "Color": "110,63,16",
+      "Label" : "Tint"
+    },
+    {
+      "Id": "Range",
+      "Type": "Decimal.Range.Connection",
+      "Color": "110,63,16",
+      "Label" : "Range"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Delimiter.DensityDelimited.TintProvider.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Tint" : {
+      "Node" : "TintProvider.Variants",
+      "Pin" : "Tint"
+    },
+    "Range" : {
+      "Node" : "Decimal.Range",
+      "Pin" : "Range"
+    }
+  }
+}

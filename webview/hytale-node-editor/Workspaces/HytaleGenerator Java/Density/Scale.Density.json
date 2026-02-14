@@ -1,0 +1,79 @@
+{
+  "Id": "Scale.Density",
+  "Title": "Scale Density",
+  "Color": "Purple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "ScaleX",
+      "Type": "Float",
+      "Options": {
+        "Label": "ScaleX",
+        "Default" : 1,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "ScaleY",
+      "Type": "Float",
+      "Options": {
+        "Label": "ScaleY",
+        "Default" : 1,
+        "Width" : 70
+      }
+    },
+    {
+      "Id": "ScaleZ",
+      "Type": "Float",
+      "Options": {
+        "Label": "ScaleZ",
+        "Default" : 1,
+        "Width" : 70
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id" : "DensityInputs",
+      "Type" : "DensityConnection",
+      "Color" : "Purple",
+      "Multiple" : true,
+      "Label" : "Inputs"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Scale",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "ScaleX" : "ScaleX",
+    "ScaleY" : "ScaleY",
+    "ScaleZ" : "ScaleZ",
+    "Inputs" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityInputs"
+    }
+  }
+}

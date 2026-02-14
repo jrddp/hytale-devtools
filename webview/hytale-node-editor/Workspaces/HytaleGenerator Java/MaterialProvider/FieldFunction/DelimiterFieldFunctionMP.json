@@ -1,0 +1,48 @@
+{
+  "Id": "DelimiterFieldFunctionMP",
+  "Title": "Delimiter FFMP",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "From",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "From",
+        "Default" : 0.0,
+        "Width" : 50
+      }
+    },
+    {
+      "Id" : "To",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "To",
+        "Default" : 1.0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "DelimiterFFMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "From" : "From",
+    "To" : "To",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "Id": "Floor.Curve",
+  "Title": "Floor Curve",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Floor_",
+      "Type": "Float",
+      "Options": {
+        "Label": "Floor",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Curve",
+      "Type": "CurveConnection",
+      "Color": "Orange",
+      "Label" : "Curve"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "CurveConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Floor",
+    "ExportAs" : "ExportAs",
+    "Floor" : "Floor_",
+    "Curve" : {
+      "Node" : "CurveVariants",
+      "Pin" : "Curve"
+    }
+  }
+}

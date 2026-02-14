@@ -1,0 +1,57 @@
+{
+  "Id": "Sphere.Positions",
+  "Title": "Sphere Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Options": {
+        "Label": "Range",
+        "Default" : 0.0
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Label" : "Positions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Sphere",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Range" : "Range",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Positions"
+    }
+  }
+}

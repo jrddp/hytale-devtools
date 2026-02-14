@@ -1,0 +1,36 @@
+﻿{
+  "Id": "JumpIfBlockType",
+  "Title": "Jump If Block Type Comparison",
+  "Color": "purple",
+  "Content": [
+    {
+      "Id": "Mask",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Mask",
+        "Width": 200
+      }
+    },
+    {
+      "Id": "StoredIndexName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Stored Index Name",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "jumpifblocktype",
+    "Mask": "Mask",
+    "StoredIndexName": "StoredIndexName"
+  }
+}

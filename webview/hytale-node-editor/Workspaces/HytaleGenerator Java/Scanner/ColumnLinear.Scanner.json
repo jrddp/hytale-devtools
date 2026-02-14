@@ -1,0 +1,93 @@
+{
+  "Id": "ColumnLinear.Scanner",
+  "Title": "ColumnLinear Scanner",
+  "Color": "LightPurple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "MaxY",
+      "Type": "Int",
+      "Options": {
+        "Label": "MaxY",
+        "Default" : 120
+      }
+    },
+    {
+      "Id": "MinY",
+      "Type": "Int",
+      "Options": {
+        "Label": "MinY",
+        "Default" : 60
+      }
+    },
+    {
+      "Id": "RelativeToPosition",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "RelativeToPosition",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "BaseHeightName",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "BaseHeightName",
+        "Default" : "Base",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "TopDownOrder",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "TopDownOrder",
+        "Default" : true
+      }
+    },
+    {
+      "Id": "ResultCap",
+      "Type": "Int",
+      "Options": {
+        "Label": "ResultCap",
+        "Default" : 1
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple"
+    }
+  ],
+  "Schema": {
+    "Type" : "ColumnLinear",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "MaxY" : "MaxY",
+    "MinY" : "MinY",
+    "RelativeToPosition" : "RelativeToPosition",
+    "BaseHeightName" : "BaseHeightName",
+    "TopDownOrder" : "TopDownOrder",
+    "ResultCap" : "ResultCap"
+  }
+}

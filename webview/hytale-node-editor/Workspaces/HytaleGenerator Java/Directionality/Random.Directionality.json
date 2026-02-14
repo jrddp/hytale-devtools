@@ -1,0 +1,49 @@
+{
+  "Id": "Random.Directionality",
+  "Title": "Random Directionality",
+  "Color": "Magenta",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "A",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Directionality.Connection",
+      "Color": "Magenta"
+    }
+  ],
+  "Schema": {
+    "Type" : "Random",
+    "ExportAs" : "ExportAs",
+    "Seed" : "Seed",
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    }
+  }
+}

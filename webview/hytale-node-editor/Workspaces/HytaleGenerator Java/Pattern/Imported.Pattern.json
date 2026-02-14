@@ -1,0 +1,38 @@
+{
+  "Id": "Imported.Pattern",
+  "Title": "Imported Pattern",
+  "Color": "Pink",
+  "Content" : [
+    {
+      "Id" : "Name",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Name",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Imported",
+    "Skip" : "Skip",
+    "Name" : "Name"
+  }
+}

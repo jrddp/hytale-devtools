@@ -1,0 +1,51 @@
+{
+  "Id": "WeightedThicknessLayerSADMP",
+  "Title": "WeightedThickness Layer SADMP",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "A",
+        "Width" : 150
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Multiple" : false,
+      "Label" : "Material"
+    },
+    {
+      "Id": "ThicknessesPin",
+      "Type": "ThicknessSADMPConnection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Thicknesses"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "LayerSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "WeightedThickness",
+    "Seed" : "Seed",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    },
+    "PossibleThicknesses" : {
+      "Node" : "WeightedThicknessSADMP",
+      "Pin" : "ThicknessesPin"
+    }
+  }
+}

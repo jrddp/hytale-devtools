@@ -1,0 +1,60 @@
+{
+  "Id": "Weighted.Assignments",
+  "Title": "Weighted Assignments",
+  "Color": "Aqua",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "SkipChance",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "SkipChance",
+        "Default" : 0.0,
+        "Width" : 70
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "A",
+        "Width" : 150
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "WeightedAssignments.Pin",
+      "Type": "Weight.Weighted.Assignments.Connection",
+      "Color": "Orange",
+      "Label" : "WeightedAssignments",
+      "Multiple" : true
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "AssignmentsConnection",
+      "Color": "Aqua"
+    }
+  ],
+  "Schema": {
+    "Type" : "Weighted",
+    "ExportAs" : "ExportAs",
+    "SkipChance" : "SkipChance",
+    "Seed" : "Seed",
+    "WeightedAssignments" : {
+      "Node" : "Weight.Weighted.Assignments",
+      "Pin" : "WeightedAssignments.Pin"
+    }
+  }
+}

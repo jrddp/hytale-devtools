@@ -1,0 +1,18 @@
+﻿{
+  "Id": "Exit",
+  "Title": "Exit",
+  "Color": "purple",
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Outputs": [],
+  "Schema": {
+    "Id": "exit"
+  }
+}
+

@@ -1,0 +1,38 @@
+{
+  "Id": "Origin.Scanner",
+  "Title": "Origin Scanner",
+  "Color": "LightPurple",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Origin",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip"
+  }
+}

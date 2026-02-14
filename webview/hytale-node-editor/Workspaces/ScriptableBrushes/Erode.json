@@ -1,0 +1,36 @@
+﻿{
+  "Id": "Erode",
+  "Title": "Erode",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "ErodePreset",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Erode Preset",
+        "Width": 120,
+        "Values": [
+          "Default",
+          "Melt",
+          "Fill",
+          "Smooth",
+          "Lift",
+          "FloatClean"
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "erode",
+    "ErodePreset": "ErodePreset"
+  }
+}
+

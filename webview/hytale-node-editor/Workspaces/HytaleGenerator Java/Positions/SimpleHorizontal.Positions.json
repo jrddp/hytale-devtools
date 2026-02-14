@@ -1,0 +1,60 @@
+{
+  "Id": "SimpleHorizontal.Positions",
+  "Title": "SimpleHorizontal Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions"
+    },
+    {
+      "Id": "RangeY",
+      "Type": "Decimal.Range.Connection",
+      "Color": "Orange",
+      "Multiple" : false,
+      "Label" : "RangeY"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "SimpleHorizontal",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "RangeY" : {
+      "Node" : "Decimal.Range",
+      "Pin" : "RangeY"
+    },
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "Id": "NoiseThicknessLayerSADMP",
+  "Title": "NoiseThickness Layer SADMP",
+  "Color": "Orange",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Multiple" : false,
+      "Label" : "Material"
+    },
+    {
+      "Id": "DensityPin",
+      "Type": "DensityConnection",
+      "Color": "Purple",
+      "Multiple" : false,
+      "Label" : "Density"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "LayerSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "NoiseThickness",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    },
+    "ThicknessFunctionXZ" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "DensityPin"
+    }
+  }
+}

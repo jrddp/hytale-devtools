@@ -1,0 +1,28 @@
+{
+  "Id": "MergingFunction",
+  "Title": "MergingFunction",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "Type",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Type",
+        "Default" : "Max",
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "MergingFunction.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "Type"
+  }
+}

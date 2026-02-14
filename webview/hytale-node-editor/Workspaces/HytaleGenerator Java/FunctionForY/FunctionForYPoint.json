@@ -1,0 +1,38 @@
+{
+  "Id": "FunctionForYPoint",
+  "Title": "FunctionForY Point",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id": "Y",
+      "Type": "Float",
+      "Options": {
+        "Label": "Y",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id": "Out",
+      "Type": "Float",
+      "Options": {
+        "Label": "Out",
+        "Default" : 0.0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Connection",
+      "Type": "FunctionForYPointConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Y" : "Y",
+    "Out" : "Out"  
+  }
+}

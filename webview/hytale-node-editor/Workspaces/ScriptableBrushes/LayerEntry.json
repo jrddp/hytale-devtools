@@ -1,0 +1,51 @@
+{
+  "Id": "LayerEntry",
+  "Title": "Layer Entry",
+  "Color": "aqua",
+  "Content": [
+    {
+      "Id": "Left",
+      "Type": "Int",
+      "Options": {
+        "Label": "Depth",
+        "Default": 1
+      }
+    },
+    {
+      "Id": "Right",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Block Type / Arg",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "UseToolArg",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "From Tool Arg"
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip"
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "LayerEntryPin",
+      "Type": "LayerEntry",
+      "Label": "Output",
+      "Color": "aqua"
+    }
+  ],
+  "Schema": {
+    "Left": "Left",
+    "Right": "Right",
+    "UseToolArg": "UseToolArg",
+    "Skip": "Skip"
+  }
+}

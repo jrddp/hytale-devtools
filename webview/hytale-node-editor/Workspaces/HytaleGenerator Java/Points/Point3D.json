@@ -1,0 +1,48 @@
+{
+  "Id": "Point3D",
+  "Title": "3D Point",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "X",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "X",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "Y",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Y",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "Z",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Z",
+        "Default" : 0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Point3D.Connection",
+      "Type": "Point3D.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "X" : "X",
+    "Y" : "Y",
+    "Z" : "Z"
+  }
+}

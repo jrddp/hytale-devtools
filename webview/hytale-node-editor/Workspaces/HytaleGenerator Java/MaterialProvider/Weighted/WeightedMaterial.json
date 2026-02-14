@@ -1,0 +1,38 @@
+{
+  "Id": "WeightedMaterial",
+  "Title": "Weight",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "Weight",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "Weight",
+        "Default" : 1.0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MaterialPin",
+      "Type": "MaterialProviderConnection",
+      "Color": "110,63,16",
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "WeightedMaterialConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Weight" : "Weight",
+    "Material" : {
+      "Node" : "MaterialProviderVariants",
+      "Pin" : "MaterialPin"
+    }
+  }
+}

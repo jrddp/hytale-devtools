@@ -1,0 +1,535 @@
+{
+  "WorkspaceName": "HytaleGenerator (Java)",
+  "ExportDefaults": true,
+  "Roots": {
+    "Biome": {
+      "RootNodeType": "Biome",
+      "MenuName" : "HytaleGenerator - Biome"
+    },
+    "Density": {
+      "RootNodeType": "DensityNodeVariants",
+      "MenuName" : "HytaleGenerator - Density"
+    },
+    "BlockMask": {
+      "RootNodeType": "BlockMask",
+      "MenuName" : "HytaleGenerator - BlockMask"
+    },
+    "Assignments": {
+      "RootNodeType": "AssignmentsVariants",
+      "MenuName" : "HytaleGenerator - Assignments"
+    }
+  },
+  "NodeCategories": {
+    "Material" : [
+      "Material"
+    ],
+    "Density Nodes": [
+      "ConstantDensityNode",
+      "SimplexNoise2DDensityNode",
+      "SimplexNoise3DDensityNode",
+      "CellNoise2DDensityNode",
+      "CellNoise3DDensityNode",
+      "OffsetConstantDensityNode",
+      "OffsetDensityNode",
+      "AmplitudeConstantDensityNode",
+      "AmplitudeDensityNode",
+      "MultiplierDensityNode",
+      "MaxDensityNode",
+      "MinDensityNode",
+      "SumDensityNode",
+      "SmoothMaxDensityNode",
+      "SmoothMinDensityNode",
+      "CeilingDensityNode",
+      "FloorDensityNode",
+      "SmoothCeilingDensityNode",
+      "SmoothFloorDensityNode",
+      "ClampDensityNode",
+      "SmoothClampDensityNode",
+      "AbsDensityNode",
+      "Gradient.Density",
+      "SqrtDensityNode",
+      "PowDensityNode",
+      "NormalizerDensityNode",
+      "Positions3DDensityNode",
+      "PositionsCellNoiseDensityNode",
+      "InverterDensityNode",
+      "ImportedDensityNode",
+      "Scale.Density",
+      "Slider.Density",
+      "GradientWarp.Density",
+      "VectorWarp.Density",
+      "Cache2D.Density",
+      "Rotator.Density",
+      "PositionsPinch.Density",
+      "PositionsTwist.Density",
+      "CurveMapper.Density",
+      "BaseHeight.Density",
+      "Anchor.Density",
+      "Distance.Density",
+      "Ellipsoid.Density",
+      "Cube.Density",
+      "Cuboid.Density",
+      "Shell.Density",
+      "Axis.Density",
+      "Plane.Density",
+      "Switch.Density",
+      "Case.Switch.Density",
+      "SwitchState.Density",
+      "Cylinder.Density",
+      "CellWallDistance.Density",
+      "FastGradientWarp.Density",
+      "Mix.Density",
+      "MultiMix.Density",
+      "Key.MultiMix.Density",
+      "XValue.Density",
+      "YValue.Density",
+      "ZValue.Density",
+      "XOverride.Density",
+      "YOverride.Density",
+      "ZOverride.Density",
+      "Cache.Density",
+      "Angle.Density",
+      "Exported.Density",
+      "Terrain.Density",
+      "DistanceToBiomeEdge.Density"
+    ],
+    "VectorProviders" : [
+      "Constant.VectorProvider",
+      "DensityGradient.VectorProvider",
+      "Imported.VectorProvider",
+      "Cache.VectorProvider",
+      "Exported.VectorProvider"
+    ],
+    "Points" : [
+      "Point3D"
+    ],
+    "Range" : [
+      "Decimal.Range",
+      "Integer.Range"
+    ],
+    "Curves": [
+      "DistanceExponentialCurve",
+      "DistanceSCurve",
+      "CurvePoint",
+      "ManualCurve",
+      "ImportedCurve",
+      "Ceiling.Curve",
+      "Floor.Curve",
+      "Clamp.Curve",
+      "Inverter.Curve",
+      "Max.Curve",
+      "Min.Curve",
+      "Multiplier.Curve",
+      "Not.Curve",
+      "SmoothCeiling.Curve",
+      "SmoothFloor.Curve",
+      "SmoothClamp.Curve",
+      "SmoothMax.Curve",
+      "SmoothMin.Curve",
+      "Sum.Curve",
+      "Constant.Curve"
+    ],
+    "FunctionForY": [
+      "FunctionForY",
+      "FunctionForYPoint"
+    ],
+    "Positions": [
+      "Mesh2DPositions",
+      "Mesh3DPositions",
+      "ListPositions",
+      "FieldFunctionPositions",
+      "Sphere.Positions",
+      "OccurrencePositions",
+      "OffsetPositions",
+      "UnionPositions",
+      "SimpleHorizontal.Positions",
+      "CachePositions",
+      "BaseHeight.Positions",
+      "Anchor.Positions",
+      "ImportedPositions",
+      "Delimiter"
+    ],
+    "PositionsCellNoise Nodes": [
+      "PositionsCellNoiseDensityNode",
+      "PCNDistanceFunction",
+      "CellValuePCNReturnType",
+      "DensityPCNReturnType",
+      "CurvePCNReturnType",
+      "DistancePCNReturnType",
+      "Distance2PCNReturnType",
+      "Distance2AddPCNReturnType",
+      "Distance2SubPCNReturnType",
+      "Distance2MulPCNReturnType",
+      "Distance2DivPCNReturnType"
+    ],
+    "PointGenerator": [
+      "MeshPointGenerator"
+    ],
+    "Biome": [
+      "Biome"
+    ],
+    "MaterialProvider": [
+      "ConstantMaterialProvider",
+      "SolidityMaterialProvider",
+      "QueueMaterialProvider",
+      "SimpleHorizontalMaterialProvider",
+      "StripedMaterialProvider",
+      "StripeStripedMP",
+      "WeightedMaterialProvider",
+      "WeightedMaterial",
+      "FieldFunctionMaterialProvider",
+      "DelimiterFieldFunctionMP",
+      "SpaceAndDepthMaterialProvider",
+      "ImportedMaterialProvider"
+    ],
+    "SpaceAndDepth MaterialProvider": [
+      "SpaceAndDepthMaterialProvider",
+      "AlwaysTrueConditionSADMP",
+      "EqualsConditionSADMP",
+      "GreaterThanConditionSADMP",
+      "SmallerThanConditionSADMP",
+      "AndConditionSADMP",
+      "OrConditionSADMP",
+      "NotConditionSADMP",
+      "ConstantThicknessLayerSADMP",
+      "RangeThicknessLayerSADMP",
+      "WeightedThicknessLayerSADMP",
+      "WeightedThicknessSADMP",
+      "NoiseThicknessLayerSADMP"
+    ],
+    "Assignments": [
+      "Constant.Assignments",
+      "FieldFunction.Assignments",
+      "Delimiter.FieldFunction.Assignments",
+      "Sandwich.Assignments",
+      "Delimiter.Sandwich.Assignments",
+      "Weighted.Assignments",
+      "Weight.Weighted.Assignments",
+      "Imported.Assignments"
+    ],
+    "Props": [
+      "Runtime",
+      "BoxProp",
+      "Union.Prop",
+      "Queue.Prop",
+      "Cluster.Prop",
+      "Weighted.Cluster.Prop",
+      "Column.Prop",
+      "Block.Column.Prop",
+      "Prefab.Prop",
+      "WeightedPath.Prefab.Prop",
+      "PondFiller.Prop",
+      "Density.Prop",
+      "Imported.Prop",
+      "Offset.Prop",
+      "Weighted.Prop",
+      "Entry.Weighted.Prop"
+    ],
+    "Patterns": [
+      "BlockType.Pattern",
+      "BlockSet.Pattern",
+      "Offset.Pattern",
+      "Floor.Pattern",
+      "Ceiling.Pattern",
+      "Wall.Pattern",
+      "Surface.Pattern",
+      "Gap.Pattern",
+      "Cuboid.Pattern",
+      "And.Pattern",
+      "Or.Pattern",
+      "Not.Pattern",
+      "FieldFunction.Pattern",
+      "Delimiter.FieldFunction.Pattern",
+      "Imported.Pattern"
+    ],
+    "Scanners": [
+      "Origin.Scanner",
+      "ColumnLinear.Scanner",
+      "ColumnRandom.Scanner",
+      "Area.Scanner",
+      "Imported.Scanner"
+    ],
+    "BlockMask": [
+      "BlockMask",
+      "BlockSet.BlockMask",
+      "Rule.BlockMask"
+    ],
+    "Directionality": [
+      "Static.Directionality",
+      "Random.Directionality",
+      "Pattern.Directionality",
+      "Imported.Directionality"
+    ],
+    "MergingFunctions" : [
+      "MergingFunction"
+    ],
+    "EnvironmentProvider" : [
+      "Constant.EnvironmentProvider",
+      "DensityDelimited.EnvironmentProvider",
+      "Delimiter.DensityDelimited.EnvironmentProvider"
+    ],
+    "TintProvider" : [
+      "Constant.TintProvider",
+      "DensityDelimited.TintProvider",
+      "Delimiter.DensityDelimited.TintProvider"
+    ]
+  },
+  "Variants": {
+    "DensityNodeVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant": "ConstantDensityNode",
+        "SimplexNoise2D": "SimplexNoise2DDensityNode",
+        "SimplexNoise3D": "SimplexNoise3DDensityNode",
+        "CellNoise2D": "CellNoise2DDensityNode",
+        "CellNoise3D": "CellNoise3DDensityNode",
+        "OffsetConstant": "OffsetConstantDensityNode",
+        "Offset": "OffsetDensityNode",
+        "AmplitudeConstant": "AmplitudeConstantDensityNode",
+        "Amplitude": "AmplitudeDensityNode",
+        "Multiplier": "MultiplierDensityNode",
+        "Max": "MaxDensityNode",
+        "Min": "MinDensityNode",
+        "Sum": "SumDensityNode",
+        "SmoothMax": "SmoothMaxDensityNode",
+        "SmoothMin": "SmoothMinDensityNode",
+        "Ceiling": "CeilingDensityNode",
+        "Floor": "FloorDensityNode",
+        "SmoothCeiling": "SmoothCeilingDensityNode",
+        "SmoothFloor": "SmoothFloorDensityNode",
+        "Clamp": "ClampDensityNode",
+        "SmoothClamp": "SmoothClampDensityNode",
+        "Abs": "AbsDensityNode",
+        "Gradient": "Gradient.Density",
+        "Sqrt": "SqrtDensityNode",
+        "Pow": "PowDensityNode",
+        "Normalizer": "NormalizerDensityNode",
+        "Positions3D": "Positions3DDensityNode",
+        "PositionsCellNoise": "PositionsCellNoiseDensityNode",
+        "Inverter": "InverterDensityNode",
+        "Imported": "ImportedDensityNode",
+        "Scale": "Scale.Density",
+        "Slider": "Slider.Density",
+        "GradientWarp": "GradientWarp.Density",
+        "VectorWarp": "VectorWarp.Density",
+        "Cache2D": "Cache2D.Density",
+        "Rotator": "Rotator.Density",
+        "PositionsPinch": "PositionsPinch.Density",
+        "PositionsTwist": "PositionsTwist.Density",
+        "CurveMapper" : "CurveMapper.Density",
+        "BaseHeight" : "BaseHeight.Density",
+        "Anchor" : "Anchor.Density",
+        "Distance" : "Distance.Density",
+        "Ellipsoid" : "Ellipsoid.Density",
+        "Cube" : "Cube.Density",
+        "Cuboid" : "Cuboid.Density",
+        "Shell" : "Shell.Density",
+        "Axis" : "Axis.Density",
+        "Plane" : "Plane.Density",
+        "Switch" : "Switch.Density",
+        "SwitchState" : "SwitchState.Density",
+        "Cylinder" : "Cylinder.Density",
+        "CellWallDistance" : "CellWallDistance.Density",
+        "FastGradientWarp" : "FastGradientWarp.Density",
+        "Mix" : "Mix.Density",
+        "MultiMix" : "MultiMix.Density",
+        "XValue" : "XValue.Density",
+        "YValue" : "YValue.Density",
+        "ZValue" : "ZValue.Density",
+        "XOverride" : "XOverride.Density",
+        "YOverride" : "YOverride.Density",
+        "ZOverride" : "ZOverride.Density",
+        "Cache" : "Cache.Density",
+        "Angle" : "Angle.Density",
+        "Exported" : "Exported.Density",
+        "Terrain" : "Terrain.Density",
+        "DistanceToBiomeEdge" : "DistanceToBiomeEdge.Density"
+      }
+    },
+    "VectorProvider.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant" : "Constant.VectorProvider",
+        "Imported" : "Imported.VectorProvider",
+        "DensityGradient" : "DensityGradient.VectorProvider",
+        "Cache" : "Cache.VectorProvider",
+        "Exported" : "Exported.VectorProvider"
+      }
+    },
+    "CurveVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "DistanceExponential": "DistanceExponentialCurve",
+        "DistanceS": "DistanceSCurve",
+        "Imported": "ImportedCurve",
+        "Manual": "ManualCurve",
+        "Ceiling" : "Ceiling.Curve",
+        "Floor" : "Floor.Curve",
+        "Clamp" : "Clamp.Curve",
+        "Inverter" : "Inverter.Curve",
+        "Max" : "Max.Curve",
+        "Min" : "Min.Curve",
+        "Multiplier" : "Multiplier.Curve",
+        "Not" : "Not.Curve",
+        "SmoothCeiling" : "SmoothCeiling.Curve",
+        "SmoothFloor" : "SmoothFloor.Curve",
+        "SmoothClamp" : "SmoothClamp.Curve",
+        "SmoothMax" : "SmoothMax.Curve",
+        "SmoothMin" : "SmoothMin.Curve",
+        "Sum" : "Sum.Curve",
+        "Constant" : "Constant.Curve"
+      }
+    },
+    "PositionsVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Mesh2D": "Mesh2DPositions",
+        "Mesh3D": "Mesh3DPositions",
+        "List": "ListPositions",
+        "FieldFunction": "FieldFunctionPositions",
+        "Occurrence": "OccurrencePositions",
+        "Offset": "OffsetPositions",
+        "Union": "UnionPositions",
+        "SimpleHorizontal": "SimpleHorizontal.Positions",
+        "Cache": "CachePositions",
+        "BaseHeight" : "BaseHeight.Positions",
+        "Imported": "ImportedPositions",
+        "Anchor" : "Anchor.Positions",
+        "Sphere" : "Sphere.Positions"
+      }
+    },
+    "PointGeneratorVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Mesh": "MeshPointGenerator"
+      }
+    },
+    "PCNReturnTypeVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Distance": "DistancePCNReturnType",
+        "Distance2": "Distance2PCNReturnType",
+        "Distance2Add": "Distance2AddPCNReturnType",
+        "Distance2Sub": "Distance2SubPCNReturnType",
+        "Distance2Mul": "Distance2MulPCNReturnType",
+        "Distance2Div": "Distance2DivPCNReturnType",
+        "Curve": "CurvePCNReturnType",
+        "CellValue": "CellValuePCNReturnType",
+        "Density": "DensityPCNReturnType"
+      }
+    },
+    "MaterialProviderVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant": "ConstantMaterialProvider",
+        "Solidity": "SolidityMaterialProvider",
+        "Queue": "QueueMaterialProvider",
+        "SimpleHorizontal": "SimpleHorizontalMaterialProvider",
+        "Striped": "StripedMaterialProvider",
+        "Weighted": "WeightedMaterialProvider",
+        "FieldFunction": "FieldFunctionMaterialProvider",
+        "SpaceAndDepth": "SpaceAndDepthMaterialProvider",
+        "Imported": "ImportedMaterialProvider"
+      }
+    },
+    "ConditionSADMPVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "AlwaysTrueCondition": "AlwaysTrueConditionSADMP",
+        "AndCondition": "AndConditionSADMP",
+        "OrCondition": "OrConditionSADMP",
+        "EqualsCondition": "EqualsConditionSADMP",
+        "GreaterThanCondition": "GreaterThanConditionSADMP",
+        "NotCondition": "NotConditionSADMP",
+        "SmallerThanCondition": "SmallerThanConditionSADMP"
+      }
+    },
+    "LayerSADMPVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "ConstantThickness": "ConstantThicknessLayerSADMP",
+        "RangeThickness": "RangeThicknessLayerSADMP",
+        "WeightedThickness": "WeightedThicknessLayerSADMP",
+        "NoiseThickness": "NoiseThicknessLayerSADMP"
+      }
+    },
+    "AssignmentsVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant": "Constant.Assignments",
+        "FieldFunction": "FieldFunction.Assignments",
+        "Sandwich": "Sandwich.Assignments",
+        "Weighted": "Weighted.Assignments",
+        "Imported": "Imported.Assignments"
+      }
+    },
+    "PropVariants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Box": "BoxProp",
+        "Union": "Union.Prop",
+        "Queue": "Queue.Prop",
+        "Cluster": "Cluster.Prop",
+        "Column": "Column.Prop",
+        "Prefab": "Prefab.Prop",
+        "PondFiller" : "PondFiller.Prop",
+        "Density" : "Density.Prop",
+        "Imported": "Imported.Prop",
+        "Offset" : "Offset.Prop",
+        "Weighted" : "Weighted.Prop"
+      }
+    },
+    "Pattern.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "BlockType": "BlockType.Pattern",
+        "BlockSet": "BlockSet.Pattern",
+        "Offset": "Offset.Pattern",
+        "Floor": "Floor.Pattern",
+        "Ceiling": "Ceiling.Pattern",
+        "Wall": "Wall.Pattern",
+        "Surface": "Surface.Pattern",
+        "Gap": "Gap.Pattern",
+        "Cuboid": "Cuboid.Pattern",
+        "And": "And.Pattern",
+        "Or": "Or.Pattern",
+        "Not": "Not.Pattern",
+        "FieldFunction": "FieldFunction.Pattern",
+        "Imported": "Imported.Pattern"
+      }
+    },
+    "Scanner.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Origin": "Origin.Scanner",
+        "ColumnLinear": "ColumnLinear.Scanner",
+        "ColumnRandom": "ColumnRandom.Scanner",
+        "Area": "Area.Scanner",
+        "Imported": "Imported.Scanner"
+      }
+    },
+    "Directionality.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Static": "Static.Directionality",
+        "Random": "Random.Directionality",
+        "Pattern": "Pattern.Directionality",
+        "Imported": "Imported.Directionality"
+      }
+    },
+    "EnvironmentProvider.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant" : "Constant.EnvironmentProvider",
+        "DensityDelimited" : "DensityDelimited.EnvironmentProvider"
+      }
+    },
+    "TintProvider.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant" : "Constant.TintProvider",
+        "DensityDelimited" : "DensityDelimited.TintProvider"
+      }
+    }
+  }
+}

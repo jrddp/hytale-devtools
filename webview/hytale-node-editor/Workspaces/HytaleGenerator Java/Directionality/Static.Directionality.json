@@ -1,0 +1,49 @@
+{
+  "Id": "Static.Directionality",
+  "Title": "Static Directionality",
+  "Color": "Magenta",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id" : "Rotation",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Rotation",
+        "Default" : 0,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Directionality.Connection",
+      "Color": "Magenta"
+    }
+  ],
+  "Schema": {
+    "Type" : "Static",
+    "ExportAs" : "ExportAs",
+    "Rotation" : "Rotation",
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "Id": "BoxProp",
+  "Title": "Box Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner"
+    },
+    {
+      "Id": "Range",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Range"
+    },
+    {
+      "Id": "Material",
+      "Type": "Material.Connection",
+      "Color": "Yellow",
+      "Label" : "Material"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Box",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "BoxBlockType" : "BoxBlockType",
+    "Range" : {
+      "Node" : "Point3D",
+      "Pin" : "Range"
+    },
+    "Material" : {
+      "Node" : "Material",
+      "Pin" : "Material"
+    },
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    }
+  }
+}

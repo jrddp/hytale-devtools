@@ -1,0 +1,17 @@
+﻿{
+  "Id": "Lift",
+  "Title": "Lift Blocks",
+  "Color": "blue",
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "lift"
+  }
+}
+

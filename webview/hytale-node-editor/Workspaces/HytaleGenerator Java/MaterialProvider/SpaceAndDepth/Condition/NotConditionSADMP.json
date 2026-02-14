@@ -1,0 +1,30 @@
+{
+  "Id": "NotConditionSADMP",
+  "Title": "Not Condition SADMP",
+  "Color": "Orange",
+  "Content": [
+  ],
+  "Outputs": [
+    {
+      "Id": "ConditionsPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange",
+      "Multiple" : false,
+      "Label" : "Conditions"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "NotCondition",
+    "Conditions" : {
+      "Node" : "ConditionSADMPVariants",
+      "Pin" : "ConditionsPin"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "Id": "Mesh3DPositions",
+  "Title": "Mesh3D Positions",
+  "Color": "Blue",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PointGeneratorConnection",
+      "Type": "PointGeneratorConnection",
+      "Color": "LightBlue",
+      "Label" : "PointGenerator"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Mesh3D",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "PointGenerator" : {
+      "Node" : "PointGeneratorVariants",
+      "Pin" : "PointGeneratorConnection"
+    }
+  }
+}

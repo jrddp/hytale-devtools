@@ -1,0 +1,28 @@
+﻿{
+  "Id": "PastePrefab",
+  "Title": "Paste Prefab",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "PrefabListAssetName",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Prefab List Asset Name",
+        "Width": 250
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "pasteprefab",
+    "PrefabListAssetName": "PrefabListAssetName"
+  }
+}
+

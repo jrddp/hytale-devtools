@@ -1,0 +1,39 @@
+{
+  "Id": "GreaterThanConditionSADMP",
+  "Title": "GreaterThan Condition SADMP",
+  "Color": "Orange",
+  "Content": [
+    {
+      "Id" : "ContextToCheck",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ContextToCheck",
+        "Default" : "SPACE_ABOVE_FLOOR",
+        "Width" : 200
+      }
+    },
+    {
+      "Id" : "Threshold",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Threshold",
+        "Default" : 1,
+        "Width" : 50
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "ConditionSADMPConnection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Type" : "GreaterThanCondition",
+    "ContextToCheck" : "ContextToCheck",
+    "Threshold" : "Threshold"
+  }
+}

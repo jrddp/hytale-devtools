@@ -1,0 +1,38 @@
+{
+  "Id": "Rule.BlockMask",
+  "Title": "Rule BlockMask",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id": "Source",
+      "Type": "BlockSet.BlockMask.Connection",
+      "Color": "Yellow",
+      "Label" : "Source"
+    },
+    {
+      "Id": "CanReplace",
+      "Type": "BlockSet.BlockMask.Connection",
+      "Color": "Yellow",
+      "Label" : "CanReplace"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Rule.BlockMask.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Source" : {
+      "Node" : "BlockSet.BlockMask",
+      "Pin" : "Source"
+    },
+    "CanReplace" : {
+      "Node" : "BlockSet.BlockMask",
+      "Pin" : "CanReplace"
+    }
+  }
+}

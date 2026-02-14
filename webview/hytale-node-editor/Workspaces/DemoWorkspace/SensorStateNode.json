@@ -1,0 +1,18 @@
+{
+  "Id": "SensorState",
+  "Title": "State Sensor",
+  "Color": "Green",
+  "Inputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Multiple": false,
+      "Color": "Green"
+    }
+  ],
+  "Content": [
+  ],
+  "Schema": {
+    "Type": "State"
+  }
+}

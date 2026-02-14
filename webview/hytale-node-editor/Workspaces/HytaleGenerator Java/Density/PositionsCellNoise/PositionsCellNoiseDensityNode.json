@@ -1,0 +1,78 @@
+{
+  "Id": "PositionsCellNoiseDensityNode",
+  "Title": "PositionsCellNoise Density",
+  "Color": "Purple",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "MaxDistance",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "MaxDistance",
+        "Default" : 10,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Label" : "Positions"
+    },
+    {
+      "Id": "DistanceFunction",
+      "Type": "DistanceFunctionPCNConnection",
+      "Color": "Olive",
+      "Label" : "DistanceFunction"
+    },
+    {
+      "Id": "ReturnType",
+      "Type": "ReturnTypePCNConnection",
+      "Color": "DarkPink",
+      "Label" : "ReturnType"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "DensityOutput",
+      "Type": "DensityConnection",
+      "Color": "Purple"
+    }
+  ],
+  "Schema": {
+    "Type" : "PositionsCellNoise",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "MaxDistance" : "MaxDistance",
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Positions"
+    },
+    "ReturnType" : {
+      "Node" : "PCNReturnTypeVariants",
+      "Pin" : "ReturnType"
+    },
+    "DistanceFunction" : {
+      "Node" : "PCNDistanceFunction",
+      "Pin" : "DistanceFunction"
+    }
+  }
+}

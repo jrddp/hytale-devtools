@@ -1,0 +1,49 @@
+{
+  "Id": "Queue.Prop",
+  "Title": "Queue Prop",
+  "Color": "Green",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Queue",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Multiple" : true,
+      "Label" : "Queue"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Queue",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Queue" : {
+      "Node" : "PropVariants",
+      "Pin" : "Queue"
+    }
+  }
+}

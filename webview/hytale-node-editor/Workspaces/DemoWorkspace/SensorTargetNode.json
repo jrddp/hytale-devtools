@@ -1,0 +1,18 @@
+{
+  "Id": "SensorTarget",
+  "Title": "Target Sensor",
+  "Color": "Green",
+  "Inputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Multiple": false,
+      "Color": "Green"
+    }
+  ],
+  "Content": [
+  ],
+  "Schema": {
+    "Type": "Target"
+  }
+}
