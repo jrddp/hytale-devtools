@@ -22,6 +22,10 @@
   export let data = {};
 
   const { updateNodeData } = useSvelteFlow();
+  const PIN_TOP_START_PX = 64;
+  const PIN_TOP_STEP_PX = 34;
+  const PIN_TOP_MAX_PX = 220;
+  const PIN_BOTTOM_CLEARANCE_PX = 30;
 
   $: template =
     getTemplateById(data?.$templateId) ??
@@ -37,6 +41,12 @@
   };
   $: inputPins = Array.isArray(template?.inputPins) ? template.inputPins : [];
   $: outputPins = Array.isArray(template?.outputPins) ? template.outputPins : [];
+  $: outputLabelColumnWidth = readOutputLabelColumnWidth(outputPins);
+  $: nodeMinWidthPx = 288 + outputLabelColumnWidth;
+  $: contentRightPaddingPx = outputLabelColumnWidth + 10;
+  $: pinLaneCount = Math.max(inputPins.length, outputPins.length);
+  $: nodeMinHeightPx =
+    readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX;
   $: nodeLabel = typeof data?.label === "string" ? data.label : template.label;
   $: commentInputId = `comment-${sanitizeId(id)}`;
   $: if (!isEditingTitle) {
@@ -156,30 +166,57 @@
   }
 
   function readPinTop(index, totalPins) {
-    if (!Number.isFinite(index) || !Number.isFinite(totalPins) || totalPins <= 1) {
-      return "50%";
+    return `${readPinTopPx(index, totalPins)}px`;
+  }
+
+  function readPinTopPx(index, totalPins) {
+    const normalizedTotal =
+      Number.isFinite(totalPins) && totalPins > 0 ? Math.floor(totalPins) : 1;
+    const normalizedIndex = Number.isFinite(index) ? Math.floor(index) : 0;
+    const clampedIndex = Math.max(0, Math.min(normalizedIndex, normalizedTotal - 1));
+    const availableRange = Math.max(0, PIN_TOP_MAX_PX - PIN_TOP_START_PX);
+    const spacing =
+      normalizedTotal <= 1
+        ? 0
+        : Math.min(PIN_TOP_STEP_PX, availableRange / (normalizedTotal - 1));
+
+    return PIN_TOP_START_PX + clampedIndex * spacing;
+  }
+
+  function readOutputLabelColumnWidth(pins) {
+    if (!Array.isArray(pins) || pins.length === 0) {
+      return 0;
     }
 
-    const normalizedIndex = Math.max(0, Math.floor(index));
-    const normalizedTotal = Math.max(1, Math.floor(totalPins));
-    const spacing = 100 / (normalizedTotal + 1);
-    return `${(normalizedIndex + 1) * spacing}%`;
+    const maxLabelLength = pins.reduce(
+      (maxLength, pin) => Math.max(maxLength, readPinLabel(pin).length),
+      0,
+    );
+
+    const estimatedWidth = maxLabelLength * 7 + 24;
+    return Math.min(240, Math.max(96, estimatedWidth));
   }
 </script>
 
 <div
-  class="relative pt-0 border rounded-lg shadow-lg min-w-72 max-w-80 border-vsc-editor-widget-border bg-vsc-editor-widget-bg text-vsc-editor-fg"
+  class="relative pt-0 border rounded-lg shadow-lg border-vsc-editor-widget-border bg-vsc-editor-widget-bg text-vsc-editor-fg"
+  style={`min-width: ${nodeMinWidthPx}px; min-height: ${nodeMinHeightPx}px;`}
   data-node-editor-root
 >
   {#each inputPins as pin, index (pin.id)}
     {@const pinTop = readPinTop(index, inputPins.length)}
-    <Handle type="target" position={Position.Left} id={pin.id} style={`top: ${pinTop};`} />
-    <div
-      class="pointer-events-none absolute text-[11px] text-vsc-muted whitespace-nowrap"
-      style={`left: -8px; top: ${pinTop}; transform: translate(-100%, -50%);`}
+    <Handle
+      type="target"
+      position={Position.Left}
+      id={pin.id}
+      style={`top: ${pinTop};`}
+      class="w-px! h-4! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
     >
-      {readPinLabel(pin)}
-    </div>
+      <span
+        aria-hidden="true"
+        class="absolute left-0 top-1/2 h-4 w-2 -translate-y-1/2 rounded-r-full bg-vsc-focus"
+      ></span>
+    </Handle>
   {/each}
 
   <div class="flex flex-col gap-1 mb-2">
@@ -224,7 +261,7 @@
     {/if}
   </div>
 
-  <div class="p-2.5 py-1">
+  <div class="p-2.5 py-1" style={`padding-right: ${contentRightPaddingPx}px;`}>
     <div class="flex flex-col gap-2">
       {#each template.fields as field}
         <FieldEditor
@@ -254,11 +291,16 @@
       position={Position.Right}
       id={pin.id}
       style={`top: ${pinTop};`}
-      class="size-4! bg-teal-500! rounded-none border-none rounded-none!"
-    />
+      class="w-px! h-4! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
+    >
+      <span
+        aria-hidden="true"
+        class="absolute right-0 top-1/2 h-4 w-2 -translate-y-1/2 rounded-l-full bg-vsc-focus"
+      ></span>
+    </Handle>
     <div
-      class="pointer-events-none absolute text-[11px] text-vsc-muted whitespace-nowrap"
-      style={`right: -8px; top: ${pinTop}; transform: translate(100%, -50%);`}
+      class="pointer-events-none absolute right-3 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
+      style={`top: ${pinTop};`}
     >
       {readPinLabel(pin)}
     </div>
