@@ -17,7 +17,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'simple',
     label: 'Simple Node',
-    subtitle: 'Basic custom node',
     category: 'Basics',
     defaultTypeName: 'Simple',
     inputPins: [
@@ -53,7 +52,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'text',
     label: 'Text Node',
-    subtitle: 'Headline + body',
     category: 'Basics',
     defaultTypeName: 'Text',
     inputPins: [
@@ -98,7 +96,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'numbers',
     label: 'Number Node',
-    subtitle: 'Int + Integer + Float',
     category: 'Controls',
     defaultTypeName: 'Number',
     inputPins: [
@@ -149,7 +146,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'slider',
     label: 'Slider Node',
-    subtitle: 'IntSlider field',
     category: 'Controls',
     defaultTypeName: 'Slider',
     inputPins: [
@@ -196,7 +192,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'toggles',
     label: 'Toggle Node',
-    subtitle: 'Checkbox + Bool + Enum',
     category: 'Controls',
     defaultTypeName: 'Toggle',
     inputPins: [
@@ -252,7 +247,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'assets',
     label: 'Asset Node',
-    subtitle: 'FilePath + List',
     category: 'Data',
     defaultTypeName: 'Asset',
     inputPins: [
@@ -305,7 +299,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'object',
     label: 'Object Node',
-    subtitle: 'Nested Object fields',
     category: 'Data',
     defaultTypeName: 'ObjectNode',
     inputPins: [
@@ -382,7 +375,6 @@ export const SAMPLE_NODE_TEMPLATES = [
   createTemplate({
     templateId: 'all-fields',
     label: 'All Fields Node',
-    subtitle: 'Coverage for all supported field types',
     category: 'Coverage',
     defaultTypeName: 'AllFields',
     inputPins: [

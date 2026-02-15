@@ -91,7 +91,6 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
     const template = createTemplate({
       templateId,
       label,
-      subtitle: defaultTypeName !== label ? defaultTypeName : undefined,
       defaultTypeName,
       fields,
       inputPins,

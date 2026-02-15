@@ -2,6 +2,7 @@
   import { Handle, Position, useSvelteFlow } from "@xyflow/svelte";
   import { Pencil } from "lucide-svelte";
   import { tick } from "svelte";
+  import HoverTooltip from "../components/HoverTooltip.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import {
     getDefaultTemplate,
@@ -22,10 +23,11 @@
   export let data = {};
 
   const { updateNodeData } = useSvelteFlow();
-  const PIN_TOP_START_PX = 64;
-  const PIN_TOP_STEP_PX = 34;
+  const PIN_TOP_START_PX = 54;
+  const PIN_TOP_STEP_PX = 32;
   const PIN_TOP_MAX_PX = 220;
-  const PIN_BOTTOM_CLEARANCE_PX = 30;
+  const PIN_BOTTOM_CLEARANCE_PX = 32;
+  const PIN_WIDTH = 8;
 
   $: template =
     getTemplateById(data?.$templateId) ??
@@ -43,7 +45,8 @@
   $: outputPins = Array.isArray(template?.outputPins) ? template.outputPins : [];
   $: outputLabelColumnWidth = readOutputLabelColumnWidth(outputPins);
   $: nodeMinWidthPx = 288 + outputLabelColumnWidth;
-  $: contentRightPaddingPx = outputLabelColumnWidth + 10;
+  $: contentPaddingLeftPx = PIN_WIDTH + 8;
+  $: contentRightPaddingPx = outputLabelColumnWidth + 8;
   $: pinLaneCount = Math.max(inputPins.length, outputPins.length);
   $: nodeMinHeightPx =
     readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX;
@@ -193,8 +196,8 @@
       0,
     );
 
-    const estimatedWidth = maxLabelLength * 7 + 24;
-    return Math.min(240, Math.max(96, estimatedWidth));
+    const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH;
+    return estimatedWidth;
   }
 </script>
 
@@ -205,6 +208,7 @@
 >
   {#each inputPins as pin, index (pin.id)}
     {@const pinTop = readPinTop(index, inputPins.length)}
+    {@const pinLabel = readPinLabel(pin)}
     <Handle
       type="target"
       position={Position.Left}
@@ -212,10 +216,18 @@
       style={`top: ${pinTop};`}
       class="w-px! h-4! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
     >
-      <span
-        aria-hidden="true"
-        class="absolute left-0 top-1/2 h-4 w-2 -translate-y-1/2 rounded-r-full bg-vsc-focus"
-      ></span>
+      <HoverTooltip
+        text={pinLabel}
+        placement="left"
+        wrapperClass="h-4"
+        groupAriaLabel={`Input pin ${pinLabel}`}
+      >
+        <span
+          aria-hidden="true"
+          class="block h-4 rounded-r-full bg-vsc-focus"
+          style={`width: ${PIN_WIDTH}px;`}
+        ></span>
+      </HoverTooltip>
     </Handle>
   {/each}
 
@@ -232,16 +244,19 @@
           onblur={handleTitleInputBlur}
         />
       {:else}
-        <div class="flex items-center flex-1 gap-1 p-1 rounded-t-md bg-vsc-input-bg">
-          <div
-            class="font-bold border border-transparent rounded-md select-none text-vsc-input-fg"
-            role="button"
-            tabindex="0"
+        <div
+          class="flex items-center flex-1 gap-1 p-1 rounded-t-md bg-vsc-input-bg"
+          role="group"
+          aria-label="Node title bar"
+        >
+          <button
+            class="flex-1 min-w-0 text-left font-bold border border-transparent rounded-md select-none text-vsc-input-fg"
+            type="button"
             ondblclick={beginTitleEditing}
             onkeydown={handleTitleDisplayKeydown}
           >
             {nodeLabel}
-          </div>
+          </button>
 
           <button
             class="inline-flex items-center justify-center rounded-md nodrag size-5 hover:backdrop-brightness-90 p-0.5"
@@ -256,12 +271,9 @@
       {/if}
     </div>
 
-    {#if template?.subtitle}
-      <div class="text-xs text-vsc-fg px-2.5">{template.subtitle}</div>
-    {/if}
   </div>
 
-  <div class="p-2.5 py-1" style={`padding-right: ${contentRightPaddingPx}px;`}>
+  <div class="py-1" style={`padding-left: ${contentPaddingLeftPx}px; padding-right: ${contentRightPaddingPx}px;`}>
     <div class="flex flex-col gap-2">
       {#each template.fields as field}
         <FieldEditor
@@ -295,7 +307,8 @@
     >
       <span
         aria-hidden="true"
-        class="absolute right-0 top-1/2 h-4 w-2 -translate-y-1/2 rounded-l-full bg-vsc-focus"
+        class="absolute right-0 top-1/2 h-4 -translate-y-1/2 rounded-l-full bg-vsc-focus"
+        style={`width: ${PIN_WIDTH}px;`}
       ></span>
     </Handle>
     <div

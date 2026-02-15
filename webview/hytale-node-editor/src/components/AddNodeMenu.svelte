@@ -23,7 +23,7 @@
   }
 
   $: filteredTemplates = templates.filter((template) => {
-    const haystack = `${template.label} ${template.subtitle ?? ''} ${template.category ?? ''}`.toLowerCase();
+    const haystack = `${template.label} ${template.category ?? ''}`.toLowerCase();
     return haystack.includes(searchQuery.trim().toLowerCase());
   });
 
@@ -189,11 +189,6 @@
                 onclick={() => selectTemplate(item.template)}
               >
                 <span class="text-xs font-semibold">{item.template.label}</span>
-                {#if item.template.subtitle}
-                  <span class="text-xs text-vsc-muted">
-                    {item.template.subtitle}
-                  </span>
-                {/if}
               </button>
             {/each}
           </div>

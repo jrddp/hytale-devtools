@@ -23,7 +23,7 @@
   }
 </script>
 
-<div class="flex flex-row items-center justify-between gap-2">
+<div class="flex flex-row items-center justify-start gap-2">
   <label class="text-xs text-vsc-muted" for={inputId}>{label}</label>
   <input
     id={inputId}
