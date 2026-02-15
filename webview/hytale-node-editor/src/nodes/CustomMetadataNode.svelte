@@ -1,9 +1,9 @@
 <script>
-  import { Handle, Position, useSvelteFlow } from "@xyflow/svelte";
+  import { useSvelteFlow } from "@xyflow/svelte";
   import { Pencil } from "lucide-svelte";
   import { tick } from "svelte";
-  import HoverTooltip from "../components/HoverTooltip.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
+  import NodePinHandle from "./NodePinHandle.svelte";
   import {
     getDefaultTemplate,
     getTemplateById,
@@ -21,13 +21,15 @@
 
   export let id;
   export let data = {};
+  export let selected = false;
+  export let dragging = false;
 
-  const { updateNodeData } = useSvelteFlow();
-  const PIN_TOP_START_PX = 54;
+  const { updateNodeData, updateNode, getNodes, getEdges, updateEdge } = useSvelteFlow();
+  const PIN_TOP_START_PX = 64;
   const PIN_TOP_STEP_PX = 32;
   const PIN_TOP_MAX_PX = 220;
   const PIN_BOTTOM_CLEARANCE_PX = 32;
-  const PIN_WIDTH = 8;
+  const PIN_WIDTH = 10;
 
   $: template =
     getTemplateById(data?.$templateId) ??
@@ -65,6 +67,30 @@
       label: nextLabel,
       $templateId: template.templateId,
     });
+  }
+
+  function selectNodeFromTitleBar(event) {
+    const isMultiSelect = Boolean(event?.metaKey || event?.ctrlKey);
+    const currentNodes = getNodes();
+
+    for (const node of currentNodes) {
+      const shouldSelect = node.id === id ? true : isMultiSelect ? Boolean(node.selected) : false;
+
+      if (node.selected !== shouldSelect) {
+        updateNode(node.id, { selected: shouldSelect });
+      }
+    }
+
+    if (isMultiSelect) {
+      return;
+    }
+
+    const currentEdges = getEdges();
+    for (const edge of currentEdges) {
+      if (edge.selected) {
+        updateEdge(edge.id, { selected: false });
+      }
+    }
   }
 
   async function beginTitleEditing() {
@@ -196,39 +222,29 @@
       0,
     );
 
-    const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH;
+    const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH + 4;
     return estimatedWidth;
   }
 </script>
 
 <div
-  class="relative pt-0 border rounded-lg shadow-lg border-vsc-editor-widget-border bg-vsc-editor-widget-bg text-vsc-editor-fg"
+  class="relative pt-0 border border-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow]"
+  class:border-vsc-focus={selected && !dragging}
   style={`min-width: ${nodeMinWidthPx}px; min-height: ${nodeMinHeightPx}px;`}
   data-node-editor-root
 >
   {#each inputPins as pin, index (pin.id)}
     {@const pinTop = readPinTop(index, inputPins.length)}
     {@const pinLabel = readPinLabel(pin)}
-    <Handle
+    <NodePinHandle
       type="target"
-      position={Position.Left}
+      side="left"
       id={pin.id}
-      style={`top: ${pinTop};`}
-      class="w-px! h-4! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
-    >
-      <HoverTooltip
-        text={pinLabel}
-        placement="left"
-        wrapperClass="h-4"
-        groupAriaLabel={`Input pin ${pinLabel}`}
-      >
-        <span
-          aria-hidden="true"
-          class="block h-4 rounded-r-full bg-vsc-focus"
-          style={`width: ${PIN_WIDTH}px;`}
-        ></span>
-      </HoverTooltip>
-    </Handle>
+      top={pinTop}
+      width={PIN_WIDTH}
+      label={pinLabel}
+      showTooltip={Boolean(pinLabel)}
+    />
   {/each}
 
   <div class="flex flex-col gap-1 mb-2">
@@ -243,14 +259,15 @@
           onkeydown={handleTitleInputKeydown}
           onblur={handleTitleInputBlur}
         />
-      {:else}
+        {:else}
         <div
-          class="flex items-center flex-1 gap-1 p-1 rounded-t-md bg-vsc-input-bg"
+          class="flex items-center flex-1 gap-1 p-2 rounded-t-md bg-vsc-input-bg cursor-grab active:cursor-grabbing"
           role="group"
           aria-label="Node title bar"
+          onpointerdown={selectNodeFromTitleBar}
         >
           <button
-            class="flex-1 min-w-0 text-left font-bold border border-transparent rounded-md select-none text-vsc-input-fg"
+            class="min-w-0 text-left font-bold border border-transparent rounded-md select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
             type="button"
             ondblclick={beginTitleEditing}
             onkeydown={handleTitleDisplayKeydown}
@@ -259,13 +276,13 @@
           </button>
 
           <button
-            class="inline-flex items-center justify-center rounded-md nodrag size-5 hover:backdrop-brightness-90 p-0.5"
+            class="inline-flex items-center justify-center rounded-md nodrag size-4 hover:backdrop-brightness-90"
             type="button"
             title="Edit node title"
             aria-label="Edit node title"
             onclick={beginTitleEditing}
           >
-            <Pencil size={12} strokeWidth={2.5} aria-hidden="true" class="" />
+            <Pencil strokeWidth={2.5} aria-hidden="true" class="" />
           </button>
         </div>
       {/if}
@@ -298,22 +315,16 @@
 
   {#each outputPins as pin, index (pin.id)}
     {@const pinTop = readPinTop(index, outputPins.length)}
-    <Handle
+    <NodePinHandle
       type="source"
-      position={Position.Right}
+      side="right"
       id={pin.id}
-      style={`top: ${pinTop};`}
-      class="w-px! h-4! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
-    >
-      <span
-        aria-hidden="true"
-        class="absolute right-0 top-1/2 h-4 -translate-y-1/2 rounded-l-full bg-vsc-focus"
-        style={`width: ${PIN_WIDTH}px;`}
-      ></span>
-    </Handle>
+      top={pinTop}
+      width={PIN_WIDTH}
+    />
     <div
-      class="pointer-events-none absolute right-3 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
-      style={`top: ${pinTop};`}
+      class="pointer-events-none absolute pr-1 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
+      style={`top: ${pinTop}; right: ${PIN_WIDTH}px;`}
     >
       {readPinLabel(pin)}
     </div>
