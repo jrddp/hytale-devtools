@@ -181,6 +181,9 @@ function normalizeTemplate(template, index) {
     normalizeNonEmptyString(template.templateId) ??
     label;
   const fields = Array.isArray(template.fields) ? template.fields : [];
+  const inputPins = normalizePinDefinitions(template.inputPins);
+  const outputPins = normalizePinDefinitions(template.outputPins);
+  const schemaConnections = normalizeSchemaConnections(template.schemaConnections);
   const buildInitialValues =
     typeof template.buildInitialValues === 'function'
       ? template.buildInitialValues
@@ -192,8 +195,76 @@ function normalizeTemplate(template, index) {
     label,
     defaultTypeName,
     fields,
+    inputPins,
+    outputPins,
+    schemaConnections,
     buildInitialValues,
   };
+}
+
+function normalizePinDefinitions(pinCandidates) {
+  if (!Array.isArray(pinCandidates)) {
+    return [];
+  }
+
+  const normalizedPins = [];
+  for (const pinCandidate of pinCandidates) {
+    if (!isObject(pinCandidate)) {
+      continue;
+    }
+
+    const pinId = normalizeNonEmptyString(pinCandidate.id ?? pinCandidate.Id);
+    const pinType = normalizeNonEmptyString(pinCandidate.type ?? pinCandidate.Type);
+    if (!pinId || !pinType) {
+      continue;
+    }
+
+    normalizedPins.push({
+      id: pinId,
+      type: pinType,
+      label: normalizeNonEmptyString(pinCandidate.label ?? pinCandidate.Label) ?? pinId,
+      multiple: pinCandidate.multiple === true || pinCandidate.Multiple === true,
+    });
+  }
+
+  return normalizedPins;
+}
+
+function normalizeSchemaConnections(connectionCandidates) {
+  if (!Array.isArray(connectionCandidates)) {
+    return [];
+  }
+
+  const normalizedConnections = [];
+  for (const connectionCandidate of connectionCandidates) {
+    if (!isObject(connectionCandidate)) {
+      continue;
+    }
+
+    const schemaKey = normalizeNonEmptyString(
+      connectionCandidate.schemaKey ?? connectionCandidate.SchemaKey
+    );
+    const outputPinId = normalizeNonEmptyString(
+      connectionCandidate.outputPinId ?? connectionCandidate.OutputPinId
+    );
+    if (!schemaKey || !outputPinId) {
+      continue;
+    }
+
+    normalizedConnections.push({
+      schemaKey,
+      outputPinId,
+      outputPinType: normalizeNonEmptyString(
+        connectionCandidate.outputPinType ?? connectionCandidate.OutputPinType
+      ),
+      nodeSelector: normalizeNonEmptyString(
+        connectionCandidate.nodeSelector ?? connectionCandidate.NodeSelector
+      ),
+      multiple: connectionCandidate.multiple === true || connectionCandidate.Multiple === true,
+    });
+  }
+
+  return normalizedConnections;
 }
 
 function getTemplateLookupKeys(template) {

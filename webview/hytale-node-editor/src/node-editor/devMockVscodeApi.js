@@ -25,6 +25,21 @@ function buildNodePayload(nodeId, template, comment) {
 function buildDefaultDocumentObject() {
   const allFieldsTemplate = getTemplate("all-fields", 0);
   const toggleTemplate = getTemplate("toggles", 1);
+  const allFieldsPayload = buildNodePayload(
+    DEFAULT_NODE_A_ID,
+    allFieldsTemplate,
+    "Use this node to preview most field styles."
+  );
+  const togglePayload = buildNodePayload(
+    DEFAULT_NODE_B_ID,
+    toggleTemplate,
+    "Use Enter/Tab to test field navigation."
+  );
+
+  // In dev mode, edges are derived from runtime schema keys rather than $Links metadata.
+  allFieldsPayload.PrimaryNode = {
+    $NodeId: DEFAULT_NODE_B_ID,
+  };
 
   return {
     $NodeEditorMetadata: {
@@ -40,8 +55,8 @@ function buildDefaultDocumentObject() {
         },
       },
       $FloatingNodes: [
-        buildNodePayload(DEFAULT_NODE_A_ID, allFieldsTemplate, "Use this node to preview most field styles."),
-        buildNodePayload(DEFAULT_NODE_B_ID, toggleTemplate, "Use Enter/Tab to test field navigation."),
+        allFieldsPayload,
+        togglePayload,
       ],
       $Links: {
         [`${DEFAULT_NODE_A_ID}--${DEFAULT_NODE_B_ID}`]: {

@@ -10,7 +10,6 @@
   } from "../node-editor/templateCatalog.js";
   import {
     buildFieldValueMap,
-    getFieldLabel,
     isObject,
     normalizeFieldValue,
   } from "../node-editor/fieldValueUtils.js";
@@ -36,6 +35,8 @@
     ...initialValues,
     ...existingFieldValues,
   };
+  $: inputPins = Array.isArray(template?.inputPins) ? template.inputPins : [];
+  $: outputPins = Array.isArray(template?.outputPins) ? template.outputPins : [];
   $: nodeLabel = typeof data?.label === "string" ? data.label : template.label;
   $: commentInputId = `comment-${sanitizeId(id)}`;
   $: if (!isEditingTitle) {
@@ -141,20 +142,52 @@
     }
     return candidate.replace(/[^a-zA-Z0-9_-]/g, "_");
   }
+
+  function readPinLabel(pin) {
+    if (typeof pin?.label === "string" && pin.label.trim()) {
+      return pin.label.trim();
+    }
+
+    if (typeof pin?.id === "string" && pin.id.trim()) {
+      return pin.id.trim();
+    }
+
+    return "";
+  }
+
+  function readPinTop(index, totalPins) {
+    if (!Number.isFinite(index) || !Number.isFinite(totalPins) || totalPins <= 1) {
+      return "50%";
+    }
+
+    const normalizedIndex = Math.max(0, Math.floor(index));
+    const normalizedTotal = Math.max(1, Math.floor(totalPins));
+    const spacing = 100 / (normalizedTotal + 1);
+    return `${(normalizedIndex + 1) * spacing}%`;
+  }
 </script>
 
 <div
-  class="pt-0 border rounded-lg shadow-lg min-w-72 max-w-80 border-vsc-editor-widget-border bg-vsc-editor-widget-bg text-vsc-editor-fg"
+  class="relative pt-0 border rounded-lg shadow-lg min-w-72 max-w-80 border-vsc-editor-widget-border bg-vsc-editor-widget-bg text-vsc-editor-fg"
   data-node-editor-root
 >
-  <Handle type="target" position={Position.Left} />
+  {#each inputPins as pin, index (pin.id)}
+    {@const pinTop = readPinTop(index, inputPins.length)}
+    <Handle type="target" position={Position.Left} id={pin.id} style={`top: ${pinTop};`} />
+    <div
+      class="pointer-events-none absolute text-[11px] text-vsc-muted whitespace-nowrap"
+      style={`left: -8px; top: ${pinTop}; transform: translate(-100%, -50%);`}
+    >
+      {readPinLabel(pin)}
+    </div>
+  {/each}
 
   <div class="flex flex-col gap-1 mb-2">
     <div class="flex items-center gap-1">
       {#if isEditingTitle}
         <input
           bind:this={titleInputElement}
-          class="rounded-t-md p-1 bg-vsc-input-bg font-bold text-vsc-input-fg w-full"
+          class="w-full p-1 font-bold rounded-t-md bg-vsc-input-bg text-vsc-input-fg"
           type="text"
           value={titleDraft}
           oninput={event => (titleDraft = event.currentTarget.value)}
@@ -162,7 +195,7 @@
           onblur={handleTitleInputBlur}
         />
       {:else}
-        <div class="flex flex-1 rounded-t-md bg-vsc-input-bg items-center p-1 gap-1">
+        <div class="flex items-center flex-1 gap-1 p-1 rounded-t-md bg-vsc-input-bg">
           <div
             class="font-bold border border-transparent rounded-md select-none text-vsc-input-fg"
             role="button"
@@ -189,7 +222,6 @@
     {#if template?.subtitle}
       <div class="text-xs text-vsc-fg px-2.5">{template.subtitle}</div>
     {/if}
-
   </div>
 
   <div class="p-2.5 py-1">
@@ -215,5 +247,20 @@
     </div>
   </div>
 
-  <Handle type="source" position={Position.Right} />
+  {#each outputPins as pin, index (pin.id)}
+    {@const pinTop = readPinTop(index, outputPins.length)}
+    <Handle
+      type="source"
+      position={Position.Right}
+      id={pin.id}
+      style={`top: ${pinTop};`}
+      class="size-4! bg-teal-500! rounded-none border-none rounded-none!"
+    />
+    <div
+      class="pointer-events-none absolute text-[11px] text-vsc-muted whitespace-nowrap"
+      style={`right: -8px; top: ${pinTop}; transform: translate(100%, -50%);`}
+    >
+      {readPinLabel(pin)}
+    </div>
+  {/each}
 </div>

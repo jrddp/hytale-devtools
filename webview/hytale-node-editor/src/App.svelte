@@ -13,6 +13,10 @@
     getTemplateById,
     setActiveTemplateSourceMode,
   } from "./node-editor/templateCatalog.js";
+  import {
+    applySchemaEdgesToNodePayloads,
+    extractSchemaEdgesFromNodePayloads,
+  } from "./node-editor/connectionSchemaMapper.js";
 
   export let vscode;
   export let templateSourceMode = "workspace-hg-java";
@@ -471,14 +475,13 @@
       ...Object.keys(context.nodePayloadById),
     ]);
 
-    const parsedEdges = [];
-    for (const [linkId, linkValue] of Object.entries(context.linkById)) {
-      const parsedEdge = parseEdgeFromLink(linkId, linkValue);
-      if (!parsedEdge) {
-        continue;
-      }
-
-      parsedEdges.push(parsedEdge);
+    const parsedEdges = extractSchemaEdgesFromNodePayloads({
+      nodePayloadById: context.nodePayloadById,
+      resolveTemplateByNodeId(nodeId, payload) {
+        return resolveTemplateForConnectionPayload(nodeId, payload, context);
+      },
+    });
+    for (const parsedEdge of parsedEdges) {
       nodeIds.add(parsedEdge.source);
       nodeIds.add(parsedEdge.target);
     }
@@ -558,13 +561,7 @@
       };
     }
 
-    const linksRoot = isObject(metadataRoot.$Links) ? metadataRoot.$Links : {};
-    for (const [linkId, linkValue] of Object.entries(linksRoot)) {
-      if (typeof linkId !== "string" || !linkId || !isObject(linkValue)) {
-        continue;
-      }
-      context.linkById[linkId] = { ...linkValue };
-    }
+    context.linkById = isObject(metadataRoot.$Links) ? { ...metadataRoot.$Links } : {};
 
     if (!context.rootNodeId) {
       const rootMetadataNodeId = Object.entries(context.nodeMetadataById).find(
@@ -590,7 +587,7 @@
 
     const normalizedNodes = [];
     const nextNodeMetadataById = {};
-    const nextNodePayloadById = {};
+    let nextNodePayloadById = {};
     const seenNodeIds = new Set();
 
     const inputNodes = Array.isArray(state.nodes) ? state.nodes : [];
@@ -700,6 +697,47 @@
     }
 
     const nodeIdSet = new Set(normalizedNodes.map((node) => node.id));
+    const normalizedEdges = [];
+    const seenEdgeIds = new Set();
+    const inputEdges = Array.isArray(state.edges) ? state.edges : [];
+
+    for (let index = 0; index < inputEdges.length; index += 1) {
+      const candidate = inputEdges[index];
+      const source = typeof candidate?.source === "string" ? candidate.source : undefined;
+      const target = typeof candidate?.target === "string" ? candidate.target : undefined;
+      if (!source || !target || !nodeIdSet.has(source) || !nodeIdSet.has(target)) {
+        continue;
+      }
+
+      const sourceHandle = normalizeHandleId(candidate?.sourceHandle);
+      const targetHandle = normalizeHandleId(candidate?.targetHandle);
+      const edgeId =
+        typeof candidate?.id === "string" && candidate.id.trim()
+          ? candidate.id.trim()
+          : `${source}:${sourceHandle ?? "source"}--${target}:${targetHandle ?? "target"}`;
+
+      if (seenEdgeIds.has(edgeId)) {
+        continue;
+      }
+      seenEdgeIds.add(edgeId);
+
+      normalizedEdges.push({
+        id: edgeId,
+        source,
+        ...(sourceHandle !== undefined ? { sourceHandle } : {}),
+        target,
+        ...(targetHandle !== undefined ? { targetHandle } : {}),
+      });
+    }
+
+    nextNodePayloadById = applySchemaEdgesToNodePayloads({
+      nodePayloadById: nextNodePayloadById,
+      edges: normalizedEdges,
+      resolveTemplateByNodeId(nodeId, payload) {
+        return resolveTemplateForConnectionPayload(nodeId, payload, state.metadataContext);
+      },
+    });
+
     const preservedFloatingRoots = [];
     const floatingCoveredNodeIds = new Set();
     const priorFloatingNodes = Array.isArray(state.metadataContext.floatingNodes)
@@ -749,41 +787,6 @@
       nextNodePayloadById[nodeId] = rewrittenFloatingRoot;
     }
 
-    const normalizedEdges = [];
-    const nextLinks = {};
-    const seenEdgeIds = new Set();
-    const inputEdges = Array.isArray(state.edges) ? state.edges : [];
-
-    for (let index = 0; index < inputEdges.length; index += 1) {
-      const candidate = inputEdges[index];
-      const source = typeof candidate?.source === "string" ? candidate.source : undefined;
-      const target = typeof candidate?.target === "string" ? candidate.target : undefined;
-      if (!source || !target || !nodeIdSet.has(source) || !nodeIdSet.has(target)) {
-        continue;
-      }
-
-      const edgeId =
-        typeof candidate?.id === "string" && candidate.id.trim()
-          ? candidate.id.trim()
-          : `${source}--${target}`;
-
-      if (seenEdgeIds.has(edgeId)) {
-        continue;
-      }
-      seenEdgeIds.add(edgeId);
-
-      const baseLink = isObject(knownLinks[edgeId]) ? { ...knownLinks[edgeId] } : {};
-      baseLink.$SourceNodeId = source;
-      baseLink.$TargetNodeId = target;
-
-      nextLinks[edgeId] = baseLink;
-      normalizedEdges.push({
-        id: edgeId,
-        source,
-        target,
-      });
-    }
-
     const nextMetadataContext = {
       workspaceId: state.metadataContext.workspaceId,
       rootNodeId: state.metadataContext.rootNodeId,
@@ -796,7 +799,7 @@
         : {},
       nodeMetadataById: nextNodeMetadataById,
       nodePayloadById: nextNodePayloadById,
-      linkById: nextLinks,
+      linkById: isObject(knownLinks) ? { ...knownLinks } : {},
     };
 
     const metadata = {
@@ -822,42 +825,6 @@
       edges: normalizedEdges,
       metadataContext: nextMetadataContext,
       text: `${JSON.stringify(root, null, 2)}\n`,
-    };
-  }
-
-  function parseEdgeFromLink(linkId, linkValue) {
-    const sourceCandidates = [
-      linkValue.$SourceNodeId,
-      linkValue.source,
-      linkValue.Source,
-      linkValue.from,
-      linkValue.From,
-    ];
-    const targetCandidates = [
-      linkValue.$TargetNodeId,
-      linkValue.target,
-      linkValue.Target,
-      linkValue.to,
-      linkValue.To,
-    ];
-
-    let source = sourceCandidates.find((candidate) => typeof candidate === "string" && candidate.trim());
-    let target = targetCandidates.find((candidate) => typeof candidate === "string" && candidate.trim());
-
-    if ((!source || !target) && linkId.includes("--")) {
-      const [sourceFromId, targetFromId] = linkId.split("--");
-      source = source ?? sourceFromId;
-      target = target ?? targetFromId;
-    }
-
-    if (!source || !target) {
-      return undefined;
-    }
-
-    return {
-      id: linkId,
-      source,
-      target,
     };
   }
 
@@ -1042,6 +1009,14 @@
     return `${cleanType || "Node"}-${createUuid()}`;
   }
 
+  function normalizeHandleId(candidate) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+
+    return undefined;
+  }
+
   function normalizePosition(candidatePosition, index) {
     const fallbackX = index * 180;
     const fallbackY = 100;
@@ -1066,6 +1041,17 @@
     }
 
     return undefined;
+  }
+
+  function resolveTemplateForConnectionPayload(nodeId, payload, context) {
+    const normalizedPayload = isObject(payload) ? payload : {};
+    const payloadForTemplate = withImplicitRootType(normalizedPayload, nodeId, context);
+    const templateId = readTemplateId(undefined, payloadForTemplate);
+
+    return (
+      (templateId !== undefined ? getTemplateById(templateId) : undefined) ??
+      findTemplateByTypeName(payloadForTemplate.Type)
+    );
   }
 
   function withImplicitRootType(payload, nodeId, context) {

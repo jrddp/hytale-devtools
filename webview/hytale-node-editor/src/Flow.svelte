@@ -13,10 +13,13 @@
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
   import {
+    findTemplateByTypeName,
     getDefaultTemplate,
+    getTemplateById,
     getTemplates,
     setActiveTemplateSourceMode,
   } from "./node-editor/templateCatalog.js";
+  import { chooseCompatibleInputHandleId } from "./node-editor/connectionSchemaMapper.js";
   import { CUSTOM_NODE_TYPE } from "./node-editor/types.js";
 
   export let nodes = createDefaultNodes();
@@ -40,7 +43,9 @@
   let addMenuPosition = { x: 0, y: 0 };
   let pendingNodePosition = { x: 0, y: 0 };
   let pendingConnectionSourceId;
+  let pendingConnectionSourceHandleId;
   let connectStartSourceNodeId;
+  let connectStartSourceHandleId;
   let skipNextPaneClickClose = false;
   let hasAppliedInitialFit = false;
   let initialFitInProgress = false;
@@ -126,6 +131,7 @@
   function closeAddNodeMenu() {
     addMenuOpen = false;
     pendingConnectionSourceId = undefined;
+    pendingConnectionSourceHandleId = undefined;
   }
 
   function didEventOccurInsideAddMenu(event) {
@@ -154,7 +160,11 @@
     closeAddNodeMenu();
   }
 
-  function openAddNodeMenu(pointerEvent, sourceNodeId = undefined) {
+  function openAddNodeMenu(
+    pointerEvent,
+    sourceNodeId = undefined,
+    sourceHandleId = undefined
+  ) {
     const { clientX, clientY } = readPointerCoordinates(pointerEvent);
     const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
     if (!paneBounds) {
@@ -172,6 +182,7 @@
     });
 
     pendingConnectionSourceId = sourceNodeId;
+    pendingConnectionSourceHandleId = sourceHandleId;
     addMenuOpen = true;
     addMenuOpenVersion += 1;
   }
@@ -199,6 +210,10 @@
   function handleConnectStart(_pointerEvent, params) {
     connectStartSourceNodeId =
       typeof params?.nodeId === "string" && params.nodeId.trim() ? params.nodeId.trim() : undefined;
+    connectStartSourceHandleId =
+      typeof params?.handleId === "string" && params.handleId.trim()
+        ? params.handleId.trim()
+        : undefined;
   }
 
   function handleConnectEnd(rawPointerEvent, rawConnectionState) {
@@ -206,6 +221,7 @@
     const connectionState = extractConnectionState(rawPointerEvent, rawConnectionState);
     if (connectionState?.isValid) {
       connectStartSourceNodeId = undefined;
+      connectStartSourceHandleId = undefined;
       return;
     }
 
@@ -214,11 +230,15 @@
       connectStartSourceNodeId ??
       nodes?.[0]?.id ??
       "Node-00000000-0000-0000-0000-000000000000";
+    const sourceHandleId =
+      extractSourceHandleId(connectionState) ??
+      connectStartSourceHandleId;
 
     // Prevent immediate close when the same mouse-up emits a pane click right after connect-end.
     skipNextPaneClickClose = true;
-    openAddNodeMenu(pointerEvent, sourceNodeId);
+    openAddNodeMenu(pointerEvent, sourceNodeId, sourceHandleId);
     connectStartSourceNodeId = undefined;
+    connectStartSourceHandleId = undefined;
   }
 
   function handleMenuSelect(event) {
@@ -246,12 +266,26 @@
     nodes = [...nodes, newNode];
 
     if (typeof pendingConnectionSourceId === "string" && pendingConnectionSourceId.trim()) {
+      const targetHandleId = chooseTargetHandleForConnection(
+        pendingConnectionSourceId,
+        pendingConnectionSourceHandleId,
+        template
+      );
       edges = [
         ...edges,
         {
-          id: `${pendingConnectionSourceId}--${newNodeId}`,
+          id: createEdgeId({
+            sourceNodeId: pendingConnectionSourceId,
+            sourceHandleId: pendingConnectionSourceHandleId,
+            targetNodeId: newNodeId,
+            targetHandleId,
+          }),
           source: pendingConnectionSourceId,
+          ...(pendingConnectionSourceHandleId
+            ? { sourceHandle: pendingConnectionSourceHandleId }
+            : {}),
           target: newNodeId,
+          ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
         },
       ];
     }
@@ -317,6 +351,61 @@
     }
 
     return undefined;
+  }
+
+  function extractSourceHandleId(connectionState) {
+    const candidates = [
+      connectionState?.fromHandle?.id,
+      connectionState?.fromHandleId,
+      connectionState?.sourceHandle,
+    ];
+
+    return candidates.find(
+      (candidate) => typeof candidate === "string" && candidate.trim()
+    );
+  }
+
+  function chooseTargetHandleForConnection(sourceNodeId, sourceHandleId, targetTemplate) {
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
+    const sourcePins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
+    const sourcePin = sourcePins.find((pin) => pin.id === sourceHandleId);
+    const sourcePinType =
+      typeof sourcePin?.type === "string" && sourcePin.type.trim() ? sourcePin.type.trim() : undefined;
+
+    return chooseCompatibleInputHandleId(sourcePinType, targetTemplate);
+  }
+
+  function findTemplateForNodeId(nodeId) {
+    if (typeof nodeId !== "string" || !nodeId.trim()) {
+      return undefined;
+    }
+
+    const sourceNode = Array.isArray(nodes) ? nodes.find((node) => node?.id === nodeId) : undefined;
+    if (!sourceNode) {
+      return undefined;
+    }
+
+    const templateId =
+      typeof sourceNode?.data?.$templateId === "string" && sourceNode.data.$templateId.trim()
+        ? sourceNode.data.$templateId.trim()
+        : undefined;
+
+    return (
+      (templateId ? getTemplateById(templateId) : undefined) ??
+      findTemplateByTypeName(sourceNode?.data?.Type) ??
+      findTemplateByTypeName(sourceNode?.data?.label)
+    );
+  }
+
+  function createEdgeId({
+    sourceNodeId,
+    sourceHandleId,
+    targetNodeId,
+    targetHandleId,
+  }) {
+    const sourcePart = sourceHandleId ? `${sourceNodeId}:${sourceHandleId}` : sourceNodeId;
+    const targetPart = targetHandleId ? `${targetNodeId}:${targetHandleId}` : targetNodeId;
+    return `${sourcePart}--${targetPart}--${createUuid()}`;
   }
 
   function normalizeNodeType(candidate) {

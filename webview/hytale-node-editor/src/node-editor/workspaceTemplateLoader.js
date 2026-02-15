@@ -29,6 +29,7 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
 
   let nodesWithConnectionPins = 0;
   let schemaLinkDescriptorCount = 0;
+  let nodesWithSchemaConnections = 0;
 
   for (const entry of moduleEntries) {
     if (entry === workspaceConfigEntry) {
@@ -49,6 +50,27 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
 
     const label = normalizeNonEmptyString(nodeDefinition.Title) ?? templateId;
     const schema = isObject(nodeDefinition.Schema) ? nodeDefinition.Schema : {};
+    const outputPins = buildTemplatePins(
+      nodeDefinition.Outputs,
+      templateId,
+      entry.relativePath,
+      'Outputs',
+      diagnostics
+    );
+    const inputPins = buildTemplatePins(
+      nodeDefinition.Inputs,
+      templateId,
+      entry.relativePath,
+      'Inputs',
+      diagnostics
+    );
+    const schemaConnections = buildSchemaConnections(
+      schema,
+      outputPins,
+      templateId,
+      entry.relativePath,
+      diagnostics
+    );
     const defaultTypeName = normalizeNonEmptyString(schema.Type) ?? templateId;
     const fields = buildTemplateFields(
       nodeDefinition.Content,
@@ -58,10 +80,13 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
       unsupportedFieldTypes
     );
 
-    if (hasConnectionPins(nodeDefinition)) {
+    if (inputPins.length > 0 || outputPins.length > 0) {
       nodesWithConnectionPins += 1;
     }
     schemaLinkDescriptorCount += countSchemaLinkDescriptors(schema);
+    if (schemaConnections.length > 0) {
+      nodesWithSchemaConnections += 1;
+    }
 
     const template = createTemplate({
       templateId,
@@ -69,6 +94,9 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
       subtitle: defaultTypeName !== label ? defaultTypeName : undefined,
       defaultTypeName,
       fields,
+      inputPins,
+      outputPins,
+      schemaConnections,
     });
 
     if (templateById.has(templateId)) {
@@ -104,7 +132,13 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
 
   if (nodesWithConnectionPins > 0) {
     diagnostics.push(
-      `Workspace defines pin schemas for ${nodesWithConnectionPins} node types. Pin typing and connection rules are not enforced yet.`
+      `Workspace defines pin schemas for ${nodesWithConnectionPins} node types. Pin-based handles are generated; type filtering rules are not enforced yet.`
+    );
+  }
+
+  if (nodesWithSchemaConnections > 0) {
+    diagnostics.push(
+      `Workspace schemas include connection mappings for ${nodesWithSchemaConnections} node types. Runtime connection parsing/writing is schema-driven.`
     );
   }
 
@@ -233,10 +267,173 @@ function buildTemplateFields(
   return fields;
 }
 
-function hasConnectionPins(nodeDefinition) {
-  const hasInputs = Array.isArray(nodeDefinition?.Inputs) && nodeDefinition.Inputs.length > 0;
-  const hasOutputs = Array.isArray(nodeDefinition?.Outputs) && nodeDefinition.Outputs.length > 0;
-  return hasInputs || hasOutputs;
+function buildTemplatePins(pins, templateId, relativePath, pinGroupName, diagnostics) {
+  if (!Array.isArray(pins)) {
+    return [];
+  }
+
+  const normalizedPins = [];
+  const seenPinIds = new Set();
+
+  for (const pinCandidate of pins) {
+    if (!isObject(pinCandidate)) {
+      continue;
+    }
+
+    const pinId = normalizeNonEmptyString(pinCandidate.Id);
+    if (!pinId) {
+      diagnostics.push(
+        `Node "${templateId}" ${pinGroupName} contains an entry without a valid Id (${relativePath}).`
+      );
+      continue;
+    }
+
+    if (seenPinIds.has(pinId)) {
+      diagnostics.push(
+        `Node "${templateId}" ${pinGroupName} contains duplicate pin Id "${pinId}" (${relativePath}). Keeping the latest definition.`
+      );
+      const existingPinIndex = normalizedPins.findIndex(
+        (existingPin) => existingPin.id === pinId
+      );
+      if (existingPinIndex >= 0) {
+        normalizedPins.splice(existingPinIndex, 1);
+      }
+    }
+
+    const pinType = normalizeNonEmptyString(pinCandidate.Type);
+    if (!pinType) {
+      diagnostics.push(
+        `Node "${templateId}" ${pinGroupName} pin "${pinId}" is missing a valid Type (${relativePath}).`
+      );
+      continue;
+    }
+
+    seenPinIds.add(pinId);
+
+    normalizedPins.push({
+      id: pinId,
+      type: pinType,
+      label: normalizeNonEmptyString(pinCandidate.Label) ?? pinId,
+      multiple: typeof pinCandidate.Multiple === 'boolean' ? pinCandidate.Multiple : false,
+    });
+  }
+
+  return normalizedPins;
+}
+
+function buildSchemaConnections(schema, outputPins, templateId, relativePath, diagnostics) {
+  if (!isObject(schema)) {
+    return [];
+  }
+
+  const connections = [];
+  const seenConnectionKeys = new Set();
+
+  for (const [schemaKey, schemaValue] of Object.entries(schema)) {
+    const descriptor = readSchemaLinkDescriptor(schemaValue);
+    if (!descriptor) {
+      continue;
+    }
+
+    const runtimeSchemaKey = normalizeSchemaRuntimeKey(schemaKey);
+    if (!runtimeSchemaKey) {
+      diagnostics.push(
+        `Node "${templateId}" schema connection key "${schemaKey}" is not valid (${relativePath}).`
+      );
+      continue;
+    }
+
+    const resolvedOutputPin = resolveOutputPinBySchemaPinId(descriptor.pinId, outputPins);
+    if (!resolvedOutputPin) {
+      diagnostics.push(
+        `Node "${templateId}" schema key "${schemaKey}" references unknown output pin "${descriptor.pinId}" (${relativePath}).`
+      );
+      continue;
+    }
+
+    if (resolvedOutputPin.id !== descriptor.pinId) {
+      diagnostics.push(
+        `Node "${templateId}" schema key "${schemaKey}" pin "${descriptor.pinId}" matched output "${resolvedOutputPin.id}" by Type fallback (${relativePath}).`
+      );
+    }
+
+    const connectionLookupKey = `${runtimeSchemaKey}:${resolvedOutputPin.id}`;
+    if (seenConnectionKeys.has(connectionLookupKey)) {
+      diagnostics.push(
+        `Node "${templateId}" schema defines duplicate connection mapping for key "${runtimeSchemaKey}" and pin "${resolvedOutputPin.id}" (${relativePath}). Keeping the latest definition.`
+      );
+      const existingConnectionIndex = connections.findIndex(
+        (existingConnection) =>
+          existingConnection.schemaKey === runtimeSchemaKey &&
+          existingConnection.outputPinId === resolvedOutputPin.id
+      );
+      if (existingConnectionIndex >= 0) {
+        connections.splice(existingConnectionIndex, 1);
+      }
+    }
+
+    seenConnectionKeys.add(connectionLookupKey);
+
+    connections.push({
+      schemaKey: runtimeSchemaKey,
+      outputPinId: resolvedOutputPin.id,
+      outputPinType: resolvedOutputPin.type,
+      nodeSelector: descriptor.nodeSelector,
+      multiple: resolvedOutputPin.multiple,
+    });
+  }
+
+  return connections;
+}
+
+function readSchemaLinkDescriptor(schemaValue) {
+  if (!isObject(schemaValue)) {
+    return undefined;
+  }
+
+  const nodeSelector =
+    normalizeNonEmptyString(schemaValue.Node) ?? normalizeNonEmptyString(schemaValue.node);
+  const pinId =
+    normalizeNonEmptyString(schemaValue.Pin) ?? normalizeNonEmptyString(schemaValue.pin);
+  if (!nodeSelector || !pinId) {
+    return undefined;
+  }
+
+  return {
+    nodeSelector,
+    pinId,
+  };
+}
+
+function normalizeSchemaRuntimeKey(schemaKey) {
+  const normalizedSchemaKey = normalizeNonEmptyString(schemaKey);
+  if (!normalizedSchemaKey) {
+    return undefined;
+  }
+
+  if (normalizedSchemaKey.endsWith('$Pin')) {
+    return normalizedSchemaKey.slice(0, -'$Pin'.length);
+  }
+
+  return normalizedSchemaKey;
+}
+
+function resolveOutputPinBySchemaPinId(schemaPinId, outputPins) {
+  if (!schemaPinId || !Array.isArray(outputPins) || outputPins.length === 0) {
+    return undefined;
+  }
+
+  const exactMatch = outputPins.find((pin) => pin.id === schemaPinId);
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  const typeMatches = outputPins.filter((pin) => pin.type === schemaPinId);
+  if (typeMatches.length === 1) {
+    return typeMatches[0];
+  }
+
+  return undefined;
 }
 
 function countSchemaLinkDescriptors(schema) {
@@ -246,11 +443,7 @@ function countSchemaLinkDescriptors(schema) {
 
   let count = 0;
   for (const schemaValue of Object.values(schema)) {
-    if (
-      isObject(schemaValue) &&
-      normalizeNonEmptyString(schemaValue.Node) &&
-      normalizeNonEmptyString(schemaValue.Pin)
-    ) {
+    if (readSchemaLinkDescriptor(schemaValue)) {
       count += 1;
     }
   }
@@ -313,6 +506,11 @@ function buildOrderedTemplates(templateById, nodeCategories, diagnostics) {
 function createTemplate(definition) {
   return {
     ...definition,
+    inputPins: Array.isArray(definition.inputPins) ? definition.inputPins : [],
+    outputPins: Array.isArray(definition.outputPins) ? definition.outputPins : [],
+    schemaConnections: Array.isArray(definition.schemaConnections)
+      ? definition.schemaConnections
+      : [],
     buildInitialValues: () => buildFieldValueMap(definition.fields),
   };
 }

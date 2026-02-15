@@ -4,6 +4,11 @@ import { buildFieldValueMap } from './fieldValueUtils.js';
 function createTemplate(definition) {
   return {
     ...definition,
+    inputPins: Array.isArray(definition.inputPins) ? definition.inputPins : [],
+    outputPins: Array.isArray(definition.outputPins) ? definition.outputPins : [],
+    schemaConnections: Array.isArray(definition.schemaConnections)
+      ? definition.schemaConnections
+      : [],
     buildInitialValues: () => buildFieldValueMap(definition.fields),
   };
 }
@@ -15,6 +20,21 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'Basic custom node',
     category: 'Basics',
     defaultTypeName: 'Simple',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+    ],
+    outputPins: [
+      { id: 'next', type: 'Flow', label: 'Next' },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'NextNode',
+        outputPinId: 'next',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+    ],
     fields: [
       {
         id: 'Label',
@@ -36,6 +56,30 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'Headline + body',
     category: 'Basics',
     defaultTypeName: 'Text',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'context', type: 'Data', label: 'Context' },
+    ],
+    outputPins: [
+      { id: 'success', type: 'Flow', label: 'Success' },
+      { id: 'failure', type: 'Flow', label: 'Failure' },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'SuccessNode',
+        outputPinId: 'success',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'FailureNode',
+        outputPinId: 'failure',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+    ],
     fields: [
       {
         id: 'Headline',
@@ -57,6 +101,30 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'Int + Integer + Float',
     category: 'Controls',
     defaultTypeName: 'Number',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'value', type: 'Number', label: 'Value' },
+    ],
+    outputPins: [
+      { id: 'next', type: 'Flow', label: 'Next' },
+      { id: 'inputs', type: 'Number', label: 'Inputs', multiple: true },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'NextNode',
+        outputPinId: 'next',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'InputNodes',
+        outputPinId: 'inputs',
+        outputPinType: 'Number',
+        nodeSelector: 'DevNode',
+        multiple: true,
+      },
+    ],
     fields: [
       {
         id: 'Quantity',
@@ -84,6 +152,38 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'IntSlider field',
     category: 'Controls',
     defaultTypeName: 'Slider',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'source', type: 'Number', label: 'Source' },
+    ],
+    outputPins: [
+      { id: 'value', type: 'Number', label: 'Value' },
+      { id: 'next', type: 'Flow', label: 'Next' },
+      { id: 'listeners', type: 'Flow', label: 'Listeners', multiple: true },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'ValueNode',
+        outputPinId: 'value',
+        outputPinType: 'Number',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'NextNode',
+        outputPinId: 'next',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'ListenerNodes',
+        outputPinId: 'listeners',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: true,
+      },
+    ],
     fields: [
       {
         id: 'Strength',
@@ -99,6 +199,30 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'Checkbox + Bool + Enum',
     category: 'Controls',
     defaultTypeName: 'Toggle',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'condition', type: 'Bool', label: 'Condition' },
+    ],
+    outputPins: [
+      { id: 'onTrue', type: 'Flow', label: 'On True' },
+      { id: 'onFalse', type: 'Flow', label: 'On False' },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'TrueNode',
+        outputPinId: 'onTrue',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'FalseNode',
+        outputPinId: 'onFalse',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+    ],
     fields: [
       {
         id: 'Enabled',
@@ -131,6 +255,38 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'FilePath + List',
     category: 'Data',
     defaultTypeName: 'Asset',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'asset', type: 'Asset', label: 'Asset In' },
+    ],
+    outputPins: [
+      { id: 'next', type: 'Flow', label: 'Next' },
+      { id: 'assetOut', type: 'Asset', label: 'Asset Out' },
+      { id: 'tags', type: 'String', label: 'Tags', multiple: true },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'NextNode',
+        outputPinId: 'next',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'AssetNode',
+        outputPinId: 'assetOut',
+        outputPinType: 'Asset',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'TagNodes',
+        outputPinId: 'tags',
+        outputPinType: 'String',
+        nodeSelector: 'DevNode',
+        multiple: true,
+      },
+    ],
     fields: [
       {
         id: 'AssetPath',
@@ -152,6 +308,30 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'Nested Object fields',
     category: 'Data',
     defaultTypeName: 'ObjectNode',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'objectIn', type: 'Data', label: 'Object In' },
+    ],
+    outputPins: [
+      { id: 'next', type: 'Flow', label: 'Next' },
+      { id: 'objectOut', type: 'Data', label: 'Object Out' },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'NextNode',
+        outputPinId: 'next',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'TransformNode',
+        outputPinId: 'objectOut',
+        outputPinType: 'Data',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+    ],
     fields: [
       {
         id: 'Offset',
@@ -205,6 +385,47 @@ export const SAMPLE_NODE_TEMPLATES = [
     subtitle: 'Coverage for all supported field types',
     category: 'Coverage',
     defaultTypeName: 'AllFields',
+    inputPins: [
+      { id: 'entry', type: 'Flow', label: 'Entry' },
+      { id: 'context', type: 'Data', label: 'Context' },
+      { id: 'metrics', type: 'Number', label: 'Metrics' },
+    ],
+    outputPins: [
+      { id: 'primary', type: 'Flow', label: 'Primary' },
+      { id: 'secondary', type: 'Flow', label: 'Secondary' },
+      { id: 'data', type: 'Data', label: 'Data' },
+      { id: 'alerts', type: 'Flow', label: 'Alerts', multiple: true },
+    ],
+    schemaConnections: [
+      {
+        schemaKey: 'PrimaryNode',
+        outputPinId: 'primary',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'SecondaryNode',
+        outputPinId: 'secondary',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'DataNode',
+        outputPinId: 'data',
+        outputPinType: 'Data',
+        nodeSelector: 'DevNode',
+        multiple: false,
+      },
+      {
+        schemaKey: 'AlertNodes',
+        outputPinId: 'alerts',
+        outputPinType: 'Flow',
+        nodeSelector: 'DevNode',
+        multiple: true,
+      },
+    ],
     fields: [
       {
         id: 'SmallString',
