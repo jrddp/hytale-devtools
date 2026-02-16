@@ -9,13 +9,11 @@
   const GROUP_TITLE_BASE_SIZE_PX = 18;
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 3.5;
   const TITLEBAR_DRAG_DISTANCE_THRESHOLD_PX = 3;
-  const DEBUG_GROUP_DRAG_STATE = true;
 
   let {
     id,
     data = {},
     selected = false,
-    draggable: nodeDraggable = undefined,
     dragging = false,
     positionAbsoluteX = 0,
     positionAbsoluteY = 0,
@@ -35,8 +33,6 @@
   let titleInputElement = $state(undefined);
   let appliedDraggable = $state(undefined);
   let titlebarDragSession = $state(undefined);
-  let previousSelected = $state(undefined);
-  let previousNodeDraggable = $state(undefined);
 
   $effect(() => {
     if (!isEditingTitle) {
@@ -45,45 +41,10 @@
   });
 
   $effect(() => {
-    if (previousSelected === selected) {
-      return;
-    }
-
-    debugDragState("selected changed", {
-      previousSelected,
-      selected,
-      nodeDraggable,
-      appliedDraggable,
-    });
-    previousSelected = selected;
-  });
-
-  $effect(() => {
-    if (previousNodeDraggable === nodeDraggable) {
-      return;
-    }
-
-    debugDragState("draggable changed", {
-      previousDraggable: previousNodeDraggable,
-      nodeDraggable,
-      selected,
-      appliedDraggable,
-    });
-    previousNodeDraggable = nodeDraggable;
-  });
-
-  $effect(() => {
     const nextDraggable = Boolean(selected);
     if (appliedDraggable === nextDraggable) {
       return;
     }
-
-    debugDragState("requesting draggable update", {
-      selected,
-      previousAppliedDraggable: appliedDraggable,
-      nextDraggable,
-      nodeDraggable,
-    });
 
     appliedDraggable = nextDraggable;
     updateNode(id, {
@@ -267,14 +228,6 @@
   function readFiniteNumber(candidateNumber) {
     const numericValue = Number(candidateNumber);
     return Number.isFinite(numericValue) ? numericValue : 0;
-  }
-
-  function debugDragState(message, payload) {
-    if (!DEBUG_GROUP_DRAG_STATE || typeof console === "undefined") {
-      return;
-    }
-
-    console.log(`[GroupMetadataNode:${id}] ${message}`, payload);
   }
 </script>
 

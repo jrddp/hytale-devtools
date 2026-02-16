@@ -238,6 +238,29 @@
     openAddNodeMenu(pointerEvent);
   }
 
+  function handleNodeContextMenu(payload) {
+    const pointerEvent = payload?.event;
+    const node = payload?.node;
+    if (!pointerEvent || !node) {
+      return;
+    }
+
+    const isGroupNode = normalizeOptionalString(node?.type) === GROUP_NODE_TYPE;
+    const isSelected = node?.selected === true;
+    const isTitleBar = Boolean(
+      typeof pointerEvent?.target?.closest === "function" &&
+        pointerEvent.target.closest(".group-title-drag-handle")
+    );
+
+    if (!isGroupNode || isSelected || isTitleBar) {
+      return;
+    }
+
+    pointerEvent.preventDefault();
+    pointerEvent.stopPropagation();
+    openAddNodeMenu(pointerEvent);
+  }
+
   function handlePaneClick() {
     if (skipNextPaneClickClose) {
       skipNextPaneClickClose = false;
@@ -812,6 +835,7 @@
     onconnectstart={handleConnectStart}
     onconnectend={handleConnectEnd}
     onnodedragstop={handleNodeDragStop}
+    onnodecontextmenu={handleNodeContextMenu}
     onpaneclick={handlePaneClick}
     onpanecontextmenu={handlePaneContextMenu}
   >
