@@ -10,6 +10,7 @@
 
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
+  import GroupMetadataNode from "./nodes/GroupMetadataNode.svelte";
   import {
     findTemplateByTypeName,
     getDefaultTemplate,
@@ -20,7 +21,12 @@
     setActiveTemplateSourceMode,
   } from "./node-editor/templateCatalog.js";
   import { chooseCompatibleInputHandleId } from "./node-editor/connectionSchemaMapper.js";
-  import { CUSTOM_NODE_TYPE } from "./node-editor/types.js";
+  import {
+    CUSTOM_NODE_TYPE,
+    GENERIC_ACTION_CREATE_GROUP,
+    GENERIC_ADD_CATEGORY,
+    GROUP_NODE_TYPE,
+  } from "./node-editor/types.js";
 
   export let nodes = createDefaultNodes();
   export let edges = [];
@@ -29,10 +35,28 @@
   export let workspaceContext = {};
 
   const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
+  const ADD_MENU_WIDTH_PX = 256;
+  const ADD_MENU_EDGE_PADDING_PX = 12;
+  const ADD_MENU_CURSOR_GAP_PX = 10;
+  const ADD_MENU_MAX_VIEWPORT_HEIGHT_RATIO = 0.7;
+  const DEFAULT_GROUP_WIDTH = 520;
+  const DEFAULT_GROUP_HEIGHT = 320;
+  const DEFAULT_GROUP_NAME = "Group";
   const dispatch = createEventDispatcher();
+
+  const GENERIC_ADD_MENU_ENTRIES = [
+    {
+      kind: "generic-action",
+      actionId: GENERIC_ACTION_CREATE_GROUP,
+      category: GENERIC_ADD_CATEGORY,
+      label: "Create New Group",
+      nodeColor: "var(--vscode-focusBorder)",
+    },
+  ];
 
   const nodeTypes = {
     [CUSTOM_NODE_TYPE]: CustomMetadataNode,
+    [GROUP_NODE_TYPE]: GroupMetadataNode,
   };
 
   const { screenToFlowPosition, fitView } = useSvelteFlow();
@@ -43,6 +67,7 @@
   let addMenuOpen = false;
   let addMenuOpenVersion = 0; // Used to trigger re-focusing when menu is re-opened.
   let addMenuPosition = { x: 0, y: 0 };
+  let addMenuMaxHeightPx = 0;
   let pendingNodePosition = { x: 0, y: 0 };
   let pendingConnection;
   let connectStartSourceNodeId;
@@ -52,7 +77,7 @@
   let initialFitInProgress = false;
   let initialViewportReady = false;
   let allTemplates = [];
-  let availableTemplates = [];
+  let availableAddEntries = [];
   let pendingSingleSourceReplacement;
 
   $: {
@@ -61,7 +86,7 @@
     allTemplates = getTemplates(workspaceContext);
   }
 
-  $: availableTemplates = resolveAvailableTemplates(pendingConnection);
+  $: availableAddEntries = resolveAvailableAddEntries(pendingConnection);
 
   $: if (loadVersion !== lastNormalizedLoadVersion) {
     lastNormalizedLoadVersion = loadVersion;
@@ -145,6 +170,19 @@
     emitFlowChange("node-moved");
   }
 
+  function handleGroupMutation(event) {
+    const mutationReason = normalizeOptionalString(event?.detail?.reason);
+    emitFlowChange(mutationReason ?? "group-updated");
+  }
+
+  function handleWindowKeyUp(event) {
+    if (!isDeleteKey(event) || isEditableTarget(event?.target)) {
+      return;
+    }
+
+    queueMicrotask(() => emitFlowChange("elements-deleted"));
+  }
+
   function closeAddNodeMenu() {
     addMenuOpen = false;
     pendingConnection = undefined;
@@ -188,6 +226,7 @@
     }
 
     addMenuPosition = addMenuRequest.position;
+    addMenuMaxHeightPx = addMenuRequest.maxHeightPx;
     pendingNodePosition = addMenuRequest.nodePosition;
     pendingConnection = addMenuRequest.connection;
     addMenuOpen = true;
@@ -263,10 +302,32 @@
   }
 
   function handleMenuSelect(event) {
-    const template = event?.detail?.template;
-    if (!template) {
+    const entry = event?.detail?.template;
+    if (!entry) {
       return;
     }
+
+    if (isGenericGroupCreationEntry(entry)) {
+      const newGroupNode = {
+        id: `Group-${createUuid()}`,
+        type: GROUP_NODE_TYPE,
+        data: {
+          $groupName: DEFAULT_GROUP_NAME,
+        },
+        position: {
+          ...pendingNodePosition,
+        },
+        width: DEFAULT_GROUP_WIDTH,
+        height: DEFAULT_GROUP_HEIGHT,
+      };
+
+      nodes = [newGroupNode, ...nodes];
+      closeAddNodeMenu();
+      emitFlowChange("group-created");
+      return;
+    }
+
+    const template = entry;
 
     const newNodeId = `${normalizeNodeType(template.schemaType ?? template.defaultTypeName)}-${createUuid()}`;
     const newNode = {
@@ -340,17 +401,63 @@
       return undefined;
     }
 
+    const menuPlacement = resolveAddMenuPlacement(clientX, clientY, paneBounds);
+
     return {
-      position: {
-        x: clientX - paneBounds.left,
-        y: clientY - paneBounds.top - 60,
-      },
+      position: menuPlacement.position,
+      maxHeightPx: menuPlacement.maxHeightPx,
       nodePosition: screenToFlowPosition({
         x: clientX,
         y: clientY,
       }),
       connection: createPendingConnection(sourceNodeId, sourceHandleId),
     };
+  }
+
+  function resolveAddMenuPlacement(clientX, clientY, paneBounds) {
+    const pointerXInPane = clientX - paneBounds.left;
+    const pointerYInPane = clientY - paneBounds.top;
+    const maxHeightPx = readAddMenuMaxHeightPx(paneBounds.height);
+
+    const preferredX = pointerXInPane + ADD_MENU_CURSOR_GAP_PX;
+    const preferredBelowY = pointerYInPane + ADD_MENU_CURSOR_GAP_PX;
+    const preferredAboveY = pointerYInPane - maxHeightPx - ADD_MENU_CURSOR_GAP_PX;
+    const shouldOpenAbove =
+      preferredBelowY + maxHeightPx > paneBounds.height - ADD_MENU_EDGE_PADDING_PX;
+    const preferredY = shouldOpenAbove ? preferredAboveY : preferredBelowY;
+
+    return {
+      position: {
+        x: clampMenuPosition(preferredX, ADD_MENU_WIDTH_PX, paneBounds.width),
+        y: clampMenuPosition(preferredY, maxHeightPx, paneBounds.height),
+      },
+      maxHeightPx,
+    };
+  }
+
+  function readAddMenuMaxHeightPx(paneHeight) {
+    const normalizedPaneHeight = Number.isFinite(paneHeight) ? Math.max(0, paneHeight) : 0;
+    const viewportHeight =
+      typeof window !== "undefined" && Number.isFinite(window.innerHeight)
+        ? Math.max(0, window.innerHeight)
+        : normalizedPaneHeight;
+    const viewportLimitedHeight = viewportHeight * ADD_MENU_MAX_VIEWPORT_HEIGHT_RATIO;
+    const paneLimitedHeight = Math.max(0, normalizedPaneHeight - ADD_MENU_EDGE_PADDING_PX * 2);
+    return Math.min(viewportLimitedHeight, paneLimitedHeight);
+  }
+
+  function clampMenuPosition(position, itemSize, paneSize) {
+    const normalizedPosition = Number.isFinite(position) ? position : 0;
+    const normalizedItemSize = Number.isFinite(itemSize) ? Math.max(0, itemSize) : 0;
+    const normalizedPaneSize = Number.isFinite(paneSize) ? Math.max(0, paneSize) : 0;
+    const maxLowerBound = Math.max(0, normalizedPaneSize - normalizedItemSize);
+    const lowerBound = Math.min(ADD_MENU_EDGE_PADDING_PX, maxLowerBound);
+    const upperBound = Math.max(
+      lowerBound,
+      normalizedPaneSize - normalizedItemSize - ADD_MENU_EDGE_PADDING_PX
+    );
+
+    return Math.min(upperBound, Math.max(lowerBound, normalizedPosition));
   }
 
   function readPointerCoordinates(event) {
@@ -592,15 +699,16 @@
     );
   }
 
-  function resolveAvailableTemplates(connection) {
+  function resolveAvailableAddEntries(connection) {
+    const genericEntries = [...GENERIC_ADD_MENU_ENTRIES];
     if (!Array.isArray(allTemplates) || allTemplates.length === 0) {
-      return [];
+      return genericEntries;
     }
 
     const sourceNodeId = normalizeOptionalString(connection?.sourceNodeId);
     const sourceHandleId = normalizeOptionalString(connection?.sourceHandleId);
     if (!sourceNodeId || !sourceHandleId) {
-      return allTemplates;
+      return [...genericEntries, ...allTemplates];
     }
 
     const sourceTemplate = findTemplateForNodeId(sourceNodeId);
@@ -612,13 +720,13 @@
     );
     const selector = normalizeOptionalString(matchedDescriptor?.nodeSelector);
     if (!selector) {
-      return allTemplates;
+      return [...genericEntries, ...allTemplates];
     }
 
     const filteredTemplates = getTemplatesForNodeSelector(selector, workspaceContext);
     return Array.isArray(filteredTemplates) && filteredTemplates.length > 0
-      ? filteredTemplates
-      : [];
+      ? [...genericEntries, ...filteredTemplates]
+      : genericEntries;
   }
 
   function createEdgeId({
@@ -700,9 +808,42 @@
   function isObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
   }
+
+  function isGenericGroupCreationEntry(candidate) {
+    return (
+      normalizeOptionalString(candidate?.kind) === "generic-action" &&
+      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_GROUP
+    );
+  }
+
+  function isDeleteKey(event) {
+    const key = normalizeOptionalString(event?.key);
+    return key === "Delete" || key === "Backspace";
+  }
+
+  function isEditableTarget(target) {
+    if (!target || typeof target !== "object") {
+      return false;
+    }
+
+    const tagName = normalizeOptionalString(target?.tagName)?.toLowerCase();
+    if (tagName === "input" || tagName === "textarea" || tagName === "select") {
+      return true;
+    }
+
+    if (target?.isContentEditable === true) {
+      return true;
+    }
+
+    return false;
+  }
 </script>
 
-<svelte:window on:pointerdown|capture={handleWindowPointerDown} />
+<svelte:window
+  on:pointerdown|capture={handleWindowPointerDown}
+  on:keyup={handleWindowKeyUp}
+  on:hytale-node-editor-group-mutation={handleGroupMutation}
+/>
 
 <div
   class="relative w-full h-full overflow-hidden"
@@ -730,7 +871,8 @@
     open={addMenuOpen}
     openVersion={addMenuOpenVersion}
     position={addMenuPosition}
-    templates={availableTemplates}
+    maxHeightPx={addMenuMaxHeightPx}
+    templates={availableAddEntries}
     on:close={closeAddNodeMenu}
     on:select={handleMenuSelect}
   />

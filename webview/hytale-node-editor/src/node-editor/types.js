@@ -16,5 +16,9 @@ export const FIELD_TYPES = {
 export const FIELD_TYPE_VALUES = Object.values(FIELD_TYPES);
 
 export const CUSTOM_NODE_TYPE = 'customMetadata';
+export const GROUP_NODE_TYPE = 'groupMetadata';
+export const GENERIC_ADD_CATEGORY = 'Generic';
+export const GENERIC_ACTION_CREATE_GROUP = 'create-group';
+export const GROUP_MUTATION_EVENT = 'hytale-node-editor-group-mutation';
 export const PAYLOAD_TEMPLATE_ID_KEY = '$TemplateId';
 export const PAYLOAD_EDITOR_FIELDS_KEY = '$EditorFields';

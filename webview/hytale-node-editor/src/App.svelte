@@ -4,6 +4,7 @@
   import Flow from "./Flow.svelte";
   import {
     CUSTOM_NODE_TYPE,
+    GROUP_NODE_TYPE,
     PAYLOAD_EDITOR_FIELDS_KEY,
     PAYLOAD_TEMPLATE_ID_KEY,
   } from "./node-editor/types.js";
@@ -55,6 +56,13 @@
   ];
   const NODE_TEMPLATE_DATA_KEY = "$templateId";
   const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
+  const GROUP_NODE_ID_PREFIX = "__group__";
+  const DEFAULT_GROUP_NAME = "Group";
+  const DEFAULT_GROUP_WIDTH = 520;
+  const DEFAULT_GROUP_HEIGHT = 320;
+  const MIN_GROUP_WIDTH = 180;
+  const MIN_GROUP_HEIGHT = 120;
+  const GROUP_RESERVED_KEYS = ["$Position", "$width", "$height", "$name"];
   const NODE_PAYLOAD_TEMPLATE_RESOLUTION_EXCLUDED_KEYS = new Set([
     "$NodeId",
     "$Comment",
@@ -131,6 +139,7 @@
     nodes = serialized.nodes;
     edges = serialized.edges;
     metadataContext = serialized.metadataContext;
+    syncedText = serialized.text;
     setActiveWorkspaceContext(metadataContext?.workspaceContext);
 
     vscode.postMessage({
@@ -212,7 +221,7 @@
     );
     let flowState = buildFlowStateFromMetadata(context);
 
-    if (flowState.nodes.length === 0) {
+    if (countRuntimeFlowNodes(flowState.nodes) === 0) {
       flowState = buildFlowStateFromMetadata(createMetadataContextWithDefaultNode(context));
     }
 
@@ -276,7 +285,7 @@
       nodeIds.add(parsedEdge.target);
     }
 
-    const flowNodes = [];
+    const runtimeFlowNodes = [];
     const sortedNodeIds = Array.from(nodeIds).sort();
     for (let index = 0; index < sortedNodeIds.length; index += 1) {
       const nodeId = sortedNodeIds[index];
@@ -296,7 +305,7 @@
       const templateId = readTemplateId(undefined, payloadForTemplate, context);
       const fieldValues = readFieldValues(undefined, payloadForTemplate, templateId, context);
 
-      flowNodes.push({
+      runtimeFlowNodes.push({
         id: nodeId,
         type: CUSTOM_NODE_TYPE,
         data: {
@@ -309,8 +318,11 @@
       });
     }
 
+    const groupFlowNodes = buildGroupFlowNodes(context.groups);
+    const groupedRuntimeNodes = assignNodesToGroups(runtimeFlowNodes, groupFlowNodes);
+
     return {
-      nodes: flowNodes,
+      nodes: [...groupFlowNodes, ...groupedRuntimeNodes],
       edges: parsedEdges,
     };
   }
@@ -328,7 +340,9 @@
       (typeof metadataRoot.$WorkspaceID === "string" && metadataRoot.$WorkspaceID.trim()
         ? metadataRoot.$WorkspaceID
         : undefined);
-    context.groups = Array.isArray(metadataRoot.$Groups) ? metadataRoot.$Groups : [];
+    context.groups = Array.isArray(metadataRoot.$Groups)
+      ? metadataRoot.$Groups.map((group) => (isObject(group) ? { ...group } : group))
+      : [];
     context.comments = Array.isArray(metadataRoot.$Comments) ? metadataRoot.$Comments : [];
     context.floatingNodes = Array.isArray(metadataRoot.$FloatingNodes) ? metadataRoot.$FloatingNodes : [];
     context.metadataExtraFields = omitKeys(metadataRoot, METADATA_RESERVED_KEYS);
@@ -380,14 +394,18 @@
         ? state.metadataContext.runtimeTreeNodeIds
         : new Set();
 
-    const normalizedNodes = [];
+    const normalizedRuntimeNodes = [];
     const nextNodeMetadataById = {};
     let nextNodePayloadById = {};
     const seenNodeIds = new Set();
 
     const inputNodes = Array.isArray(state.nodes) ? state.nodes : [];
-    for (let index = 0; index < inputNodes.length; index += 1) {
-      const candidate = inputNodes[index];
+    const inputGroupNodes = inputNodes.filter((candidate) => isGroupFlowNode(candidate));
+    const normalizedGroupNodes = normalizeGroupFlowNodes(inputGroupNodes);
+    const groupNodeById = new Map(normalizedGroupNodes.map((groupNode) => [groupNode.id, groupNode]));
+    const inputRuntimeNodes = inputNodes.filter((candidate) => !isGroupFlowNode(candidate));
+    for (let index = 0; index < inputRuntimeNodes.length; index += 1) {
+      const candidate = inputRuntimeNodes[index];
       const nodeId = normalizeNodeId(candidate?.id, candidate?.type, index);
       if (seenNodeIds.has(nodeId)) {
         continue;
@@ -397,7 +415,12 @@
       const baseMeta = isObject(knownNodeMetadata[nodeId]) ? { ...knownNodeMetadata[nodeId] } : {};
       const basePayload = isObject(knownNodePayload[nodeId]) ? { ...knownNodePayload[nodeId] } : {};
       const payloadForTemplate = getPayloadForTemplateResolution(basePayload, nodeId, state.metadataContext);
-      const position = normalizePosition(candidate?.position, index);
+      const absolutePosition = readAbsoluteNodePosition(
+        candidate,
+        groupNodeById,
+        index,
+        baseMeta?.$Position
+      );
       const label = readNodeLabel(nodeId, baseMeta, candidate?.data?.label, payloadForTemplate);
       const comment =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
@@ -416,8 +439,8 @@
       );
 
       baseMeta.$Position = {
-        $x: position.x,
-        $y: position.y,
+        $x: absolutePosition.x,
+        $y: absolutePosition.y,
       };
 
       if (label !== defaultLabelForNodeId(nodeId) || typeof baseMeta.$Title === "string") {
@@ -452,9 +475,17 @@
       }
       applyFieldValuesToPayload(basePayload, templateDefinition, fieldValues);
 
+      const parentGroup = findContainingGroupForPosition(absolutePosition, normalizedGroupNodes);
+      const position = parentGroup
+        ? {
+            x: absolutePosition.x - parentGroup.position.x,
+            y: absolutePosition.y - parentGroup.position.y,
+          }
+        : absolutePosition;
+
       nextNodeMetadataById[nodeId] = baseMeta;
       nextNodePayloadById[nodeId] = basePayload;
-      normalizedNodes.push({
+      normalizedRuntimeNodes.push({
         id: nodeId,
         type: CUSTOM_NODE_TYPE,
         data: {
@@ -464,10 +495,11 @@
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
         position,
+        ...(parentGroup ? { parentId: parentGroup.id } : {}),
       });
     }
 
-    if (normalizedNodes.length === 0) {
+    if (normalizedRuntimeNodes.length === 0) {
       const fallbackNode = createDefaultFlowNode(state.metadataContext);
       const fallbackContext = {
         ...state.metadataContext,
@@ -493,12 +525,12 @@
 
       return buildSerializedState({
         ...state,
-        nodes: [fallbackNode],
+        nodes: [...normalizedGroupNodes, fallbackNode],
         metadataContext: fallbackContext,
       });
     }
 
-    const nodeIdSet = new Set(normalizedNodes.map((node) => node.id));
+    const nodeIdSet = new Set(normalizedRuntimeNodes.map((node) => node.id));
     const normalizedEdges = [];
     const seenEdgeIds = new Set();
     const inputEdges = Array.isArray(state.edges) ? state.edges : [];
@@ -539,7 +571,7 @@
         return resolveTemplateForConnectionPayload(nodeId, payload, state.metadataContext);
       },
       resolveMapKeyForTargetNode({ targetNodeId }) {
-        return readNodeMapKey(targetNodeId, state.metadataContext, normalizedNodes);
+        return readNodeMapKey(targetNodeId, state.metadataContext, normalizedRuntimeNodes);
       },
     });
 
@@ -567,7 +599,7 @@
       collectNodeIdsFromPayload(rewrittenFloatingRoot, floatingCoveredNodeIds);
     }
 
-    for (const normalizedNode of normalizedNodes) {
+    for (const normalizedNode of normalizedRuntimeNodes) {
       const nodeId = normalizedNode.id;
       if (runtimeTreeNodeIds.has(nodeId) || floatingCoveredNodeIds.has(nodeId)) {
         continue;
@@ -603,7 +635,10 @@
       workspaceContext: isObject(state.metadataContext.workspaceContext)
         ? state.metadataContext.workspaceContext
         : {},
-      groups: Array.isArray(state.metadataContext.groups) ? state.metadataContext.groups : [],
+      groups: serializeGroupsFromFlowNodes(
+        normalizedGroupNodes,
+        Array.isArray(state.metadataContext.groups) ? state.metadataContext.groups : []
+      ),
       comments: Array.isArray(state.metadataContext.comments) ? state.metadataContext.comments : [],
       floatingNodes: preservedFloatingRoots,
       runtimeTreeNodeIds,
@@ -634,11 +669,217 @@
     };
 
     return {
-      nodes: normalizedNodes,
+      nodes: [...normalizedGroupNodes, ...normalizedRuntimeNodes],
       edges: normalizedEdges,
       metadataContext: nextMetadataContext,
       text: `${JSON.stringify(root, null, 2)}\n`,
     };
+  }
+
+  function countRuntimeFlowNodes(flowNodesCandidate) {
+    const flowNodes = Array.isArray(flowNodesCandidate) ? flowNodesCandidate : [];
+    return flowNodes.filter((flowNode) => !isGroupFlowNode(flowNode)).length;
+  }
+
+  function isGroupFlowNode(candidateNode) {
+    return normalizeNonEmptyString(candidateNode?.type) === GROUP_NODE_TYPE;
+  }
+
+  function buildGroupFlowNodes(groupsCandidate) {
+    const sourceGroups = Array.isArray(groupsCandidate) ? groupsCandidate : [];
+    const flowGroups = [];
+
+    for (let index = 0; index < sourceGroups.length; index += 1) {
+      const sourceGroup = isObject(sourceGroups[index]) ? sourceGroups[index] : {};
+      const position = normalizePosition(sourceGroup.$Position, index);
+      const dimensions = readGroupNodeDimensions(sourceGroup);
+      const groupName = readGroupName(sourceGroup.$name);
+
+      flowGroups.push({
+        id: `${GROUP_NODE_ID_PREFIX}${index}`,
+        type: GROUP_NODE_TYPE,
+        data: {
+          $groupName: groupName,
+        },
+        position,
+        width: dimensions.width,
+        height: dimensions.height,
+      });
+    }
+
+    return flowGroups;
+  }
+
+  function normalizeGroupFlowNodes(groupNodesCandidate) {
+    const sourceGroups = Array.isArray(groupNodesCandidate) ? groupNodesCandidate : [];
+    const normalizedGroups = [];
+    const seenGroupIds = new Set();
+
+    for (let index = 0; index < sourceGroups.length; index += 1) {
+      const sourceGroup = sourceGroups[index];
+      const fallbackGroupId = `${GROUP_NODE_ID_PREFIX}${index}`;
+      let groupId = normalizeNonEmptyString(sourceGroup?.id) ?? fallbackGroupId;
+      if (seenGroupIds.has(groupId)) {
+        groupId = `${fallbackGroupId}-${index}`;
+      }
+      seenGroupIds.add(groupId);
+
+      const position = normalizePosition(sourceGroup?.position, index);
+      const dimensions = readGroupNodeDimensions(sourceGroup);
+      const groupName = readGroupName(sourceGroup?.data?.$groupName);
+
+      normalizedGroups.push({
+        id: groupId,
+        type: GROUP_NODE_TYPE,
+        data: {
+          $groupName: groupName,
+        },
+        position,
+        width: dimensions.width,
+        height: dimensions.height,
+      });
+    }
+
+    return normalizedGroups;
+  }
+
+  function assignNodesToGroups(runtimeNodesCandidate, groupNodesCandidate) {
+    const runtimeNodes = Array.isArray(runtimeNodesCandidate) ? runtimeNodesCandidate : [];
+    const groupNodes = Array.isArray(groupNodesCandidate) ? groupNodesCandidate : [];
+
+    return runtimeNodes.map((runtimeNode, index) => {
+      const absolutePosition = normalizePosition(runtimeNode?.position, index);
+      const containingGroup = findContainingGroupForPosition(absolutePosition, groupNodes);
+      if (!containingGroup) {
+        const detachedNode = {
+          ...runtimeNode,
+          position: absolutePosition,
+        };
+        delete detachedNode.parentId;
+        return detachedNode;
+      }
+
+      return {
+        ...runtimeNode,
+        position: {
+          x: absolutePosition.x - containingGroup.position.x,
+          y: absolutePosition.y - containingGroup.position.y,
+        },
+        parentId: containingGroup.id,
+      };
+    });
+  }
+
+  function readAbsoluteNodePosition(
+    nodeCandidate,
+    groupNodeById,
+    index = 0,
+    fallbackPositionCandidate = undefined
+  ) {
+    const relativePosition = normalizePosition(nodeCandidate?.position, index);
+    const parentGroupId = normalizeNonEmptyString(nodeCandidate?.parentId);
+    if (!parentGroupId || !(groupNodeById instanceof Map)) {
+      return relativePosition;
+    }
+
+    const parentGroup = groupNodeById.get(parentGroupId);
+    if (!parentGroup) {
+      if (fallbackPositionCandidate !== undefined) {
+        return normalizePosition(fallbackPositionCandidate, index);
+      }
+      return relativePosition;
+    }
+
+    return {
+      x: relativePosition.x + parentGroup.position.x,
+      y: relativePosition.y + parentGroup.position.y,
+    };
+  }
+
+  function findContainingGroupForPosition(position, groupNodesCandidate) {
+    const groupNodes = Array.isArray(groupNodesCandidate) ? groupNodesCandidate : [];
+    let selectedGroup;
+    let selectedGroupArea = Number.POSITIVE_INFINITY;
+
+    for (const groupNode of groupNodes) {
+      if (!isPositionInsideGroup(position, groupNode)) {
+        continue;
+      }
+
+      const dimensions = readGroupNodeDimensions(groupNode);
+      const area = dimensions.width * dimensions.height;
+      if (area < selectedGroupArea) {
+        selectedGroup = groupNode;
+        selectedGroupArea = area;
+      }
+    }
+
+    return selectedGroup;
+  }
+
+  function isPositionInsideGroup(positionCandidate, groupNode) {
+    const position = normalizePosition(positionCandidate, 0);
+    const groupPosition = normalizePosition(groupNode?.position, 0);
+    const dimensions = readGroupNodeDimensions(groupNode);
+
+    return (
+      position.x >= groupPosition.x &&
+      position.x <= groupPosition.x + dimensions.width &&
+      position.y >= groupPosition.y &&
+      position.y <= groupPosition.y + dimensions.height
+    );
+  }
+
+  function readGroupNodeDimensions(groupNode) {
+    return {
+      width: normalizeGroupDimension(
+        groupNode?.width ?? groupNode?.initialWidth ?? groupNode?.measured?.width ?? groupNode?.$width,
+        DEFAULT_GROUP_WIDTH,
+        MIN_GROUP_WIDTH
+      ),
+      height: normalizeGroupDimension(
+        groupNode?.height ?? groupNode?.initialHeight ?? groupNode?.measured?.height ?? groupNode?.$height,
+        DEFAULT_GROUP_HEIGHT,
+        MIN_GROUP_HEIGHT
+      ),
+    };
+  }
+
+  function normalizeGroupDimension(candidateValue, fallbackValue, minValue) {
+    const normalizedValue = Number(candidateValue);
+    if (!Number.isFinite(normalizedValue)) {
+      return fallbackValue;
+    }
+
+    return Math.max(minValue, normalizedValue);
+  }
+
+  function readGroupName(candidateName) {
+    const normalizedName = normalizeNonEmptyString(candidateName);
+    return normalizedName ?? DEFAULT_GROUP_NAME;
+  }
+
+  function serializeGroupsFromFlowNodes(groupNodesCandidate, priorGroupsCandidate) {
+    const groupNodes = Array.isArray(groupNodesCandidate) ? groupNodesCandidate : [];
+    const priorGroups = Array.isArray(priorGroupsCandidate) ? priorGroupsCandidate : [];
+
+    return groupNodes.map((groupNode, index) => {
+      const priorGroup = isObject(priorGroups[index]) ? priorGroups[index] : {};
+      const dimensions = readGroupNodeDimensions(groupNode);
+      const position = normalizePosition(groupNode?.position, index);
+      const groupName = readGroupName(groupNode?.data?.$groupName);
+
+      return {
+        ...omitKeys(priorGroup, GROUP_RESERVED_KEYS),
+        $Position: {
+          $x: position.x,
+          $y: position.y,
+        },
+        $width: dimensions.width,
+        $height: dimensions.height,
+        $name: groupName,
+      };
+    });
   }
 
   function createEmptyMetadataContext(workspaceContext = undefined) {
