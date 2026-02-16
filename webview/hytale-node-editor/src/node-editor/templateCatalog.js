@@ -181,6 +181,13 @@ function normalizeTemplate(template, index) {
     normalizeNonEmptyString(template.defaultTypeName) ??
     normalizeNonEmptyString(template.templateId) ??
     label;
+  const nodeColor = normalizePinColor(
+    template.nodeColor ??
+      template.color ??
+      template.Color ??
+      template.colour ??
+      template.Colour
+  );
   const fields = Array.isArray(template.fields) ? template.fields : [];
   const inputPins = normalizePinDefinitions(template.inputPins);
   const outputPins = normalizePinDefinitions(template.outputPins);
@@ -194,6 +201,7 @@ function normalizeTemplate(template, index) {
     ...template,
     templateId,
     label,
+    nodeColor,
     defaultTypeName,
     fields,
     inputPins,

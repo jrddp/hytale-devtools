@@ -49,6 +49,11 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
     }
 
     const label = normalizeNonEmptyString(nodeDefinition.Title) ?? templateId;
+    const nodeColor =
+      nodeDefinition.Color ??
+      nodeDefinition.color ??
+      nodeDefinition.Colour ??
+      nodeDefinition.colour;
     const schema = isObject(nodeDefinition.Schema) ? nodeDefinition.Schema : {};
     const outputPins = buildTemplatePins(
       nodeDefinition.Outputs,
@@ -91,6 +96,7 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
     const template = createTemplate({
       templateId,
       label,
+      nodeColor,
       defaultTypeName,
       fields,
       inputPins,

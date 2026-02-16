@@ -19,6 +19,7 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/focusNavigation.js";
+  import { getDefaultPinColor } from "../node-editor/pinColorUtils.js";
 
   export let id;
   export let data = {};
@@ -52,6 +53,7 @@
   $: contentRightPaddingPx = outputLabelColumnWidth + 8;
   $: pinLaneCount = Math.max(inputPins.length, outputPins.length);
   $: contentMinHeightPx = readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX;
+  $: nodeAccentColor = typeof template?.nodeColor === "string" ? template.nodeColor : getDefaultPinColor();
   $: nodeLabel = typeof data?.label === "string" ? data.label : template.label;
   $: commentInputId = `comment-${sanitizeId(id)}`;
   $: commentValue = typeof data?.$comment === "string" ? data.$comment : "";
@@ -242,6 +244,12 @@
   style={`min-width: ${nodeMinWidthPx}px;`}
   data-node-editor-root
 >
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 rounded-t-lg"
+    style={`background-color: ${nodeAccentColor};`}
+  ></div>
+
   <div class="flex flex-col gap-1">
     <div class="flex items-center gap-1 rounded-t-lg bg-vsc-input-bg text-vsc-input-fg">
       {#if isEditingTitle}
