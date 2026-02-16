@@ -36,7 +36,6 @@
   $: template =
     getTemplateById(data?.$templateId) ??
     findTemplateByTypeName(data?.Type) ??
-    findTemplateByTypeName(data?.label) ??
     getDefaultTemplate();
 
   $: initialValues = template?.buildInitialValues?.() ?? buildFieldValueMap(template?.fields ?? []);

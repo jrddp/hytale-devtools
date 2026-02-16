@@ -17,6 +17,8 @@
     getDefaultTemplate,
     getTemplateById,
     getTemplates,
+    getTemplatesForNodeSelector,
+    setActiveWorkspaceContext,
     setActiveTemplateSourceMode,
   } from "./node-editor/templateCatalog.js";
   import { chooseCompatibleInputHandleId } from "./node-editor/connectionSchemaMapper.js";
@@ -26,6 +28,7 @@
   export let edges = [];
   export let loadVersion = 0;
   export let templateSourceMode = "workspace-hg-java";
+  export let workspaceContext = {};
 
   const dispatch = createEventDispatcher();
 
@@ -50,12 +53,16 @@
   let hasAppliedInitialFit = false;
   let initialFitInProgress = false;
   let initialViewportReady = false;
+  let allTemplates = [];
   let availableTemplates = [];
 
-  $: if (templateSourceMode) {
+  $: if (templateSourceMode || workspaceContext) {
     setActiveTemplateSourceMode(templateSourceMode);
-    availableTemplates = getTemplates();
+    setActiveWorkspaceContext(workspaceContext);
+    allTemplates = getTemplates(workspaceContext);
   }
+
+  $: availableTemplates = resolveAvailableTemplates();
 
   $: if (loadVersion !== lastNormalizedLoadVersion) {
     lastNormalizedLoadVersion = loadVersion;
@@ -247,13 +254,15 @@
       return;
     }
 
-    const newNodeId = `${normalizeNodeType(template.defaultTypeName)}-${createUuid()}`;
+    const newNodeId = `${normalizeNodeType(template.schemaType ?? template.defaultTypeName)}-${createUuid()}`;
     const newNode = {
       id: newNodeId,
       type: CUSTOM_NODE_TYPE,
       data: {
         label: template.label,
-        Type: template.defaultTypeName,
+        ...(typeof template?.schemaType === "string" && template.schemaType.trim()
+          ? { Type: template.schemaType.trim() }
+          : {}),
         $templateId: template.templateId,
         $fieldValues: template.buildInitialValues(),
       },
@@ -294,7 +303,7 @@
   }
 
   function createDefaultNodes() {
-    const defaultTemplate = getDefaultTemplate();
+    const defaultTemplate = getDefaultTemplate(workspaceContext);
     if (!defaultTemplate) {
       return [];
     }
@@ -305,7 +314,9 @@
         type: CUSTOM_NODE_TYPE,
         data: {
           label: defaultTemplate.label,
-          Type: defaultTemplate.defaultTypeName,
+          ...(typeof defaultTemplate?.schemaType === "string" && defaultTemplate.schemaType.trim()
+            ? { Type: defaultTemplate.schemaType.trim() }
+            : {}),
           $templateId: defaultTemplate.templateId,
           $fieldValues: defaultTemplate.buildInitialValues(),
         },
@@ -391,10 +402,43 @@
         : undefined;
 
     return (
-      (templateId ? getTemplateById(templateId) : undefined) ??
-      findTemplateByTypeName(sourceNode?.data?.Type) ??
-      findTemplateByTypeName(sourceNode?.data?.label)
+      (templateId ? getTemplateById(templateId, workspaceContext) : undefined) ??
+      findTemplateByTypeName(sourceNode?.data?.Type, workspaceContext)
     );
+  }
+
+  function resolveAvailableTemplates() {
+    if (!Array.isArray(allTemplates) || allTemplates.length === 0) {
+      return [];
+    }
+
+    if (
+      typeof pendingConnectionSourceId !== "string" ||
+      !pendingConnectionSourceId.trim() ||
+      typeof pendingConnectionSourceHandleId !== "string" ||
+      !pendingConnectionSourceHandleId.trim()
+    ) {
+      return allTemplates;
+    }
+
+    const sourceTemplate = findTemplateForNodeId(pendingConnectionSourceId);
+    const sourceConnectionDescriptors = Array.isArray(sourceTemplate?.schemaConnections)
+      ? sourceTemplate.schemaConnections
+      : [];
+    const matchedDescriptor = sourceConnectionDescriptors.find(
+      (descriptor) => descriptor?.outputPinId === pendingConnectionSourceHandleId
+    );
+    const selector = typeof matchedDescriptor?.nodeSelector === "string"
+      ? matchedDescriptor.nodeSelector
+      : undefined;
+    if (!selector) {
+      return allTemplates;
+    }
+
+    const filteredTemplates = getTemplatesForNodeSelector(selector, workspaceContext);
+    return Array.isArray(filteredTemplates) && filteredTemplates.length > 0
+      ? filteredTemplates
+      : [];
   }
 
   function createEdgeId({
@@ -410,7 +454,7 @@
 
   function normalizeNodeType(candidate) {
     if (typeof candidate === "string") {
-      const cleaned = candidate.trim().replace(/[^A-Za-z0-9_]/g, "");
+      const cleaned = candidate.trim().replace(/\s+/g, "");
       if (cleaned) {
         return cleaned;
       }

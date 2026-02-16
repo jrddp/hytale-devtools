@@ -8,20 +8,43 @@
     PAYLOAD_TEMPLATE_ID_KEY,
   } from "./node-editor/types.js";
   import {
+    NODE_EDITOR_METADATA_KEY,
+    collectNodeIdsFromPayload,
+    collectRuntimeNodePayloadById,
+    defaultLabelForNodeId,
+    isObject,
+    normalizeHandleId,
+    normalizeNodeId,
+    normalizeNonEmptyString,
+    normalizePosition,
+    omitKeys,
+    readRuntimeRootNodeId,
+    readTypeFromNodeId,
+    rewriteNodePayloadTree,
+  } from "./node-editor/assetDocumentUtils.js";
+  import {
     findTemplateByTypeName,
+    findTemplatesByTypeName,
     getDefaultTemplate,
     getTemplateById,
+    getTemplatesForNodeSelector,
+    setActiveWorkspaceContext,
     setActiveTemplateSourceMode,
   } from "./node-editor/templateCatalog.js";
   import {
     applySchemaEdgesToNodePayloads,
     extractSchemaEdgesFromNodePayloads,
   } from "./node-editor/connectionSchemaMapper.js";
+  import {
+    LEGACY_ROOT_EDITOR_KEYS,
+    convertLegacyInlineAssetDocument,
+    isLegacyInlineAssetDocument,
+  } from "./node-editor/legacyAssetDocumentConverter.js";
+  import { resolveWorkspaceContext } from "./node-editor/workspaceContextResolver.js";
 
   export let vscode;
   export let templateSourceMode = "workspace-hg-java";
 
-  const NODE_EDITOR_METADATA_KEY = "$NodeEditorMetadata";
   const METADATA_RESERVED_KEYS = [
     "$WorkspaceID",
     "$Nodes",
@@ -30,14 +53,20 @@
     "$Groups",
     "$Comments",
   ];
-  const LEGACY_INLINE_ROOT_METADATA_KEYS = ["$WorkspaceID", "$Groups", "$Comments"];
   const NODE_TEMPLATE_DATA_KEY = "$templateId";
   const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
-  const DEFAULT_WORKSPACE_ROOT_TYPE = "Biome";
+  const NODE_PAYLOAD_TEMPLATE_RESOLUTION_EXCLUDED_KEYS = new Set([
+    "$NodeId",
+    "$Comment",
+    "Type",
+    PAYLOAD_TEMPLATE_ID_KEY,
+    PAYLOAD_EDITOR_FIELDS_KEY,
+  ]);
 
   setActiveTemplateSourceMode(templateSourceMode);
   $: setActiveTemplateSourceMode(templateSourceMode);
 
+  let documentPath = "";
   const initialState = parseDocumentText("");
 
   let nodes = initialState.nodes;
@@ -58,9 +87,11 @@
     if (message.type === "update") {
       sourceVersion = typeof message.version === "number" ? message.version : sourceVersion;
       const incomingText = typeof message.text === "string" ? message.text : "";
+      documentPath =
+        typeof message.documentPath === "string" ? message.documentPath : documentPath;
 
       try {
-        const parsedState = parseDocumentText(incomingText);
+        const parsedState = parseDocumentText(incomingText, documentPath);
         nodes = parsedState.nodes;
         edges = parsedState.edges;
         runtimeFields = parsedState.runtimeFields;
@@ -100,6 +131,7 @@
     nodes = serialized.nodes;
     edges = serialized.edges;
     metadataContext = serialized.metadataContext;
+    setActiveWorkspaceContext(metadataContext?.workspaceContext);
 
     vscode.postMessage({
       type: "apply",
@@ -117,9 +149,9 @@
     };
   });
 
-  function parseDocumentText(text) {
+  function parseDocumentText(text, sourceDocumentPath = documentPath) {
     if (!text.trim()) {
-      return buildStateFromMetadataDocument({}, {});
+      return buildStateFromMetadataDocument({}, {}, sourceDocumentPath);
     }
 
     let parsed;
@@ -134,27 +166,49 @@
     }
 
     const hasMetadataContainer = isObject(parsed[NODE_EDITOR_METADATA_KEY]);
-    if (!hasMetadataContainer && (Array.isArray(parsed.nodes) || Array.isArray(parsed.edges))) {
-      return buildStateFromLegacyFlowDocument(parsed);
-    }
-
-    if (!hasMetadataContainer && looksLikeLegacyInlineTemplate(parsed)) {
-      return buildStateFromLegacyInlineTemplateDocument(parsed);
+    if (!hasMetadataContainer && isLegacyInlineAssetDocument(parsed)) {
+      const legacyRuntimeRoot = omitKeys(parsed, LEGACY_ROOT_EDITOR_KEYS);
+      const legacyWorkspaceContext = resolveWorkspaceContext({
+        documentPath: sourceDocumentPath,
+        metadataWorkspaceId: parsed?.$WorkspaceID,
+        runtimeRoot: legacyRuntimeRoot,
+      });
+      const convertedLegacy = convertLegacyInlineAssetDocument(parsed, {
+        resolveNodeIdPrefix(params) {
+          return resolveLegacyNodeIdPrefix({
+            ...params,
+            workspaceContext: legacyWorkspaceContext,
+          });
+        },
+      });
+      return buildStateFromMetadataDocument(
+        convertedLegacy.runtime,
+        convertedLegacy.metadataRoot,
+        sourceDocumentPath
+      );
     }
 
     const metadataRoot = hasMetadataContainer ? parsed[NODE_EDITOR_METADATA_KEY] : {};
-    const runtime = omitKeys(parsed, [NODE_EDITOR_METADATA_KEY]);
-    return buildStateFromMetadataDocument(runtime, metadataRoot);
+    const runtime = hasMetadataContainer ? omitKeys(parsed, [NODE_EDITOR_METADATA_KEY]) : parsed;
+    return buildStateFromMetadataDocument(runtime, metadataRoot, sourceDocumentPath);
   }
 
-  function buildStateFromMetadataDocument(runtime, metadataRoot) {
+  function buildStateFromMetadataDocument(runtime, metadataRoot, sourceDocumentPath = documentPath) {
+    const workspaceContext = resolveWorkspaceContext({
+      documentPath: sourceDocumentPath,
+      metadataWorkspaceId: metadataRoot?.$WorkspaceID,
+      runtimeRoot: runtime,
+    });
+    setActiveWorkspaceContext(workspaceContext);
+
     const runtimeNodePayloadById = collectRuntimeNodePayloadById(runtime);
     const runtimeTreeNodeIds = new Set(Object.keys(runtimeNodePayloadById));
     const context = parseMetadataContext(
       metadataRoot,
       runtimeNodePayloadById,
       runtimeTreeNodeIds,
-      readRuntimeRootNodeId(runtime)
+      readRuntimeRootNodeId(runtime),
+      workspaceContext
     );
     let flowState = buildFlowStateFromMetadata(context);
 
@@ -178,271 +232,6 @@
     };
   }
 
-  function buildStateFromLegacyFlowDocument(root) {
-    const runtime = omitKeys(root, ["nodes", "edges", NODE_EDITOR_METADATA_KEY]);
-    const context = createEmptyMetadataContext();
-    const nextNodes = [];
-    const nextEdges = [];
-    const seenNodeIds = new Set();
-    const candidateNodes = Array.isArray(root.nodes) ? root.nodes : [];
-
-    for (let index = 0; index < candidateNodes.length; index += 1) {
-      const candidate = candidateNodes[index];
-      const nodeId = normalizeNodeId(candidate?.id, candidate?.type, index);
-      if (seenNodeIds.has(nodeId)) {
-        continue;
-      }
-
-      seenNodeIds.add(nodeId);
-
-      const position = normalizePosition(candidate?.position, index);
-      const label =
-        typeof candidate?.data?.label === "string" && candidate.data.label.trim()
-          ? candidate.data.label.trim()
-          : defaultLabelForNodeId(nodeId);
-      const comment =
-        typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
-          ? candidate.data.$comment.trim()
-          : undefined;
-      const basePayload = isObject(candidate?.data?.$nodePayload) ? { ...candidate.data.$nodePayload } : {};
-      const templateId = readTemplateId(candidate?.data?.[NODE_TEMPLATE_DATA_KEY], basePayload);
-      const fieldValues = readFieldValues(candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY], basePayload);
-
-      context.nodeMetadataById[nodeId] = {
-        $Position: { $x: position.x, $y: position.y },
-      };
-
-      if (label !== defaultLabelForNodeId(nodeId)) {
-        context.nodeMetadataById[nodeId].$Title = label;
-      }
-
-      const payload = basePayload;
-      payload.$NodeId = nodeId;
-      if (comment !== undefined) {
-        payload.$Comment = comment;
-      }
-      if (templateId !== undefined) {
-        payload[PAYLOAD_TEMPLATE_ID_KEY] = templateId;
-      }
-      if (fieldValues !== undefined) {
-        payload[PAYLOAD_EDITOR_FIELDS_KEY] = fieldValues;
-      }
-      context.nodePayloadById[nodeId] = payload;
-
-      nextNodes.push({
-        id: nodeId,
-        type: CUSTOM_NODE_TYPE,
-        data: {
-          label,
-          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
-          ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
-          ...(comment !== undefined ? { $comment: comment } : {}),
-        },
-        position,
-      });
-    }
-
-    const candidateEdges = Array.isArray(root.edges) ? root.edges : [];
-    for (let index = 0; index < candidateEdges.length; index += 1) {
-      const candidate = candidateEdges[index];
-      const source = typeof candidate?.source === "string" ? candidate.source : undefined;
-      const target = typeof candidate?.target === "string" ? candidate.target : undefined;
-      if (!source || !target || !seenNodeIds.has(source) || !seenNodeIds.has(target)) {
-        continue;
-      }
-
-      const edgeId =
-        typeof candidate?.id === "string" && candidate.id.trim()
-          ? candidate.id.trim()
-          : `${source}--${target}`;
-
-      context.linkById[edgeId] = {
-        $SourceNodeId: source,
-        $TargetNodeId: target,
-      };
-
-      nextEdges.push({
-        id: edgeId,
-        source,
-        target,
-      });
-    }
-
-    if (nextNodes.length === 0) {
-      const fallbackNode = createDefaultFlowNode();
-      nextNodes.push(fallbackNode);
-      context.nodeMetadataById[fallbackNode.id] = {
-        $Position: {
-          $x: fallbackNode.position.x,
-          $y: fallbackNode.position.y,
-        },
-      };
-      context.nodePayloadById[fallbackNode.id] = {
-        $NodeId: fallbackNode.id,
-        [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
-        [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
-      };
-    }
-
-    const serialized = buildSerializedState({
-      nodes: nextNodes,
-      edges: nextEdges,
-      runtimeFields: runtime,
-      metadataContext: context,
-    });
-
-    return {
-      nodes: serialized.nodes,
-      edges: serialized.edges,
-      runtimeFields: runtime,
-      metadataContext: serialized.metadataContext,
-      serializedText: serialized.text,
-    };
-  }
-
-  function buildStateFromLegacyInlineTemplateDocument(root) {
-    const context = createEmptyMetadataContext();
-    context.workspaceId = typeof root.$WorkspaceID === "string" ? root.$WorkspaceID : undefined;
-    context.groups = Array.isArray(root.$Groups) ? root.$Groups : [];
-    context.comments = Array.isArray(root.$Comments) ? root.$Comments : [];
-
-    const runtimeTemplateRoot = omitKeys(root, LEGACY_INLINE_ROOT_METADATA_KEYS);
-    const conversion = convertLegacyInlineRuntimeTree(runtimeTemplateRoot);
-    context.nodeMetadataById = conversion.nodeMetadataById;
-    context.nodePayloadById = conversion.nodePayloadById;
-    context.runtimeTreeNodeIds = conversion.runtimeTreeNodeIds;
-
-    const runtime = isObject(conversion.runtimeRoot) ? conversion.runtimeRoot : {};
-    context.rootNodeId = readRuntimeRootNodeId(runtime);
-    const flowState = {
-      nodes: conversion.flowNodes,
-      edges: [],
-    };
-
-    const serialized = buildSerializedState({
-      nodes: flowState.nodes,
-      edges: flowState.edges,
-      runtimeFields: runtime,
-      metadataContext: context,
-    });
-
-    return {
-      nodes: serialized.nodes,
-      edges: serialized.edges,
-      runtimeFields: runtime,
-      metadataContext: serialized.metadataContext,
-      serializedText: serialized.text,
-    };
-  }
-
-  function convertLegacyInlineRuntimeTree(runtimeRootCandidate) {
-    const nodeMetadataById = {};
-    const nodePayloadById = {};
-    const runtimeTreeNodeIds = new Set();
-    const flowNodes = [];
-
-    let fallbackIndex = 0;
-
-    const visit = (candidate, keyHint, forceNode = false) => {
-      if (Array.isArray(candidate)) {
-        return candidate.map((item, index) => visit(item, `${keyHint}${index}`, false));
-      }
-
-      if (!isObject(candidate)) {
-        return candidate;
-      }
-
-      const shouldBeNode =
-        forceNode ||
-        (typeof candidate.$NodeId === "string" && candidate.$NodeId.trim()) ||
-        isPositionCandidate(candidate.$Position);
-
-      if (!shouldBeNode) {
-        return Object.fromEntries(
-          Object.entries(candidate).map(([childKey, childValue]) => [
-            childKey,
-            visit(childValue, childKey, false),
-          ])
-        );
-      }
-
-      const nodeIndex = fallbackIndex;
-      fallbackIndex += 1;
-      const typeHint =
-        typeof candidate.Type === "string" && candidate.Type.trim() ? candidate.Type.trim() : keyHint;
-      const nodeId = normalizeNodeId(candidate.$NodeId, typeHint, nodeIndex);
-      const position = normalizePosition(candidate.$Position, nodeIndex);
-      const title =
-        typeof candidate.$Title === "string" && candidate.$Title.trim() ? candidate.$Title.trim() : undefined;
-      const comment =
-        typeof candidate.$Comment === "string" && candidate.$Comment.trim()
-          ? candidate.$Comment.trim()
-          : undefined;
-
-      const transformedNode = {};
-      for (const [childKey, childValue] of Object.entries(candidate)) {
-        if (childKey === "$NodeId" || childKey === "$Position" || childKey === "$Title") {
-          continue;
-        }
-
-        transformedNode[childKey] = visit(childValue, childKey, false);
-      }
-      transformedNode.$NodeId = nodeId;
-
-      nodeMetadataById[nodeId] = {
-        $Position: {
-          $x: position.x,
-          $y: position.y,
-        },
-        ...(title ? { $Title: title } : {}),
-      };
-      nodePayloadById[nodeId] = transformedNode;
-      runtimeTreeNodeIds.add(nodeId);
-      const templateId = readTemplateId(undefined, transformedNode);
-      const fieldValues = readFieldValues(undefined, transformedNode);
-      flowNodes.push({
-        id: nodeId,
-        type: CUSTOM_NODE_TYPE,
-        data: {
-          label: readNodeLabel(nodeId, nodeMetadataById[nodeId], undefined, transformedNode),
-          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
-          ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
-          ...(comment !== undefined ? { $comment: comment } : {}),
-        },
-        position,
-      });
-
-      return transformedNode;
-    };
-
-    const runtimeRoot = visit(runtimeRootCandidate, "Root", true);
-
-    if (flowNodes.length === 0) {
-      const fallbackNode = createDefaultFlowNode();
-      runtimeTreeNodeIds.add(fallbackNode.id);
-      nodeMetadataById[fallbackNode.id] = {
-        $Position: {
-          $x: fallbackNode.position.x,
-          $y: fallbackNode.position.y,
-        },
-      };
-      nodePayloadById[fallbackNode.id] = {
-        $NodeId: fallbackNode.id,
-        [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
-        [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
-      };
-      flowNodes.push(fallbackNode);
-    }
-
-    return {
-      runtimeRoot,
-      nodeMetadataById,
-      nodePayloadById,
-      runtimeTreeNodeIds,
-      flowNodes,
-    };
-  }
-
   function createMetadataContextWithDefaultNode(context) {
     const nextContext = {
       ...context,
@@ -450,7 +239,7 @@
       nodePayloadById: { ...context.nodePayloadById },
     };
 
-    const fallbackNode = createDefaultFlowNode();
+    const fallbackNode = createDefaultFlowNode(context);
     nextContext.nodeMetadataById[fallbackNode.id] = {
       $Position: {
         $x: fallbackNode.position.x,
@@ -459,8 +248,9 @@
     };
     nextContext.nodePayloadById[fallbackNode.id] = {
       $NodeId: fallbackNode.id,
-      [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
-      [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
+      ...(normalizeNonEmptyString(fallbackNode?.data?.Type)
+        ? { Type: fallbackNode.data.Type.trim() }
+        : {}),
     };
     if (!nextContext.rootNodeId) {
       nextContext.rootNodeId = fallbackNode.id;
@@ -496,15 +286,15 @@
       const payload = isObject(context.nodePayloadById[nodeId])
         ? context.nodePayloadById[nodeId]
         : {};
-      const payloadForTemplate = withImplicitRootType(payload, nodeId, context);
+      const payloadForTemplate = getPayloadForTemplateResolution(payload, nodeId, context);
       const position = normalizePosition(nodeMeta?.$Position, index);
       const label = readNodeLabel(nodeId, nodeMeta, undefined, payloadForTemplate);
       const comment =
         typeof payloadForTemplate.$Comment === "string" && payloadForTemplate.$Comment.trim()
           ? payloadForTemplate.$Comment.trim()
           : undefined;
-      const templateId = readTemplateId(undefined, payloadForTemplate);
-      const fieldValues = readFieldValues(undefined, payloadForTemplate);
+      const templateId = readTemplateId(undefined, payloadForTemplate, context);
+      const fieldValues = readFieldValues(undefined, payloadForTemplate, templateId, context);
 
       flowNodes.push({
         id: nodeId,
@@ -529,10 +319,15 @@
     metadataRoot,
     runtimeNodePayloadById = {},
     runtimeTreeNodeIds = new Set(),
-    runtimeRootNodeId = undefined
+    runtimeRootNodeId = undefined,
+    workspaceContext = undefined
   ) {
-    const context = createEmptyMetadataContext();
-    context.workspaceId = metadataRoot.$WorkspaceID;
+    const context = createEmptyMetadataContext(workspaceContext);
+    context.workspaceId =
+      normalizeNonEmptyString(workspaceContext?.rootMenuName) ??
+      (typeof metadataRoot.$WorkspaceID === "string" && metadataRoot.$WorkspaceID.trim()
+        ? metadataRoot.$WorkspaceID
+        : undefined);
     context.groups = Array.isArray(metadataRoot.$Groups) ? metadataRoot.$Groups : [];
     context.comments = Array.isArray(metadataRoot.$Comments) ? metadataRoot.$Comments : [];
     context.floatingNodes = Array.isArray(metadataRoot.$FloatingNodes) ? metadataRoot.$FloatingNodes : [];
@@ -601,15 +396,24 @@
 
       const baseMeta = isObject(knownNodeMetadata[nodeId]) ? { ...knownNodeMetadata[nodeId] } : {};
       const basePayload = isObject(knownNodePayload[nodeId]) ? { ...knownNodePayload[nodeId] } : {};
-      const payloadForTemplate = withImplicitRootType(basePayload, nodeId, state.metadataContext);
+      const payloadForTemplate = getPayloadForTemplateResolution(basePayload, nodeId, state.metadataContext);
       const position = normalizePosition(candidate?.position, index);
       const label = readNodeLabel(nodeId, baseMeta, candidate?.data?.label, payloadForTemplate);
       const comment =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
           : undefined;
-      const templateId = readTemplateId(candidate?.data?.[NODE_TEMPLATE_DATA_KEY], payloadForTemplate);
-      const fieldValues = readFieldValues(candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY], payloadForTemplate);
+      const templateId = readTemplateId(
+        candidate?.data?.[NODE_TEMPLATE_DATA_KEY],
+        payloadForTemplate,
+        state.metadataContext
+      );
+      const fieldValues = readFieldValues(
+        candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY],
+        payloadForTemplate,
+        templateId,
+        state.metadataContext
+      );
 
       baseMeta.$Position = {
         $x: position.x,
@@ -623,31 +427,28 @@
       }
 
       basePayload.$NodeId = nodeId;
-      if (typeof payloadForTemplate.Type === "string" && payloadForTemplate.Type.trim()) {
-        basePayload.Type = payloadForTemplate.Type.trim();
+      const explicitType = normalizeNonEmptyString(payloadForTemplate.Type);
+      if (explicitType) {
+        basePayload.Type = explicitType;
+      } else {
+        delete basePayload.Type;
       }
       if (comment !== undefined) {
         basePayload.$Comment = comment;
       } else {
         delete basePayload.$Comment;
       }
-      if (templateId !== undefined) {
-        basePayload[PAYLOAD_TEMPLATE_ID_KEY] = templateId;
-      } else {
-        delete basePayload[PAYLOAD_TEMPLATE_ID_KEY];
-      }
-      if (fieldValues !== undefined) {
-        basePayload[PAYLOAD_EDITOR_FIELDS_KEY] = fieldValues;
-      } else {
-        delete basePayload[PAYLOAD_EDITOR_FIELDS_KEY];
-      }
+      delete basePayload[PAYLOAD_TEMPLATE_ID_KEY];
+      delete basePayload[PAYLOAD_EDITOR_FIELDS_KEY];
 
-      const templateDefinition =
-        (templateId !== undefined ? getTemplateById(templateId) : undefined) ??
-        findTemplateByTypeName(basePayload.Type) ??
-        findTemplateByTypeName(label);
-      if (templateDefinition && (typeof basePayload.Type !== "string" || !basePayload.Type.trim())) {
-        basePayload.Type = templateDefinition.defaultTypeName;
+      const templateDefinition = resolveTemplateForPayload(
+        payloadForTemplate,
+        nodeId,
+        state.metadataContext,
+        templateId
+      );
+      if (!explicitType && templateDefinition?.schemaType) {
+        basePayload.Type = templateDefinition.schemaType;
       }
       applyFieldValuesToPayload(basePayload, templateDefinition, fieldValues);
 
@@ -667,7 +468,7 @@
     }
 
     if (normalizedNodes.length === 0) {
-      const fallbackNode = createDefaultFlowNode();
+      const fallbackNode = createDefaultFlowNode(state.metadataContext);
       const fallbackContext = {
         ...state.metadataContext,
         nodeMetadataById: {
@@ -683,8 +484,9 @@
           ...nextNodePayloadById,
           [fallbackNode.id]: {
             $NodeId: fallbackNode.id,
-            [PAYLOAD_TEMPLATE_ID_KEY]: fallbackNode.data?.[NODE_TEMPLATE_DATA_KEY],
-            [PAYLOAD_EDITOR_FIELDS_KEY]: fallbackNode.data?.[NODE_FIELD_VALUES_DATA_KEY],
+            ...(normalizeNonEmptyString(fallbackNode?.data?.Type)
+              ? { Type: fallbackNode.data.Type.trim() }
+              : {}),
           },
         },
       };
@@ -736,6 +538,9 @@
       resolveTemplateByNodeId(nodeId, payload) {
         return resolveTemplateForConnectionPayload(nodeId, payload, state.metadataContext);
       },
+      resolveMapKeyForTargetNode({ targetNodeId }) {
+        return readNodeMapKey(targetNodeId, state.metadataContext, normalizedNodes);
+      },
     });
 
     const preservedFloatingRoots = [];
@@ -768,17 +573,22 @@
         continue;
       }
 
-      const fallbackType =
-        typeof normalizedNode?.data?.label === "string" && normalizedNode.data.label.trim()
-          ? normalizedNode.data.label.trim()
-          : defaultLabelForNodeId(nodeId);
       const existingPayload = isObject(nextNodePayloadById[nodeId]) ? nextNodePayloadById[nodeId] : {};
       const newFloatingRoot = {
         ...existingPayload,
         $NodeId: nodeId,
       };
-      if (typeof newFloatingRoot.Type !== "string" && fallbackType) {
-        newFloatingRoot.Type = fallbackType;
+      const floatingTemplateId = normalizeNonEmptyString(
+        normalizedNode?.data?.[NODE_TEMPLATE_DATA_KEY]
+      );
+      const floatingTemplate = floatingTemplateId
+        ? getTemplateById(floatingTemplateId, state.metadataContext.workspaceContext)
+        : undefined;
+      if (
+        typeof newFloatingRoot.Type !== "string" &&
+        normalizeNonEmptyString(floatingTemplate?.schemaType)
+      ) {
+        newFloatingRoot.Type = floatingTemplate.schemaType;
       }
 
       const rewrittenFloatingRoot = rewriteNodePayloadTree(newFloatingRoot, nextNodePayloadById);
@@ -790,6 +600,9 @@
     const nextMetadataContext = {
       workspaceId: state.metadataContext.workspaceId,
       rootNodeId: state.metadataContext.rootNodeId,
+      workspaceContext: isObject(state.metadataContext.workspaceContext)
+        ? state.metadataContext.workspaceContext
+        : {},
       groups: Array.isArray(state.metadataContext.groups) ? state.metadataContext.groups : [],
       comments: Array.isArray(state.metadataContext.comments) ? state.metadataContext.comments : [],
       floatingNodes: preservedFloatingRoots,
@@ -828,10 +641,11 @@
     };
   }
 
-  function createEmptyMetadataContext() {
+  function createEmptyMetadataContext(workspaceContext = undefined) {
     return {
-      workspaceId: undefined,
+      workspaceId: normalizeNonEmptyString(workspaceContext?.rootMenuName),
       rootNodeId: undefined,
+      workspaceContext: isObject(workspaceContext) ? workspaceContext : {},
       groups: [],
       comments: [],
       floatingNodes: [],
@@ -843,9 +657,9 @@
     };
   }
 
-  function createDefaultFlowNode() {
+  function createDefaultFlowNode(context = undefined) {
     const nodeId = "Node-00000000-0000-0000-0000-000000000000";
-    const defaultTemplate = getDefaultTemplate();
+    const defaultTemplate = getDefaultTemplate(context?.workspaceContext);
     if (!defaultTemplate) {
       return {
         id: nodeId,
@@ -862,6 +676,9 @@
       type: CUSTOM_NODE_TYPE,
       data: {
         label: defaultLabelForNodeId(nodeId),
+        ...(normalizeNonEmptyString(defaultTemplate.schemaType)
+          ? { Type: defaultTemplate.schemaType }
+          : {}),
         [NODE_TEMPLATE_DATA_KEY]: defaultTemplate.templateId,
         [NODE_FIELD_VALUES_DATA_KEY]: defaultTemplate.buildInitialValues(),
       },
@@ -889,45 +706,141 @@
       return fromType;
     }
 
+    const fromNodeIdType = readTypeFromNodeId(payload?.$NodeId ?? nodeId);
+    if (fromNodeIdType !== undefined) {
+      return fromNodeIdType;
+    }
+
     return defaultLabelForNodeId(nodeId);
   }
 
-  function readTemplateId(candidateTemplateId, payload) {
-    if (typeof candidateTemplateId === "string" && candidateTemplateId.trim()) {
-      return candidateTemplateId.trim();
+  function readTemplateId(candidateTemplateId, payload, context = metadataContext) {
+    const normalizedPayloadType =
+      normalizeNonEmptyString(payload?.Type) ?? readTypeFromNodeId(payload?.$NodeId);
+    if (normalizedPayloadType) {
+      const inferredTemplate = resolveTemplateByPayloadType(
+        { ...(isObject(payload) ? payload : {}), Type: normalizedPayloadType },
+        context
+      );
+      if (inferredTemplate) {
+        return inferredTemplate.templateId;
+      }
     }
 
-    const payloadTemplateId = payload?.[PAYLOAD_TEMPLATE_ID_KEY];
-    if (typeof payloadTemplateId === "string" && payloadTemplateId.trim()) {
-      return payloadTemplateId.trim();
+    const normalizedCandidateTemplateId = normalizeNonEmptyString(candidateTemplateId);
+    if (normalizedCandidateTemplateId) {
+      return normalizedCandidateTemplateId;
     }
 
-    const inferredTemplate = findTemplateByTypeName(payload?.Type);
-    if (inferredTemplate) {
-      return inferredTemplate.templateId;
+    const payloadTemplateId = normalizeNonEmptyString(payload?.[PAYLOAD_TEMPLATE_ID_KEY]);
+    if (payloadTemplateId) {
+      return payloadTemplateId;
     }
 
     return undefined;
   }
 
-  function readFieldValues(candidateFieldValues, payload) {
+  function resolveLegacyNodeIdPrefix({
+    payload,
+    keyHint,
+    parentPayload,
+    parentNodeId,
+    isRoot = false,
+    workspaceContext,
+  }) {
+    const payloadObject = isObject(payload) ? payload : {};
+    const normalizedKeyHint = normalizeNonEmptyString(keyHint);
+    const context = {
+      workspaceContext: isObject(workspaceContext) ? workspaceContext : {},
+    };
+    const inferredPayloadType =
+      normalizeNonEmptyString(payloadObject.Type) ?? readTypeFromNodeId(payloadObject.$NodeId);
+
+    if (inferredPayloadType) {
+      const templateFromType = resolveTemplateByPayloadType(
+        {
+          ...payloadObject,
+          Type: inferredPayloadType,
+        },
+        context
+      );
+      const templateIdFromType = normalizeNonEmptyString(templateFromType?.templateId);
+      if (templateIdFromType) {
+        return templateIdFromType;
+      }
+    }
+
+    if (isRoot) {
+      const rootTemplateId = normalizeNonEmptyString(workspaceContext?.rootTemplateId);
+      if (rootTemplateId) {
+        return rootTemplateId;
+      }
+    }
+
+    if (normalizedKeyHint && isObject(parentPayload)) {
+      const parentTemplate = resolveTemplateForPayload(
+        parentPayload,
+        parentNodeId,
+        context
+      );
+      const matchedDescriptor = Array.isArray(parentTemplate?.schemaConnections)
+        ? parentTemplate.schemaConnections.find(
+            (descriptor) => normalizeNonEmptyString(descriptor?.schemaKey) === normalizedKeyHint
+          )
+        : undefined;
+      const selector = normalizeNonEmptyString(matchedDescriptor?.nodeSelector);
+      if (selector) {
+        const selectorTemplates = getTemplatesForNodeSelector(selector, workspaceContext);
+        const preferredTemplate = Array.isArray(selectorTemplates)
+          ? selectorTemplates[0]
+          : undefined;
+        const templateIdFromSelector = normalizeNonEmptyString(preferredTemplate?.templateId);
+        if (templateIdFromSelector) {
+          return templateIdFromSelector;
+        }
+
+        const schemaTypeFromSelector = normalizeNonEmptyString(preferredTemplate?.schemaType);
+        if (schemaTypeFromSelector) {
+          return schemaTypeFromSelector;
+        }
+
+        return selector;
+      }
+    }
+
+    if (inferredPayloadType) {
+      return inferredPayloadType;
+    }
+
+    if (normalizedKeyHint) {
+      return normalizedKeyHint;
+    }
+
+    return "Node";
+  }
+
+  function readFieldValues(
+    candidateFieldValues,
+    payload,
+    templateId = undefined,
+    context = metadataContext
+  ) {
     const candidateObject = normalizeFieldValuesObject(candidateFieldValues);
     if (candidateObject !== undefined) {
       return candidateObject;
     }
 
-    const payloadFieldValues = normalizeFieldValuesObject(payload?.[PAYLOAD_EDITOR_FIELDS_KEY]);
-    if (payloadFieldValues !== undefined) {
-      return payloadFieldValues;
-    }
+    const resolvedTemplateId = normalizeNonEmptyString(templateId) ?? readTemplateId(undefined, payload, context);
+    const template = resolveTemplateForPayload(payload, payload?.$NodeId, context, resolvedTemplateId);
 
-    const templateId = readTemplateId(undefined, payload);
-    const template =
-      (templateId !== undefined ? getTemplateById(templateId) : undefined) ??
-      findTemplateByTypeName(payload?.Type);
     const extractedFieldValues = extractFieldValuesFromPayload(payload, template);
     if (extractedFieldValues !== undefined) {
       return extractedFieldValues;
+    }
+
+    const payloadFieldValues = normalizeFieldValuesObject(payload?.[PAYLOAD_EDITOR_FIELDS_KEY]);
+    if (payloadFieldValues !== undefined) {
+      return payloadFieldValues;
     }
 
     return template?.buildInitialValues();
@@ -942,11 +855,17 @@
     const extracted = {};
     for (const field of template.fields) {
       const fieldId = typeof field?.id === "string" ? field.id.trim() : "";
-      if (!fieldId || !Object.prototype.hasOwnProperty.call(payload, fieldId)) {
+      if (!fieldId) {
         continue;
       }
 
-      extracted[fieldId] = payload[fieldId];
+      const runtimeKey =
+        normalizeNonEmptyString(template?.fieldRuntimeKeyByFieldId?.[fieldId]) ?? fieldId;
+      if (!Object.prototype.hasOwnProperty.call(payload, runtimeKey)) {
+        continue;
+      }
+
+      extracted[fieldId] = payload[runtimeKey];
       hasAnyValue = true;
     }
 
@@ -969,7 +888,10 @@
         continue;
       }
 
-      payload[fieldId] = fieldValues[fieldId];
+      const runtimeKey =
+        normalizeNonEmptyString(templateDefinition?.fieldRuntimeKeyByFieldId?.[fieldId]) ??
+        fieldId;
+      payload[runtimeKey] = fieldValues[fieldId];
     }
   }
 
@@ -981,83 +903,41 @@
     return { ...candidateValue };
   }
 
-  function defaultLabelForNodeId(nodeId) {
-    if (typeof nodeId !== "string" || !nodeId.trim()) {
-      return "Node";
-    }
-
-    const [prefix, suffix] = nodeId.split("-", 2);
-    if (prefix && suffix) {
-      return prefix;
-    }
-
-    return nodeId;
-  }
-
-  function normalizeNodeId(candidate, typeHint, index) {
-    if (typeof candidate === "string" && candidate.trim()) {
-      return candidate.trim();
-    }
-    if (typeof candidate === "number" && Number.isFinite(candidate)) {
-      return String(candidate);
-    }
-
-    const cleanType =
-      typeof typeHint === "string" && typeHint.trim()
-        ? typeHint.trim().replace(/[^A-Za-z0-9_]/g, "")
-        : "Node";
-    return `${cleanType || "Node"}-${createUuid()}`;
-  }
-
-  function normalizeHandleId(candidate) {
-    if (typeof candidate === "string" && candidate.trim()) {
-      return candidate.trim();
-    }
-
-    return undefined;
-  }
-
-  function normalizePosition(candidatePosition, index) {
-    const fallbackX = index * 180;
-    const fallbackY = 100;
-    const x = Number(candidatePosition?.x);
-    const y = Number(candidatePosition?.y);
-    const metaX = Number(candidatePosition?.$x);
-    const metaY = Number(candidatePosition?.$y);
-
-    return {
-      x: Number.isFinite(x) ? x : Number.isFinite(metaX) ? metaX : fallbackX,
-      y: Number.isFinite(y) ? y : Number.isFinite(metaY) ? metaY : fallbackY,
-    };
-  }
-
-  function readRuntimeRootNodeId(runtimeRoot) {
-    if (!isObject(runtimeRoot)) {
-      return undefined;
-    }
-
-    if (typeof runtimeRoot.$NodeId === "string" && runtimeRoot.$NodeId.trim()) {
-      return runtimeRoot.$NodeId.trim();
-    }
-
-    return undefined;
-  }
-
   function resolveTemplateForConnectionPayload(nodeId, payload, context) {
-    const normalizedPayload = isObject(payload) ? payload : {};
-    const payloadForTemplate = withImplicitRootType(normalizedPayload, nodeId, context);
-    const templateId = readTemplateId(undefined, payloadForTemplate);
-
-    return (
-      (templateId !== undefined ? getTemplateById(templateId) : undefined) ??
-      findTemplateByTypeName(payloadForTemplate.Type)
-    );
+    return resolveTemplateForPayload(payload, nodeId, context);
   }
 
-  function withImplicitRootType(payload, nodeId, context) {
-    const normalizedPayload = isObject(payload) ? payload : {};
-    if (typeof normalizedPayload.Type === "string" && normalizedPayload.Type.trim()) {
-      return normalizedPayload;
+  function resolveTemplateForPayload(
+    payload,
+    nodeId,
+    context = metadataContext,
+    explicitTemplateId = undefined
+  ) {
+    const payloadForTemplate = getPayloadForTemplateResolution(payload, nodeId, context);
+    const workspaceContext = context?.workspaceContext;
+
+    const payloadType = normalizeNonEmptyString(payloadForTemplate?.Type);
+    if (payloadType) {
+      const fromType = resolveTemplateByPayloadType(payloadForTemplate, context);
+      if (fromType) {
+        return fromType;
+      }
+    }
+
+    const resolvedTemplateId = normalizeNonEmptyString(explicitTemplateId);
+    if (resolvedTemplateId) {
+      const fromTemplateId = getTemplateById(resolvedTemplateId, workspaceContext);
+      if (fromTemplateId) {
+        return fromTemplateId;
+      }
+    }
+
+    const payloadTemplateId = normalizeNonEmptyString(payloadForTemplate?.[PAYLOAD_TEMPLATE_ID_KEY]);
+    if (payloadTemplateId) {
+      const fromPayloadTemplateId = getTemplateById(payloadTemplateId, workspaceContext);
+      if (fromPayloadTemplateId) {
+        return fromPayloadTemplateId;
+      }
     }
 
     if (
@@ -1066,208 +946,157 @@
       typeof context?.rootNodeId === "string" &&
       context.rootNodeId === nodeId
     ) {
+      const rootTemplateId = normalizeNonEmptyString(context?.workspaceContext?.rootTemplateId);
+      if (rootTemplateId) {
+        return getTemplateById(rootTemplateId, workspaceContext);
+      }
+    }
+
+    return undefined;
+  }
+
+  function getPayloadForTemplateResolution(payload, nodeId, context) {
+    const normalizedPayload = isObject(payload) ? payload : {};
+    if (normalizeNonEmptyString(normalizedPayload.Type)) {
+      return normalizedPayload;
+    }
+
+    const inferredTypeFromNodeId = readTypeFromNodeId(normalizedPayload.$NodeId ?? nodeId);
+    if (inferredTypeFromNodeId) {
       return {
         ...normalizedPayload,
-        Type: DEFAULT_WORKSPACE_ROOT_TYPE,
+        Type: inferredTypeFromNodeId,
       };
+    }
+
+    if (
+      typeof nodeId === "string" &&
+      nodeId &&
+      typeof context?.rootNodeId === "string" &&
+      context.rootNodeId === nodeId
+    ) {
+      const rootTemplateId = normalizeNonEmptyString(context?.workspaceContext?.rootTemplateId);
+      if (!rootTemplateId) {
+        return normalizedPayload;
+      }
+
+      const rootTemplate = getTemplateById(rootTemplateId, context?.workspaceContext);
+      if (normalizeNonEmptyString(rootTemplate?.schemaType)) {
+        return {
+          ...normalizedPayload,
+          Type: rootTemplate.schemaType,
+        };
+      }
     }
 
     return normalizedPayload;
   }
 
-  function omitKeys(source, keysToOmit) {
-    if (!isObject(source)) {
-      return {};
+  function readNodeMapKey(nodeId, context, flowNodesCandidate = nodes) {
+    if (typeof nodeId !== "string" || !nodeId.trim()) {
+      return undefined;
     }
 
-    const omitSet = new Set(keysToOmit);
-    return Object.fromEntries(Object.entries(source).filter(([key]) => !omitSet.has(key)));
-  }
-
-  function isObject(value) {
-    return value !== null && typeof value === "object" && !Array.isArray(value);
-  }
-
-  function isPositionCandidate(value) {
-    if (!isObject(value)) {
-      return false;
-    }
-
-    return Number.isFinite(Number(value.$x)) || Number.isFinite(Number(value.$y));
-  }
-
-  function looksLikeLegacyInlineTemplate(root) {
-    if (!isObject(root)) {
-      return false;
-    }
-
-    if (
-      Number.isFinite(Number(root?.$Position?.$x)) ||
-      Number.isFinite(Number(root?.$Position?.$y))
-    ) {
-      return true;
-    }
-
-    if (typeof root.$Title === "string" && root.$Title.trim()) {
-      return true;
-    }
-
-    let foundInlinePosition = false;
-    const scan = (candidate) => {
-      if (foundInlinePosition) {
-        return;
-      }
-
-      if (Array.isArray(candidate)) {
-        for (const item of candidate) {
-          scan(item);
-          if (foundInlinePosition) {
-            return;
-          }
-        }
-        return;
-      }
-
-      if (!isObject(candidate)) {
-        return;
-      }
-
-      if (isPositionCandidate(candidate.$Position)) {
-        foundInlinePosition = true;
-        return;
-      }
-
-      for (const [key, value] of Object.entries(candidate)) {
-        if (key === NODE_EDITOR_METADATA_KEY || key === "$Groups") {
-          continue;
-        }
-        scan(value);
-        if (foundInlinePosition) {
-          return;
-        }
-      }
-    };
-
-    scan(root);
-    return foundInlinePosition;
-  }
-
-  function collectRuntimeNodePayloadById(runtimeRoot) {
-    const payloadById = {};
-
-    const visit = (candidate) => {
-      if (Array.isArray(candidate)) {
-        for (const item of candidate) {
-          visit(item);
-        }
-        return;
-      }
-
-      if (!isObject(candidate)) {
-        return;
-      }
-
-      const nodeId =
-        typeof candidate.$NodeId === "string" && candidate.$NodeId.trim()
-          ? candidate.$NodeId.trim()
-          : undefined;
-
-      if (nodeId && !isObject(payloadById[nodeId])) {
-        payloadById[nodeId] = candidate;
-      }
-
-      for (const [key, value] of Object.entries(candidate)) {
-        if (key === NODE_EDITOR_METADATA_KEY) {
-          continue;
-        }
-        visit(value);
-      }
-    };
-
-    visit(runtimeRoot);
-    return payloadById;
-  }
-
-  function collectNodeIdsFromPayload(rootPayload, collectedIds) {
-    const visit = (candidate) => {
-      if (Array.isArray(candidate)) {
-        for (const item of candidate) {
-          visit(item);
-        }
-        return;
-      }
-
-      if (!isObject(candidate)) {
-        return;
-      }
-
-      const nodeId =
-        typeof candidate.$NodeId === "string" && candidate.$NodeId.trim()
-          ? candidate.$NodeId.trim()
-          : undefined;
-      if (nodeId) {
-        collectedIds.add(nodeId);
-      }
-
-      for (const [key, value] of Object.entries(candidate)) {
-        if (key === NODE_EDITOR_METADATA_KEY) {
-          continue;
-        }
-        visit(value);
-      }
-    };
-
-    visit(rootPayload);
-  }
-
-  function rewriteNodePayloadTree(candidate, payloadById) {
-    if (Array.isArray(candidate)) {
-      let changed = false;
-      const rewrittenArray = candidate.map((item) => {
-        const rewrittenItem = rewriteNodePayloadTree(item, payloadById);
-        if (rewrittenItem !== item) {
-          changed = true;
-        }
-        return rewrittenItem;
-      });
-      return changed ? rewrittenArray : candidate;
-    }
-
-    if (!isObject(candidate)) {
-      return candidate;
-    }
-
-    const nodeId =
-      typeof candidate.$NodeId === "string" && candidate.$NodeId.trim()
-        ? candidate.$NodeId.trim()
+    const nodeMeta = context?.nodeMetadataById?.[nodeId];
+    const fromMetadataTitle =
+      typeof nodeMeta?.$Title === "string" && nodeMeta.$Title.trim()
+        ? nodeMeta.$Title.trim()
         : undefined;
-    const source =
-      nodeId && isObject(payloadById?.[nodeId]) ? payloadById[nodeId] : candidate;
-
-    let changed = source !== candidate;
-    const rewrittenObject = {};
-    for (const [key, value] of Object.entries(source)) {
-      if (key === NODE_EDITOR_METADATA_KEY) {
-        rewrittenObject[key] = value;
-        continue;
-      }
-
-      const rewrittenValue = rewriteNodePayloadTree(value, payloadById);
-      if (rewrittenValue !== value) {
-        changed = true;
-      }
-      rewrittenObject[key] = rewrittenValue;
+    if (fromMetadataTitle) {
+      return fromMetadataTitle;
     }
 
-    return changed ? rewrittenObject : source;
+    const flowNode = Array.isArray(flowNodesCandidate)
+      ? flowNodesCandidate.find((candidate) => candidate.id === nodeId)
+      : undefined;
+    const fromFlowLabel =
+      typeof flowNode?.data?.label === "string" && flowNode.data.label.trim()
+        ? flowNode.data.label.trim()
+        : undefined;
+    if (fromFlowLabel) {
+      return fromFlowLabel;
+    }
+
+    return nodeId;
   }
 
-  function createUuid() {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-      return crypto.randomUUID();
+  function resolveTemplateByPayloadType(payload, context = metadataContext) {
+    const payloadType = normalizeNonEmptyString(payload?.Type);
+    if (!payloadType) {
+      return undefined;
     }
-    return Math.random().toString(16).slice(2);
+
+    const workspaceContext = context?.workspaceContext;
+    const candidates = findTemplatesByTypeName(payloadType, workspaceContext);
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return findTemplateByTypeName(payloadType, workspaceContext);
+    }
+
+    if (candidates.length === 1) {
+      return candidates[0];
+    }
+
+    return chooseBestTemplateCandidateForPayload(payload, candidates);
   }
+
+  function chooseBestTemplateCandidateForPayload(payload, candidates) {
+    if (!isObject(payload) || !Array.isArray(candidates) || candidates.length === 0) {
+      return candidates?.[0];
+    }
+
+    const runtimePayloadKeys = Object.keys(payload).filter(
+      (key) => !NODE_PAYLOAD_TEMPLATE_RESOLUTION_EXCLUDED_KEYS.has(key)
+    );
+    if (runtimePayloadKeys.length === 0) {
+      return candidates[0];
+    }
+
+    let bestCandidate = candidates[0];
+    let bestScore = -1;
+    let bestMatchedKeyCount = -1;
+
+    for (const candidate of candidates) {
+      const connectionKeySet = new Set(
+        Array.isArray(candidate?.schemaConnections)
+          ? candidate.schemaConnections
+              .map((descriptor) => normalizeNonEmptyString(descriptor?.schemaKey))
+              .filter((schemaKey) => Boolean(schemaKey))
+          : []
+      );
+      const fieldKeySet = new Set(
+        Object.values(isObject(candidate?.fieldRuntimeKeyByFieldId) ? candidate.fieldRuntimeKeyByFieldId : {})
+          .map((runtimeKey) => normalizeNonEmptyString(runtimeKey))
+          .filter((runtimeKey) => Boolean(runtimeKey))
+      );
+
+      let score = 0;
+      let matchedKeyCount = 0;
+      for (const runtimePayloadKey of runtimePayloadKeys) {
+        if (connectionKeySet.has(runtimePayloadKey)) {
+          score += 5;
+          matchedKeyCount += 1;
+          continue;
+        }
+
+        if (fieldKeySet.has(runtimePayloadKey)) {
+          score += 3;
+          matchedKeyCount += 1;
+        }
+      }
+
+      if (
+        score > bestScore ||
+        (score === bestScore && matchedKeyCount > bestMatchedKeyCount)
+      ) {
+        bestCandidate = candidate;
+        bestScore = score;
+        bestMatchedKeyCount = matchedKeyCount;
+      }
+    }
+
+    return bestCandidate;
+  }
+
 </script>
 
 <main class="flex flex-col h-screen min-h-0 p-3">
@@ -1280,6 +1109,7 @@
       bind:edges
       loadVersion={graphLoadVersion}
       templateSourceMode={templateSourceMode}
+      workspaceContext={metadataContext?.workspaceContext}
       on:flowchange={handleFlowChange}
     />
   </SvelteFlowProvider>

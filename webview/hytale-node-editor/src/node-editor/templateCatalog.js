@@ -1,12 +1,12 @@
-import { buildFieldValueMap } from './fieldValueUtils.js';
 import {
   SAMPLE_NODE_TEMPLATES,
   findTemplateByTypeName as findDevTemplateByTypeName,
   getDefaultTemplate as getDevDefaultTemplate,
   getTemplateById as getDevTemplateById,
 } from './sampleNodeTemplates.js';
+import { buildFieldValueMap } from './fieldValueUtils.js';
 import { normalizePinColor } from './pinColorUtils.js';
-import { loadHytaleGeneratorJavaWorkspaceTemplates } from './workspaceTemplateLoader.js';
+import { loadWorkspaceTemplateCollection } from './workspaceTemplateLoader.js';
 
 export const TEMPLATE_SOURCE_MODE = {
   DEV_PRESETS: 'dev-presets',
@@ -14,57 +14,108 @@ export const TEMPLATE_SOURCE_MODE = {
 };
 
 let activeTemplateSourceMode = TEMPLATE_SOURCE_MODE.WORKSPACE_HG_JAVA;
+let activeWorkspaceContext = {
+  workspaceId: 'HytaleGenerator Java',
+  rootId: 'Biome',
+};
 
-const catalogByMode = new Map();
-const warnedModes = new Set();
+const catalogByKey = new Map();
+const warnedCatalogKeys = new Set();
 
 export function setActiveTemplateSourceMode(candidateMode) {
   activeTemplateSourceMode = normalizeTemplateSourceMode(candidateMode);
-  const catalog = getCatalogByMode(activeTemplateSourceMode);
+  const catalog = getTemplateCatalog();
   logCatalogDiagnostics(activeTemplateSourceMode, catalog);
   return catalog;
 }
 
-export function getTemplateCatalog(candidateMode = activeTemplateSourceMode) {
-  const normalizedMode = normalizeTemplateSourceMode(candidateMode);
-  return getCatalogByMode(normalizedMode);
+export function setActiveWorkspaceContext(candidateContext) {
+  if (!isObject(candidateContext)) {
+    return getTemplateCatalog();
+  }
+
+  const workspaceId = normalizeNonEmptyString(candidateContext.workspaceId);
+  const rootId = normalizeNonEmptyString(candidateContext.rootId);
+  activeWorkspaceContext = {
+    workspaceId: workspaceId ?? activeWorkspaceContext.workspaceId,
+    rootId: rootId ?? activeWorkspaceContext.rootId,
+  };
+
+  const catalog = getTemplateCatalog();
+  logCatalogDiagnostics(activeTemplateSourceMode, catalog);
+  return catalog;
 }
 
-export function getTemplates() {
-  return getTemplateCatalog().templates;
+export function getActiveWorkspaceContext() {
+  return { ...activeWorkspaceContext };
 }
 
-export function getTemplateById(templateId) {
-  return getTemplateCatalog().getTemplateById(templateId);
-}
-
-export function getDefaultTemplate() {
-  return getTemplateCatalog().getDefaultTemplate();
-}
-
-export function findTemplateByTypeName(typeName) {
-  return getTemplateCatalog().findTemplateByTypeName(typeName);
-}
-
-export function getTemplateCatalogDiagnostics() {
-  return getTemplateCatalog().diagnostics;
-}
-
-function getCatalogByMode(mode) {
-  const existing = catalogByMode.get(mode);
+export function getTemplateCatalog(
+  candidateMode = activeTemplateSourceMode,
+  candidateContext = activeWorkspaceContext
+) {
+  const mode = normalizeTemplateSourceMode(candidateMode);
+  const key = buildCatalogKey(mode, candidateContext);
+  const existing = catalogByKey.get(key);
   if (existing) {
     return existing;
   }
 
   const catalog = mode === TEMPLATE_SOURCE_MODE.DEV_PRESETS
     ? createDevPresetCatalog()
-    : createWorkspaceCatalog();
-  catalogByMode.set(mode, catalog);
+    : createWorkspaceCatalog(candidateContext);
+  catalogByKey.set(key, catalog);
   return catalog;
 }
 
+export function getTemplates(candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).templates;
+}
+
+export function getTemplateById(templateId, candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).getTemplateById(templateId);
+}
+
+export function getDefaultTemplate(candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).getDefaultTemplate();
+}
+
+export function findTemplateByTypeName(typeName, candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).findTemplateByTypeName(typeName);
+}
+
+export function findTemplatesByTypeName(typeName, candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).findTemplatesByTypeName(
+    typeName
+  );
+}
+
+export function getTemplatesForNodeSelector(nodeSelector, candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).getTemplatesForNodeSelector(
+    nodeSelector
+  );
+}
+
+export function getWorkspaceDefinition(candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).workspace;
+}
+
+export function getRootDefinition(candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).root;
+}
+
+export function getTemplateCatalogDiagnostics(candidateContext = activeWorkspaceContext) {
+  return getTemplateCatalog(activeTemplateSourceMode, candidateContext).diagnostics;
+}
+
 function createDevPresetCatalog() {
-  const fallback = createCatalogFromTemplates(SAMPLE_NODE_TEMPLATES);
+  const fallback = createCatalogFromTemplates({
+    templates: SAMPLE_NODE_TEMPLATES,
+    diagnostics: [],
+    workspace: undefined,
+    root: undefined,
+  });
+
   return {
     ...fallback,
     getTemplateById(templateId) {
@@ -76,67 +127,135 @@ function createDevPresetCatalog() {
     findTemplateByTypeName(typeName) {
       return findDevTemplateByTypeName(typeName) ?? fallback.findTemplateByTypeName(typeName);
     },
-    diagnostics: [],
+    findTemplatesByTypeName(typeName) {
+      const fromDev = findDevTemplateByTypeName(typeName);
+      if (fromDev) {
+        return [fromDev];
+      }
+
+      return fallback.findTemplatesByTypeName(typeName);
+    },
+    getTemplatesForNodeSelector(nodeSelector) {
+      const normalizedSelector = normalizeLookupKey(nodeSelector);
+      if (!normalizedSelector) {
+        return fallback.templates;
+      }
+
+      const direct = fallback.findTemplateByTypeName(nodeSelector);
+      return direct ? [direct] : [];
+    },
   };
 }
 
-function createWorkspaceCatalog() {
-  const workspaceData = loadHytaleGeneratorJavaWorkspaceTemplates();
-  const baseCatalog = createCatalogFromTemplates(workspaceData.templates);
+function createWorkspaceCatalog(candidateContext) {
+  const collection = loadWorkspaceTemplateCollection();
+  const workspaces = Array.isArray(collection.workspaces) ? collection.workspaces : [];
+  const normalizedWorkspaceId = normalizeNonEmptyString(candidateContext?.workspaceId);
+  const workspace =
+    workspaces.find((entry) => entry.workspaceId === normalizedWorkspaceId) ?? workspaces[0];
 
-  if (baseCatalog.templates.length > 0) {
-    return {
-      ...baseCatalog,
-      diagnostics: Array.isArray(workspaceData.diagnostics)
-        ? workspaceData.diagnostics
-        : [],
-    };
+  if (!workspace) {
+    const fallback = createCatalogFromTemplates({
+      templates: SAMPLE_NODE_TEMPLATES,
+      diagnostics: ['Workspace catalog is empty; falling back to dev preset templates.'],
+      workspace: undefined,
+      root: undefined,
+    });
+    return fallback;
   }
 
-  const devFallbackCatalog = createCatalogFromTemplates(SAMPLE_NODE_TEMPLATES);
-  return {
-    ...devFallbackCatalog,
+  const normalizedRootId = normalizeNonEmptyString(candidateContext?.rootId);
+  const root =
+    workspace.roots?.find((entry) => entry.rootId === normalizedRootId) ?? workspace.roots?.[0];
+
+  return createCatalogFromTemplates({
+    templates: workspace.templates,
     diagnostics: [
-      ...(Array.isArray(workspaceData.diagnostics) ? workspaceData.diagnostics : []),
-      'Workspace template catalog is empty; falling back to dev preset templates.',
+      ...(Array.isArray(collection.diagnostics) ? collection.diagnostics : []),
+      ...(Array.isArray(workspace.diagnostics) ? workspace.diagnostics : []),
     ],
-  };
+    workspace,
+    root,
+  });
 }
 
-function createCatalogFromTemplates(sourceTemplates) {
+function createCatalogFromTemplates({ templates: sourceTemplates, diagnostics, workspace, root }) {
   const templates = normalizeTemplateArray(sourceTemplates);
-  const templateById = new Map(templates.map((template) => [template.templateId, template]));
-  const templateByNormalizedId = new Map();
-  const lookupByTypeName = new Map();
+  const templateById = new Map();
+  const templateByLowerId = new Map();
+  const templateByType = new Map();
+  const templatesByType = new Map();
+  const variantTemplatesById = new Map();
 
   for (const template of templates) {
-    const normalizedTemplateId = normalizeLookupKey(template.templateId);
-    if (normalizedTemplateId && !templateByNormalizedId.has(normalizedTemplateId)) {
-      templateByNormalizedId.set(normalizedTemplateId, template);
+    templateById.set(template.templateId, template);
+
+    const lowerTemplateId = normalizeLookupKey(template.templateId);
+    if (lowerTemplateId && !templateByLowerId.has(lowerTemplateId)) {
+      templateByLowerId.set(lowerTemplateId, template);
     }
 
-    for (const lookupKey of getTemplateLookupKeys(template)) {
-      if (!lookupByTypeName.has(lookupKey)) {
-        lookupByTypeName.set(lookupKey, template);
+    const schemaTypeKey = normalizeLookupKey(template.schemaType ?? template.defaultTypeName);
+    if (schemaTypeKey) {
+      pushLookupTemplate(templatesByType, schemaTypeKey, template);
+      if (!templateByType.has(schemaTypeKey)) {
+        templateByType.set(schemaTypeKey, template);
+      }
+    }
+  }
+
+  const variants = Array.isArray(workspace?.variants) ? workspace.variants : [];
+  for (const variant of variants) {
+    const variantKey = normalizeLookupKey(variant.variantId);
+    if (!variantKey || !Array.isArray(variant.templateIds)) {
+      continue;
+    }
+
+    const resolvedTemplates = variant.templateIds
+      .map((templateId) => templateById.get(templateId))
+      .filter((template) => Boolean(template));
+    variantTemplatesById.set(variantKey, resolvedTemplates);
+
+    for (const entry of Array.isArray(variant.values) ? variant.values : []) {
+      const valueKey = normalizeLookupKey(entry.value);
+      const valueTemplate = templateById.get(entry.templateId);
+      if (!valueKey || !valueTemplate) {
+        continue;
+      }
+      pushLookupTemplate(templatesByType, valueKey, valueTemplate);
+      if (!templateByType.has(valueKey)) {
+        templateByType.set(valueKey, valueTemplate);
       }
     }
   }
 
   return {
     templates,
-    diagnostics: [],
+    diagnostics: Array.isArray(diagnostics) ? diagnostics : [],
+    workspace,
+    root,
     getTemplateById(templateId) {
-      const exactTemplateId = normalizeNonEmptyString(templateId);
-      if (!exactTemplateId) {
+      const normalizedTemplateId = normalizeNonEmptyString(templateId);
+      if (!normalizedTemplateId) {
         return undefined;
       }
-
       return (
-        templateById.get(exactTemplateId) ??
-        templateByNormalizedId.get(exactTemplateId.toLowerCase())
+        templateById.get(normalizedTemplateId) ??
+        templateByLowerId.get(normalizedTemplateId.toLowerCase())
       );
     },
     getDefaultTemplate() {
+      const rootTemplateId = normalizeNonEmptyString(root?.rootNodeType);
+      if (rootTemplateId) {
+        const rootTemplate =
+          templateById.get(rootTemplateId) ??
+          templateByLowerId.get(rootTemplateId.toLowerCase()) ??
+          variantTemplatesById.get(rootTemplateId.toLowerCase())?.[0];
+        if (rootTemplate) {
+          return rootTemplate;
+        }
+      }
+
       return templates[0];
     },
     findTemplateByTypeName(typeName) {
@@ -144,24 +263,70 @@ function createCatalogFromTemplates(sourceTemplates) {
       if (!lookupKey) {
         return undefined;
       }
+      return (
+        templateByType.get(lookupKey) ??
+        templateByLowerId.get(lookupKey)
+      );
+    },
+    findTemplatesByTypeName(typeName) {
+      const lookupKey = normalizeLookupKey(typeName);
+      if (!lookupKey) {
+        return [];
+      }
 
-      return lookupByTypeName.get(lookupKey);
+      const candidates = templatesByType.get(lookupKey);
+      if (Array.isArray(candidates) && candidates.length > 0) {
+        return candidates;
+      }
+
+      const directTemplate = templateByLowerId.get(lookupKey);
+      return directTemplate ? [directTemplate] : [];
+    },
+    getTemplatesForNodeSelector(nodeSelector) {
+      const selectorKey = normalizeLookupKey(nodeSelector);
+      if (!selectorKey) {
+        return templates;
+      }
+
+      const directTemplate = templateByLowerId.get(selectorKey);
+      if (directTemplate) {
+        return [directTemplate];
+      }
+
+      const variantTemplates = variantTemplatesById.get(selectorKey);
+      if (variantTemplates && variantTemplates.length > 0) {
+        return variantTemplates;
+      }
+
+      return [];
     },
   };
 }
 
-function normalizeTemplateArray(sourceTemplates) {
-  const templates = [];
-  const inputTemplates = Array.isArray(sourceTemplates) ? sourceTemplates : [];
+function pushLookupTemplate(lookup, key, template) {
+  if (!lookup.has(key)) {
+    lookup.set(key, []);
+  }
 
-  for (let index = 0; index < inputTemplates.length; index += 1) {
-    const normalizedTemplate = normalizeTemplate(inputTemplates[index], index);
+  const templates = lookup.get(key);
+  if (templates.includes(template)) {
+    return;
+  }
+
+  templates.push(template);
+}
+
+function normalizeTemplateArray(sourceTemplates) {
+  const normalizedTemplates = [];
+  const templates = Array.isArray(sourceTemplates) ? sourceTemplates : [];
+  for (let index = 0; index < templates.length; index += 1) {
+    const normalizedTemplate = normalizeTemplate(templates[index], index);
     if (normalizedTemplate) {
-      templates.push(normalizedTemplate);
+      normalizedTemplates.push(normalizedTemplate);
     }
   }
 
-  return templates;
+  return normalizedTemplates;
 }
 
 function normalizeTemplate(template, index) {
@@ -173,14 +338,9 @@ function normalizeTemplate(template, index) {
     normalizeNonEmptyString(template.templateId) ??
     normalizeNonEmptyString(template.defaultTypeName) ??
     `Template-${index}`;
-  const label =
-    normalizeNonEmptyString(template.label) ??
-    normalizeNonEmptyString(template.defaultTypeName) ??
-    templateId;
-  const defaultTypeName =
-    normalizeNonEmptyString(template.defaultTypeName) ??
-    normalizeNonEmptyString(template.templateId) ??
-    label;
+  const label = normalizeNonEmptyString(template.label) ?? templateId;
+  const schemaType = normalizeNonEmptyString(template.schemaType);
+  const defaultTypeName = schemaType ?? normalizeNonEmptyString(template.defaultTypeName) ?? templateId;
   const nodeColor = normalizePinColor(
     template.nodeColor ??
       template.color ??
@@ -188,26 +348,26 @@ function normalizeTemplate(template, index) {
       template.colour ??
       template.Colour
   );
-  const fields = Array.isArray(template.fields) ? template.fields : [];
-  const inputPins = normalizePinDefinitions(template.inputPins);
-  const outputPins = normalizePinDefinitions(template.outputPins);
-  const schemaConnections = normalizeSchemaConnections(template.schemaConnections);
-  const buildInitialValues =
-    typeof template.buildInitialValues === 'function'
-      ? template.buildInitialValues
-      : () => buildFieldValueMap(fields);
 
   return {
     ...template,
     templateId,
     label,
-    nodeColor,
+    schemaType,
     defaultTypeName,
-    fields,
-    inputPins,
-    outputPins,
-    schemaConnections,
-    buildInitialValues,
+    nodeColor,
+    fields: Array.isArray(template.fields) ? template.fields : [],
+    inputPins: normalizePinDefinitions(template.inputPins),
+    outputPins: normalizePinDefinitions(template.outputPins),
+    schemaConnections: normalizeSchemaConnections(template.schemaConnections),
+    fieldRuntimeKeyByFieldId: isObject(template.fieldRuntimeKeyByFieldId)
+      ? template.fieldRuntimeKeyByFieldId
+      : {},
+    fieldIdBySchemaKey: isObject(template.fieldIdBySchemaKey) ? template.fieldIdBySchemaKey : {},
+    buildInitialValues:
+      typeof template.buildInitialValues === 'function'
+        ? template.buildInitialValues
+        : () => buildFieldValueMap(Array.isArray(template.fields) ? template.fields : []),
   };
 }
 
@@ -222,17 +382,18 @@ function normalizePinDefinitions(pinCandidates) {
       continue;
     }
 
-    const pinId = normalizeNonEmptyString(pinCandidate.id ?? pinCandidate.Id);
-    const pinType = normalizeNonEmptyString(pinCandidate.type ?? pinCandidate.Type);
-    if (!pinId || !pinType) {
+    const id = normalizeNonEmptyString(pinCandidate.id ?? pinCandidate.Id);
+    const type = normalizeNonEmptyString(pinCandidate.type ?? pinCandidate.Type);
+    if (!id || !type) {
       continue;
     }
 
     normalizedPins.push({
-      id: pinId,
-      type: pinType,
-      label: normalizeNonEmptyString(pinCandidate.label ?? pinCandidate.Label) ?? pinId,
+      id,
+      type,
+      label: normalizeNonEmptyString(pinCandidate.label ?? pinCandidate.Label) ?? id,
       multiple: pinCandidate.multiple === true || pinCandidate.Multiple === true,
+      isMap: pinCandidate.isMap === true || pinCandidate.IsMap === true,
       color: normalizePinColor(
         pinCandidate.color ??
           pinCandidate.Color ??
@@ -250,7 +411,7 @@ function normalizeSchemaConnections(connectionCandidates) {
     return [];
   }
 
-  const normalizedConnections = [];
+  const connections = [];
   for (const connectionCandidate of connectionCandidates) {
     if (!isObject(connectionCandidate)) {
       continue;
@@ -266,7 +427,7 @@ function normalizeSchemaConnections(connectionCandidates) {
       continue;
     }
 
-    normalizedConnections.push({
+    connections.push({
       schemaKey,
       outputPinId,
       outputPinType: normalizeNonEmptyString(
@@ -276,24 +437,17 @@ function normalizeSchemaConnections(connectionCandidates) {
         connectionCandidate.nodeSelector ?? connectionCandidate.NodeSelector
       ),
       multiple: connectionCandidate.multiple === true || connectionCandidate.Multiple === true,
+      isMap: connectionCandidate.isMap === true || connectionCandidate.IsMap === true,
     });
   }
 
-  return normalizedConnections;
+  return connections;
 }
 
-function getTemplateLookupKeys(template) {
-  const keys = new Set();
-  const candidates = [template?.templateId, template?.defaultTypeName, template?.label];
-
-  for (const candidate of candidates) {
-    const normalized = normalizeLookupKey(candidate);
-    if (normalized) {
-      keys.add(normalized);
-    }
-  }
-
-  return Array.from(keys);
+function buildCatalogKey(mode, context) {
+  const workspaceId = normalizeNonEmptyString(context?.workspaceId) ?? 'workspace-default';
+  const rootId = normalizeNonEmptyString(context?.rootId) ?? 'root-default';
+  return `${mode}:${workspaceId}:${rootId}`;
 }
 
 function normalizeTemplateSourceMode(candidateMode) {
@@ -303,11 +457,18 @@ function normalizeTemplateSourceMode(candidateMode) {
 }
 
 function logCatalogDiagnostics(mode, catalog) {
-  if (!catalog || warnedModes.has(mode)) {
+  if (!catalog) {
     return;
   }
 
-  warnedModes.add(mode);
+  const workspaceLabel = normalizeNonEmptyString(catalog?.workspace?.workspaceId) ?? 'workspace';
+  const rootLabel = normalizeNonEmptyString(catalog?.root?.rootId) ?? 'root';
+  const warningKey = `${mode}:${workspaceLabel}:${rootLabel}`;
+  if (warnedCatalogKeys.has(warningKey)) {
+    return;
+  }
+  warnedCatalogKeys.add(warningKey);
+
   const diagnostics = Array.isArray(catalog.diagnostics) ? catalog.diagnostics : [];
   if (diagnostics.length === 0) {
     return;
@@ -316,11 +477,10 @@ function logCatalogDiagnostics(mode, catalog) {
   const modeLabel =
     mode === TEMPLATE_SOURCE_MODE.DEV_PRESETS
       ? 'dev presets'
-      : 'workspace HytaleGenerator Java';
-
+      : `workspace ${workspaceLabel} (${rootLabel})`;
   console.warn(
     `[node-editor] Template diagnostics (${modeLabel}):\n${diagnostics
-      .map((message) => `- ${message}`)
+      .map((diagnostic) => `- ${diagnostic}`)
       .join('\n')}`
   );
 }

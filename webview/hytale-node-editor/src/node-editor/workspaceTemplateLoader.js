@@ -3,131 +3,120 @@ import { FIELD_TYPE_VALUES } from './types.js';
 
 const WORKSPACE_CONFIG_FILENAME = '_Workspace.json';
 const UNCATEGORIZED_CATEGORY = 'Uncategorized';
-
 const SUPPORTED_FIELD_TYPES = new Set(FIELD_TYPE_VALUES);
-const workspaceModuleMap = import.meta.glob(
-  '../../Workspaces/HytaleGenerator Java/**/*.json',
-  { eager: true }
-);
+const workspaceModuleMap = import.meta.glob('../../Workspaces/**/*.json', { eager: true });
 
-let cachedWorkspaceTemplateData;
+let cachedWorkspaceCollection;
 
-export function loadHytaleGeneratorJavaWorkspaceTemplates() {
-  if (cachedWorkspaceTemplateData) {
-    return cachedWorkspaceTemplateData;
+export function loadWorkspaceTemplateCollection() {
+  if (cachedWorkspaceCollection) {
+    return cachedWorkspaceCollection;
   }
 
-  const diagnostics = [];
-  const moduleEntries = normalizeModuleEntries();
-  const workspaceConfigEntry = moduleEntries.find((entry) =>
-    entry.relativePath.endsWith(`/${WORKSPACE_CONFIG_FILENAME}`) ||
-    entry.relativePath === WORKSPACE_CONFIG_FILENAME
+  const globalDiagnostics = [];
+  const workspaceEntries = groupWorkspaceEntriesByFolder(normalizeModuleEntries(), globalDiagnostics);
+  const workspaces = [];
+
+  for (const [workspaceId, entries] of workspaceEntries.entries()) {
+    workspaces.push(buildWorkspaceDefinition(workspaceId, entries));
+  }
+
+  workspaces.sort((left, right) => left.workspaceId.localeCompare(right.workspaceId));
+  cachedWorkspaceCollection = {
+    workspaces,
+    diagnostics: globalDiagnostics,
+  };
+  return cachedWorkspaceCollection;
+}
+
+export function loadWorkspaceTemplateData(workspaceId) {
+  const collection = loadWorkspaceTemplateCollection();
+  const normalizedWorkspaceId = normalizeNonEmptyString(workspaceId);
+  if (!normalizedWorkspaceId) {
+    return undefined;
+  }
+
+  return collection.workspaces.find(
+    (workspace) => workspace.workspaceId === normalizedWorkspaceId
   );
-  const workspaceConfig = isObject(workspaceConfigEntry?.json) ? workspaceConfigEntry.json : {};
-  const templateById = new Map();
+}
+
+export function loadHytaleGeneratorJavaWorkspaceTemplates() {
+  const workspaceData = loadWorkspaceTemplateData('HytaleGenerator Java');
+  if (!workspaceData) {
+    return {
+      workspaceId: 'HytaleGenerator Java',
+      workspaceName: 'HytaleGenerator (Java)',
+      roots: [],
+      variants: [],
+      templates: [],
+      diagnostics: ['Workspace config _Workspace.json not found in HytaleGenerator Java.'],
+    };
+  }
+
+  return workspaceData;
+}
+
+function buildWorkspaceDefinition(workspaceId, entries) {
+  const diagnostics = [];
   const unsupportedFieldTypes = new Set();
+  const templateById = new Map();
+  let workspaceConfigEntry;
 
-  let nodesWithConnectionPins = 0;
-  let schemaLinkDescriptorCount = 0;
-  let nodesWithSchemaConnections = 0;
-
-  for (const entry of moduleEntries) {
-    if (entry === workspaceConfigEntry) {
+  for (const entry of entries) {
+    if (entry.fileName === WORKSPACE_CONFIG_FILENAME) {
+      workspaceConfigEntry = entry;
       continue;
     }
 
     const nodeDefinition = isObject(entry.json) ? entry.json : undefined;
     if (!nodeDefinition) {
-      diagnostics.push(`Skipping non-object workspace definition: ${entry.relativePath}`);
+      diagnostics.push(`Skipping non-object workspace definition: ${workspaceId}/${entry.relativePath}`);
       continue;
     }
 
     const templateId = normalizeNonEmptyString(nodeDefinition.Id);
     if (!templateId) {
-      diagnostics.push(`Skipping workspace definition without a valid Id: ${entry.relativePath}`);
+      diagnostics.push(
+        `Skipping workspace definition without a valid Id: ${workspaceId}/${entry.relativePath}`
+      );
       continue;
     }
 
-    const label = normalizeNonEmptyString(nodeDefinition.Title) ?? templateId;
-    const nodeColor =
-      nodeDefinition.Color ??
-      nodeDefinition.color ??
-      nodeDefinition.Colour ??
-      nodeDefinition.colour;
-    const schema = isObject(nodeDefinition.Schema) ? nodeDefinition.Schema : {};
-    const outputPins = buildTemplatePins(
-      nodeDefinition.Outputs,
+    const template = buildTemplateDefinition({
+      workspaceId,
+      relativePath: entry.relativePath,
       templateId,
-      entry.relativePath,
-      'Outputs',
-      diagnostics
-    );
-    const inputPins = buildTemplatePins(
-      nodeDefinition.Inputs,
-      templateId,
-      entry.relativePath,
-      'Inputs',
-      diagnostics
-    );
-    const schemaConnections = buildSchemaConnections(
-      schema,
-      outputPins,
-      templateId,
-      entry.relativePath,
-      diagnostics
-    );
-    const defaultTypeName = normalizeNonEmptyString(schema.Type) ?? templateId;
-    const fields = buildTemplateFields(
-      nodeDefinition.Content,
-      templateId,
-      entry.relativePath,
+      nodeDefinition,
       diagnostics,
-      unsupportedFieldTypes
-    );
-
-    if (inputPins.length > 0 || outputPins.length > 0) {
-      nodesWithConnectionPins += 1;
-    }
-    schemaLinkDescriptorCount += countSchemaLinkDescriptors(schema);
-    if (schemaConnections.length > 0) {
-      nodesWithSchemaConnections += 1;
-    }
-
-    const template = createTemplate({
-      templateId,
-      label,
-      nodeColor,
-      defaultTypeName,
-      fields,
-      inputPins,
-      outputPins,
-      schemaConnections,
+      unsupportedFieldTypes,
     });
 
     if (templateById.has(templateId)) {
       diagnostics.push(
-        `Duplicate workspace node Id "${templateId}" detected; keeping the latest definition (${entry.relativePath}).`
+        `Duplicate workspace node Id "${templateId}" detected; keeping the latest definition (${workspaceId}/${entry.relativePath}).`
       );
     }
     templateById.set(templateId, template);
   }
 
-  if (workspaceConfigEntry && !isObject(workspaceConfigEntry.json)) {
-    diagnostics.push(`Workspace config ${workspaceConfigEntry.relativePath} is not a JSON object.`);
-  }
+  const workspaceConfig = isObject(workspaceConfigEntry?.json) ? workspaceConfigEntry.json : {};
   if (!workspaceConfigEntry) {
-    diagnostics.push('Workspace config _Workspace.json not found in HytaleGenerator Java.');
+    diagnostics.push(`Workspace config _Workspace.json not found in ${workspaceId}.`);
+  } else if (!isObject(workspaceConfigEntry.json)) {
+    diagnostics.push(
+      `Workspace config ${workspaceId}/${workspaceConfigEntry.relativePath} is not a JSON object.`
+    );
   }
 
-  const templates = buildOrderedTemplates(
-    templateById,
-    workspaceConfig.NodeCategories,
-    diagnostics
-  );
+  const templates = buildOrderedTemplates(templateById, workspaceConfig.NodeCategories, diagnostics);
+  const variants = buildVariants(workspaceConfig.Variants, templateById, workspaceId, diagnostics);
+  const roots = buildRoots(workspaceConfig.Roots, workspaceId, diagnostics);
+  const workspaceName = normalizeNonEmptyString(workspaceConfig.WorkspaceName) ?? workspaceId;
 
   if (unsupportedFieldTypes.size > 0) {
     diagnostics.push(
-      `Unsupported workspace field types were found and are rendered with fallback behavior: ${Array.from(
+      `Unsupported workspace field types are rendered with fallback behavior: ${Array.from(
         unsupportedFieldTypes
       )
         .sort((left, right) => left.localeCompare(right))
@@ -135,80 +124,166 @@ export function loadHytaleGeneratorJavaWorkspaceTemplates() {
     );
   }
 
-  if (nodesWithConnectionPins > 0) {
-    diagnostics.push(
-      `Workspace defines pin schemas for ${nodesWithConnectionPins} node types. Pin-based handles are generated; type filtering rules are not enforced yet.`
-    );
-  }
-
-  if (nodesWithSchemaConnections > 0) {
-    diagnostics.push(
-      `Workspace schemas include connection mappings for ${nodesWithSchemaConnections} node types. Runtime connection parsing/writing is schema-driven.`
-    );
-  }
-
-  if (schemaLinkDescriptorCount > 0) {
-    diagnostics.push(
-      `Workspace schemas include ${schemaLinkDescriptorCount} linked-node descriptors ({ Node, Pin }). Automated linked-node behaviors are not implemented yet.`
-    );
-  }
-
-  cachedWorkspaceTemplateData = {
-    workspaceName:
-      normalizeNonEmptyString(workspaceConfig.WorkspaceName) ?? 'HytaleGenerator (Java)',
+  return {
+    workspaceId,
+    workspaceName,
+    roots,
+    variants,
     templates,
     diagnostics,
   };
-
-  return cachedWorkspaceTemplateData;
 }
 
-function normalizeModuleEntries() {
-  return Object.entries(workspaceModuleMap)
-    .map(([modulePath, moduleValue]) => ({
-      modulePath,
-      relativePath: toWorkspaceRelativePath(modulePath),
-      json: unwrapModuleJson(moduleValue),
-    }))
-    .sort((left, right) => left.relativePath.localeCompare(right.relativePath));
+function buildTemplateDefinition({
+  workspaceId,
+  relativePath,
+  templateId,
+  nodeDefinition,
+  diagnostics,
+  unsupportedFieldTypes,
+}) {
+  const label = normalizeNonEmptyString(nodeDefinition.Title) ?? templateId;
+  const nodeColor =
+    nodeDefinition.Color ??
+    nodeDefinition.color ??
+    nodeDefinition.Colour ??
+    nodeDefinition.colour;
+  const schema = isObject(nodeDefinition.Schema) ? nodeDefinition.Schema : {};
+  const schemaType =
+    normalizeNonEmptyString(schema.Type) ?? normalizeNonEmptyString(nodeDefinition.Type);
+  const fields = buildTemplateFields(
+    nodeDefinition.Content,
+    templateId,
+    workspaceId,
+    relativePath,
+    diagnostics,
+    unsupportedFieldTypes
+  );
+  const inputPins = buildTemplatePins(
+    nodeDefinition.Inputs,
+    templateId,
+    workspaceId,
+    relativePath,
+    'Inputs',
+    diagnostics
+  );
+  const outputPins = buildTemplatePins(
+    nodeDefinition.Outputs,
+    templateId,
+    workspaceId,
+    relativePath,
+    'Outputs',
+    diagnostics
+  );
+  const fieldMappings = buildFieldMappings(schema, fields, templateId, workspaceId, relativePath, diagnostics);
+  const schemaConnections = buildSchemaConnections(
+    schema,
+    outputPins,
+    templateId,
+    workspaceId,
+    relativePath,
+    diagnostics
+  );
+
+  return {
+    templateId,
+    label,
+    nodeColor,
+    schemaType,
+    defaultTypeName: schemaType ?? templateId,
+    fields,
+    inputPins,
+    outputPins,
+    fieldMappings,
+    fieldIdBySchemaKey: Object.fromEntries(
+      fieldMappings.map((mapping) => [mapping.schemaKey, mapping.fieldId])
+    ),
+    fieldRuntimeKeyByFieldId: Object.fromEntries(
+      fieldMappings.map((mapping) => [mapping.fieldId, mapping.schemaKey])
+    ),
+    schemaConnections,
+    buildInitialValues: () => buildFieldValueMap(fields),
+  };
 }
 
-function unwrapModuleJson(moduleValue) {
-  if (!isObject(moduleValue)) {
-    return moduleValue;
+function buildRoots(rootsCandidate, workspaceId, diagnostics) {
+  const rootsObject = isObject(rootsCandidate) ? rootsCandidate : {};
+  const roots = [];
+
+  for (const [rootIdCandidate, rootDefinitionCandidate] of Object.entries(rootsObject)) {
+    const rootId = normalizeNonEmptyString(rootIdCandidate);
+    const rootDefinition = isObject(rootDefinitionCandidate) ? rootDefinitionCandidate : {};
+    const rootNodeType = normalizeNonEmptyString(rootDefinition.RootNodeType);
+    const menuName = normalizeNonEmptyString(rootDefinition.MenuName);
+    if (!rootId || !rootNodeType) {
+      diagnostics.push(`Skipping invalid root definition in ${workspaceId}/${WORKSPACE_CONFIG_FILENAME}.`);
+      continue;
+    }
+
+    roots.push({
+      rootId,
+      rootNodeType,
+      menuName: menuName ?? rootId,
+    });
   }
 
-  if (Object.prototype.hasOwnProperty.call(moduleValue, 'default')) {
-    return moduleValue.default;
-  }
-
-  return moduleValue;
+  roots.sort((left, right) => left.rootId.localeCompare(right.rootId));
+  return roots;
 }
 
-function toWorkspaceRelativePath(modulePath) {
-  if (typeof modulePath !== 'string') {
-    return '';
+function buildVariants(variantsCandidate, templateById, workspaceId, diagnostics) {
+  const variantsObject = isObject(variantsCandidate) ? variantsCandidate : {};
+  const variants = [];
+
+  for (const [variantIdCandidate, variantDefinitionCandidate] of Object.entries(variantsObject)) {
+    const variantId = normalizeNonEmptyString(variantIdCandidate);
+    const variantDefinition = isObject(variantDefinitionCandidate) ? variantDefinitionCandidate : {};
+    const rawVariantMap = isObject(variantDefinition.Variants) ? variantDefinition.Variants : {};
+    if (!variantId) {
+      diagnostics.push(`Skipping invalid variant definition in ${workspaceId}/${WORKSPACE_CONFIG_FILENAME}.`);
+      continue;
+    }
+
+    const values = [];
+    const seenTemplateIds = new Set();
+    for (const [variantValueCandidate, variantTemplateIdCandidate] of Object.entries(rawVariantMap)) {
+      const variantValue = normalizeNonEmptyString(variantValueCandidate);
+      const templateId = normalizeNonEmptyString(variantTemplateIdCandidate);
+      if (!variantValue || !templateId) {
+        continue;
+      }
+
+      if (!templateById.has(templateId)) {
+        diagnostics.push(
+          `Variant "${variantId}" references unknown template "${templateId}" (${workspaceId}/${WORKSPACE_CONFIG_FILENAME}).`
+        );
+        continue;
+      }
+
+      values.push({
+        value: variantValue,
+        templateId,
+      });
+      seenTemplateIds.add(templateId);
+    }
+
+    variants.push({
+      variantId,
+      variantFieldName: normalizeNonEmptyString(variantDefinition.VariantFieldName) ?? 'Type',
+      values,
+      templateIds: Array.from(seenTemplateIds),
+      templateIdByValue: Object.fromEntries(values.map((entry) => [entry.value, entry.templateId])),
+    });
   }
 
-  const normalizedPath = modulePath.replaceAll('\\', '/');
-  const marker = '/Workspaces/HytaleGenerator Java/';
-  const markerIndex = normalizedPath.lastIndexOf(marker);
-  if (markerIndex >= 0) {
-    return normalizedPath.slice(markerIndex + marker.length);
-  }
-
-  const fallbackMarker = 'HytaleGenerator Java/';
-  const fallbackIndex = normalizedPath.lastIndexOf(fallbackMarker);
-  if (fallbackIndex >= 0) {
-    return normalizedPath.slice(fallbackIndex + fallbackMarker.length);
-  }
-
-  return normalizedPath;
+  variants.sort((left, right) => left.variantId.localeCompare(right.variantId));
+  return variants;
 }
 
 function buildTemplateFields(
   content,
   templateId,
+  workspaceId,
   relativePath,
   diagnostics,
   unsupportedFieldTypes
@@ -228,35 +303,30 @@ function buildTemplateFields(
     const fieldId = normalizeNonEmptyString(fieldCandidate.Id);
     if (!fieldId) {
       diagnostics.push(
-        `Node "${templateId}" has a content entry without a valid Id (${relativePath}).`
+        `Node "${templateId}" has a content entry without a valid Id (${workspaceId}/${relativePath}).`
       );
       continue;
     }
 
     if (seenFieldIds.has(fieldId)) {
       diagnostics.push(
-        `Node "${templateId}" defines duplicate field Id "${fieldId}" (${relativePath}). Keeping the latest definition.`
+        `Node "${templateId}" defines duplicate field Id "${fieldId}" (${workspaceId}/${relativePath}). Keeping the latest definition.`
       );
-      const existingFieldIndex = fields.findIndex(
-        (existingField) => existingField.id === fieldId
-      );
-      if (existingFieldIndex >= 0) {
-        fields.splice(existingFieldIndex, 1);
+      const existingIndex = fields.findIndex((field) => field.id === fieldId);
+      if (existingIndex >= 0) {
+        fields.splice(existingIndex, 1);
       }
     }
-
     seenFieldIds.add(fieldId);
 
     const fieldType = normalizeNonEmptyString(fieldCandidate.Type);
     const options = isObject(fieldCandidate.Options) ? { ...fieldCandidate.Options } : {};
-
     if (!fieldType) {
       diagnostics.push(
-        `Node "${templateId}" field "${fieldId}" is missing a valid Type (${relativePath}).`
+        `Node "${templateId}" field "${fieldId}" is missing a valid Type (${workspaceId}/${relativePath}).`
       );
       continue;
     }
-
     if (!SUPPORTED_FIELD_TYPES.has(fieldType)) {
       unsupportedFieldTypes.add(fieldType);
     }
@@ -272,7 +342,7 @@ function buildTemplateFields(
   return fields;
 }
 
-function buildTemplatePins(pins, templateId, relativePath, pinGroupName, diagnostics) {
+function buildTemplatePins(pins, templateId, workspaceId, relativePath, pinGroupName, diagnostics) {
   if (!Array.isArray(pins)) {
     return [];
   }
@@ -286,40 +356,31 @@ function buildTemplatePins(pins, templateId, relativePath, pinGroupName, diagnos
     }
 
     const pinId = normalizeNonEmptyString(pinCandidate.Id);
-    if (!pinId) {
+    const pinType = normalizeNonEmptyString(pinCandidate.Type);
+    if (!pinId || !pinType) {
       diagnostics.push(
-        `Node "${templateId}" ${pinGroupName} contains an entry without a valid Id (${relativePath}).`
+        `Node "${templateId}" ${pinGroupName} contains an invalid pin definition (${workspaceId}/${relativePath}).`
       );
       continue;
     }
 
     if (seenPinIds.has(pinId)) {
       diagnostics.push(
-        `Node "${templateId}" ${pinGroupName} contains duplicate pin Id "${pinId}" (${relativePath}). Keeping the latest definition.`
+        `Node "${templateId}" ${pinGroupName} contains duplicate pin Id "${pinId}" (${workspaceId}/${relativePath}). Keeping the latest definition.`
       );
-      const existingPinIndex = normalizedPins.findIndex(
-        (existingPin) => existingPin.id === pinId
-      );
-      if (existingPinIndex >= 0) {
-        normalizedPins.splice(existingPinIndex, 1);
+      const existingIndex = normalizedPins.findIndex((pin) => pin.id === pinId);
+      if (existingIndex >= 0) {
+        normalizedPins.splice(existingIndex, 1);
       }
     }
-
-    const pinType = normalizeNonEmptyString(pinCandidate.Type);
-    if (!pinType) {
-      diagnostics.push(
-        `Node "${templateId}" ${pinGroupName} pin "${pinId}" is missing a valid Type (${relativePath}).`
-      );
-      continue;
-    }
-
     seenPinIds.add(pinId);
 
     normalizedPins.push({
       id: pinId,
       type: pinType,
       label: normalizeNonEmptyString(pinCandidate.Label) ?? pinId,
-      multiple: typeof pinCandidate.Multiple === 'boolean' ? pinCandidate.Multiple : false,
+      multiple: pinCandidate.Multiple === true,
+      isMap: pinCandidate.IsMap === true,
       color:
         pinCandidate.Color ??
         pinCandidate.color ??
@@ -331,69 +392,103 @@ function buildTemplatePins(pins, templateId, relativePath, pinGroupName, diagnos
   return normalizedPins;
 }
 
-function buildSchemaConnections(schema, outputPins, templateId, relativePath, diagnostics) {
+function buildFieldMappings(schema, fields, templateId, workspaceId, relativePath, diagnostics) {
   if (!isObject(schema)) {
     return [];
   }
 
-  const connections = [];
-  const seenConnectionKeys = new Set();
+  const knownFieldIds = new Set(
+    Array.isArray(fields)
+      ? fields
+          .map((field) => normalizeNonEmptyString(field?.id))
+          .filter((fieldId) => Boolean(fieldId))
+      : []
+  );
+  const mappings = [];
+  const seenFieldIds = new Set();
 
-  for (const [schemaKey, schemaValue] of Object.entries(schema)) {
-    const descriptor = readSchemaLinkDescriptor(schemaValue);
-    if (!descriptor) {
+  for (const [schemaKeyCandidate, schemaValueCandidate] of Object.entries(schema)) {
+    const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+    const fieldId = normalizeNonEmptyString(schemaValueCandidate);
+    if (!schemaKey || !fieldId) {
       continue;
     }
 
-    const runtimeSchemaKey = normalizeSchemaRuntimeKey(schemaKey);
-    if (!runtimeSchemaKey) {
+    if (schemaKey === 'Type') {
+      continue;
+    }
+
+    if (seenFieldIds.has(fieldId)) {
       diagnostics.push(
-        `Node "${templateId}" schema connection key "${schemaKey}" is not valid (${relativePath}).`
+        `Node "${templateId}" maps field "${fieldId}" multiple times in Schema (${workspaceId}/${relativePath}). Keeping the latest mapping.`
       );
+      const existingIndex = mappings.findIndex((mapping) => mapping.fieldId === fieldId);
+      if (existingIndex >= 0) {
+        mappings.splice(existingIndex, 1);
+      }
+    }
+
+    if (!knownFieldIds.has(fieldId)) {
+      diagnostics.push(
+        `Node "${templateId}" schema key "${schemaKey}" maps to unknown field "${fieldId}" (${workspaceId}/${relativePath}).`
+      );
+    }
+
+    seenFieldIds.add(fieldId);
+    mappings.push({
+      schemaKey,
+      fieldId,
+    });
+  }
+
+  return mappings;
+}
+
+function buildSchemaConnections(schema, outputPins, templateId, workspaceId, relativePath, diagnostics) {
+  if (!isObject(schema)) {
+    return [];
+  }
+
+  const descriptors = [];
+  const seenDescriptors = new Set();
+
+  for (const [schemaKeyCandidate, schemaValueCandidate] of Object.entries(schema)) {
+    const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+    const descriptor = readSchemaLinkDescriptor(schemaValueCandidate);
+    if (!schemaKey || !descriptor) {
       continue;
     }
 
     const resolvedOutputPin = resolveOutputPinBySchemaPinId(descriptor.pinId, outputPins);
     if (!resolvedOutputPin) {
       diagnostics.push(
-        `Node "${templateId}" schema key "${schemaKey}" references unknown output pin "${descriptor.pinId}" (${relativePath}).`
+        `Node "${templateId}" schema key "${schemaKey}" references unknown output pin "${descriptor.pinId}" (${workspaceId}/${relativePath}).`
       );
       continue;
     }
 
-    if (resolvedOutputPin.id !== descriptor.pinId) {
-      diagnostics.push(
-        `Node "${templateId}" schema key "${schemaKey}" pin "${descriptor.pinId}" matched output "${resolvedOutputPin.id}" by Type fallback (${relativePath}).`
+    const descriptorKey = `${schemaKey}\u0000${resolvedOutputPin.id}`;
+    if (seenDescriptors.has(descriptorKey)) {
+      const existingIndex = descriptors.findIndex(
+        (entry) => entry.schemaKey === schemaKey && entry.outputPinId === resolvedOutputPin.id
       );
-    }
-
-    const connectionLookupKey = `${runtimeSchemaKey}:${resolvedOutputPin.id}`;
-    if (seenConnectionKeys.has(connectionLookupKey)) {
-      diagnostics.push(
-        `Node "${templateId}" schema defines duplicate connection mapping for key "${runtimeSchemaKey}" and pin "${resolvedOutputPin.id}" (${relativePath}). Keeping the latest definition.`
-      );
-      const existingConnectionIndex = connections.findIndex(
-        (existingConnection) =>
-          existingConnection.schemaKey === runtimeSchemaKey &&
-          existingConnection.outputPinId === resolvedOutputPin.id
-      );
-      if (existingConnectionIndex >= 0) {
-        connections.splice(existingConnectionIndex, 1);
+      if (existingIndex >= 0) {
+        descriptors.splice(existingIndex, 1);
       }
     }
+    seenDescriptors.add(descriptorKey);
 
-    seenConnectionKeys.add(connectionLookupKey);
-
-    connections.push({
-      schemaKey: runtimeSchemaKey,
+    descriptors.push({
+      schemaKey,
       outputPinId: resolvedOutputPin.id,
       outputPinType: resolvedOutputPin.type,
       nodeSelector: descriptor.nodeSelector,
-      multiple: resolvedOutputPin.multiple,
+      multiple: resolvedOutputPin.multiple === true,
+      isMap: resolvedOutputPin.isMap === true,
     });
   }
 
-  return connections;
+  return descriptors;
 }
 
 function readSchemaLinkDescriptor(schemaValue) {
@@ -403,8 +498,7 @@ function readSchemaLinkDescriptor(schemaValue) {
 
   const nodeSelector =
     normalizeNonEmptyString(schemaValue.Node) ?? normalizeNonEmptyString(schemaValue.node);
-  const pinId =
-    normalizeNonEmptyString(schemaValue.Pin) ?? normalizeNonEmptyString(schemaValue.pin);
+  const pinId = normalizeNonEmptyString(schemaValue.Pin) ?? normalizeNonEmptyString(schemaValue.pin);
   if (!nodeSelector || !pinId) {
     return undefined;
   }
@@ -415,50 +509,18 @@ function readSchemaLinkDescriptor(schemaValue) {
   };
 }
 
-function normalizeSchemaRuntimeKey(schemaKey) {
-  const normalizedSchemaKey = normalizeNonEmptyString(schemaKey);
-  if (!normalizedSchemaKey) {
-    return undefined;
-  }
-
-  if (normalizedSchemaKey.endsWith('$Pin')) {
-    return normalizedSchemaKey.slice(0, -'$Pin'.length);
-  }
-
-  return normalizedSchemaKey;
-}
-
 function resolveOutputPinBySchemaPinId(schemaPinId, outputPins) {
-  if (!schemaPinId || !Array.isArray(outputPins) || outputPins.length === 0) {
+  if (!schemaPinId || !Array.isArray(outputPins)) {
     return undefined;
   }
 
-  const exactMatch = outputPins.find((pin) => pin.id === schemaPinId);
-  if (exactMatch) {
-    return exactMatch;
+  const exact = outputPins.find((pin) => pin.id === schemaPinId);
+  if (exact) {
+    return exact;
   }
 
-  const typeMatches = outputPins.filter((pin) => pin.type === schemaPinId);
-  if (typeMatches.length === 1) {
-    return typeMatches[0];
-  }
-
-  return undefined;
-}
-
-function countSchemaLinkDescriptors(schema) {
-  if (!isObject(schema)) {
-    return 0;
-  }
-
-  let count = 0;
-  for (const schemaValue of Object.values(schema)) {
-    if (readSchemaLinkDescriptor(schemaValue)) {
-      count += 1;
-    }
-  }
-
-  return count;
+  const schemaPinIdLower = schemaPinId.toLowerCase();
+  return outputPins.find((pin) => normalizeNonEmptyString(pin.id)?.toLowerCase() === schemaPinIdLower);
 }
 
 function buildOrderedTemplates(templateById, nodeCategories, diagnostics) {
@@ -466,63 +528,114 @@ function buildOrderedTemplates(templateById, nodeCategories, diagnostics) {
   const assignedTemplateIds = new Set();
   const categories = isObject(nodeCategories) ? nodeCategories : {};
 
-  for (const [categoryName, listedNodeIds] of Object.entries(categories)) {
-    const normalizedCategoryName =
-      normalizeNonEmptyString(categoryName) ?? UNCATEGORIZED_CATEGORY;
+  for (const [categoryNameCandidate, listedNodeIds] of Object.entries(categories)) {
+    const categoryName = normalizeNonEmptyString(categoryNameCandidate) ?? UNCATEGORIZED_CATEGORY;
     if (!Array.isArray(listedNodeIds)) {
       continue;
     }
 
-    for (const listedNodeId of listedNodeIds) {
-      const normalizedNodeId = normalizeNonEmptyString(listedNodeId);
-      if (!normalizedNodeId || assignedTemplateIds.has(normalizedNodeId)) {
+    for (const listedNodeIdCandidate of listedNodeIds) {
+      const listedNodeId = normalizeNonEmptyString(listedNodeIdCandidate);
+      if (!listedNodeId || assignedTemplateIds.has(listedNodeId)) {
         continue;
       }
 
-      const template = templateById.get(normalizedNodeId);
+      const template = templateById.get(listedNodeId);
       if (!template) {
         diagnostics.push(
-          `Workspace category "${normalizedCategoryName}" references unknown node Id "${normalizedNodeId}".`
+          `Workspace category "${categoryName}" references unknown node Id "${listedNodeId}".`
         );
         continue;
       }
 
-      assignedTemplateIds.add(normalizedNodeId);
+      assignedTemplateIds.add(listedNodeId);
       orderedTemplates.push({
         ...template,
-        category: normalizedCategoryName,
+        category: categoryName,
       });
     }
   }
 
-  const uncategorized = Array.from(templateById.values())
+  const uncategorizedTemplates = Array.from(templateById.values())
     .filter((template) => !assignedTemplateIds.has(template.templateId))
-    .sort((left, right) => {
-      const labelCompare = left.label.localeCompare(right.label);
-      if (labelCompare !== 0) {
-        return labelCompare;
-      }
-
-      return left.templateId.localeCompare(right.templateId);
-    })
+    .sort((left, right) => left.label.localeCompare(right.label))
     .map((template) => ({
       ...template,
       category: UNCATEGORIZED_CATEGORY,
     }));
 
-  return [...orderedTemplates, ...uncategorized];
+  return [...orderedTemplates, ...uncategorizedTemplates];
 }
 
-function createTemplate(definition) {
+function groupWorkspaceEntriesByFolder(entries, globalDiagnostics) {
+  const workspaceEntries = new Map();
+  for (const entry of entries) {
+    if (!entry.workspaceId) {
+      globalDiagnostics.push(`Skipping workspace file outside Workspaces/: ${entry.modulePath}`);
+      continue;
+    }
+
+    if (!workspaceEntries.has(entry.workspaceId)) {
+      workspaceEntries.set(entry.workspaceId, []);
+    }
+    workspaceEntries.get(entry.workspaceId).push(entry);
+  }
+
+  for (const workspaceEntry of workspaceEntries.values()) {
+    workspaceEntry.sort((left, right) => left.relativePath.localeCompare(right.relativePath));
+  }
+
+  return workspaceEntries;
+}
+
+function normalizeModuleEntries() {
+  return Object.entries(workspaceModuleMap).map(([modulePath, moduleValue]) => {
+    const pathParts = toWorkspacePathParts(modulePath);
+    return {
+      modulePath,
+      workspaceId: pathParts.workspaceId,
+      relativePath: pathParts.relativePath,
+      fileName: pathParts.fileName,
+      json: unwrapModuleJson(moduleValue),
+    };
+  });
+}
+
+function toWorkspacePathParts(modulePath) {
+  const normalizedPath = typeof modulePath === 'string' ? modulePath.replaceAll('\\', '/') : '';
+  const marker = '/Workspaces/';
+  const markerIndex = normalizedPath.lastIndexOf(marker);
+  if (markerIndex < 0) {
+    return {
+      workspaceId: undefined,
+      relativePath: normalizedPath,
+      fileName: '',
+    };
+  }
+
+  const workspaceRelative = normalizedPath.slice(markerIndex + marker.length);
+  const parts = workspaceRelative.split('/').filter((part) => Boolean(part));
+  const workspaceId = normalizeNonEmptyString(parts[0]);
+  const relativeParts = parts.slice(1);
+  const relativePath = relativeParts.join('/');
+  const fileName = relativeParts.length > 0 ? relativeParts[relativeParts.length - 1] : '';
   return {
-    ...definition,
-    inputPins: Array.isArray(definition.inputPins) ? definition.inputPins : [],
-    outputPins: Array.isArray(definition.outputPins) ? definition.outputPins : [],
-    schemaConnections: Array.isArray(definition.schemaConnections)
-      ? definition.schemaConnections
-      : [],
-    buildInitialValues: () => buildFieldValueMap(definition.fields),
+    workspaceId,
+    relativePath,
+    fileName,
   };
+}
+
+function unwrapModuleJson(moduleValue) {
+  if (!isObject(moduleValue)) {
+    return moduleValue;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(moduleValue, 'default')) {
+    return moduleValue.default;
+  }
+
+  return moduleValue;
 }
 
 function normalizeNonEmptyString(candidate) {

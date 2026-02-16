@@ -28,6 +28,7 @@ function normalizeConnectionDescriptors(template) {
       outputPinId,
       outputPinType: normalizeNonEmptyString(descriptor.outputPinType),
       multiple: descriptor.multiple === true,
+      isMap: descriptor.isMap === true,
     });
   }
 
@@ -42,21 +43,60 @@ function readNodeId(candidate) {
   return undefined;
 }
 
-function readLinkedNodeIdsFromValue(connectionValue) {
+function readLinkedNodeEntriesFromValue(connectionValue, descriptor) {
   if (Array.isArray(connectionValue)) {
-    const linkedIds = [];
+    const entries = [];
     for (const item of connectionValue) {
       const linkedNodeId = readNodeId(item);
       if (linkedNodeId) {
-        linkedIds.push(linkedNodeId);
+        entries.push({
+          nodeId: linkedNodeId,
+          mapKey: undefined,
+        });
       }
     }
-    return linkedIds;
+    return entries;
   }
 
   if (isObject(connectionValue)) {
-    const linkedNodeId = readNodeId(connectionValue);
-    return linkedNodeId ? [linkedNodeId] : [];
+    const directNodeId = readNodeId(connectionValue);
+    if (directNodeId) {
+      return [
+        {
+          nodeId: directNodeId,
+          mapKey: undefined,
+        },
+      ];
+    }
+
+    if (descriptor?.isMap === true) {
+      const entries = [];
+      for (const [mapKeyCandidate, mapValue] of Object.entries(connectionValue)) {
+        const linkedNodeId = readNodeId(mapValue);
+        if (!linkedNodeId) {
+          continue;
+        }
+
+        entries.push({
+          nodeId: linkedNodeId,
+          mapKey: normalizeNonEmptyString(mapKeyCandidate),
+        });
+      }
+      return entries;
+    }
+
+    const entries = [];
+    for (const mapValue of Object.values(connectionValue)) {
+      const linkedNodeId = readNodeId(mapValue);
+      if (!linkedNodeId) {
+        continue;
+      }
+      entries.push({
+        nodeId: linkedNodeId,
+        mapKey: undefined,
+      });
+    }
+    return entries;
   }
 
   return [];
@@ -151,9 +191,13 @@ export function extractSchemaEdgesFromNodePayloads({
         continue;
       }
 
-      const linkedNodeIds = readLinkedNodeIdsFromValue(sourcePayload[descriptor.schemaKey]);
-      for (let index = 0; index < linkedNodeIds.length; index += 1) {
-        const targetNodeId = linkedNodeIds[index];
+      const linkedEntries = readLinkedNodeEntriesFromValue(
+        sourcePayload[descriptor.schemaKey],
+        descriptor
+      );
+      for (let index = 0; index < linkedEntries.length; index += 1) {
+        const entry = linkedEntries[index];
+        const targetNodeId = entry.nodeId;
         const targetPayload = isObject(nodePayloadById[targetNodeId])
           ? nodePayloadById[targetNodeId]
           : undefined;
@@ -169,7 +213,9 @@ export function extractSchemaEdgesFromNodePayloads({
           targetNodeId,
           targetHandleId,
           schemaKey: descriptor.schemaKey,
-          itemIndex: index,
+          itemIndex: descriptor.isMap
+            ? `${index}:${entry.mapKey ?? 'map'}`
+            : index,
         });
 
         let edgeId = baseEdgeId;
@@ -185,6 +231,10 @@ export function extractSchemaEdgesFromNodePayloads({
           source: sourceNodeId,
           target: targetNodeId,
           sourceHandle: sourceHandleId,
+          data: {
+            schemaKey: descriptor.schemaKey,
+            ...(descriptor.isMap === true && entry.mapKey ? { mapKey: entry.mapKey } : {}),
+          },
           ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
         });
       }
@@ -198,6 +248,7 @@ export function applySchemaEdgesToNodePayloads({
   nodePayloadById,
   edges,
   resolveTemplateByNodeId,
+  resolveMapKeyForTargetNode,
 }) {
   if (!isObject(nodePayloadById) || typeof resolveTemplateByNodeId !== 'function') {
     return isObject(nodePayloadById) ? { ...nodePayloadById } : {};
@@ -251,27 +302,85 @@ export function applySchemaEdgesToNodePayloads({
 
       const sourceHandleKey = createSourceHandleKey(sourceNodeId, sourceHandleId);
       const desiredTargetIds = desiredTargetsBySourceHandle.get(sourceHandleKey) ?? [];
-      const existingTargetIds = readLinkedNodeIdsFromValue(sourcePayload[descriptor.schemaKey]);
+      const existingEntries = readLinkedNodeEntriesFromValue(
+        sourcePayload[descriptor.schemaKey],
+        descriptor
+      );
+      const existingTargetIds = existingEntries.map((entry) => entry.nodeId);
+      const existingMapKeyByNodeId = new Map();
+      for (const existingEntry of existingEntries) {
+        if (!existingEntry.mapKey || existingMapKeyByNodeId.has(existingEntry.nodeId)) {
+          continue;
+        }
+        existingMapKeyByNodeId.set(existingEntry.nodeId, existingEntry.mapKey);
+      }
       const mergedTargetIds = mergeLinkedNodeOrder(existingTargetIds, desiredTargetIds);
       const resolvedTargetPayloads = mergedTargetIds
-        .map((targetNodeId) => nextNodePayloadById[targetNodeId])
-        .filter((targetPayload) => isObject(targetPayload));
+        .map((targetNodeId) => ({
+          targetNodeId,
+          targetPayload: nextNodePayloadById[targetNodeId],
+        }))
+        .filter((entry) => isObject(entry.targetPayload));
 
       if (resolvedTargetPayloads.length === 0) {
         delete sourcePayload[descriptor.schemaKey];
         continue;
       }
 
-      if (descriptor.multiple) {
-        sourcePayload[descriptor.schemaKey] = resolvedTargetPayloads;
+      if (descriptor.isMap) {
+        const nextMappedValue = {};
+        const usedKeys = new Set();
+        for (let index = 0; index < resolvedTargetPayloads.length; index += 1) {
+          const entry = resolvedTargetPayloads[index];
+          const fallbackMapKey = existingMapKeyByNodeId.get(entry.targetNodeId);
+          const requestedMapKey =
+            normalizeNonEmptyString(fallbackMapKey) ??
+            normalizeNonEmptyString(
+              typeof resolveMapKeyForTargetNode === 'function'
+                ? resolveMapKeyForTargetNode({
+                    sourceNodeId,
+                    descriptor,
+                    targetNodeId: entry.targetNodeId,
+                    targetPayload: entry.targetPayload,
+                    itemIndex: index,
+                  })
+                : undefined
+            ) ??
+            entry.targetNodeId;
+
+          const uniqueMapKey = buildUniqueMapKey(requestedMapKey, usedKeys);
+          usedKeys.add(uniqueMapKey);
+          nextMappedValue[uniqueMapKey] = entry.targetPayload;
+        }
+
+        sourcePayload[descriptor.schemaKey] = nextMappedValue;
         continue;
       }
 
-      sourcePayload[descriptor.schemaKey] = resolvedTargetPayloads[0];
+      if (descriptor.multiple) {
+        sourcePayload[descriptor.schemaKey] = resolvedTargetPayloads.map((entry) => entry.targetPayload);
+        continue;
+      }
+
+      sourcePayload[descriptor.schemaKey] = resolvedTargetPayloads[0].targetPayload;
     }
 
     nextNodePayloadById[sourceNodeId] = sourcePayload;
   }
 
   return nextNodePayloadById;
+}
+
+function buildUniqueMapKey(baseMapKey, usedKeys) {
+  const normalizedBase = normalizeNonEmptyString(baseMapKey) ?? 'Node';
+  if (!usedKeys.has(normalizedBase)) {
+    return normalizedBase;
+  }
+
+  let suffix = 2;
+  while (usedKeys.has(`${normalizedBase}_${suffix}`)) {
+    suffix += 1;
+  }
+
+  return `${normalizedBase}_${suffix}`;
 }

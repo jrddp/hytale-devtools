@@ -72,6 +72,9 @@
         "selector": [
           {
             "filenamePattern": "**/HytaleGenerator/**/*.json"
+          },
+          {
+            "filenamePattern": "**/ScriptedBrushes/**/*.json"
           }
         ],
         "priority": "default"

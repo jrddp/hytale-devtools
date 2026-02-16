@@ -142,6 +142,7 @@ export function createMockVscodeApi() {
           type: "update",
           text: documentText,
           version: documentVersion,
+          documentPath: "/mock/Server/HytaleGenerator/Biomes/Dev.json",
         });
         return;
       }

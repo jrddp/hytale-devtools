@@ -6,7 +6,7 @@ type WebviewToExtensionMessage =
 	| { type: 'apply'; text: string; sourceVersion?: number };
 
 type ExtensionToWebviewMessage =
-	| { type: 'update'; text: string; version: number }
+	| { type: 'update'; text: string; version: number; documentPath: string }
 	| { type: 'error'; message: string };
 
 type ViteManifestEntry = {
@@ -49,7 +49,8 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 				const payload: ExtensionToWebviewMessage = {
 					type: 'update',
 					text: document.getText(),
-					version: document.version
+					version: document.version,
+					documentPath: document.uri.fsPath || document.uri.toString()
 				};
 				void webviewPanel.webview.postMessage(payload);
 			};
