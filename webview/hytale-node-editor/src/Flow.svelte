@@ -35,10 +35,6 @@
   export let workspaceContext = {};
 
   const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
-  const ADD_MENU_WIDTH_PX = 256;
-  const ADD_MENU_EDGE_PADDING_PX = 12;
-  const ADD_MENU_CURSOR_GAP_PX = 10;
-  const ADD_MENU_MAX_VIEWPORT_HEIGHT_RATIO = 0.7;
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
   const DEFAULT_GROUP_NAME = "Group";
@@ -67,7 +63,6 @@
   let addMenuOpen = false;
   let addMenuOpenVersion = 0; // Used to trigger re-focusing when menu is re-opened.
   let addMenuPosition = { x: 0, y: 0 };
-  let addMenuMaxHeightPx = 0;
   let pendingNodePosition = { x: 0, y: 0 };
   let pendingConnection;
   let connectStartSourceNodeId;
@@ -226,7 +221,6 @@
     }
 
     addMenuPosition = addMenuRequest.position;
-    addMenuMaxHeightPx = addMenuRequest.maxHeightPx;
     pendingNodePosition = addMenuRequest.nodePosition;
     pendingConnection = addMenuRequest.connection;
     addMenuOpen = true;
@@ -319,6 +313,8 @@
         },
         width: DEFAULT_GROUP_WIDTH,
         height: DEFAULT_GROUP_HEIGHT,
+        selected: false,
+        draggable: false,
       };
 
       nodes = [newGroupNode, ...nodes];
@@ -401,63 +397,17 @@
       return undefined;
     }
 
-    const menuPlacement = resolveAddMenuPlacement(clientX, clientY, paneBounds);
-
     return {
-      position: menuPlacement.position,
-      maxHeightPx: menuPlacement.maxHeightPx,
+      position: {
+        x: clientX - paneBounds.left,
+        y: clientY - paneBounds.top - 60,
+      },
       nodePosition: screenToFlowPosition({
         x: clientX,
         y: clientY,
       }),
       connection: createPendingConnection(sourceNodeId, sourceHandleId),
     };
-  }
-
-  function resolveAddMenuPlacement(clientX, clientY, paneBounds) {
-    const pointerXInPane = clientX - paneBounds.left;
-    const pointerYInPane = clientY - paneBounds.top;
-    const maxHeightPx = readAddMenuMaxHeightPx(paneBounds.height);
-
-    const preferredX = pointerXInPane + ADD_MENU_CURSOR_GAP_PX;
-    const preferredBelowY = pointerYInPane + ADD_MENU_CURSOR_GAP_PX;
-    const preferredAboveY = pointerYInPane - maxHeightPx - ADD_MENU_CURSOR_GAP_PX;
-    const shouldOpenAbove =
-      preferredBelowY + maxHeightPx > paneBounds.height - ADD_MENU_EDGE_PADDING_PX;
-    const preferredY = shouldOpenAbove ? preferredAboveY : preferredBelowY;
-
-    return {
-      position: {
-        x: clampMenuPosition(preferredX, ADD_MENU_WIDTH_PX, paneBounds.width),
-        y: clampMenuPosition(preferredY, maxHeightPx, paneBounds.height),
-      },
-      maxHeightPx,
-    };
-  }
-
-  function readAddMenuMaxHeightPx(paneHeight) {
-    const normalizedPaneHeight = Number.isFinite(paneHeight) ? Math.max(0, paneHeight) : 0;
-    const viewportHeight =
-      typeof window !== "undefined" && Number.isFinite(window.innerHeight)
-        ? Math.max(0, window.innerHeight)
-        : normalizedPaneHeight;
-    const viewportLimitedHeight = viewportHeight * ADD_MENU_MAX_VIEWPORT_HEIGHT_RATIO;
-    const paneLimitedHeight = Math.max(0, normalizedPaneHeight - ADD_MENU_EDGE_PADDING_PX * 2);
-    return Math.min(viewportLimitedHeight, paneLimitedHeight);
-  }
-
-  function clampMenuPosition(position, itemSize, paneSize) {
-    const normalizedPosition = Number.isFinite(position) ? position : 0;
-    const normalizedItemSize = Number.isFinite(itemSize) ? Math.max(0, itemSize) : 0;
-    const normalizedPaneSize = Number.isFinite(paneSize) ? Math.max(0, paneSize) : 0;
-    const maxLowerBound = Math.max(0, normalizedPaneSize - normalizedItemSize);
-    const lowerBound = Math.min(ADD_MENU_EDGE_PADDING_PX, maxLowerBound);
-    const upperBound = Math.max(
-      lowerBound,
-      normalizedPaneSize - normalizedItemSize - ADD_MENU_EDGE_PADDING_PX
-    );
-
-    return Math.min(upperBound, Math.max(lowerBound, normalizedPosition));
   }
 
   function readPointerCoordinates(event) {
@@ -855,6 +805,7 @@
     bind:edges
     disableKeyboardA11y={addMenuOpen}
     panActivationKey={"Shift"}
+    selectNodesOnDrag={false}
     minZoom={0.2}
     {nodeTypes}
     onconnect={handleConnect}
@@ -871,7 +822,6 @@
     open={addMenuOpen}
     openVersion={addMenuOpenVersion}
     position={addMenuPosition}
-    maxHeightPx={addMenuMaxHeightPx}
     templates={availableAddEntries}
     on:close={closeAddNodeMenu}
     on:select={handleMenuSelect}

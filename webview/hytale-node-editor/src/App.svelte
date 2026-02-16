@@ -704,6 +704,8 @@
         position,
         width: dimensions.width,
         height: dimensions.height,
+        selected: false,
+        draggable: false,
       });
     }
 
@@ -727,6 +729,9 @@
       const position = normalizePosition(sourceGroup?.position, index);
       const dimensions = readGroupNodeDimensions(sourceGroup);
       const groupName = readGroupName(sourceGroup?.data?.$groupName);
+      const isSelected = sourceGroup?.selected === true;
+      const isDraggable =
+        typeof sourceGroup?.draggable === "boolean" ? sourceGroup.draggable : isSelected;
 
       normalizedGroups.push({
         id: groupId,
@@ -737,6 +742,8 @@
         position,
         width: dimensions.width,
         height: dimensions.height,
+        selected: isSelected,
+        draggable: isDraggable,
       });
     }
 

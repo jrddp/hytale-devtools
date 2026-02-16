@@ -5,7 +5,6 @@
   export let open = false;
   export let openVersion = 0; // Used to trigger re-focusing when menu is re-opened.
   export let position = { x: 0, y: 0 };
-  export let maxHeightPx = 0;
   export let templates = [];
 
   const dispatch = createEventDispatcher();
@@ -23,12 +22,6 @@
     lastFocusedOpenVersion = openVersion;
     tick().then(() => searchInput?.focus());
   }
-
-  $: menuMaxHeight =
-    Number.isFinite(maxHeightPx) && maxHeightPx > 0
-      ? `${Math.floor(maxHeightPx)}px`
-      : "70vh";
-  $: menuListMaxHeight = `max(0px, calc(${menuMaxHeight} - 3.5rem))`;
 
   $: filteredTemplates = templates.filter((template) => {
     const haystack = `${template.label} ${template.category ?? ''}`.toLowerCase();
@@ -167,10 +160,9 @@
     role="dialog"
     aria-label="Add node menu"
     tabindex="-1"
-    class="absolute z-3001 w-64 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
+    class="absolute z-3001 w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
     style:left={`${position.x}px`}
     style:top={`${position.y}px`}
-    style:max-height={menuMaxHeight}
     onkeydown={handleKeyDown}
   >
     <input
@@ -182,11 +174,7 @@
       placeholder="Search nodes..."
     />
 
-    <div
-      class="mt-2 flex flex-col gap-2 overflow-auto pr-0.5"
-      style:max-height={menuListMaxHeight}
-      role="listbox"
-    >
+    <div class="mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-auto pr-0.5" role="listbox">
       {#if groupedTemplateEntries.length === 0}
         <div class="text-xs text-vsc-muted">No matching node types</div>
       {:else}
