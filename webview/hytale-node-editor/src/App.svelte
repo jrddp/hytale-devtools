@@ -62,6 +62,8 @@
   const DEFAULT_GROUP_HEIGHT = 320;
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
+  const GROUP_Z_INDEX_UNSELECTED = -10000;
+  const GROUP_Z_INDEX_SELECTED = 10000;
   const GROUP_RESERVED_KEYS = ["$Position", "$width", "$height", "$name"];
   const NODE_PAYLOAD_TEMPLATE_RESOLUTION_EXCLUDED_KEYS = new Set([
     "$NodeId",
@@ -706,6 +708,7 @@
         height: dimensions.height,
         selected: false,
         draggable: false,
+        zIndex: GROUP_Z_INDEX_UNSELECTED,
       });
     }
 
@@ -732,6 +735,7 @@
       const isSelected = sourceGroup?.selected === true;
       const isDraggable =
         typeof sourceGroup?.draggable === "boolean" ? sourceGroup.draggable : isSelected;
+      const normalizedGroupZIndex = isSelected ? GROUP_Z_INDEX_SELECTED : GROUP_Z_INDEX_UNSELECTED;
 
       normalizedGroups.push({
         id: groupId,
@@ -744,6 +748,7 @@
         height: dimensions.height,
         selected: isSelected,
         draggable: isDraggable,
+        zIndex: normalizedGroupZIndex,
       });
     }
 

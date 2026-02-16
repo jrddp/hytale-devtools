@@ -38,6 +38,7 @@
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
   const DEFAULT_GROUP_NAME = "Group";
+  const GROUP_Z_INDEX_UNSELECTED = -10000;
   const dispatch = createEventDispatcher();
 
   const GENERIC_ADD_MENU_ENTRIES = [
@@ -338,6 +339,7 @@
         height: DEFAULT_GROUP_HEIGHT,
         selected: false,
         draggable: false,
+        zIndex: GROUP_Z_INDEX_UNSELECTED,
       };
 
       nodes = [newGroupNode, ...nodes];
