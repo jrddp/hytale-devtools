@@ -314,6 +314,11 @@ function buildTemplatePins(pins, templateId, relativePath, pinGroupName, diagnos
       type: pinType,
       label: normalizeNonEmptyString(pinCandidate.Label) ?? pinId,
       multiple: typeof pinCandidate.Multiple === 'boolean' ? pinCandidate.Multiple : false,
+      color:
+        pinCandidate.Color ??
+        pinCandidate.color ??
+        pinCandidate.Colour ??
+        pinCandidate.colour,
     });
   }
 

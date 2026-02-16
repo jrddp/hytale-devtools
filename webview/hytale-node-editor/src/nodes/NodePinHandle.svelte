@@ -1,6 +1,7 @@
 <script>
   import { Handle, Position } from "@xyflow/svelte";
   import HoverTooltip from "../components/HoverTooltip.svelte";
+  import { getDefaultPinColor, normalizePinColor } from "../node-editor/pinColorUtils.js";
 
   export let id;
   export let type = "target";
@@ -9,6 +10,7 @@
   export let width = 12;
   export let label = "";
   export let showTooltip = false;
+  export let color = undefined;
 
   $: normalizedSide = side === "right" ? "right" : "left";
   $: normalizedPosition = normalizedSide === "right" ? Position.Right : Position.Left;
@@ -16,6 +18,7 @@
   $: normalizedTop = readTopValue(top);
   $: normalizedWidth = readPinWidth(width);
   $: normalizedLabel = typeof label === "string" ? label.trim() : "";
+  $: normalizedColor = normalizePinColor(color) ?? getDefaultPinColor();
   $: pinSideClass = normalizedSide === "right" ? "right-0 rounded-l-full" : "left-0 rounded-r-full";
   $: tooltipPlacement = normalizedSide === "right" ? "right" : "left";
   $: tooltipAriaLabel = normalizedLabel
@@ -58,7 +61,7 @@
   type={normalizedType}
   position={normalizedPosition}
   {id}
-  style={`top: ${normalizedTop}; height: var(--pin-diameter); --pin-width: ${normalizedWidth}; --pin-diameter: calc(var(--pin-width) * 2);`}
+  style={`top: ${normalizedTop}; height: var(--pin-diameter); --pin-width: ${normalizedWidth}; --pin-diameter: calc(var(--pin-width) * 2); --pin-color: ${normalizedColor};`}
   class="w-px! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
 >
   {#if showTooltip && normalizedLabel}
@@ -70,15 +73,15 @@
     >
       <span
         aria-hidden="true"
-        class={`absolute top-1/2 -translate-y-1/2 bg-vsc-focus ${pinSideClass}`}
-        style="width: var(--pin-width); height: var(--pin-diameter);"
+        class={`absolute top-1/2 -translate-y-1/2 ${pinSideClass}`}
+        style="width: var(--pin-width); height: var(--pin-diameter); background-color: var(--pin-color);"
       ></span>
     </HoverTooltip>
   {:else}
     <span
       aria-hidden="true"
-      class={`absolute top-1/2 -translate-y-1/2 bg-vsc-focus ${pinSideClass}`}
-      style="width: var(--pin-width); height: var(--pin-diameter);"
+      class={`absolute top-1/2 -translate-y-1/2 ${pinSideClass}`}
+      style="width: var(--pin-width); height: var(--pin-diameter); background-color: var(--pin-color);"
     ></span>
   {/if}
 </Handle>

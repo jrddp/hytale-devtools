@@ -5,6 +5,7 @@ import {
   getDefaultTemplate as getDevDefaultTemplate,
   getTemplateById as getDevTemplateById,
 } from './sampleNodeTemplates.js';
+import { normalizePinColor } from './pinColorUtils.js';
 import { loadHytaleGeneratorJavaWorkspaceTemplates } from './workspaceTemplateLoader.js';
 
 export const TEMPLATE_SOURCE_MODE = {
@@ -224,6 +225,12 @@ function normalizePinDefinitions(pinCandidates) {
       type: pinType,
       label: normalizeNonEmptyString(pinCandidate.label ?? pinCandidate.Label) ?? pinId,
       multiple: pinCandidate.multiple === true || pinCandidate.Multiple === true,
+      color: normalizePinColor(
+        pinCandidate.color ??
+          pinCandidate.Color ??
+          pinCandidate.colour ??
+          pinCandidate.Colour
+      ),
     });
   }
 

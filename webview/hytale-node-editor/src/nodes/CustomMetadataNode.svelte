@@ -320,6 +320,7 @@
         width={PIN_WIDTH}
         label={pinLabel}
         showTooltip={Boolean(pinLabel)}
+        color={pin.color}
       />
     {/each}
 
@@ -335,7 +336,14 @@
 
     {#each outputPins as pin, index (pin.id)}
       {@const pinTop = readPinTop(index, outputPins.length)}
-      <NodePinHandle type="source" side="right" id={pin.id} top={pinTop} width={PIN_WIDTH} />
+      <NodePinHandle
+        type="source"
+        side="right"
+        id={pin.id}
+        top={pinTop}
+        width={PIN_WIDTH}
+        color={pin.color}
+      />
       <div
         class="pointer-events-none absolute pr-1 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
         style={`top: ${pinTop}; right: ${PIN_WIDTH}px;`}
