@@ -2,8 +2,6 @@
   import {
     addEdge,
     Background,
-    MiniMap,
-    Controls,
     SvelteFlow,
     useSvelteFlow,
   } from "@xyflow/svelte";
@@ -30,6 +28,7 @@
   export let templateSourceMode = "workspace-hg-java";
   export let workspaceContext = {};
 
+  const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
   const dispatch = createEventDispatcher();
 
   const nodeTypes = {
@@ -42,11 +41,10 @@
   let flowWrapperElement;
 
   let addMenuOpen = false;
-  let addMenuOpenVersion = 0;
+  let addMenuOpenVersion = 0; // Used to trigger re-focusing when menu is re-opened.
   let addMenuPosition = { x: 0, y: 0 };
   let pendingNodePosition = { x: 0, y: 0 };
-  let pendingConnectionSourceId;
-  let pendingConnectionSourceHandleId;
+  let pendingConnection;
   let connectStartSourceNodeId;
   let connectStartSourceHandleId;
   let skipNextPaneClickClose = false;
@@ -56,13 +54,13 @@
   let allTemplates = [];
   let availableTemplates = [];
 
-  $: if (templateSourceMode || workspaceContext) {
+  $: {
     setActiveTemplateSourceMode(templateSourceMode);
     setActiveWorkspaceContext(workspaceContext);
     allTemplates = getTemplates(workspaceContext);
   }
 
-  $: availableTemplates = resolveAvailableTemplates();
+  $: availableTemplates = resolveAvailableTemplates(pendingConnection);
 
   $: if (loadVersion !== lastNormalizedLoadVersion) {
     lastNormalizedLoadVersion = loadVersion;
@@ -137,8 +135,7 @@
 
   function closeAddNodeMenu() {
     addMenuOpen = false;
-    pendingConnectionSourceId = undefined;
-    pendingConnectionSourceHandleId = undefined;
+    pendingConnection = undefined;
   }
 
   function didEventOccurInsideAddMenu(event) {
@@ -172,24 +169,14 @@
     sourceNodeId = undefined,
     sourceHandleId = undefined
   ) {
-    const { clientX, clientY } = readPointerCoordinates(pointerEvent);
-    const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
-    if (!paneBounds) {
+    const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
+    if (!addMenuRequest) {
       return;
     }
 
-    addMenuPosition = {
-      x: clientX - paneBounds.left,
-      y: clientY - paneBounds.top - 60,
-    };
-
-    pendingNodePosition = screenToFlowPosition({
-      x: clientX,
-      y: clientY,
-    });
-
-    pendingConnectionSourceId = sourceNodeId;
-    pendingConnectionSourceHandleId = sourceHandleId;
+    addMenuPosition = addMenuRequest.position;
+    pendingNodePosition = addMenuRequest.nodePosition;
+    pendingConnection = addMenuRequest.connection;
     addMenuOpen = true;
     addMenuOpenVersion += 1;
   }
@@ -201,7 +188,7 @@
     }
 
     pointerEvent.preventDefault();
-    openAddNodeMenu(pointerEvent);
+    void openAddNodeMenu(pointerEvent);
   }
 
   function handlePaneClick() {
@@ -211,16 +198,11 @@
     }
 
     closeAddNodeMenu();
-    emitFlowChange("node-created");
   }
 
   function handleConnectStart(_pointerEvent, params) {
-    connectStartSourceNodeId =
-      typeof params?.nodeId === "string" && params.nodeId.trim() ? params.nodeId.trim() : undefined;
-    connectStartSourceHandleId =
-      typeof params?.handleId === "string" && params.handleId.trim()
-        ? params.handleId.trim()
-        : undefined;
+    connectStartSourceNodeId = normalizeOptionalString(params?.nodeId);
+    connectStartSourceHandleId = normalizeOptionalString(params?.handleId);
   }
 
   function handleConnectEnd(rawPointerEvent, rawConnectionState) {
@@ -236,14 +218,14 @@
       connectionState?.fromNode?.id ??
       connectStartSourceNodeId ??
       nodes?.[0]?.id ??
-      "Node-00000000-0000-0000-0000-000000000000";
+      ROOT_NODE_ID;
     const sourceHandleId =
       extractSourceHandleId(connectionState) ??
       connectStartSourceHandleId;
 
     // Prevent immediate close when the same mouse-up emits a pane click right after connect-end.
     skipNextPaneClickClose = true;
-    openAddNodeMenu(pointerEvent, sourceNodeId, sourceHandleId);
+    void openAddNodeMenu(pointerEvent, sourceNodeId, sourceHandleId);
     connectStartSourceNodeId = undefined;
     connectStartSourceHandleId = undefined;
   }
@@ -258,14 +240,7 @@
     const newNode = {
       id: newNodeId,
       type: CUSTOM_NODE_TYPE,
-      data: {
-        label: template.label,
-        ...(typeof template?.schemaType === "string" && template.schemaType.trim()
-          ? { Type: template.schemaType.trim() }
-          : {}),
-        $templateId: template.templateId,
-        $fieldValues: template.buildInitialValues(),
-      },
+      data: buildNodeDataFromTemplate(template),
       position: {
         ...pendingNodePosition,
       },
@@ -274,24 +249,25 @@
 
     nodes = [...nodes, newNode];
 
-    if (typeof pendingConnectionSourceId === "string" && pendingConnectionSourceId.trim()) {
+    const connection = pendingConnection;
+    if (connection?.sourceNodeId) {
       const targetHandleId = chooseTargetHandleForConnection(
-        pendingConnectionSourceId,
-        pendingConnectionSourceHandleId,
+        connection.sourceNodeId,
+        connection.sourceHandleId,
         template
       );
       edges = [
         ...edges,
         {
           id: createEdgeId({
-            sourceNodeId: pendingConnectionSourceId,
-            sourceHandleId: pendingConnectionSourceHandleId,
+            sourceNodeId: connection.sourceNodeId,
+            sourceHandleId: connection.sourceHandleId,
             targetNodeId: newNodeId,
             targetHandleId,
           }),
-          source: pendingConnectionSourceId,
-          ...(pendingConnectionSourceHandleId
-            ? { sourceHandle: pendingConnectionSourceHandleId }
+          source: connection.sourceNodeId,
+          ...(connection.sourceHandleId
+            ? { sourceHandle: connection.sourceHandleId }
             : {}),
           target: newNodeId,
           ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
@@ -300,6 +276,7 @@
     }
 
     closeAddNodeMenu();
+    emitFlowChange("node-created");
   }
 
   function createDefaultNodes() {
@@ -310,19 +287,32 @@
 
     return [
       {
-        id: "Node-00000000-0000-0000-0000-000000000000",
+        id: ROOT_NODE_ID,
         type: CUSTOM_NODE_TYPE,
-        data: {
-          label: defaultTemplate.label,
-          ...(typeof defaultTemplate?.schemaType === "string" && defaultTemplate.schemaType.trim()
-            ? { Type: defaultTemplate.schemaType.trim() }
-            : {}),
-          $templateId: defaultTemplate.templateId,
-          $fieldValues: defaultTemplate.buildInitialValues(),
-        },
+        data: buildNodeDataFromTemplate(defaultTemplate),
         position: { x: 0, y: 50 },
       },
     ];
+  }
+
+  function createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId) {
+    const { clientX, clientY } = readPointerCoordinates(pointerEvent);
+    const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
+    if (!paneBounds) {
+      return undefined;
+    }
+
+    return {
+      position: {
+        x: clientX - paneBounds.left,
+        y: clientY - paneBounds.top - 60,
+      },
+      nodePosition: screenToFlowPosition({
+        x: clientX,
+        y: clientY,
+      }),
+      connection: createPendingConnection(sourceNodeId, sourceHandleId),
+    };
   }
 
   function readPointerCoordinates(event) {
@@ -371,9 +361,9 @@
       connectionState?.sourceHandle,
     ];
 
-    return candidates.find(
-      (candidate) => typeof candidate === "string" && candidate.trim()
-    );
+    return candidates
+      .map(candidate => normalizeOptionalString(candidate))
+      .find(Boolean);
   }
 
   function chooseTargetHandleForConnection(sourceNodeId, sourceHandleId, targetTemplate) {
@@ -387,19 +377,19 @@
   }
 
   function findTemplateForNodeId(nodeId) {
-    if (typeof nodeId !== "string" || !nodeId.trim()) {
+    const normalizedNodeId = normalizeOptionalString(nodeId);
+    if (!normalizedNodeId) {
       return undefined;
     }
 
-    const sourceNode = Array.isArray(nodes) ? nodes.find((node) => node?.id === nodeId) : undefined;
+    const sourceNode = Array.isArray(nodes)
+      ? nodes.find((node) => node?.id === normalizedNodeId)
+      : undefined;
     if (!sourceNode) {
       return undefined;
     }
 
-    const templateId =
-      typeof sourceNode?.data?.$templateId === "string" && sourceNode.data.$templateId.trim()
-        ? sourceNode.data.$templateId.trim()
-        : undefined;
+    const templateId = normalizeOptionalString(sourceNode?.data?.$templateId);
 
     return (
       (templateId ? getTemplateById(templateId, workspaceContext) : undefined) ??
@@ -407,30 +397,25 @@
     );
   }
 
-  function resolveAvailableTemplates() {
+  function resolveAvailableTemplates(connection) {
     if (!Array.isArray(allTemplates) || allTemplates.length === 0) {
       return [];
     }
 
-    if (
-      typeof pendingConnectionSourceId !== "string" ||
-      !pendingConnectionSourceId.trim() ||
-      typeof pendingConnectionSourceHandleId !== "string" ||
-      !pendingConnectionSourceHandleId.trim()
-    ) {
+    const sourceNodeId = normalizeOptionalString(connection?.sourceNodeId);
+    const sourceHandleId = normalizeOptionalString(connection?.sourceHandleId);
+    if (!sourceNodeId || !sourceHandleId) {
       return allTemplates;
     }
 
-    const sourceTemplate = findTemplateForNodeId(pendingConnectionSourceId);
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
     const sourceConnectionDescriptors = Array.isArray(sourceTemplate?.schemaConnections)
       ? sourceTemplate.schemaConnections
       : [];
     const matchedDescriptor = sourceConnectionDescriptors.find(
-      (descriptor) => descriptor?.outputPinId === pendingConnectionSourceHandleId
+      (descriptor) => descriptor?.outputPinId === sourceHandleId
     );
-    const selector = typeof matchedDescriptor?.nodeSelector === "string"
-      ? matchedDescriptor.nodeSelector
-      : undefined;
+    const selector = normalizeOptionalString(matchedDescriptor?.nodeSelector);
     if (!selector) {
       return allTemplates;
     }
@@ -461,6 +446,32 @@
     }
 
     return "Node";
+  }
+
+  function normalizeOptionalString(value) {
+    return typeof value === "string" && value.trim() ? value.trim() : undefined;
+  }
+
+  function buildNodeDataFromTemplate(template) {
+    const schemaType = normalizeOptionalString(template?.schemaType);
+    return {
+      label: template.label,
+      ...(schemaType ? { Type: schemaType } : {}),
+      $templateId: template.templateId,
+      $fieldValues: template.buildInitialValues(),
+    };
+  }
+
+  function createPendingConnection(sourceNodeId, sourceHandleId) {
+    const normalizedSourceNodeId = normalizeOptionalString(sourceNodeId);
+    if (!normalizedSourceNodeId) {
+      return undefined;
+    }
+
+    return {
+      sourceNodeId: normalizedSourceNodeId,
+      sourceHandleId: normalizeOptionalString(sourceHandleId),
+    };
   }
 
   function createUuid() {

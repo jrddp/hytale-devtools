@@ -1,8 +1,9 @@
 <script>
   import { createEventDispatcher, tick } from 'svelte';
+  import { getDefaultPinColor } from '../node-editor/pinColorUtils.js';
 
   export let open = false;
-  export let openVersion = 0;
+  export let openVersion = 0; // Used to trigger re-focusing when menu is re-opened.
   export let position = { x: 0, y: 0 };
   export let templates = [];
 
@@ -142,6 +143,14 @@
       activeIndex = flatIndex;
     }
   }
+
+  function readTemplateColor(template) {
+    if (typeof template?.nodeColor === 'string' && template.nodeColor.trim()) {
+      return template.nodeColor.trim();
+    }
+
+    return getDefaultPinColor();
+  }
 </script>
 
 {#if open}
@@ -171,13 +180,14 @@
       {:else}
         {#each groupedTemplateEntries as group}
           <div class="flex flex-col gap-1.5">
-            <div class="text-xs uppercase tracking-wide text-vsc-muted">
-              {group.category}
+            <div class="flex items-center gap-2 px-1 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">
+              <span>{group.category}</span>
+              <span class="h-px flex-1 bg-vsc-editor-widget-border"></span>
             </div>
             {#each group.items as item (item.flatIndex)}
               <button
                 data-add-node-menu-item="true"
-                class="flex w-full cursor-pointer flex-col gap-0.5 rounded-md border border-vsc-editor-widget-border bg-vsc-button-secondary-bg px-2 py-1.5 text-left text-vsc-fg"
+                class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip"
                 class:border-vsc-focus={isActiveTemplate(item.flatIndex)}
                 class:bg-vsc-list-active-bg={isActiveTemplate(item.flatIndex)}
                 class:text-vsc-list-active-fg={isActiveTemplate(item.flatIndex)}
@@ -188,7 +198,15 @@
                 onmouseenter={() => setActiveTemplate(item.flatIndex)}
                 onclick={() => selectTemplate(item.template)}
               >
-                <span class="text-xs font-semibold">{item.template.label}</span>
+                <span
+                  aria-hidden="true"
+                  class="relative h-8 w-2.5"
+                  style="background-color: {readTemplateColor(item.template)};"
+                ></span>
+
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate text-xs font-semibold">{item.template.label}</span>
+                </span>
               </button>
             {/each}
           </div>
