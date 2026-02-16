@@ -463,6 +463,8 @@
     bind:nodes
     bind:edges
     disableKeyboardA11y={addMenuOpen}
+    panActivationKey={"Shift"}
+    minZoom={0.2}
     {nodeTypes}
     onconnect={handleConnect}
     onconnectstart={handleConnectStart}
