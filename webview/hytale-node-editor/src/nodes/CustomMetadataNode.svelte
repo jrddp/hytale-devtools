@@ -207,6 +207,18 @@
     return "";
   }
 
+  function readOutputPinConnectionMultiplicity(pin) {
+    if (pin?.isMap === true) {
+      return "map";
+    }
+
+    if (pin?.multiple === true) {
+      return "multiple";
+    }
+
+    return "single";
+  }
+
   function readPinTop(index, totalPins) {
     return `${readPinTopPx(index, totalPins)}px`;
   }
@@ -240,13 +252,13 @@
 <div
   class="relative pt-0 border border-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow]"
   class:border-vsc-focus={selected && !dragging}
-  style={`min-width: ${nodeMinWidthPx}px;`}
+  style="min-width: {nodeMinWidthPx}px;"
   data-node-editor-root
 >
   <div
     aria-hidden="true"
     class="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 rounded-t-lg"
-    style={`background-color: ${nodeAccentColor};`}
+    style="background-color: {nodeAccentColor};"
   ></div>
 
   <div class="flex flex-col gap-1">
@@ -314,7 +326,7 @@
 
   <div
     class="relative py-2"
-    style={`padding-left: ${contentPaddingLeftPx}px; padding-right: ${contentRightPaddingPx}px; min-height: ${contentMinHeightPx}px;`}
+    style="padding-left: {contentPaddingLeftPx}px; padding-right: {contentRightPaddingPx}px; min-height: {contentMinHeightPx}px;"
   >
     {#each inputPins as pin, index (pin.id)}
       {@const pinTop = readPinTop(index, inputPins.length)}
@@ -343,6 +355,7 @@
 
     {#each outputPins as pin, index (pin.id)}
       {@const pinTop = readPinTop(index, outputPins.length)}
+      {@const pinMultiplicity = readOutputPinConnectionMultiplicity(pin)}
       <NodePinHandle
         type="source"
         side="right"
@@ -350,10 +363,11 @@
         top={pinTop}
         width={PIN_WIDTH}
         color={pin.color}
+        connectionMultiplicity={pinMultiplicity}
       />
       <div
         class="pointer-events-none absolute pr-1 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
-        style={`top: ${pinTop}; right: ${PIN_WIDTH}px;`}
+        style="top: {pinTop}; right: {PIN_WIDTH}px;"
       >
         {readPinLabel(pin)}
       </div>

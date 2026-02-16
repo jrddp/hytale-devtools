@@ -53,6 +53,7 @@
   let initialViewportReady = false;
   let allTemplates = [];
   let availableTemplates = [];
+  let pendingSingleSourceReplacement;
 
   $: {
     setActiveTemplateSourceMode(templateSourceMode);
@@ -64,6 +65,7 @@
 
   $: if (loadVersion !== lastNormalizedLoadVersion) {
     lastNormalizedLoadVersion = loadVersion;
+    clearPendingSingleSourceReplacement();
     ensureCustomNodeTypes();
   }
 
@@ -125,7 +127,17 @@
   }
 
   function handleConnect(connection) {
-    edges = addEdge(connection, edges);
+    const normalizedConnection = normalizeConnection(connection);
+    if (!normalizedConnection) {
+      restorePendingSingleSourceReplacement();
+      return;
+    }
+
+    edges = addEdge(
+      normalizedConnection,
+      pruneConflictingInputEdges(edges, normalizedConnection)
+    );
+    clearPendingSingleSourceReplacement();
     emitFlowChange("edge-created");
   }
 
@@ -136,6 +148,7 @@
   function closeAddNodeMenu() {
     addMenuOpen = false;
     pendingConnection = undefined;
+    restorePendingSingleSourceReplacement();
   }
 
   function didEventOccurInsideAddMenu(event) {
@@ -171,7 +184,7 @@
   ) {
     const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
     if (!addMenuRequest) {
-      return;
+      return false;
     }
 
     addMenuPosition = addMenuRequest.position;
@@ -179,6 +192,7 @@
     pendingConnection = addMenuRequest.connection;
     addMenuOpen = true;
     addMenuOpenVersion += 1;
+    return true;
   }
 
   function handlePaneContextMenu(payload) {
@@ -188,7 +202,7 @@
     }
 
     pointerEvent.preventDefault();
-    void openAddNodeMenu(pointerEvent);
+    openAddNodeMenu(pointerEvent);
   }
 
   function handlePaneClick() {
@@ -201,14 +215,28 @@
   }
 
   function handleConnectStart(_pointerEvent, params) {
-    connectStartSourceNodeId = normalizeOptionalString(params?.nodeId);
-    connectStartSourceHandleId = normalizeOptionalString(params?.handleId);
+    const sourceNodeId = normalizeOptionalString(params?.nodeId);
+    const sourceHandleId = normalizeOptionalString(params?.handleId);
+    const handleType = normalizeOptionalString(params?.handleType);
+    if (handleType && handleType !== "source") {
+      connectStartSourceNodeId = undefined;
+      connectStartSourceHandleId = undefined;
+      clearPendingSingleSourceReplacement();
+      return;
+    }
+
+    connectStartSourceNodeId = sourceNodeId;
+    connectStartSourceHandleId = sourceHandleId;
+    beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId);
   }
 
   function handleConnectEnd(rawPointerEvent, rawConnectionState) {
     const pointerEvent = extractPointerEvent(rawPointerEvent);
     const connectionState = extractConnectionState(rawPointerEvent, rawConnectionState);
     if (connectionState?.isValid) {
+      if (pendingSingleSourceReplacement) {
+        restorePendingSingleSourceReplacement();
+      }
       connectStartSourceNodeId = undefined;
       connectStartSourceHandleId = undefined;
       return;
@@ -223,9 +251,13 @@
       extractSourceHandleId(connectionState) ??
       connectStartSourceHandleId;
 
-    // Prevent immediate close when the same mouse-up emits a pane click right after connect-end.
-    skipNextPaneClickClose = true;
-    void openAddNodeMenu(pointerEvent, sourceNodeId, sourceHandleId);
+    const addMenuOpened = openAddNodeMenu(pointerEvent, sourceNodeId, sourceHandleId);
+    if (addMenuOpened) {
+      // Prevent immediate close when the same mouse-up emits a pane click right after connect-end.
+      skipNextPaneClickClose = true;
+    } else {
+      restorePendingSingleSourceReplacement();
+    }
     connectStartSourceNodeId = undefined;
     connectStartSourceHandleId = undefined;
   }
@@ -256,23 +288,29 @@
         connection.sourceHandleId,
         template
       );
-      edges = [
-        ...edges,
-        {
-          id: createEdgeId({
-            sourceNodeId: connection.sourceNodeId,
-            sourceHandleId: connection.sourceHandleId,
-            targetNodeId: newNodeId,
-            targetHandleId,
-          }),
-          source: connection.sourceNodeId,
-          ...(connection.sourceHandleId
-            ? { sourceHandle: connection.sourceHandleId }
-            : {}),
-          target: newNodeId,
-          ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
-        },
-      ];
+      const normalizedConnection = normalizeConnection({
+        id: createEdgeId({
+          sourceNodeId: connection.sourceNodeId,
+          sourceHandleId: connection.sourceHandleId,
+          targetNodeId: newNodeId,
+          targetHandleId,
+        }),
+        source: connection.sourceNodeId,
+        ...(connection.sourceHandleId
+          ? { sourceHandle: connection.sourceHandleId }
+          : {}),
+        target: newNodeId,
+        ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
+      });
+
+      if (normalizedConnection) {
+        edges = addEdge(
+          normalizedConnection,
+          pruneConflictingInputEdges(edges, normalizedConnection)
+        );
+      }
+
+      clearPendingSingleSourceReplacement();
     }
 
     closeAddNodeMenu();
@@ -364,6 +402,163 @@
     return candidates
       .map(candidate => normalizeOptionalString(candidate))
       .find(Boolean);
+  }
+
+  function normalizeConnection(connection) {
+    const sourceNodeId = normalizeOptionalString(connection?.source);
+    const targetNodeId = normalizeOptionalString(connection?.target);
+    if (!sourceNodeId || !targetNodeId) {
+      return undefined;
+    }
+
+    const normalizedConnection = {
+      source: sourceNodeId,
+      target: targetNodeId,
+    };
+    const connectionId = normalizeOptionalString(connection?.id);
+    if (connectionId) {
+      normalizedConnection.id = connectionId;
+    }
+
+    const sourceHandleId = normalizeOptionalString(connection?.sourceHandle);
+    if (sourceHandleId) {
+      normalizedConnection.sourceHandle = sourceHandleId;
+    }
+
+    const targetHandleId = normalizeOptionalString(connection?.targetHandle);
+    if (targetHandleId) {
+      normalizedConnection.targetHandle = targetHandleId;
+    }
+
+    return normalizedConnection;
+  }
+
+  function pruneConflictingInputEdges(existingEdges, connection) {
+    const targetNodeId = normalizeOptionalString(connection?.target);
+    if (!targetNodeId) {
+      return Array.isArray(existingEdges) ? existingEdges : [];
+    }
+
+    const targetHandleId = normalizeOptionalString(connection?.targetHandle);
+    const normalizedEdges = Array.isArray(existingEdges) ? existingEdges : [];
+
+    return normalizedEdges.filter((edge) => {
+      const edgeTargetNodeId = normalizeOptionalString(edge?.target);
+      if (edgeTargetNodeId !== targetNodeId) {
+        return true;
+      }
+
+      const edgeTargetHandleId = normalizeOptionalString(edge?.targetHandle);
+      if (targetHandleId) {
+        return edgeTargetHandleId !== targetHandleId;
+      }
+
+      return false;
+    });
+  }
+
+  function beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId) {
+    clearPendingSingleSourceReplacement();
+
+    const normalizedSourceNodeId = normalizeOptionalString(sourceNodeId);
+    const normalizedSourceHandleId = normalizeOptionalString(sourceHandleId);
+    if (!normalizedSourceNodeId) {
+      return;
+    }
+
+    const sourceMultiplicity = readSourceHandleMultiplicity(
+      normalizedSourceNodeId,
+      normalizedSourceHandleId
+    );
+    if (sourceMultiplicity !== "single") {
+      return;
+    }
+
+    const normalizedEdges = Array.isArray(edges) ? edges : [];
+    const retainedEdges = [];
+    const removedEdges = [];
+    for (const edge of normalizedEdges) {
+      if (isEdgeFromSourceHandle(edge, normalizedSourceNodeId, normalizedSourceHandleId)) {
+        removedEdges.push(edge);
+        continue;
+      }
+
+      retainedEdges.push(edge);
+    }
+
+    if (removedEdges.length === 0) {
+      return;
+    }
+
+    edges = retainedEdges;
+    pendingSingleSourceReplacement = {
+      sourceNodeId: normalizedSourceNodeId,
+      sourceHandleId: normalizedSourceHandleId,
+      removedEdges,
+    };
+  }
+
+  function readSourceHandleMultiplicity(sourceNodeId, sourceHandleId) {
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
+    const outputPins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
+    const sourcePin = outputPins.find(
+      (pin) => normalizeOptionalString(pin?.id) === sourceHandleId
+    );
+    if (sourcePin?.isMap === true) {
+      return "map";
+    }
+
+    if (sourcePin?.multiple === true) {
+      return "multiple";
+    }
+
+    return "single";
+  }
+
+  function isEdgeFromSourceHandle(edge, sourceNodeId, sourceHandleId) {
+    if (normalizeOptionalString(edge?.source) !== sourceNodeId) {
+      return false;
+    }
+
+    return normalizeOptionalString(edge?.sourceHandle) === sourceHandleId;
+  }
+
+  function restorePendingSingleSourceReplacement() {
+    const removedEdges = Array.isArray(pendingSingleSourceReplacement?.removedEdges)
+      ? pendingSingleSourceReplacement.removedEdges
+      : [];
+    if (removedEdges.length === 0) {
+      pendingSingleSourceReplacement = undefined;
+      return;
+    }
+
+    const normalizedEdges = Array.isArray(edges) ? edges : [];
+    const existingEdgeIds = new Set(
+      normalizedEdges
+        .map((edge) => normalizeOptionalString(edge?.id))
+        .filter((edgeId) => Boolean(edgeId))
+    );
+    const restoredEdges = [];
+
+    for (const removedEdge of removedEdges) {
+      const edgeId = normalizeOptionalString(removedEdge?.id);
+      if (edgeId && existingEdgeIds.has(edgeId)) {
+        continue;
+      }
+
+      if (edgeId) {
+        existingEdgeIds.add(edgeId);
+      }
+
+      restoredEdges.push(removedEdge);
+    }
+
+    edges = [...normalizedEdges, ...restoredEdges];
+    pendingSingleSourceReplacement = undefined;
+  }
+
+  function clearPendingSingleSourceReplacement() {
+    pendingSingleSourceReplacement = undefined;
   }
 
   function chooseTargetHandleForConnection(sourceNodeId, sourceHandleId, targetTemplate) {

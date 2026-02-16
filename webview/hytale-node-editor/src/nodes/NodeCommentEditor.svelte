@@ -143,11 +143,9 @@
     <textarea
       bind:this={textareaElement}
       {id}
-      class={`w-full resize-none overflow-hidden p-1 rounded-md text-left text-xs leading-5 text-vsc-input-fg whitespace-pre-wrap wrap-break-word ${
-        isEditing
-          ? "nodrag border border-vsc-input-border bg-vsc-input-bg"
-          : "border border-transparent bg-transparent cursor-grab active:cursor-grabbing select-none outline-none focus:outline-none focus-visible:outline-none focus:border-transparent"
-      }`}
+      class="w-full resize-none overflow-hidden p-1 rounded-md text-left text-xs leading-5 text-vsc-input-fg whitespace-pre-wrap wrap-break-word {isEditing
+        ? 'nodrag border border-vsc-input-border bg-vsc-input-bg'
+        : 'border border-transparent bg-transparent cursor-grab active:cursor-grabbing select-none outline-none focus:outline-none focus-visible:outline-none focus:border-transparent'}"
       rows="1"
       readonly={!isEditing}
       aria-label="Node comment"
