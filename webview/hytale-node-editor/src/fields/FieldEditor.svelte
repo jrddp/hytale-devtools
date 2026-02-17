@@ -10,9 +10,9 @@
   import ObjectField from './ObjectField.svelte';
   import { FIELD_TYPES } from '../node-editor/types.js';
   import {
-    normalizeFieldOptions,
     normalizeFieldType,
     normalizeFieldValue,
+    getObjectNestedFields,
     isObject,
   } from '../node-editor/fieldValueUtils.js';
 
@@ -23,8 +23,7 @@
 
   $: fieldType = normalizeFieldType(field?.type);
   $: normalizedValue = normalizeFieldValue(field, value);
-  $: fieldOptions = normalizeFieldOptions(field?.options);
-  $: nestedFields = Array.isArray(fieldOptions.Fields) ? fieldOptions.Fields : [];
+  $: nestedFields = getObjectNestedFields(field);
 
   function emitValue(nextValue) {
     dispatch('change', { value: normalizeFieldValue(field, nextValue) });
@@ -40,7 +39,7 @@
 </script>
 
 {#if fieldType === FIELD_TYPES.OBJECT}
-  <ObjectField {field}>
+  <ObjectField {field} hasNestedFields={nestedFields.length > 0}>
     {#each nestedFields as nestedField}
       {#if typeof nestedField?.id === 'string' && nestedField.id.trim()}
         <svelte:self

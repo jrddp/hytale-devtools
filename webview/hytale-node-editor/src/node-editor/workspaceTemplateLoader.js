@@ -436,29 +436,49 @@ function buildTemplateFields(
   diagnostics,
   unsupportedFieldTypes
 ) {
-  if (!Array.isArray(content)) {
+  return normalizeTemplateFieldDefinitions({
+    fieldCandidates: content,
+    templateId,
+    workspaceId,
+    relativePath,
+    diagnostics,
+    unsupportedFieldTypes,
+    pathLabel: 'Content',
+  });
+}
+
+function normalizeTemplateFieldDefinitions({
+  fieldCandidates,
+  templateId,
+  workspaceId,
+  relativePath,
+  diagnostics,
+  unsupportedFieldTypes,
+  pathLabel,
+}) {
+  if (!Array.isArray(fieldCandidates)) {
     return [];
   }
 
   const fields = [];
   const seenFieldIds = new Set();
 
-  for (const fieldCandidate of content) {
+  for (const fieldCandidate of fieldCandidates) {
     if (!isObject(fieldCandidate)) {
       continue;
     }
 
-    const fieldId = normalizeNonEmptyString(fieldCandidate.Id);
+    const fieldId = readTemplateFieldId(fieldCandidate);
     if (!fieldId) {
       diagnostics.push(
-        `Node "${templateId}" has a content entry without a valid Id (${workspaceId}/${relativePath}).`
+        `Node "${templateId}" has a field entry without a valid Id in ${pathLabel} (${workspaceId}/${relativePath}).`
       );
       continue;
     }
 
     if (seenFieldIds.has(fieldId)) {
       diagnostics.push(
-        `Node "${templateId}" defines duplicate field Id "${fieldId}" (${workspaceId}/${relativePath}). Keeping the latest definition.`
+        `Node "${templateId}" defines duplicate field Id "${fieldId}" in ${pathLabel} (${workspaceId}/${relativePath}). Keeping the latest definition.`
       );
       const existingIndex = fields.findIndex((field) => field.id === fieldId);
       if (existingIndex >= 0) {
@@ -467,27 +487,112 @@ function buildTemplateFields(
     }
     seenFieldIds.add(fieldId);
 
-    const fieldType = normalizeNonEmptyString(fieldCandidate.Type);
-    const options = isObject(fieldCandidate.Options) ? { ...fieldCandidate.Options } : {};
+    const fieldType = readTemplateFieldType(fieldCandidate);
     if (!fieldType) {
       diagnostics.push(
-        `Node "${templateId}" field "${fieldId}" is missing a valid Type (${workspaceId}/${relativePath}).`
+        `Node "${templateId}" field "${fieldId}" in ${pathLabel} is missing a valid Type (${workspaceId}/${relativePath}).`
       );
       continue;
     }
+
     if (!SUPPORTED_FIELD_TYPES.has(fieldType)) {
       unsupportedFieldTypes.add(fieldType);
     }
 
+    const options = normalizeTemplateFieldOptions({
+      optionsCandidate: readTemplateFieldOptions(fieldCandidate),
+      templateId,
+      workspaceId,
+      relativePath,
+      diagnostics,
+      unsupportedFieldTypes,
+      pathLabel: `${pathLabel}.${fieldId}`,
+    });
+
     fields.push({
       id: fieldId,
       type: fieldType,
-      label: normalizeNonEmptyString(options.Label) ?? fieldId,
+      label: normalizeNonEmptyString(options.Label) ?? readTemplateFieldLabel(fieldCandidate) ?? fieldId,
       options,
     });
   }
 
   return fields;
+}
+
+function normalizeTemplateFieldOptions({
+  optionsCandidate,
+  templateId,
+  workspaceId,
+  relativePath,
+  diagnostics,
+  unsupportedFieldTypes,
+  pathLabel,
+}) {
+  const options = isObject(optionsCandidate) ? { ...optionsCandidate } : {};
+  const nestedFieldCandidates = Array.isArray(options.Fields)
+    ? options.Fields
+    : Array.isArray(options.fields)
+      ? options.fields
+      : undefined;
+
+  if (Array.isArray(nestedFieldCandidates)) {
+    options.Fields = normalizeTemplateFieldDefinitions({
+      fieldCandidates: nestedFieldCandidates,
+      templateId,
+      workspaceId,
+      relativePath,
+      diagnostics,
+      unsupportedFieldTypes,
+      pathLabel: `${pathLabel}.Fields`,
+    });
+  }
+  delete options.fields;
+
+  const elementOptionsCandidate = isObject(options.ElementOptions)
+    ? options.ElementOptions
+    : isObject(options.elementOptions)
+      ? options.elementOptions
+      : undefined;
+
+  if (elementOptionsCandidate) {
+    options.ElementOptions = normalizeTemplateFieldOptions({
+      optionsCandidate: elementOptionsCandidate,
+      templateId,
+      workspaceId,
+      relativePath,
+      diagnostics,
+      unsupportedFieldTypes,
+      pathLabel: `${pathLabel}.ElementOptions`,
+    });
+  }
+  delete options.elementOptions;
+
+  return options;
+}
+
+function readTemplateFieldId(fieldCandidate) {
+  return normalizeNonEmptyString(fieldCandidate?.Id) ?? normalizeNonEmptyString(fieldCandidate?.id);
+}
+
+function readTemplateFieldType(fieldCandidate) {
+  return normalizeNonEmptyString(fieldCandidate?.Type) ?? normalizeNonEmptyString(fieldCandidate?.type);
+}
+
+function readTemplateFieldLabel(fieldCandidate) {
+  return normalizeNonEmptyString(fieldCandidate?.Label) ?? normalizeNonEmptyString(fieldCandidate?.label);
+}
+
+function readTemplateFieldOptions(fieldCandidate) {
+  if (isObject(fieldCandidate?.Options)) {
+    return fieldCandidate.Options;
+  }
+
+  if (isObject(fieldCandidate?.options)) {
+    return fieldCandidate.options;
+  }
+
+  return {};
 }
 
 function buildTemplatePins(pins, templateId, workspaceId, relativePath, pinGroupName, diagnostics) {

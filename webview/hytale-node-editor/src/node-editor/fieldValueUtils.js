@@ -22,16 +22,110 @@ export function isObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function normalizeNonEmptyString(candidate) {
+  return typeof candidate === 'string' && candidate.trim() ? candidate.trim() : undefined;
+}
+
 export function normalizeFieldType(candidateType) {
-  return typeof candidateType === 'string' ? candidateType.trim() : '';
+  return normalizeNonEmptyString(candidateType) ?? '';
 }
 
 export function normalizeFieldOptions(options) {
   return isObject(options) ? options : {};
 }
 
+function readFieldId(field) {
+  return normalizeNonEmptyString(field?.id) ?? normalizeNonEmptyString(field?.Id);
+}
+
+function readFieldType(field) {
+  return normalizeFieldType(field?.type) || normalizeFieldType(field?.Type);
+}
+
+function readFieldOptions(field) {
+  if (isObject(field?.options)) {
+    return { ...field.options };
+  }
+
+  if (isObject(field?.Options)) {
+    return { ...field.Options };
+  }
+
+  return {};
+}
+
+function normalizeFieldDefinition(field) {
+  if (!isObject(field)) {
+    return undefined;
+  }
+
+  const id = readFieldId(field);
+  const type = readFieldType(field);
+  if (!id || !type) {
+    return undefined;
+  }
+
+  const options = normalizeNestedFieldOptions(readFieldOptions(field));
+
+  return {
+    id,
+    type,
+    label:
+      normalizeNonEmptyString(options.Label) ??
+      normalizeNonEmptyString(field?.label) ??
+      normalizeNonEmptyString(field?.Label) ??
+      id,
+    options,
+  };
+}
+
+function normalizeNestedFieldOptions(options) {
+  const normalized = normalizeFieldOptions(options);
+  const withNormalizedFields = { ...normalized };
+  const nestedFieldsCandidate = Array.isArray(normalized.Fields)
+    ? normalized.Fields
+    : Array.isArray(normalized.fields)
+      ? normalized.fields
+      : undefined;
+
+  if (Array.isArray(nestedFieldsCandidate)) {
+    withNormalizedFields.Fields = nestedFieldsCandidate
+      .map((candidate) => normalizeFieldDefinition(candidate))
+      .filter((candidate) => Boolean(candidate));
+  }
+
+  delete withNormalizedFields.fields;
+
+  const elementOptionsCandidate = isObject(normalized.ElementOptions)
+    ? normalized.ElementOptions
+    : isObject(normalized.elementOptions)
+      ? normalized.elementOptions
+      : undefined;
+
+  if (elementOptionsCandidate) {
+    withNormalizedFields.ElementOptions = normalizeNestedFieldOptions(elementOptionsCandidate);
+  }
+
+  delete withNormalizedFields.elementOptions;
+
+  return withNormalizedFields;
+}
+
+export function getObjectNestedFields(field) {
+  const options = normalizeNestedFieldOptions(readFieldOptions(field));
+  const nestedFieldsCandidate = Array.isArray(options.Fields)
+    ? options.Fields
+    : Array.isArray(options.fields)
+      ? options.fields
+      : [];
+
+  return nestedFieldsCandidate
+    .map((candidate) => normalizeFieldDefinition(candidate))
+    .filter((candidate) => Boolean(candidate));
+}
+
 export function getFieldLabel(field) {
-  const options = normalizeFieldOptions(field?.options);
+  const options = normalizeNestedFieldOptions(readFieldOptions(field));
   if (typeof options.Label === 'string' && options.Label.trim()) {
     return options.Label.trim();
   }
@@ -40,15 +134,16 @@ export function getFieldLabel(field) {
     return field.label.trim();
   }
 
-  if (typeof field?.id === 'string' && field.id.trim()) {
-    return field.id.trim();
+  const normalizedFieldId = readFieldId(field);
+  if (normalizedFieldId) {
+    return normalizedFieldId;
   }
 
   return 'Field';
 }
 
 export function getListElementType(field) {
-  const options = normalizeFieldOptions(field?.options);
+  const options = normalizeNestedFieldOptions(readFieldOptions(field));
 
   if (typeof options.Type === 'string' && options.Type.trim()) {
     return options.Type.trim();
@@ -103,8 +198,8 @@ function readEnumValues(options) {
 }
 
 export function createDefaultFieldValue(field) {
-  const type = normalizeFieldType(field?.type);
-  const options = normalizeFieldOptions(field?.options);
+  const type = readFieldType(field);
+  const options = normalizeNestedFieldOptions(readFieldOptions(field));
 
   if (TEXT_FIELD_TYPES.has(type)) {
     return typeof options.Default === 'string' ? options.Default : '';
@@ -136,13 +231,10 @@ export function createDefaultFieldValue(field) {
   }
 
   if (type === FIELD_TYPES.OBJECT) {
-    const nestedFields = Array.isArray(options.Fields) ? options.Fields : [];
+    const nestedFields = getObjectNestedFields({ options });
     const nestedValue = {};
 
     for (const nestedField of nestedFields) {
-      if (typeof nestedField?.id !== 'string' || !nestedField.id.trim()) {
-        continue;
-      }
       nestedValue[nestedField.id] = createDefaultFieldValue(nestedField);
     }
 
@@ -153,8 +245,8 @@ export function createDefaultFieldValue(field) {
 }
 
 export function normalizeFieldValue(field, value) {
-  const type = normalizeFieldType(field?.type);
-  const options = normalizeFieldOptions(field?.options);
+  const type = readFieldType(field);
+  const options = normalizeNestedFieldOptions(readFieldOptions(field));
 
   if (TEXT_FIELD_TYPES.has(type)) {
     return typeof value === 'string' ? value : String(value ?? '');
@@ -196,15 +288,11 @@ export function normalizeFieldValue(field, value) {
   }
 
   if (type === FIELD_TYPES.OBJECT) {
-    const nestedFields = Array.isArray(options.Fields) ? options.Fields : [];
+    const nestedFields = getObjectNestedFields({ options });
     const source = isObject(value) ? value : {};
-    const normalizedObject = {};
+    const normalizedObject = { ...source };
 
     for (const nestedField of nestedFields) {
-      if (typeof nestedField?.id !== 'string' || !nestedField.id.trim()) {
-        continue;
-      }
-
       normalizedObject[nestedField.id] = normalizeFieldValue(nestedField, source[nestedField.id]);
     }
 
@@ -223,11 +311,12 @@ export function buildFieldValueMap(fields) {
   const sourceFields = Array.isArray(fields) ? fields : [];
 
   for (const field of sourceFields) {
-    if (typeof field?.id !== 'string' || !field.id.trim()) {
+    const fieldId = readFieldId(field);
+    if (!fieldId) {
       continue;
     }
 
-    result[field.id] = createDefaultFieldValue(field);
+    result[fieldId] = createDefaultFieldValue(field);
   }
 
   return result;
