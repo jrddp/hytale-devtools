@@ -32,6 +32,8 @@
   const PIN_TOP_MAX_PX = 220;
   const PIN_BOTTOM_CLEARANCE_PX = 32;
   const PIN_WIDTH = 10;
+  const NODE_MIN_WIDTH_WITH_CONTENT_PX = 288;
+  const NODE_MIN_WIDTH_WITHOUT_CONTENT_PX = 80;
 
   $: template =
     getTemplateById(data?.$templateId) ??
@@ -46,8 +48,11 @@
   };
   $: inputPins = Array.isArray(template?.inputPins) ? template.inputPins : [];
   $: outputPins = Array.isArray(template?.outputPins) ? template.outputPins : [];
+  $: hasContentFields = Array.isArray(template?.fields) && template.fields.length > 0;
   $: outputLabelColumnWidth = readOutputLabelColumnWidth(outputPins);
-  $: nodeMinWidthPx = 288 + outputLabelColumnWidth;
+  $: nodeMinWidthPx =
+    (hasContentFields ? NODE_MIN_WIDTH_WITH_CONTENT_PX : NODE_MIN_WIDTH_WITHOUT_CONTENT_PX) +
+    outputLabelColumnWidth;
   $: contentPaddingLeftPx = PIN_WIDTH + 8;
   $: contentRightPaddingPx = outputLabelColumnWidth + 8;
   $: pinLaneCount = Math.max(inputPins.length, outputPins.length);
