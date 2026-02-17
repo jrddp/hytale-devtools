@@ -10,7 +10,11 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/focusNavigation.js";
-  import { RAW_JSON_INPUT_HANDLE_ID, RAW_JSON_MUTATION_EVENT } from "../node-editor/types.js";
+  import {
+    NODE_INPUT_INDEX_DATA_KEY,
+    RAW_JSON_INPUT_HANDLE_ID,
+    RAW_JSON_MUTATION_EVENT,
+  } from "../node-editor/types.js";
 
   const RAW_JSON_FIELD = {
     id: "Data",
@@ -34,6 +38,9 @@
   $: nodeLabel = typeof data?.label === "string" && data.label.trim()
     ? data.label.trim()
     : RAW_JSON_DEFAULT_LABEL;
+  $: inputConnectionIndex = readInputConnectionIndex(data?.[NODE_INPUT_INDEX_DATA_KEY]);
+  $: inputConnectionIndexPrefix =
+    inputConnectionIndex !== undefined ? `[${inputConnectionIndex}]` : undefined;
   $: commentInputId = `comment-${sanitizeId(id)}`;
   $: commentValue = typeof data?.$comment === "string" ? data.$comment : "";
   $: existingFieldValues = isObject(data?.$fieldValues) ? data.$fieldValues : {};
@@ -204,6 +211,15 @@
       return false;
     }
   }
+
+  function readInputConnectionIndex(candidateIndex) {
+    const normalizedIndex = Number(candidateIndex);
+    if (!Number.isInteger(normalizedIndex) || normalizedIndex < 0) {
+      return undefined;
+    }
+
+    return normalizedIndex;
+  }
 </script>
 
 <div
@@ -243,7 +259,10 @@
             ondblclick={beginTitleEditing}
             onkeydown={handleTitleDisplayKeydown}
           >
-            {nodeLabel}
+            {#if inputConnectionIndexPrefix !== undefined}
+              <span class="mr-1 text-vsc-muted">{inputConnectionIndexPrefix}</span>
+            {/if}
+            <span>{nodeLabel}</span>
           </button>
 
           <button

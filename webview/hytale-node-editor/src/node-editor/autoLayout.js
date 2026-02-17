@@ -93,7 +93,8 @@ export function layoutDirectedGraph({
   }
 
   const normalizedEdges = normalizeEdges(edges, normalizedNodeIds);
-  for (const edge of normalizedEdges) {
+  for (let index = normalizedEdges.length - 1; index >= 0; index -= 1) {
+    const edge = normalizedEdges[index];
     graph.setEdge(edge.source, edge.target);
   }
 

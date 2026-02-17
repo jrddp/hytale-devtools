@@ -33,5 +33,6 @@ export const COMMENT_MUTATION_EVENT = 'hytale-node-editor-comment-mutation';
 export const CUSTOM_MUTATION_EVENT = 'hytale-node-editor-custom-mutation';
 export const RAW_JSON_MUTATION_EVENT = 'hytale-node-editor-raw-json-mutation';
 export const LINK_MUTATION_EVENT = 'hytale-node-editor-link-mutation';
+export const NODE_INPUT_INDEX_DATA_KEY = '$InputConnectionIndex';
 export const PAYLOAD_TEMPLATE_ID_KEY = '$TemplateId';
 export const PAYLOAD_EDITOR_FIELDS_KEY = '$EditorFields';

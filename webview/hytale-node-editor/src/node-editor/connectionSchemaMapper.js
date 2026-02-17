@@ -265,6 +265,7 @@ export function applySchemaEdgesToNodePayloads({
   edges,
   resolveTemplateByNodeId,
   resolveMapKeyForTargetNode,
+  compareTargetsForMultipleConnection,
 }) {
   if (!isObject(nodePayloadById) || typeof resolveTemplateByNodeId !== 'function') {
     return isObject(nodePayloadById) ? { ...nodePayloadById } : {};
@@ -374,7 +375,14 @@ export function applySchemaEdgesToNodePayloads({
       }
 
       if (descriptor.multiple) {
-        sourcePayload[descriptor.schemaKey] = resolvedTargetPayloads.map((entry) => entry.targetPayload);
+        const orderedTargetPayloads = orderMultipleTargetPayloads({
+          sourceNodeId,
+          sourceHandleId,
+          descriptor,
+          targetPayloadEntries: resolvedTargetPayloads,
+          compareTargetsForMultipleConnection,
+        });
+        sourcePayload[descriptor.schemaKey] = orderedTargetPayloads.map((entry) => entry.targetPayload);
         continue;
       }
 
@@ -385,6 +393,42 @@ export function applySchemaEdgesToNodePayloads({
   }
 
   return nextNodePayloadById;
+}
+
+function orderMultipleTargetPayloads({
+  sourceNodeId,
+  sourceHandleId,
+  descriptor,
+  targetPayloadEntries,
+  compareTargetsForMultipleConnection,
+}) {
+  const entries = Array.isArray(targetPayloadEntries) ? targetPayloadEntries : [];
+  if (entries.length <= 1 || typeof compareTargetsForMultipleConnection !== 'function') {
+    return entries;
+  }
+
+  return entries
+    .map((entry, index) => ({
+      entry,
+      index,
+    }))
+    .sort((left, right) => {
+      const compared = compareTargetsForMultipleConnection({
+        sourceNodeId,
+        sourceHandleId,
+        descriptor,
+        leftTargetNodeId: left.entry.targetNodeId,
+        leftTargetPayload: left.entry.targetPayload,
+        rightTargetNodeId: right.entry.targetNodeId,
+        rightTargetPayload: right.entry.targetPayload,
+      });
+      if (Number.isFinite(compared) && compared !== 0) {
+        return compared;
+      }
+
+      return left.index - right.index;
+    })
+    .map((sortedEntry) => sortedEntry.entry);
 }
 
 function buildUniqueMapKey(baseMapKey, usedKeys) {

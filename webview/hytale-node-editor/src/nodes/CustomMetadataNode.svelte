@@ -20,7 +20,10 @@
     isPlainEnterNavigationEvent,
   } from "../node-editor/focusNavigation.js";
   import { getDefaultPinColor } from "../node-editor/pinColorUtils.js";
-  import { CUSTOM_MUTATION_EVENT } from "../node-editor/types.js";
+  import {
+    CUSTOM_MUTATION_EVENT,
+    NODE_INPUT_INDEX_DATA_KEY,
+  } from "../node-editor/types.js";
 
   export let id;
   export let data = {};
@@ -60,6 +63,9 @@
   $: contentMinHeightPx = readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX;
   $: nodeAccentColor = typeof template?.nodeColor === "string" ? template.nodeColor : getDefaultPinColor();
   $: nodeLabel = typeof data?.label === "string" ? data.label : template.label;
+  $: inputConnectionIndex = readInputConnectionIndex(data?.[NODE_INPUT_INDEX_DATA_KEY]);
+  $: inputConnectionIndexPrefix =
+    inputConnectionIndex !== undefined ? `[${inputConnectionIndex}]` : undefined;
   $: commentInputId = `comment-${sanitizeId(id)}`;
   $: commentValue = typeof data?.$comment === "string" ? data.$comment : "";
   $: hasComment = commentValue.trim().length > 0;
@@ -271,6 +277,15 @@
     const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH + 4;
     return estimatedWidth;
   }
+
+  function readInputConnectionIndex(candidateIndex) {
+    const normalizedIndex = Number(candidateIndex);
+    if (!Number.isInteger(normalizedIndex) || normalizedIndex < 0) {
+      return undefined;
+    }
+
+    return normalizedIndex;
+  }
 </script>
 
 <div
@@ -310,7 +325,10 @@
             ondblclick={beginTitleEditing}
             onkeydown={handleTitleDisplayKeydown}
           >
-            {nodeLabel}
+            {#if inputConnectionIndexPrefix !== undefined}
+              <span class="mr-1 text-vsc-muted">{inputConnectionIndexPrefix}</span>
+            {/if}
+            <span>{nodeLabel}</span>
           </button>
 
           <button

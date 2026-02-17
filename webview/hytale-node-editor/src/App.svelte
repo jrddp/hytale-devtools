@@ -9,6 +9,7 @@
     LINK_INPUT_HANDLE_ID,
     LINK_NODE_TYPE,
     LINK_OUTPUT_HANDLE_ID,
+    NODE_INPUT_INDEX_DATA_KEY,
     PAYLOAD_EDITOR_FIELDS_KEY,
     PAYLOAD_TEMPLATE_ID_KEY,
     RAW_JSON_INPUT_HANDLE_ID,
@@ -974,6 +975,7 @@
     const normalizedRuntimeNodes = [];
     const normalizedLinkNodes = [];
     const serializedLinkNodeRecords = [];
+    const runtimeNodeAbsolutePositionById = new Map();
     const nextNodeMetadataById = {};
     let nextNodePayloadById = {};
     const seenNodeIds = new Set();
@@ -1005,6 +1007,7 @@
         index,
         baseMeta?.$Position
       );
+      runtimeNodeAbsolutePositionById.set(nodeId, absolutePosition);
       const commentFromNode =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
@@ -1331,7 +1334,36 @@
       resolveMapKeyForTargetNode({ targetNodeId }) {
         return readNodeMapKey(targetNodeId, state.metadataContext, normalizedRuntimeNodes);
       },
+      compareTargetsForMultipleConnection({ leftTargetNodeId, rightTargetNodeId }) {
+        return compareNodeIdsByAbsolutePosition(
+          leftTargetNodeId,
+          rightTargetNodeId,
+          runtimeNodeAbsolutePositionById
+        );
+      },
     });
+    const multipleInputIndexByNodeId = buildMultipleInputIndexByNodeId({
+      edges: normalizedRuntimeEdges,
+      readSourceMultiplicity({ sourceNodeId, sourceHandleId }) {
+        return readSourceOutputPinConnectionMultiplicity({
+          sourceNodeId,
+          sourceHandleId,
+          nodePayloadById: nextNodePayloadById,
+          context: state.metadataContext,
+        });
+      },
+      compareTargetNodeIds(leftTargetNodeId, rightTargetNodeId) {
+        return compareNodeIdsByAbsolutePosition(
+          leftTargetNodeId,
+          rightTargetNodeId,
+          runtimeNodeAbsolutePositionById
+        );
+      },
+    });
+    const indexedRuntimeNodes = applyMultipleInputIndexToRuntimeNodes(
+      normalizedRuntimeNodes,
+      multipleInputIndexByNodeId
+    );
 
     const preservedFloatingRoots = [];
     const floatingCoveredNodeIds = new Set();
@@ -1427,7 +1459,7 @@
     };
 
     return {
-      nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, ...normalizedRuntimeNodes, ...normalizedLinkNodes],
+      nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, ...indexedRuntimeNodes, ...normalizedLinkNodes],
       edges: normalizedUiEdges,
       metadataContext: nextMetadataContext,
       text: `${JSON.stringify(root, null, 2)}\n`,
@@ -2572,6 +2604,172 @@
     }
 
     return nodeId;
+  }
+
+  function applyMultipleInputIndexToRuntimeNodes(runtimeNodesCandidate, inputIndexByNodeId) {
+    const runtimeNodes = Array.isArray(runtimeNodesCandidate) ? runtimeNodesCandidate : [];
+    if (!(inputIndexByNodeId instanceof Map) || inputIndexByNodeId.size === 0) {
+      return runtimeNodes;
+    }
+
+    return runtimeNodes.map((runtimeNode) => {
+      const runtimeNodeId = normalizeNonEmptyString(runtimeNode?.id);
+      if (!runtimeNodeId) {
+        return runtimeNode;
+      }
+
+      const inputIndex = inputIndexByNodeId.get(runtimeNodeId);
+      if (!Number.isInteger(inputIndex) || inputIndex < 0) {
+        return runtimeNode;
+      }
+
+      return {
+        ...runtimeNode,
+        data: {
+          ...(isObject(runtimeNode?.data) ? runtimeNode.data : {}),
+          [NODE_INPUT_INDEX_DATA_KEY]: inputIndex,
+        },
+      };
+    });
+  }
+
+  function buildMultipleInputIndexByNodeId({
+    edges,
+    readSourceMultiplicity,
+    compareTargetNodeIds,
+  }) {
+    const sourceEdges = Array.isArray(edges) ? edges : [];
+    const targetNodeIdsBySourceHandle = new Map();
+
+    for (const edge of sourceEdges) {
+      const sourceNodeId = normalizeNonEmptyString(edge?.source);
+      const targetNodeId = normalizeNonEmptyString(edge?.target);
+      if (!sourceNodeId || !targetNodeId) {
+        continue;
+      }
+
+      const sourceHandleId = normalizeHandleId(edge?.sourceHandle);
+      const sourceMultiplicity =
+        typeof readSourceMultiplicity === "function"
+          ? readSourceMultiplicity({
+              sourceNodeId,
+              sourceHandleId,
+            })
+          : "single";
+      if (sourceMultiplicity !== "multiple") {
+        continue;
+      }
+
+      const sourceHandleKey = createSourceHandleKey(sourceNodeId, sourceHandleId);
+      if (!targetNodeIdsBySourceHandle.has(sourceHandleKey)) {
+        targetNodeIdsBySourceHandle.set(sourceHandleKey, []);
+      }
+
+      const targetNodeIds = targetNodeIdsBySourceHandle.get(sourceHandleKey);
+      if (!targetNodeIds.includes(targetNodeId)) {
+        targetNodeIds.push(targetNodeId);
+      }
+    }
+
+    const inputIndexByNodeId = new Map();
+    const sortedSourceHandleKeys = Array.from(targetNodeIdsBySourceHandle.keys()).sort((left, right) =>
+      left.localeCompare(right)
+    );
+    for (const sourceHandleKey of sortedSourceHandleKeys) {
+      const targetNodeIds = [...(targetNodeIdsBySourceHandle.get(sourceHandleKey) ?? [])];
+      targetNodeIds.sort((leftTargetNodeId, rightTargetNodeId) => {
+        const compared =
+          typeof compareTargetNodeIds === "function"
+            ? compareTargetNodeIds(leftTargetNodeId, rightTargetNodeId)
+            : 0;
+        if (Number.isFinite(compared) && compared !== 0) {
+          return compared;
+        }
+
+        return leftTargetNodeId.localeCompare(rightTargetNodeId);
+      });
+
+      for (let index = 0; index < targetNodeIds.length; index += 1) {
+        const targetNodeId = targetNodeIds[index];
+        if (!inputIndexByNodeId.has(targetNodeId)) {
+          inputIndexByNodeId.set(targetNodeId, index);
+        }
+      }
+    }
+
+    return inputIndexByNodeId;
+  }
+
+  function readSourceOutputPinConnectionMultiplicity({
+    sourceNodeId,
+    sourceHandleId,
+    nodePayloadById,
+    context = metadataContext,
+  }) {
+    const normalizedSourceNodeId = normalizeNonEmptyString(sourceNodeId);
+    if (!normalizedSourceNodeId || !isObject(nodePayloadById)) {
+      return "single";
+    }
+
+    const sourcePayload = isObject(nodePayloadById[normalizedSourceNodeId])
+      ? nodePayloadById[normalizedSourceNodeId]
+      : undefined;
+    const sourceTemplate = resolveTemplateForConnectionPayload(
+      normalizedSourceNodeId,
+      sourcePayload,
+      context
+    );
+    const outputPins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
+    if (outputPins.length === 0) {
+      return "single";
+    }
+
+    const normalizedSourceHandleId = normalizeHandleId(sourceHandleId);
+    let sourcePin = outputPins.find(
+      (pin) => normalizeHandleId(pin?.id) === normalizedSourceHandleId
+    );
+    if (!sourcePin && normalizedSourceHandleId === undefined && outputPins.length === 1) {
+      sourcePin = outputPins[0];
+    }
+    if (!sourcePin) {
+      return "single";
+    }
+
+    if (sourcePin?.isMap === true) {
+      return "map";
+    }
+
+    if (sourcePin?.multiple === true) {
+      return "multiple";
+    }
+
+    return "single";
+  }
+
+  function compareNodeIdsByAbsolutePosition(leftNodeId, rightNodeId, absolutePositionByNodeId) {
+    if (!(absolutePositionByNodeId instanceof Map)) {
+      return normalizeNonEmptyString(leftNodeId)?.localeCompare(normalizeNonEmptyString(rightNodeId) ?? "") ?? 0;
+    }
+
+    const leftPosition = normalizePosition(absolutePositionByNodeId.get(leftNodeId), 0);
+    const rightPosition = normalizePosition(absolutePositionByNodeId.get(rightNodeId), 0);
+    if (leftPosition.y !== rightPosition.y) {
+      return leftPosition.y - rightPosition.y;
+    }
+
+    if (leftPosition.x !== rightPosition.x) {
+      return leftPosition.x - rightPosition.x;
+    }
+
+    const normalizedLeftNodeId = normalizeNonEmptyString(leftNodeId) ?? "";
+    const normalizedRightNodeId = normalizeNonEmptyString(rightNodeId) ?? "";
+    return normalizedLeftNodeId.localeCompare(normalizedRightNodeId);
+  }
+
+  function createSourceHandleKey(sourceNodeId, sourceHandleId) {
+    const normalizedSourceNodeId = normalizeNonEmptyString(sourceNodeId) ?? "";
+    const normalizedSourceHandleId = normalizeHandleId(sourceHandleId) ?? "";
+    return `${normalizedSourceNodeId}\u0000${normalizedSourceHandleId}`;
   }
 
   function resolveTemplateByPayloadType(payload, context = metadataContext, nodeId = undefined) {
