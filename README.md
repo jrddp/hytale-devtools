@@ -14,14 +14,9 @@ This extension provides tools to make Hytale modding easier.
 ### Command: Add Listener
 - Easily select from all available base game event listeners and generate a function to handle it in your code.
 
-### Auto-Completion and Hints
-- When editing asset JSON files, full auto-completion and description tooltips are now provided for all assets types.
-- Dynamically generated using the same in-game data that the asset editor gets its information from, so it is always up to date.
-- More advanced completion than the base game's asset editor, including dynamically populated auto-completion of other asset IDs.
-
 ## Planned Features
 
-- Asset JSON auto-completion support for Common Asset paths such as setting texture pngs or blockymodels.
+- Custom language handler for asset JSON editing and completions.
 - Improve the experience of opening blockymodels/animations in blockbench from VSCode.
 - Custom node editor for world generation and behavior tree configuration.
 - Custom key-value editor similar to the base game's asset editor to show and edit the full list of available properties and inherited values of an asset.

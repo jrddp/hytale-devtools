@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 import { ensureCompanionModGenerated } from './companion/generateCompanionMod';
 import { registerHytaleNodeEditorProvider } from './editors/hytaleNodeEditorProvider';
-import { initializeJsonSchemaSupport } from './schema/jsonSchemaSupport';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -32,7 +31,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(copyBaseGameAssetCommand);
 
-	context.subscriptions.push(initializeJsonSchemaSupport(context));
 	context.subscriptions.push(registerHytaleNodeEditorProvider(context));
 
 	void ensureCompanionModGenerated(context).catch((error) => {

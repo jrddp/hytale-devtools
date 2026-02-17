@@ -14,7 +14,10 @@
     "Language Packs"
   ],
   "activationEvents": [
-    "onLanguage:json"
+    "onCommand:hytale-devtools.createMod",
+    "onCommand:hytale-devtools.addListener",
+    "onCommand:hytale-devtools.copyBaseGameAsset",
+    "onCustomEditor:hytale-devtools.hytaleNodeEditor"
   ],
   "main": "./dist/extension.js",
   "contributes": {
