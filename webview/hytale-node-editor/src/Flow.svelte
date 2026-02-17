@@ -12,6 +12,7 @@
   import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
   import GroupMetadataNode from "./nodes/GroupMetadataNode.svelte";
+  import LinkMetadataNode from "./nodes/LinkMetadataNode.svelte";
   import RawJsonMetadataNode from "./nodes/RawJsonMetadataNode.svelte";
   import {
     findTemplateByTypeName,
@@ -33,11 +34,15 @@
   import {
     COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
+    GENERIC_ACTION_CREATE_LINK,
     GENERIC_ACTION_CREATE_RAW_JSON,
     GENERIC_ACTION_CREATE_COMMENT,
     GENERIC_ACTION_CREATE_GROUP,
     GENERIC_ADD_CATEGORY,
     GROUP_NODE_TYPE,
+    LINK_INPUT_HANDLE_ID,
+    LINK_NODE_TYPE,
+    LINK_OUTPUT_HANDLE_ID,
     RAW_JSON_INPUT_HANDLE_ID,
     RAW_JSON_NODE_TYPE,
   } from "./node-editor/types.js";
@@ -81,12 +86,20 @@
       label: "Raw JSON Node",
       nodeColor: "var(--vscode-focusBorder)",
     },
+    {
+      kind: "generic-action",
+      actionId: GENERIC_ACTION_CREATE_LINK,
+      category: GENERIC_ADD_CATEGORY,
+      label: "Link",
+      nodeColor: "var(--vscode-descriptionForeground)",
+    },
   ];
 
   const nodeTypes = {
     [COMMENT_NODE_TYPE]: CommentMetadataNode,
     [CUSTOM_NODE_TYPE]: CustomMetadataNode,
     [GROUP_NODE_TYPE]: GroupMetadataNode,
+    [LINK_NODE_TYPE]: LinkMetadataNode,
     [RAW_JSON_NODE_TYPE]: RawJsonMetadataNode,
   };
 
@@ -117,6 +130,15 @@
   }
 
   $: availableAddEntries = resolveAvailableAddEntries(pendingConnection);
+
+  $: {
+    const reconciledEdges = reconcileLinkOutputEdges(edges);
+    if (!areEdgeListsEquivalent(edges, reconciledEdges)) {
+      edges = reconciledEdges;
+      clearPendingSingleSourceReplacement();
+      emitFlowChange("link-output-incompatible-edges-pruned");
+    }
+  }
 
   $: if (loadVersion !== lastNormalizedLoadVersion) {
     lastNormalizedLoadVersion = loadVersion;
@@ -181,6 +203,32 @@
     return true;
   }
 
+  function areEdgeListsEquivalent(leftEdges, rightEdges) {
+    if (
+      !Array.isArray(leftEdges) ||
+      !Array.isArray(rightEdges) ||
+      leftEdges.length !== rightEdges.length
+    ) {
+      return false;
+    }
+
+    for (let index = 0; index < leftEdges.length; index += 1) {
+      const left = leftEdges[index];
+      const right = rightEdges[index];
+      if (
+        normalizeOptionalString(left?.id) !== normalizeOptionalString(right?.id) ||
+        normalizeOptionalString(left?.source) !== normalizeOptionalString(right?.source) ||
+        normalizeOptionalString(left?.target) !== normalizeOptionalString(right?.target) ||
+        normalizeOptionalString(left?.sourceHandle) !== normalizeOptionalString(right?.sourceHandle) ||
+        normalizeOptionalString(left?.targetHandle) !== normalizeOptionalString(right?.targetHandle)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   function handleConnect(connection) {
     const normalizedConnection = normalizeConnection(connection);
     if (!normalizedConnection) {
@@ -194,6 +242,179 @@
     );
     clearPendingSingleSourceReplacement();
     emitFlowChange("edge-created");
+  }
+
+  function reconcileLinkOutputEdges(edgeCandidates) {
+    const normalizedEdges = Array.isArray(edgeCandidates) ? edgeCandidates : [];
+    if (normalizedEdges.length === 0) {
+      return normalizedEdges;
+    }
+
+    const linkNodeIds = new Set(
+      (Array.isArray(nodes) ? nodes : [])
+        .map((node) =>
+          normalizeOptionalString(node?.type) === LINK_NODE_TYPE
+            ? normalizeOptionalString(node?.id)
+            : undefined
+        )
+        .filter(Boolean)
+    );
+    if (linkNodeIds.size === 0) {
+      return normalizedEdges;
+    }
+
+    const outgoingLinkEdgesByNodeId = new Map();
+    for (const edge of normalizedEdges) {
+      const sourceNodeId = normalizeOptionalString(edge?.source);
+      if (!sourceNodeId || !linkNodeIds.has(sourceNodeId)) {
+        continue;
+      }
+
+      if (!isLinkOutputHandleId(edge?.sourceHandle)) {
+        continue;
+      }
+
+      if (!outgoingLinkEdgesByNodeId.has(sourceNodeId)) {
+        outgoingLinkEdgesByNodeId.set(sourceNodeId, []);
+      }
+      outgoingLinkEdgesByNodeId.get(sourceNodeId).push(edge);
+    }
+    if (outgoingLinkEdgesByNodeId.size === 0) {
+      return normalizedEdges;
+    }
+
+    const disallowedEdgeKeys = new Set();
+    const allowedTemplateIdsBySelector = new Map();
+    for (const [linkNodeId, outgoingLinkEdges] of outgoingLinkEdgesByNodeId.entries()) {
+      const sourceDescriptor = resolveSourceDescriptorForLinkOutput(linkNodeId);
+      const connectionMultiplicity = sourceDescriptor?.connectionMultiplicity ?? "single";
+      const sourcePinType = normalizeOptionalString(sourceDescriptor?.pinType);
+      const nodeSelector = normalizeOptionalString(sourceDescriptor?.nodeSelector);
+      const compatibleOutgoingEdges = [];
+
+      for (const outgoingLinkEdge of outgoingLinkEdges) {
+        if (
+          !isCompatibleLinkOutputEdge(outgoingLinkEdge, {
+            sourcePinType,
+            nodeSelector,
+            allowedTemplateIdsBySelector,
+          })
+        ) {
+          disallowedEdgeKeys.add(readEdgeIdentityKey(outgoingLinkEdge));
+          continue;
+        }
+
+        compatibleOutgoingEdges.push(outgoingLinkEdge);
+      }
+
+      if (connectionMultiplicity === "single" && compatibleOutgoingEdges.length > 1) {
+        for (let index = 1; index < compatibleOutgoingEdges.length; index += 1) {
+          disallowedEdgeKeys.add(readEdgeIdentityKey(compatibleOutgoingEdges[index]));
+        }
+      }
+    }
+
+    if (disallowedEdgeKeys.size === 0) {
+      return normalizedEdges;
+    }
+
+    return normalizedEdges.filter(
+      (edge) => !disallowedEdgeKeys.has(readEdgeIdentityKey(edge))
+    );
+  }
+
+  function isCompatibleLinkOutputEdge(edge, context = {}) {
+    const targetNodeId = normalizeOptionalString(edge?.target);
+    if (!targetNodeId) {
+      return false;
+    }
+
+    const targetNode = findNodeById(targetNodeId);
+    if (!targetNode) {
+      return false;
+    }
+
+    const targetNodeType = normalizeOptionalString(targetNode?.type);
+    const sourcePinType = normalizeOptionalString(context?.sourcePinType);
+    const nodeSelector = normalizeOptionalString(context?.nodeSelector);
+
+    if (targetNodeType === LINK_NODE_TYPE) {
+      return isLinkInputHandleId(edge?.targetHandle);
+    }
+
+    if (targetNodeType === RAW_JSON_NODE_TYPE) {
+      const targetHandleId = normalizeOptionalString(edge?.targetHandle);
+      return !targetHandleId || targetHandleId === RAW_JSON_INPUT_HANDLE_ID;
+    }
+
+    if (targetNodeType !== CUSTOM_NODE_TYPE) {
+      return false;
+    }
+
+    const targetTemplate = findTemplateForNodeId(targetNodeId);
+    if (!targetTemplate) {
+      return false;
+    }
+
+    if (nodeSelector) {
+      const allowedTemplateIds = readAllowedTemplateIdsForSelector(
+        nodeSelector,
+        context?.allowedTemplateIdsBySelector
+      );
+      const targetTemplateId = normalizeOptionalString(targetTemplate?.templateId);
+      if (!targetTemplateId || !allowedTemplateIds.has(targetTemplateId)) {
+        return false;
+      }
+    }
+
+    const compatibleTargetHandleId = chooseCompatibleInputHandleId(sourcePinType, targetTemplate);
+    if (!compatibleTargetHandleId) {
+      return false;
+    }
+
+    const targetHandleId = normalizeOptionalString(edge?.targetHandle);
+    if (targetHandleId && targetHandleId !== compatibleTargetHandleId) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function readAllowedTemplateIdsForSelector(selector, cache) {
+    const normalizedSelector = normalizeOptionalString(selector);
+    if (!normalizedSelector) {
+      return new Set();
+    }
+
+    if (cache instanceof Map && cache.has(normalizedSelector)) {
+      return cache.get(normalizedSelector);
+    }
+
+    const templates = getTemplatesForNodeSelector(normalizedSelector, workspaceContext);
+    const allowedTemplateIds = new Set(
+      (Array.isArray(templates) ? templates : [])
+        .map((template) => normalizeOptionalString(template?.templateId))
+        .filter(Boolean)
+    );
+
+    if (cache instanceof Map) {
+      cache.set(normalizedSelector, allowedTemplateIds);
+    }
+
+    return allowedTemplateIds;
+  }
+
+  function readEdgeIdentityKey(edge) {
+    const edgeId = normalizeOptionalString(edge?.id);
+    if (edgeId) {
+      return `id:${edgeId}`;
+    }
+
+    const sourceNodeId = normalizeOptionalString(edge?.source) ?? "";
+    const sourceHandleId = normalizeOptionalString(edge?.sourceHandle) ?? "";
+    const targetNodeId = normalizeOptionalString(edge?.target) ?? "";
+    const targetHandleId = normalizeOptionalString(edge?.targetHandle) ?? "";
+    return `edge:${sourceNodeId}:${sourceHandleId}->${targetNodeId}:${targetHandleId}`;
   }
 
   function handleNodeDragStop() {
@@ -455,6 +676,53 @@
       return;
     }
 
+    if (isGenericLinkCreationEntry(entry)) {
+      const newLinkNode = {
+        id: `Link-${createUuid()}`,
+        type: LINK_NODE_TYPE,
+        data: {
+          label: "Link",
+        },
+        position: {
+          ...pendingNodePosition,
+        },
+        origin: [0.5, 0.0],
+      };
+
+      nodes = [...nodes, newLinkNode];
+
+      const connection = pendingConnection;
+      if (connection?.sourceNodeId) {
+        const normalizedConnection = normalizeConnection({
+          id: createEdgeId({
+            sourceNodeId: connection.sourceNodeId,
+            sourceHandleId: connection.sourceHandleId,
+            targetNodeId: newLinkNode.id,
+            targetHandleId: LINK_INPUT_HANDLE_ID,
+          }),
+          source: connection.sourceNodeId,
+          ...(connection.sourceHandleId
+            ? { sourceHandle: connection.sourceHandleId }
+            : {}),
+          target: newLinkNode.id,
+          targetHandle: LINK_INPUT_HANDLE_ID,
+        });
+
+        if (normalizedConnection) {
+          edges = addEdge(
+            normalizedConnection,
+            pruneConflictingInputEdges(edges, normalizedConnection)
+          );
+        }
+
+        clearPendingSingleSourceReplacement();
+      }
+
+      closeAddNodeMenu();
+      emitFlowChange("link-node-created");
+      return;
+    }
+
     const template = entry;
 
     const newNodeId = `${normalizeNodeType(template.schemaType ?? template.defaultTypeName)}-${createUuid()}`;
@@ -688,6 +956,14 @@
   }
 
   function readSourceHandleMultiplicity(sourceNodeId, sourceHandleId) {
+    const sourceNode = findNodeById(sourceNodeId);
+    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
+      const linkSourceDescriptor = resolveSourceDescriptorForLinkOutput(
+        sourceNodeId
+      );
+      return linkSourceDescriptor?.connectionMultiplicity ?? "single";
+    }
+
     const sourceTemplate = findTemplateForNodeId(sourceNodeId);
     const outputPins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
     const sourcePin = outputPins.find(
@@ -702,6 +978,110 @@
     }
 
     return "single";
+  }
+
+  function resolveSourceDescriptorForLinkOutput(linkNodeId, visitedLinkNodeIds = new Set()) {
+    const normalizedLinkNodeId = normalizeOptionalString(linkNodeId);
+    if (!normalizedLinkNodeId || visitedLinkNodeIds.has(normalizedLinkNodeId)) {
+      return undefined;
+    }
+
+    const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
+    nextVisitedLinkNodeIds.add(normalizedLinkNodeId);
+
+    const inputEdge = findInputEdgeForLinkNode(normalizedLinkNodeId);
+    if (!inputEdge) {
+      return undefined;
+    }
+
+    const sourceNodeId = normalizeOptionalString(inputEdge?.source);
+    if (!sourceNodeId) {
+      return undefined;
+    }
+
+    const sourceNode = findNodeById(sourceNodeId);
+    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
+      return resolveSourceDescriptorForLinkOutput(
+        sourceNodeId,
+        nextVisitedLinkNodeIds
+      );
+    }
+
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
+    const sourceOutputPins = Array.isArray(sourceTemplate?.outputPins)
+      ? sourceTemplate.outputPins
+      : [];
+    if (sourceOutputPins.length === 0) {
+      return undefined;
+    }
+
+    const normalizedSourceHandleId = normalizeOptionalString(inputEdge?.sourceHandle);
+    let sourcePin = sourceOutputPins.find(
+      (pin) => normalizeOptionalString(pin?.id) === normalizedSourceHandleId
+    );
+    if (!sourcePin && !normalizedSourceHandleId && sourceOutputPins.length === 1) {
+      sourcePin = sourceOutputPins[0];
+    }
+    if (!sourcePin) {
+      sourcePin = sourceOutputPins[0];
+    }
+    if (!sourcePin) {
+      return undefined;
+    }
+
+    return {
+      connectionMultiplicity: readOutputPinConnectionMultiplicity(sourcePin),
+      pinType: normalizeOptionalString(sourcePin?.type),
+      nodeSelector: normalizeOptionalString(
+        readSourceConnectionDescriptor(sourceTemplate, sourcePin?.id)?.nodeSelector
+      ),
+    };
+  }
+
+  function readOutputPinConnectionMultiplicity(pin) {
+    if (pin?.isMap === true) {
+      return "map";
+    }
+
+    if (pin?.multiple === true) {
+      return "multiple";
+    }
+
+    return "single";
+  }
+
+  function findInputEdgeForLinkNode(linkNodeId) {
+    const normalizedLinkNodeId = normalizeOptionalString(linkNodeId);
+    if (!normalizedLinkNodeId) {
+      return undefined;
+    }
+
+    const normalizedEdges = Array.isArray(edges) ? edges : [];
+    return normalizedEdges.find(
+      (edge) =>
+        normalizeOptionalString(edge?.target) === normalizedLinkNodeId &&
+        isLinkInputHandleId(edge?.targetHandle)
+    );
+  }
+
+  function isLinkInputHandleId(candidateHandleId) {
+    const normalizedHandleId = normalizeOptionalString(candidateHandleId);
+    return normalizedHandleId === undefined || normalizedHandleId === LINK_INPUT_HANDLE_ID;
+  }
+
+  function isLinkOutputHandleId(candidateHandleId) {
+    const normalizedHandleId = normalizeOptionalString(candidateHandleId);
+    return normalizedHandleId === undefined || normalizedHandleId === LINK_OUTPUT_HANDLE_ID;
+  }
+
+  function findNodeById(nodeId) {
+    const normalizedNodeId = normalizeOptionalString(nodeId);
+    if (!normalizedNodeId) {
+      return undefined;
+    }
+
+    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
+    return normalizedNodes.find((node) => normalizeOptionalString(node?.id) === normalizedNodeId);
   }
 
   function isEdgeFromSourceHandle(edge, sourceNodeId, sourceHandleId) {
@@ -751,6 +1131,12 @@
   }
 
   function chooseTargetHandleForConnection(sourceNodeId, sourceHandleId, targetTemplate) {
+    const sourceNode = findNodeById(sourceNodeId);
+    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
+      const linkSourceDescriptor = resolveSourceDescriptorForLinkOutput(sourceNodeId);
+      return chooseCompatibleInputHandleId(linkSourceDescriptor?.pinType, targetTemplate);
+    }
+
     const sourceTemplate = findTemplateForNodeId(sourceNodeId);
     const sourcePins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
     const sourcePin = sourcePins.find((pin) => pin.id === sourceHandleId);
@@ -758,6 +1144,38 @@
       typeof sourcePin?.type === "string" && sourcePin.type.trim() ? sourcePin.type.trim() : undefined;
 
     return chooseCompatibleInputHandleId(sourcePinType, targetTemplate);
+  }
+
+  function readSourceConnectionDescriptor(sourceTemplate, sourceHandleId) {
+    const sourceConnectionDescriptors = Array.isArray(sourceTemplate?.schemaConnections)
+      ? sourceTemplate.schemaConnections
+      : [];
+    if (sourceConnectionDescriptors.length === 0) {
+      return undefined;
+    }
+
+    const normalizedSourceHandleId = normalizeOptionalString(sourceHandleId);
+    let matchedDescriptor = sourceConnectionDescriptors.find(
+      (descriptor) =>
+        normalizeOptionalString(descriptor?.outputPinId) === normalizedSourceHandleId
+    );
+    if (!matchedDescriptor && !normalizedSourceHandleId && sourceConnectionDescriptors.length === 1) {
+      matchedDescriptor = sourceConnectionDescriptors[0];
+    }
+
+    return matchedDescriptor;
+  }
+
+  function resolveNodeSelectorForSourceConnection(sourceNodeId, sourceHandleId) {
+    const sourceNode = findNodeById(sourceNodeId);
+    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
+      const linkSourceDescriptor = resolveSourceDescriptorForLinkOutput(sourceNodeId);
+      return normalizeOptionalString(linkSourceDescriptor?.nodeSelector);
+    }
+
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
+    const matchedDescriptor = readSourceConnectionDescriptor(sourceTemplate, sourceHandleId);
+    return normalizeOptionalString(matchedDescriptor?.nodeSelector);
   }
 
   function findTemplateForNodeId(nodeId) {
@@ -793,14 +1211,7 @@
       return [...genericEntries, ...allTemplates];
     }
 
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    const sourceConnectionDescriptors = Array.isArray(sourceTemplate?.schemaConnections)
-      ? sourceTemplate.schemaConnections
-      : [];
-    const matchedDescriptor = sourceConnectionDescriptors.find(
-      (descriptor) => descriptor?.outputPinId === sourceHandleId
-    );
-    const selector = normalizeOptionalString(matchedDescriptor?.nodeSelector);
+    const selector = resolveNodeSelectorForSourceConnection(sourceNodeId, sourceHandleId);
     if (!selector) {
       return [...genericEntries, ...allTemplates];
     }
@@ -911,6 +1322,13 @@
     );
   }
 
+  function isGenericLinkCreationEntry(candidate) {
+    return (
+      normalizeOptionalString(candidate?.kind) === "generic-action" &&
+      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_LINK
+    );
+  }
+
   function isDeleteKey(event) {
     const key = normalizeOptionalString(event?.key);
     return key === "Delete" || key === "Backspace";
@@ -941,6 +1359,7 @@
   on:hytale-node-editor-comment-mutation={handleMetadataMutation}
   on:hytale-node-editor-custom-mutation={handleMetadataMutation}
   on:hytale-node-editor-raw-json-mutation={handleMetadataMutation}
+  on:hytale-node-editor-link-mutation={handleMetadataMutation}
 />
 
 <div

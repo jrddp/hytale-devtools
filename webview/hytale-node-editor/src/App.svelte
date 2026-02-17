@@ -6,6 +6,9 @@
     COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
     GROUP_NODE_TYPE,
+    LINK_INPUT_HANDLE_ID,
+    LINK_NODE_TYPE,
+    LINK_OUTPUT_HANDLE_ID,
     PAYLOAD_EDITOR_FIELDS_KEY,
     PAYLOAD_TEMPLATE_ID_KEY,
     RAW_JSON_INPUT_HANDLE_ID,
@@ -81,6 +84,8 @@
   const RAW_JSON_DEFAULT_DATA_VALUE = "{\n\n}";
   const GROUP_NODE_ID_PREFIX = "__group__";
   const COMMENT_NODE_ID_PREFIX = "__comment__";
+  const LINK_NODE_ID_PREFIX = "Link";
+  const LINK_DEFAULT_LABEL = "Link";
   const DEFAULT_GROUP_NAME = "Group";
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
@@ -375,6 +380,14 @@
       ...Object.keys(context.nodeMetadataById),
       ...Object.keys(context.nodePayloadById),
     ]);
+    const metadataLinkNodeIds = new Set(
+      Object.keys(isObject(context?.linkById) ? context.linkById : {})
+        .map((linkNodeId) => normalizeLinkNodeId(linkNodeId))
+        .filter((linkNodeId) => linkNodeId !== undefined)
+    );
+    for (const linkNodeId of metadataLinkNodeIds) {
+      nodeIds.delete(linkNodeId);
+    }
 
     const parsedEdges = extractSchemaEdgesFromNodePayloads({
       nodePayloadById: context.nodePayloadById,
@@ -460,34 +473,372 @@
       });
     }
 
-    const normalizedParsedEdges = parsedEdges.map((edge) => {
-      const targetNodeId = normalizeNonEmptyString(edge?.target);
-      if (
-        targetNodeId &&
-        rawRuntimeNodeIds.has(targetNodeId) &&
-        !normalizeNonEmptyString(edge?.targetHandle)
-      ) {
-        return {
-          ...edge,
-          targetHandle: RAW_JSON_INPUT_HANDLE_ID,
-        };
-      }
-
-      return edge;
-    });
-
     const normalizedRuntimeFlowNodes =
       options?.applyAutoLayout === true
-        ? applyLegacyMissingPositionAutoLayout(runtimeFlowNodes, normalizedParsedEdges)
+        ? applyLegacyMissingPositionAutoLayout(runtimeFlowNodes, parsedEdges)
         : runtimeFlowNodes;
+    const linkFlowNodes = buildLinkFlowNodes(context.linkById);
+    const linkMetadataEdges = buildFlowEdgesFromLinkMetadata(context.linkById);
+    const runtimeNodeIds = new Set(normalizedRuntimeFlowNodes.map((node) => node.id));
+    const linkNodeIds = new Set(linkFlowNodes.map((node) => node.id));
+    const collapsedRuntimeEdgesFromLinks = collectCollapsedRuntimeEdgesFromLinkEdges({
+      edges: linkMetadataEdges,
+      runtimeNodeIdSet: runtimeNodeIds,
+      linkNodeIdSet: linkNodeIds,
+    });
+    const collapsedRuntimeEdgeKeySet = new Set(
+      collapsedRuntimeEdgesFromLinks
+        .map((edge) => buildNormalizedEdgeConnectionKey(edge, rawRuntimeNodeIds))
+        .filter((edgeKey) => edgeKey !== undefined)
+    );
+    const filteredParsedEdges = parsedEdges.filter((edge) => {
+      const edgeKey = buildNormalizedEdgeConnectionKey(edge, rawRuntimeNodeIds);
+      if (!edgeKey) {
+        return false;
+      }
+
+      return !collapsedRuntimeEdgeKeySet.has(edgeKey);
+    });
+    const knownFlowNodeIds = new Set([
+      ...normalizedRuntimeFlowNodes.map((node) => node.id),
+      ...linkFlowNodes.map((node) => node.id),
+    ]);
+    const normalizedParsedEdges = normalizeFlowEdgesForRendering(
+      [...filteredParsedEdges, ...linkMetadataEdges],
+      {
+        rawRuntimeNodeIds,
+        knownFlowNodeIds,
+      }
+    );
+
     const groupFlowNodes = buildGroupFlowNodes(context.groups);
     const commentFlowNodes = buildCommentFlowNodes(context.comments);
-    const groupedRuntimeNodes = assignNodesToGroups(normalizedRuntimeFlowNodes, groupFlowNodes);
+    const groupedFlowNodes = assignNodesToGroups(
+      [...normalizedRuntimeFlowNodes, ...linkFlowNodes],
+      groupFlowNodes
+    );
 
     return {
-      nodes: [...groupFlowNodes, ...commentFlowNodes, ...groupedRuntimeNodes],
+      nodes: [...groupFlowNodes, ...commentFlowNodes, ...groupedFlowNodes],
       edges: normalizedParsedEdges,
     };
+  }
+
+  function buildLinkFlowNodes(linkByIdCandidate) {
+    if (!isObject(linkByIdCandidate)) {
+      return [];
+    }
+
+    const sourceLinkById = linkByIdCandidate;
+    const linkFlowNodes = [];
+    const seenLinkNodeIds = new Set();
+
+    for (const [linkNodeIdCandidate, linkMetadataCandidate] of Object.entries(sourceLinkById)) {
+      const linkNodeId = normalizeLinkNodeId(linkNodeIdCandidate);
+      if (!linkNodeId || seenLinkNodeIds.has(linkNodeId)) {
+        continue;
+      }
+      seenLinkNodeIds.add(linkNodeId);
+
+      const linkMetadata = isObject(linkMetadataCandidate) ? linkMetadataCandidate : {};
+      const position = normalizePosition(linkMetadata?.$Position, linkFlowNodes.length);
+      const label = normalizeNonEmptyString(linkMetadata?.$Title) ?? LINK_DEFAULT_LABEL;
+      const comment = normalizeNonEmptyString(linkMetadata?.$Comment);
+
+      linkFlowNodes.push({
+        id: linkNodeId,
+        type: LINK_NODE_TYPE,
+        data: {
+          label,
+          ...(comment !== undefined ? { $comment: comment } : {}),
+        },
+        position,
+      });
+    }
+
+    return linkFlowNodes;
+  }
+
+  function buildFlowEdgesFromLinkMetadata(linkByIdCandidate) {
+    if (!isObject(linkByIdCandidate)) {
+      return [];
+    }
+
+    const sourceLinkById = linkByIdCandidate;
+    const linkEdges = [];
+
+    for (const [linkNodeIdCandidate, linkMetadataCandidate] of Object.entries(sourceLinkById)) {
+      const linkNodeId = normalizeLinkNodeId(linkNodeIdCandidate);
+      if (!linkNodeId) {
+        continue;
+      }
+
+      const linkMetadata = isObject(linkMetadataCandidate) ? linkMetadataCandidate : {};
+      const inputConnections = readLinkConnectionTokens(
+        linkMetadata,
+        "inputConnections",
+        "sourceEndpoint"
+      );
+      const outputConnections = readLinkConnectionTokens(
+        linkMetadata,
+        "outputConnections",
+        "targetEndpoint"
+      );
+
+      for (const inputConnection of inputConnections) {
+        const parsedInputConnection = parseLinkConnectionToken(inputConnection);
+        if (!parsedInputConnection?.nodeId) {
+          continue;
+        }
+
+        linkEdges.push({
+          source: parsedInputConnection.nodeId,
+          ...(parsedInputConnection.handleId
+            ? { sourceHandle: parsedInputConnection.handleId }
+            : {}),
+          target: linkNodeId,
+          targetHandle: LINK_INPUT_HANDLE_ID,
+        });
+      }
+
+      for (const outputConnection of outputConnections) {
+        const parsedOutputConnection = parseLinkConnectionToken(outputConnection);
+        if (!parsedOutputConnection?.nodeId) {
+          continue;
+        }
+
+        linkEdges.push({
+          source: linkNodeId,
+          sourceHandle: LINK_OUTPUT_HANDLE_ID,
+          target: parsedOutputConnection.nodeId,
+          ...(parsedOutputConnection.handleId
+            ? { targetHandle: parsedOutputConnection.handleId }
+            : {}),
+        });
+      }
+    }
+
+    return linkEdges;
+  }
+
+  function normalizeFlowEdgesForRendering(edgesCandidate, options = {}) {
+    const sourceEdges = Array.isArray(edgesCandidate) ? edgesCandidate : [];
+    const rawRuntimeNodeIds =
+      options?.rawRuntimeNodeIds instanceof Set ? options.rawRuntimeNodeIds : new Set();
+    const knownFlowNodeIds =
+      options?.knownFlowNodeIds instanceof Set ? options.knownFlowNodeIds : undefined;
+    const normalizedEdges = [];
+    const seenEdgeIds = new Set();
+
+    for (const candidate of sourceEdges) {
+      const sourceNodeId = normalizeNonEmptyString(candidate?.source);
+      const targetNodeId = normalizeNonEmptyString(candidate?.target);
+      if (!sourceNodeId || !targetNodeId) {
+        continue;
+      }
+
+      if (knownFlowNodeIds) {
+        if (!knownFlowNodeIds.has(sourceNodeId) || !knownFlowNodeIds.has(targetNodeId)) {
+          continue;
+        }
+      }
+
+      const sourceHandleId = normalizeHandleId(candidate?.sourceHandle);
+      const targetHandleId = normalizeHandleId(candidate?.targetHandle);
+      const normalizedTargetHandleId =
+        targetHandleId ?? (rawRuntimeNodeIds.has(targetNodeId) ? RAW_JSON_INPUT_HANDLE_ID : undefined);
+      const edgeId =
+        normalizeNonEmptyString(candidate?.id) ??
+        `${sourceNodeId}:${sourceHandleId ?? "source"}--${targetNodeId}:${normalizedTargetHandleId ?? "target"}`;
+      if (seenEdgeIds.has(edgeId)) {
+        continue;
+      }
+      seenEdgeIds.add(edgeId);
+
+      normalizedEdges.push({
+        id: edgeId,
+        source: sourceNodeId,
+        ...(sourceHandleId !== undefined ? { sourceHandle: sourceHandleId } : {}),
+        target: targetNodeId,
+        ...(normalizedTargetHandleId !== undefined ? { targetHandle: normalizedTargetHandleId } : {}),
+      });
+    }
+
+    return normalizedEdges;
+  }
+
+  function collectCollapsedRuntimeEdgesFromLinkEdges({
+    edges,
+    runtimeNodeIdSet,
+    linkNodeIdSet,
+  }) {
+    const sourceEdges = Array.isArray(edges) ? edges : [];
+    const runtimeNodeIds = runtimeNodeIdSet instanceof Set ? runtimeNodeIdSet : new Set();
+    const linkNodeIds = linkNodeIdSet instanceof Set ? linkNodeIdSet : new Set();
+    if (linkNodeIds.size === 0 || sourceEdges.length === 0) {
+      return [];
+    }
+
+    const normalizedEdges = [];
+    for (const sourceEdge of sourceEdges) {
+      const sourceNodeId = normalizeNonEmptyString(sourceEdge?.source);
+      const targetNodeId = normalizeNonEmptyString(sourceEdge?.target);
+      if (!sourceNodeId || !targetNodeId) {
+        continue;
+      }
+
+      normalizedEdges.push({
+        source: sourceNodeId,
+        target: targetNodeId,
+        sourceHandle: normalizeHandleId(sourceEdge?.sourceHandle),
+        targetHandle: normalizeHandleId(sourceEdge?.targetHandle),
+      });
+    }
+
+    const incomingByLinkId = new Map();
+    const outgoingByLinkId = new Map();
+    for (const edge of normalizedEdges) {
+      if (linkNodeIds.has(edge.target) && isLinkInputHandleId(edge.targetHandle)) {
+        if (!incomingByLinkId.has(edge.target)) {
+          incomingByLinkId.set(edge.target, []);
+        }
+        incomingByLinkId.get(edge.target).push(edge);
+      }
+
+      if (linkNodeIds.has(edge.source) && isLinkOutputHandleId(edge.sourceHandle)) {
+        if (!outgoingByLinkId.has(edge.source)) {
+          outgoingByLinkId.set(edge.source, []);
+        }
+        outgoingByLinkId.get(edge.source).push(edge);
+      }
+    }
+
+    function collectRuntimeSourcesForLink(linkNodeId, visitedLinkNodeIds = new Set()) {
+      if (visitedLinkNodeIds.has(linkNodeId)) {
+        return [];
+      }
+
+      const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
+      nextVisitedLinkNodeIds.add(linkNodeId);
+      const incomingEdges = incomingByLinkId.get(linkNodeId) ?? [];
+      const sourceEndpoints = [];
+
+      for (const incomingEdge of incomingEdges) {
+        const sourceNodeId = normalizeNonEmptyString(incomingEdge?.source);
+        if (!sourceNodeId) {
+          continue;
+        }
+
+        if (linkNodeIds.has(sourceNodeId)) {
+          sourceEndpoints.push(
+            ...collectRuntimeSourcesForLink(sourceNodeId, nextVisitedLinkNodeIds)
+          );
+          continue;
+        }
+
+        if (!runtimeNodeIds.has(sourceNodeId)) {
+          continue;
+        }
+
+        sourceEndpoints.push({
+          nodeId: sourceNodeId,
+          handleId: normalizeHandleId(incomingEdge?.sourceHandle),
+        });
+      }
+
+      return dedupeLinkEndpointEntries(sourceEndpoints);
+    }
+
+    function collectRuntimeTargetsForLink(linkNodeId, visitedLinkNodeIds = new Set()) {
+      if (visitedLinkNodeIds.has(linkNodeId)) {
+        return [];
+      }
+
+      const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
+      nextVisitedLinkNodeIds.add(linkNodeId);
+      const outgoingEdges = outgoingByLinkId.get(linkNodeId) ?? [];
+      const targetEndpoints = [];
+
+      for (const outgoingEdge of outgoingEdges) {
+        const targetNodeId = normalizeNonEmptyString(outgoingEdge?.target);
+        if (!targetNodeId) {
+          continue;
+        }
+
+        if (linkNodeIds.has(targetNodeId)) {
+          targetEndpoints.push(
+            ...collectRuntimeTargetsForLink(targetNodeId, nextVisitedLinkNodeIds)
+          );
+          continue;
+        }
+
+        if (!runtimeNodeIds.has(targetNodeId)) {
+          continue;
+        }
+
+        targetEndpoints.push({
+          nodeId: targetNodeId,
+          handleId: normalizeHandleId(outgoingEdge?.targetHandle),
+        });
+      }
+
+      return dedupeLinkEndpointEntries(targetEndpoints);
+    }
+
+    const collapsedRuntimeEdges = [];
+    const seenCollapsedEdgeKeys = new Set();
+    for (const linkNodeId of linkNodeIds) {
+      const runtimeSources = collectRuntimeSourcesForLink(linkNodeId);
+      const runtimeTargets = collectRuntimeTargetsForLink(linkNodeId);
+      if (runtimeSources.length === 0 || runtimeTargets.length === 0) {
+        continue;
+      }
+
+      for (const runtimeSource of runtimeSources) {
+        for (const runtimeTarget of runtimeTargets) {
+          if (
+            runtimeSource.nodeId === runtimeTarget.nodeId &&
+            (runtimeSource.handleId ?? "") === (runtimeTarget.handleId ?? "")
+          ) {
+            continue;
+          }
+
+          const edgeKey = `${runtimeSource.nodeId}:${runtimeSource.handleId ?? ""}->${runtimeTarget.nodeId}:${runtimeTarget.handleId ?? ""}`;
+          if (seenCollapsedEdgeKeys.has(edgeKey)) {
+            continue;
+          }
+          seenCollapsedEdgeKeys.add(edgeKey);
+
+          collapsedRuntimeEdges.push({
+            source: runtimeSource.nodeId,
+            ...(runtimeSource.handleId !== undefined
+              ? { sourceHandle: runtimeSource.handleId }
+              : {}),
+            target: runtimeTarget.nodeId,
+            ...(runtimeTarget.handleId !== undefined
+              ? { targetHandle: runtimeTarget.handleId }
+              : {}),
+          });
+        }
+      }
+    }
+
+    return collapsedRuntimeEdges;
+  }
+
+  function buildNormalizedEdgeConnectionKey(edgeCandidate, rawRuntimeNodeIds = new Set()) {
+    const sourceNodeId = normalizeNonEmptyString(edgeCandidate?.source);
+    const targetNodeId = normalizeNonEmptyString(edgeCandidate?.target);
+    if (!sourceNodeId || !targetNodeId) {
+      return undefined;
+    }
+
+    const sourceHandleId = normalizeHandleId(edgeCandidate?.sourceHandle);
+    const targetHandleId = normalizeHandleId(edgeCandidate?.targetHandle);
+    const normalizedTargetHandleId =
+      targetHandleId ?? (rawRuntimeNodeIds.has(targetNodeId) ? RAW_JSON_INPUT_HANDLE_ID : undefined);
+
+    return `${sourceNodeId}:${sourceHandleId ?? ""}->${targetNodeId}:${normalizedTargetHandleId ?? ""}`;
   }
 
   function applyLegacyMissingPositionAutoLayout(runtimeNodesCandidate, edgesCandidate) {
@@ -621,6 +972,8 @@
         : new Set();
 
     const normalizedRuntimeNodes = [];
+    const normalizedLinkNodes = [];
+    const serializedLinkNodeRecords = [];
     const nextNodeMetadataById = {};
     let nextNodePayloadById = {};
     const seenNodeIds = new Set();
@@ -631,6 +984,7 @@
     const inputCommentNodes = inputNodes.filter((candidate) => isCommentFlowNode(candidate));
     const normalizedCommentNodes = normalizeCommentFlowNodes(inputCommentNodes);
     const groupNodeById = new Map(normalizedGroupNodes.map((groupNode) => [groupNode.id, groupNode]));
+    const inputLinkNodes = inputNodes.filter((candidate) => isLinkFlowNode(candidate));
     const inputRuntimeNodes = inputNodes.filter((candidate) => !isMetadataFlowNode(candidate));
     for (let index = 0; index < inputRuntimeNodes.length; index += 1) {
       const candidate = inputRuntimeNodes[index];
@@ -823,6 +1177,57 @@
       });
     }
 
+    const seenLinkNodeIds = new Set();
+    for (let index = 0; index < inputLinkNodes.length; index += 1) {
+      const candidate = inputLinkNodes[index];
+      const nodeId = normalizeLinkNodeId(candidate?.id) ?? normalizeNodeId(undefined, LINK_NODE_ID_PREFIX);
+      if (seenLinkNodeIds.has(nodeId)) {
+        continue;
+      }
+      seenLinkNodeIds.add(nodeId);
+
+      const baseLink = isObject(knownLinks?.[nodeId]) ? { ...knownLinks[nodeId] } : {};
+      const absolutePosition = readAbsoluteNodePosition(
+        candidate,
+        groupNodeById,
+        index,
+        baseLink?.$Position
+      );
+      const label =
+        normalizeNonEmptyString(candidate?.data?.label) ??
+        normalizeNonEmptyString(baseLink?.$Title) ??
+        LINK_DEFAULT_LABEL;
+      const comment =
+        normalizeNonEmptyString(candidate?.data?.$comment) ??
+        normalizeNonEmptyString(baseLink?.$Comment);
+
+      const parentGroup = findContainingGroupForPosition(absolutePosition, normalizedGroupNodes);
+      const position = parentGroup
+        ? {
+            x: absolutePosition.x - parentGroup.position.x,
+            y: absolutePosition.y - parentGroup.position.y,
+          }
+        : absolutePosition;
+
+      normalizedLinkNodes.push({
+        id: nodeId,
+        type: LINK_NODE_TYPE,
+        data: {
+          label,
+          ...(comment !== undefined ? { $comment: comment } : {}),
+        },
+        position,
+        ...(parentGroup ? { parentId: parentGroup.id } : {}),
+      });
+      serializedLinkNodeRecords.push({
+        id: nodeId,
+        label,
+        absolutePosition,
+        ...(comment !== undefined ? { comment } : {}),
+        baseLink,
+      });
+    }
+
     if (normalizedRuntimeNodes.length === 0) {
       const fallbackNode = createDefaultFlowNode(state.metadataContext);
       const fallbackContext = {
@@ -854,18 +1259,40 @@
 
       return buildSerializedState({
         ...state,
-        nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, fallbackNode],
+        nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, ...normalizedLinkNodes, fallbackNode],
         metadataContext: fallbackContext,
       });
     }
 
     const nodeIdSet = new Set(normalizedRuntimeNodes.map((node) => node.id));
-    const normalizedEdges = [];
+    const linkNodeIdSet = new Set(normalizedLinkNodes.map((node) => node.id));
+    const rawRuntimeNodeIdSet = new Set(
+      normalizedRuntimeNodes
+        .filter((node) => isRawJsonFlowNode(node))
+        .map((node) => node.id)
+    );
+    const flowVisibleNodeIdSet = new Set([...nodeIdSet, ...linkNodeIdSet]);
+    const linkSerialization = serializeLinksFromFlowState({
+      linkNodes: serializedLinkNodeRecords,
+      edges: state.edges,
+      knownLinks,
+      runtimeNodeIdSet: nodeIdSet,
+      linkNodeIdSet,
+    });
+    const normalizedUiEdges = normalizeFlowEdgesForRendering(state.edges, {
+      rawRuntimeNodeIds: rawRuntimeNodeIdSet,
+      knownFlowNodeIds: flowVisibleNodeIdSet,
+    });
+    const normalizedRuntimeEdges = [];
     const seenEdgeIds = new Set();
-    const inputEdges = Array.isArray(state.edges) ? state.edges : [];
+    const seenConnectionKeys = new Set();
+    const runtimeInputEdges = [
+      ...normalizedUiEdges,
+      ...linkSerialization.collapsedRuntimeEdges,
+    ];
 
-    for (let index = 0; index < inputEdges.length; index += 1) {
-      const candidate = inputEdges[index];
+    for (let index = 0; index < runtimeInputEdges.length; index += 1) {
+      const candidate = runtimeInputEdges[index];
       const source = typeof candidate?.source === "string" ? candidate.source : undefined;
       const target = typeof candidate?.target === "string" ? candidate.target : undefined;
       if (!source || !target || !nodeIdSet.has(source) || !nodeIdSet.has(target)) {
@@ -878,13 +1305,15 @@
         typeof candidate?.id === "string" && candidate.id.trim()
           ? candidate.id.trim()
           : `${source}:${sourceHandle ?? "source"}--${target}:${targetHandle ?? "target"}`;
+      const connectionKey = `${source}:${sourceHandle ?? ""}->${target}:${targetHandle ?? ""}`;
 
-      if (seenEdgeIds.has(edgeId)) {
+      if (seenEdgeIds.has(edgeId) || seenConnectionKeys.has(connectionKey)) {
         continue;
       }
       seenEdgeIds.add(edgeId);
+      seenConnectionKeys.add(connectionKey);
 
-      normalizedEdges.push({
+      normalizedRuntimeEdges.push({
         id: edgeId,
         source,
         ...(sourceHandle !== undefined ? { sourceHandle } : {}),
@@ -895,7 +1324,7 @@
 
     nextNodePayloadById = applySchemaEdgesToNodePayloads({
       nodePayloadById: nextNodePayloadById,
-      edges: normalizedEdges,
+      edges: normalizedRuntimeEdges,
       resolveTemplateByNodeId(nodeId, payload) {
         return resolveTemplateForConnectionPayload(nodeId, payload, state.metadataContext);
       },
@@ -976,7 +1405,7 @@
         : {},
       nodeMetadataById: nextNodeMetadataById,
       nodePayloadById: nextNodePayloadById,
-      linkById: isObject(knownLinks) ? { ...knownLinks } : {},
+      linkById: linkSerialization.linkById,
     };
 
     const metadata = {
@@ -998,11 +1427,373 @@
     };
 
     return {
-      nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, ...normalizedRuntimeNodes],
-      edges: normalizedEdges,
+      nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, ...normalizedRuntimeNodes, ...normalizedLinkNodes],
+      edges: normalizedUiEdges,
       metadataContext: nextMetadataContext,
       text: `${JSON.stringify(root, null, 2)}\n`,
     };
+  }
+
+  function serializeLinksFromFlowState({
+    linkNodes,
+    edges,
+    knownLinks,
+    runtimeNodeIdSet,
+    linkNodeIdSet,
+  }) {
+    const normalizedLinkNodes = Array.isArray(linkNodes) ? linkNodes : [];
+    const sourceEdges = Array.isArray(edges) ? edges : [];
+    const knownLinkById = isObject(knownLinks) ? knownLinks : {};
+    const runtimeNodeIds = runtimeNodeIdSet instanceof Set ? runtimeNodeIdSet : new Set();
+    const linkNodeIds =
+      linkNodeIdSet instanceof Set
+        ? linkNodeIdSet
+        : new Set(
+            normalizedLinkNodes
+              .map((node) => normalizeLinkNodeId(node?.id))
+              .filter((nodeId) => nodeId !== undefined)
+          );
+
+    const normalizedEdges = [];
+    for (const sourceEdge of sourceEdges) {
+      const sourceNodeId = normalizeNonEmptyString(sourceEdge?.source);
+      const targetNodeId = normalizeNonEmptyString(sourceEdge?.target);
+      if (!sourceNodeId || !targetNodeId) {
+        continue;
+      }
+
+      normalizedEdges.push({
+        source: sourceNodeId,
+        target: targetNodeId,
+        sourceHandle: normalizeHandleId(sourceEdge?.sourceHandle),
+        targetHandle: normalizeHandleId(sourceEdge?.targetHandle),
+      });
+    }
+
+    const incomingByLinkId = new Map();
+    const outgoingByLinkId = new Map();
+    for (const normalizedEdge of normalizedEdges) {
+      if (
+        linkNodeIds.has(normalizedEdge.target) &&
+        isLinkInputHandleId(normalizedEdge.targetHandle)
+      ) {
+        if (!incomingByLinkId.has(normalizedEdge.target)) {
+          incomingByLinkId.set(normalizedEdge.target, []);
+        }
+        incomingByLinkId.get(normalizedEdge.target).push(normalizedEdge);
+      }
+
+      if (
+        linkNodeIds.has(normalizedEdge.source) &&
+        isLinkOutputHandleId(normalizedEdge.sourceHandle)
+      ) {
+        if (!outgoingByLinkId.has(normalizedEdge.source)) {
+          outgoingByLinkId.set(normalizedEdge.source, []);
+        }
+        outgoingByLinkId.get(normalizedEdge.source).push(normalizedEdge);
+      }
+    }
+
+    const collapsedRuntimeEdges = [];
+    const seenCollapsedEdgeKeys = new Set();
+
+    function collectRuntimeSourcesForLink(linkNodeId, visitedLinkNodeIds = new Set()) {
+      if (visitedLinkNodeIds.has(linkNodeId)) {
+        return [];
+      }
+
+      const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
+      nextVisitedLinkNodeIds.add(linkNodeId);
+      const incomingEdges = incomingByLinkId.get(linkNodeId) ?? [];
+      const sourceEndpoints = [];
+
+      for (const incomingEdge of incomingEdges) {
+        const sourceNodeId = normalizeNonEmptyString(incomingEdge?.source);
+        if (!sourceNodeId) {
+          continue;
+        }
+
+        if (linkNodeIds.has(sourceNodeId)) {
+          sourceEndpoints.push(
+            ...collectRuntimeSourcesForLink(sourceNodeId, nextVisitedLinkNodeIds)
+          );
+          continue;
+        }
+
+        if (!runtimeNodeIds.has(sourceNodeId)) {
+          continue;
+        }
+
+        sourceEndpoints.push({
+          nodeId: sourceNodeId,
+          handleId: normalizeHandleId(incomingEdge?.sourceHandle),
+        });
+      }
+
+      return dedupeLinkEndpointEntries(sourceEndpoints);
+    }
+
+    function collectRuntimeTargetsForLink(linkNodeId, visitedLinkNodeIds = new Set()) {
+      if (visitedLinkNodeIds.has(linkNodeId)) {
+        return [];
+      }
+
+      const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
+      nextVisitedLinkNodeIds.add(linkNodeId);
+      const outgoingEdges = outgoingByLinkId.get(linkNodeId) ?? [];
+      const targetEndpoints = [];
+
+      for (const outgoingEdge of outgoingEdges) {
+        const targetNodeId = normalizeNonEmptyString(outgoingEdge?.target);
+        if (!targetNodeId) {
+          continue;
+        }
+
+        if (linkNodeIds.has(targetNodeId)) {
+          targetEndpoints.push(
+            ...collectRuntimeTargetsForLink(targetNodeId, nextVisitedLinkNodeIds)
+          );
+          continue;
+        }
+
+        if (!runtimeNodeIds.has(targetNodeId)) {
+          continue;
+        }
+
+        targetEndpoints.push({
+          nodeId: targetNodeId,
+          handleId: normalizeHandleId(outgoingEdge?.targetHandle),
+        });
+      }
+
+      return dedupeLinkEndpointEntries(targetEndpoints);
+    }
+
+    const nextLinkById = {};
+    for (const linkNode of normalizedLinkNodes) {
+      const linkNodeId = normalizeLinkNodeId(linkNode?.id);
+      if (!linkNodeId) {
+        continue;
+      }
+
+      const inputConnectionTokens = dedupeConnectionTokens(
+        (incomingByLinkId.get(linkNodeId) ?? [])
+          .map((incomingEdge) =>
+            formatLinkConnectionToken(
+              normalizeNonEmptyString(incomingEdge?.source),
+              normalizeHandleId(incomingEdge?.sourceHandle)
+            )
+          )
+          .filter((candidate) => candidate !== undefined)
+      );
+      const outputConnectionTokens = dedupeConnectionTokens(
+        (outgoingByLinkId.get(linkNodeId) ?? [])
+          .map((outgoingEdge) =>
+            formatLinkConnectionToken(
+              normalizeNonEmptyString(outgoingEdge?.target),
+              normalizeHandleId(outgoingEdge?.targetHandle)
+            )
+          )
+          .filter((candidate) => candidate !== undefined)
+      );
+      const sourceEndpoint = inputConnectionTokens[0];
+      const targetEndpoint = outputConnectionTokens[0];
+      const baseLink = isObject(linkNode?.baseLink)
+        ? linkNode.baseLink
+        : isObject(knownLinkById[linkNodeId])
+          ? knownLinkById[linkNodeId]
+          : {};
+      const nextLinkEntry = {
+        ...(isObject(baseLink) ? { ...baseLink } : {}),
+        $Position: {
+          $x: normalizePosition(linkNode?.absolutePosition, 0).x,
+          $y: normalizePosition(linkNode?.absolutePosition, 0).y,
+        },
+        inputConnections: inputConnectionTokens,
+        outputConnections: outputConnectionTokens,
+      };
+      if (sourceEndpoint !== undefined) {
+        nextLinkEntry.sourceEndpoint = sourceEndpoint;
+      } else {
+        delete nextLinkEntry.sourceEndpoint;
+      }
+      if (targetEndpoint !== undefined) {
+        nextLinkEntry.targetEndpoint = targetEndpoint;
+      } else {
+        delete nextLinkEntry.targetEndpoint;
+      }
+
+      const title = normalizeNonEmptyString(linkNode?.label);
+      if (title !== undefined) {
+        nextLinkEntry.$Title = title;
+      } else {
+        delete nextLinkEntry.$Title;
+      }
+
+      const comment = normalizeNonEmptyString(linkNode?.comment);
+      if (comment !== undefined) {
+        nextLinkEntry.$Comment = comment;
+      } else {
+        delete nextLinkEntry.$Comment;
+      }
+
+      nextLinkById[linkNodeId] = nextLinkEntry;
+
+      const runtimeSources = collectRuntimeSourcesForLink(linkNodeId);
+      const runtimeTargets = collectRuntimeTargetsForLink(linkNodeId);
+      if (runtimeSources.length === 0 || runtimeTargets.length === 0) {
+        continue;
+      }
+
+      for (const runtimeSource of runtimeSources) {
+        for (const runtimeTarget of runtimeTargets) {
+          if (
+            runtimeSource.nodeId === runtimeTarget.nodeId &&
+            (runtimeSource.handleId ?? "") === (runtimeTarget.handleId ?? "")
+          ) {
+            continue;
+          }
+
+          const collapsedEdgeKey = `${runtimeSource.nodeId}:${runtimeSource.handleId ?? ""}->${runtimeTarget.nodeId}:${runtimeTarget.handleId ?? ""}`;
+          if (seenCollapsedEdgeKeys.has(collapsedEdgeKey)) {
+            continue;
+          }
+          seenCollapsedEdgeKeys.add(collapsedEdgeKey);
+
+          collapsedRuntimeEdges.push({
+            source: runtimeSource.nodeId,
+            ...(runtimeSource.handleId !== undefined
+              ? { sourceHandle: runtimeSource.handleId }
+              : {}),
+            target: runtimeTarget.nodeId,
+            ...(runtimeTarget.handleId !== undefined
+              ? { targetHandle: runtimeTarget.handleId }
+              : {}),
+          });
+        }
+      }
+    }
+
+    return {
+      linkById: nextLinkById,
+      collapsedRuntimeEdges,
+    };
+  }
+
+  function dedupeLinkEndpointEntries(endpointEntriesCandidate) {
+    const sourceEndpointEntries = Array.isArray(endpointEntriesCandidate)
+      ? endpointEntriesCandidate
+      : [];
+    const dedupedEndpointEntries = [];
+    const seenEndpointKeys = new Set();
+
+    for (const endpointEntry of sourceEndpointEntries) {
+      const nodeId = normalizeNonEmptyString(endpointEntry?.nodeId);
+      if (!nodeId) {
+        continue;
+      }
+
+      const handleId = normalizeHandleId(endpointEntry?.handleId);
+      const endpointKey = `${nodeId}:${handleId ?? ""}`;
+      if (seenEndpointKeys.has(endpointKey)) {
+        continue;
+      }
+      seenEndpointKeys.add(endpointKey);
+
+      dedupedEndpointEntries.push({
+        nodeId,
+        ...(handleId !== undefined ? { handleId } : {}),
+      });
+    }
+
+    return dedupedEndpointEntries;
+  }
+
+  function normalizeLinkNodeId(candidateNodeId) {
+    return normalizeNonEmptyString(candidateNodeId);
+  }
+
+  function isLinkInputHandleId(candidateHandleId) {
+    const normalizedHandleId = normalizeHandleId(candidateHandleId);
+    return normalizedHandleId === undefined || normalizedHandleId === LINK_INPUT_HANDLE_ID;
+  }
+
+  function isLinkOutputHandleId(candidateHandleId) {
+    const normalizedHandleId = normalizeHandleId(candidateHandleId);
+    return normalizedHandleId === undefined || normalizedHandleId === LINK_OUTPUT_HANDLE_ID;
+  }
+
+  function parseLinkConnectionToken(connectionToken) {
+    const normalizedToken = normalizeNonEmptyString(connectionToken);
+    if (!normalizedToken) {
+      return undefined;
+    }
+
+    const separatorIndex = normalizedToken.indexOf(":");
+    if (separatorIndex < 0) {
+      return {
+        nodeId: normalizedToken,
+      };
+    }
+
+    const nodeId = normalizeNonEmptyString(normalizedToken.slice(0, separatorIndex));
+    if (!nodeId) {
+      return undefined;
+    }
+
+    const handleId = normalizeHandleId(normalizedToken.slice(separatorIndex + 1));
+    return {
+      nodeId,
+      ...(handleId !== undefined ? { handleId } : {}),
+    };
+  }
+
+  function formatLinkConnectionToken(nodeIdCandidate, handleIdCandidate) {
+    const nodeId = normalizeNonEmptyString(nodeIdCandidate);
+    if (!nodeId) {
+      return undefined;
+    }
+
+    const handleId = normalizeHandleId(handleIdCandidate);
+    return handleId !== undefined ? `${nodeId}:${handleId}` : nodeId;
+  }
+
+  function readLinkConnectionTokens(linkMetadataCandidate, listKey, endpointFallbackKey) {
+    const linkMetadata = isObject(linkMetadataCandidate) ? linkMetadataCandidate : {};
+    const fromList = Array.isArray(linkMetadata?.[listKey])
+      ? linkMetadata[listKey]
+          .map((candidate) => normalizeNonEmptyString(candidate))
+          .filter((candidate) => candidate !== undefined)
+      : [];
+    if (fromList.length > 0) {
+      return dedupeConnectionTokens(fromList);
+    }
+
+    const fallbackEndpoint = normalizeNonEmptyString(linkMetadata?.[endpointFallbackKey]);
+    if (fallbackEndpoint !== undefined) {
+      return [fallbackEndpoint];
+    }
+
+    return [];
+  }
+
+  function dedupeConnectionTokens(connectionTokensCandidate) {
+    const sourceConnectionTokens = Array.isArray(connectionTokensCandidate)
+      ? connectionTokensCandidate
+      : [];
+    const dedupedConnectionTokens = [];
+    const seenConnectionTokens = new Set();
+
+    for (const sourceConnectionToken of sourceConnectionTokens) {
+      const normalizedToken = normalizeNonEmptyString(sourceConnectionToken);
+      if (!normalizedToken || seenConnectionTokens.has(normalizedToken)) {
+        continue;
+      }
+      seenConnectionTokens.add(normalizedToken);
+      dedupedConnectionTokens.push(normalizedToken);
+    }
+
+    return dedupedConnectionTokens;
   }
 
   function buildRawJsonPayloadBody(payloadCandidate) {
@@ -1061,6 +1852,10 @@
     return normalizeNonEmptyString(candidateNode?.type) === RAW_JSON_NODE_TYPE;
   }
 
+  function isLinkFlowNode(candidateNode) {
+    return normalizeNonEmptyString(candidateNode?.type) === LINK_NODE_TYPE;
+  }
+
   function normalizeRawJsonNodeId(candidateNodeId) {
     const normalizedCandidateNodeId = normalizeNonEmptyString(candidateNodeId);
     if (normalizedCandidateNodeId) {
@@ -1071,7 +1866,11 @@
   }
 
   function isMetadataFlowNode(candidateNode) {
-    return isGroupFlowNode(candidateNode) || isCommentFlowNode(candidateNode);
+    return (
+      isGroupFlowNode(candidateNode) ||
+      isCommentFlowNode(candidateNode) ||
+      isLinkFlowNode(candidateNode)
+    );
   }
 
   function buildGroupFlowNodes(groupsCandidate) {
