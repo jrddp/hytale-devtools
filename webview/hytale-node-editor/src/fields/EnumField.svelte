@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { ChevronDown } from 'lucide-svelte';
   import { getFieldLabel, normalizeFieldOptions } from '../node-editor/fieldValueUtils.js';
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
 
@@ -177,23 +178,29 @@
 
 <div class="relative flex flex-col gap-1">
   <label class="text-xs text-vsc-muted" for={inputId}>{label}</label>
-  <input
-    bind:this={inputElement}
-    id={inputId}
-    class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-    type="text"
-    autocomplete="off"
-    spellcheck="false"
-    value={draftText}
-    role="combobox"
-    aria-expanded={isOpen}
-    aria-controls={listId}
-    aria-autocomplete="list"
-    oninput={handleInput}
-    onclick={handleInputClick}
-    onkeydown={handleKeyDown}
-    onblur={handleBlur}
-  />
+  <div class="relative">
+    <input
+      bind:this={inputElement}
+      id={inputId}
+      class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 pr-7 text-xs text-vsc-input-fg"
+      type="text"
+      autocomplete="off"
+      spellcheck="false"
+      value={draftText}
+      role="combobox"
+      aria-expanded={isOpen}
+      aria-controls={listId}
+      aria-autocomplete="list"
+      oninput={handleInput}
+      onclick={handleInputClick}
+      onkeydown={handleKeyDown}
+      onblur={handleBlur}
+    />
+    <ChevronDown
+      class="pointer-events-none absolute right-2 top-1/2 size-3.5 -translate-y-1/2 text-vsc-muted"
+      aria-hidden="true"
+    />
+  </div>
   {#if isOpen}
     <div
       id={listId}
