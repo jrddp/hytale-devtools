@@ -52,6 +52,7 @@
   export let loadVersion = 0;
   export let templateSourceMode = "workspace-hg-java";
   export let workspaceContext = {};
+  export let rootNodeId = undefined;
 
   const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
   const DEFAULT_GROUP_WIDTH = 520;
@@ -60,6 +61,7 @@
   const RAW_JSON_DEFAULT_LABEL = "Raw JSON Node";
   const RAW_JSON_FIELD_ID = "Data";
   const RAW_JSON_DEFAULT_DATA = "{\n\n}";
+  const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
   const MIN_FLOW_ZOOM = 0;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const dispatch = createEventDispatcher();
@@ -1296,8 +1298,10 @@
     initialFitInProgress = true;
     await tick();
 
-    if (Array.isArray(nodes) && nodes.length > 0) {
+    const initialFitNodeIds = resolveInitialFitNodeIds(nodes, rootNodeId);
+    if (initialFitNodeIds.length > 0) {
       fitView({
+        nodes: initialFitNodeIds,
         padding: 0.2,
         minZoom: MIN_FLOW_ZOOM,
         duration: 0,
@@ -1307,6 +1311,59 @@
     hasAppliedInitialFit = true;
     initialViewportReady = true;
     initialFitInProgress = false;
+  }
+
+  function resolveInitialFitNodeIds(nodesCandidate, rootNodeIdCandidate) {
+    const nodeList = Array.isArray(nodesCandidate) ? nodesCandidate : [];
+    if (nodeList.length === 0) {
+      return [];
+    }
+
+    const resolvedRootNodeId =
+      normalizeOptionalString(rootNodeIdCandidate) ?? ROOT_NODE_ID;
+    const rootNode = nodeList.find(
+      (node) => normalizeOptionalString(node?.id) === resolvedRootNodeId
+    );
+    if (!rootNode) {
+      return [];
+    }
+
+    const rootPosition = readNodePosition(rootNode);
+    if (!rootPosition) {
+      return [];
+    }
+
+    const fitNodeIdSet = new Set([resolvedRootNodeId]);
+    for (const node of nodeList) {
+      const nodeId = normalizeOptionalString(node?.id);
+      if (!nodeId) {
+        continue;
+      }
+
+      const nodePosition = readNodePosition(node);
+      if (!nodePosition) {
+        continue;
+      }
+
+      const dx = nodePosition.x - rootPosition.x;
+      const dy = nodePosition.y - rootPosition.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance <= INITIAL_FIT_ROOT_DISTANCE_LIMIT) {
+        fitNodeIdSet.add(nodeId);
+      }
+    }
+
+    return Array.from(fitNodeIdSet, (nodeId) => ({ id: nodeId }));
+  }
+
+  function readNodePosition(nodeCandidate) {
+    const x = nodeCandidate?.position?.x;
+    const y = nodeCandidate?.position?.y;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      return undefined;
+    }
+
+    return { x, y };
   }
 
   function isObject(value) {

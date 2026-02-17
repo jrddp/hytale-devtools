@@ -2907,6 +2907,7 @@
       loadVersion={graphLoadVersion}
       templateSourceMode={templateSourceMode}
       workspaceContext={metadataContext?.workspaceContext}
+      rootNodeId={metadataContext?.rootNodeId}
       on:flowchange={handleFlowChange}
     />
   </SvelteFlowProvider>
