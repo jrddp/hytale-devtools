@@ -33,6 +33,11 @@
     COMMENT_DEFAULT_WIDTH,
   } from "./node-editor/commentMetadata.js";
   import {
+    collectRecursiveDescendantNodeIds,
+    layoutDirectedGraphWithNodeSizes,
+    readLayoutOriginFromPositions,
+  } from "./node-editor/autoLayout.js";
+  import {
     COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
     GENERIC_ACTION_CREATE_LINK,
@@ -456,7 +461,109 @@
   }
 
   function handleQuickActionAutoPositionNodes() {
-    console.info("[node-editor] Quick action is not implemented yet: Auto Position Nodes");
+    const autoLayoutSeedNodeIds = resolveAutoLayoutSeedNodeIds();
+    const allowedNodeIds = (Array.isArray(nodes) ? nodes : [])
+      .filter((nodeCandidate) => isAutoLayoutEligibleNode(nodeCandidate))
+      .map((nodeCandidate) => normalizeOptionalString(nodeCandidate?.id))
+      .filter(Boolean);
+    const targetNodeIds = collectRecursiveDescendantNodeIds({
+      seedNodeIds: autoLayoutSeedNodeIds,
+      edges,
+      allowedNodeIds,
+    });
+    if (targetNodeIds.length === 0) {
+      console.info("[node-editor] Quick action could not resolve nodes for auto-layout.");
+      return;
+    }
+
+    const targetNodeIdSet = new Set(targetNodeIds);
+    const targetNodesById = new Map();
+    const absolutePositionByNodeId = new Map();
+    for (const targetNodeId of targetNodeIds) {
+      const targetNode = findNodeById(targetNodeId);
+      if (!targetNode) {
+        continue;
+      }
+
+      const absolutePosition = readAbsoluteNodePosition(targetNode);
+      if (!absolutePosition) {
+        continue;
+      }
+
+      targetNodesById.set(targetNodeId, targetNode);
+      absolutePositionByNodeId.set(targetNodeId, absolutePosition);
+    }
+
+    if (targetNodesById.size === 0 || absolutePositionByNodeId.size === 0) {
+      return;
+    }
+
+    const layoutOrigin = readLayoutOriginFromPositions(Array.from(absolutePositionByNodeId.values()));
+    const layoutEdges = (Array.isArray(edges) ? edges : [])
+      .map((edge) => ({
+        source: normalizeOptionalString(edge?.source),
+        target: normalizeOptionalString(edge?.target),
+      }))
+      .filter(
+        (edge) =>
+          edge.source &&
+          edge.target &&
+          targetNodeIdSet.has(edge.source) &&
+          targetNodeIdSet.has(edge.target)
+      );
+    const layoutNodes = Array.from(targetNodesById.entries()).map(([nodeId, nodeCandidate]) => {
+      const nodeDimensions = readNodeDimensions(nodeCandidate);
+      return {
+        id: nodeId,
+        width: nodeDimensions?.width,
+        height: nodeDimensions?.height,
+      };
+    });
+    const layoutedPositionByNodeId = layoutDirectedGraphWithNodeSizes({
+      nodes: layoutNodes,
+      edges: layoutEdges,
+      spacing: {
+        marginX: 0,
+        marginY: 0,
+      },
+      origin: layoutOrigin,
+    });
+
+    let hasPositionUpdates = false;
+    nodes = (Array.isArray(nodes) ? nodes : []).map((nodeCandidate) => {
+      const nodeId = normalizeOptionalString(nodeCandidate?.id);
+      if (!nodeId || !targetNodeIdSet.has(nodeId)) {
+        return nodeCandidate;
+      }
+
+      const layoutedAbsolutePosition = layoutedPositionByNodeId.get(nodeId);
+      if (!layoutedAbsolutePosition) {
+        return nodeCandidate;
+      }
+
+      const nextRelativePosition = convertAbsolutePositionToNodeSpace(
+        nodeCandidate,
+        layoutedAbsolutePosition
+      );
+      if (!nextRelativePosition) {
+        return nodeCandidate;
+      }
+
+      const currentPosition = readNodePosition(nodeCandidate);
+      if (!currentPosition || areNodePositionsDifferent(currentPosition, nextRelativePosition)) {
+        hasPositionUpdates = true;
+        return {
+          ...nodeCandidate,
+          position: nextRelativePosition,
+        };
+      }
+
+      return nodeCandidate;
+    });
+
+    if (hasPositionUpdates) {
+      emitFlowChange("auto-layout-applied");
+    }
   }
 
   function handleQuickActionViewRawJson() {
@@ -1493,6 +1600,62 @@
       x: parentAbsolutePosition.x + relativePosition.x,
       y: parentAbsolutePosition.y + relativePosition.y,
     };
+  }
+
+  function resolveAutoLayoutSeedNodeIds() {
+    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
+    const selectedNodeIds = normalizedNodes
+      .filter((nodeCandidate) => nodeCandidate?.selected === true && isAutoLayoutEligibleNode(nodeCandidate))
+      .map((nodeCandidate) => normalizeOptionalString(nodeCandidate?.id))
+      .filter(Boolean);
+
+    if (selectedNodeIds.length > 0) {
+      return Array.from(new Set(selectedNodeIds));
+    }
+
+    const rootNode = resolveRootNodeForNavigation();
+    const rootNodeId =
+      isAutoLayoutEligibleNode(rootNode) ? normalizeOptionalString(rootNode?.id) : undefined;
+    return rootNodeId ? [rootNodeId] : [];
+  }
+
+  function isAutoLayoutEligibleNode(nodeCandidate) {
+    const nodeType = normalizeOptionalString(nodeCandidate?.type);
+    return nodeType !== GROUP_NODE_TYPE && nodeType !== COMMENT_NODE_TYPE;
+  }
+
+  function convertAbsolutePositionToNodeSpace(nodeCandidate, absolutePositionCandidate) {
+    const absolutePosition = readNodePosition({ position: absolutePositionCandidate });
+    if (!absolutePosition) {
+      return undefined;
+    }
+
+    const parentNodeId = normalizeOptionalString(nodeCandidate?.parentId);
+    if (!parentNodeId) {
+      return absolutePosition;
+    }
+
+    const parentNode = findNodeById(parentNodeId);
+    if (!parentNode) {
+      return absolutePosition;
+    }
+
+    const parentAbsolutePosition = readAbsoluteNodePosition(parentNode);
+    if (!parentAbsolutePosition) {
+      return absolutePosition;
+    }
+
+    return {
+      x: absolutePosition.x - parentAbsolutePosition.x,
+      y: absolutePosition.y - parentAbsolutePosition.y,
+    };
+  }
+
+  function areNodePositionsDifferent(leftPosition, rightPosition) {
+    return (
+      Math.abs(leftPosition.x - rightPosition.x) > 0.001 ||
+      Math.abs(leftPosition.y - rightPosition.y) > 0.001
+    );
   }
 
   function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {

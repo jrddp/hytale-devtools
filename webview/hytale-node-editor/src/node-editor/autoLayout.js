@@ -17,6 +17,11 @@ function normalizeFiniteNumber(value, fallback) {
   return Number.isFinite(numericValue) ? numericValue : fallback;
 }
 
+function normalizePositiveFiniteNumber(value, fallback) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) && numericValue > 0 ? numericValue : fallback;
+}
+
 function normalizeDirection(direction) {
   const normalizedDirection = normalizeNonEmptyString(direction)?.toUpperCase();
   return normalizedDirection === "TB" || normalizedDirection === "LR"
@@ -33,6 +38,29 @@ function normalizeNodeIds(nodeIdsCandidate) {
         .filter((nodeId) => nodeId !== undefined)
     )
   ).sort((left, right) => left.localeCompare(right));
+}
+
+function normalizeLayoutNodes(layoutNodesCandidate) {
+  const layoutNodes = Array.isArray(layoutNodesCandidate) ? layoutNodesCandidate : [];
+  const normalizedNodes = [];
+  const seenNodeIds = new Set();
+
+  for (const layoutNode of layoutNodes) {
+    const nodeId = normalizeNonEmptyString(layoutNode?.id);
+    if (!nodeId || seenNodeIds.has(nodeId)) {
+      continue;
+    }
+
+    seenNodeIds.add(nodeId);
+    normalizedNodes.push({
+      id: nodeId,
+      width: normalizePositiveFiniteNumber(layoutNode?.width, DEFAULT_NODE_WIDTH),
+      height: normalizePositiveFiniteNumber(layoutNode?.height, DEFAULT_NODE_HEIGHT),
+    });
+  }
+
+  normalizedNodes.sort((left, right) => left.id.localeCompare(right.id));
+  return normalizedNodes;
 }
 
 function normalizeEdges(edgesCandidate, knownNodeIds) {
@@ -53,21 +81,107 @@ function normalizeEdges(edgesCandidate, knownNodeIds) {
   return normalizedEdges;
 }
 
-export function layoutDirectedGraph({
-  nodeIds,
+export function readLayoutOriginFromPositions(positionsCandidate) {
+  const positions = Array.isArray(positionsCandidate) ? positionsCandidate : [];
+  if (positions.length === 0) {
+    return { x: 0, y: 0 };
+  }
+
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  for (const position of positions) {
+    const x = Number(position?.x);
+    const y = Number(position?.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      continue;
+    }
+
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+  }
+
+  if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+    return { x: 0, y: 0 };
+  }
+
+  return { x: minX, y: minY };
+}
+
+export function collectRecursiveDescendantNodeIds({
+  seedNodeIds,
+  edges,
+  allowedNodeIds,
+} = {}) {
+  const normalizedSeedNodeIds = normalizeNodeIds(seedNodeIds);
+  if (normalizedSeedNodeIds.length === 0) {
+    return [];
+  }
+
+  const normalizedAllowedNodeIds = normalizeNodeIds(allowedNodeIds);
+  const allowedNodeIdSet =
+    normalizedAllowedNodeIds.length > 0
+      ? new Set(normalizedAllowedNodeIds)
+      : undefined;
+
+  const childNodeIdsByParentNodeId = new Map();
+  for (const edge of Array.isArray(edges) ? edges : []) {
+    const sourceNodeId = normalizeNonEmptyString(edge?.source);
+    const targetNodeId = normalizeNonEmptyString(edge?.target);
+    if (!sourceNodeId || !targetNodeId) {
+      continue;
+    }
+
+    if (
+      allowedNodeIdSet &&
+      (!allowedNodeIdSet.has(sourceNodeId) || !allowedNodeIdSet.has(targetNodeId))
+    ) {
+      continue;
+    }
+
+    if (!childNodeIdsByParentNodeId.has(sourceNodeId)) {
+      childNodeIdsByParentNodeId.set(sourceNodeId, new Set());
+    }
+    childNodeIdsByParentNodeId.get(sourceNodeId).add(targetNodeId);
+  }
+
+  const visitedNodeIds = new Set(
+    allowedNodeIdSet
+      ? normalizedSeedNodeIds.filter((nodeId) => allowedNodeIdSet.has(nodeId))
+      : normalizedSeedNodeIds
+  );
+  const pendingNodeIds = Array.from(visitedNodeIds);
+  while (pendingNodeIds.length > 0) {
+    const currentNodeId = pendingNodeIds.shift();
+    const childNodeIds = childNodeIdsByParentNodeId.get(currentNodeId);
+    if (!(childNodeIds instanceof Set)) {
+      continue;
+    }
+
+    for (const childNodeId of childNodeIds) {
+      if (visitedNodeIds.has(childNodeId)) {
+        continue;
+      }
+
+      visitedNodeIds.add(childNodeId);
+      pendingNodeIds.push(childNodeId);
+    }
+  }
+
+  return Array.from(visitedNodeIds);
+}
+
+export function layoutDirectedGraphWithNodeSizes({
+  nodes,
   edges,
   direction = DEFAULT_DIRECTION,
-  nodeSize = {},
   spacing = {},
   origin = {},
 } = {}) {
-  const normalizedNodeIds = normalizeNodeIds(nodeIds);
-  if (normalizedNodeIds.length === 0) {
+  const normalizedLayoutNodes = normalizeLayoutNodes(nodes);
+  if (normalizedLayoutNodes.length === 0) {
     return new Map();
   }
 
-  const nodeWidth = normalizeFiniteNumber(nodeSize?.width, DEFAULT_NODE_WIDTH);
-  const nodeHeight = normalizeFiniteNumber(nodeSize?.height, DEFAULT_NODE_HEIGHT);
   const nodeSep = normalizeFiniteNumber(spacing?.nodeSep, DEFAULT_NODE_SEP);
   const rankSep = normalizeFiniteNumber(spacing?.rankSep, DEFAULT_RANK_SEP);
   const marginX = normalizeFiniteNumber(spacing?.marginX, DEFAULT_MARGIN_X);
@@ -85,14 +199,22 @@ export function layoutDirectedGraph({
     marginy: marginY,
   });
 
-  for (const nodeId of normalizedNodeIds) {
-    graph.setNode(nodeId, {
-      width: nodeWidth,
-      height: nodeHeight,
+  const nodeSizeByNodeId = new Map();
+  for (const node of normalizedLayoutNodes) {
+    nodeSizeByNodeId.set(node.id, {
+      width: node.width,
+      height: node.height,
+    });
+    graph.setNode(node.id, {
+      width: node.width,
+      height: node.height,
     });
   }
 
-  const normalizedEdges = normalizeEdges(edges, normalizedNodeIds);
+  const normalizedEdges = normalizeEdges(
+    edges,
+    normalizedLayoutNodes.map((node) => node.id)
+  );
   for (let index = normalizedEdges.length - 1; index >= 0; index -= 1) {
     const edge = normalizedEdges[index];
     graph.setEdge(edge.source, edge.target);
@@ -101,17 +223,44 @@ export function layoutDirectedGraph({
   dagre.layout(graph);
 
   const positionsByNodeId = new Map();
-  for (const nodeId of normalizedNodeIds) {
-    const nodeWithCenterAnchor = graph.node(nodeId);
-    if (!nodeWithCenterAnchor) {
+  for (const node of normalizedLayoutNodes) {
+    const nodeWithCenterAnchor = graph.node(node.id);
+    const nodeSize = nodeSizeByNodeId.get(node.id);
+    if (!nodeWithCenterAnchor || !nodeSize) {
       continue;
     }
 
-    positionsByNodeId.set(nodeId, {
-      x: nodeWithCenterAnchor.x - nodeWidth / 2 + offsetX,
-      y: nodeWithCenterAnchor.y - nodeHeight / 2 + offsetY,
+    positionsByNodeId.set(node.id, {
+      x: nodeWithCenterAnchor.x - nodeSize.width / 2 + offsetX,
+      y: nodeWithCenterAnchor.y - nodeSize.height / 2 + offsetY,
     });
   }
 
   return positionsByNodeId;
+}
+
+export function layoutDirectedGraph({
+  nodeIds,
+  edges,
+  direction = DEFAULT_DIRECTION,
+  nodeSize = {},
+  spacing = {},
+  origin = {},
+} = {}) {
+  const normalizedNodeIds = normalizeNodeIds(nodeIds);
+  const nodeWidth = normalizePositiveFiniteNumber(nodeSize?.width, DEFAULT_NODE_WIDTH);
+  const nodeHeight = normalizePositiveFiniteNumber(nodeSize?.height, DEFAULT_NODE_HEIGHT);
+  const layoutNodes = normalizedNodeIds.map((nodeId) => ({
+    id: nodeId,
+    width: nodeWidth,
+    height: nodeHeight,
+  }));
+
+  return layoutDirectedGraphWithNodeSizes({
+    nodes: layoutNodes,
+    edges,
+    direction,
+    spacing,
+    origin,
+  });
 }
