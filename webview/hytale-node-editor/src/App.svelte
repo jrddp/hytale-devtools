@@ -382,12 +382,19 @@
         : {};
       const payloadForTemplate = getPayloadForTemplateResolution(payload, nodeId, context);
       const position = normalizePosition(nodeMeta?.$Position, index);
-      const label = readNodeLabel(nodeId, nodeMeta, undefined, payloadForTemplate, context);
+      const templateId = readTemplateId(undefined, payloadForTemplate, context);
+      const label = readNodeLabel(
+        nodeId,
+        nodeMeta,
+        undefined,
+        payloadForTemplate,
+        context,
+        templateId
+      );
       const comment =
         typeof payloadForTemplate.$Comment === "string" && payloadForTemplate.$Comment.trim()
           ? payloadForTemplate.$Comment.trim()
           : undefined;
-      const templateId = readTemplateId(undefined, payloadForTemplate, context);
       const fieldValues = readFieldValues(undefined, payloadForTemplate, templateId, context);
 
       runtimeFlowNodes.push({
@@ -571,13 +578,6 @@
         index,
         baseMeta?.$Position
       );
-      const label = readNodeLabel(
-        nodeId,
-        baseMeta,
-        candidate?.data?.label,
-        payloadForTemplate,
-        state.metadataContext
-      );
       const comment =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
@@ -586,6 +586,14 @@
         candidate?.data?.[NODE_TEMPLATE_DATA_KEY],
         payloadForTemplate,
         state.metadataContext
+      );
+      const label = readNodeLabel(
+        nodeId,
+        baseMeta,
+        candidate?.data?.label,
+        payloadForTemplate,
+        state.metadataContext,
+        templateId
       );
       const fieldValues = readFieldValues(
         candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY],
@@ -599,7 +607,14 @@
         $y: absolutePosition.y,
       };
 
-      if (label !== defaultLabelForNodeId(nodeId) || typeof baseMeta.$Title === "string") {
+      const hasExistingExplicitTitle = normalizeNonEmptyString(baseMeta.$Title) !== undefined;
+      const defaultComputedLabel = readDefaultNodeLabel(
+        nodeId,
+        payloadForTemplate,
+        state.metadataContext,
+        templateId
+      );
+      if (label !== defaultComputedLabel || hasExistingExplicitTitle) {
         baseMeta.$Title = label;
       } else {
         delete baseMeta.$Title;
@@ -1087,7 +1102,7 @@
       id: nodeId,
       type: CUSTOM_NODE_TYPE,
       data: {
-        label: defaultLabelForNodeId(nodeId),
+        label: normalizeNonEmptyString(defaultTemplate.label) ?? defaultLabelForNodeId(nodeId),
         [NODE_TEMPLATE_DATA_KEY]: defaultTemplate.templateId,
         [NODE_FIELD_VALUES_DATA_KEY]: defaultTemplate.buildInitialValues(),
       },
@@ -1095,7 +1110,14 @@
     };
   }
 
-  function readNodeLabel(nodeId, nodeMeta, candidateLabel, payload, context = metadataContext) {
+  function readNodeLabel(
+    nodeId,
+    nodeMeta,
+    candidateLabel,
+    payload,
+    context = metadataContext,
+    templateId = undefined
+  ) {
     const fromCandidate =
       typeof candidateLabel === "string" && candidateLabel.trim() ? candidateLabel.trim() : undefined;
     if (fromCandidate !== undefined) {
@@ -1109,13 +1131,24 @@
       return fromMeta;
     }
 
+    return readDefaultNodeLabel(nodeId, payload, context, templateId);
+  }
+
+  function readDefaultNodeLabel(nodeId, payload, context = metadataContext, templateId = undefined) {
+    const template = resolveTemplateForPayload(payload, nodeId, context, templateId);
+    const fromTemplate = normalizeNonEmptyString(template?.label);
+    if (fromTemplate !== undefined) {
+      return fromTemplate;
+    }
+
     const workspaceDefinition = getWorkspaceDefinitionForContext(context);
     const variantIdentity = readPayloadVariantIdentity(payload, workspaceDefinition, {
       nodeId: payload?.$NodeId ?? nodeId,
       includeNodeIdFallback: true,
     });
-    if (variantIdentity?.value !== undefined) {
-      return variantIdentity.value;
+    const fromVariantIdentity = normalizeNonEmptyString(variantIdentity?.value);
+    if (fromVariantIdentity !== undefined) {
+      return fromVariantIdentity;
     }
 
     const fromNodeIdType = readTypeFromNodeId(payload?.$NodeId ?? nodeId);
