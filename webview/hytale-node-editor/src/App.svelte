@@ -158,6 +158,10 @@
     applyFlowState(detail.nodes, detail.edges);
   }
 
+  function handleViewRawJsonRequest() {
+    vscode.postMessage({ type: "openRawJson" });
+  }
+
   function applyFlowState(nextNodes, nextEdges) {
     const serialized = buildSerializedState({
       nodes: Array.isArray(nextNodes) ? nextNodes : [],
@@ -2917,6 +2921,7 @@
       workspaceContext={metadataContext?.workspaceContext}
       rootNodeId={metadataContext?.rootNodeId}
       on:flowchange={handleFlowChange}
+      on:viewrawjson={handleViewRawJsonRequest}
     />
   </SvelteFlowProvider>
 </main>

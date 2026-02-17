@@ -460,7 +460,7 @@
   }
 
   function handleQuickActionViewRawJson() {
-    console.info("[node-editor] Quick action is not implemented yet: View Raw JSON");
+    dispatch("viewrawjson");
   }
 
   function handleQuickActionHelpAndHotkeys() {

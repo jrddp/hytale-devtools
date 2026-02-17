@@ -3,7 +3,8 @@ import * as fs from 'node:fs';
 
 type WebviewToExtensionMessage =
 	| { type: 'ready' }
-	| { type: 'apply'; text: string; sourceVersion?: number };
+	| { type: 'apply'; text: string; sourceVersion?: number }
+	| { type: 'openRawJson' };
 
 type ExtensionToWebviewMessage =
 	| { type: 'update'; text: string; version: number; documentPath: string }
@@ -73,6 +74,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 					case 'apply':
 						void this.applyWebviewEdits(document, message, webviewPanel.webview, updateWebview);
 						return;
+					case 'openRawJson':
+						void this.openRawJsonInTextEditor(document, webviewPanel);
+						return;
 					default:
 						return;
 				}
@@ -109,6 +113,18 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 		if (!applied) {
 			await this.postError(webview, 'VS Code rejected the edit request.');
 		}
+	}
+
+	private async openRawJsonInTextEditor(
+		document: vscode.TextDocument,
+		webviewPanel: vscode.WebviewPanel
+	): Promise<void> {
+		const targetViewColumn = webviewPanel.viewColumn ?? vscode.ViewColumn.Active;
+		await vscode.window.showTextDocument(document, {
+			viewColumn: targetViewColumn,
+			preserveFocus: false,
+			preview: true
+		});
 	}
 
 	private async postError(webview: vscode.Webview, message: string): Promise<void> {
