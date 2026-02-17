@@ -5,7 +5,7 @@
   "icon": "media/icon.png",
   "description": "Hytale modding made easy",
   "repository": "https://github.com/jrddp/hytale-devtools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.104.0"
   },
@@ -93,6 +93,8 @@
     "dev:webview": "vite --config webview/hytale-node-editor/vite.config.mjs",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production",
+    "vsce:package": "vsce package --no-dependencies",
+    "vsce:publish": "vsce publish --no-dependencies",
     "build:webview": "vite build --config webview/hytale-node-editor/vite.config.mjs",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
