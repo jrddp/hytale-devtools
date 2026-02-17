@@ -1200,13 +1200,13 @@
   }
 
   function resolveAvailableAddEntries(connection) {
-    const genericEntries = [...GENERIC_ADD_MENU_ENTRIES];
+    const sourceNodeId = normalizeOptionalString(connection?.sourceNodeId);
+    const sourceHandleId = normalizeOptionalString(connection?.sourceHandleId);
+    const genericEntries = resolveGenericAddEntries(sourceNodeId);
     if (!Array.isArray(allTemplates) || allTemplates.length === 0) {
       return genericEntries;
     }
 
-    const sourceNodeId = normalizeOptionalString(connection?.sourceNodeId);
-    const sourceHandleId = normalizeOptionalString(connection?.sourceHandleId);
     if (!sourceNodeId || !sourceHandleId) {
       return [...genericEntries, ...allTemplates];
     }
@@ -1220,6 +1220,18 @@
     return Array.isArray(filteredTemplates) && filteredTemplates.length > 0
       ? [...genericEntries, ...filteredTemplates]
       : genericEntries;
+  }
+
+  function resolveGenericAddEntries(sourceNodeId) {
+    if (!sourceNodeId) {
+      return [...GENERIC_ADD_MENU_ENTRIES];
+    }
+
+    return GENERIC_ADD_MENU_ENTRIES.filter(
+      (entry) =>
+        !isGenericGroupCreationEntry(entry) &&
+        !isGenericCommentCreationEntry(entry)
+    );
   }
 
   function createEdgeId({
