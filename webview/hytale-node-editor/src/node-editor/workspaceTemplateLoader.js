@@ -4,6 +4,7 @@ import { FIELD_TYPE_VALUES } from './types.js';
 const WORKSPACE_CONFIG_FILENAME = '_Workspace.json';
 const UNCATEGORIZED_CATEGORY = 'Uncategorized';
 const SUPPORTED_FIELD_TYPES = new Set(FIELD_TYPE_VALUES);
+const SCHEMA_CONNECTION_RUNTIME_SUFFIX = '$Pin';
 const workspaceModuleMap = import.meta.glob('../../Workspaces/**/*.json', { eager: true });
 
 let cachedWorkspaceCollection;
@@ -61,11 +62,12 @@ function buildWorkspaceDefinition(workspaceId, entries) {
   const diagnostics = [];
   const unsupportedFieldTypes = new Set();
   const templateById = new Map();
-  let workspaceConfigEntry;
+  const workspaceConfigEntry = entries.find((entry) => entry.fileName === WORKSPACE_CONFIG_FILENAME);
+  const workspaceConfig = isObject(workspaceConfigEntry?.json) ? workspaceConfigEntry.json : {};
+  const variantIdentitySchemaKeys = collectVariantIdentitySchemaKeys(workspaceConfig.Variants);
 
   for (const entry of entries) {
     if (entry.fileName === WORKSPACE_CONFIG_FILENAME) {
-      workspaceConfigEntry = entry;
       continue;
     }
 
@@ -90,6 +92,7 @@ function buildWorkspaceDefinition(workspaceId, entries) {
       nodeDefinition,
       diagnostics,
       unsupportedFieldTypes,
+      variantIdentitySchemaKeys,
     });
 
     if (templateById.has(templateId)) {
@@ -100,7 +103,6 @@ function buildWorkspaceDefinition(workspaceId, entries) {
     templateById.set(templateId, template);
   }
 
-  const workspaceConfig = isObject(workspaceConfigEntry?.json) ? workspaceConfigEntry.json : {};
   if (!workspaceConfigEntry) {
     diagnostics.push(`Workspace config _Workspace.json not found in ${workspaceId}.`);
   } else if (!isObject(workspaceConfigEntry.json)) {
@@ -111,6 +113,7 @@ function buildWorkspaceDefinition(workspaceId, entries) {
 
   const templates = buildOrderedTemplates(templateById, workspaceConfig.NodeCategories, diagnostics);
   const variants = buildVariants(workspaceConfig.Variants, templateById, workspaceId, diagnostics);
+  const variantIdentityLookups = buildVariantIdentityLookups(variants);
   const roots = buildRoots(workspaceConfig.Roots, workspaceId, diagnostics);
   const workspaceName = normalizeNonEmptyString(workspaceConfig.WorkspaceName) ?? workspaceId;
 
@@ -129,6 +132,9 @@ function buildWorkspaceDefinition(workspaceId, entries) {
     workspaceName,
     roots,
     variants,
+    variantFieldNames: variantIdentityLookups.variantFieldNames,
+    variantIdentitiesByTemplateId: variantIdentityLookups.variantIdentitiesByTemplateId,
+    templateIdByFieldNameAndValue: variantIdentityLookups.templateIdByFieldNameAndValue,
     templates,
     diagnostics,
   };
@@ -141,6 +147,7 @@ function buildTemplateDefinition({
   nodeDefinition,
   diagnostics,
   unsupportedFieldTypes,
+  variantIdentitySchemaKeys,
 }) {
   const label = normalizeNonEmptyString(nodeDefinition.Title) ?? templateId;
   const nodeColor =
@@ -175,7 +182,15 @@ function buildTemplateDefinition({
     'Outputs',
     diagnostics
   );
-  const fieldMappings = buildFieldMappings(schema, fields, templateId, workspaceId, relativePath, diagnostics);
+  const fieldMappings = buildFieldMappings(
+    schema,
+    fields,
+    templateId,
+    workspaceId,
+    relativePath,
+    diagnostics,
+    variantIdentitySchemaKeys
+  );
   const schemaConnections = buildSchemaConnections(
     schema,
     outputPins,
@@ -278,6 +293,85 @@ function buildVariants(variantsCandidate, templateById, workspaceId, diagnostics
 
   variants.sort((left, right) => left.variantId.localeCompare(right.variantId));
   return variants;
+}
+
+function collectVariantIdentitySchemaKeys(variantsCandidate) {
+  const variantIdentitySchemaKeys = new Set(['Type']);
+  const variantsObject = isObject(variantsCandidate) ? variantsCandidate : {};
+
+  for (const variantDefinitionCandidate of Object.values(variantsObject)) {
+    const variantDefinition = isObject(variantDefinitionCandidate) ? variantDefinitionCandidate : {};
+    const variantFieldName = normalizeNonEmptyString(variantDefinition.VariantFieldName) ?? 'Type';
+    variantIdentitySchemaKeys.add(variantFieldName);
+  }
+
+  return variantIdentitySchemaKeys;
+}
+
+function buildVariantIdentityLookups(variantsCandidate) {
+  const variants = Array.isArray(variantsCandidate) ? variantsCandidate : [];
+  const variantFieldNames = new Set();
+  const variantIdentitiesByTemplateId = {};
+  const templateIdByFieldNameAndValue = {};
+
+  for (const variant of variants) {
+    const variantId = normalizeNonEmptyString(variant?.variantId);
+    const variantFieldName = normalizeNonEmptyString(variant?.variantFieldName) ?? 'Type';
+    const variantValues = Array.isArray(variant?.values) ? variant.values : [];
+    if (!variantId) {
+      continue;
+    }
+
+    variantFieldNames.add(variantFieldName);
+    if (!isObject(templateIdByFieldNameAndValue[variantFieldName])) {
+      templateIdByFieldNameAndValue[variantFieldName] = {};
+    }
+
+    for (const entry of variantValues) {
+      const templateId = normalizeNonEmptyString(entry?.templateId);
+      const value = normalizeNonEmptyString(entry?.value);
+      if (!templateId || !value) {
+        continue;
+      }
+
+      if (!templateIdByFieldNameAndValue[variantFieldName][value]) {
+        templateIdByFieldNameAndValue[variantFieldName][value] = templateId;
+      }
+
+      if (!Array.isArray(variantIdentitiesByTemplateId[templateId])) {
+        variantIdentitiesByTemplateId[templateId] = [];
+      }
+      variantIdentitiesByTemplateId[templateId].push({
+        variantId,
+        fieldName: variantFieldName,
+        value,
+      });
+    }
+  }
+
+  for (const identityList of Object.values(variantIdentitiesByTemplateId)) {
+    identityList.sort((left, right) => {
+      const fieldNameCompare = left.fieldName.localeCompare(right.fieldName);
+      if (fieldNameCompare !== 0) {
+        return fieldNameCompare;
+      }
+
+      const valueCompare = left.value.localeCompare(right.value);
+      if (valueCompare !== 0) {
+        return valueCompare;
+      }
+
+      return left.variantId.localeCompare(right.variantId);
+    });
+  }
+
+  return {
+    variantFieldNames: Array.from(variantFieldNames).sort((left, right) =>
+      left.localeCompare(right)
+    ),
+    variantIdentitiesByTemplateId,
+    templateIdByFieldNameAndValue,
+  };
 }
 
 function buildTemplateFields(
@@ -392,7 +486,15 @@ function buildTemplatePins(pins, templateId, workspaceId, relativePath, pinGroup
   return normalizedPins;
 }
 
-function buildFieldMappings(schema, fields, templateId, workspaceId, relativePath, diagnostics) {
+function buildFieldMappings(
+  schema,
+  fields,
+  templateId,
+  workspaceId,
+  relativePath,
+  diagnostics,
+  variantIdentitySchemaKeys = new Set(['Type'])
+) {
   if (!isObject(schema)) {
     return [];
   }
@@ -414,7 +516,7 @@ function buildFieldMappings(schema, fields, templateId, workspaceId, relativePat
       continue;
     }
 
-    if (schemaKey === 'Type') {
+    if (variantIdentitySchemaKeys.has(schemaKey)) {
       continue;
     }
 
@@ -453,7 +555,7 @@ function buildSchemaConnections(schema, outputPins, templateId, workspaceId, rel
   const seenDescriptors = new Set();
 
   for (const [schemaKeyCandidate, schemaValueCandidate] of Object.entries(schema)) {
-    const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+    const schemaKey = normalizeSchemaConnectionRuntimeKey(schemaKeyCandidate);
     const descriptor = readSchemaLinkDescriptor(schemaValueCandidate);
     if (!schemaKey || !descriptor) {
       continue;
@@ -521,6 +623,20 @@ function resolveOutputPinBySchemaPinId(schemaPinId, outputPins) {
 
   const schemaPinIdLower = schemaPinId.toLowerCase();
   return outputPins.find((pin) => normalizeNonEmptyString(pin.id)?.toLowerCase() === schemaPinIdLower);
+}
+
+function normalizeSchemaConnectionRuntimeKey(schemaKeyCandidate) {
+  const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+  if (!schemaKey) {
+    return undefined;
+  }
+
+  if (!schemaKey.endsWith(SCHEMA_CONNECTION_RUNTIME_SUFFIX)) {
+    return schemaKey;
+  }
+
+  const withoutSuffix = schemaKey.slice(0, -SCHEMA_CONNECTION_RUNTIME_SUFFIX.length);
+  return normalizeNonEmptyString(withoutSuffix) ?? schemaKey;
 }
 
 function buildOrderedTemplates(templateById, nodeCategories, diagnostics) {

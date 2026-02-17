@@ -731,10 +731,8 @@
   }
 
   function buildNodeDataFromTemplate(template) {
-    const schemaType = normalizeOptionalString(template?.schemaType);
     return {
       label: template.label,
-      ...(schemaType ? { Type: schemaType } : {}),
       $templateId: template.templateId,
       $fieldValues: template.buildInitialValues(),
     };

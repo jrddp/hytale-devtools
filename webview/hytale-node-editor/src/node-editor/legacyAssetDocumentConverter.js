@@ -3,7 +3,6 @@ import {
   isObject,
   normalizeNodeId,
   normalizeNonEmptyString,
-  normalizePosition,
   omitKeys,
 } from './assetDocumentUtils.js';
 
@@ -15,74 +14,36 @@ export const LEGACY_ROOT_EDITOR_KEYS = [
   '$FloatingNodes',
 ];
 
-function isPositionValue(candidatePosition) {
+export function isLegacyInlineAssetDocument(root) {
+  return isObject(root) && !isObject(root[NODE_EDITOR_METADATA_KEY]);
+}
+
+function hasLegacyInlinePosition(candidatePosition) {
   if (!isObject(candidatePosition)) {
     return false;
   }
 
   return (
     Number.isFinite(Number(candidatePosition.$x)) ||
-    Number.isFinite(Number(candidatePosition.$y))
+    Number.isFinite(Number(candidatePosition.$y)) ||
+    Number.isFinite(Number(candidatePosition.x)) ||
+    Number.isFinite(Number(candidatePosition.y))
   );
 }
 
-export function isLegacyInlineAssetDocument(root) {
-  if (!isObject(root) || isObject(root[NODE_EDITOR_METADATA_KEY])) {
-    return false;
-  }
+function normalizeLegacyPosition(candidatePosition) {
+  const x = Number(candidatePosition?.$x ?? candidatePosition?.x);
+  const y = Number(candidatePosition?.$y ?? candidatePosition?.y);
 
-  const hasRootMarkers =
-    isPositionValue(root.$Position) ||
-    normalizeNonEmptyString(root.$Title) !== undefined ||
-    normalizeNonEmptyString(root.$WorkspaceID) !== undefined ||
-    Array.isArray(root.$Groups) ||
-    Array.isArray(root.$Comments) ||
-    isObject(root.$Links) ||
-    Array.isArray(root.$FloatingNodes);
-  if (hasRootMarkers) {
-    return true;
-  }
-
-  let hasInlinePositions = false;
-  const scan = (candidate) => {
-    if (hasInlinePositions) {
-      return;
-    }
-
-    if (Array.isArray(candidate)) {
-      for (const item of candidate) {
-        scan(item);
-        if (hasInlinePositions) {
-          return;
-        }
-      }
-      return;
-    }
-
-    if (!isObject(candidate)) {
-      return;
-    }
-
-    if (isPositionValue(candidate.$Position)) {
-      hasInlinePositions = true;
-      return;
-    }
-
-    for (const value of Object.values(candidate)) {
-      scan(value);
-      if (hasInlinePositions) {
-        return;
-      }
-    }
+  return {
+    x: Number.isFinite(x) ? x : 0,
+    y: Number.isFinite(y) ? y : 0,
   };
-
-  scan(root);
-  return hasInlinePositions;
 }
 
 export function convertLegacyInlineAssetDocument(
   root,
-  { resolveNodeIdPrefix } = {}
+  { resolveNodeIdPrefix, shouldTreatAsLegacyNodePayload } = {}
 ) {
   if (!isObject(root)) {
     return {
@@ -99,7 +60,6 @@ export function convertLegacyInlineAssetDocument(
 
   const legacyRuntimeRoot = omitKeys(root, LEGACY_ROOT_EDITOR_KEYS);
   const nodeMetadataById = {};
-  let fallbackIndex = 0;
 
   const visit = (
     candidate,
@@ -128,8 +88,17 @@ export function convertLegacyInlineAssetDocument(
     const shouldTreatAsNode =
       forceNode ||
       normalizeNonEmptyString(candidate.$NodeId) !== undefined ||
-      isPositionValue(candidate.$Position) ||
-      normalizeNonEmptyString(candidate.$Title) !== undefined;
+      hasLegacyInlinePosition(candidate.$Position) ||
+      normalizeNonEmptyString(candidate.$Title) !== undefined ||
+      (typeof shouldTreatAsLegacyNodePayload === 'function'
+        ? shouldTreatAsLegacyNodePayload({
+            payload: candidate,
+            keyHint,
+            parentPayload,
+            parentNodeId,
+            isRoot: forceNode === true && parentPayload === undefined,
+          }) === true
+        : false);
     if (!shouldTreatAsNode) {
       const transformed = {};
       for (const [childKey, childValue] of Object.entries(candidate)) {
@@ -155,13 +124,13 @@ export function convertLegacyInlineAssetDocument(
             })
           : undefined
       ) ??
+      normalizeNonEmptyString(candidate.Id) ??
       normalizeNonEmptyString(candidate.Type) ??
       normalizeNonEmptyString(keyHint) ??
       'Node';
     const nodeId = normalizeNodeId(candidate.$NodeId, prefixHint);
 
-    const position = normalizePosition(candidate.$Position, fallbackIndex);
-    fallbackIndex += 1;
+    const position = normalizeLegacyPosition(candidate.$Position);
     const title = normalizeNonEmptyString(candidate.$Title);
     nodeMetadataById[nodeId] = {
       $Position: {

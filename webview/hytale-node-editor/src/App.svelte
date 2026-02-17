@@ -28,6 +28,7 @@
     findTemplatesByTypeName,
     getDefaultTemplate,
     getTemplateById,
+    getWorkspaceDefinition,
     getTemplatesForNodeSelector,
     setActiveWorkspaceContext,
     setActiveTemplateSourceMode,
@@ -41,6 +42,12 @@
     convertLegacyInlineAssetDocument,
     isLegacyInlineAssetDocument,
   } from "./node-editor/legacyAssetDocumentConverter.js";
+  import {
+    getWorkspaceVariantFieldNames,
+    readPayloadVariantIdentity,
+    resolveTemplateIdFromPayloadVariant,
+    writeTemplateVariantIdentity,
+  } from "./node-editor/variantIdentityResolver.js";
   import { resolveWorkspaceContext } from "./node-editor/workspaceContextResolver.js";
 
   export let vscode;
@@ -65,10 +72,9 @@
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const GROUP_Z_INDEX_SELECTED = 10000;
   const GROUP_RESERVED_KEYS = ["$Position", "$width", "$height", "$name"];
-  const NODE_PAYLOAD_TEMPLATE_RESOLUTION_EXCLUDED_KEYS = new Set([
+  const BASE_TEMPLATE_RESOLUTION_EXCLUDED_KEYS = new Set([
     "$NodeId",
     "$Comment",
-    "Type",
     PAYLOAD_TEMPLATE_ID_KEY,
     PAYLOAD_EDITOR_FIELDS_KEY,
   ]);
@@ -177,7 +183,7 @@
     }
 
     const hasMetadataContainer = isObject(parsed[NODE_EDITOR_METADATA_KEY]);
-    if (!hasMetadataContainer && isLegacyInlineAssetDocument(parsed)) {
+    if (isLegacyInlineAssetDocument(parsed)) {
       const legacyRuntimeRoot = omitKeys(parsed, LEGACY_ROOT_EDITOR_KEYS);
       const legacyWorkspaceContext = resolveWorkspaceContext({
         documentPath: sourceDocumentPath,
@@ -190,6 +196,15 @@
             ...params,
             workspaceContext: legacyWorkspaceContext,
           });
+        },
+        shouldTreatAsLegacyNodePayload(params) {
+          const workspaceDefinition = getWorkspaceDefinition(legacyWorkspaceContext);
+          return Boolean(
+            resolveTemplateIdFromPayloadVariant(params?.payload, workspaceDefinition, {
+              nodeId: params?.payload?.$NodeId,
+              includeNodeIdFallback: false,
+            })?.templateId
+          );
         },
       });
       return buildStateFromMetadataDocument(
@@ -243,6 +258,44 @@
     };
   }
 
+  function getWorkspaceDefinitionForContext(context = metadataContext) {
+    return getWorkspaceDefinition(context?.workspaceContext);
+  }
+
+  function buildTemplateResolutionExcludedPayloadKeys(context = metadataContext) {
+    const excludedKeys = new Set(BASE_TEMPLATE_RESOLUTION_EXCLUDED_KEYS);
+    const workspaceDefinition = getWorkspaceDefinitionForContext(context);
+    const variantFieldNames = getWorkspaceVariantFieldNames(workspaceDefinition);
+    for (const fieldName of variantFieldNames) {
+      excludedKeys.add(fieldName);
+    }
+    return excludedKeys;
+  }
+
+  function applyTemplateVariantIdentityToPayload(
+    payload,
+    templateId,
+    context = metadataContext
+  ) {
+    if (!isObject(payload)) {
+      return;
+    }
+
+    const normalizedTemplateId = normalizeNonEmptyString(templateId);
+    if (!normalizedTemplateId) {
+      return;
+    }
+
+    const workspaceContext = context?.workspaceContext;
+    const template = getTemplateById(normalizedTemplateId, workspaceContext);
+    if (!template) {
+      return;
+    }
+
+    const workspaceDefinition = getWorkspaceDefinition(workspaceContext);
+    writeTemplateVariantIdentity(payload, template, workspaceDefinition);
+  }
+
   function createMetadataContextWithDefaultNode(context) {
     const nextContext = {
       ...context,
@@ -257,12 +310,15 @@
         $y: fallbackNode.position.y,
       },
     };
-    nextContext.nodePayloadById[fallbackNode.id] = {
+    const fallbackPayload = {
       $NodeId: fallbackNode.id,
-      ...(normalizeNonEmptyString(fallbackNode?.data?.Type)
-        ? { Type: fallbackNode.data.Type.trim() }
-        : {}),
     };
+    applyTemplateVariantIdentityToPayload(
+      fallbackPayload,
+      fallbackNode?.data?.[NODE_TEMPLATE_DATA_KEY],
+      context
+    );
+    nextContext.nodePayloadById[fallbackNode.id] = fallbackPayload;
     if (!nextContext.rootNodeId) {
       nextContext.rootNodeId = fallbackNode.id;
     }
@@ -299,7 +355,7 @@
         : {};
       const payloadForTemplate = getPayloadForTemplateResolution(payload, nodeId, context);
       const position = normalizePosition(nodeMeta?.$Position, index);
-      const label = readNodeLabel(nodeId, nodeMeta, undefined, payloadForTemplate);
+      const label = readNodeLabel(nodeId, nodeMeta, undefined, payloadForTemplate, context);
       const comment =
         typeof payloadForTemplate.$Comment === "string" && payloadForTemplate.$Comment.trim()
           ? payloadForTemplate.$Comment.trim()
@@ -391,6 +447,7 @@
     const knownNodeMetadata = state.metadataContext.nodeMetadataById;
     const knownNodePayload = state.metadataContext.nodePayloadById;
     const knownLinks = state.metadataContext.linkById;
+    const workspaceDefinition = getWorkspaceDefinition(state.metadataContext.workspaceContext);
     const runtimeTreeNodeIds =
       state.metadataContext.runtimeTreeNodeIds instanceof Set
         ? state.metadataContext.runtimeTreeNodeIds
@@ -423,7 +480,13 @@
         index,
         baseMeta?.$Position
       );
-      const label = readNodeLabel(nodeId, baseMeta, candidate?.data?.label, payloadForTemplate);
+      const label = readNodeLabel(
+        nodeId,
+        baseMeta,
+        candidate?.data?.label,
+        payloadForTemplate,
+        state.metadataContext
+      );
       const comment =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
@@ -452,11 +515,12 @@
       }
 
       basePayload.$NodeId = nodeId;
-      const explicitType = normalizeNonEmptyString(payloadForTemplate.Type);
-      if (explicitType) {
-        basePayload.Type = explicitType;
-      } else {
-        delete basePayload.Type;
+      const explicitVariantIdentity = readPayloadVariantIdentity(payloadForTemplate, workspaceDefinition, {
+        nodeId,
+        includeNodeIdFallback: true,
+      });
+      if (explicitVariantIdentity?.source !== "node-id") {
+        basePayload[explicitVariantIdentity.fieldName] = explicitVariantIdentity.value;
       }
       if (comment !== undefined) {
         basePayload.$Comment = comment;
@@ -472,8 +536,10 @@
         state.metadataContext,
         templateId
       );
-      if (!explicitType && templateDefinition?.schemaType) {
-        basePayload.Type = templateDefinition.schemaType;
+      if (templateDefinition) {
+        writeTemplateVariantIdentity(basePayload, templateDefinition, workspaceDefinition);
+      } else if (explicitVariantIdentity && explicitVariantIdentity.source !== "node-id") {
+        basePayload[explicitVariantIdentity.fieldName] = explicitVariantIdentity.value;
       }
       applyFieldValuesToPayload(basePayload, templateDefinition, fieldValues);
 
@@ -516,12 +582,17 @@
         },
         nodePayloadById: {
           ...nextNodePayloadById,
-          [fallbackNode.id]: {
-            $NodeId: fallbackNode.id,
-            ...(normalizeNonEmptyString(fallbackNode?.data?.Type)
-              ? { Type: fallbackNode.data.Type.trim() }
-              : {}),
-          },
+          [fallbackNode.id]: (() => {
+            const fallbackPayload = {
+              $NodeId: fallbackNode.id,
+            };
+            applyTemplateVariantIdentityToPayload(
+              fallbackPayload,
+              fallbackNode?.data?.[NODE_TEMPLATE_DATA_KEY],
+              state.metadataContext
+            );
+            return fallbackPayload;
+          })(),
         },
       };
 
@@ -618,11 +689,8 @@
       const floatingTemplate = floatingTemplateId
         ? getTemplateById(floatingTemplateId, state.metadataContext.workspaceContext)
         : undefined;
-      if (
-        typeof newFloatingRoot.Type !== "string" &&
-        normalizeNonEmptyString(floatingTemplate?.schemaType)
-      ) {
-        newFloatingRoot.Type = floatingTemplate.schemaType;
+      if (floatingTemplate) {
+        writeTemplateVariantIdentity(newFloatingRoot, floatingTemplate, workspaceDefinition);
       }
 
       const rewrittenFloatingRoot = rewriteNodePayloadTree(newFloatingRoot, nextNodePayloadById);
@@ -929,9 +997,6 @@
       type: CUSTOM_NODE_TYPE,
       data: {
         label: defaultLabelForNodeId(nodeId),
-        ...(normalizeNonEmptyString(defaultTemplate.schemaType)
-          ? { Type: defaultTemplate.schemaType }
-          : {}),
         [NODE_TEMPLATE_DATA_KEY]: defaultTemplate.templateId,
         [NODE_FIELD_VALUES_DATA_KEY]: defaultTemplate.buildInitialValues(),
       },
@@ -939,7 +1004,7 @@
     };
   }
 
-  function readNodeLabel(nodeId, nodeMeta, candidateLabel, payload) {
+  function readNodeLabel(nodeId, nodeMeta, candidateLabel, payload, context = metadataContext) {
     const fromCandidate =
       typeof candidateLabel === "string" && candidateLabel.trim() ? candidateLabel.trim() : undefined;
     if (fromCandidate !== undefined) {
@@ -953,10 +1018,13 @@
       return fromMeta;
     }
 
-    const fromType =
-      typeof payload?.Type === "string" && payload.Type.trim() ? payload.Type.trim() : undefined;
-    if (fromType !== undefined) {
-      return fromType;
+    const workspaceDefinition = getWorkspaceDefinitionForContext(context);
+    const variantIdentity = readPayloadVariantIdentity(payload, workspaceDefinition, {
+      nodeId: payload?.$NodeId ?? nodeId,
+      includeNodeIdFallback: true,
+    });
+    if (variantIdentity?.value !== undefined) {
+      return variantIdentity.value;
     }
 
     const fromNodeIdType = readTypeFromNodeId(payload?.$NodeId ?? nodeId);
@@ -968,16 +1036,9 @@
   }
 
   function readTemplateId(candidateTemplateId, payload, context = metadataContext) {
-    const normalizedPayloadType =
-      normalizeNonEmptyString(payload?.Type) ?? readTypeFromNodeId(payload?.$NodeId);
-    if (normalizedPayloadType) {
-      const inferredTemplate = resolveTemplateByPayloadType(
-        { ...(isObject(payload) ? payload : {}), Type: normalizedPayloadType },
-        context
-      );
-      if (inferredTemplate) {
-        return inferredTemplate.templateId;
-      }
+    const inferredTemplate = resolveTemplateByPayloadType(payload, context, payload?.$NodeId);
+    if (inferredTemplate) {
+      return inferredTemplate.templateId;
     }
 
     const normalizedCandidateTemplateId = normalizeNonEmptyString(candidateTemplateId);
@@ -1006,21 +1067,10 @@
     const context = {
       workspaceContext: isObject(workspaceContext) ? workspaceContext : {},
     };
-    const inferredPayloadType =
-      normalizeNonEmptyString(payloadObject.Type) ?? readTypeFromNodeId(payloadObject.$NodeId);
-
-    if (inferredPayloadType) {
-      const templateFromType = resolveTemplateByPayloadType(
-        {
-          ...payloadObject,
-          Type: inferredPayloadType,
-        },
-        context
-      );
-      const templateIdFromType = normalizeNonEmptyString(templateFromType?.templateId);
-      if (templateIdFromType) {
-        return templateIdFromType;
-      }
+    const inferredTemplate = resolveTemplateByPayloadType(payloadObject, context, payloadObject.$NodeId);
+    const templateIdFromType = normalizeNonEmptyString(inferredTemplate?.templateId);
+    if (templateIdFromType) {
+      return templateIdFromType;
     }
 
     if (isRoot) {
@@ -1038,7 +1088,7 @@
       );
       const matchedDescriptor = Array.isArray(parentTemplate?.schemaConnections)
         ? parentTemplate.schemaConnections.find(
-            (descriptor) => normalizeNonEmptyString(descriptor?.schemaKey) === normalizedKeyHint
+            (descriptor) => doesConnectionDescriptorMatchKey(descriptor, normalizedKeyHint)
           )
         : undefined;
       const selector = normalizeNonEmptyString(matchedDescriptor?.nodeSelector);
@@ -1061,8 +1111,13 @@
       }
     }
 
-    if (inferredPayloadType) {
-      return inferredPayloadType;
+    const workspaceDefinition = getWorkspaceDefinition(workspaceContext);
+    const inferredIdentity = readPayloadVariantIdentity(payloadObject, workspaceDefinition, {
+      nodeId: payloadObject.$NodeId,
+      includeNodeIdFallback: true,
+    });
+    if (inferredIdentity?.value) {
+      return inferredIdentity.value;
     }
 
     if (normalizedKeyHint) {
@@ -1169,12 +1224,9 @@
     const payloadForTemplate = getPayloadForTemplateResolution(payload, nodeId, context);
     const workspaceContext = context?.workspaceContext;
 
-    const payloadType = normalizeNonEmptyString(payloadForTemplate?.Type);
-    if (payloadType) {
-      const fromType = resolveTemplateByPayloadType(payloadForTemplate, context);
-      if (fromType) {
-        return fromType;
-      }
+    const fromVariantIdentity = resolveTemplateByPayloadType(payloadForTemplate, context, nodeId);
+    if (fromVariantIdentity) {
+      return fromVariantIdentity;
     }
 
     const resolvedTemplateId = normalizeNonEmptyString(explicitTemplateId);
@@ -1210,16 +1262,13 @@
 
   function getPayloadForTemplateResolution(payload, nodeId, context) {
     const normalizedPayload = isObject(payload) ? payload : {};
-    if (normalizeNonEmptyString(normalizedPayload.Type)) {
+    const workspaceDefinition = getWorkspaceDefinitionForContext(context);
+    const identityInPayload = readPayloadVariantIdentity(normalizedPayload, workspaceDefinition, {
+      nodeId: normalizedPayload.$NodeId ?? nodeId,
+      includeNodeIdFallback: false,
+    });
+    if (identityInPayload) {
       return normalizedPayload;
-    }
-
-    const inferredTypeFromNodeId = readTypeFromNodeId(normalizedPayload.$NodeId ?? nodeId);
-    if (inferredTypeFromNodeId) {
-      return {
-        ...normalizedPayload,
-        Type: inferredTypeFromNodeId,
-      };
     }
 
     if (
@@ -1234,11 +1283,10 @@
       }
 
       const rootTemplate = getTemplateById(rootTemplateId, context?.workspaceContext);
-      if (normalizeNonEmptyString(rootTemplate?.schemaType)) {
-        return {
-          ...normalizedPayload,
-          Type: rootTemplate.schemaType,
-        };
+      if (rootTemplate) {
+        const payloadWithIdentity = { ...normalizedPayload };
+        writeTemplateVariantIdentity(payloadWithIdentity, rootTemplate, workspaceDefinition);
+        return payloadWithIdentity;
       }
     }
 
@@ -1273,32 +1321,78 @@
     return nodeId;
   }
 
-  function resolveTemplateByPayloadType(payload, context = metadataContext) {
-    const payloadType = normalizeNonEmptyString(payload?.Type);
-    if (!payloadType) {
+  function resolveTemplateByPayloadType(payload, context = metadataContext, nodeId = undefined) {
+    const workspaceContext = context?.workspaceContext;
+    const workspaceDefinition = getWorkspaceDefinition(workspaceContext);
+    const variantResolution = resolveTemplateIdFromPayloadVariant(payload, workspaceDefinition, {
+      nodeId,
+      includeNodeIdFallback: true,
+    });
+
+    const payloadVariantValue = normalizeNonEmptyString(variantResolution?.identity?.value);
+    if (payloadVariantValue) {
+      const candidates = findTemplatesByTypeName(payloadVariantValue, workspaceContext);
+      if (Array.isArray(candidates) && candidates.length > 0) {
+        if (candidates.length === 1) {
+          return candidates[0];
+        }
+
+        return chooseBestTemplateCandidateForPayload(payload, candidates, context);
+      }
+
+      const directTypeTemplate = findTemplateByTypeName(payloadVariantValue, workspaceContext);
+      if (directTypeTemplate) {
+        return directTypeTemplate;
+      }
+    }
+
+    const templateIdFromVariant = normalizeNonEmptyString(variantResolution?.templateId);
+    if (templateIdFromVariant) {
+      const mappedTemplate = getTemplateById(templateIdFromVariant, workspaceContext);
+      if (mappedTemplate) {
+        return mappedTemplate;
+      }
+    }
+
+    return undefined;
+  }
+
+  function normalizeConnectionRuntimeKey(schemaKeyCandidate) {
+    const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+    if (!schemaKey) {
       return undefined;
     }
 
-    const workspaceContext = context?.workspaceContext;
-    const candidates = findTemplatesByTypeName(payloadType, workspaceContext);
-    if (!Array.isArray(candidates) || candidates.length === 0) {
-      return findTemplateByTypeName(payloadType, workspaceContext);
+    if (!schemaKey.endsWith("$Pin")) {
+      return schemaKey;
     }
 
-    if (candidates.length === 1) {
-      return candidates[0];
-    }
-
-    return chooseBestTemplateCandidateForPayload(payload, candidates);
+    const withoutSuffix = schemaKey.slice(0, -"$Pin".length);
+    return normalizeNonEmptyString(withoutSuffix) ?? schemaKey;
   }
 
-  function chooseBestTemplateCandidateForPayload(payload, candidates) {
+  function collectConnectionDescriptorKeys(descriptor) {
+    const schemaKey = normalizeConnectionRuntimeKey(descriptor?.schemaKey);
+    return schemaKey ? [schemaKey] : [];
+  }
+
+  function doesConnectionDescriptorMatchKey(descriptor, keyCandidate) {
+    const key = normalizeNonEmptyString(keyCandidate);
+    if (!key) {
+      return false;
+    }
+
+    return collectConnectionDescriptorKeys(descriptor).includes(key);
+  }
+
+  function chooseBestTemplateCandidateForPayload(payload, candidates, context = metadataContext) {
     if (!isObject(payload) || !Array.isArray(candidates) || candidates.length === 0) {
       return candidates?.[0];
     }
 
+    const excludedPayloadKeys = buildTemplateResolutionExcludedPayloadKeys(context);
     const runtimePayloadKeys = Object.keys(payload).filter(
-      (key) => !NODE_PAYLOAD_TEMPLATE_RESOLUTION_EXCLUDED_KEYS.has(key)
+      (key) => !excludedPayloadKeys.has(key)
     );
     if (runtimePayloadKeys.length === 0) {
       return candidates[0];
@@ -1312,8 +1406,7 @@
       const connectionKeySet = new Set(
         Array.isArray(candidate?.schemaConnections)
           ? candidate.schemaConnections
-              .map((descriptor) => normalizeNonEmptyString(descriptor?.schemaKey))
-              .filter((schemaKey) => Boolean(schemaKey))
+              .flatMap((descriptor) => collectConnectionDescriptorKeys(descriptor))
           : []
       );
       const fieldKeySet = new Set(

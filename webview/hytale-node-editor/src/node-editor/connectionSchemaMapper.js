@@ -6,6 +6,22 @@ function normalizeNonEmptyString(candidate) {
   return typeof candidate === 'string' && candidate.trim() ? candidate.trim() : undefined;
 }
 
+const SCHEMA_CONNECTION_RUNTIME_SUFFIX = '$Pin';
+
+function normalizeSchemaConnectionRuntimeKey(schemaKeyCandidate) {
+  const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+  if (!schemaKey) {
+    return undefined;
+  }
+
+  if (!schemaKey.endsWith(SCHEMA_CONNECTION_RUNTIME_SUFFIX)) {
+    return schemaKey;
+  }
+
+  const withoutSuffix = schemaKey.slice(0, -SCHEMA_CONNECTION_RUNTIME_SUFFIX.length);
+  return normalizeNonEmptyString(withoutSuffix) ?? schemaKey;
+}
+
 function normalizeConnectionDescriptors(template) {
   if (!Array.isArray(template?.schemaConnections)) {
     return [];
@@ -17,7 +33,7 @@ function normalizeConnectionDescriptors(template) {
       continue;
     }
 
-    const schemaKey = normalizeNonEmptyString(descriptor.schemaKey);
+    const schemaKey = normalizeSchemaConnectionRuntimeKey(descriptor.schemaKey);
     const outputPinId = normalizeNonEmptyString(descriptor.outputPinId);
     if (!schemaKey || !outputPinId) {
       continue;

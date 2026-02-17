@@ -21,6 +21,7 @@ let activeWorkspaceContext = {
 
 const catalogByKey = new Map();
 const warnedCatalogKeys = new Set();
+const SCHEMA_CONNECTION_RUNTIME_SUFFIX = '$Pin';
 
 export function setActiveTemplateSourceMode(candidateMode) {
   activeTemplateSourceMode = normalizeTemplateSourceMode(candidateMode);
@@ -417,7 +418,7 @@ function normalizeSchemaConnections(connectionCandidates) {
       continue;
     }
 
-    const schemaKey = normalizeNonEmptyString(
+    const schemaKey = normalizeSchemaConnectionRuntimeKey(
       connectionCandidate.schemaKey ?? connectionCandidate.SchemaKey
     );
     const outputPinId = normalizeNonEmptyString(
@@ -442,6 +443,20 @@ function normalizeSchemaConnections(connectionCandidates) {
   }
 
   return connections;
+}
+
+function normalizeSchemaConnectionRuntimeKey(schemaKeyCandidate) {
+  const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+  if (!schemaKey) {
+    return undefined;
+  }
+
+  if (!schemaKey.endsWith(SCHEMA_CONNECTION_RUNTIME_SUFFIX)) {
+    return schemaKey;
+  }
+
+  const withoutSuffix = schemaKey.slice(0, -SCHEMA_CONNECTION_RUNTIME_SUFFIX.length);
+  return normalizeNonEmptyString(withoutSuffix) ?? schemaKey;
 }
 
 function buildCatalogKey(mode, context) {

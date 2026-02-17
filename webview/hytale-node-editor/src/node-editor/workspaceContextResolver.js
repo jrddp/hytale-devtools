@@ -1,5 +1,5 @@
 import { loadWorkspaceTemplateCollection } from './workspaceTemplateLoader.js';
-import { readTypeFromNodeId } from './assetDocumentUtils.js';
+import { resolveTemplateIdFromPayloadVariant } from './variantIdentityResolver.js';
 
 const WORKSPACE_PATH_RULES = [
   {
@@ -79,6 +79,18 @@ export function resolveTemplateByType(workspace, typeName) {
   }
 
   const templates = Array.isArray(workspace.templates) ? workspace.templates : [];
+  const templateIdFromVariantIdentity = resolveTemplateIdFromPayloadVariant(
+    { Type: normalizedType },
+    workspace,
+    { includeNodeIdFallback: false }
+  )?.templateId;
+  if (templateIdFromVariantIdentity) {
+    const mappedTemplate = templates.find((template) => template.templateId === templateIdFromVariantIdentity);
+    if (mappedTemplate) {
+      return mappedTemplate;
+    }
+  }
+
   const exactSchemaTypeMatch = templates.find(
     (template) => normalizeNonEmptyString(template?.schemaType) === normalizedType
   );
@@ -127,18 +139,36 @@ export function resolveTemplateByType(workspace, typeName) {
 function finalizeContext(workspace, root, runtimeRoot, diagnostics, source) {
   const resolvedWorkspace = workspace;
   const resolvedRoot = root ?? workspace?.roots?.[0];
-  const rootTypeFromPayload =
-    normalizeNonEmptyString(runtimeRoot?.Type) ?? readTypeFromNodeId(runtimeRoot?.$NodeId);
   let rootTemplateId;
 
-  if (resolvedWorkspace && rootTypeFromPayload) {
-    const rootTemplate = resolveTemplateByType(resolvedWorkspace, rootTypeFromPayload);
-    if (rootTemplate) {
-      rootTemplateId = rootTemplate.templateId;
-    } else {
+  if (resolvedWorkspace) {
+    const rootIdentityResolution = resolveTemplateIdFromPayloadVariant(runtimeRoot, resolvedWorkspace, {
+      nodeId: runtimeRoot?.$NodeId,
+      includeNodeIdFallback: true,
+    });
+    if (rootIdentityResolution?.templateId) {
+      rootTemplateId = rootIdentityResolution.templateId;
+    } else if (rootIdentityResolution?.identity?.value) {
+      const identity = rootIdentityResolution.identity;
       diagnostics.push(
-        `Root payload Type "${rootTypeFromPayload}" did not resolve to a template in workspace "${resolvedWorkspace.workspaceId}".`
+        `Root payload variant identity "${identity.fieldName}=${identity.value}" did not resolve to a template in workspace "${resolvedWorkspace.workspaceId}".`
       );
+    } else {
+      const rootTypeFromPayload = normalizeNonEmptyString(runtimeRoot?.Type);
+      const rootTemplate = resolveTemplateByType(resolvedWorkspace, rootTypeFromPayload);
+      if (rootTemplate) {
+        rootTemplateId = rootTemplate.templateId;
+      }
+    }
+  }
+
+  if (!rootTemplateId && resolvedWorkspace) {
+    const rootTypeFromPayload = normalizeNonEmptyString(runtimeRoot?.Type);
+    if (rootTypeFromPayload) {
+      const rootTemplate = resolveTemplateByType(resolvedWorkspace, rootTypeFromPayload);
+      if (rootTemplate) {
+        rootTemplateId = rootTemplate.templateId;
+      }
     }
   }
 
