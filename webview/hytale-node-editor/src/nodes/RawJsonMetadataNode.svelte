@@ -5,22 +5,24 @@
   import FieldEditor from "../fields/FieldEditor.svelte";
   import NodeCommentEditor from "./NodeCommentEditor.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
-  import {
-    getDefaultTemplate,
-    getTemplateById,
-    findTemplateByTypeName,
-  } from "../node-editor/templateCatalog.js";
-  import {
-    buildFieldValueMap,
-    isObject,
-    normalizeFieldValue,
-  } from "../node-editor/fieldValueUtils.js";
+  import { isObject } from "../node-editor/fieldValueUtils.js";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/focusNavigation.js";
-  import { getDefaultPinColor } from "../node-editor/pinColorUtils.js";
-  import { CUSTOM_MUTATION_EVENT } from "../node-editor/types.js";
+  import { RAW_JSON_INPUT_HANDLE_ID, RAW_JSON_MUTATION_EVENT } from "../node-editor/types.js";
+
+  const RAW_JSON_FIELD = {
+    id: "Data",
+    label: "Data",
+    type: "String",
+  };
+  const RAW_JSON_DEFAULT_DATA = "{\n\n}";
+  const RAW_JSON_DEFAULT_LABEL = "Raw JSON Node";
+  const NODE_MIN_WIDTH_PX = 288;
+  const NODE_ACCENT_COLOR = "var(--vscode-focusBorder)";
+  const PIN_WIDTH = 10;
+  const PIN_TOP = "50%";
 
   export let id;
   export let data = {};
@@ -28,41 +30,17 @@
   export let dragging = false;
 
   const { updateNodeData, updateNode, getNodes, getEdges, updateEdge } = useSvelteFlow();
-  const PIN_TOP_START_PX = 16;
-  const PIN_TOP_STEP_PX = 32;
-  const PIN_TOP_MAX_PX = 220;
-  const PIN_BOTTOM_CLEARANCE_PX = 32;
-  const PIN_WIDTH = 10;
-  const NODE_MIN_WIDTH_WITH_CONTENT_PX = 288;
-  const NODE_MIN_WIDTH_WITHOUT_CONTENT_PX = 80;
 
-  $: template =
-    getTemplateById(data?.$templateId) ??
-    findTemplateByTypeName(data?.Type) ??
-    getDefaultTemplate();
-
-  $: initialValues = template?.buildInitialValues?.() ?? buildFieldValueMap(template?.fields ?? []);
-  $: existingFieldValues = isObject(data?.$fieldValues) ? data.$fieldValues : {};
-  $: mergedFieldValues = {
-    ...initialValues,
-    ...existingFieldValues,
-  };
-  $: inputPins = Array.isArray(template?.inputPins) ? template.inputPins : [];
-  $: outputPins = Array.isArray(template?.outputPins) ? template.outputPins : [];
-  $: hasContentFields = Array.isArray(template?.fields) && template.fields.length > 0;
-  $: outputLabelColumnWidth = readOutputLabelColumnWidth(outputPins);
-  $: nodeMinWidthPx =
-    (hasContentFields ? NODE_MIN_WIDTH_WITH_CONTENT_PX : NODE_MIN_WIDTH_WITHOUT_CONTENT_PX) +
-    outputLabelColumnWidth;
-  $: contentPaddingLeftPx = PIN_WIDTH + 8;
-  $: contentRightPaddingPx = outputLabelColumnWidth + 8;
-  $: pinLaneCount = Math.max(inputPins.length, outputPins.length);
-  $: contentMinHeightPx = readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX;
-  $: nodeAccentColor = typeof template?.nodeColor === "string" ? template.nodeColor : getDefaultPinColor();
-  $: nodeLabel = typeof data?.label === "string" ? data.label : template.label;
+  $: nodeLabel = typeof data?.label === "string" && data.label.trim()
+    ? data.label.trim()
+    : RAW_JSON_DEFAULT_LABEL;
   $: commentInputId = `comment-${sanitizeId(id)}`;
   $: commentValue = typeof data?.$comment === "string" ? data.$comment : "";
-  $: hasComment = commentValue.trim().length > 0;
+  $: existingFieldValues = isObject(data?.$fieldValues) ? data.$fieldValues : {};
+  $: dataFieldValue =
+    typeof existingFieldValues?.[RAW_JSON_FIELD.id] === "string"
+      ? existingFieldValues[RAW_JSON_FIELD.id]
+      : RAW_JSON_DEFAULT_DATA;
   $: if (!isEditingTitle) {
     titleDraft = nodeLabel;
   }
@@ -76,9 +54,23 @@
   function updateLabel(nextLabel) {
     updateNodeData(id, {
       label: nextLabel,
-      $templateId: template.templateId,
     });
-    notifyCustomMutation("custom-label-updated");
+    notifyRawJsonMutation("raw-json-label-updated");
+  }
+
+  function updateData(nextValue) {
+    const nextRawJsonData = typeof nextValue === "string" ? nextValue : RAW_JSON_DEFAULT_DATA;
+    if (!isValidRawJsonPayloadBody(nextRawJsonData)) {
+      return;
+    }
+
+    updateNodeData(id, {
+      $fieldValues: {
+        ...existingFieldValues,
+        [RAW_JSON_FIELD.id]: nextRawJsonData,
+      },
+    });
+    notifyRawJsonMutation("raw-json-field-updated");
   }
 
   function selectNodeFromTitleBar(event) {
@@ -174,27 +166,8 @@
     const normalizedComment = typeof nextComment === "string" ? nextComment : "";
     updateNodeData(id, {
       $comment: normalizedComment,
-      $templateId: template.templateId,
     });
-    notifyCustomMutation("custom-comment-updated");
-  }
-
-  function updateField(field, nextValue) {
-    const currentValues = isObject(data?.$fieldValues) ? data.$fieldValues : {};
-    const normalizedValue = normalizeFieldValue(field, nextValue);
-
-    updateNodeData(id, {
-      $templateId: template.templateId,
-      $fieldValues: {
-        ...currentValues,
-        [field.id]: normalizedValue,
-      },
-    });
-    notifyCustomMutation("custom-field-updated");
-  }
-
-  function readFieldValue(field) {
-    return normalizeFieldValue(field, mergedFieldValues[field.id]);
+    notifyRawJsonMutation("raw-json-comment-updated");
   }
 
   function sanitizeId(candidate) {
@@ -204,13 +177,13 @@
     return candidate.replace(/[^a-zA-Z0-9_-]/g, "_");
   }
 
-  function notifyCustomMutation(reason) {
+  function notifyRawJsonMutation(reason) {
     if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
       return;
     }
 
     window.dispatchEvent(
-      new CustomEvent(CUSTOM_MUTATION_EVENT, {
+      new CustomEvent(RAW_JSON_MUTATION_EVENT, {
         detail: {
           nodeId: id,
           reason,
@@ -219,70 +192,30 @@
     );
   }
 
-  function readPinLabel(pin) {
-    if (typeof pin?.label === "string" && pin.label.trim()) {
-      return pin.label.trim();
+  function isValidRawJsonPayloadBody(candidateValue) {
+    if (typeof candidateValue !== "string") {
+      return false;
     }
 
-    if (typeof pin?.id === "string" && pin.id.trim()) {
-      return pin.id.trim();
+    try {
+      const parsedValue = JSON.parse(candidateValue);
+      return isObject(parsedValue);
+    } catch {
+      return false;
     }
-
-    return "";
-  }
-
-  function readOutputPinConnectionMultiplicity(pin) {
-    if (pin?.isMap === true) {
-      return "map";
-    }
-
-    if (pin?.multiple === true) {
-      return "multiple";
-    }
-
-    return "single";
-  }
-
-  function readPinTop(index, totalPins) {
-    return `${readPinTopPx(index, totalPins)}px`;
-  }
-
-  function readPinTopPx(index, totalPins) {
-    const normalizedTotal = Number.isFinite(totalPins) && totalPins > 0 ? Math.floor(totalPins) : 1;
-    const normalizedIndex = Number.isFinite(index) ? Math.floor(index) : 0;
-    const clampedIndex = Math.max(0, Math.min(normalizedIndex, normalizedTotal - 1));
-    const availableRange = Math.max(0, PIN_TOP_MAX_PX - PIN_TOP_START_PX);
-    const spacing =
-      normalizedTotal <= 1 ? 0 : Math.min(PIN_TOP_STEP_PX, availableRange / (normalizedTotal - 1));
-
-    return PIN_TOP_START_PX + clampedIndex * spacing;
-  }
-
-  function readOutputLabelColumnWidth(pins) {
-    if (!Array.isArray(pins) || pins.length === 0) {
-      return 0;
-    }
-
-    const maxLabelLength = pins.reduce(
-      (maxLength, pin) => Math.max(maxLength, readPinLabel(pin).length),
-      0,
-    );
-
-    const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH + 4;
-    return estimatedWidth;
   }
 </script>
 
 <div
-  class="relative pt-0 border border-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow]"
+  class="relative border border-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow]"
   class:border-vsc-focus={selected && !dragging}
-  style="min-width: {nodeMinWidthPx}px;"
+  style="min-width: {NODE_MIN_WIDTH_PX}px;"
   data-node-editor-root
 >
   <div
     aria-hidden="true"
     class="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 rounded-t-lg"
-    style="background-color: {nodeAccentColor};"
+    style="background-color: {NODE_ACCENT_COLOR};"
   ></div>
 
   <div class="flex flex-col gap-1">
@@ -320,7 +253,7 @@
             aria-label="Edit node title"
             onclick={beginTitleEditing}
           >
-            <Pencil strokeWidth={2.5} aria-hidden="true" class="" />
+            <Pencil strokeWidth={2.5} aria-hidden="true" />
           </button>
 
           <button
@@ -348,53 +281,22 @@
     />
   </div>
 
-  <div
-    class="relative py-2"
-    style="padding-left: {contentPaddingLeftPx}px; padding-right: {contentRightPaddingPx}px; min-height: {contentMinHeightPx}px;"
-  >
-    {#each inputPins as pin, index (pin.id)}
-      {@const pinTop = readPinTop(index, inputPins.length)}
-      {@const pinLabel = readPinLabel(pin)}
-      <NodePinHandle
-        type="target"
-        side="left"
-        id={pin.id}
-        top={pinTop}
-        width={PIN_WIDTH}
-        label={pinLabel}
-        showTooltip={Boolean(pinLabel)}
-        color={pin.color}
-      />
-    {/each}
+  <div class="px-[18px] py-2">
+    <NodePinHandle
+      type="target"
+      side="left"
+      id={RAW_JSON_INPUT_HANDLE_ID}
+      top={PIN_TOP}
+      width={PIN_WIDTH}
+      label="Input"
+      showTooltip={true}
+      color={NODE_ACCENT_COLOR}
+    />
 
-    <div class="flex flex-col gap-2">
-      {#each template.fields as field}
-        <FieldEditor
-          {field}
-          value={readFieldValue(field)}
-          on:change={event => updateField(field, event.detail.value)}
-        />
-      {/each}
-    </div>
-
-    {#each outputPins as pin, index (pin.id)}
-      {@const pinTop = readPinTop(index, outputPins.length)}
-      {@const pinMultiplicity = readOutputPinConnectionMultiplicity(pin)}
-      <NodePinHandle
-        type="source"
-        side="right"
-        id={pin.id}
-        top={pinTop}
-        width={PIN_WIDTH}
-        color={pin.color}
-        connectionMultiplicity={pinMultiplicity}
-      />
-      <div
-        class="pointer-events-none absolute pr-1 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
-        style="top: {pinTop}; right: {PIN_WIDTH}px;"
-      >
-        {readPinLabel(pin)}
-      </div>
-    {/each}
+    <FieldEditor
+      field={RAW_JSON_FIELD}
+      value={dataFieldValue}
+      on:change={event => updateData(event.detail.value)}
+    />
   </div>
 </div>

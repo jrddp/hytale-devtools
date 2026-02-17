@@ -118,7 +118,7 @@
                 class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
                 type="number"
                 value={Number.isFinite(Number(item)) ? Number(item) : 0}
-                oninput={(event) => updateNumberItem(index, event.currentTarget.value)}
+                onchange={(event) => updateNumberItem(index, event.currentTarget.value)}
                 onkeydown={handleEnterNavigation}
               />
             {:else if elementType === 'Object'}
@@ -126,14 +126,14 @@
                 class="nodrag min-h-10 w-full resize-y rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
                 rows="3"
                 value={formatObjectValue(item)}
-                oninput={(event) => updateObjectItem(index, event.currentTarget.value)}
+                onchange={(event) => updateObjectItem(index, event.currentTarget.value)}
               ></textarea>
             {:else}
               <input
                 class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
                 type="text"
                 value={typeof item === 'string' ? item : String(item ?? '')}
-                oninput={(event) => updateTextItem(index, event.currentTarget.value)}
+                onchange={(event) => updateTextItem(index, event.currentTarget.value)}
                 onkeydown={handleEnterNavigation}
               />
             {/if}

@@ -12,12 +12,56 @@
   $: min = Number.isFinite(Number(options.Min)) ? Number(options.Min) : 0;
   $: max = Number.isFinite(Number(options.Max)) ? Number(options.Max) : 100;
   $: step = Number.isFinite(Number(options.TickFrequency)) ? Number(options.TickFrequency) : 1;
-  $: numericValue = Number.isFinite(Number(value)) ? Number(value) : min;
-  $: label = `${baseLabel} (${numericValue})`;
+  $: committedNumericValue = Number.isFinite(Number(value)) ? Number(value) : min;
+  $: if (!hasPendingValue && draftNumericValue !== committedNumericValue) {
+    draftNumericValue = committedNumericValue;
+  }
+  $: label = `${baseLabel} (${draftNumericValue})`;
   $: inputId = `slider-${sanitizeId(field?.id)}-${field?.type ?? 'value'}`;
+
+  let draftNumericValue = min;
+  let hasPendingValue = false;
+  let lastInteractionMode = 'unknown';
 
   function emitValue(nextValue) {
     dispatch('change', { value: nextValue });
+  }
+
+  function handleInput(event) {
+    const parsedValue = Number(event.currentTarget.value);
+    draftNumericValue = Number.isFinite(parsedValue) ? parsedValue : min;
+    hasPendingValue = draftNumericValue !== committedNumericValue;
+  }
+
+  function handlePointerDown() {
+    lastInteractionMode = 'pointer';
+  }
+
+  function handleKeyDown(event) {
+    const navigationKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'];
+    if (navigationKeys.includes(event.key)) {
+      lastInteractionMode = 'keyboard';
+    }
+  }
+
+  function commitPendingValue() {
+    if (!hasPendingValue) {
+      return;
+    }
+
+    emitValue(draftNumericValue);
+    hasPendingValue = false;
+  }
+
+  function handleChange() {
+    if (lastInteractionMode === 'pointer') {
+      commitPendingValue();
+    }
+  }
+
+  function handleBlur() {
+    commitPendingValue();
+    lastInteractionMode = 'unknown';
   }
 
   function sanitizeId(candidate) {
@@ -37,7 +81,11 @@
     {min}
     {max}
     {step}
-    value={numericValue}
-    oninput={(event) => emitValue(event.currentTarget.value)}
+    value={draftNumericValue}
+    onpointerdown={handlePointerDown}
+    oninput={handleInput}
+    onchange={handleChange}
+    onkeydown={handleKeyDown}
+    onblur={handleBlur}
   />
 </div>

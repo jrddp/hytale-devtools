@@ -10,12 +10,37 @@
 
   $: options = normalizeFieldOptions(field?.options);
   $: label = getFieldLabel(field);
-  $: inputValue = typeof value === 'string' ? value : String(value ?? '');
+  $: committedValue = typeof value === 'string' ? value : String(value ?? '');
   $: rows = Math.max(2, Math.round(Number(options.Height) / 24) || 2);
   $: inputId = `text-${sanitizeId(field?.id)}-${field?.type ?? 'value'}`;
+  $: if (!isEditing && draftValue !== committedValue) {
+    draftValue = committedValue;
+  }
+
+  let isEditing = false;
+  let draftValue = '';
 
   function emitValue(nextValue) {
     dispatch('change', { value: nextValue });
+  }
+
+  function beginEditing() {
+    isEditing = true;
+  }
+
+  function handleInput(event) {
+    draftValue = event.currentTarget.value;
+  }
+
+  function commitEditing() {
+    if (!isEditing) {
+      return;
+    }
+
+    isEditing = false;
+    if (draftValue !== committedValue) {
+      emitValue(draftValue);
+    }
   }
 
   function handleSingleLineEnter(event) {
@@ -44,17 +69,21 @@
       id={inputId}
       class="nodrag min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg h-20"
       rows={rows}
-      value={inputValue}
-      oninput={(event) => emitValue(event.currentTarget.value)}
+      value={draftValue}
+      onfocus={beginEditing}
+      oninput={handleInput}
+      onblur={commitEditing}
     ></textarea>
   {:else}
     <input
       id={inputId}
       class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
       type="text"
-      value={inputValue}
-      oninput={(event) => emitValue(event.currentTarget.value)}
+      value={draftValue}
+      onfocus={beginEditing}
+      oninput={handleInput}
       onkeydown={handleSingleLineEnter}
+      onblur={commitEditing}
     />
   {/if}
 </div>

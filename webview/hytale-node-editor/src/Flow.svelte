@@ -12,6 +12,7 @@
   import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
   import GroupMetadataNode from "./nodes/GroupMetadataNode.svelte";
+  import RawJsonMetadataNode from "./nodes/RawJsonMetadataNode.svelte";
   import {
     findTemplateByTypeName,
     getDefaultTemplate,
@@ -32,10 +33,13 @@
   import {
     COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
+    GENERIC_ACTION_CREATE_RAW_JSON,
     GENERIC_ACTION_CREATE_COMMENT,
     GENERIC_ACTION_CREATE_GROUP,
     GENERIC_ADD_CATEGORY,
     GROUP_NODE_TYPE,
+    RAW_JSON_INPUT_HANDLE_ID,
+    RAW_JSON_NODE_TYPE,
   } from "./node-editor/types.js";
 
   export let nodes = createDefaultNodes();
@@ -48,6 +52,9 @@
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
   const DEFAULT_GROUP_NAME = "Group";
+  const RAW_JSON_DEFAULT_LABEL = "Raw JSON Node";
+  const RAW_JSON_FIELD_ID = "Data";
+  const RAW_JSON_DEFAULT_DATA = "{\n\n}";
   const MIN_FLOW_ZOOM = 0;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const dispatch = createEventDispatcher();
@@ -67,12 +74,20 @@
       label: "Create New Comment",
       nodeColor: "var(--vscode-descriptionForeground)",
     },
+    {
+      kind: "generic-action",
+      actionId: GENERIC_ACTION_CREATE_RAW_JSON,
+      category: GENERIC_ADD_CATEGORY,
+      label: "Raw JSON Node",
+      nodeColor: "var(--vscode-focusBorder)",
+    },
   ];
 
   const nodeTypes = {
     [COMMENT_NODE_TYPE]: CommentMetadataNode,
     [CUSTOM_NODE_TYPE]: CustomMetadataNode,
     [GROUP_NODE_TYPE]: GroupMetadataNode,
+    [RAW_JSON_NODE_TYPE]: RawJsonMetadataNode,
   };
 
   const { screenToFlowPosition, fitView } = useSvelteFlow();
@@ -387,6 +402,56 @@
       nodes = [newCommentNode, ...nodes];
       closeAddNodeMenu();
       emitFlowChange("comment-created");
+      return;
+    }
+
+    if (isGenericRawJsonCreationEntry(entry)) {
+      const newRawJsonNode = {
+        id: `Generic-${createUuid()}`,
+        type: RAW_JSON_NODE_TYPE,
+        data: {
+          label: RAW_JSON_DEFAULT_LABEL,
+          $fieldValues: {
+            [RAW_JSON_FIELD_ID]: RAW_JSON_DEFAULT_DATA,
+          },
+        },
+        position: {
+          ...pendingNodePosition,
+        },
+        origin: [0.5, 0.0],
+      };
+
+      nodes = [...nodes, newRawJsonNode];
+
+      const connection = pendingConnection;
+      if (connection?.sourceNodeId) {
+        const normalizedConnection = normalizeConnection({
+          id: createEdgeId({
+            sourceNodeId: connection.sourceNodeId,
+            sourceHandleId: connection.sourceHandleId,
+            targetNodeId: newRawJsonNode.id,
+            targetHandleId: RAW_JSON_INPUT_HANDLE_ID,
+          }),
+          source: connection.sourceNodeId,
+          ...(connection.sourceHandleId
+            ? { sourceHandle: connection.sourceHandleId }
+            : {}),
+          target: newRawJsonNode.id,
+          targetHandle: RAW_JSON_INPUT_HANDLE_ID,
+        });
+
+        if (normalizedConnection) {
+          edges = addEdge(
+            normalizedConnection,
+            pruneConflictingInputEdges(edges, normalizedConnection)
+          );
+        }
+
+        clearPendingSingleSourceReplacement();
+      }
+
+      closeAddNodeMenu();
+      emitFlowChange("raw-json-node-created");
       return;
     }
 
@@ -839,6 +904,13 @@
     );
   }
 
+  function isGenericRawJsonCreationEntry(candidate) {
+    return (
+      normalizeOptionalString(candidate?.kind) === "generic-action" &&
+      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_RAW_JSON
+    );
+  }
+
   function isDeleteKey(event) {
     const key = normalizeOptionalString(event?.key);
     return key === "Delete" || key === "Backspace";
@@ -867,6 +939,8 @@
   on:keyup={handleWindowKeyUp}
   on:hytale-node-editor-group-mutation={handleMetadataMutation}
   on:hytale-node-editor-comment-mutation={handleMetadataMutation}
+  on:hytale-node-editor-custom-mutation={handleMetadataMutation}
+  on:hytale-node-editor-raw-json-mutation={handleMetadataMutation}
 />
 
 <div

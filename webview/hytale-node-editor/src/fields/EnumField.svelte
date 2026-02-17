@@ -133,7 +133,9 @@
   }
 
   function handleBlur() {
-    revertValue();
+    const rankedValues = rankEnumValues(values, draftText);
+    const bestMatchValue = rankedValues[0] ?? committedValue;
+    commitValue(bestMatchValue, false);
   }
 
   function selectOption(optionValue) {

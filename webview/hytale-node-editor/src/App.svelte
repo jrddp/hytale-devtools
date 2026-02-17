@@ -8,6 +8,8 @@
     GROUP_NODE_TYPE,
     PAYLOAD_EDITOR_FIELDS_KEY,
     PAYLOAD_TEMPLATE_ID_KEY,
+    RAW_JSON_INPUT_HANDLE_ID,
+    RAW_JSON_NODE_TYPE,
   } from "./node-editor/types.js";
   import {
     NODE_EDITOR_METADATA_KEY,
@@ -75,6 +77,8 @@
   ];
   const NODE_TEMPLATE_DATA_KEY = "$templateId";
   const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
+  const RAW_JSON_DATA_FIELD_ID = "Data";
+  const RAW_JSON_DEFAULT_DATA_VALUE = "{\n\n}";
   const GROUP_NODE_ID_PREFIX = "__group__";
   const COMMENT_NODE_ID_PREFIX = "__comment__";
   const DEFAULT_GROUP_NAME = "Group";
@@ -384,6 +388,7 @@
     }
 
     const runtimeFlowNodes = [];
+    const rawRuntimeNodeIds = new Set();
     const sortedNodeIds = Array.from(nodeIds).sort();
     for (let index = 0; index < sortedNodeIds.length; index += 1) {
       const nodeId = sortedNodeIds[index];
@@ -396,26 +401,58 @@
       const payloadForTemplate = getPayloadForTemplateResolution(payload, nodeId, context);
       const position = normalizePosition(nodeMeta?.$Position, index);
       const templateId = readTemplateId(undefined, payloadForTemplate, context);
+      const templateDefinition = resolveTemplateForPayload(
+        payloadForTemplate,
+        nodeId,
+        context,
+        templateId
+      );
+      const resolvedTemplateId = normalizeNonEmptyString(templateDefinition?.templateId);
       const label = readNodeLabel(
         nodeId,
         nodeMeta,
         undefined,
         payloadForTemplate,
         context,
-        templateId
+        resolvedTemplateId
       );
       const comment =
         typeof payloadForTemplate.$Comment === "string" && payloadForTemplate.$Comment.trim()
           ? payloadForTemplate.$Comment.trim()
           : undefined;
-      const fieldValues = readFieldValues(undefined, payloadForTemplate, templateId, context);
+
+      if (!templateDefinition) {
+        rawRuntimeNodeIds.add(nodeId);
+        runtimeFlowNodes.push({
+          id: nodeId,
+          type: RAW_JSON_NODE_TYPE,
+          data: {
+            label,
+            [NODE_FIELD_VALUES_DATA_KEY]: {
+              [RAW_JSON_DATA_FIELD_ID]: stringifyRawJsonPayloadBody(payloadForTemplate),
+            },
+            ...(comment !== undefined ? { $comment: comment } : {}),
+          },
+          position,
+        });
+        continue;
+      }
+
+      const fieldValues = readFieldValues(
+        undefined,
+        payloadForTemplate,
+        resolvedTemplateId,
+        context
+      );
 
       runtimeFlowNodes.push({
         id: nodeId,
         type: CUSTOM_NODE_TYPE,
         data: {
           label,
-          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
+          ...(resolvedTemplateId !== undefined
+            ? { [NODE_TEMPLATE_DATA_KEY]: resolvedTemplateId }
+            : {}),
           ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
@@ -423,9 +460,25 @@
       });
     }
 
+    const normalizedParsedEdges = parsedEdges.map((edge) => {
+      const targetNodeId = normalizeNonEmptyString(edge?.target);
+      if (
+        targetNodeId &&
+        rawRuntimeNodeIds.has(targetNodeId) &&
+        !normalizeNonEmptyString(edge?.targetHandle)
+      ) {
+        return {
+          ...edge,
+          targetHandle: RAW_JSON_INPUT_HANDLE_ID,
+        };
+      }
+
+      return edge;
+    });
+
     const normalizedRuntimeFlowNodes =
       options?.applyAutoLayout === true
-        ? applyLegacyMissingPositionAutoLayout(runtimeFlowNodes, parsedEdges)
+        ? applyLegacyMissingPositionAutoLayout(runtimeFlowNodes, normalizedParsedEdges)
         : runtimeFlowNodes;
     const groupFlowNodes = buildGroupFlowNodes(context.groups);
     const commentFlowNodes = buildCommentFlowNodes(context.comments);
@@ -433,7 +486,7 @@
 
     return {
       nodes: [...groupFlowNodes, ...commentFlowNodes, ...groupedRuntimeNodes],
-      edges: parsedEdges,
+      edges: normalizedParsedEdges,
     };
   }
 
@@ -581,42 +634,125 @@
     const inputRuntimeNodes = inputNodes.filter((candidate) => !isMetadataFlowNode(candidate));
     for (let index = 0; index < inputRuntimeNodes.length; index += 1) {
       const candidate = inputRuntimeNodes[index];
-      const nodeId = normalizeNodeId(candidate?.id, candidate?.type, index);
+      const isRawJsonNode = isRawJsonFlowNode(candidate);
+      const nodeId = isRawJsonNode
+        ? normalizeRawJsonNodeId(candidate?.id)
+        : normalizeNodeId(candidate?.id, candidate?.type, index);
       if (seenNodeIds.has(nodeId)) {
         continue;
       }
       seenNodeIds.add(nodeId);
 
       const baseMeta = isObject(knownNodeMetadata[nodeId]) ? { ...knownNodeMetadata[nodeId] } : {};
-      const basePayload = isObject(knownNodePayload[nodeId]) ? { ...knownNodePayload[nodeId] } : {};
-      const payloadForTemplate = getPayloadForTemplateResolution(basePayload, nodeId, state.metadataContext);
+      let basePayload = isObject(knownNodePayload[nodeId]) ? { ...knownNodePayload[nodeId] } : {};
       const absolutePosition = readAbsoluteNodePosition(
         candidate,
         groupNodeById,
         index,
         baseMeta?.$Position
       );
-      const comment =
+      const commentFromNode =
         typeof candidate?.data?.$comment === "string" && candidate.data.$comment.trim()
           ? candidate.data.$comment.trim()
           : undefined;
+
+      if (isRawJsonNode) {
+        const rawJsonData = readRawJsonDataValue(candidate?.data, basePayload);
+        basePayload = parseRawJsonDataValueToPayload(rawJsonData, basePayload);
+        const payloadForLabel = getPayloadForTemplateResolution(
+          basePayload,
+          nodeId,
+          state.metadataContext
+        );
+        const comment =
+          commentFromNode ??
+          (typeof basePayload.$Comment === "string" && basePayload.$Comment.trim()
+            ? basePayload.$Comment.trim()
+            : undefined);
+        const label = readNodeLabel(
+          nodeId,
+          baseMeta,
+          candidate?.data?.label,
+          payloadForLabel,
+          state.metadataContext
+        );
+
+        baseMeta.$Position = {
+          $x: absolutePosition.x,
+          $y: absolutePosition.y,
+        };
+
+        const hasExistingExplicitTitle = normalizeNonEmptyString(baseMeta.$Title) !== undefined;
+        const defaultComputedLabel = readDefaultNodeLabel(
+          nodeId,
+          payloadForLabel,
+          state.metadataContext
+        );
+        if (label !== defaultComputedLabel || hasExistingExplicitTitle) {
+          baseMeta.$Title = label;
+        } else {
+          delete baseMeta.$Title;
+        }
+
+        basePayload.$NodeId = nodeId;
+        if (comment !== undefined) {
+          basePayload.$Comment = comment;
+        } else {
+          delete basePayload.$Comment;
+        }
+
+        const parentGroup = findContainingGroupForPosition(absolutePosition, normalizedGroupNodes);
+        const position = parentGroup
+          ? {
+              x: absolutePosition.x - parentGroup.position.x,
+              y: absolutePosition.y - parentGroup.position.y,
+            }
+          : absolutePosition;
+
+        nextNodeMetadataById[nodeId] = baseMeta;
+        nextNodePayloadById[nodeId] = basePayload;
+        normalizedRuntimeNodes.push({
+          id: nodeId,
+          type: RAW_JSON_NODE_TYPE,
+          data: {
+            label,
+            [NODE_FIELD_VALUES_DATA_KEY]: {
+              [RAW_JSON_DATA_FIELD_ID]: rawJsonData,
+            },
+            ...(comment !== undefined ? { $comment: comment } : {}),
+          },
+          position,
+          ...(parentGroup ? { parentId: parentGroup.id } : {}),
+        });
+        continue;
+      }
+
+      const payloadForTemplate = getPayloadForTemplateResolution(basePayload, nodeId, state.metadataContext);
+      const comment = commentFromNode;
       const templateId = readTemplateId(
         candidate?.data?.[NODE_TEMPLATE_DATA_KEY],
         payloadForTemplate,
         state.metadataContext
       );
+      const templateDefinition = resolveTemplateForPayload(
+        payloadForTemplate,
+        nodeId,
+        state.metadataContext,
+        templateId
+      );
+      const resolvedTemplateId = normalizeNonEmptyString(templateDefinition?.templateId);
       const label = readNodeLabel(
         nodeId,
         baseMeta,
         candidate?.data?.label,
         payloadForTemplate,
         state.metadataContext,
-        templateId
+        resolvedTemplateId
       );
       const fieldValues = readFieldValues(
         candidate?.data?.[NODE_FIELD_VALUES_DATA_KEY],
         payloadForTemplate,
-        templateId,
+        resolvedTemplateId,
         state.metadataContext
       );
 
@@ -630,7 +766,7 @@
         nodeId,
         payloadForTemplate,
         state.metadataContext,
-        templateId
+        resolvedTemplateId
       );
       if (label !== defaultComputedLabel || hasExistingExplicitTitle) {
         baseMeta.$Title = label;
@@ -654,12 +790,6 @@
       delete basePayload[PAYLOAD_TEMPLATE_ID_KEY];
       delete basePayload[PAYLOAD_EDITOR_FIELDS_KEY];
 
-      const templateDefinition = resolveTemplateForPayload(
-        payloadForTemplate,
-        nodeId,
-        state.metadataContext,
-        templateId
-      );
       if (templateDefinition) {
         writeTemplateVariantIdentity(basePayload, templateDefinition, workspaceDefinition);
       } else if (explicitVariantIdentity && explicitVariantIdentity.source !== "node-id") {
@@ -682,7 +812,9 @@
         type: CUSTOM_NODE_TYPE,
         data: {
           label,
-          ...(templateId !== undefined ? { [NODE_TEMPLATE_DATA_KEY]: templateId } : {}),
+          ...(resolvedTemplateId !== undefined
+            ? { [NODE_TEMPLATE_DATA_KEY]: resolvedTemplateId }
+            : {}),
           ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
         },
@@ -873,6 +1005,45 @@
     };
   }
 
+  function buildRawJsonPayloadBody(payloadCandidate) {
+    const payloadBody = isObject(payloadCandidate) ? { ...payloadCandidate } : {};
+    delete payloadBody.$NodeId;
+    delete payloadBody.$Comment;
+    return payloadBody;
+  }
+
+  function stringifyRawJsonPayloadBody(payloadCandidate) {
+    const payloadBody = buildRawJsonPayloadBody(payloadCandidate);
+    const serialized = JSON.stringify(payloadBody, null, 2);
+    return serialized === "{}" ? RAW_JSON_DEFAULT_DATA_VALUE : serialized;
+  }
+
+  function readRawJsonDataValue(nodeData, fallbackPayload = {}) {
+    const fromFieldValues = nodeData?.[NODE_FIELD_VALUES_DATA_KEY]?.[RAW_JSON_DATA_FIELD_ID];
+    if (typeof fromFieldValues === "string") {
+      return fromFieldValues;
+    }
+
+    return stringifyRawJsonPayloadBody(fallbackPayload);
+  }
+
+  function parseRawJsonDataValueToPayload(rawJsonData, fallbackPayload = {}) {
+    if (typeof rawJsonData !== "string") {
+      return buildRawJsonPayloadBody(fallbackPayload);
+    }
+
+    try {
+      const parsed = JSON.parse(rawJsonData);
+      if (isObject(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Preserve the prior payload body when raw data is not valid JSON.
+    }
+
+    return buildRawJsonPayloadBody(fallbackPayload);
+  }
+
   function countRuntimeFlowNodes(flowNodesCandidate) {
     const flowNodes = Array.isArray(flowNodesCandidate) ? flowNodesCandidate : [];
     return flowNodes.filter((flowNode) => !isMetadataFlowNode(flowNode)).length;
@@ -884,6 +1055,19 @@
 
   function isCommentFlowNode(candidateNode) {
     return normalizeNonEmptyString(candidateNode?.type) === COMMENT_NODE_TYPE;
+  }
+
+  function isRawJsonFlowNode(candidateNode) {
+    return normalizeNonEmptyString(candidateNode?.type) === RAW_JSON_NODE_TYPE;
+  }
+
+  function normalizeRawJsonNodeId(candidateNodeId) {
+    const normalizedCandidateNodeId = normalizeNonEmptyString(candidateNodeId);
+    if (normalizedCandidateNodeId) {
+      return normalizedCandidateNodeId;
+    }
+
+    return normalizeNodeId(undefined, "Generic");
   }
 
   function isMetadataFlowNode(candidateNode) {
