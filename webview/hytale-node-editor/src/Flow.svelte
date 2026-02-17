@@ -9,6 +9,7 @@
   import "@xyflow/svelte/dist/style.css";
 
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
+  import NodeSearchPanel from "./components/NodeSearchPanel.svelte";
   import NodeEditorActionMenu from "./components/NodeEditorActionMenu.svelte";
   import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
@@ -37,6 +38,7 @@
     layoutDirectedGraphWithNodeSizes,
     readLayoutOriginFromPositions,
   } from "./node-editor/autoLayout.js";
+  import { buildNodeSearchGroups } from "./node-editor/nodeSearch.js";
   import {
     COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
@@ -69,6 +71,8 @@
   const RAW_JSON_DEFAULT_DATA = "{\n\n}";
   const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
   const MIN_FLOW_ZOOM = 0;
+  const SEARCH_NODE_FOCUS_DURATION_MS = 100;
+  const SEARCH_NODE_FOCUS_ZOOM = 0.9;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
@@ -113,7 +117,7 @@
     [RAW_JSON_NODE_TYPE]: RawJsonMetadataNode,
   };
 
-  const { fitView, screenToFlowPosition, setCenter } = useSvelteFlow();
+  const { fitView, getViewport, screenToFlowPosition, setCenter, setViewport } = useSvelteFlow();
 
   let lastNormalizedLoadVersion = -1;
   let flowWrapperElement;
@@ -132,6 +136,11 @@
   let allTemplates = [];
   let availableAddEntries = [];
   let pendingSingleSourceReplacement;
+  let nodeSearchOpen = false;
+  let nodeSearchOpenVersion = 0;
+  let nodeSearchInitialViewport = undefined;
+  let nodeSearchLastPreviewedNodeId = undefined;
+  let nodeSearchGroups = [];
 
   $: {
     setActiveTemplateSourceMode(templateSourceMode);
@@ -140,6 +149,10 @@
   }
 
   $: availableAddEntries = resolveAvailableAddEntries(pendingConnection);
+  $: nodeSearchGroups = buildNodeSearchGroups({
+    nodes,
+    workspaceContext,
+  });
 
   $: {
     const reconciledEdges = reconcileLinkOutputEdges(edges);
@@ -457,7 +470,7 @@
   }
 
   function handleQuickActionSearchNodes() {
-    console.info("[node-editor] Quick action is not implemented yet: Search Nodes");
+    openNodeSearchMenu();
   }
 
   function handleQuickActionAutoPositionNodes() {
@@ -593,6 +606,116 @@
     restorePendingSingleSourceReplacement();
   }
 
+  function openNodeSearchMenu() {
+    closeAddNodeMenu();
+    const currentViewport = getViewport();
+    nodeSearchInitialViewport = isViewport(currentViewport)
+      ? { ...currentViewport }
+      : undefined;
+    nodeSearchLastPreviewedNodeId = undefined;
+    nodeSearchOpen = true;
+    nodeSearchOpenVersion += 1;
+  }
+
+  function closeNodeSearchMenu({ restoreViewport = false } = {}) {
+    if (!nodeSearchOpen) {
+      return;
+    }
+
+    const initialViewport = nodeSearchInitialViewport;
+    nodeSearchOpen = false;
+    nodeSearchInitialViewport = undefined;
+    nodeSearchLastPreviewedNodeId = undefined;
+
+    if (restoreViewport && isViewport(initialViewport)) {
+      void setViewport(initialViewport, {
+        duration: 250,
+      });
+    }
+  }
+
+  function handleNodeSearchCloseRequest() {
+    closeNodeSearchMenu({ restoreViewport: true });
+  }
+
+  function handleNodeSearchPreview(event) {
+    const nodeId = normalizeOptionalString(event?.detail?.nodeId);
+    if (!nodeId || nodeId === nodeSearchLastPreviewedNodeId) {
+      return;
+    }
+
+    nodeSearchLastPreviewedNodeId = nodeId;
+    centerViewportOnNode(nodeId);
+  }
+
+  function handleNodeSearchSelect(event) {
+    const nodeId = normalizeOptionalString(event?.detail?.nodeId);
+    if (!nodeId) {
+      return;
+    }
+
+    nodeSearchLastPreviewedNodeId = nodeId;
+    centerViewportOnNode(nodeId);
+    const didSelectionChange = selectOnlyNodeById(nodeId);
+    closeNodeSearchMenu({ restoreViewport: false });
+    if (didSelectionChange) {
+      emitFlowChange("node-search-selected");
+    }
+  }
+
+  function centerViewportOnNode(nodeIdCandidate) {
+    const targetNode = findNodeById(nodeIdCandidate);
+    const targetPosition = readAbsoluteNodePosition(targetNode);
+    if (!targetPosition) {
+      return false;
+    }
+
+    const targetDimensions = readNodeDimensions(targetNode);
+    const targetX = targetPosition.x + (targetDimensions?.width ?? 0) / 2;
+    const targetY = targetPosition.y + (targetDimensions?.height ?? 0) / 2;
+    void setCenter(targetX, targetY, {
+      zoom: SEARCH_NODE_FOCUS_ZOOM,
+      duration: SEARCH_NODE_FOCUS_DURATION_MS,
+    });
+    return true;
+  }
+
+  function selectOnlyNodeById(nodeIdCandidate) {
+    const nodeId = normalizeOptionalString(nodeIdCandidate);
+    if (!nodeId) {
+      return false;
+    }
+
+    let hasSelectionChanges = false;
+    nodes = (Array.isArray(nodes) ? nodes : []).map((nodeCandidate) => {
+      const candidateNodeId = normalizeOptionalString(nodeCandidate?.id);
+      const shouldSelect = candidateNodeId === nodeId;
+      if (Boolean(nodeCandidate?.selected) === shouldSelect) {
+        return nodeCandidate;
+      }
+
+      hasSelectionChanges = true;
+      return {
+        ...nodeCandidate,
+        selected: shouldSelect,
+      };
+    });
+
+    edges = (Array.isArray(edges) ? edges : []).map((edgeCandidate) => {
+      if (edgeCandidate?.selected !== true) {
+        return edgeCandidate;
+      }
+
+      hasSelectionChanges = true;
+      return {
+        ...edgeCandidate,
+        selected: false,
+      };
+    });
+
+    return hasSelectionChanges;
+  }
+
   function didEventOccurInsideAddMenu(event) {
     if (typeof event?.composedPath !== "function") {
       return false;
@@ -607,16 +730,28 @@
     });
   }
 
+  function didEventOccurInsideNodeSearchMenu(event) {
+    if (typeof event?.composedPath !== "function") {
+      return false;
+    }
+
+    return event.composedPath().some((target) => {
+      if (typeof target?.getAttribute !== "function") {
+        return false;
+      }
+
+      return target.getAttribute("data-node-search-menu") === "true";
+    });
+  }
+
   function handleWindowPointerDown(event) {
-    if (!addMenuOpen) {
-      return;
+    if (addMenuOpen && !didEventOccurInsideAddMenu(event)) {
+      closeAddNodeMenu();
     }
 
-    if (didEventOccurInsideAddMenu(event)) {
-      return;
+    if (nodeSearchOpen && !didEventOccurInsideNodeSearchMenu(event)) {
+      closeNodeSearchMenu({ restoreViewport: true });
     }
-
-    closeAddNodeMenu();
   }
 
   function openAddNodeMenu(
@@ -624,6 +759,7 @@
     sourceNodeId = undefined,
     sourceHandleId = undefined
   ) {
+    closeNodeSearchMenu({ restoreViewport: false });
     const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
     if (!addMenuRequest) {
       return false;
@@ -1674,6 +1810,14 @@
     return Math.max(minValue, normalizedValue);
   }
 
+  function isViewport(candidateViewport) {
+    return (
+      Number.isFinite(candidateViewport?.x) &&
+      Number.isFinite(candidateViewport?.y) &&
+      Number.isFinite(candidateViewport?.zoom)
+    );
+  }
+
   function isObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
   }
@@ -1747,7 +1891,7 @@
   <SvelteFlow
     bind:nodes
     bind:edges
-    disableKeyboardA11y={addMenuOpen}
+    disableKeyboardA11y={addMenuOpen || nodeSearchOpen}
     panActivationKey={"Shift"}
     selectNodesOnDrag={false}
     minZoom={MIN_FLOW_ZOOM}
@@ -1768,6 +1912,14 @@
       on:autopositionnodes={handleQuickActionAutoPositionNodes}
       on:viewrawjson={handleQuickActionViewRawJson}
       on:helphotkeys={handleQuickActionHelpAndHotkeys}
+    />
+    <NodeSearchPanel
+      open={nodeSearchOpen}
+      openVersion={nodeSearchOpenVersion}
+      groups={nodeSearchGroups}
+      on:close={handleNodeSearchCloseRequest}
+      on:preview={handleNodeSearchPreview}
+      on:select={handleNodeSearchSelect}
     />
   </SvelteFlow>
 
