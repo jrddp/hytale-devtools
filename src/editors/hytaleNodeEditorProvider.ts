@@ -77,8 +77,6 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 						return;
 				}
 			});
-
-			updateWebview();
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			console.error('Failed to resolve Hytale Node custom editor:', message);

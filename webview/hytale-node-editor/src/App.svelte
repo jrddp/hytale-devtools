@@ -111,13 +111,11 @@
   $: setActiveTemplateSourceMode(templateSourceMode);
 
   let documentPath = "";
-  const initialState = parseDocumentText("");
-
-  let nodes = initialState.nodes;
-  let edges = initialState.edges;
-  let runtimeFields = initialState.runtimeFields;
-  let metadataContext = initialState.metadataContext;
-  let syncedText = initialState.serializedText;
+  let nodes = [];
+  let edges = [];
+  let runtimeFields = {};
+  let metadataContext = createEmptyMetadataContext();
+  let syncedText = "";
   let sourceVersion = -1;
   let graphLoadVersion = 0;
   let extensionError = "";
@@ -262,6 +260,7 @@
       metadataWorkspaceId: metadataRoot?.$WorkspaceID,
       runtimeRoot: runtime,
     });
+    console.log(`[node-editor] Detected workspace type: ${normalizeNonEmptyString(workspaceContext?.workspaceId) ?? "(none)"}`);
     setActiveWorkspaceContext(workspaceContext);
 
     const runtimeNodePayloadById = collectRuntimeNodePayloadById(runtime);
