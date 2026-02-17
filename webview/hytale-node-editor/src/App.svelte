@@ -2904,9 +2904,9 @@
 
 </script>
 
-<main class="flex flex-col h-screen min-h-0 p-3">
+<main class="flex flex-col h-screen min-h-0">
   {#if extensionError}
-    <div class="mb-2 text-sm text-vsc-error">{extensionError}</div>
+    <div class="mx-3 mt-3 text-sm text-vsc-error">{extensionError}</div>
   {/if}
   <SvelteFlowProvider>
     <Flow
