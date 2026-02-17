@@ -9,6 +9,7 @@
   import "@xyflow/svelte/dist/style.css";
 
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
+  import NodeEditorActionMenu from "./components/NodeEditorActionMenu.svelte";
   import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
   import GroupMetadataNode from "./nodes/GroupMetadataNode.svelte";
@@ -107,7 +108,7 @@
     [RAW_JSON_NODE_TYPE]: RawJsonMetadataNode,
   };
 
-  const { screenToFlowPosition, fitView } = useSvelteFlow();
+  const { fitView, screenToFlowPosition, setCenter } = useSvelteFlow();
 
   let lastNormalizedLoadVersion = -1;
   let flowWrapperElement;
@@ -423,6 +424,47 @@
 
   function handleNodeDragStop() {
     emitFlowChange("node-moved");
+  }
+
+  function handleQuickActionFitFullView() {
+    void fitView({
+      padding: 0.2,
+      minZoom: MIN_FLOW_ZOOM,
+      duration: 250,
+    });
+  }
+
+  function handleQuickActionGoToRoot() {
+    const rootNode = resolveRootNodeForNavigation();
+    const rootPosition = readAbsoluteNodePosition(rootNode);
+    if (!rootPosition) {
+      console.info("[node-editor] Quick action could not resolve a root node position.");
+      return;
+    }
+    const rootDimensions = readNodeDimensions(rootNode);
+    const targetX = rootPosition.x + (rootDimensions?.width ?? 0);
+    const targetY = rootPosition.y + (rootDimensions?.height ?? 0) / 2;
+
+    void setCenter(targetX, targetY, {
+      zoom: 1.2,
+      duration: 250,
+    });
+  }
+
+  function handleQuickActionSearchNodes() {
+    console.info("[node-editor] Quick action is not implemented yet: Search Nodes");
+  }
+
+  function handleQuickActionAutoPositionNodes() {
+    console.info("[node-editor] Quick action is not implemented yet: Auto Position Nodes");
+  }
+
+  function handleQuickActionViewRawJson() {
+    console.info("[node-editor] Quick action is not implemented yet: View Raw JSON");
+  }
+
+  function handleQuickActionHelpAndHotkeys() {
+    console.info("[node-editor] Quick action is not implemented yet: Help and Hotkeys");
   }
 
   function handleMetadataMutation(event) {
@@ -1368,6 +1410,91 @@
     return { x, y };
   }
 
+  function readNodeDimensions(nodeCandidate) {
+    const width = readFiniteDimension(
+      nodeCandidate?.width,
+      nodeCandidate?.initialWidth,
+      nodeCandidate?.measured?.width
+    );
+    const height = readFiniteDimension(
+      nodeCandidate?.height,
+      nodeCandidate?.initialHeight,
+      nodeCandidate?.measured?.height
+    );
+
+    return width === undefined && height === undefined
+      ? undefined
+      : { width: width ?? 0, height: height ?? 0 };
+  }
+
+  function readFiniteDimension(...candidates) {
+    for (const candidate of candidates) {
+      if (Number.isFinite(candidate)) {
+        return candidate;
+      }
+    }
+
+    return undefined;
+  }
+
+  function resolveRootNodeForNavigation() {
+    const explicitRootNodeId = normalizeOptionalString(rootNodeId);
+    const candidateRootNodeIds = [explicitRootNodeId, ROOT_NODE_ID].filter(Boolean);
+    for (const candidateRootNodeId of candidateRootNodeIds) {
+      const candidateRootNode = findNodeById(candidateRootNodeId);
+      if (candidateRootNode) {
+        return candidateRootNode;
+      }
+    }
+
+    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
+    const firstRuntimeNode = normalizedNodes.find((node) => {
+      const nodeType = normalizeOptionalString(node?.type);
+      return nodeType !== GROUP_NODE_TYPE && nodeType !== COMMENT_NODE_TYPE;
+    });
+    if (firstRuntimeNode) {
+      return firstRuntimeNode;
+    }
+
+    return normalizedNodes[0];
+  }
+
+  function readAbsoluteNodePosition(nodeCandidate, visitedNodeIds = new Set()) {
+    const relativePosition = readNodePosition(nodeCandidate);
+    if (!relativePosition) {
+      return undefined;
+    }
+
+    const nodeId = normalizeOptionalString(nodeCandidate?.id);
+    const parentNodeId = normalizeOptionalString(nodeCandidate?.parentId);
+    if (!parentNodeId) {
+      return relativePosition;
+    }
+
+    if (nodeId && visitedNodeIds.has(nodeId)) {
+      return relativePosition;
+    }
+
+    const parentNode = findNodeById(parentNodeId);
+    if (!parentNode) {
+      return relativePosition;
+    }
+
+    const nextVisitedNodeIds = new Set(visitedNodeIds);
+    if (nodeId) {
+      nextVisitedNodeIds.add(nodeId);
+    }
+    const parentAbsolutePosition = readAbsoluteNodePosition(parentNode, nextVisitedNodeIds);
+    if (!parentAbsolutePosition) {
+      return relativePosition;
+    }
+
+    return {
+      x: parentAbsolutePosition.x + relativePosition.x,
+      y: parentAbsolutePosition.y + relativePosition.y,
+    };
+  }
+
   function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
     const width = normalizeGroupDimension(widthCandidate, DEFAULT_GROUP_WIDTH, MIN_GROUP_WIDTH);
     const height = normalizeGroupDimension(heightCandidate, DEFAULT_GROUP_HEIGHT, MIN_GROUP_HEIGHT);
@@ -1471,6 +1598,14 @@
     onpanecontextmenu={handlePaneContextMenu}
   >
     <Background bgColor={"var(--vscode-editor-background)"} />
+    <NodeEditorActionMenu
+      on:gotoroot={handleQuickActionGoToRoot}
+      on:fitfullview={handleQuickActionFitFullView}
+      on:searchnodes={handleQuickActionSearchNodes}
+      on:autopositionnodes={handleQuickActionAutoPositionNodes}
+      on:viewrawjson={handleQuickActionViewRawJson}
+      on:helphotkeys={handleQuickActionHelpAndHotkeys}
+    />
   </SvelteFlow>
 
   <AddNodeMenu
