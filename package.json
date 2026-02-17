@@ -117,6 +117,7 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^2.0.4",
     "@xyflow/svelte": "^1.5.0",
     "lucide-svelte": "^0.564.0"
   }

@@ -37,6 +37,7 @@
     applySchemaEdgesToNodePayloads,
     extractSchemaEdgesFromNodePayloads,
   } from "./node-editor/connectionSchemaMapper.js";
+  import { layoutDirectedGraph } from "./node-editor/autoLayout.js";
   import {
     LEGACY_ROOT_EDITOR_KEYS,
     convertLegacyInlineAssetDocument,
@@ -72,6 +73,11 @@
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const GROUP_Z_INDEX_SELECTED = 10000;
   const GROUP_RESERVED_KEYS = ["$Position", "$width", "$height", "$name"];
+  const LEGACY_MISSING_POSITION_LAYOUT_DIRECTION = "LR";
+  const LEGACY_MISSING_POSITION_LAYOUT_NODE_SIZE = {
+    width: 360,
+    height: 240,
+  };
   const BASE_TEMPLATE_RESOLUTION_EXCLUDED_KEYS = new Set([
     "$NodeId",
     "$Comment",
@@ -210,7 +216,11 @@
       return buildStateFromMetadataDocument(
         convertedLegacy.runtime,
         convertedLegacy.metadataRoot,
-        sourceDocumentPath
+        sourceDocumentPath,
+        {
+          enableLegacyMissingPositionAutoLayout: true,
+          legacyHasAnyExplicitRuntimePosition: convertedLegacy.hasAnyExplicitRuntimePosition,
+        }
       );
     }
 
@@ -219,7 +229,12 @@
     return buildStateFromMetadataDocument(runtime, metadataRoot, sourceDocumentPath);
   }
 
-  function buildStateFromMetadataDocument(runtime, metadataRoot, sourceDocumentPath = documentPath) {
+  function buildStateFromMetadataDocument(
+    runtime,
+    metadataRoot,
+    sourceDocumentPath = documentPath,
+    options = {}
+  ) {
     const workspaceContext = resolveWorkspaceContext({
       documentPath: sourceDocumentPath,
       metadataWorkspaceId: metadataRoot?.$WorkspaceID,
@@ -236,7 +251,11 @@
       readRuntimeRootNodeId(runtime),
       workspaceContext
     );
-    let flowState = buildFlowStateFromMetadata(context);
+    const shouldAutoLayoutLegacyMissingPositions =
+      shouldApplyLegacyMissingPositionAutoLayout(options);
+    let flowState = buildFlowStateFromMetadata(context, {
+      applyAutoLayout: shouldAutoLayoutLegacyMissingPositions,
+    });
 
     if (countRuntimeFlowNodes(flowState.nodes) === 0) {
       flowState = buildFlowStateFromMetadata(createMetadataContextWithDefaultNode(context));
@@ -326,7 +345,15 @@
     return nextContext;
   }
 
-  function buildFlowStateFromMetadata(context) {
+  function shouldApplyLegacyMissingPositionAutoLayout(options = {}) {
+    if (options?.enableLegacyMissingPositionAutoLayout !== true) {
+      return false;
+    }
+
+    return options?.legacyHasAnyExplicitRuntimePosition !== true;
+  }
+
+  function buildFlowStateFromMetadata(context, options = {}) {
     const nodeIds = new Set([
       ...Object.keys(context.nodeMetadataById),
       ...Object.keys(context.nodePayloadById),
@@ -376,13 +403,77 @@
       });
     }
 
+    const normalizedRuntimeFlowNodes =
+      options?.applyAutoLayout === true
+        ? applyLegacyMissingPositionAutoLayout(runtimeFlowNodes, parsedEdges)
+        : runtimeFlowNodes;
     const groupFlowNodes = buildGroupFlowNodes(context.groups);
-    const groupedRuntimeNodes = assignNodesToGroups(runtimeFlowNodes, groupFlowNodes);
+    const groupedRuntimeNodes = assignNodesToGroups(normalizedRuntimeFlowNodes, groupFlowNodes);
 
     return {
       nodes: [...groupFlowNodes, ...groupedRuntimeNodes],
       edges: parsedEdges,
     };
+  }
+
+  function applyLegacyMissingPositionAutoLayout(runtimeNodesCandidate, edgesCandidate) {
+    const runtimeNodes = Array.isArray(runtimeNodesCandidate) ? runtimeNodesCandidate : [];
+    if (runtimeNodes.length === 0) {
+      return runtimeNodes;
+    }
+
+    const nodeById = new Map();
+    for (const runtimeNode of runtimeNodes) {
+      const nodeId = normalizeNonEmptyString(runtimeNode?.id);
+      if (!nodeId || nodeById.has(nodeId)) {
+        continue;
+      }
+
+      nodeById.set(nodeId, runtimeNode);
+    }
+
+    if (nodeById.size === 0) {
+      return runtimeNodes;
+    }
+
+    const layoutEdges = [];
+    const sourceEdges = Array.isArray(edgesCandidate) ? edgesCandidate : [];
+    for (const edge of sourceEdges) {
+      const sourceNodeId = normalizeNonEmptyString(edge?.source);
+      const targetNodeId = normalizeNonEmptyString(edge?.target);
+      if (
+        !sourceNodeId ||
+        !targetNodeId ||
+        !nodeById.has(sourceNodeId) ||
+        !nodeById.has(targetNodeId)
+      ) {
+        continue;
+      }
+
+      layoutEdges.push({
+        source: sourceNodeId,
+        target: targetNodeId,
+      });
+    }
+
+    const layoutedPositionById = layoutDirectedGraph({
+      nodeIds: Array.from(nodeById.keys()),
+      edges: layoutEdges,
+      direction: LEGACY_MISSING_POSITION_LAYOUT_DIRECTION,
+      nodeSize: LEGACY_MISSING_POSITION_LAYOUT_NODE_SIZE,
+    });
+
+    return runtimeNodes.map((runtimeNode, index) => {
+      const nodeId = normalizeNonEmptyString(runtimeNode?.id);
+      const layoutedPosition = nodeId ? layoutedPositionById.get(nodeId) : undefined;
+      const nextPosition =
+        layoutedPosition ?? normalizePosition(runtimeNode?.position, index);
+
+      return {
+        ...runtimeNode,
+        position: nextPosition,
+      };
+    });
   }
 
   function parseMetadataContext(

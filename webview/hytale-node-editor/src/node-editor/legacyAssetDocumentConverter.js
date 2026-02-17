@@ -41,6 +41,29 @@ function normalizeLegacyPosition(candidatePosition) {
   };
 }
 
+function createLegacyNodeMetadata({ positionCandidate, titleCandidate }) {
+  const hasPosition = hasLegacyInlinePosition(positionCandidate);
+  const title = normalizeNonEmptyString(titleCandidate);
+
+  if (!hasPosition && title === undefined) {
+    return undefined;
+  }
+
+  const metadata = {
+    ...(title !== undefined ? { $Title: title } : {}),
+  };
+
+  if (hasPosition) {
+    const position = normalizeLegacyPosition(positionCandidate);
+    metadata.$Position = {
+      $x: position.x,
+      $y: position.y,
+    };
+  }
+
+  return metadata;
+}
+
 export function convertLegacyInlineAssetDocument(
   root,
   { resolveNodeIdPrefix, shouldTreatAsLegacyNodePayload } = {}
@@ -55,11 +78,13 @@ export function convertLegacyInlineAssetDocument(
         $Groups: [],
         $Comments: [],
       },
+      hasAnyExplicitRuntimePosition: false,
     };
   }
 
   const legacyRuntimeRoot = omitKeys(root, LEGACY_ROOT_EDITOR_KEYS);
   const nodeMetadataById = {};
+  let hasAnyExplicitRuntimePosition = false;
 
   const visit = (
     candidate,
@@ -68,6 +93,7 @@ export function convertLegacyInlineAssetDocument(
       keyHint = undefined,
       parentPayload = undefined,
       parentNodeId = undefined,
+      trackRuntimePosition = false,
     } = {}
   ) => {
     if (Array.isArray(candidate)) {
@@ -77,6 +103,7 @@ export function convertLegacyInlineAssetDocument(
           keyHint,
           parentPayload,
           parentNodeId,
+          trackRuntimePosition,
         })
       );
     }
@@ -107,6 +134,7 @@ export function convertLegacyInlineAssetDocument(
           keyHint: childKey,
           parentPayload,
           parentNodeId,
+          trackRuntimePosition,
         });
       }
       return transformed;
@@ -130,15 +158,18 @@ export function convertLegacyInlineAssetDocument(
       'Node';
     const nodeId = normalizeNodeId(candidate.$NodeId, prefixHint);
 
-    const position = normalizeLegacyPosition(candidate.$Position);
-    const title = normalizeNonEmptyString(candidate.$Title);
-    nodeMetadataById[nodeId] = {
-      $Position: {
-        $x: position.x,
-        $y: position.y,
-      },
-      ...(title !== undefined ? { $Title: title } : {}),
-    };
+    const hasExplicitInlinePosition = hasLegacyInlinePosition(candidate.$Position);
+    if (trackRuntimePosition && hasExplicitInlinePosition) {
+      hasAnyExplicitRuntimePosition = true;
+    }
+
+    const nodeMetadata = createLegacyNodeMetadata({
+      positionCandidate: candidate.$Position,
+      titleCandidate: candidate.$Title,
+    });
+    if (nodeMetadata !== undefined) {
+      nodeMetadataById[nodeId] = nodeMetadata;
+    }
 
     const payloadForChildren = {
       ...candidate,
@@ -155,6 +186,7 @@ export function convertLegacyInlineAssetDocument(
         keyHint: childKey,
         parentPayload: payloadForChildren,
         parentNodeId: nodeId,
+        trackRuntimePosition,
       });
     }
     transformedNode.$NodeId = nodeId;
@@ -166,6 +198,7 @@ export function convertLegacyInlineAssetDocument(
     keyHint: 'Root',
     parentPayload: undefined,
     parentNodeId: undefined,
+    trackRuntimePosition: true,
   });
 
   const floatingRoots = Array.isArray(root.$FloatingNodes) ? root.$FloatingNodes : [];
@@ -176,6 +209,7 @@ export function convertLegacyInlineAssetDocument(
         keyHint: `Floating${index}`,
         parentPayload: undefined,
         parentNodeId: undefined,
+        trackRuntimePosition: false,
       })
     )
     .filter((floatingRoot) => isObject(floatingRoot));
@@ -194,5 +228,6 @@ export function convertLegacyInlineAssetDocument(
   return {
     runtime: isObject(runtime) ? runtime : {},
     metadataRoot,
+    hasAnyExplicitRuntimePosition,
   };
 }
