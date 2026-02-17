@@ -3,6 +3,7 @@
   import { SvelteFlowProvider } from "@xyflow/svelte";
   import Flow from "./Flow.svelte";
   import {
+    COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
     GROUP_NODE_TYPE,
     PAYLOAD_EDITOR_FIELDS_KEY,
@@ -50,6 +51,16 @@
     writeTemplateVariantIdentity,
   } from "./node-editor/variantIdentityResolver.js";
   import { resolveWorkspaceContext } from "./node-editor/workspaceContextResolver.js";
+  import {
+    COMMENT_DEFAULT_FONT_SIZE,
+    COMMENT_DEFAULT_HEIGHT,
+    COMMENT_DEFAULT_WIDTH,
+    COMMENT_MIN_HEIGHT,
+    COMMENT_MIN_WIDTH,
+    normalizeCommentFontSize,
+    normalizeCommentName,
+    normalizeCommentText,
+  } from "./node-editor/commentMetadata.js";
 
   export let vscode;
   export let templateSourceMode = "workspace-hg-java";
@@ -65,6 +76,7 @@
   const NODE_TEMPLATE_DATA_KEY = "$templateId";
   const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
   const GROUP_NODE_ID_PREFIX = "__group__";
+  const COMMENT_NODE_ID_PREFIX = "__comment__";
   const DEFAULT_GROUP_NAME = "Group";
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
@@ -73,6 +85,7 @@
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const GROUP_Z_INDEX_SELECTED = 10000;
   const GROUP_RESERVED_KEYS = ["$Position", "$width", "$height", "$name"];
+  const COMMENT_RESERVED_KEYS = ["$Position", "$width", "$height", "$name", "$text", "$fontSize"];
   const LEGACY_MISSING_POSITION_LAYOUT_DIRECTION = "LR";
   const LEGACY_MISSING_POSITION_LAYOUT_NODE_SIZE = {
     width: 360,
@@ -415,10 +428,11 @@
         ? applyLegacyMissingPositionAutoLayout(runtimeFlowNodes, parsedEdges)
         : runtimeFlowNodes;
     const groupFlowNodes = buildGroupFlowNodes(context.groups);
+    const commentFlowNodes = buildCommentFlowNodes(context.comments);
     const groupedRuntimeNodes = assignNodesToGroups(normalizedRuntimeFlowNodes, groupFlowNodes);
 
     return {
-      nodes: [...groupFlowNodes, ...groupedRuntimeNodes],
+      nodes: [...groupFlowNodes, ...commentFlowNodes, ...groupedRuntimeNodes],
       edges: parsedEdges,
     };
   }
@@ -499,7 +513,9 @@
     context.groups = Array.isArray(metadataRoot.$Groups)
       ? metadataRoot.$Groups.map((group) => (isObject(group) ? { ...group } : group))
       : [];
-    context.comments = Array.isArray(metadataRoot.$Comments) ? metadataRoot.$Comments : [];
+    context.comments = Array.isArray(metadataRoot.$Comments)
+      ? metadataRoot.$Comments.map((comment) => (isObject(comment) ? { ...comment } : comment))
+      : [];
     context.floatingNodes = Array.isArray(metadataRoot.$FloatingNodes) ? metadataRoot.$FloatingNodes : [];
     context.metadataExtraFields = omitKeys(metadataRoot, METADATA_RESERVED_KEYS);
     context.nodePayloadById = { ...runtimeNodePayloadById };
@@ -559,8 +575,10 @@
     const inputNodes = Array.isArray(state.nodes) ? state.nodes : [];
     const inputGroupNodes = inputNodes.filter((candidate) => isGroupFlowNode(candidate));
     const normalizedGroupNodes = normalizeGroupFlowNodes(inputGroupNodes);
+    const inputCommentNodes = inputNodes.filter((candidate) => isCommentFlowNode(candidate));
+    const normalizedCommentNodes = normalizeCommentFlowNodes(inputCommentNodes);
     const groupNodeById = new Map(normalizedGroupNodes.map((groupNode) => [groupNode.id, groupNode]));
-    const inputRuntimeNodes = inputNodes.filter((candidate) => !isGroupFlowNode(candidate));
+    const inputRuntimeNodes = inputNodes.filter((candidate) => !isMetadataFlowNode(candidate));
     for (let index = 0; index < inputRuntimeNodes.length; index += 1) {
       const candidate = inputRuntimeNodes[index];
       const nodeId = normalizeNodeId(candidate?.id, candidate?.type, index);
@@ -704,7 +722,7 @@
 
       return buildSerializedState({
         ...state,
-        nodes: [...normalizedGroupNodes, fallbackNode],
+        nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, fallbackNode],
         metadataContext: fallbackContext,
       });
     }
@@ -815,7 +833,10 @@
         normalizedGroupNodes,
         Array.isArray(state.metadataContext.groups) ? state.metadataContext.groups : []
       ),
-      comments: Array.isArray(state.metadataContext.comments) ? state.metadataContext.comments : [],
+      comments: serializeCommentsFromFlowNodes(
+        normalizedCommentNodes,
+        Array.isArray(state.metadataContext.comments) ? state.metadataContext.comments : []
+      ),
       floatingNodes: preservedFloatingRoots,
       runtimeTreeNodeIds,
       metadataExtraFields: isObject(state.metadataContext.metadataExtraFields)
@@ -845,7 +866,7 @@
     };
 
     return {
-      nodes: [...normalizedGroupNodes, ...normalizedRuntimeNodes],
+      nodes: [...normalizedGroupNodes, ...normalizedCommentNodes, ...normalizedRuntimeNodes],
       edges: normalizedEdges,
       metadataContext: nextMetadataContext,
       text: `${JSON.stringify(root, null, 2)}\n`,
@@ -854,11 +875,19 @@
 
   function countRuntimeFlowNodes(flowNodesCandidate) {
     const flowNodes = Array.isArray(flowNodesCandidate) ? flowNodesCandidate : [];
-    return flowNodes.filter((flowNode) => !isGroupFlowNode(flowNode)).length;
+    return flowNodes.filter((flowNode) => !isMetadataFlowNode(flowNode)).length;
   }
 
   function isGroupFlowNode(candidateNode) {
     return normalizeNonEmptyString(candidateNode?.type) === GROUP_NODE_TYPE;
+  }
+
+  function isCommentFlowNode(candidateNode) {
+    return normalizeNonEmptyString(candidateNode?.type) === COMMENT_NODE_TYPE;
+  }
+
+  function isMetadataFlowNode(candidateNode) {
+    return isGroupFlowNode(candidateNode) || isCommentFlowNode(candidateNode);
   }
 
   function buildGroupFlowNodes(groupsCandidate) {
@@ -927,6 +956,78 @@
     }
 
     return normalizedGroups;
+  }
+
+  function buildCommentFlowNodes(commentsCandidate) {
+    const sourceComments = Array.isArray(commentsCandidate) ? commentsCandidate : [];
+    const flowComments = [];
+
+    for (let index = 0; index < sourceComments.length; index += 1) {
+      const sourceComment = isObject(sourceComments[index]) ? sourceComments[index] : {};
+      const position = normalizePosition(sourceComment.$Position, index);
+      const dimensions = readCommentNodeDimensions(sourceComment);
+      const commentName = normalizeCommentName(sourceComment.$name);
+      const commentText = normalizeCommentText(sourceComment?.$text);
+      const commentFontSize = normalizeCommentFontSize(sourceComment.$fontSize);
+
+      flowComments.push({
+        id: `${COMMENT_NODE_ID_PREFIX}${index}`,
+        type: COMMENT_NODE_TYPE,
+        data: {
+          $commentName: commentName,
+          $commentText: commentText,
+          $fontSize: commentFontSize,
+        },
+        position,
+        width: dimensions.width,
+        height: dimensions.height,
+        selected: false,
+      });
+    }
+
+    return flowComments;
+  }
+
+  function normalizeCommentFlowNodes(commentNodesCandidate) {
+    const sourceComments = Array.isArray(commentNodesCandidate) ? commentNodesCandidate : [];
+    const normalizedComments = [];
+    const seenCommentIds = new Set();
+
+    for (let index = 0; index < sourceComments.length; index += 1) {
+      const sourceComment = sourceComments[index];
+      const fallbackCommentId = `${COMMENT_NODE_ID_PREFIX}${index}`;
+      let commentId = normalizeNonEmptyString(sourceComment?.id) ?? fallbackCommentId;
+      if (seenCommentIds.has(commentId)) {
+        commentId = `${fallbackCommentId}-${index}`;
+      }
+      seenCommentIds.add(commentId);
+
+      const position = normalizePosition(sourceComment?.position, index);
+      const dimensions = readCommentNodeDimensions(sourceComment);
+      const commentName = normalizeCommentName(sourceComment?.data?.$commentName);
+      const commentText = normalizeCommentText(sourceComment?.data?.$commentText);
+      const commentFontSize = normalizeCommentFontSize(sourceComment?.data?.$fontSize);
+      const isSelected = sourceComment?.selected === true;
+      const isDraggable =
+        typeof sourceComment?.draggable === "boolean" ? sourceComment.draggable : true;
+
+      normalizedComments.push({
+        id: commentId,
+        type: COMMENT_NODE_TYPE,
+        data: {
+          $commentName: commentName,
+          $commentText: commentText,
+          $fontSize: commentFontSize,
+        },
+        position,
+        width: dimensions.width,
+        height: dimensions.height,
+        selected: isSelected,
+        draggable: isDraggable,
+      });
+    }
+
+    return normalizedComments;
   }
 
   function assignNodesToGroups(runtimeNodesCandidate, groupNodesCandidate) {
@@ -1045,6 +1146,21 @@
     return normalizedName ?? DEFAULT_GROUP_NAME;
   }
 
+  function readCommentNodeDimensions(commentNode) {
+    return {
+      width: normalizeGroupDimension(
+        commentNode?.width ?? commentNode?.initialWidth ?? commentNode?.measured?.width ?? commentNode?.$width,
+        COMMENT_DEFAULT_WIDTH,
+        COMMENT_MIN_WIDTH
+      ),
+      height: normalizeGroupDimension(
+        commentNode?.height ?? commentNode?.initialHeight ?? commentNode?.measured?.height ?? commentNode?.$height,
+        COMMENT_DEFAULT_HEIGHT,
+        COMMENT_MIN_HEIGHT
+      ),
+    };
+  }
+
   function serializeGroupsFromFlowNodes(groupNodesCandidate, priorGroupsCandidate) {
     const groupNodes = Array.isArray(groupNodesCandidate) ? groupNodesCandidate : [];
     const priorGroups = Array.isArray(priorGroupsCandidate) ? priorGroupsCandidate : [];
@@ -1064,6 +1180,36 @@
         $width: dimensions.width,
         $height: dimensions.height,
         $name: groupName,
+      };
+    });
+  }
+
+  function serializeCommentsFromFlowNodes(commentNodesCandidate, priorCommentsCandidate) {
+    const commentNodes = Array.isArray(commentNodesCandidate) ? commentNodesCandidate : [];
+    const priorComments = Array.isArray(priorCommentsCandidate) ? priorCommentsCandidate : [];
+
+    return commentNodes.map((commentNode, index) => {
+      const priorComment = isObject(priorComments[index]) ? priorComments[index] : {};
+      const dimensions = readCommentNodeDimensions(commentNode);
+      const position = normalizePosition(commentNode?.position, index);
+      const commentName = normalizeCommentName(commentNode?.data?.$commentName);
+      const commentText = normalizeCommentText(commentNode?.data?.$commentText);
+      const commentFontSize = normalizeCommentFontSize(commentNode?.data?.$fontSize);
+      const shouldPersistFontSize =
+        commentFontSize !== COMMENT_DEFAULT_FONT_SIZE ||
+        Object.prototype.hasOwnProperty.call(priorComment, "$fontSize");
+
+      return {
+        ...omitKeys(priorComment, COMMENT_RESERVED_KEYS),
+        $Position: {
+          $x: position.x,
+          $y: position.y,
+        },
+        $width: dimensions.width,
+        $height: dimensions.height,
+        $name: commentName,
+        $text: commentText,
+        ...(shouldPersistFontSize ? { $fontSize: commentFontSize } : {}),
       };
     });
   }

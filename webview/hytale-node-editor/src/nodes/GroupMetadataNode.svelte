@@ -1,17 +1,16 @@
 <script>
-  import { NodeResizer, useSvelteFlow, useViewport } from "@xyflow/svelte";
+  import { useSvelteFlow, useViewport } from "@xyflow/svelte";
   import { Pencil } from "lucide-svelte";
   import { tick } from "svelte";
+  import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
   import { GROUP_MUTATION_EVENT } from "../node-editor/types.js";
 
   const DEFAULT_GROUP_NAME = "Group";
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
   const GROUP_TITLE_BASE_SIZE_PX = 18;
-  const GROUP_TITLE_MAX_COMPENSATION_SCALE = 3.5;
+  const GROUP_TITLE_MAX_COMPENSATION_SCALE = 5.5;
   const TITLEBAR_DRAG_DISTANCE_THRESHOLD_PX = 3;
-  const RESIZER_HANDLE_BASE_SIZE_PX = 8;
-  const RESIZER_HANDLE_MAX_COMPENSATION_SCALE = 3.5;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const GROUP_Z_INDEX_SELECTED = 10000;
 
@@ -30,13 +29,6 @@
   let nodeName = $derived(readGroupName(data?.$groupName));
   let viewportZoom = $derived(readViewportZoom(viewport.current?.zoom));
   let titleCompensationScale = $derived(readCompensatedTitleScale(viewportZoom));
-  let resizerHandleCompensationScale = $derived(readResizerHandleCompensationScale(viewportZoom));
-  let resizerHandleSizePx = $derived(
-    Math.round(RESIZER_HANDLE_BASE_SIZE_PX * resizerHandleCompensationScale)
-  );
-  let resizerHandleStyle = $derived(
-    `width:${resizerHandleSizePx}px;height:${resizerHandleSizePx}px;`
-  );
   let showInlineTitleDisplay = $derived(titleCompensationScale <= 1.001);
   let showInlineEditButton = $derived(showInlineTitleDisplay && !isEditingTitle);
 
@@ -249,15 +241,6 @@
     return Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, Math.max(1, inverseScale));
   }
 
-  function readResizerHandleCompensationScale(zoom) {
-    if (!Number.isFinite(zoom) || zoom >= 1) {
-      return 1;
-    }
-
-    const inverseScale = 1 / zoom;
-    return Math.min(RESIZER_HANDLE_MAX_COMPENSATION_SCALE, Math.max(1, inverseScale));
-  }
-
   function readFiniteNumber(candidateNumber) {
     const numericValue = Number(candidateNumber);
     return Number.isFinite(numericValue) ? numericValue : 0;
@@ -327,15 +310,10 @@
 
   <div class="pointer-events-none absolute inset-x-0 top-8 h-px bg-vsc-editor-widget-border/80"></div>
 
-  <NodeResizer
+  <ZoomCompensatedNodeResizer
     isVisible={selected}
-    autoScale={false}
     minWidth={MIN_GROUP_WIDTH}
     minHeight={MIN_GROUP_HEIGHT}
-    color={"var(--vscode-focusBorder)"}
-    handleClass={"rounded-sm border border-vsc-focus bg-vsc-editor-widget-bg"}
-    handleStyle={resizerHandleStyle}
-    lineClass={"border-vsc-focus"}
     onResizeEnd={handleResizeEnd}
   />
 </div>

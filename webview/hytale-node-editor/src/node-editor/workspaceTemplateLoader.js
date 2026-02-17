@@ -158,6 +158,12 @@ function buildTemplateDefinition({
   const schema = isObject(nodeDefinition.Schema) ? nodeDefinition.Schema : {};
   const schemaType =
     normalizeNonEmptyString(schema.Type) ?? normalizeNonEmptyString(nodeDefinition.Type);
+  const variantIdentityFieldValueByFieldName = buildTemplateVariantFieldValueMap({
+    nodeDefinition,
+    schema,
+    templateId,
+    variantIdentitySchemaKeys,
+  });
   const fields = buildTemplateFields(
     nodeDefinition.Content,
     templateId,
@@ -206,6 +212,7 @@ function buildTemplateDefinition({
     nodeColor,
     schemaType,
     defaultTypeName: schemaType ?? templateId,
+    variantIdentityFieldValueByFieldName,
     fields,
     inputPins,
     outputPins,
@@ -219,6 +226,53 @@ function buildTemplateDefinition({
     schemaConnections,
     buildInitialValues: () => buildFieldValueMap(fields),
   };
+}
+
+function buildTemplateVariantFieldValueMap({
+  nodeDefinition,
+  schema,
+  templateId,
+  variantIdentitySchemaKeys = new Set(['Type']),
+}) {
+  const nodeDefinitionObject = isObject(nodeDefinition) ? nodeDefinition : {};
+  const schemaObject = isObject(schema) ? schema : {};
+  const fieldNames = new Set(['Type', 'Id']);
+  for (const fieldNameCandidate of variantIdentitySchemaKeys) {
+    const fieldName = normalizeNonEmptyString(fieldNameCandidate);
+    if (fieldName) {
+      fieldNames.add(fieldName);
+    }
+  }
+
+  const valueByFieldName = {};
+  for (const fieldName of fieldNames) {
+    const value =
+      normalizeNonEmptyString(schemaObject[fieldName]) ??
+      normalizeNonEmptyString(nodeDefinitionObject[fieldName]);
+    if (!value) {
+      continue;
+    }
+
+    valueByFieldName[fieldName] = value;
+  }
+
+  if (!valueByFieldName.Type) {
+    const fallbackType =
+      normalizeNonEmptyString(schemaObject.Type) ?? normalizeNonEmptyString(nodeDefinitionObject.Type);
+    if (fallbackType) {
+      valueByFieldName.Type = fallbackType;
+    }
+  }
+
+  if (!valueByFieldName.Id) {
+    const fallbackId =
+      normalizeNonEmptyString(nodeDefinitionObject.Id) ?? normalizeNonEmptyString(templateId);
+    if (fallbackId) {
+      valueByFieldName.Id = fallbackId;
+    }
+  }
+
+  return valueByFieldName;
 }
 
 function buildRoots(rootsCandidate, workspaceId, diagnostics) {

@@ -273,6 +273,7 @@ export function resolveCanonicalVariantIdentityForTemplate(template, workspace, 
   const identityList = templateId && isObject(workspace?.variantIdentitiesByTemplateId)
     ? workspace.variantIdentitiesByTemplateId[templateId]
     : undefined;
+  const payloadObject = isObject(payload) ? payload : {};
   const normalizedIdentityList = Array.isArray(identityList)
     ? identityList
         .map((identity) => normalizeVariantIdentity(identity))
@@ -280,7 +281,6 @@ export function resolveCanonicalVariantIdentityForTemplate(template, workspace, 
     : [];
 
   if (normalizedIdentityList.length > 0) {
-    const payloadObject = isObject(payload) ? payload : {};
     for (const identity of normalizedIdentityList) {
       const payloadValue = normalizeNonEmptyString(payloadObject[identity.fieldName]);
       if (payloadValue && payloadValue.toLowerCase() === identity.value.toLowerCase()) {
@@ -289,6 +289,37 @@ export function resolveCanonicalVariantIdentityForTemplate(template, workspace, 
     }
 
     return normalizedIdentityList[0];
+  }
+
+  const variantFieldValueByFieldName = isObject(template?.variantIdentityFieldValueByFieldName)
+    ? template.variantIdentityFieldValueByFieldName
+    : {};
+  const workspaceVariantFieldNames = getWorkspaceVariantFieldNames(workspace);
+  for (const fieldName of workspaceVariantFieldNames) {
+    const canonicalValue = normalizeNonEmptyString(variantFieldValueByFieldName[fieldName]);
+    if (!canonicalValue) {
+      continue;
+    }
+
+    const payloadValue = normalizeNonEmptyString(payloadObject[fieldName]);
+    if (payloadValue && payloadValue.toLowerCase() === canonicalValue.toLowerCase()) {
+      return {
+        fieldName,
+        value: canonicalValue,
+      };
+    }
+  }
+
+  for (const fieldName of workspaceVariantFieldNames) {
+    const canonicalValue = normalizeNonEmptyString(variantFieldValueByFieldName[fieldName]);
+    if (!canonicalValue) {
+      continue;
+    }
+
+    return {
+      fieldName,
+      value: canonicalValue,
+    };
   }
 
   const schemaType = normalizeNonEmptyString(template?.schemaType ?? template?.defaultTypeName);

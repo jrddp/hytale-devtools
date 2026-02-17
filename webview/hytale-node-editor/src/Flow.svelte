@@ -9,6 +9,7 @@
   import "@xyflow/svelte/dist/style.css";
 
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
+  import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
   import GroupMetadataNode from "./nodes/GroupMetadataNode.svelte";
   import {
@@ -22,7 +23,16 @@
   } from "./node-editor/templateCatalog.js";
   import { chooseCompatibleInputHandleId } from "./node-editor/connectionSchemaMapper.js";
   import {
+    COMMENT_DEFAULT_FONT_SIZE,
+    COMMENT_DEFAULT_HEIGHT,
+    COMMENT_DEFAULT_NAME,
+    COMMENT_DEFAULT_TEXT,
+    COMMENT_DEFAULT_WIDTH,
+  } from "./node-editor/commentMetadata.js";
+  import {
+    COMMENT_NODE_TYPE,
     CUSTOM_NODE_TYPE,
+    GENERIC_ACTION_CREATE_COMMENT,
     GENERIC_ACTION_CREATE_GROUP,
     GENERIC_ADD_CATEGORY,
     GROUP_NODE_TYPE,
@@ -38,6 +48,7 @@
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
   const DEFAULT_GROUP_NAME = "Group";
+  const MIN_FLOW_ZOOM = 0;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const dispatch = createEventDispatcher();
 
@@ -49,9 +60,17 @@
       label: "Create New Group",
       nodeColor: "var(--vscode-focusBorder)",
     },
+    {
+      kind: "generic-action",
+      actionId: GENERIC_ACTION_CREATE_COMMENT,
+      category: GENERIC_ADD_CATEGORY,
+      label: "Create New Comment",
+      nodeColor: "var(--vscode-descriptionForeground)",
+    },
   ];
 
   const nodeTypes = {
+    [COMMENT_NODE_TYPE]: CommentMetadataNode,
     [CUSTOM_NODE_TYPE]: CustomMetadataNode,
     [GROUP_NODE_TYPE]: GroupMetadataNode,
   };
@@ -166,9 +185,9 @@
     emitFlowChange("node-moved");
   }
 
-  function handleGroupMutation(event) {
+  function handleMetadataMutation(event) {
     const mutationReason = normalizeOptionalString(event?.detail?.reason);
-    emitFlowChange(mutationReason ?? "group-updated");
+    emitFlowChange(mutationReason ?? "metadata-updated");
   }
 
   function handleWindowKeyUp(event) {
@@ -345,6 +364,29 @@
       nodes = [newGroupNode, ...nodes];
       closeAddNodeMenu();
       emitFlowChange("group-created");
+      return;
+    }
+
+    if (isGenericCommentCreationEntry(entry)) {
+      const newCommentNode = {
+        id: `Comment-${createUuid()}`,
+        type: COMMENT_NODE_TYPE,
+        data: {
+          $commentName: COMMENT_DEFAULT_NAME,
+          $commentText: COMMENT_DEFAULT_TEXT,
+          $fontSize: COMMENT_DEFAULT_FONT_SIZE,
+        },
+        position: {
+          ...pendingNodePosition,
+        },
+        width: COMMENT_DEFAULT_WIDTH,
+        height: COMMENT_DEFAULT_HEIGHT,
+        selected: false,
+      };
+
+      nodes = [newCommentNode, ...nodes];
+      closeAddNodeMenu();
+      emitFlowChange("comment-created");
       return;
     }
 
@@ -769,6 +811,7 @@
     if (Array.isArray(nodes) && nodes.length > 0) {
       fitView({
         padding: 0.2,
+        minZoom: MIN_FLOW_ZOOM,
         duration: 0,
       });
     }
@@ -786,6 +829,13 @@
     return (
       normalizeOptionalString(candidate?.kind) === "generic-action" &&
       normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_GROUP
+    );
+  }
+
+  function isGenericCommentCreationEntry(candidate) {
+    return (
+      normalizeOptionalString(candidate?.kind) === "generic-action" &&
+      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_COMMENT
     );
   }
 
@@ -815,7 +865,8 @@
 <svelte:window
   on:pointerdown|capture={handleWindowPointerDown}
   on:keyup={handleWindowKeyUp}
-  on:hytale-node-editor-group-mutation={handleGroupMutation}
+  on:hytale-node-editor-group-mutation={handleMetadataMutation}
+  on:hytale-node-editor-comment-mutation={handleMetadataMutation}
 />
 
 <div
@@ -829,7 +880,7 @@
     disableKeyboardA11y={addMenuOpen}
     panActivationKey={"Shift"}
     selectNodesOnDrag={false}
-    minZoom={0.2}
+    minZoom={MIN_FLOW_ZOOM}
     {nodeTypes}
     onconnect={handleConnect}
     onconnectstart={handleConnectStart}
