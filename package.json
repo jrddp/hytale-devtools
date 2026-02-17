@@ -5,7 +5,7 @@
   "icon": "media/icon.png",
   "description": "Hytale modding made easy",
   "repository": "https://github.com/jrddp/hytale-devtools",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.104.0"
   },
