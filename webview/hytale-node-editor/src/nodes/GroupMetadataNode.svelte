@@ -12,7 +12,6 @@
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 5.5;
   const TITLEBAR_DRAG_DISTANCE_THRESHOLD_PX = 3;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
-  const GROUP_Z_INDEX_SELECTED = 10000;
 
   let {
     id,
@@ -21,6 +20,8 @@
     dragging = false,
     positionAbsoluteX = 0,
     positionAbsoluteY = 0,
+    width = MIN_GROUP_WIDTH,
+    height = MIN_GROUP_HEIGHT,
   } = $props();
 
   const viewport = useViewport();
@@ -47,7 +48,7 @@
 
   $effect(() => {
     const nextDraggable = Boolean(selected);
-    const nextZIndex = selected ? GROUP_Z_INDEX_SELECTED : GROUP_Z_INDEX_UNSELECTED;
+    const nextZIndex = readGroupUnselectedZIndex(width, height);
     if (appliedDraggable === nextDraggable && appliedZIndex === nextZIndex) {
       return;
     }
@@ -244,6 +245,22 @@
   function readFiniteNumber(candidateNumber) {
     const numericValue = Number(candidateNumber);
     return Number.isFinite(numericValue) ? numericValue : 0;
+  }
+
+  function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
+    const normalizedWidth = normalizeGroupDimension(widthCandidate, MIN_GROUP_WIDTH);
+    const normalizedHeight = normalizeGroupDimension(heightCandidate, MIN_GROUP_HEIGHT);
+    const area = normalizedWidth * normalizedHeight;
+    return GROUP_Z_INDEX_UNSELECTED - Math.round(area);
+  }
+
+  function normalizeGroupDimension(candidateDimension, minDimension) {
+    const normalizedDimension = Number(candidateDimension);
+    if (!Number.isFinite(normalizedDimension)) {
+      return minDimension;
+    }
+
+    return Math.max(minDimension, normalizedDimension);
   }
 </script>
 

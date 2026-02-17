@@ -93,7 +93,6 @@
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
-  const GROUP_Z_INDEX_SELECTED = 10000;
   const GROUP_RESERVED_KEYS = ["$Position", "$width", "$height", "$name"];
   const COMMENT_RESERVED_KEYS = ["$Position", "$width", "$height", "$name", "$text", "$fontSize"];
   const LEGACY_MISSING_POSITION_LAYOUT_DIRECTION = "LR";
@@ -1926,7 +1925,7 @@
         height: dimensions.height,
         selected: false,
         draggable: false,
-        zIndex: GROUP_Z_INDEX_UNSELECTED,
+        zIndex: readGroupUnselectedZIndex(dimensions.width, dimensions.height),
       });
     }
 
@@ -1953,7 +1952,10 @@
       const isSelected = sourceGroup?.selected === true;
       const isDraggable =
         typeof sourceGroup?.draggable === "boolean" ? sourceGroup.draggable : isSelected;
-      const normalizedGroupZIndex = isSelected ? GROUP_Z_INDEX_SELECTED : GROUP_Z_INDEX_UNSELECTED;
+      const normalizedGroupZIndex = readGroupUnselectedZIndex(
+        dimensions.width,
+        dimensions.height
+      );
 
       normalizedGroups.push({
         id: groupId,
@@ -2154,6 +2156,13 @@
     }
 
     return Math.max(minValue, normalizedValue);
+  }
+
+  function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
+    const width = normalizeGroupDimension(widthCandidate, DEFAULT_GROUP_WIDTH, MIN_GROUP_WIDTH);
+    const height = normalizeGroupDimension(heightCandidate, DEFAULT_GROUP_HEIGHT, MIN_GROUP_HEIGHT);
+    const area = width * height;
+    return GROUP_Z_INDEX_UNSELECTED - Math.round(area);
   }
 
   function readGroupName(candidateName) {

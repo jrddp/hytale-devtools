@@ -64,6 +64,8 @@
   const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
   const MIN_FLOW_ZOOM = 0;
   const GROUP_Z_INDEX_UNSELECTED = -10000;
+  const MIN_GROUP_WIDTH = 180;
+  const MIN_GROUP_HEIGHT = 120;
   const dispatch = createEventDispatcher();
 
   const GENERIC_ADD_MENU_ENTRIES = [
@@ -596,7 +598,7 @@
         height: DEFAULT_GROUP_HEIGHT,
         selected: false,
         draggable: false,
-        zIndex: GROUP_Z_INDEX_UNSELECTED,
+        zIndex: readGroupUnselectedZIndex(DEFAULT_GROUP_WIDTH, DEFAULT_GROUP_HEIGHT),
       };
 
       nodes = [newGroupNode, ...nodes];
@@ -1364,6 +1366,22 @@
     }
 
     return { x, y };
+  }
+
+  function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
+    const width = normalizeGroupDimension(widthCandidate, DEFAULT_GROUP_WIDTH, MIN_GROUP_WIDTH);
+    const height = normalizeGroupDimension(heightCandidate, DEFAULT_GROUP_HEIGHT, MIN_GROUP_HEIGHT);
+    const area = width * height;
+    return GROUP_Z_INDEX_UNSELECTED - Math.round(area);
+  }
+
+  function normalizeGroupDimension(candidateValue, fallbackValue, minValue) {
+    const normalizedValue = Number(candidateValue);
+    if (!Number.isFinite(normalizedValue)) {
+      return fallbackValue;
+    }
+
+    return Math.max(minValue, normalizedValue);
   }
 
   function isObject(value) {
