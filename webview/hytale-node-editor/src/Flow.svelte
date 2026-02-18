@@ -39,6 +39,13 @@
     layoutDirectedGraphWithNodeSizes,
     readLayoutOriginFromPositions,
   } from "./node-editor/autoLayout.js";
+  import {
+    applyClipboardSelectionPayload,
+    buildClipboardSelectionPayload,
+    cutSelectedNodesFromFlowState,
+    readClipboardSelectionPayload,
+    writeClipboardSelectionPayload,
+  } from "./node-editor/clipboardSelection.js";
   import { buildNodeSearchGroups } from "./node-editor/nodeSearch.js";
   import {
     COMMENT_NODE_TYPE,
@@ -151,6 +158,7 @@
   let nodeHelpOpenVersion = 0;
   let nodeSearchGroups = [];
   let lastHandledQuickActionRequestToken = -1;
+  let lastPointerClientPosition = undefined;
 
   $: {
     setActiveTemplateSourceMode(templateSourceMode);
@@ -674,6 +682,112 @@
     queueMicrotask(() => emitFlowChange("elements-deleted"));
   }
 
+  function handleWindowCopy(event) {
+    if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+      return;
+    }
+
+    const clipboardPayload = buildClipboardSelectionPayload({
+      nodes,
+      edges,
+      readAbsoluteNodePosition,
+      readNodeDimensions,
+      normalizeOptionalString,
+    });
+    const didWrite = writeClipboardSelectionPayload(
+      event?.clipboardData,
+      clipboardPayload
+    );
+    if (!didWrite) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function handleWindowCut(event) {
+    if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+      return;
+    }
+
+    const clipboardPayload = buildClipboardSelectionPayload({
+      nodes,
+      edges,
+      readAbsoluteNodePosition,
+      readNodeDimensions,
+      normalizeOptionalString,
+    });
+    const didWrite = writeClipboardSelectionPayload(
+      event?.clipboardData,
+      clipboardPayload
+    );
+    if (!didWrite) {
+      return;
+    }
+
+    const cutResult = cutSelectedNodesFromFlowState({
+      nodes,
+      edges,
+      normalizeOptionalString,
+    });
+    if (cutResult?.didCut !== true) {
+      return;
+    }
+
+    nodes = cutResult.nodes;
+    edges = cutResult.edges;
+    clearPendingSingleSourceReplacement();
+    emitFlowChange("nodes-cut");
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function handleWindowPaste(event) {
+    if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+      return;
+    }
+
+    const clipboardPayload = readClipboardSelectionPayload(event?.clipboardData);
+    if (!clipboardPayload) {
+      return;
+    }
+
+    const pasteAnchor = resolvePasteAnchorFlowPosition();
+    if (!pasteAnchor) {
+      return;
+    }
+
+    const pasteResult = applyClipboardSelectionPayload({
+      clipboardPayload,
+      pasteAnchor,
+      nodes,
+      edges,
+      addEdgeWithConflictPruning,
+      normalizeOptionalString,
+      normalizeNodeType,
+      createUuid,
+      readNodeDimensions,
+      readGroupUnselectedZIndex,
+      groupNodeType: GROUP_NODE_TYPE,
+      commentNodeType: COMMENT_NODE_TYPE,
+      linkNodeType: LINK_NODE_TYPE,
+      rawJsonNodeType: RAW_JSON_NODE_TYPE,
+    });
+    if (pasteResult?.didPaste !== true) {
+      return;
+    }
+
+    nodes = pasteResult.nodes;
+    edges = pasteResult.edges;
+    emitFlowChange("nodes-pasted");
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function handleWindowPointerMove(event) {
+    updateLastPointerClientPosition(event);
+  }
+
   function closeAddNodeMenu() {
     addMenuOpen = false;
     pendingConnection = undefined;
@@ -843,7 +957,37 @@
     });
   }
 
+  function updateLastPointerClientPosition(event) {
+    if (!didEventOccurInsideFlowWrapper(event)) {
+      return;
+    }
+
+    const { clientX, clientY } = readPointerCoordinates(event);
+    lastPointerClientPosition = {
+      x: clientX,
+      y: clientY,
+    };
+  }
+
+  function didEventOccurInsideFlowWrapper(event) {
+    if (!flowWrapperElement) {
+      return false;
+    }
+
+    if (typeof event?.composedPath === "function") {
+      return event.composedPath().includes(flowWrapperElement);
+    }
+
+    if (!event?.target || typeof flowWrapperElement.contains !== "function") {
+      return false;
+    }
+
+    return flowWrapperElement.contains(event.target);
+  }
+
   function handleWindowPointerDown(event) {
+    updateLastPointerClientPosition(event);
+
     if (addMenuOpen && !didEventOccurInsideAddMenu(event)) {
       closeAddNodeMenu();
     }
@@ -1303,6 +1447,37 @@
     });
   }
 
+  function addEdgeWithConflictPruning(
+    existingEdges,
+    {
+      sourceNodeId,
+      sourceHandleId,
+      targetNodeId,
+      targetHandleId,
+    } = {}
+  ) {
+    const normalizedConnection = normalizeConnection({
+      id: createEdgeId({
+        sourceNodeId,
+        sourceHandleId,
+        targetNodeId,
+        targetHandleId,
+      }),
+      source: sourceNodeId,
+      ...(sourceHandleId ? { sourceHandle: sourceHandleId } : {}),
+      target: targetNodeId,
+      ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
+    });
+    if (!normalizedConnection) {
+      return Array.isArray(existingEdges) ? existingEdges : [];
+    }
+
+    return addEdge(
+      normalizedConnection,
+      pruneConflictingInputEdges(existingEdges, normalizedConnection)
+    );
+  }
+
   function beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId) {
     clearPendingSingleSourceReplacement();
 
@@ -1632,6 +1807,28 @@
     const sourcePart = sourceHandleId ? `${sourceNodeId}:${sourceHandleId}` : sourceNodeId;
     const targetPart = targetHandleId ? `${targetNodeId}:${targetHandleId}` : targetNodeId;
     return `${sourcePart}--${targetPart}--${createUuid()}`;
+  }
+
+  function resolvePasteAnchorFlowPosition() {
+    if (
+      Number.isFinite(lastPointerClientPosition?.x) &&
+      Number.isFinite(lastPointerClientPosition?.y)
+    ) {
+      return screenToFlowPosition({
+        x: lastPointerClientPosition.x,
+        y: lastPointerClientPosition.y,
+      });
+    }
+
+    const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
+    if (!paneBounds) {
+      return undefined;
+    }
+
+    return screenToFlowPosition({
+      x: paneBounds.left + paneBounds.width / 2,
+      y: paneBounds.top + paneBounds.height / 2,
+    });
   }
 
   function normalizeNodeType(candidate) {
@@ -2007,6 +2204,10 @@
 
 <svelte:window
   on:keydown|capture={handleWindowKeyDown}
+  on:copy|capture={handleWindowCopy}
+  on:cut|capture={handleWindowCut}
+  on:paste|capture={handleWindowPaste}
+  on:pointermove|capture={handleWindowPointerMove}
   on:pointerdown|capture={handleWindowPointerDown}
   on:keyup={handleWindowKeyUp}
   on:hytale-node-editor-group-mutation={handleMetadataMutation}
