@@ -189,6 +189,13 @@
     vscode.postMessage({ type: "openRawJson" });
   }
 
+  function handleCustomizeKeybindsRequest() {
+    vscode.postMessage({
+      type: "openKeybindings",
+      query: "Hytale Node Editor",
+    });
+  }
+
   function applyFlowState(nextNodes, nextEdges) {
     const serialized = buildSerializedState({
       nodes: Array.isArray(nextNodes) ? nextNodes : [],
@@ -2950,6 +2957,7 @@
       {quickActionRequest}
       on:flowchange={handleFlowChange}
       on:viewrawjson={handleViewRawJsonRequest}
+      on:customizekeybinds={handleCustomizeKeybindsRequest}
     />
   </SvelteFlowProvider>
 </main>

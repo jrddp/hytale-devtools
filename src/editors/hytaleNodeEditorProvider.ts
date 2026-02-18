@@ -4,7 +4,8 @@ import * as fs from 'node:fs';
 type WebviewToExtensionMessage =
 	| { type: 'ready' }
 	| { type: 'apply'; text: string; sourceVersion?: number }
-	| { type: 'openRawJson' };
+	| { type: 'openRawJson' }
+	| { type: 'openKeybindings'; query?: string };
 
 type ExtensionToWebviewMessage =
 	| { type: 'update'; text: string; version: number; documentPath: string }
@@ -122,6 +123,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 						return;
 					case 'openRawJson':
 						void this.openRawJsonInTextEditor(document, webviewPanel);
+						return;
+					case 'openKeybindings':
+						void this.openNodeEditorKeybindings(message.query);
 						return;
 					default:
 						return;
@@ -247,6 +251,11 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 			preserveFocus: false,
 			preview: true
 		});
+	}
+
+	private async openNodeEditorKeybindings(queryCandidate: string | undefined): Promise<void> {
+		const query = readNonEmptyString(queryCandidate) ?? 'Hytale Node Editor';
+		await vscode.commands.executeCommand('workbench.action.openGlobalKeybindings', query);
 	}
 
 	private async postError(webview: vscode.Webview, message: string): Promise<void> {

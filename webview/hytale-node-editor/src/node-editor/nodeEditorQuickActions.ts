@@ -34,20 +34,35 @@ export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition
 		id: NODE_EDITOR_QUICK_ACTION_IDS.FIT_FULL_VIEW,
 		eventName: 'fitfullview',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.fitFullView',
-		name: 'Fit full view'
+		name: 'Fit full view',
+		defaultKeybinding: {
+			win: 'V',
+			linux: 'V',
+			mac: 'V'
+		}
 	},
 	{
 		id: NODE_EDITOR_QUICK_ACTION_IDS.SEARCH_NODES,
 		eventName: 'searchnodes',
-		commandId: 'editor.action.webvieweditor.showFind',
+		commandId: 'hytale-devtools.nodeEditor.quickAction.searchNodes',
 		name: 'Search nodes',
-		keybindingSourceCommandId: 'editor.action.webvieweditor.showFind'
+		keybindingSourceCommandId: 'editor.action.webvieweditor.showFind',
+		defaultKeybinding: {
+			win: 'F',
+			linux: 'F',
+			mac: 'F'
+		}
 	},
 	{
 		id: NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES,
 		eventName: 'autopositionnodes',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.autoPositionNodes',
-		name: 'Auto position nodes'
+		name: 'Auto position nodes',
+		defaultKeybinding: {
+			win: 'L',
+			linux: 'L',
+			mac: 'L'
+		}
 	},
 	{
 		id: NODE_EDITOR_QUICK_ACTION_IDS.VIEW_RAW_JSON,
@@ -59,7 +74,12 @@ export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition
 		id: NODE_EDITOR_QUICK_ACTION_IDS.HELP_AND_HOTKEYS,
 		eventName: 'helphotkeys',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.helpAndHotkeys',
-		name: 'Help and hotkeys'
+		name: 'Show help',
+		defaultKeybinding: {
+			win: '?',
+			linux: '?',
+			mac: '?'
+		}
 	}
 ]);
 
@@ -69,9 +89,14 @@ const QUICK_ACTION_BY_ID = new Map(
 const QUICK_ACTION_BY_EVENT_NAME = new Map(
 	NODE_EDITOR_QUICK_ACTIONS.map((quickAction) => [quickAction.eventName, quickAction])
 );
-const QUICK_ACTION_BY_COMMAND_ID = new Map(
-	NODE_EDITOR_QUICK_ACTIONS.map((quickAction) => [quickAction.commandId, quickAction])
-);
+const QUICK_ACTION_BY_COMMAND_ID = new Map<string, NodeEditorQuickActionDefinition>();
+for (const quickAction of NODE_EDITOR_QUICK_ACTIONS) {
+	QUICK_ACTION_BY_COMMAND_ID.set(quickAction.commandId, quickAction);
+	const aliasCommandId = quickAction.keybindingSourceCommandId;
+	if (aliasCommandId) {
+		QUICK_ACTION_BY_COMMAND_ID.set(aliasCommandId, quickAction);
+	}
+}
 
 export function getNodeEditorQuickActionById(
 	actionId: string | undefined

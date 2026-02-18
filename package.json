@@ -46,6 +46,12 @@
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
+        "command": "hytale-devtools.nodeEditor.quickAction.searchNodes",
+        "title": "Search Nodes",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      },
+      {
         "command": "hytale-devtools.nodeEditor.quickAction.autoPositionNodes",
         "title": "Auto Position Nodes",
         "category": "Hytale Node Editor",
@@ -59,9 +65,31 @@
       },
       {
         "command": "hytale-devtools.nodeEditor.quickAction.helpAndHotkeys",
-        "title": "Help and Hotkeys",
+        "title": "Show Help",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.searchNodes",
+        "key": "f",
+        "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.fitFullView",
+        "key": "v",
+        "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.autoPositionNodes",
+        "key": "l",
+        "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.helpAndHotkeys",
+        "key": "shift+/",
+        "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
       }
     ],
     "configuration": {

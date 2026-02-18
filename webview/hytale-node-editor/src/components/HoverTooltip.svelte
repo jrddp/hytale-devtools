@@ -102,7 +102,7 @@
   {#if isVisible && normalizedText}
     <div
       role="tooltip"
-      class="pointer-events-none absolute z-20 max-w-64 whitespace-normal rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {placementClass} {tooltipClass}"
+      class="pointer-events-none absolute z-20 w-max max-w-64 whitespace-normal rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {placementClass} {tooltipClass}"
     >
       {normalizedText}
     </div>

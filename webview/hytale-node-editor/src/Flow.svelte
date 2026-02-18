@@ -10,6 +10,7 @@
 
   import AddNodeMenu from "./components/AddNodeMenu.svelte";
   import NodeSearchPanel from "./components/NodeSearchPanel.svelte";
+  import NodeHelpPanel from "./components/NodeHelpPanel.svelte";
   import NodeEditorActionMenu from "./components/NodeEditorActionMenu.svelte";
   import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
   import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
@@ -146,6 +147,8 @@
   let nodeSearchOpenVersion = 0;
   let nodeSearchInitialViewport = undefined;
   let nodeSearchLastPreviewedNodeId = undefined;
+  let nodeHelpOpen = false;
+  let nodeHelpOpenVersion = 0;
   let nodeSearchGroups = [];
   let lastHandledQuickActionRequestToken = -1;
 
@@ -185,7 +188,9 @@
     quickActionRequest.token !== lastHandledQuickActionRequestToken
   ) {
     lastHandledQuickActionRequestToken = quickActionRequest.token;
-    handleQuickActionById(quickActionRequest?.actionId);
+    if (!isKeyboardShortcutBlockedByFocusedInput()) {
+      handleQuickActionById(quickActionRequest?.actionId);
+    }
   }
 
   function emitFlowChange(reason) {
@@ -638,7 +643,12 @@
   }
 
   function handleQuickActionHelpAndHotkeys() {
-    console.info("[node-editor] Quick action is not implemented yet: Help and Hotkeys");
+    if (nodeHelpOpen) {
+      closeNodeHelpMenu();
+      return;
+    }
+
+    openNodeHelpMenu();
   }
 
   function handleMetadataMutation(event) {
@@ -646,8 +656,18 @@
     emitFlowChange(mutationReason ?? "metadata-updated");
   }
 
+  function handleWindowKeyDown(event) {
+    if (!nodeHelpOpen || normalizeOptionalString(event?.key) !== "Escape") {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    closeNodeHelpMenu();
+  }
+
   function handleWindowKeyUp(event) {
-    if (!isDeleteKey(event) || isEditableTarget(event?.target)) {
+    if (!isDeleteKey(event) || isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
       return;
     }
 
@@ -662,6 +682,7 @@
 
   function openNodeSearchMenu() {
     closeAddNodeMenu();
+    closeNodeHelpMenu();
     const currentViewport = getViewport();
     nodeSearchInitialViewport = isViewport(currentViewport)
       ? { ...currentViewport }
@@ -690,6 +711,30 @@
 
   function handleNodeSearchCloseRequest() {
     closeNodeSearchMenu({ restoreViewport: true });
+  }
+
+  function openNodeHelpMenu() {
+    closeAddNodeMenu();
+    closeNodeSearchMenu({ restoreViewport: false });
+    nodeHelpOpen = true;
+    nodeHelpOpenVersion += 1;
+  }
+
+  function closeNodeHelpMenu() {
+    if (!nodeHelpOpen) {
+      return;
+    }
+
+    nodeHelpOpen = false;
+  }
+
+  function handleNodeHelpCloseRequest() {
+    closeNodeHelpMenu();
+  }
+
+  function handleNodeHelpCustomizeKeybindsRequest() {
+    closeNodeHelpMenu();
+    dispatch("customizekeybinds");
   }
 
   function handleNodeSearchPreview(event) {
@@ -814,6 +859,7 @@
     sourceHandleId = undefined
   ) {
     closeNodeSearchMenu({ restoreViewport: false });
+    closeNodeHelpMenu();
     const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
     if (!addMenuRequest) {
       return false;
@@ -1909,6 +1955,15 @@
     return key === "Delete" || key === "Backspace";
   }
 
+  function isKeyboardShortcutBlockedByFocusedInput(eventTarget = undefined) {
+    if (isEditableTarget(eventTarget)) {
+      return true;
+    }
+
+    const activeElement = globalThis?.document?.activeElement;
+    return isEditableTarget(activeElement);
+  }
+
   function isEditableTarget(target) {
     if (!target || typeof target !== "object") {
       return false;
@@ -1923,11 +1978,35 @@
       return true;
     }
 
+    const role = normalizeOptionalString(
+      typeof target?.getAttribute === "function" ? target.getAttribute("role") : undefined
+    )?.toLowerCase();
+    if (role === "textbox" || role === "searchbox" || role === "combobox" || role === "spinbutton") {
+      return true;
+    }
+
+    if (typeof target?.closest === "function") {
+      const editableAncestor = target.closest(
+        "input, textarea, select, [contenteditable], [role='textbox'], [role='searchbox'], [role='combobox'], [role='spinbutton']"
+      );
+      if (editableAncestor) {
+        const contentEditableValue = normalizeOptionalString(
+          typeof editableAncestor.getAttribute === "function"
+            ? editableAncestor.getAttribute("contenteditable")
+            : undefined
+        )?.toLowerCase();
+        if (contentEditableValue !== "false") {
+          return true;
+        }
+      }
+    }
+
     return false;
   }
 </script>
 
 <svelte:window
+  on:keydown|capture={handleWindowKeyDown}
   on:pointerdown|capture={handleWindowPointerDown}
   on:keyup={handleWindowKeyUp}
   on:hytale-node-editor-group-mutation={handleMetadataMutation}
@@ -1945,7 +2024,7 @@
   <SvelteFlow
     bind:nodes
     bind:edges
-    disableKeyboardA11y={addMenuOpen || nodeSearchOpen}
+    disableKeyboardA11y={addMenuOpen || nodeSearchOpen || nodeHelpOpen}
     panActivationKey={"Shift"}
     selectNodesOnDrag={false}
     minZoom={MIN_FLOW_ZOOM}
@@ -1984,5 +2063,12 @@
     templates={availableAddEntries}
     on:close={closeAddNodeMenu}
     on:select={handleMenuSelect}
+  />
+
+  <NodeHelpPanel
+    open={nodeHelpOpen}
+    openVersion={nodeHelpOpenVersion}
+    on:close={handleNodeHelpCloseRequest}
+    on:customizekeybinds={handleNodeHelpCustomizeKeybindsRequest}
   />
 </div>
