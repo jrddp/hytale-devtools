@@ -191,11 +191,11 @@
           aria-hidden="true"
           size={14}
           strokeWidth={2}
-          class="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-vsc-muted"
+          class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-vsc-muted"
         />
         <input
           bind:this={searchInput}
-          class="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+          class="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg pr-2 py-1.5 pl-9 text-xs text-vsc-input-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
           type="search"
           bind:value={searchQuery}
           onkeydown={handleKeyDown}

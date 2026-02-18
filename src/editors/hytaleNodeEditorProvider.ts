@@ -8,6 +8,7 @@ type WebviewToExtensionMessage =
 
 type ExtensionToWebviewMessage =
 	| { type: 'update'; text: string; version: number; documentPath: string }
+	| { type: 'triggerQuickAction'; commandId: string; actionId?: string }
 	| { type: 'error'; message: string };
 
 type ViteManifestEntry = {
@@ -21,15 +22,33 @@ type WebviewAssetUris =
 	| { ok: false; reason: string };
 
 const VIEW_TYPE = 'hytale-devtools.hytaleNodeEditor';
+const WEBVIEW_FIND_COMMAND_ID = 'editor.action.webvieweditor.showFind';
+const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = 'hytale-devtools.nodeEditor.quickAction.';
 
 export function registerHytaleNodeEditorProvider(
 	context: vscode.ExtensionContext
 ): vscode.Disposable {
 	const provider = new HytaleNodeEditorProvider(context);
-	return vscode.window.registerCustomEditorProvider(VIEW_TYPE, provider);
+	const providerRegistration = vscode.window.registerCustomEditorProvider(VIEW_TYPE, provider, {
+		webviewOptions: {
+			enableFindWidget: true
+		}
+	});
+	const quickActionCommandRegistrations = readNodeEditorQuickActionCommandIds(context).map(
+		(commandId) =>
+			vscode.commands.registerCommand(commandId, () => {
+				void provider.triggerQuickActionByCommandId(commandId);
+			})
+	);
+
+	return vscode.Disposable.from(providerRegistration, provider, ...quickActionCommandRegistrations);
 }
 
 class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
+	private readonly webviewPanelsByDocumentUri = new Map<string, vscode.WebviewPanel>();
+	private activeDocumentUri: string | undefined;
+	private nativeFindCommandRegistration: vscode.Disposable | undefined;
+
 	constructor(private readonly context: vscode.ExtensionContext) { }
 
 	public resolveCustomTextEditor(
@@ -37,6 +56,13 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 		webviewPanel: vscode.WebviewPanel
 	): void {
 		try {
+			const documentUri = document.uri.toString();
+			this.webviewPanelsByDocumentUri.set(documentUri, webviewPanel);
+			if (webviewPanel.active) {
+				this.activeDocumentUri = documentUri;
+			}
+			this.updateNativeFindCommandRegistration();
+
 			webviewPanel.webview.options = {
 				enableScripts: true,
 				localResourceRoots: [
@@ -61,9 +87,29 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 					updateWebview();
 				}
 			});
+			const panelViewStateSubscription = webviewPanel.onDidChangeViewState((event) => {
+				if (event.webviewPanel.active) {
+					this.activeDocumentUri = documentUri;
+				} else if (this.activeDocumentUri === documentUri) {
+					this.activeDocumentUri = undefined;
+				}
+
+				this.updateNativeFindCommandRegistration();
+			});
 
 			webviewPanel.onDidDispose(() => {
 				documentChangeSubscription.dispose();
+				panelViewStateSubscription.dispose();
+
+				const existingPanel = this.webviewPanelsByDocumentUri.get(documentUri);
+				if (existingPanel === webviewPanel) {
+					this.webviewPanelsByDocumentUri.delete(documentUri);
+				}
+				if (this.activeDocumentUri === documentUri) {
+					this.activeDocumentUri = undefined;
+				}
+
+				this.updateNativeFindCommandRegistration();
 			});
 
 			webviewPanel.webview.onDidReceiveMessage((message: WebviewToExtensionMessage) => {
@@ -87,6 +133,82 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 			void vscode.window.showErrorMessage(`Hytale Node editor failed to load: ${message}`);
 			webviewPanel.webview.html = `<html><body><h3>Hytale Node editor failed to load</h3><pre>${escapeHtml(message)}</pre></body></html>`;
 		}
+	}
+
+	public dispose(): void {
+		this.disposeNativeFindCommandRegistration();
+	}
+
+	public async triggerQuickActionByCommandId(commandId: string): Promise<void> {
+		const normalizedCommandId = readNonEmptyString(commandId);
+		if (!normalizedCommandId) {
+			return;
+		}
+
+		const targetPanel = this.resolveTargetWebviewPanel();
+		if (!targetPanel) {
+			return;
+		}
+
+		const payload: ExtensionToWebviewMessage = {
+			type: 'triggerQuickAction',
+			commandId: normalizedCommandId
+		};
+		await targetPanel.webview.postMessage(payload);
+	}
+
+	private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
+		const activePanel = this.activeDocumentUri
+			? this.webviewPanelsByDocumentUri.get(this.activeDocumentUri)
+			: undefined;
+		if (activePanel) {
+			return activePanel;
+		}
+
+		for (const webviewPanel of this.webviewPanelsByDocumentUri.values()) {
+			if (webviewPanel.visible) {
+				return webviewPanel;
+			}
+		}
+
+		for (const webviewPanel of this.webviewPanelsByDocumentUri.values()) {
+			return webviewPanel;
+		}
+
+		return undefined;
+	}
+
+	private updateNativeFindCommandRegistration(): void {
+		if (this.hasActiveNodeEditorPanel()) {
+			if (!this.nativeFindCommandRegistration) {
+				this.nativeFindCommandRegistration = vscode.commands.registerCommand(
+					WEBVIEW_FIND_COMMAND_ID,
+					() => {
+						void this.triggerQuickActionByCommandId(WEBVIEW_FIND_COMMAND_ID);
+					}
+				);
+			}
+			return;
+		}
+
+		this.disposeNativeFindCommandRegistration();
+	}
+
+	private disposeNativeFindCommandRegistration(): void {
+		if (this.nativeFindCommandRegistration) {
+			this.nativeFindCommandRegistration.dispose();
+			this.nativeFindCommandRegistration = undefined;
+		}
+	}
+
+	private hasActiveNodeEditorPanel(): boolean {
+		for (const panel of this.webviewPanelsByDocumentUri.values()) {
+			if (panel.active) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private async applyWebviewEdits(
@@ -236,6 +358,34 @@ function getDocumentRange(document: vscode.TextDocument): vscode.Range {
 function normalizeTextEol(text: string, eol: vscode.EndOfLine): string {
 	const targetEol = eol === vscode.EndOfLine.CRLF ? '\r\n' : '\n';
 	return text.replace(/\r\n|\r|\n/g, targetEol);
+}
+
+function readNodeEditorQuickActionCommandIds(context: vscode.ExtensionContext): string[] {
+	const packageJson = context.extension.packageJSON;
+	if (!isObject(packageJson)) {
+		return [];
+	}
+
+	const contributes = packageJson.contributes;
+	if (!isObject(contributes) || !Array.isArray(contributes.commands)) {
+		return [];
+	}
+
+	const commandIds = contributes.commands
+		.filter((candidate) => isObject(candidate))
+		.map((candidate) => readNonEmptyString(candidate.command))
+		.filter((commandId): commandId is string =>
+			Boolean(commandId?.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX))
+		);
+	return Array.from(new Set(commandIds));
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function readNonEmptyString(value: unknown): string | undefined {
+	return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
 function escapeHtml(value: string): string {

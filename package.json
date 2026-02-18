@@ -14,10 +14,6 @@
     "Language Packs"
   ],
   "activationEvents": [
-    "onCommand:hytale-devtools.createMod",
-    "onCommand:hytale-devtools.addListener",
-    "onCommand:hytale-devtools.copyBaseGameAsset",
-    "onCustomEditor:hytale-devtools.hytaleNodeEditor"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -36,6 +32,36 @@
         "command": "hytale-devtools.copyBaseGameAsset",
         "title": "Copy Base Game Asset",
         "category": "Hytale Devtools"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.goToRoot",
+        "title": "Go to Root",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.fitFullView",
+        "title": "Fit Full View",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.autoPositionNodes",
+        "title": "Auto Position Nodes",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.viewRawJson",
+        "title": "View Raw JSON",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.helpAndHotkeys",
+        "title": "Help and Hotkeys",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       }
     ],
     "configuration": {

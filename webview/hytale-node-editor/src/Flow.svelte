@@ -54,6 +54,11 @@
     RAW_JSON_INPUT_HANDLE_ID,
     RAW_JSON_NODE_TYPE,
   } from "./node-editor/types.js";
+  import {
+    NODE_EDITOR_QUICK_ACTION_IDS,
+    getNodeEditorQuickActionByEventName,
+    getNodeEditorQuickActionById,
+  } from "./node-editor/nodeEditorQuickActions.ts";
 
   export let nodes = createDefaultNodes();
   export let edges = [];
@@ -61,6 +66,7 @@
   export let templateSourceMode = "workspace-hg-java";
   export let workspaceContext = {};
   export let rootNodeId = undefined;
+  export let quickActionRequest = undefined;
 
   const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
   const DEFAULT_GROUP_WIDTH = 520;
@@ -141,6 +147,7 @@
   let nodeSearchInitialViewport = undefined;
   let nodeSearchLastPreviewedNodeId = undefined;
   let nodeSearchGroups = [];
+  let lastHandledQuickActionRequestToken = -1;
 
   $: {
     setActiveTemplateSourceMode(templateSourceMode);
@@ -171,6 +178,14 @@
 
   $: if (!hasAppliedInitialFit && loadVersion > 0) {
     void applyInitialFitOnce();
+  }
+
+  $: if (
+    Number.isInteger(quickActionRequest?.token) &&
+    quickActionRequest.token !== lastHandledQuickActionRequestToken
+  ) {
+    lastHandledQuickActionRequestToken = quickActionRequest.token;
+    handleQuickActionById(quickActionRequest?.actionId);
   }
 
   function emitFlowChange(reason) {
@@ -442,6 +457,45 @@
 
   function handleNodeDragStop() {
     emitFlowChange("node-moved");
+  }
+
+  function handleQuickActionMenuEvent(event) {
+    const quickAction = getNodeEditorQuickActionByEventName(event?.type);
+    if (!quickAction) {
+      return;
+    }
+
+    handleQuickActionById(quickAction.id);
+  }
+
+  function handleQuickActionById(actionIdCandidate) {
+    const quickAction = getNodeEditorQuickActionById(normalizeOptionalString(actionIdCandidate));
+    if (!quickAction) {
+      return;
+    }
+
+    switch (quickAction.id) {
+      case NODE_EDITOR_QUICK_ACTION_IDS.GO_TO_ROOT:
+        handleQuickActionGoToRoot();
+        return;
+      case NODE_EDITOR_QUICK_ACTION_IDS.FIT_FULL_VIEW:
+        handleQuickActionFitFullView();
+        return;
+      case NODE_EDITOR_QUICK_ACTION_IDS.SEARCH_NODES:
+        handleQuickActionSearchNodes();
+        return;
+      case NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES:
+        handleQuickActionAutoPositionNodes();
+        return;
+      case NODE_EDITOR_QUICK_ACTION_IDS.VIEW_RAW_JSON:
+        handleQuickActionViewRawJson();
+        return;
+      case NODE_EDITOR_QUICK_ACTION_IDS.HELP_AND_HOTKEYS:
+        handleQuickActionHelpAndHotkeys();
+        return;
+      default:
+        return;
+    }
   }
 
   function handleQuickActionFitFullView() {
@@ -1906,12 +1960,12 @@
   >
     <Background bgColor={"var(--vscode-editor-background)"} />
     <NodeEditorActionMenu
-      on:gotoroot={handleQuickActionGoToRoot}
-      on:fitfullview={handleQuickActionFitFullView}
-      on:searchnodes={handleQuickActionSearchNodes}
-      on:autopositionnodes={handleQuickActionAutoPositionNodes}
-      on:viewrawjson={handleQuickActionViewRawJson}
-      on:helphotkeys={handleQuickActionHelpAndHotkeys}
+      on:gotoroot={handleQuickActionMenuEvent}
+      on:fitfullview={handleQuickActionMenuEvent}
+      on:searchnodes={handleQuickActionMenuEvent}
+      on:autopositionnodes={handleQuickActionMenuEvent}
+      on:viewrawjson={handleQuickActionMenuEvent}
+      on:helphotkeys={handleQuickActionMenuEvent}
     />
     <NodeSearchPanel
       open={nodeSearchOpen}

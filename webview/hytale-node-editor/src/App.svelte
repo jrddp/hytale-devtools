@@ -67,6 +67,10 @@
     normalizeCommentName,
     normalizeCommentText,
   } from "./node-editor/commentMetadata.js";
+  import {
+    getNodeEditorQuickActionByCommandId,
+    getNodeEditorQuickActionById,
+  } from "./node-editor/nodeEditorQuickActions.ts";
 
   export let vscode;
   export let templateSourceMode = "workspace-hg-java";
@@ -119,6 +123,8 @@
   let sourceVersion = -1;
   let graphLoadVersion = 0;
   let extensionError = "";
+  let quickActionRequest = undefined;
+  let quickActionRequestToken = 0;
 
   function handleMessage(event) {
     const message = event.data;
@@ -150,6 +156,27 @@
     if (message.type === "error") {
       extensionError =
         typeof message.message === "string" ? message.message : "Unknown editor error.";
+      return;
+    }
+
+    if (message.type === "triggerQuickAction") {
+      const actionFromId = getNodeEditorQuickActionById(
+        normalizeNonEmptyString(message?.actionId)
+      );
+      const actionFromCommand = getNodeEditorQuickActionByCommandId(
+        normalizeNonEmptyString(message?.commandId)
+      );
+      const quickAction = actionFromId ?? actionFromCommand;
+      if (!quickAction) {
+        return;
+      }
+
+      quickActionRequestToken += 1;
+      quickActionRequest = {
+        token: quickActionRequestToken,
+        actionId: quickAction.id,
+        commandId: quickAction.commandId,
+      };
     }
   }
 
@@ -2920,6 +2947,7 @@
       templateSourceMode={templateSourceMode}
       workspaceContext={metadataContext?.workspaceContext}
       rootNodeId={metadataContext?.rootNodeId}
+      {quickActionRequest}
       on:flowchange={handleFlowChange}
       on:viewrawjson={handleViewRawJsonRequest}
     />
