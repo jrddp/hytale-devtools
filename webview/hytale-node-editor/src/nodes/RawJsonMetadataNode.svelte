@@ -81,6 +81,11 @@
   }
 
   function selectNodeFromTitleBar(event) {
+    // Let SvelteFlow handle Shift-based additive/toggle selection semantics.
+    if (event?.shiftKey) {
+      return;
+    }
+
     const isMultiSelect = Boolean(event?.metaKey || event?.ctrlKey);
     const currentNodes = getNodes();
 
@@ -224,8 +229,9 @@
 
 <div
   class="relative border border-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow]"
-  class:border-vsc-focus={selected && !dragging}
-  style="min-width: {NODE_MIN_WIDTH_PX}px;"
+  style="min-width: {NODE_MIN_WIDTH_PX}px; outline: {selected && !dragging
+    ? '2px solid var(--vscode-focusBorder)'
+    : 'none'};"
   data-node-editor-root
 >
   <div

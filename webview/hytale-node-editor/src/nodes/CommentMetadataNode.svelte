@@ -212,6 +212,11 @@
       return;
     }
 
+    // Let SvelteFlow handle Shift-based additive/toggle selection semantics.
+    if (event?.shiftKey) {
+      return;
+    }
+
     const isMultiSelect = Boolean(event?.metaKey || event?.ctrlKey);
     const currentNodes = getNodes();
 
@@ -267,7 +272,7 @@
 
 <div
   class="relative h-full w-full overflow-visible rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg/90 text-vsc-editor-fg shadow-lg transition-[border-color,box-shadow]"
-  class:border-vsc-focus={selected && !dragging}
+  style="outline: {selected && !dragging ? '2px solid var(--vscode-focusBorder)' : 'none'};"
 >
   <div
     class="flex items-center gap-2 border-b border-vsc-editor-widget-border bg-vsc-input-bg/70 px-2 py-1.5 cursor-grab active:cursor-grabbing"

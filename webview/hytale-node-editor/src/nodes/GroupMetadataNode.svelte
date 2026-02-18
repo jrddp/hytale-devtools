@@ -266,8 +266,8 @@
 
 <div
   class="relative h-full w-full cursor-grab overflow-visible rounded-lg border border-dashed border-vsc-editor-widget-border bg-vsc-editor-widget-bg/40 transition-[border-color,box-shadow]"
-  class:border-vsc-focus={selected && !dragging}
   class:cursor-grabbing={dragging}
+  style="outline: {selected && !dragging ? '2px solid var(--vscode-focusBorder)' : 'none'};"
 >
   <div
     class="group-title-drag-handle nopan absolute inset-x-0 top-0 flex h-8 cursor-default items-end gap-1 overflow-visible rounded-t-lg bg-vsc-input-bg/60 px-2 pb-1"

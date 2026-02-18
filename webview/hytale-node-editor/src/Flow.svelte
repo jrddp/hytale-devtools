@@ -2,6 +2,7 @@
   import {
     addEdge,
     Background,
+    SelectionMode,
     SvelteFlow,
     useSvelteFlow,
   } from "@xyflow/svelte";
@@ -2226,6 +2227,8 @@
     bind:nodes
     bind:edges
     disableKeyboardA11y={addMenuOpen || nodeSearchOpen || nodeHelpOpen}
+    selectionMode={SelectionMode.Full}
+    multiSelectionKey={"Shift"}
     panActivationKey={"Shift"}
     selectNodesOnDrag={false}
     minZoom={MIN_FLOW_ZOOM}
