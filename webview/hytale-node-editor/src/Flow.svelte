@@ -167,7 +167,11 @@
     allTemplates = getTemplates(workspaceContext);
   }
 
-  $: availableAddEntries = resolveAvailableAddEntries(pendingConnection);
+  $: availableAddEntries = resolveAvailableAddEntries(
+    pendingConnection,
+    allTemplates,
+    workspaceContext
+  );
   $: nodeSearchGroups = buildNodeSearchGroups({
     nodes,
     workspaceContext,
@@ -1764,24 +1768,28 @@
     );
   }
 
-  function resolveAvailableAddEntries(connection) {
+  function resolveAvailableAddEntries(
+    connection,
+    templateEntries = allTemplates,
+    candidateWorkspaceContext = workspaceContext
+  ) {
     const sourceNodeId = normalizeOptionalString(connection?.sourceNodeId);
     const sourceHandleId = normalizeOptionalString(connection?.sourceHandleId);
     const genericEntries = resolveGenericAddEntries(sourceNodeId);
-    if (!Array.isArray(allTemplates) || allTemplates.length === 0) {
+    if (!Array.isArray(templateEntries) || templateEntries.length === 0) {
       return genericEntries;
     }
 
     if (!sourceNodeId || !sourceHandleId) {
-      return [...genericEntries, ...allTemplates];
+      return [...genericEntries, ...templateEntries];
     }
 
     const selector = resolveNodeSelectorForSourceConnection(sourceNodeId, sourceHandleId);
     if (!selector) {
-      return [...genericEntries, ...allTemplates];
+      return [...genericEntries, ...templateEntries];
     }
 
-    const filteredTemplates = getTemplatesForNodeSelector(selector, workspaceContext);
+    const filteredTemplates = getTemplatesForNodeSelector(selector, candidateWorkspaceContext);
     return Array.isArray(filteredTemplates) && filteredTemplates.length > 0
       ? [...genericEntries, ...filteredTemplates]
       : genericEntries;
