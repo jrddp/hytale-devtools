@@ -1,0 +1,21 @@
+{
+    "Group": "kokeria",
+    "Name": "HytaleDevtoolsCompanion",
+    "Version": "0.0.2",
+    "Description": "Companion exporter for Hytale Devtools extension.",
+    "Authors": [
+        {
+            "Name": "Kokeria"
+        }
+    ],
+    "ServerVersion": "*",
+    "Dependencies": {
+        
+    },
+    "OptionalDependencies": {
+        
+    },
+    "DisabledByDefault": false,
+    "Main": "kokeria.hytaledevtoolscompanion.HytaleDevtoolsCompanion",
+    "IncludesAssetPack": true
+}

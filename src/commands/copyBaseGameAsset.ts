@@ -6,13 +6,18 @@ import * as vscode from 'vscode';
 import { getHytaleHome, resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
 
 const execFileAsync = util.promisify(cp.execFile);
-const SCHEMA_EXPORTS_DIRECTORY = 'schemas';
+const LEGACY_SCHEMA_EXPORTS_DIRECTORY = 'schemas';
 const STORE_INFO_FILE_CANDIDATES = ['stores_info.json', 'stores-info.json'] as const;
+const SCHEMA_MAPPINGS_FILE_CANDIDATES = ['schema_mappings.json', 'schemaMappings.json'] as const;
 const ZIP_LIST_MAX_BUFFER_BYTES = 1024 * 1024 * 50;
 const ZIP_EXTRACT_MAX_BUFFER_BYTES = 1024 * 1024 * 100;
 
 interface StoreInfoDocument {
     stores?: unknown;
+}
+
+interface SchemaMappingsDocument {
+    schemaMappings?: unknown;
 }
 
 interface StoreInfoEntry {
@@ -52,7 +57,7 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
 
     let stores: StoreInfoEntry[];
     try {
-        stores = await loadStoreInfoEntries(context);
+        stores = await loadStoreInfoEntries(context, rootPath);
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         vscode.window.showErrorMessage(`Failed to load store information: ${message}`);
@@ -142,8 +147,65 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
     vscode.window.showInformationMessage(`Copied base asset to ${normalizeZipPath(relativeDestinationPath)}.`);
 }
 
-async function loadStoreInfoEntries(context: vscode.ExtensionContext): Promise<StoreInfoEntry[]> {
-    const schemaRootPath = path.join(context.globalStorageUri.fsPath, SCHEMA_EXPORTS_DIRECTORY);
+async function loadStoreInfoEntries(context: vscode.ExtensionContext, workspaceRootPath: string): Promise<StoreInfoEntry[]> {
+    const schemaRootPaths = resolveSchemaExportRoots(context, workspaceRootPath);
+    for (const schemaRootPath of schemaRootPaths) {
+        const storeInfoEntries = await loadStoreInfoEntriesFromStoresInfo(schemaRootPath);
+        if (storeInfoEntries.length > 0) {
+            return storeInfoEntries;
+        }
+
+        const schemaMappingEntries = await loadStoreInfoEntriesFromSchemaMappings(schemaRootPath);
+        if (schemaMappingEntries.length > 0) {
+            return schemaMappingEntries;
+        }
+    }
+
+    return [];
+}
+
+function resolveSchemaExportRoots(context: vscode.ExtensionContext, workspaceRootPath: string): string[] {
+    const workspaceRunModsPath = path.join(workspaceRootPath, 'run', 'mods');
+    const userDataModsPath = path.join(getHytaleHome(), 'UserData', 'Mods');
+    const legacyGlobalStoragePath = path.join(context.globalStorageUri.fsPath, LEGACY_SCHEMA_EXPORTS_DIRECTORY);
+
+    const candidates = [
+        ...collectExportDirectories(workspaceRunModsPath),
+        ...collectExportDirectories(userDataModsPath),
+        legacyGlobalStoragePath
+    ];
+
+    const uniquePaths = new Set<string>();
+    for (const candidate of candidates) {
+        uniquePaths.add(path.resolve(candidate));
+    }
+    return Array.from(uniquePaths);
+}
+
+function collectExportDirectories(modsRootPath: string): string[] {
+    if (!fs.existsSync(modsRootPath)) {
+        return [];
+    }
+
+    let entries: fs.Dirent[];
+    try {
+        entries = fs.readdirSync(modsRootPath, { withFileTypes: true });
+    } catch {
+        return [];
+    }
+
+    return entries
+        .filter(entry => entry.isDirectory())
+        .map(entry => path.join(modsRootPath, entry.name))
+        .filter(isLikelyExportDirectory);
+}
+
+function isLikelyExportDirectory(directoryPath: string): boolean {
+    const knownRootFiles = [...STORE_INFO_FILE_CANDIDATES, ...SCHEMA_MAPPINGS_FILE_CANDIDATES];
+    return knownRootFiles.some(fileName => fs.existsSync(path.join(directoryPath, fileName)));
+}
+
+async function loadStoreInfoEntriesFromStoresInfo(schemaRootPath: string): Promise<StoreInfoEntry[]> {
     for (const candidateName of STORE_INFO_FILE_CANDIDATES) {
         const candidatePath = path.join(schemaRootPath, candidateName);
         if (!fs.existsSync(candidatePath)) {
@@ -164,6 +226,140 @@ async function loadStoreInfoEntries(context: vscode.ExtensionContext): Promise<S
     }
 
     return [];
+}
+
+async function loadStoreInfoEntriesFromSchemaMappings(schemaRootPath: string): Promise<StoreInfoEntry[]> {
+    for (const candidateName of SCHEMA_MAPPINGS_FILE_CANDIDATES) {
+        const candidatePath = path.join(schemaRootPath, candidateName);
+        if (!fs.existsSync(candidatePath)) {
+            continue;
+        }
+
+        try {
+            const schemaMappingsContent = await fs.promises.readFile(candidatePath, 'utf8');
+            const parsedDocument = JSON.parse(schemaMappingsContent) as SchemaMappingsDocument;
+            const stores = parseStoreInfoEntriesFromSchemaMappings(parsedDocument);
+            if (stores.length > 0) {
+                return stores;
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            console.warn(`Failed to parse schema mappings file (${candidatePath}): ${message}`);
+        }
+    }
+
+    return [];
+}
+
+function parseStoreInfoEntriesFromSchemaMappings(document: SchemaMappingsDocument): StoreInfoEntry[] {
+    if (!isObject(document.schemaMappings)) {
+        return [];
+    }
+
+    const schemaMappings = document.schemaMappings;
+    const jsonSchemas = schemaMappings['json.schemas'];
+    if (!Array.isArray(jsonSchemas)) {
+        return [];
+    }
+
+    const stores: StoreInfoEntry[] = [];
+    const seen = new Set<string>();
+
+    for (const candidate of jsonSchemas) {
+        if (!isObject(candidate)) {
+            continue;
+        }
+
+        const fileMatches = candidate.fileMatch;
+        if (!Array.isArray(fileMatches)) {
+            continue;
+        }
+
+        const schemaUrl = typeof candidate.url === 'string' ? candidate.url : '';
+        const assetSimpleName = deriveAssetSimpleNameFromSchemaUrl(schemaUrl);
+
+        for (const fileMatch of fileMatches) {
+            if (typeof fileMatch !== 'string') {
+                continue;
+            }
+
+            const storePath = extractStorePathFromFileMatch(fileMatch);
+            const extension = extractStoreExtensionFromFileMatch(fileMatch);
+            if (!storePath || !extension) {
+                continue;
+            }
+
+            const fallbackName = assetSimpleName || path.posix.basename(storePath) || 'UnknownAsset';
+            const storeKey = `${fallbackName}::${storePath}::${extension}`;
+            if (seen.has(storeKey)) {
+                continue;
+            }
+
+            seen.add(storeKey);
+            stores.push({
+                assetSimpleName: fallbackName,
+                path: storePath,
+                extension
+            });
+        }
+    }
+
+    stores.sort((left, right) => {
+        const simpleNameComparison = left.assetSimpleName.localeCompare(right.assetSimpleName);
+        if (simpleNameComparison !== 0) {
+            return simpleNameComparison;
+        }
+
+        const pathComparison = left.path.localeCompare(right.path);
+        if (pathComparison !== 0) {
+            return pathComparison;
+        }
+
+        return left.extension.localeCompare(right.extension);
+    });
+    return stores;
+}
+
+function deriveAssetSimpleNameFromSchemaUrl(schemaUrl: string): string {
+    const normalizedUrl = normalizeZipPath(schemaUrl).replace(/^\.\//, '');
+    if (!normalizedUrl) {
+        return '';
+    }
+
+    const schemaFileName = path.posix.basename(normalizedUrl);
+    return schemaFileName.replace(/\.[^.]+$/, '');
+}
+
+function extractStorePathFromFileMatch(fileMatch: string): string {
+    const normalized = normalizeZipPath(fileMatch);
+    if (!normalized) {
+        return '';
+    }
+
+    const wildcardIndex = normalized.search(/[\*\[\{]/);
+    const pathWithoutPattern = wildcardIndex >= 0 ? normalized.substring(0, wildcardIndex) : normalized;
+    const trimmedPath = pathWithoutPattern.replace(/\/+$/, '');
+    if (!trimmedPath) {
+        return '';
+    }
+
+    const extension = path.posix.extname(trimmedPath);
+    const directoryPath = extension ? path.posix.dirname(trimmedPath) : trimmedPath;
+    if (!directoryPath || directoryPath === '.') {
+        return '';
+    }
+
+    return normalizeStorePath(directoryPath, true);
+}
+
+function extractStoreExtensionFromFileMatch(fileMatch: string): string {
+    const normalized = normalizeZipPath(fileMatch);
+    if (!normalized) {
+        return '';
+    }
+
+    const withoutWildcards = normalized.replace(/\*/g, '');
+    return normalizeStoreExtension(path.posix.extname(withoutWildcards));
 }
 
 function parseStoreInfoEntries(document: StoreInfoDocument): StoreInfoEntry[] {

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.3'
 }
 
 ext {
@@ -13,6 +14,13 @@ ext {
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// Quiet warnings about missing Javadocs.
+javadoc {
+    options.addStringOption('Xdoclint:-missing', '-quiet')
 }
 
 // Adds the Hytale server as a build dependency, allowing you to reference and
@@ -20,6 +28,12 @@ java {
 // the official launcher for now.
 dependencies {
     implementation(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
+}
+
+// Create the working directory to run the server if it does not already exist.
+def serverRunDir = file("$projectDir/run")
+if (!serverRunDir.exists()) {
+    serverRunDir.mkdirs()
 }
 
 // Updates the manifest.json file with the latest properties defined in the
@@ -41,4 +55,21 @@ tasks.register('updatePluginManifest') {
 // Makes sure the plugin manifest is up to date.
 tasks.named('processResources') {
     dependsOn 'updatePluginManifest'
+}
+
+// Creates a run configuration in IDEA that will run the Hytale server with
+// your plugin and the default assets.
+idea.project.settings.runConfigurations {
+    'HytaleServer'(org.jetbrains.gradle.ext.Application) {
+        mainClass = 'com.hypixel.hytale.Main'
+        moduleName = project.idea.module.name + '.main'
+        programParameters = "--allow-op --disable-sentry --assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip"
+        if (includes_pack.toBoolean()) {
+            programParameters += " --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
+        }
+        if (load_user_mods.toBoolean()) {
+            programParameters += " --mods=$hytaleHome/UserData/Mods"
+        }
+        workingDirectory = serverRunDir.absolutePath
+    }
 }

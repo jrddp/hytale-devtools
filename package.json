@@ -109,16 +109,6 @@
           "type": "string",
           "default": "",
           "description": "Default website for new mods."
-        },
-        "hytale-devtools.companionPatchline": {
-          "type": "string",
-          "enum": [
-            "auto",
-            "release",
-            "pre-release"
-          ],
-          "default": "auto",
-          "description": "Patchline used when generating the companion mod. Auto detects an installed patchline."
         }
       }
     },
@@ -146,7 +136,8 @@
     "watch:webview": "vite build --watch --config webview/hytale-node-editor/vite.config.mjs",
     "dev:webview": "vite --config webview/hytale-node-editor/vite.config.mjs",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production",
+    "build:companion": "node scripts/build-companion.js",
+    "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production && pnpm run build:companion",
     "vsce:package": "vsce package --no-dependencies",
     "vsce:publish": "vsce publish --no-dependencies",
     "build:webview": "vite build --config webview/hytale-node-editor/vite.config.mjs",

@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { toCamelCase, toPascalCase, toSquashedCase, replaceTokens } from '../utils/stringUtils';
-import { getCompanionPaths } from '../utils/companionPaths';
-import { ensureCompanionModGenerated } from '../companion/generateCompanionMod';
 
 const TEMPLATE_DIR_NAME = 'templates/basic-mod';
+const COMPANION_MOD_LIBS_RELATIVE_PATH = path.join('companion-mod', 'build', 'libs');
 
 
 export async function createMod(context: vscode.ExtensionContext) {
@@ -47,15 +46,13 @@ export async function createMod(context: vscode.ExtensionContext) {
     let author = config.get<string>('defaultAuthor') || '';
     let group = config.get<string>('defaultGroup') || '';
     let website = config.get<string>('defaultWebsite') || '';
-
-    const companionPaths = getCompanionPaths(context);
-    if (!fs.existsSync(companionPaths.companionModArtifactPath)) {
-        try {
-            await ensureCompanionModGenerated(context);
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            vscode.window.showWarningMessage(`Companion mod artifacts are unavailable and build failed: ${message}`);
-        }
+    const companionBuiltModsPath = context.asAbsolutePath(COMPANION_MOD_LIBS_RELATIVE_PATH);
+    const companionExportPath = path.join(context.globalStorageUri.fsPath, 'release');
+    if (!fs.existsSync(companionBuiltModsPath)) {
+        vscode.window.showWarningMessage(
+            `Bundled companion mod libs were not found at "${companionBuiltModsPath}". `
+            + 'The generated launch config will still reference this path.'
+        );
     }
 
     let updateConfig = false;
@@ -106,7 +103,8 @@ export async function createMod(context: vscode.ExtensionContext) {
         '{{AUTHOR}}': author,
         '{{GROUP}}': group,
         '{{WEBSITE}}': website,
-        '{{COMPANION_BUILT_MODS_PATH}}': normalizePathForTemplate(companionPaths.companionModArtifactPath)
+        '{{COMPANION_BUILT_MODS_PATH}}': normalizePathForTemplate(companionBuiltModsPath),
+        '{{COMPANION_EXPORT_PATH}}': normalizePathForTemplate(companionExportPath)
     };
 
     try {
