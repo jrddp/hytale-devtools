@@ -14,6 +14,7 @@
     "Language Packs"
   ],
   "activationEvents": [
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -31,6 +32,11 @@
       {
         "command": "hytale-devtools.copyBaseGameAsset",
         "title": "Copy Base Game Asset",
+        "category": "Hytale Devtools"
+      },
+      {
+        "command": "hytale-devtools.changeModPatchline",
+        "title": "Change Mod Support Version Patchline",
         "category": "Hytale Devtools"
       },
       {

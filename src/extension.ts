@@ -7,10 +7,6 @@ import { registerHytaleNodeEditorProvider } from './editors/hytaleNodeEditorProv
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "hytale-devtools" is now active!');
-
 	const createModCommand = vscode.commands.registerCommand('hytale-devtools.createMod', () => {
 		const { createMod } = require('./commands/createMod');
 		createMod(context);
@@ -30,7 +26,28 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(copyBaseGameAssetCommand);
 
+	const changeModPatchlineCommand = vscode.commands.registerCommand('hytale-devtools.changeModPatchline', () => {
+		const { changeModPatchline } = require('./commands/changeModPatchline');
+		changeModPatchline(context);
+	});
+	context.subscriptions.push(changeModPatchlineCommand);
+
 	context.subscriptions.push(registerHytaleNodeEditorProvider(context));
+
+	const ensureCompanionSupportForWorkspace = (workspacePath: string): void => {
+		const { ensureCompanionModSupportForWorkspace } = require('./commands/ensureCompanionModSupport');
+		void ensureCompanionModSupportForWorkspace(context, workspacePath);
+	};
+
+	for (const folder of vscode.workspace.workspaceFolders ?? []) {
+		ensureCompanionSupportForWorkspace(folder.uri.fsPath);
+	}
+
+	context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(event => {
+		for (const folder of event.added) {
+			ensureCompanionSupportForWorkspace(folder.uri.fsPath);
+		}
+	}));
 }
 
 // This method is called when your extension is deactivated

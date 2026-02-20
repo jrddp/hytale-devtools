@@ -68,7 +68,6 @@ import com.hypixel.hytale.server.core.util.BsonUtil;
 public final class AssetRegistryExportService {
     private static final String SCHEMA_MAPPINGS_FILE = "schema_mappings";
     private static final String SCHEMAS_DIRECTORY = "schemas";
-    private static final String INDEX_MANIFEST_FILE = "index_manifest";
     private static final String INDEXES_DIRECTORY = "indexes";
 
     private static final String HYTALE_GENERATOR_ASSETS_PACKAGE_PREFIX = "com.hypixel.hytale.builtin.hytalegenerator.assets.";
@@ -1828,7 +1827,6 @@ public final class AssetRegistryExportService {
         clearDirectoryRecursively(indexesDirectory);
         Files.createDirectories(indexesDirectory);
 
-        BsonArray indexFiles = new BsonArray();
         for (IndexShard shard : indexShards) {
             BsonDocument shardDocument = new BsonDocument();
             shardDocument.put("hytaleVersion", new BsonString(hytaleVersion));
@@ -1837,19 +1835,7 @@ public final class AssetRegistryExportService {
             shardDocument.put("key", new BsonString(shard.key));
             shardDocument.put("values", shard.values);
             writeJsonRelative(outputDirectory, shard.relativePath, shardDocument);
-
-            BsonDocument indexFile = new BsonDocument();
-            indexFile.put("indexKind", new BsonString(shard.indexKind));
-            indexFile.put("key", new BsonString(shard.key));
-            indexFile.put("path", new BsonString(shard.relativePath));
-            indexFiles.add(indexFile);
         }
-
-        BsonDocument manifestDocument = new BsonDocument();
-        manifestDocument.put("hytaleVersion", new BsonString(hytaleVersion));
-        manifestDocument.put("generatedAt", new BsonString(generatedAt));
-        manifestDocument.put("indexFiles", indexFiles);
-        writeJson(outputDirectory, INDEX_MANIFEST_FILE, manifestDocument);
     }
 
     private static void cleanupRemovedArtifactsStage(@Nonnull Path dataDirectory) throws IOException {
@@ -1865,6 +1851,7 @@ public final class AssetRegistryExportService {
         Files.deleteIfExists(dataDirectory.resolve("reference_indexes_v1.json"));
         Files.deleteIfExists(dataDirectory.resolve("autocomplete_semantics_v1.bson"));
         Files.deleteIfExists(dataDirectory.resolve("reference_indexes_v1.bson"));
+        deleteFilePair(dataDirectory, "index_manifest");
     }
 
     private static void deleteFilePair(@Nonnull Path dataDirectory, @Nonnull String baseFileName) throws IOException {
