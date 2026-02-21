@@ -80,3 +80,56 @@ export type ResolvePropertyResult =
         kind: 'error';
         message: string;
     };
+
+export interface ResolveSchemaDefinitionRequestItem {
+    nodeId: string;
+    schemaDefinition: string;
+}
+
+export interface ResolveSchemaDefinitionsBatchRequest {
+    workspacePath: string;
+    items: ResolveSchemaDefinitionRequestItem[];
+}
+
+export type ResolveSchemaDefinitionResult =
+    | {
+        kind: 'ready';
+        nodeId: string;
+        schemaDefinition: string;
+        schemaFile: string;
+        jsonPointer: string;
+        resolvedPointer: string;
+        pointerSegments: string[];
+        variantIndex: number | null;
+        resolvedNode: unknown;
+        hytaleDevtools?: Record<string, unknown>;
+    }
+    | {
+        kind: 'loading';
+        nodeId: string;
+        schemaDefinition: string;
+        message: string;
+    }
+    | {
+        kind: 'missing_exports';
+        nodeId: string;
+        schemaDefinition: string;
+        message: string;
+    }
+    | {
+        kind: 'schema_unresolved';
+        nodeId: string;
+        schemaDefinition: string;
+        message: string;
+    }
+    | {
+        kind: 'error';
+        nodeId: string;
+        schemaDefinition: string;
+        message: string;
+    };
+
+export interface ResolveSchemaDefinitionsBatchResult {
+    results: ResolveSchemaDefinitionResult[];
+    message?: string;
+}

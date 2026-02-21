@@ -1,16 +1,23 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
+import { CompanionSnapshotRuntime } from '../shared/companion/snapshotStore';
+import {
+	ResolveSchemaDefinitionsBatchResult,
+	ResolveSchemaDefinitionRequestItem
+} from '../shared/companion/types';
 
 type WebviewToExtensionMessage =
 	| { type: 'ready' }
 	| { type: 'apply'; text: string; sourceVersion?: number }
 	| { type: 'openRawJson' }
-	| { type: 'openKeybindings'; query?: string };
+	| { type: 'openKeybindings'; query?: string }
+	| { type: 'hydrateNodeSchemas'; requestId: number; items?: ResolveSchemaDefinitionRequestItem[] };
 
 type ExtensionToWebviewMessage =
 	| { type: 'update'; text: string; version: number; documentPath: string }
 	| { type: 'triggerQuickAction'; commandId: string; actionId?: string }
-	| { type: 'error'; message: string };
+	| { type: 'error'; message: string }
+	| { type: 'hydrateNodeSchemasResult'; requestId: number; results: ResolveSchemaDefinitionsBatchResult['results'] };
 
 type ViteManifestEntry = {
 	file: string;
@@ -27,9 +34,10 @@ const WEBVIEW_FIND_COMMAND_ID = 'editor.action.webvieweditor.showFind';
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = 'hytale-devtools.nodeEditor.quickAction.';
 
 export function registerHytaleNodeEditorProvider(
-	context: vscode.ExtensionContext
+	context: vscode.ExtensionContext,
+	companionSnapshotRuntime: CompanionSnapshotRuntime
 ): vscode.Disposable {
-	const provider = new HytaleNodeEditorProvider(context);
+	const provider = new HytaleNodeEditorProvider(context, companionSnapshotRuntime);
 	const providerRegistration = vscode.window.registerCustomEditorProvider(VIEW_TYPE, provider, {
 		webviewOptions: {
 			enableFindWidget: true
@@ -50,7 +58,10 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 	private activeDocumentUri: string | undefined;
 	private nativeFindCommandRegistration: vscode.Disposable | undefined;
 
-	constructor(private readonly context: vscode.ExtensionContext) { }
+	constructor(
+		private readonly context: vscode.ExtensionContext,
+		private readonly companionSnapshotRuntime: CompanionSnapshotRuntime
+	) { }
 
 	public resolveCustomTextEditor(
 		document: vscode.TextDocument,
@@ -126,6 +137,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 						return;
 					case 'openKeybindings':
 						void this.openNodeEditorKeybindings(message.query);
+						return;
+					case 'hydrateNodeSchemas':
+						void this.hydrateNodeSchemas(document, message, webviewPanel.webview);
 						return;
 					default:
 						return;
@@ -256,6 +270,59 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 	private async openNodeEditorKeybindings(queryCandidate: string | undefined): Promise<void> {
 		const query = readNonEmptyString(queryCandidate) ?? 'Hytale Node Editor';
 		await vscode.commands.executeCommand('workbench.action.openGlobalKeybindings', query);
+	}
+
+	private async hydrateNodeSchemas(
+		document: vscode.TextDocument,
+		message: Extract<WebviewToExtensionMessage, { type: 'hydrateNodeSchemas' }>,
+		webview: vscode.Webview
+	): Promise<void> {
+		const requestId = Number(message?.requestId);
+		if (!Number.isInteger(requestId)) {
+			return;
+		}
+
+		const items = normalizeHydrationRequestItems(message?.items);
+		if (items.length === 0) {
+			const emptyResponse: ExtensionToWebviewMessage = {
+				type: 'hydrateNodeSchemasResult',
+				requestId,
+				results: []
+			};
+			await webview.postMessage(emptyResponse);
+			return;
+		}
+
+		const workspacePath = vscode.workspace.getWorkspaceFolder(document.uri)?.uri.fsPath;
+		if (!workspacePath) {
+			const results = items.map((item) => ({
+				kind: 'missing_exports' as const,
+				nodeId: item.nodeId,
+				schemaDefinition: item.schemaDefinition,
+				message: 'No workspace folder is associated with the current document.'
+			}));
+			const response: ExtensionToWebviewMessage = {
+				type: 'hydrateNodeSchemasResult',
+				requestId,
+				results
+			};
+			await webview.postMessage(response);
+			return;
+		}
+
+		// Ensure hydration can resolve snapshots even when activation-time workspace detection skipped registration.
+		this.companionSnapshotRuntime.registerWorkspace(workspacePath);
+
+		const batchResult = this.companionSnapshotRuntime.resolveSchemaDefinitionsBatch({
+			workspacePath,
+			items
+		});
+		const response: ExtensionToWebviewMessage = {
+			type: 'hydrateNodeSchemasResult',
+			requestId,
+			results: batchResult.results
+		};
+		await webview.postMessage(response);
 	}
 
 	private async postError(webview: vscode.Webview, message: string): Promise<void> {
@@ -395,6 +462,38 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 function readNonEmptyString(value: unknown): string | undefined {
 	return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function normalizeHydrationRequestItems(itemsCandidate: unknown): ResolveSchemaDefinitionRequestItem[] {
+	if (!Array.isArray(itemsCandidate)) {
+		return [];
+	}
+
+	const normalizedItems: ResolveSchemaDefinitionRequestItem[] = [];
+	const seen = new Set<string>();
+	for (const itemCandidate of itemsCandidate) {
+		if (!isObject(itemCandidate)) {
+			continue;
+		}
+
+		const nodeId = readNonEmptyString(itemCandidate.nodeId);
+		const schemaDefinition = readNonEmptyString(itemCandidate.schemaDefinition);
+		if (!nodeId || !schemaDefinition) {
+			continue;
+		}
+
+		const dedupeKey = `${nodeId}\u0000${schemaDefinition}`;
+		if (seen.has(dedupeKey)) {
+			continue;
+		}
+		seen.add(dedupeKey);
+		normalizedItems.push({
+			nodeId,
+			schemaDefinition
+		});
+	}
+
+	return normalizedItems;
 }
 
 function escapeHtml(value: string): string {

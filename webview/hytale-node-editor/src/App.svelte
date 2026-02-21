@@ -71,6 +71,11 @@
     getNodeEditorQuickActionByCommandId,
     getNodeEditorQuickActionById,
   } from "./node-editor/nodeEditorQuickActions.ts";
+  import nodeSchemaMappingsDocument from "../Workspaces/node-schema-mappings.json";
+  import {
+    normalizeNodeSchemaMappingsByWorkspace,
+    resolveMappedSchemaDefinitionForNode,
+  } from "./node-editor/nodeSchemaMappings.js";
 
   export let vscode;
   export let templateSourceMode = "workspace-hg-java";
@@ -85,6 +90,7 @@
   ];
   const NODE_TEMPLATE_DATA_KEY = "$templateId";
   const NODE_FIELD_VALUES_DATA_KEY = "$fieldValues";
+  const NODE_SCHEMA_INFO_DATA_KEY = "$schemaInfo";
   const RAW_JSON_DATA_FIELD_ID = "Data";
   const RAW_JSON_DEFAULT_DATA_VALUE = "{\n\n}";
   const GROUP_NODE_ID_PREFIX = "__group__";
@@ -110,6 +116,10 @@
     PAYLOAD_TEMPLATE_ID_KEY,
     PAYLOAD_EDITOR_FIELDS_KEY,
   ]);
+  const NODE_SCHEMA_MAPPINGS_BY_WORKSPACE =
+    normalizeNodeSchemaMappingsByWorkspace(nodeSchemaMappingsDocument);
+  const SCHEMA_HYDRATION_RETRY_DELAYS_MS = [250, 500, 1000, 2000, 4000];
+  const SCHEMA_HYDRATION_MAX_RETRY_DURATION_MS = 20_000;
 
   setActiveTemplateSourceMode(templateSourceMode);
   $: setActiveTemplateSourceMode(templateSourceMode);
@@ -125,6 +135,11 @@
   let extensionError = "";
   let quickActionRequest = undefined;
   let quickActionRequestToken = 0;
+  let schemaHydrationRequestId = 0;
+  let schemaHydrationGeneration = 0;
+  let schemaHydrationActiveRequestId = undefined;
+  let schemaHydrationRetryHandle = undefined;
+  let schemaHydrationRetryContext = undefined;
 
   function handleMessage(event) {
     const message = event.data;
@@ -147,7 +162,9 @@
         syncedText = parsedState.serializedText;
         graphLoadVersion += 1;
         extensionError = "";
+        beginNodeSchemaHydration(parsedState.nodes, parsedState.metadataContext?.workspaceContext);
       } catch (error) {
+        clearNodeSchemaHydrationRetry();
         extensionError = error instanceof Error ? error.message : "Could not parse flow JSON.";
       }
       return;
@@ -177,6 +194,11 @@
         actionId: quickAction.id,
         commandId: quickAction.commandId,
       };
+      return;
+    }
+
+    if (message.type === "hydrateNodeSchemasResult") {
+      handleNodeSchemaHydrationResult(message);
     }
   }
 
@@ -194,6 +216,301 @@
       type: "openKeybindings",
       query: "Hytale Node Editor",
     });
+  }
+
+  function beginNodeSchemaHydration(nodeCandidates, workspaceContextCandidate) {
+    schemaHydrationGeneration += 1;
+    schemaHydrationActiveRequestId = undefined;
+    clearNodeSchemaHydrationRetry();
+
+    const requestItems = collectNodeSchemaHydrationRequestItems(
+      nodeCandidates,
+      workspaceContextCandidate
+    );
+    if (requestItems.length === 0) {
+      return;
+    }
+
+    dispatchNodeSchemaHydrationRequest(requestItems, {
+      generation: schemaHydrationGeneration,
+      attempt: 0,
+      startedAtMs: Date.now(),
+    });
+  }
+
+  function collectNodeSchemaHydrationRequestItems(nodeCandidates, workspaceContextCandidate) {
+    const nodeList = Array.isArray(nodeCandidates) ? nodeCandidates : [];
+    if (nodeList.length === 0) {
+      return [];
+    }
+
+    const requestItems = [];
+    const seenKeys = new Set();
+    for (const nodeCandidate of nodeList) {
+      if (normalizeNonEmptyString(nodeCandidate?.type) !== CUSTOM_NODE_TYPE) {
+        continue;
+      }
+
+      const nodeId = normalizeNonEmptyString(nodeCandidate?.id);
+      if (!nodeId) {
+        continue;
+      }
+
+      const templateId = normalizeNonEmptyString(nodeCandidate?.data?.[NODE_TEMPLATE_DATA_KEY]);
+      const template =
+        (templateId ? getTemplateById(templateId, workspaceContextCandidate) : undefined) ??
+        findTemplateByTypeName(nodeCandidate?.data?.Type, workspaceContextCandidate);
+      const mappedSchemaDefinition = resolveMappedSchemaDefinitionForNode({
+        workspaceId: workspaceContextCandidate?.workspaceId,
+        templateId,
+        schemaType: normalizeNonEmptyString(template?.schemaType),
+        payloadType: normalizeNonEmptyString(nodeCandidate?.data?.Type),
+        mappingsByWorkspace: NODE_SCHEMA_MAPPINGS_BY_WORKSPACE,
+      }).schemaDefinition;
+      if (!mappedSchemaDefinition) {
+        continue;
+      }
+
+      const key = `${nodeId}\u0000${mappedSchemaDefinition}`;
+      if (seenKeys.has(key)) {
+        continue;
+      }
+      seenKeys.add(key);
+      requestItems.push({
+        nodeId,
+        schemaDefinition: mappedSchemaDefinition,
+      });
+    }
+
+    return requestItems;
+  }
+
+  function dispatchNodeSchemaHydrationRequest(itemsCandidate, context = {}) {
+    const items = normalizeNodeSchemaHydrationItems(itemsCandidate);
+    if (items.length === 0) {
+      return;
+    }
+
+    const generation = Number.isInteger(context?.generation)
+      ? context.generation
+      : schemaHydrationGeneration;
+    const attempt = Number.isInteger(context?.attempt) ? context.attempt : 0;
+    const startedAtMs = Number.isFinite(context?.startedAtMs) ? context.startedAtMs : Date.now();
+    const requestId = ++schemaHydrationRequestId;
+    schemaHydrationActiveRequestId = requestId;
+    schemaHydrationRetryContext = {
+      generation,
+      attempt,
+      startedAtMs,
+      items,
+    };
+
+    vscode.postMessage({
+      type: "hydrateNodeSchemas",
+      requestId,
+      items,
+    });
+  }
+
+  function handleNodeSchemaHydrationResult(message) {
+    const responseRequestId = Number(message?.requestId);
+    if (!Number.isInteger(responseRequestId) || responseRequestId !== schemaHydrationActiveRequestId) {
+      return;
+    }
+
+    const retryContext = isNodeSchemaHydrationRetryContext(schemaHydrationRetryContext)
+      ? schemaHydrationRetryContext
+      : undefined;
+    if (!retryContext || retryContext.generation !== schemaHydrationGeneration) {
+      return;
+    }
+
+    const results = normalizeNodeSchemaHydrationResults(message?.results);
+    applyNodeSchemaHydrationResults(results, retryContext.generation);
+    schemaHydrationActiveRequestId = undefined;
+
+    const loadingItems = results
+      .filter((result) => result.kind === "loading")
+      .map((result) => ({
+        nodeId: result.nodeId,
+        schemaDefinition: result.schemaDefinition,
+      }));
+    if (loadingItems.length === 0) {
+      clearNodeSchemaHydrationRetry();
+      return;
+    }
+
+    const elapsedMs = Date.now() - retryContext.startedAtMs;
+    if (elapsedMs > SCHEMA_HYDRATION_MAX_RETRY_DURATION_MS) {
+      clearNodeSchemaHydrationRetry();
+      return;
+    }
+
+    const normalizedLoadingItems = normalizeNodeSchemaHydrationItems(loadingItems);
+    if (normalizedLoadingItems.length === 0) {
+      clearNodeSchemaHydrationRetry();
+      return;
+    }
+
+    scheduleNodeSchemaHydrationRetry({
+      generation: retryContext.generation,
+      attempt: retryContext.attempt + 1,
+      startedAtMs: retryContext.startedAtMs,
+      items: normalizedLoadingItems,
+    });
+  }
+
+  function applyNodeSchemaHydrationResults(resultsCandidate, generation) {
+    if (generation !== schemaHydrationGeneration) {
+      return;
+    }
+
+    const results = Array.isArray(resultsCandidate) ? resultsCandidate : [];
+    if (results.length === 0) {
+      return;
+    }
+
+    const schemaResultByNodeId = new Map();
+    for (const result of results) {
+      const nodeId = normalizeNonEmptyString(result?.nodeId);
+      if (!nodeId) {
+        continue;
+      }
+      schemaResultByNodeId.set(nodeId, result);
+    }
+    if (schemaResultByNodeId.size === 0) {
+      return;
+    }
+
+    nodes = (Array.isArray(nodes) ? nodes : []).map((nodeCandidate) => {
+      const nodeId = normalizeNonEmptyString(nodeCandidate?.id);
+      if (!nodeId) {
+        return nodeCandidate;
+      }
+
+      const schemaResult = schemaResultByNodeId.get(nodeId);
+      if (!schemaResult) {
+        return nodeCandidate;
+      }
+
+      return {
+        ...nodeCandidate,
+        data: {
+          ...(isObject(nodeCandidate?.data) ? nodeCandidate.data : {}),
+          [NODE_SCHEMA_INFO_DATA_KEY]: createNodeSchemaInfoPayload(schemaResult),
+        },
+      };
+    });
+  }
+
+  function createNodeSchemaInfoPayload(schemaResult) {
+    const kind = normalizeNonEmptyString(schemaResult?.kind) ?? "error";
+    if (kind === "ready") {
+      return {
+        kind,
+        schemaDefinition: normalizeNonEmptyString(schemaResult?.schemaDefinition) ?? null,
+        schemaFile: normalizeNonEmptyString(schemaResult?.schemaFile) ?? null,
+        jsonPointer: normalizeNonEmptyString(schemaResult?.jsonPointer) ?? "",
+        resolvedPointer: normalizeNonEmptyString(schemaResult?.resolvedPointer) ?? "",
+        pointerSegments: Array.isArray(schemaResult?.pointerSegments)
+          ? [...schemaResult.pointerSegments]
+          : [],
+        variantIndex: Number.isInteger(schemaResult?.variantIndex) ? schemaResult.variantIndex : null,
+        resolvedNode: schemaResult?.resolvedNode ?? null,
+        hytaleDevtools: isObject(schemaResult?.hytaleDevtools) ? schemaResult.hytaleDevtools : null,
+      };
+    }
+
+    return {
+      kind,
+      schemaDefinition: normalizeNonEmptyString(schemaResult?.schemaDefinition) ?? null,
+      message: normalizeNonEmptyString(schemaResult?.message) ?? "Schema hydration failed.",
+    };
+  }
+
+  function scheduleNodeSchemaHydrationRetry(nextContext) {
+    clearNodeSchemaHydrationRetry();
+    if (!isNodeSchemaHydrationRetryContext(nextContext)) {
+      return;
+    }
+
+    if (nextContext.generation !== schemaHydrationGeneration) {
+      return;
+    }
+
+    schemaHydrationRetryContext = nextContext;
+    const delayIndex = Math.min(
+      Math.max(0, nextContext.attempt),
+      SCHEMA_HYDRATION_RETRY_DELAYS_MS.length - 1
+    );
+    const delayMs = SCHEMA_HYDRATION_RETRY_DELAYS_MS[delayIndex];
+    schemaHydrationRetryHandle = window.setTimeout(() => {
+      schemaHydrationRetryHandle = undefined;
+      if (!isNodeSchemaHydrationRetryContext(schemaHydrationRetryContext)) {
+        return;
+      }
+      if (schemaHydrationRetryContext.generation !== schemaHydrationGeneration) {
+        return;
+      }
+
+      dispatchNodeSchemaHydrationRequest(schemaHydrationRetryContext.items, schemaHydrationRetryContext);
+    }, delayMs);
+  }
+
+  function clearNodeSchemaHydrationRetry() {
+    if (schemaHydrationRetryHandle !== undefined) {
+      window.clearTimeout(schemaHydrationRetryHandle);
+      schemaHydrationRetryHandle = undefined;
+    }
+    schemaHydrationRetryContext = undefined;
+  }
+
+  function normalizeNodeSchemaHydrationItems(itemsCandidate) {
+    const items = Array.isArray(itemsCandidate) ? itemsCandidate : [];
+    const normalizedItems = [];
+    const seen = new Set();
+    for (const itemCandidate of items) {
+      const nodeId = normalizeNonEmptyString(itemCandidate?.nodeId);
+      const schemaDefinition = normalizeNonEmptyString(itemCandidate?.schemaDefinition);
+      if (!nodeId || !schemaDefinition) {
+        continue;
+      }
+
+      const dedupeKey = `${nodeId}\u0000${schemaDefinition}`;
+      if (seen.has(dedupeKey)) {
+        continue;
+      }
+      seen.add(dedupeKey);
+      normalizedItems.push({
+        nodeId,
+        schemaDefinition,
+      });
+    }
+
+    return normalizedItems;
+  }
+
+  function normalizeNodeSchemaHydrationResults(resultsCandidate) {
+    const results = Array.isArray(resultsCandidate) ? resultsCandidate : [];
+    return results
+      .filter((candidate) => isObject(candidate))
+      .map((candidate) => ({
+        ...candidate,
+        kind: normalizeNonEmptyString(candidate.kind) ?? "error",
+        nodeId: normalizeNonEmptyString(candidate.nodeId),
+        schemaDefinition: normalizeNonEmptyString(candidate.schemaDefinition),
+      }))
+      .filter((candidate) => candidate.nodeId && candidate.schemaDefinition);
+  }
+
+  function isNodeSchemaHydrationRetryContext(candidate) {
+    return (
+      isObject(candidate) &&
+      Number.isInteger(candidate.generation) &&
+      Number.isInteger(candidate.attempt) &&
+      Number.isFinite(candidate.startedAtMs) &&
+      Array.isArray(candidate.items)
+    );
   }
 
   function applyFlowState(nextNodes, nextEdges) {
@@ -227,6 +544,7 @@
 
     return () => {
       window.removeEventListener("message", handleMessage);
+      clearNodeSchemaHydrationRetry();
     };
   });
 
@@ -1113,6 +1431,9 @@
               [RAW_JSON_DATA_FIELD_ID]: rawJsonData,
             },
             ...(comment !== undefined ? { $comment: comment } : {}),
+            ...(candidate?.data?.[NODE_SCHEMA_INFO_DATA_KEY] !== undefined
+              ? { [NODE_SCHEMA_INFO_DATA_KEY]: candidate.data[NODE_SCHEMA_INFO_DATA_KEY] }
+              : {}),
           },
           position,
           ...(parentGroup ? { parentId: parentGroup.id } : {}),
@@ -1210,6 +1531,9 @@
             : {}),
           ...(fieldValues !== undefined ? { [NODE_FIELD_VALUES_DATA_KEY]: fieldValues } : {}),
           ...(comment !== undefined ? { $comment: comment } : {}),
+          ...(candidate?.data?.[NODE_SCHEMA_INFO_DATA_KEY] !== undefined
+            ? { [NODE_SCHEMA_INFO_DATA_KEY]: candidate.data[NODE_SCHEMA_INFO_DATA_KEY] }
+            : {}),
         },
         position,
         ...(parentGroup ? { parentId: parentGroup.id } : {}),

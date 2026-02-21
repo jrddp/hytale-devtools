@@ -36,7 +36,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(changeModPatchlineCommand);
 
-	context.subscriptions.push(registerHytaleNodeEditorProvider(context));
+	context.subscriptions.push(registerHytaleNodeEditorProvider(context, companionSnapshotRuntime));
 
 	const ensureCompanionSupportForWorkspace = (workspacePath: string): void => {
 		const { ensureCompanionModSupportForWorkspace } = require('./commands/ensureCompanionModSupport');

@@ -68,6 +68,11 @@
     getNodeEditorQuickActionByEventName,
     getNodeEditorQuickActionById,
   } from "./node-editor/nodeEditorQuickActions.ts";
+  import nodeSchemaMappingsDocument from "../Workspaces/node-schema-mappings.json";
+  import {
+    normalizeNodeSchemaMappingsByWorkspace,
+    resolveMappedSchemaDefinitionForNode,
+  } from "./node-editor/nodeSchemaMappings.js";
 
   export let nodes = createDefaultNodes();
   export let edges = [];
@@ -91,6 +96,10 @@
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
+  const DEBUG_SCHEMA_ROOT_PATH = "(root)";
+  const NODE_SCHEMA_INFO_DATA_KEY = "$schemaInfo";
+  const DEBUG_NODE_SCHEMA_MAPPINGS_BY_WORKSPACE =
+    normalizeNodeSchemaMappingsByWorkspace(nodeSchemaMappingsDocument);
   const dispatch = createEventDispatcher();
 
   const GENERIC_ADD_MENU_ENTRIES = [
@@ -160,6 +169,7 @@
   let nodeSearchGroups = [];
   let lastHandledQuickActionRequestToken = -1;
   let lastPointerClientPosition = undefined;
+  let debugSchemaResolutionCacheByNodeId = new Map();
 
   $: {
     setActiveTemplateSourceMode(templateSourceMode);
@@ -670,6 +680,17 @@
   }
 
   function handleWindowKeyDown(event) {
+    if (isDebugSchemaKeyShortcut(event)) {
+      if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      logDebugSchemaPropertyKeyForSelectedNode();
+      return;
+    }
+
     if (!nodeHelpOpen || normalizeOptionalString(event?.key) !== "Escape") {
       return;
     }
@@ -677,6 +698,366 @@
     event.preventDefault();
     event.stopPropagation();
     closeNodeHelpMenu();
+  }
+
+  function isDebugSchemaKeyShortcut(event) {
+    const key = normalizeOptionalString(event?.key)?.toLowerCase();
+    if (key !== "d") {
+      return false;
+    }
+
+    const hasPrimaryModifier = Boolean(event?.metaKey || event?.ctrlKey);
+    if (!hasPrimaryModifier) {
+      return false;
+    }
+
+    return event?.altKey !== true && event?.shiftKey !== true;
+  }
+
+  function logDebugSchemaPropertyKeyForSelectedNode() {
+    const targetNode = resolveDebugTargetNode();
+    if (!targetNode) {
+      console.info("[node-editor][debug] Cmd/Ctrl+D: no runtime node available.");
+      return;
+    }
+
+    const nodeId = normalizeOptionalString(targetNode?.id) ?? "<unknown>";
+    const template = findTemplateForNodeId(nodeId);
+    const templateId = normalizeOptionalString(template?.templateId);
+    const schemaType = normalizeOptionalString(template?.schemaType);
+    const payloadType = normalizeOptionalString(targetNode?.data?.Type);
+    const schemaResolution = resolveSchemaPropertyResolutionForNode(nodeId);
+    const schemaDefinitionResolution = resolveMappedSchemaDefinitionForNode({
+      workspaceId: workspaceContext?.workspaceId,
+      templateId,
+      schemaType,
+      payloadType,
+      mappingsByWorkspace: DEBUG_NODE_SCHEMA_MAPPINGS_BY_WORKSPACE,
+    });
+    const hydratedSchemaInfo = isObject(targetNode?.data?.[NODE_SCHEMA_INFO_DATA_KEY])
+      ? targetNode.data[NODE_SCHEMA_INFO_DATA_KEY]
+      : null;
+    const fallbackKey =
+      schemaResolution.schemaPropertyPaths[0] ??
+      schemaResolution.schemaPropertyKeys[0] ??
+      schemaType ??
+      payloadType ??
+      "(root or unresolved)";
+
+    console.log(
+      "[node-editor][debug] schema/property key",
+      {
+        nodeId,
+        schemaPropertyKeys: schemaResolution.schemaPropertyKeys,
+        schemaPropertyPaths: schemaResolution.schemaPropertyPaths,
+        resolvedFromCache: schemaResolution.fromCache === true,
+        fallbackKey,
+        templateId: templateId ?? null,
+        schemaType: schemaType ?? null,
+        payloadType: payloadType ?? null,
+        schemaMappingWorkspaceId: schemaDefinitionResolution.workspaceId ?? null,
+        schemaMappingLookupKey: schemaDefinitionResolution.lookupKey ?? null,
+        mappedSchemaDefinition: schemaDefinitionResolution.schemaDefinition ?? null,
+        resolvedMappedSchema: schemaDefinitionResolution.resolvedSchema ?? null,
+        hydratedSchemaInfo,
+      }
+    );
+  }
+
+  function resolveSchemaPropertyResolutionForNode(nodeIdCandidate) {
+    const nodeId = normalizeOptionalString(nodeIdCandidate);
+    if (!nodeId) {
+      return {
+        schemaPropertyKeys: [],
+        schemaPropertyPaths: [],
+        fromCache: false,
+      };
+    }
+
+    const graphResolution = collectSchemaPropertyResolutionFromGraph(nodeId);
+    if (graphResolution.schemaPropertyKeys.length > 0 || graphResolution.schemaPropertyPaths.length > 0) {
+      debugSchemaResolutionCacheByNodeId.set(nodeId, {
+        schemaPropertyKeys: graphResolution.schemaPropertyKeys,
+        schemaPropertyPaths: graphResolution.schemaPropertyPaths,
+      });
+      return {
+        ...graphResolution,
+        fromCache: false,
+      };
+    }
+
+    const cachedResolution = debugSchemaResolutionCacheByNodeId.get(nodeId);
+    if (isDebugSchemaResolution(cachedResolution)) {
+      return {
+        schemaPropertyKeys: [...cachedResolution.schemaPropertyKeys],
+        schemaPropertyPaths: [...cachedResolution.schemaPropertyPaths],
+        fromCache: true,
+      };
+    }
+
+    return {
+      schemaPropertyKeys: [],
+      schemaPropertyPaths: [],
+      fromCache: false,
+    };
+  }
+
+  function collectSchemaPropertyResolutionFromGraph(nodeIdCandidate) {
+    const nodeId = normalizeOptionalString(nodeIdCandidate);
+    if (!nodeId) {
+      return {
+        schemaPropertyKeys: [],
+        schemaPropertyPaths: [],
+      };
+    }
+
+    const incomingSchemaLinksByTarget = buildIncomingSchemaLinksByTarget();
+    const incomingSchemaLinks = incomingSchemaLinksByTarget.get(nodeId) ?? [];
+    const schemaPropertyKeys = Array.from(
+      new Set(
+        incomingSchemaLinks
+          .map((incomingLink) => normalizeOptionalString(incomingLink?.schemaKey))
+          .filter(Boolean)
+      )
+    ).sort((left, right) => left.localeCompare(right));
+    const schemaPropertyPaths = collectSchemaPropertyPathsForNode(
+      nodeId,
+      incomingSchemaLinksByTarget
+    );
+
+    return {
+      schemaPropertyKeys,
+      schemaPropertyPaths,
+    };
+  }
+
+  function collectSchemaPropertyPathsForNode(
+    nodeIdCandidate,
+    incomingSchemaLinksByTarget
+  ) {
+    const nodeId = normalizeOptionalString(nodeIdCandidate);
+    if (!nodeId) {
+      return [];
+    }
+
+    const incomingByTarget =
+      incomingSchemaLinksByTarget instanceof Map ? incomingSchemaLinksByTarget : new Map();
+    const configuredRootNodeId = resolveSchemaPathRootNodeId();
+    const resolvedPaths = new Set();
+
+    function visit(currentNodeId, reversedSchemaPath, visitedNodeIds = new Set()) {
+      const normalizedCurrentNodeId = normalizeOptionalString(currentNodeId);
+      if (!normalizedCurrentNodeId || visitedNodeIds.has(normalizedCurrentNodeId)) {
+        return;
+      }
+
+      if (configuredRootNodeId && normalizedCurrentNodeId === configuredRootNodeId) {
+        if (reversedSchemaPath.length === 0) {
+          resolvedPaths.add(DEBUG_SCHEMA_ROOT_PATH);
+        } else {
+          resolvedPaths.add(
+            formatSchemaPropertyPath([...reversedSchemaPath].reverse())
+          );
+        }
+        return;
+      }
+
+      const incomingLinks = Array.isArray(incomingByTarget.get(normalizedCurrentNodeId))
+        ? incomingByTarget.get(normalizedCurrentNodeId)
+        : [];
+      if (incomingLinks.length === 0) {
+        if (!configuredRootNodeId && reversedSchemaPath.length === 0) {
+          resolvedPaths.add(DEBUG_SCHEMA_ROOT_PATH);
+        } else if (reversedSchemaPath.length > 0) {
+          resolvedPaths.add(
+            formatSchemaPropertyPath([...reversedSchemaPath].reverse())
+          );
+        }
+        return;
+      }
+
+      const nextVisitedNodeIds = new Set(visitedNodeIds);
+      nextVisitedNodeIds.add(normalizedCurrentNodeId);
+      for (const incomingLink of incomingLinks) {
+        const sourceNodeId = normalizeOptionalString(incomingLink?.sourceNodeId);
+        const schemaKey = normalizeOptionalString(incomingLink?.schemaKey);
+        if (!sourceNodeId || !schemaKey) {
+          continue;
+        }
+
+        visit(
+          sourceNodeId,
+          [...reversedSchemaPath, schemaKey],
+          nextVisitedNodeIds
+        );
+      }
+    }
+
+    visit(nodeId, []);
+
+    return Array.from(resolvedPaths).sort((left, right) =>
+      left.localeCompare(right)
+    );
+  }
+
+  function formatSchemaPropertyPath(schemaPathSegmentsCandidate) {
+    const segments = Array.isArray(schemaPathSegmentsCandidate)
+      ? schemaPathSegmentsCandidate
+      : [];
+    const normalizedSegments = segments
+      .map((segment) => normalizeOptionalString(segment))
+      .filter(Boolean);
+    if (normalizedSegments.length === 0) {
+      return DEBUG_SCHEMA_ROOT_PATH;
+    }
+
+    return normalizedSegments.join(".");
+  }
+
+  function resolveSchemaPathRootNodeId() {
+    const explicitRootNodeId = normalizeOptionalString(rootNodeId);
+    if (explicitRootNodeId) {
+      return explicitRootNodeId;
+    }
+
+    const resolvedRootNode = resolveRootNodeForNavigation();
+    return normalizeOptionalString(resolvedRootNode?.id);
+  }
+
+  function buildIncomingSchemaLinksByTarget() {
+    const normalizedEdges = Array.isArray(edges) ? edges : [];
+    const incomingSchemaLinksByTarget = new Map();
+    const dedupeKeysByTarget = new Map();
+
+    for (const edgeCandidate of normalizedEdges) {
+      const targetNodeId = normalizeOptionalString(edgeCandidate?.target);
+      const sourceNodeId = normalizeOptionalString(edgeCandidate?.source);
+      const schemaKey = resolveSchemaKeyForEdge(edgeCandidate);
+      if (!targetNodeId || !sourceNodeId || !schemaKey) {
+        continue;
+      }
+
+      if (!incomingSchemaLinksByTarget.has(targetNodeId)) {
+        incomingSchemaLinksByTarget.set(targetNodeId, []);
+      }
+      if (!dedupeKeysByTarget.has(targetNodeId)) {
+        dedupeKeysByTarget.set(targetNodeId, new Set());
+      }
+
+      const dedupeKey = `${sourceNodeId}\u0000${schemaKey}`;
+      const dedupeKeys = dedupeKeysByTarget.get(targetNodeId);
+      if (dedupeKeys.has(dedupeKey)) {
+        continue;
+      }
+      dedupeKeys.add(dedupeKey);
+
+      incomingSchemaLinksByTarget.get(targetNodeId).push({
+        sourceNodeId,
+        schemaKey,
+      });
+    }
+
+    return incomingSchemaLinksByTarget;
+  }
+
+  function resolveSchemaKeyForEdge(edgeCandidate) {
+    const explicitSchemaKey = normalizeOptionalString(edgeCandidate?.data?.schemaKey);
+    if (explicitSchemaKey) {
+      return explicitSchemaKey;
+    }
+
+    const sourceDescriptor = resolveSchemaDescriptorForEdgeSource(edgeCandidate);
+    return normalizeOptionalString(sourceDescriptor?.schemaKey);
+  }
+
+  function resolveSchemaDescriptorForEdgeSource(edgeCandidate) {
+    const sourceNodeId = normalizeOptionalString(edgeCandidate?.source);
+    if (!sourceNodeId) {
+      return undefined;
+    }
+
+    const sourceNode = findNodeById(sourceNodeId);
+    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
+      return resolveSchemaDescriptorForLinkOutput(sourceNodeId);
+    }
+
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
+    return readSourceConnectionDescriptor(sourceTemplate, edgeCandidate?.sourceHandle);
+  }
+
+  function resolveSchemaDescriptorForLinkOutput(
+    linkNodeId,
+    visitedLinkNodeIds = new Set()
+  ) {
+    const normalizedLinkNodeId = normalizeOptionalString(linkNodeId);
+    if (!normalizedLinkNodeId || visitedLinkNodeIds.has(normalizedLinkNodeId)) {
+      return undefined;
+    }
+
+    const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
+    nextVisitedLinkNodeIds.add(normalizedLinkNodeId);
+
+    const inputEdge = findInputEdgeForLinkNode(normalizedLinkNodeId);
+    if (!inputEdge) {
+      return undefined;
+    }
+
+    const sourceNodeId = normalizeOptionalString(inputEdge?.source);
+    if (!sourceNodeId) {
+      return undefined;
+    }
+
+    const sourceNode = findNodeById(sourceNodeId);
+    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
+      return resolveSchemaDescriptorForLinkOutput(
+        sourceNodeId,
+        nextVisitedLinkNodeIds
+      );
+    }
+
+    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
+    return readSourceConnectionDescriptor(sourceTemplate, inputEdge?.sourceHandle);
+  }
+
+  function isDebugSchemaResolution(candidate) {
+    if (!isObject(candidate)) {
+      return false;
+    }
+
+    return (
+      Array.isArray(candidate.schemaPropertyKeys) &&
+      Array.isArray(candidate.schemaPropertyPaths)
+    );
+  }
+
+  function resolveDebugTargetNode() {
+    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
+    if (normalizedNodes.length === 0) {
+      return undefined;
+    }
+
+    const selectedCustomNode = normalizedNodes.find(
+      (nodeCandidate) =>
+        nodeCandidate?.selected === true &&
+        normalizeOptionalString(nodeCandidate?.type) === CUSTOM_NODE_TYPE
+    );
+    if (selectedCustomNode) {
+      return selectedCustomNode;
+    }
+
+    const selectedRuntimeNode = normalizedNodes.find((nodeCandidate) => {
+      if (nodeCandidate?.selected !== true) {
+        return false;
+      }
+
+      const nodeType = normalizeOptionalString(nodeCandidate?.type);
+      return nodeType !== GROUP_NODE_TYPE && nodeType !== COMMENT_NODE_TYPE;
+    });
+    if (selectedRuntimeNode) {
+      return selectedRuntimeNode;
+    }
+
+    return resolveRootNodeForNavigation();
   }
 
   function handleWindowKeyUp(event) {
@@ -1598,12 +1979,18 @@
       return undefined;
     }
 
+    const sourceConnectionDescriptor = readSourceConnectionDescriptor(
+      sourceTemplate,
+      sourcePin?.id
+    );
+
     return {
       connectionMultiplicity: readOutputPinConnectionMultiplicity(sourcePin),
       pinType: normalizeOptionalString(sourcePin?.type),
       nodeSelector: normalizeOptionalString(
-        readSourceConnectionDescriptor(sourceTemplate, sourcePin?.id)?.nodeSelector
+        sourceConnectionDescriptor?.nodeSelector
       ),
+      schemaKey: normalizeOptionalString(sourceConnectionDescriptor?.schemaKey),
     };
   }
 
