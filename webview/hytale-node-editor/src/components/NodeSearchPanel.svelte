@@ -13,6 +13,7 @@
   let searchQuery = "";
   let searchInput;
   let menuElement;
+  let resultListElement;
   let activeIndex = 0;
   let hasHardSelection = false;
   let lastSearchQuery = "";
@@ -54,7 +55,7 @@
     hasHardSelection = true;
   }
 
-  $: if (open && flatItems.length > 0) {
+  $: if (open && flatItems.length > 0 && activeIndex >= 0) {
     tick().then(() => {
       scrollActiveResultIntoView();
     });
@@ -86,11 +87,25 @@
   }
 
   function scrollActiveResultIntoView() {
-    const activeItemElement = menuElement?.querySelector?.(
-      '[data-node-search-item="true"][data-active="true"]'
-    );
-    if (typeof activeItemElement?.scrollIntoView === "function") {
-      activeItemElement.scrollIntoView({ block: "nearest" });
+    const itemElements = resultListElement?.querySelectorAll?.('[data-node-search-item="true"]');
+    const activeItemElement = itemElements?.[activeIndex];
+
+    if (!resultListElement || !activeItemElement) {
+      return;
+    }
+
+    const itemTop = activeItemElement.offsetTop;
+    const itemBottom = itemTop + activeItemElement.offsetHeight;
+    const viewTop = resultListElement.scrollTop;
+    const viewBottom = viewTop + resultListElement.clientHeight;
+
+    if (itemTop < viewTop) {
+      resultListElement.scrollTop = itemTop;
+      return;
+    }
+
+    if (itemBottom > viewBottom) {
+      resultListElement.scrollTop = itemBottom - resultListElement.clientHeight;
     }
   }
 
@@ -150,12 +165,14 @@
 
       if (!hasHardSelection && flatItems.length > 1) {
         hasHardSelection = true;
+        tick().then(() => scrollActiveResultIntoView());
         return;
       }
 
       const delta = event.key === "ArrowDown" ? 1 : -1;
       activeIndex = (activeIndex + delta + flatItems.length) % flatItems.length;
       hasHardSelection = true;
+      tick().then(() => scrollActiveResultIntoView());
       return;
     }
 
@@ -203,7 +220,11 @@
         />
       </div>
 
-      <div class="mt-3 flex max-h-[calc(72vh-4.75rem)] flex-col gap-3 overflow-auto pr-0.5" role="listbox">
+      <div
+        bind:this={resultListElement}
+        class="relative mt-3 flex max-h-[calc(72vh-4.75rem)] flex-col gap-3 overflow-auto pr-0.5"
+        role="listbox"
+      >
         {#if groupedEntries.length === 0}
           <div class="px-1 py-4 text-xs text-vsc-muted">No matching nodes</div>
         {:else}

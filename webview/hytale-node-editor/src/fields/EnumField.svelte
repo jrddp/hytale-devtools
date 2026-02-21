@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, tick } from 'svelte';
   import { ChevronDown } from 'lucide-svelte';
   import { getFieldLabel, normalizeFieldOptions } from '../node-editor/fieldValueUtils.js';
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
@@ -24,13 +24,29 @@
   $: activeValue = highlightedIndex >= 0 ? filteredValues[highlightedIndex] : undefined;
 
   let inputElement;
+  let dropdownElement;
   let isOpen = false;
   let forceFullList = false;
   let draftText = '';
   let highlightedIndex = -1;
+  let skipNextBlurCommit = false;
 
   $: if (!isOpen && draftText !== committedValue) {
     draftText = committedValue;
+  }
+
+  $: if (isOpen && filteredValues.length === 0 && highlightedIndex !== -1) {
+    highlightedIndex = -1;
+  }
+
+  $: if (isOpen && filteredValues.length > 0 && (highlightedIndex < 0 || highlightedIndex >= filteredValues.length)) {
+    highlightedIndex = 0;
+  }
+
+  $: if (isOpen && filteredValues.length > 0 && highlightedIndex >= 0) {
+    tick().then(() => {
+      scrollHighlightedOptionIntoView();
+    });
   }
 
   function emitValue(nextValue) {
@@ -58,21 +74,10 @@
     }
   }
 
-  function revertValue() {
-    draftText = committedValue;
-    closeDropdown();
-  }
-
   function openDropdown() {
     isOpen = true;
     const rankedValues = rankEnumValues(values, forceFullList ? '' : draftText);
-    if (isStrict === true) {
-      const nextHighlightedIndex = rankedValues.indexOf(committedValue);
-      highlightedIndex = nextHighlightedIndex >= 0 ? nextHighlightedIndex : rankedValues.length > 0 ? 0 : -1;
-      return;
-    }
-
-    highlightedIndex = -1;
+    highlightedIndex = rankedValues.length > 0 ? 0 : -1;
   }
 
   function closeDropdown() {
@@ -85,7 +90,7 @@
     draftText = event.currentTarget.value;
     forceFullList = false;
     isOpen = true;
-    highlightedIndex = isStrict === true ? 0 : -1;
+    highlightedIndex = 0;
   }
 
   function handleInputClick(event) {
@@ -97,8 +102,9 @@
   function handleKeyDown(event) {
     if (isPlainEnterNavigationEvent(event)) {
       event.preventDefault();
+      event.stopPropagation();
       const selectedValue = highlightedIndex >= 0 ? activeValue : undefined;
-      commitValue(selectedValue ?? draftText, true, { allowFreeText: true });
+      commitAndBlur(selectedValue ?? draftText, { allowFreeText: true });
       return;
     }
 
@@ -110,7 +116,8 @@
 
     if (event.key === 'Escape') {
       event.preventDefault();
-      revertValue();
+      event.stopPropagation();
+      commitAndBlur(draftText, { allowFreeText: true });
       return;
     }
 
@@ -147,6 +154,11 @@
   }
 
   function handleBlur() {
+    if (skipNextBlurCommit) {
+      skipNextBlurCommit = false;
+      return;
+    }
+
     if (isStrict !== true) {
       commitValue(draftText, false, { allowFreeText: true });
       return;
@@ -163,6 +175,23 @@
 
   function handleOptionMouseDown(event) {
     event.preventDefault();
+  }
+
+  function handleDropdownWheel(event) {
+    event.stopPropagation();
+  }
+
+  function commitAndBlur(candidateValue, config = {}) {
+    skipNextBlurCommit = true;
+    commitValue(candidateValue, false, config);
+    tick().then(() => {
+      inputElement?.blur();
+    });
+  }
+
+  function scrollHighlightedOptionIntoView() {
+    const activeOption = dropdownElement?.querySelector('button[data-active="true"]');
+    activeOption?.scrollIntoView({ block: 'nearest' });
   }
 
   function rankEnumValues(sourceValues, query) {
@@ -259,9 +288,11 @@
   </div>
   {#if isOpen}
     <div
+      bind:this={dropdownElement}
       id={listId}
       role="listbox"
       class="nodrag absolute left-0 right-0 top-full z-20 mt-1 max-h-40 overflow-auto rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg py-1 shadow-lg"
+      onwheel={handleDropdownWheel}
     >
       {#if filteredValues.length === 0}
         <div class="px-2 py-1 text-xs text-vsc-muted">No matching values</div>

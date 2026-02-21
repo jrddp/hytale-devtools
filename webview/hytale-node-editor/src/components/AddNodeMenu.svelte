@@ -12,6 +12,7 @@
   let searchQuery = '';
   let searchInput;
   let menuElement;
+  let resultListElement;
   let activeIndex = 0;
   let lastSearchQuery = '';
   let lastFocusedOpenVersion = -1;
@@ -42,7 +43,7 @@
     activeIndex = Math.max(0, flatTemplates.length - 1);
   }
 
-  $: if (open && flatTemplates.length > 0) {
+  $: if (open && flatTemplates.length > 0 && activeIndex >= 0) {
     tick().then(() => {
       scrollActiveTemplateIntoView();
     });
@@ -107,6 +108,7 @@
       event.preventDefault();
       event.stopPropagation();
       activeIndex = (activeIndex + 1) % flatTemplates.length;
+      tick().then(() => scrollActiveTemplateIntoView());
       return;
     }
 
@@ -114,6 +116,7 @@
       event.preventDefault();
       event.stopPropagation();
       activeIndex = (activeIndex - 1 + flatTemplates.length) % flatTemplates.length;
+      tick().then(() => scrollActiveTemplateIntoView());
       return;
     }
 
@@ -125,12 +128,25 @@
   }
 
   function scrollActiveTemplateIntoView() {
-    const activeItemElement = menuElement?.querySelector?.(
-      '[data-add-node-menu-item="true"][data-active="true"]'
-    );
+    const itemElements = resultListElement?.querySelectorAll?.('[data-add-node-menu-item="true"]');
+    const activeItemElement = itemElements?.[activeIndex];
 
-    if (typeof activeItemElement?.scrollIntoView === 'function') {
-      activeItemElement.scrollIntoView({ block: 'nearest' });
+    if (!resultListElement || !activeItemElement) {
+      return;
+    }
+
+    const itemTop = activeItemElement.offsetTop;
+    const itemBottom = itemTop + activeItemElement.offsetHeight;
+    const viewTop = resultListElement.scrollTop;
+    const viewBottom = viewTop + resultListElement.clientHeight;
+
+    if (itemTop < viewTop) {
+      resultListElement.scrollTop = itemTop;
+      return;
+    }
+
+    if (itemBottom > viewBottom) {
+      resultListElement.scrollTop = itemBottom - resultListElement.clientHeight;
     }
   }
 
@@ -174,7 +190,11 @@
       placeholder="Search nodes..."
     />
 
-    <div class="mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-auto pr-0.5" role="listbox">
+    <div
+      bind:this={resultListElement}
+      class="relative mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-auto pr-0.5"
+      role="listbox"
+    >
       {#if groupedTemplateEntries.length === 0}
         <div class="text-xs text-vsc-muted">No matching node types</div>
       {:else}
