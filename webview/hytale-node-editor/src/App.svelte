@@ -418,6 +418,9 @@
         variantIndex: Number.isInteger(schemaResult?.variantIndex) ? schemaResult.variantIndex : null,
         resolvedNode: schemaResult?.resolvedNode ?? null,
         hytaleDevtools: isObject(schemaResult?.hytaleDevtools) ? schemaResult.hytaleDevtools : null,
+        autocompleteValuesBySchemaKey: normalizeAutocompleteValuesBySchemaKey(
+          schemaResult?.autocompleteValuesBySchemaKey
+        ),
       };
     }
 
@@ -426,6 +429,36 @@
       schemaDefinition: normalizeNonEmptyString(schemaResult?.schemaDefinition) ?? null,
       message: normalizeNonEmptyString(schemaResult?.message) ?? "Schema hydration failed.",
     };
+  }
+
+  function normalizeAutocompleteValuesBySchemaKey(candidate) {
+    if (!isObject(candidate)) {
+      return {};
+    }
+
+    const normalized = {};
+    for (const [schemaKeyCandidate, valuesCandidate] of Object.entries(candidate)) {
+      const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+      if (!schemaKey || !Array.isArray(valuesCandidate)) {
+        continue;
+      }
+
+      const values = [];
+      const seen = new Set();
+      for (const valueCandidate of valuesCandidate) {
+        const value = normalizeNonEmptyString(valueCandidate);
+        if (!value || seen.has(value)) {
+          continue;
+        }
+        seen.add(value);
+        values.push(value);
+      }
+      if (values.length > 0) {
+        normalized[schemaKey] = values;
+      }
+    }
+
+    return normalized;
   }
 
   function scheduleNodeSchemaHydrationRetry(nextContext) {

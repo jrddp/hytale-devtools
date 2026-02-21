@@ -1,3 +1,4 @@
+import { asHytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
 import { PropertyNodeData } from './types';
 import { appendJsonPointer, escapeJsonPointerToken } from './schemaStore';
 
@@ -59,7 +60,7 @@ function indexPropertyNodesRecursive(
 
             const propertyPointer = `${appendJsonPointer(pointer, 'properties')}/${escapeJsonPointerToken(propertyName)}`;
             const propertyKey = buildPropertyKey(schemaFile, propertyPointer);
-            const hytaleDevtools = isRecord(propertyNode.hytaleDevtools) ? propertyNode.hytaleDevtools : undefined;
+            const hytaleDevtools = asHytaleDevtoolsPayload(propertyNode.hytaleDevtools);
             index.set(propertyKey, {
                 propertyKey,
                 schemaFile,

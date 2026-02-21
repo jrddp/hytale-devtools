@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { asHytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
+import { resolveHytaleDevtoolsValueList } from '../hytaleDevtoolsValueList';
 import { resolveCompanionExportRoot } from './exportRoot';
 import { loadIndexShardsFromDirectory } from './indexStore';
 import { buildPropertyIndex } from './propertyIndex';
@@ -508,9 +510,12 @@ function resolveSingleSchemaDefinitionItem(
     }
 
     const hytaleDevtools = isRecord(variantResolution.node)
-        && isRecord(variantResolution.node.hytaleDevtools)
-        ? variantResolution.node.hytaleDevtools
+        ? asHytaleDevtoolsPayload(variantResolution.node.hytaleDevtools)
         : undefined;
+    const autocompleteValuesBySchemaKey = resolveAutocompleteValuesBySchemaKey(
+        variantResolution.node,
+        snapshot
+    );
 
     return {
         kind: 'ready',
@@ -522,8 +527,40 @@ function resolveSingleSchemaDefinitionItem(
         pointerSegments: decodeJsonPointer(variantResolution.pointer),
         variantIndex: parsedDefinition.variantIndex,
         resolvedNode: variantResolution.node,
-        ...(hytaleDevtools ? { hytaleDevtools } : {})
+        ...(hytaleDevtools ? { hytaleDevtools } : {}),
+        ...(autocompleteValuesBySchemaKey ? { autocompleteValuesBySchemaKey } : {})
     };
+}
+
+function resolveAutocompleteValuesBySchemaKey(
+    resolvedNodeCandidate: unknown,
+    snapshot: CompanionSnapshot
+): Record<string, string[]> | undefined {
+    if (!isRecord(resolvedNodeCandidate) || !isRecord(resolvedNodeCandidate.properties)) {
+        return undefined;
+    }
+
+    const valueListBySchemaKey: Record<string, string[]> = {};
+    for (const [schemaKeyCandidate, propertyNodeCandidate] of Object.entries(resolvedNodeCandidate.properties)) {
+        const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+        if (!schemaKey || !isRecord(propertyNodeCandidate)) {
+            continue;
+        }
+
+        const values = resolveHytaleDevtoolsValueList(
+            propertyNodeCandidate.hytaleDevtools,
+            {
+                indexShards: snapshot.indexShards
+            }
+        );
+        if (!Array.isArray(values) || values.length === 0) {
+            continue;
+        }
+
+        valueListBySchemaKey[schemaKey] = values;
+    }
+
+    return Object.keys(valueListBySchemaKey).length > 0 ? valueListBySchemaKey : undefined;
 }
 
 function resolveVariantNodeForSchemaDefinition(

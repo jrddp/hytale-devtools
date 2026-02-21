@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
   import { MessageCircleMore, Pencil } from "lucide-svelte";
   import { tick } from "svelte";
@@ -22,6 +22,7 @@
   import { getDefaultPinColor } from "../node-editor/pinColorUtils.js";
   import {
     CUSTOM_MUTATION_EVENT,
+    FIELD_TYPES,
     NODE_INPUT_INDEX_DATA_KEY,
   } from "../node-editor/types.js";
 
@@ -38,6 +39,12 @@
   const PIN_WIDTH = 10;
   const NODE_MIN_WIDTH_WITH_CONTENT_PX = 288;
   const NODE_MIN_WIDTH_WITHOUT_CONTENT_PX = 80;
+  const NODE_SCHEMA_INFO_DATA_KEY = "$schemaInfo";
+  const TEXT_INPUT_FIELD_TYPES = new Set([
+    FIELD_TYPES.SMALL_STRING,
+    FIELD_TYPES.STRING,
+    FIELD_TYPES.FILE_PATH,
+  ]);
 
   $: template =
     getTemplateById(data?.$templateId) ??
@@ -50,9 +57,21 @@
     ...initialValues,
     ...existingFieldValues,
   };
+  $: schemaInfo = isObject(data?.[NODE_SCHEMA_INFO_DATA_KEY]) ? data[NODE_SCHEMA_INFO_DATA_KEY] : {};
+  $: autocompleteValuesBySchemaKey = readAutocompleteValuesBySchemaKey(
+    schemaInfo?.autocompleteValuesBySchemaKey
+  );
+  $: renderFields = buildRenderFields({
+    fields: Array.isArray(template?.fields) ? template.fields : [],
+    fieldRuntimeKeyByFieldId: isObject(template?.fieldRuntimeKeyByFieldId)
+      ? template.fieldRuntimeKeyByFieldId
+      : {},
+    autocompleteValuesBySchemaKey,
+    fieldValues: mergedFieldValues,
+  });
   $: inputPins = Array.isArray(template?.inputPins) ? template.inputPins : [];
   $: outputPins = Array.isArray(template?.outputPins) ? template.outputPins : [];
-  $: hasContentFields = Array.isArray(template?.fields) && template.fields.length > 0;
+  $: hasContentFields = Array.isArray(renderFields) && renderFields.length > 0;
   $: outputLabelColumnWidth = readOutputLabelColumnWidth(outputPins);
   $: nodeMinWidthPx =
     (hasContentFields ? NODE_MIN_WIDTH_WITH_CONTENT_PX : NODE_MIN_WIDTH_WITHOUT_CONTENT_PX) +
@@ -213,6 +232,127 @@
       return "node";
     }
     return candidate.replace(/[^a-zA-Z0-9_-]/g, "_");
+  }
+
+  function buildRenderFields({
+    fields,
+    fieldRuntimeKeyByFieldId,
+    autocompleteValuesBySchemaKey,
+    fieldValues,
+  }) {
+    const sourceFields = Array.isArray(fields) ? fields : [];
+    return sourceFields.map((field) =>
+      coerceFieldToAutocompleteEnum({
+        field,
+        fieldRuntimeKeyByFieldId,
+        autocompleteValuesBySchemaKey,
+        fieldValues,
+      })
+    );
+  }
+
+  function coerceFieldToAutocompleteEnum({
+    field,
+    fieldRuntimeKeyByFieldId,
+    autocompleteValuesBySchemaKey,
+    fieldValues,
+  }) {
+    if (!isObject(field)) {
+      return field;
+    }
+
+    const fieldId = normalizeNonEmptyString(field.id);
+    const fieldType = normalizeNonEmptyString(field.type);
+    if (!fieldId || !fieldType || !TEXT_INPUT_FIELD_TYPES.has(fieldType)) {
+      return field;
+    }
+
+    const schemaKey =
+      normalizeNonEmptyString(fieldRuntimeKeyByFieldId?.[fieldId]) ??
+      normalizeNonEmptyString(fieldId);
+    if (!schemaKey) {
+      return field;
+    }
+
+    const resolvedValues = normalizeStringList(autocompleteValuesBySchemaKey?.[schemaKey]);
+    if (resolvedValues.length === 0) {
+      return field;
+    }
+
+    const currentValue = normalizeNonEmptyString(fieldValues?.[fieldId]);
+    const enumValues = normalizeStringList(
+      currentValue && !resolvedValues.includes(currentValue)
+        ? [currentValue, ...resolvedValues]
+        : resolvedValues
+    );
+    const options = isObject(field.options) ? field.options : {};
+
+    return {
+      ...field,
+      type: FIELD_TYPES.ENUM,
+      options: {
+        ...options,
+        Values: enumValues,
+        Strict: false,
+      },
+    };
+  }
+
+  function readAutocompleteValuesBySchemaKey(candidate) {
+    if (!isObject(candidate)) {
+      return {};
+    }
+
+    const normalized = {};
+    for (const [schemaKeyCandidate, valuesCandidate] of Object.entries(candidate)) {
+      const schemaKey = normalizeNonEmptyString(schemaKeyCandidate);
+      if (!schemaKey) {
+        continue;
+      }
+
+      const values = normalizeStringList(valuesCandidate);
+      if (values.length === 0) {
+        continue;
+      }
+
+      normalized[schemaKey] = values;
+    }
+
+    return normalized;
+  }
+
+  function normalizeStringList(valuesCandidate) {
+    if (!Array.isArray(valuesCandidate)) {
+      return [];
+    }
+
+    const seen = new Set();
+    const normalized = [];
+    for (const valueCandidate of valuesCandidate) {
+      const value = normalizeNonEmptyString(valueCandidate);
+      if (!value || seen.has(value)) {
+        continue;
+      }
+      seen.add(value);
+      normalized.push(value);
+    }
+
+    normalized.sort(compareAutocompleteValueOrder);
+    return normalized;
+  }
+
+  function compareAutocompleteValueOrder(left, right) {
+    const leftStartsWithStar = typeof left === "string" && left.startsWith("*");
+    const rightStartsWithStar = typeof right === "string" && right.startsWith("*");
+    if (leftStartsWithStar !== rightStartsWithStar) {
+      return leftStartsWithStar ? 1 : -1;
+    }
+
+    return String(left).localeCompare(String(right));
+  }
+
+  function normalizeNonEmptyString(value) {
+    return typeof value === "string" && value.trim() ? value.trim() : undefined;
   }
 
   function notifyCustomMutation(reason) {
@@ -392,7 +532,7 @@
     {/each}
 
     <div class="flex flex-col gap-2">
-      {#each template.fields as field}
+      {#each renderFields as field}
         <FieldEditor
           {field}
           value={readFieldValue(field)}

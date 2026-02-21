@@ -1,3 +1,5 @@
+import { HytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
+
 export type CompanionSnapshotStateKind = 'idle' | 'loading' | 'ready' | 'missing_exports' | 'error';
 
 export interface CompanionSnapshotState {
@@ -24,7 +26,7 @@ export interface PropertyNodeData {
     jsonPointer: string;
     propertyName: string;
     node: Record<string, unknown>;
-    hytaleDevtools?: Record<string, unknown>;
+    hytaleDevtools?: HytaleDevtoolsPayload;
 }
 
 export interface LoadedIndexShard {
@@ -102,7 +104,8 @@ export type ResolveSchemaDefinitionResult =
         pointerSegments: string[];
         variantIndex: number | null;
         resolvedNode: unknown;
-        hytaleDevtools?: Record<string, unknown>;
+        hytaleDevtools?: HytaleDevtoolsPayload;
+        autocompleteValuesBySchemaKey?: Record<string, string[]>;
     }
     | {
         kind: 'loading';

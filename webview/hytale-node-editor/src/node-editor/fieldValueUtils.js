@@ -197,6 +197,18 @@ function readEnumValues(options) {
     : [];
 }
 
+function readEnumStrictOption(options) {
+  if (typeof options?.Strict === 'boolean') {
+    return options.Strict;
+  }
+
+  if (typeof options?.strict === 'boolean') {
+    return options.strict;
+  }
+
+  return true;
+}
+
 export function createDefaultFieldValue(field) {
   const type = readFieldType(field);
   const options = normalizeNestedFieldOptions(readFieldOptions(field));
@@ -219,8 +231,13 @@ export function createDefaultFieldValue(field) {
 
   if (type === FIELD_TYPES.ENUM) {
     const values = readEnumValues(options);
-    if (typeof options.Default === 'string' && values.includes(options.Default)) {
+    const isStrictEnum = readEnumStrictOption(options);
+    if (typeof options.Default === 'string' && (!isStrictEnum || values.includes(options.Default))) {
       return options.Default;
+    }
+
+    if (!isStrictEnum) {
+      return '';
     }
 
     return values[0] ?? '';
@@ -274,6 +291,12 @@ export function normalizeFieldValue(field, value) {
 
   if (type === FIELD_TYPES.ENUM) {
     const values = readEnumValues(options);
+    const isStrictEnum = readEnumStrictOption(options);
+
+    if (!isStrictEnum) {
+      return typeof value === 'string' ? value : String(value ?? '');
+    }
+
     const fallback = createDefaultFieldValue(field);
 
     if (typeof value === 'string' && values.includes(value)) {

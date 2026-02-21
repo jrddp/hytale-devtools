@@ -130,7 +130,8 @@ suite('Companion Snapshot Store Test Suite', () => {
                                     Max: {
                                         type: 'number',
                                         hytaleDevtools: {
-                                            semanticKind: 'literalChoice'
+                                            semanticKind: 'literalChoice',
+                                            values: ['Low', 'Medium', 'High']
                                         }
                                     }
                                 }
@@ -188,6 +189,7 @@ suite('Companion Snapshot Store Test Suite', () => {
             assert.strictEqual(nodeA.jsonPointer, '/definitions/DelimiterAsset');
             assert.strictEqual(nodeA.resolvedPointer, '/definitions/DelimiterAsset/allOf/1');
             assert.strictEqual(nodeA.variantIndex, 1);
+            assert.deepStrictEqual(nodeA.autocompleteValuesBySchemaKey?.Max, ['High', 'Low', 'Medium']);
         }
 
         const nodeB = result.results.find(entry => entry.nodeId === 'Node-B');

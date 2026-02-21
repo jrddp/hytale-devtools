@@ -11,14 +11,17 @@
 
   $: options = normalizeFieldOptions(field?.options);
   $: label = getFieldLabel(field);
-  $: values = Array.isArray(options.Values)
-    ? options.Values.filter((candidate) => typeof candidate === 'string')
-    : [];
+  $: values = sortEnumValues(
+    Array.isArray(options.Values)
+      ? options.Values.filter((candidate) => typeof candidate === 'string')
+      : []
+  );
+  $: isStrict = readStrictOption(options);
   $: inputId = `enum-${sanitizeId(field?.id)}-${field?.type ?? 'value'}`;
   $: listId = `${inputId}-list`;
-  $: committedValue = typeof value === 'string' && values.includes(value) ? value : values[0] ?? '';
+  $: committedValue = readCommittedValue({ value, values, isStrict });
   $: filteredValues = rankEnumValues(values, forceFullList ? '' : draftText);
-  $: activeValue = filteredValues[highlightedIndex] ?? filteredValues[0];
+  $: activeValue = highlightedIndex >= 0 ? filteredValues[highlightedIndex] : undefined;
 
   let inputElement;
   let isOpen = false;
@@ -34,9 +37,12 @@
     dispatch('change', { value: nextValue });
   }
 
-  function commitValue(candidateValue, moveFocus = false) {
+  function commitValue(candidateValue, moveFocus = false, config = {}) {
+    const allowFreeText = config?.allowFreeText === true || isStrict !== true;
     const nextValue =
-      typeof candidateValue === 'string' && values.includes(candidateValue) ? candidateValue : committedValue;
+      typeof candidateValue === 'string' && (allowFreeText || values.includes(candidateValue))
+        ? candidateValue
+        : committedValue;
 
     if (nextValue !== committedValue) {
       emitValue(nextValue);
@@ -60,8 +66,13 @@
   function openDropdown() {
     isOpen = true;
     const rankedValues = rankEnumValues(values, forceFullList ? '' : draftText);
-    const nextHighlightedIndex = rankedValues.indexOf(committedValue);
-    highlightedIndex = nextHighlightedIndex >= 0 ? nextHighlightedIndex : rankedValues.length > 0 ? 0 : -1;
+    if (isStrict === true) {
+      const nextHighlightedIndex = rankedValues.indexOf(committedValue);
+      highlightedIndex = nextHighlightedIndex >= 0 ? nextHighlightedIndex : rankedValues.length > 0 ? 0 : -1;
+      return;
+    }
+
+    highlightedIndex = -1;
   }
 
   function closeDropdown() {
@@ -74,7 +85,7 @@
     draftText = event.currentTarget.value;
     forceFullList = false;
     isOpen = true;
-    highlightedIndex = 0;
+    highlightedIndex = isStrict === true ? 0 : -1;
   }
 
   function handleInputClick(event) {
@@ -86,12 +97,14 @@
   function handleKeyDown(event) {
     if (isPlainEnterNavigationEvent(event)) {
       event.preventDefault();
-      commitValue(activeValue, true);
+      const selectedValue = highlightedIndex >= 0 ? activeValue : undefined;
+      commitValue(selectedValue ?? draftText, true, { allowFreeText: true });
       return;
     }
 
     if (event.key === 'Tab') {
-      commitValue(activeValue, false);
+      const selectedValue = highlightedIndex >= 0 ? activeValue : undefined;
+      commitValue(selectedValue ?? draftText, false, { allowFreeText: true });
       return;
     }
 
@@ -134,6 +147,11 @@
   }
 
   function handleBlur() {
+    if (isStrict !== true) {
+      commitValue(draftText, false, { allowFreeText: true });
+      return;
+    }
+
     const rankedValues = rankEnumValues(values, draftText);
     const bestMatchValue = rankedValues[0] ?? committedValue;
     commitValue(bestMatchValue, false);
@@ -173,6 +191,44 @@
       return 'field';
     }
     return candidate.replace(/[^a-zA-Z0-9_-]/g, '_');
+  }
+
+  function readStrictOption(options) {
+    if (typeof options?.Strict === 'boolean') {
+      return options.Strict;
+    }
+
+    if (typeof options?.strict === 'boolean') {
+      return options.strict;
+    }
+
+    return true;
+  }
+
+  function readCommittedValue({ value, values, isStrict }) {
+    if (typeof value !== 'string') {
+      return isStrict === true ? values[0] ?? '' : String(value ?? '');
+    }
+
+    if (isStrict === true) {
+      return values.includes(value) ? value : values[0] ?? '';
+    }
+
+    return value;
+  }
+
+  function sortEnumValues(sourceValues) {
+    const values = Array.isArray(sourceValues) ? [...sourceValues] : [];
+    values.sort((left, right) => {
+      const leftStartsWithStar = left.startsWith('*');
+      const rightStartsWithStar = right.startsWith('*');
+      if (leftStartsWithStar !== rightStartsWithStar) {
+        return leftStartsWithStar ? 1 : -1;
+      }
+
+      return left.localeCompare(right);
+    });
+    return values;
   }
 </script>
 
