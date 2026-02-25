@@ -104,7 +104,6 @@
 
     try {
       const parsedState = parseDocumentText(message.text);
-      console.log(parsedState);
       workspace.state = parsedState;
 
       graphLoadVersion += 1;

@@ -18,13 +18,16 @@ export function serializeDocument(
     $Comments: [],
   };
 
-  // nodeId -> handle -> connectedNodeId
-  const handleConnections: Map<string, Map<string, string>> = edges.reduce(
-    (map: Map<string, Map<string, string>>, edge) => {
+  // nodeId -> handle -> targetNodeId
+  const outgoingConnections: Map<string, Map<string, string[]>> = edges.reduce(
+    (map: Map<string, Map<string, string[]>>, edge) => {
       if (!map.has(edge.source)) {
         map.set(edge.source, new Map());
       }
-      map.get(edge.source).set(edge.sourceHandle, edge.target);
+      if (!map.get(edge.source).has(edge.sourceHandle)) {
+        map.get(edge.source).set(edge.sourceHandle, []);
+      }
+      map.get(edge.source).get(edge.sourceHandle).push(edge.target);
       return map;
     },
     new Map(),
@@ -45,9 +48,23 @@ export function serializeDocument(
     switch (node.type) {
       case "datanode":
         node.data.outputPins.forEach(pin => {
-          const connectedNodeId = handleConnections.get(node.id)?.get(pin.schemaKey);
-          if (connectedNodeId) {
-            json[pin.schemaKey] = recursiveSerializeNode(connectedNodeId);
+          const connectedNodeIds = outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
+          if (connectedNodeIds.length > 0) {
+            switch (pin.type) {
+              case "single":
+                json[pin.schemaKey] = recursiveSerializeNode(connectedNodeIds[0]);
+                break;
+              case "multiple":
+                json[pin.schemaKey] = connectedNodeIds.map(id => recursiveSerializeNode(id));
+                break;
+              case "map":
+                json[pin.schemaKey] = connectedNodeIds.reduce((map, id) => {
+                  const node = nodesById.get(id);
+                  const key = (node.data.titleOverride as string | undefined) ?? id;
+                  map[key] = recursiveSerializeNode(id);
+                  return map;
+                }, {});
+            }
           }
         });
         Object.values(node.data.fieldsBySchemaKey).forEach(field => {

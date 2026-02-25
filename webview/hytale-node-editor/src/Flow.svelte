@@ -437,8 +437,8 @@
 
   function logDebugInfo() {
     const selectedNodes = nodes.filter(node => node.selected);
-    console.log(workspace.context);
-    console.log(workspace.state);
+    console.log("workspace.context", workspace.context);
+    console.log("workspace.state", workspace.state);
     for (const node of selectedNodes) {
       console.log(node);
     }
