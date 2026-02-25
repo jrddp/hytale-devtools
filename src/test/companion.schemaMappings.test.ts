@@ -5,7 +5,7 @@ import {
     normalizeSchemaUrlToSchemaFileName,
     parseSchemaMappingRules
 } from '../shared/companion/schemaMappings';
-import { CompanionSchemaMappingsDocument } from '../shared/companion/types';
+import { type CompanionSchemaMappingsDocument } from '../shared/companion/types';
 
 suite('Companion Schema Mappings Test Suite', () => {
     test('normalizeSchemaUrlToSchemaFileName uses basename', () => {

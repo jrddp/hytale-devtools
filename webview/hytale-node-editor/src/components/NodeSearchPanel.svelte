@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { Panel } from "@xyflow/svelte";
   import { createEventDispatcher, tick } from "svelte";
   import { Search } from "lucide-svelte";
-  import { filterNodeSearchGroups } from "../node-editor/nodeSearch.js";
+  import { filterNodeSearchGroups } from "../node-editor/ui/nodeSearch";
 
   export let open = false;
   export let openVersion = 0; // Used to trigger re-focusing when menu is re-opened.
@@ -20,8 +20,8 @@
   let lastFocusedOpenVersion = -1;
   let lastPreviewedNodeId = undefined;
 
-  $: normalizedGroups = Array.isArray(groups) ? groups : [];
-  $: filteredGroups = filterNodeSearchGroups(normalizedGroups, searchQuery);
+  $: currentGroups = Array.isArray(groups) ? groups : [];
+  $: filteredGroups = filterNodeSearchGroups(currentGroups, searchQuery);
   $: groupedEntries = annotateGroupedEntries(filteredGroups);
   $: flatItems = groupedEntries.flatMap((group) => group.items.map((item) => item.entry));
 
@@ -63,7 +63,7 @@
 
   $: if (open && hasHardSelection && flatItems.length > 0) {
     const activeItem = flatItems[activeIndex] ?? flatItems[0];
-    const activeNodeId = normalizeOptionalString(activeItem?.nodeId);
+    const activeNodeId = readString(activeItem?.nodeId);
     if (activeNodeId && activeNodeId !== lastPreviewedNodeId) {
       lastPreviewedNodeId = activeNodeId;
       dispatch("preview", { nodeId: activeNodeId });
@@ -131,7 +131,7 @@
   }
 
   function selectResult(entry) {
-    const nodeId = normalizeOptionalString(entry?.nodeId);
+    const nodeId = readString(entry?.nodeId);
     if (!nodeId) {
       return;
     }
@@ -184,11 +184,11 @@
   }
 
   function readItemColor(entry) {
-    return normalizeOptionalString(entry?.color) ?? "var(--vscode-descriptionForeground)";
+    return readString(entry?.color) ?? "var(--vscode-descriptionForeground)";
   }
 
-  function normalizeOptionalString(value) {
-    return typeof value === "string" && value.trim() ? value.trim() : undefined;
+  function readString(value) {
+    return typeof value === "string" ? value : undefined;
   }
 </script>
 

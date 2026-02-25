@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "allowJs": true,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "outDir": "out-node-editor-parser-tests",
+    "esModuleInterop": true,
+    "strict": false,
+    "types": ["node", "mocha"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "test/node-editor-parser/**/*.ts",
+    "webview/hytale-node-editor/src/node-editor/**/*.ts",
+    "webview/hytale-node-editor/src/node-editor/**/*.js",
+    "src/editors/nodeEditorRuntime/workspaceTemplateRuntimeLoader.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "out",
+    "media"
+  ]
+}

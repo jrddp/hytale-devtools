@@ -1,4 +1,4 @@
-import { HytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
+import { type HytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
 
 export type CompanionSnapshotStateKind = 'idle' | 'loading' | 'ready' | 'missing_exports' | 'error';
 

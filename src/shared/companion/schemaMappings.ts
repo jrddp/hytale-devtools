@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { CompanionSchemaMappingsDocument, SchemaMappingRule } from './types';
+import { type CompanionSchemaMappingsDocument, type SchemaMappingRule } from './types';
 
 interface SchemaMappingEntryCandidate {
     fileMatch?: unknown;

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { LoadedIndexShard } from './types';
+import { type LoadedIndexShard } from './types';
 
 interface IndexShardDocument {
     hytaleVersion?: unknown;

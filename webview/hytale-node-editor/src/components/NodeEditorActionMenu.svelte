@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { Panel } from "@xyflow/svelte";
   import {
@@ -13,7 +13,7 @@
   import {
     NODE_EDITOR_QUICK_ACTION_IDS,
     getNodeEditorQuickActionById,
-  } from "../node-editor/nodeEditorQuickActions.ts";
+  } from "../node-editor/ui/nodeEditorQuickActions";
 
   const dispatch = createEventDispatcher();
   const MENU_ITEMS = [

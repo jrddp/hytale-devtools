@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, tick } from "svelte";
 
   export let id = "";
@@ -129,7 +129,7 @@
     try {
       textareaElement.setSelectionRange(0, 0);
     } catch {
-      // Ignore selection range failures when element isn't focusable.
+      // ignore selection range failures when element isn't focusable.
     }
 
     if (typeof window !== "undefined") {

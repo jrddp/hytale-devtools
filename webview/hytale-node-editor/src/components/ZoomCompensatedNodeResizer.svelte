@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { NodeResizer, useViewport } from "@xyflow/svelte";
 
   export let isVisible = false;

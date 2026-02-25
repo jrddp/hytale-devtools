@@ -1,34 +1,41 @@
-<script>
-  import { createEventDispatcher } from 'svelte';
-  import { getFieldLabel, normalizeFieldOptions } from '../node-editor/fieldValueUtils.js';
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
+<script lang="ts">
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import {
+    focusNextEditableInNode,
+    isPlainEnterNavigationEvent,
+  } from "../node-editor/ui/focusNavigation";
 
-  export let field;
-  export let value;
+  let {
+    schemaKey,
+    type,
+    label,
+    value,
+    onchange,
+  }: NodeField & { onchange: (value: unknown) => void } = $props();
 
-  const dispatch = createEventDispatcher();
+  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
+  const committedValue = $derived(typeof value === "string" ? value : String(value ?? ""));
+  const isMultiline = $derived(type === "text");
+  const inputId = $derived(`text-${schemaKey ?? "field"}-${type}`);
 
-  $: options = normalizeFieldOptions(field?.options);
-  $: label = getFieldLabel(field);
-  $: committedValue = typeof value === 'string' ? value : String(value ?? '');
-  $: rows = Math.max(2, Math.round(Number(options.Height) / 24) || 2);
-  $: inputId = `text-${sanitizeId(field?.id)}-${field?.type ?? 'value'}`;
-  $: if (!isEditing && draftValue !== committedValue) {
-    draftValue = committedValue;
-  }
+  let isEditing = $state(false);
+  let draftValue = $state("");
 
-  let isEditing = false;
-  let draftValue = '';
+  $effect(() => {
+    if (!isEditing) {
+      draftValue = committedValue;
+    }
+  });
 
-  function emitValue(nextValue) {
-    dispatch('change', { value: nextValue });
+  function emitValue(nextValue: string) {
+    onchange(nextValue);
   }
 
   function beginEditing() {
     isEditing = true;
   }
 
-  function handleInput(event) {
+  function handleInput(event: Event & { currentTarget: HTMLInputElement | HTMLTextAreaElement }) {
     draftValue = event.currentTarget.value;
   }
 
@@ -43,7 +50,7 @@
     }
   }
 
-  function handleSingleLineEnter(event) {
+  function handleSingleLineEnter(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
     if (!isPlainEnterNavigationEvent(event)) {
       return;
     }
@@ -53,22 +60,15 @@
       event.currentTarget.blur();
     }
   }
-
-  function sanitizeId(candidate) {
-    if (typeof candidate !== 'string' || !candidate.trim()) {
-      return 'field';
-    }
-    return candidate.replace(/[^a-zA-Z0-9_-]/g, '_');
-  }
 </script>
 
 <div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted" for={inputId}>{label}</label>
-  {#if field?.type === 'String' || Number(options.Height) > 0}
+  <label class="text-xs text-vsc-muted" for={inputId}>{fieldLabel}</label>
+  {#if isMultiline}
     <textarea
       id={inputId}
       class="nodrag min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg h-20"
-      rows={rows}
+      rows="4"
       value={draftValue}
       onfocus={beginEditing}
       oninput={handleInput}

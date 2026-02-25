@@ -1,81 +1,68 @@
-<script>
-  import { createEventDispatcher } from 'svelte';
+<script lang="ts">
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import {
-    createDefaultFieldValue,
-    getFieldLabel,
-    getListElementType,
-    normalizeFieldOptions,
-  } from '../node-editor/fieldValueUtils.js';
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from '../node-editor/focusNavigation.js';
+    focusNextEditableInNode,
+    isPlainEnterNavigationEvent,
+  } from "../node-editor/ui/focusNavigation";
+  import { isObject } from "src/node-editor/utils/valueUtils";
 
-  export let field;
-  export let value;
+  let { schemaKey, label, value, onchange }: NodeField & { onchange: (value: unknown) => void } =
+    $props();
 
-  const dispatch = createEventDispatcher();
+  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
+  const listValue = $derived(Array.isArray(value) ? value : []);
 
-  $: options = normalizeFieldOptions(field?.options);
-  $: label = getFieldLabel(field);
-  $: elementType = getListElementType(field);
-  $: listValue = Array.isArray(value) ? value : [];
-
-  function emitValue(nextValue) {
-    dispatch('change', { value: nextValue });
-  }
-
-  function createDefaultItem() {
-    return createDefaultFieldValue({
-      type: elementType,
-      options: options.ElementOptions ?? {},
-    });
+  function emitValue(nextValue: unknown[]) {
+    onchange(nextValue);
   }
 
   function addItem() {
-    emitValue([...listValue, createDefaultItem()]);
+    emitValue([...listValue, ""]);
   }
 
-  function removeItem(index) {
+  function removeItem(index: number) {
     emitValue(listValue.filter((_, entryIndex) => entryIndex !== index));
   }
 
-  function updateItem(index, nextItem) {
+  function updateItem(index: number, nextItem: unknown) {
     const nextList = listValue.slice();
     nextList[index] = nextItem;
     emitValue(nextList);
   }
 
-  function updateTextItem(index, nextText) {
+  function updateTextItem(index: number, nextText: string) {
     updateItem(index, nextText);
   }
 
-  function updateNumberItem(index, nextText) {
+  function updateNumberItem(index: number, nextText: string) {
     const parsed = Number(nextText);
     updateItem(index, Number.isFinite(parsed) ? parsed : 0);
   }
 
-  function updateBooleanItem(index, checked) {
-    updateItem(index, Boolean(checked));
+  function updateBooleanItem(index: number, checked: boolean) {
+    updateItem(index, checked);
   }
 
-  function updateObjectItem(index, nextText) {
+  function updateObjectItem(index: number, nextText: string) {
     try {
       const parsed = JSON.parse(nextText);
-      if (parsed !== null && typeof parsed === 'object') {
+      if (isObject(parsed)) {
         updateItem(index, parsed);
       }
     } catch {
-      // Wait for valid JSON input before applying.
+      // wait until json is valid
     }
   }
 
-  function formatObjectValue(item) {
+  function formatObjectValue(item: unknown) {
     try {
       return JSON.stringify(item ?? {}, null, 2);
     } catch {
-      return '{}';
+      return "{}";
     }
   }
 
-  function handleEnterNavigation(event) {
+  function handleEnterNavigation(event: KeyboardEvent & { currentTarget: HTMLElement }) {
     if (!isPlainEnterNavigationEvent(event)) {
       return;
     }
@@ -87,11 +74,13 @@
   }
 </script>
 
-<div class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2">
+<div
+  class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+>
   <div class="flex items-center justify-between gap-2">
-    <div class="text-xs font-bold uppercase text-vsc-muted">{label}</div>
+    <div class="text-xs font-bold uppercase text-vsc-muted">{fieldLabel}</div>
     <button
-      class="rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
+      class="px-2 py-1 text-xs border rounded-md border-vsc-button-border bg-vsc-button-secondary-bg text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
       type="button"
       onclick={addItem}
     >
@@ -106,40 +95,40 @@
       {#each listValue as item, index}
         <div class="flex items-start gap-1.5">
           <div class="flex-1">
-            {#if elementType === 'Checkbox' || elementType === 'Bool'}
+            {#if typeof item === "boolean"}
               <input
-                class="nodrag h-4 w-4"
+                class="w-4 h-4 nodrag"
                 type="checkbox"
-                checked={Boolean(item)}
-                onchange={(event) => updateBooleanItem(index, event.currentTarget.checked)}
+                checked={item}
+                onchange={event => updateBooleanItem(index, event.currentTarget.checked)}
               />
-            {:else if elementType === 'Int' || elementType === 'Integer' || elementType === 'IntSlider' || elementType === 'Float'}
+            {:else if typeof item === "number"}
               <input
                 class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
                 type="number"
-                value={Number.isFinite(Number(item)) ? Number(item) : 0}
-                onchange={(event) => updateNumberItem(index, event.currentTarget.value)}
+                value={item}
+                onchange={event => updateNumberItem(index, event.currentTarget.value)}
                 onkeydown={handleEnterNavigation}
               />
-            {:else if elementType === 'Object'}
+            {:else if isObject(item)}
               <textarea
                 class="nodrag min-h-10 w-full resize-y rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
                 rows="3"
                 value={formatObjectValue(item)}
-                onchange={(event) => updateObjectItem(index, event.currentTarget.value)}
+                onchange={event => updateObjectItem(index, event.currentTarget.value)}
               ></textarea>
             {:else}
               <input
                 class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
                 type="text"
-                value={typeof item === 'string' ? item : String(item ?? '')}
-                onchange={(event) => updateTextItem(index, event.currentTarget.value)}
+                value={typeof item === "string" ? item : String(item ?? "")}
+                onchange={event => updateTextItem(index, event.currentTarget.value)}
                 onkeydown={handleEnterNavigation}
               />
             {/if}
           </div>
           <button
-            class="rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
+            class="px-2 py-1 text-xs border rounded-md border-vsc-button-border bg-vsc-button-secondary-bg text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
             type="button"
             onclick={() => removeItem(index)}
           >
@@ -149,6 +138,4 @@
       {/each}
     </div>
   {/if}
-
-  <div class="text-xs text-vsc-muted">Element type: {elementType}</div>
 </div>

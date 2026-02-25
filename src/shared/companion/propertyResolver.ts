@@ -1,6 +1,6 @@
 import { buildPropertyKey } from './propertyIndex';
 import { appendJsonPointer, decodeJsonPointer } from './schemaStore';
-import { PropertyNodeData } from './types';
+import { type PropertyNodeData } from './types';
 
 export function resolveSchemaPropertyPointerFromJsonPointer(
     schemaDocument: unknown,

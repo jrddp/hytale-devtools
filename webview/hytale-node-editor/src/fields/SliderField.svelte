@@ -1,46 +1,60 @@
-<script>
-  import { createEventDispatcher } from 'svelte';
-  import { getFieldLabel, normalizeFieldOptions } from '../node-editor/fieldValueUtils.js';
+<script lang="ts">
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
 
-  export let field;
-  export let value;
+  let {
+    schemaKey,
+    type,
+    label,
+    value,
+    onchange,
+  }: NodeField & { onchange: (value: unknown) => void } = $props();
 
-  const dispatch = createEventDispatcher();
+  const min = 0;
+  const max = 100;
+  const step = 1;
 
-  $: options = normalizeFieldOptions(field?.options);
-  $: baseLabel = getFieldLabel(field);
-  $: min = Number.isFinite(Number(options.Min)) ? Number(options.Min) : 0;
-  $: max = Number.isFinite(Number(options.Max)) ? Number(options.Max) : 100;
-  $: step = Number.isFinite(Number(options.TickFrequency)) ? Number(options.TickFrequency) : 1;
-  $: committedNumericValue = Number.isFinite(Number(value)) ? Number(value) : min;
-  $: if (!hasPendingValue && draftNumericValue !== committedNumericValue) {
-    draftNumericValue = committedNumericValue;
+  const committedNumericValue = $derived(Number.isFinite(Number(value)) ? Number(value) : min);
+  const inputId = $derived(`slider-${schemaKey ?? "field"}-${type}`);
+
+  let draftNumericValue = $state(min);
+  let hasPendingValue = $state(false);
+  let lastInteractionMode = $state<"unknown" | "pointer" | "keyboard">("unknown");
+
+  $effect(() => {
+    if (!hasPendingValue) {
+      draftNumericValue = committedNumericValue;
+    }
+  });
+
+  const fieldLabel = $derived(`${label ?? schemaKey ?? "Field"} (${draftNumericValue})`);
+
+  function emitValue(nextValue: number) {
+    onchange(nextValue);
   }
-  $: label = `${baseLabel} (${draftNumericValue})`;
-  $: inputId = `slider-${sanitizeId(field?.id)}-${field?.type ?? 'value'}`;
 
-  let draftNumericValue = min;
-  let hasPendingValue = false;
-  let lastInteractionMode = 'unknown';
-
-  function emitValue(nextValue) {
-    dispatch('change', { value: nextValue });
-  }
-
-  function handleInput(event) {
-    const parsedValue = Number(event.currentTarget.value);
-    draftNumericValue = Number.isFinite(parsedValue) ? parsedValue : min;
+  function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
+    const parsed = Number(event.currentTarget.value);
+    draftNumericValue = Number.isFinite(parsed) ? parsed : min;
     hasPendingValue = draftNumericValue !== committedNumericValue;
   }
 
   function handlePointerDown() {
-    lastInteractionMode = 'pointer';
+    lastInteractionMode = "pointer";
   }
 
-  function handleKeyDown(event) {
-    const navigationKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'];
+  function handleKeyDown(event: KeyboardEvent) {
+    const navigationKeys = [
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "Home",
+      "End",
+      "PageUp",
+      "PageDown",
+    ];
     if (navigationKeys.includes(event.key)) {
-      lastInteractionMode = 'keyboard';
+      lastInteractionMode = "keyboard";
     }
   }
 
@@ -54,26 +68,19 @@
   }
 
   function handleChange() {
-    if (lastInteractionMode === 'pointer') {
+    if (lastInteractionMode === "pointer") {
       commitPendingValue();
     }
   }
 
   function handleBlur() {
     commitPendingValue();
-    lastInteractionMode = 'unknown';
-  }
-
-  function sanitizeId(candidate) {
-    if (typeof candidate !== 'string' || !candidate.trim()) {
-      return 'field';
-    }
-    return candidate.replace(/[^a-zA-Z0-9_-]/g, '_');
+    lastInteractionMode = "unknown";
   }
 </script>
 
 <div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted" for={inputId}>{label}</label>
+  <label class="text-xs text-vsc-muted" for={inputId}>{fieldLabel}</label>
   <input
     id={inputId}
     class="nodrag w-full"

@@ -1,93 +1,98 @@
-<script>
+<script lang="ts">
   import {
     addEdge,
     Background,
+    type Connection,
+    type OnConnect,
+    type OnConnectEnd,
     SelectionMode,
     SvelteFlow,
     useSvelteFlow,
+    type XYPosition,
   } from "@xyflow/svelte";
-  import { createEventDispatcher, tick } from "svelte";
   import "@xyflow/svelte/dist/style.css";
+  import { type Component, tick } from "svelte";
 
-  import AddNodeMenu from "./components/AddNodeMenu.svelte";
-  import NodeSearchPanel from "./components/NodeSearchPanel.svelte";
-  import NodeHelpPanel from "./components/NodeHelpPanel.svelte";
-  import NodeEditorActionMenu from "./components/NodeEditorActionMenu.svelte";
-  import CommentMetadataNode from "./nodes/CommentMetadataNode.svelte";
-  import CustomMetadataNode from "./nodes/CustomMetadataNode.svelte";
-  import GroupMetadataNode from "./nodes/GroupMetadataNode.svelte";
-  import LinkMetadataNode from "./nodes/LinkMetadataNode.svelte";
-  import RawJsonMetadataNode from "./nodes/RawJsonMetadataNode.svelte";
+  import { type NodePin } from "@shared/node-editor/workspaceTypes";
+  import type {
+    CommentNodeType,
+    DataNodeType,
+    FlowEdge,
+    FlowNode,
+    GroupNodeType,
+    LinkNodeType,
+    RawJsonNodeType,
+  } from "./node-editor/graph/graphTypes";
   import {
-    findTemplateByTypeName,
-    getDefaultTemplate,
-    getTemplateById,
-    getTemplates,
-    getTemplatesForNodeSelector,
-    setActiveWorkspaceContext,
-    setActiveTemplateSourceMode,
-  } from "./node-editor/templateCatalog.js";
-  import { chooseCompatibleInputHandleId } from "./node-editor/connectionSchemaMapper.js";
+    COMMENT_NODE_TYPE,
+    DATA_NODE_TYPE,
+    GENERIC_ACTION_CREATE_COMMENT,
+    GENERIC_ACTION_CREATE_GROUP,
+    GENERIC_ACTION_CREATE_LINK,
+    GENERIC_ACTION_CREATE_RAW_JSON,
+    GENERIC_ADD_CATEGORY,
+    GROUP_NODE_TYPE,
+    INPUT_HANDLE_ID,
+    LINK_INPUT_HANDLE_ID,
+    LINK_NODE_TYPE,
+    LINK_OUTPUT_HANDLE_ID,
+    RAW_JSON_INPUT_HANDLE_ID,
+    RAW_JSON_NODE_TYPE,
+  } from "./node-editor/graph/graphTypes";
+  import {
+    collectRecursiveDescendantNodeIds,
+    layoutDirectedGraphWithNodeSizes,
+    readLayoutOriginFromPositions,
+  } from "./node-editor/layout/autoLayout";
+  import {
+    getNodeEditorQuickActionByEventName,
+    getNodeEditorQuickActionById,
+    NODE_EDITOR_QUICK_ACTION_IDS,
+  } from "./node-editor/ui/nodeEditorQuickActions";
   import {
     COMMENT_DEFAULT_FONT_SIZE,
     COMMENT_DEFAULT_HEIGHT,
     COMMENT_DEFAULT_NAME,
     COMMENT_DEFAULT_TEXT,
     COMMENT_DEFAULT_WIDTH,
-  } from "./node-editor/commentMetadata.js";
-  import {
-    collectRecursiveDescendantNodeIds,
-    layoutDirectedGraphWithNodeSizes,
-    readLayoutOriginFromPositions,
-  } from "./node-editor/autoLayout.js";
-  import {
-    applyClipboardSelectionPayload,
-    buildClipboardSelectionPayload,
-    cutSelectedNodesFromFlowState,
-    readClipboardSelectionPayload,
-    writeClipboardSelectionPayload,
-  } from "./node-editor/clipboardSelection.js";
-  import { buildNodeSearchGroups } from "./node-editor/nodeSearch.js";
-  import {
-    COMMENT_NODE_TYPE,
-    CUSTOM_NODE_TYPE,
-    GENERIC_ACTION_CREATE_LINK,
-    GENERIC_ACTION_CREATE_RAW_JSON,
-    GENERIC_ACTION_CREATE_COMMENT,
-    GENERIC_ACTION_CREATE_GROUP,
-    GENERIC_ADD_CATEGORY,
-    GROUP_NODE_TYPE,
-    LINK_INPUT_HANDLE_ID,
-    LINK_NODE_TYPE,
-    LINK_OUTPUT_HANDLE_ID,
-    RAW_JSON_INPUT_HANDLE_ID,
-    RAW_JSON_NODE_TYPE,
-  } from "./node-editor/types.js";
-  import {
-    NODE_EDITOR_QUICK_ACTION_IDS,
-    getNodeEditorQuickActionByEventName,
-    getNodeEditorQuickActionById,
-  } from "./node-editor/nodeEditorQuickActions.ts";
-  import nodeSchemaMappingsDocument from "../Workspaces/node-schema-mappings.json";
-  import {
-    normalizeNodeSchemaMappingsByWorkspace,
-    resolveMappedSchemaDefinitionForNode,
-  } from "./node-editor/nodeSchemaMappings.js";
+  } from "./node-editor/utils/commentMetadata";
+  import CommentNode from "./nodes/CommentNode.svelte";
+  import DataNode from "./nodes/DataNode.svelte";
+  import GroupNode from "./nodes/GroupNode.svelte";
+  import LinkNode from "./nodes/LinkNode.svelte";
+  import RawJsonNode from "./nodes/RawJsonNode.svelte";
+  import { workspace } from "./workspaceState.svelte";
+  import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
+  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
+  import AddNodeMenu from "src/components/AddNodeMenu.svelte";
+  import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
 
-  export let nodes = createDefaultNodes();
-  export let edges = [];
-  export let loadVersion = 0;
-  export let templateSourceMode = "workspace-hg-java";
-  export let workspaceContext = {};
-  export let rootNodeId = undefined;
-  export let quickActionRequest = undefined;
+  let {
+    nodes = $bindable([]),
+    edges = $bindable([]),
+    loadVersion = 0,
+    quickActionRequest = undefined,
+    revealNodeId = undefined,
+    revealNodeRequestVersion = 0,
+    onflowchange,
+    onviewrawjson,
+    oncustomizekeybinds,
+  }: {
+    nodes?: FlowNode[];
+    edges?: FlowEdge[];
+    loadVersion?: number;
+    quickActionRequest?: { token: number; actionId: string; commandId: string };
+    revealNodeId?: string;
+    revealNodeRequestVersion?: number;
+    onflowchange?: (event: string, nodes: FlowNode[], edges: FlowEdge[]) => void;
+    onviewrawjson?: () => void;
+    oncustomizekeybinds?: () => void;
+  } = $props();
 
   const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
   const DEFAULT_GROUP_WIDTH = 520;
   const DEFAULT_GROUP_HEIGHT = 320;
   const DEFAULT_GROUP_NAME = "Group";
-  const RAW_JSON_DEFAULT_LABEL = "Raw JSON Node";
-  const RAW_JSON_FIELD_ID = "Data";
   const RAW_JSON_DEFAULT_DATA = "{\n\n}";
   const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
   const MIN_FLOW_ZOOM = 0;
@@ -96,11 +101,6 @@
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
-  const DEBUG_SCHEMA_ROOT_PATH = "(root)";
-  const NODE_SCHEMA_INFO_DATA_KEY = "$schemaInfo";
-  const DEBUG_NODE_SCHEMA_MAPPINGS_BY_WORKSPACE =
-    normalizeNodeSchemaMappingsByWorkspace(nodeSchemaMappingsDocument);
-  const dispatch = createEventDispatcher();
 
   const GENERIC_ADD_MENU_ENTRIES = [
     {
@@ -134,31 +134,31 @@
   ];
 
   const nodeTypes = {
-    [COMMENT_NODE_TYPE]: CommentMetadataNode,
-    [CUSTOM_NODE_TYPE]: CustomMetadataNode,
-    [GROUP_NODE_TYPE]: GroupMetadataNode,
-    [LINK_NODE_TYPE]: LinkMetadataNode,
-    [RAW_JSON_NODE_TYPE]: RawJsonMetadataNode,
-  };
+    [COMMENT_NODE_TYPE]: CommentNode,
+    [DATA_NODE_TYPE]: DataNode,
+    [GROUP_NODE_TYPE]: GroupNode,
+    [LINK_NODE_TYPE]: LinkNode,
+    [RAW_JSON_NODE_TYPE]: RawJsonNode,
+  } as Record<string, Component>;
 
   const { fitView, getViewport, screenToFlowPosition, setCenter, setViewport } = useSvelteFlow();
 
-  let lastNormalizedLoadVersion = -1;
-  let flowWrapperElement;
+  interface PendingConnection {
+    source: string;
+    sourceHandle: string;
+  }
+
+  let lastHandledLoadVersion = -1;
+  let flowWrapperElement: HTMLDivElement | undefined = undefined;
 
   let addMenuOpen = false;
   let addMenuOpenVersion = 0; // Used to trigger re-focusing when menu is re-opened.
-  let addMenuPosition = { x: 0, y: 0 };
-  let pendingNodePosition = { x: 0, y: 0 };
-  let pendingConnection;
-  let connectStartSourceNodeId;
-  let connectStartSourceHandleId;
-  let skipNextPaneClickClose = false;
+  let addMenuPosition: XYPosition = { x: 0, y: 0 };
+  let pendingNodePosition: XYPosition = { x: 0, y: 0 };
+  let pendingConnection: PendingConnection | undefined;
   let hasAppliedInitialFit = false;
   let initialFitInProgress = false;
   let initialViewportReady = false;
-  let allTemplates = [];
-  let availableAddEntries = [];
   let pendingSingleSourceReplacement;
   let nodeSearchOpen = false;
   let nodeSearchOpenVersion = 0;
@@ -169,319 +169,52 @@
   let nodeSearchGroups = [];
   let lastHandledQuickActionRequestToken = -1;
   let lastPointerClientPosition = undefined;
-  let debugSchemaResolutionCacheByNodeId = new Map();
+  let pendingRestoredSessionState = undefined;
+  let lastRevealNodeRequestVersion = -1;
 
-  $: {
-    setActiveTemplateSourceMode(templateSourceMode);
-    setActiveWorkspaceContext(workspaceContext);
-    allTemplates = getTemplates(workspaceContext);
-  }
-
-  $: availableAddEntries = resolveAvailableAddEntries(
-    pendingConnection,
-    allTemplates,
-    workspaceContext
-  );
-  $: nodeSearchGroups = buildNodeSearchGroups({
-    nodes,
-    workspaceContext,
+  $effect(() => {
+    if (loadVersion !== lastHandledLoadVersion) {
+      lastHandledLoadVersion = loadVersion;
+      clearPendingSingleSourceReplacement();
+    }
   });
 
-  $: {
-    const reconciledEdges = reconcileLinkOutputEdges(edges);
-    if (!areEdgeListsEquivalent(edges, reconciledEdges)) {
-      edges = reconciledEdges;
-      clearPendingSingleSourceReplacement();
-      emitFlowChange("link-output-incompatible-edges-pruned");
+  $effect(() => {
+    if (revealNodeRequestVersion !== lastRevealNodeRequestVersion) {
+      lastRevealNodeRequestVersion = revealNodeRequestVersion;
+      if (loadVersion > 0) {
+        void revealNodeFromDocumentSelection(revealNodeId);
+      }
     }
-  }
+  });
 
-  $: if (loadVersion !== lastNormalizedLoadVersion) {
-    lastNormalizedLoadVersion = loadVersion;
-    clearPendingSingleSourceReplacement();
-    ensureCustomNodeTypes();
-  }
-
-  $: if (!hasAppliedInitialFit && loadVersion > 0) {
-    void applyInitialFitOnce();
-  }
-
-  $: if (
-    Number.isInteger(quickActionRequest?.token) &&
-    quickActionRequest.token !== lastHandledQuickActionRequestToken
-  ) {
-    lastHandledQuickActionRequestToken = quickActionRequest.token;
-    if (!isKeyboardShortcutBlockedByFocusedInput()) {
-      handleQuickActionById(quickActionRequest?.actionId);
+  $effect(() => {
+    if (
+      Number.isInteger(quickActionRequest?.token) &&
+      quickActionRequest.token !== lastHandledQuickActionRequestToken
+    ) {
+      lastHandledQuickActionRequestToken = quickActionRequest.token;
+      if (!isKeyboardShortcutBlockedByFocusedInput()) {
+        handleQuickActionById(quickActionRequest?.actionId);
+      }
     }
-  }
+  });
+
+  $effect(() => {
+    if (!hasAppliedInitialFit && loadVersion > 0 && !pendingRestoredSessionState) {
+      void applyInitialFitOnce();
+    }
+  });
 
   function emitFlowChange(reason) {
-    dispatch("flowchange", {
-      reason,
-      nodes,
-      edges,
-    });
+    onflowchange(reason, nodes, edges);
   }
 
-  function ensureCustomNodeTypes() {
-    const normalizedNodes = Array.isArray(nodes)
-      ? nodes.map(node => normalizeNodeForRendering(node))
-      : [];
-
-    if (!areNodeListsEquivalent(nodes, normalizedNodes)) {
-      nodes = normalizedNodes;
-    }
-  }
-
-  function normalizeNodeForRendering(node) {
-    return {
-      ...node,
-      type: typeof node?.type === "string" && node.type.trim() ? node.type : CUSTOM_NODE_TYPE,
-      data: {
-        ...(node?.data ?? {}),
-      },
-    };
-  }
-
-  function areNodeListsEquivalent(leftNodes, rightNodes) {
-    if (
-      !Array.isArray(leftNodes) ||
-      !Array.isArray(rightNodes) ||
-      leftNodes.length !== rightNodes.length
-    ) {
-      return false;
-    }
-
-    for (let index = 0; index < leftNodes.length; index += 1) {
-      const left = leftNodes[index];
-      const right = rightNodes[index];
-
-      if (left?.id !== right?.id || left?.type !== right?.type) {
-        return false;
-      }
-
-      if (!isObject(left?.data) || !isObject(right?.data)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function areEdgeListsEquivalent(leftEdges, rightEdges) {
-    if (
-      !Array.isArray(leftEdges) ||
-      !Array.isArray(rightEdges) ||
-      leftEdges.length !== rightEdges.length
-    ) {
-      return false;
-    }
-
-    for (let index = 0; index < leftEdges.length; index += 1) {
-      const left = leftEdges[index];
-      const right = rightEdges[index];
-      if (
-        normalizeOptionalString(left?.id) !== normalizeOptionalString(right?.id) ||
-        normalizeOptionalString(left?.source) !== normalizeOptionalString(right?.source) ||
-        normalizeOptionalString(left?.target) !== normalizeOptionalString(right?.target) ||
-        normalizeOptionalString(left?.sourceHandle) !== normalizeOptionalString(right?.sourceHandle) ||
-        normalizeOptionalString(left?.targetHandle) !== normalizeOptionalString(right?.targetHandle)
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function handleConnect(connection) {
-    const normalizedConnection = normalizeConnection(connection);
-    if (!normalizedConnection) {
-      restorePendingSingleSourceReplacement();
-      return;
-    }
-
-    edges = addEdge(
-      normalizedConnection,
-      pruneConflictingInputEdges(edges, normalizedConnection)
-    );
+  const handleConnect: OnConnect = connection => {
+    edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
     clearPendingSingleSourceReplacement();
     emitFlowChange("edge-created");
-  }
-
-  function reconcileLinkOutputEdges(edgeCandidates) {
-    const normalizedEdges = Array.isArray(edgeCandidates) ? edgeCandidates : [];
-    if (normalizedEdges.length === 0) {
-      return normalizedEdges;
-    }
-
-    const linkNodeIds = new Set(
-      (Array.isArray(nodes) ? nodes : [])
-        .map((node) =>
-          normalizeOptionalString(node?.type) === LINK_NODE_TYPE
-            ? normalizeOptionalString(node?.id)
-            : undefined
-        )
-        .filter(Boolean)
-    );
-    if (linkNodeIds.size === 0) {
-      return normalizedEdges;
-    }
-
-    const outgoingLinkEdgesByNodeId = new Map();
-    for (const edge of normalizedEdges) {
-      const sourceNodeId = normalizeOptionalString(edge?.source);
-      if (!sourceNodeId || !linkNodeIds.has(sourceNodeId)) {
-        continue;
-      }
-
-      if (!isLinkOutputHandleId(edge?.sourceHandle)) {
-        continue;
-      }
-
-      if (!outgoingLinkEdgesByNodeId.has(sourceNodeId)) {
-        outgoingLinkEdgesByNodeId.set(sourceNodeId, []);
-      }
-      outgoingLinkEdgesByNodeId.get(sourceNodeId).push(edge);
-    }
-    if (outgoingLinkEdgesByNodeId.size === 0) {
-      return normalizedEdges;
-    }
-
-    const disallowedEdgeKeys = new Set();
-    const allowedTemplateIdsBySelector = new Map();
-    for (const [linkNodeId, outgoingLinkEdges] of outgoingLinkEdgesByNodeId.entries()) {
-      const sourceDescriptor = resolveSourceDescriptorForLinkOutput(linkNodeId);
-      const connectionMultiplicity = sourceDescriptor?.connectionMultiplicity ?? "single";
-      const sourcePinType = normalizeOptionalString(sourceDescriptor?.pinType);
-      const nodeSelector = normalizeOptionalString(sourceDescriptor?.nodeSelector);
-      const compatibleOutgoingEdges = [];
-
-      for (const outgoingLinkEdge of outgoingLinkEdges) {
-        if (
-          !isCompatibleLinkOutputEdge(outgoingLinkEdge, {
-            sourcePinType,
-            nodeSelector,
-            allowedTemplateIdsBySelector,
-          })
-        ) {
-          disallowedEdgeKeys.add(readEdgeIdentityKey(outgoingLinkEdge));
-          continue;
-        }
-
-        compatibleOutgoingEdges.push(outgoingLinkEdge);
-      }
-
-      if (connectionMultiplicity === "single" && compatibleOutgoingEdges.length > 1) {
-        for (let index = 1; index < compatibleOutgoingEdges.length; index += 1) {
-          disallowedEdgeKeys.add(readEdgeIdentityKey(compatibleOutgoingEdges[index]));
-        }
-      }
-    }
-
-    if (disallowedEdgeKeys.size === 0) {
-      return normalizedEdges;
-    }
-
-    return normalizedEdges.filter(
-      (edge) => !disallowedEdgeKeys.has(readEdgeIdentityKey(edge))
-    );
-  }
-
-  function isCompatibleLinkOutputEdge(edge, context = {}) {
-    const targetNodeId = normalizeOptionalString(edge?.target);
-    if (!targetNodeId) {
-      return false;
-    }
-
-    const targetNode = findNodeById(targetNodeId);
-    if (!targetNode) {
-      return false;
-    }
-
-    const targetNodeType = normalizeOptionalString(targetNode?.type);
-    const sourcePinType = normalizeOptionalString(context?.sourcePinType);
-    const nodeSelector = normalizeOptionalString(context?.nodeSelector);
-
-    if (targetNodeType === LINK_NODE_TYPE) {
-      return isLinkInputHandleId(edge?.targetHandle);
-    }
-
-    if (targetNodeType === RAW_JSON_NODE_TYPE) {
-      const targetHandleId = normalizeOptionalString(edge?.targetHandle);
-      return !targetHandleId || targetHandleId === RAW_JSON_INPUT_HANDLE_ID;
-    }
-
-    if (targetNodeType !== CUSTOM_NODE_TYPE) {
-      return false;
-    }
-
-    const targetTemplate = findTemplateForNodeId(targetNodeId);
-    if (!targetTemplate) {
-      return false;
-    }
-
-    if (nodeSelector) {
-      const allowedTemplateIds = readAllowedTemplateIdsForSelector(
-        nodeSelector,
-        context?.allowedTemplateIdsBySelector
-      );
-      const targetTemplateId = normalizeOptionalString(targetTemplate?.templateId);
-      if (!targetTemplateId || !allowedTemplateIds.has(targetTemplateId)) {
-        return false;
-      }
-    }
-
-    const compatibleTargetHandleId = chooseCompatibleInputHandleId(sourcePinType, targetTemplate);
-    if (!compatibleTargetHandleId) {
-      return false;
-    }
-
-    const targetHandleId = normalizeOptionalString(edge?.targetHandle);
-    if (targetHandleId && targetHandleId !== compatibleTargetHandleId) {
-      return false;
-    }
-
-    return true;
-  }
-
-  function readAllowedTemplateIdsForSelector(selector, cache) {
-    const normalizedSelector = normalizeOptionalString(selector);
-    if (!normalizedSelector) {
-      return new Set();
-    }
-
-    if (cache instanceof Map && cache.has(normalizedSelector)) {
-      return cache.get(normalizedSelector);
-    }
-
-    const templates = getTemplatesForNodeSelector(normalizedSelector, workspaceContext);
-    const allowedTemplateIds = new Set(
-      (Array.isArray(templates) ? templates : [])
-        .map((template) => normalizeOptionalString(template?.templateId))
-        .filter(Boolean)
-    );
-
-    if (cache instanceof Map) {
-      cache.set(normalizedSelector, allowedTemplateIds);
-    }
-
-    return allowedTemplateIds;
-  }
-
-  function readEdgeIdentityKey(edge) {
-    const edgeId = normalizeOptionalString(edge?.id);
-    if (edgeId) {
-      return `id:${edgeId}`;
-    }
-
-    const sourceNodeId = normalizeOptionalString(edge?.source) ?? "";
-    const sourceHandleId = normalizeOptionalString(edge?.sourceHandle) ?? "";
-    const targetNodeId = normalizeOptionalString(edge?.target) ?? "";
-    const targetHandleId = normalizeOptionalString(edge?.targetHandle) ?? "";
-    return `edge:${sourceNodeId}:${sourceHandleId}->${targetNodeId}:${targetHandleId}`;
-  }
+  };
 
   function handleNodeDragStop() {
     emitFlowChange("node-moved");
@@ -497,7 +230,7 @@
   }
 
   function handleQuickActionById(actionIdCandidate) {
-    const quickAction = getNodeEditorQuickActionById(normalizeOptionalString(actionIdCandidate));
+    const quickAction = getNodeEditorQuickActionById(actionIdCandidate);
     if (!quickAction) {
       return;
     }
@@ -535,15 +268,9 @@
   }
 
   function handleQuickActionGoToRoot() {
-    const rootNode = resolveRootNodeForNavigation();
-    const rootPosition = readAbsoluteNodePosition(rootNode);
-    if (!rootPosition) {
-      console.info("[node-editor] Quick action could not resolve a root node position.");
-      return;
-    }
-    const rootDimensions = readNodeDimensions(rootNode);
-    const targetX = rootPosition.x + (rootDimensions?.width ?? 0);
-    const targetY = rootPosition.y + (rootDimensions?.height ?? 0) / 2;
+    const root = findNodeById(workspace.state.rootNodeId);
+    const targetX = root.position.x + root.width;
+    const targetY = root.position.y + root.height / 2;
 
     void setCenter(targetX, targetY, {
       zoom: 1.2,
@@ -557,14 +284,11 @@
 
   function handleQuickActionAutoPositionNodes() {
     const autoLayoutSeedNodeIds = resolveAutoLayoutSeedNodeIds();
-    const allowedNodeIds = (Array.isArray(nodes) ? nodes : [])
-      .filter((nodeCandidate) => isAutoLayoutEligibleNode(nodeCandidate))
-      .map((nodeCandidate) => normalizeOptionalString(nodeCandidate?.id))
-      .filter(Boolean);
+    const nodeIds = nodes.map(nodeCandidate => nodeCandidate.id);
     const targetNodeIds = collectRecursiveDescendantNodeIds({
       seedNodeIds: autoLayoutSeedNodeIds,
       edges,
-      allowedNodeIds,
+      allowedNodeIds: nodeIds,
     });
     if (targetNodeIds.length === 0) {
       console.info("[node-editor] Quick action could not resolve nodes for auto-layout.");
@@ -593,19 +317,16 @@
       return;
     }
 
-    const layoutOrigin = readLayoutOriginFromPositions(Array.from(absolutePositionByNodeId.values()));
-    const layoutEdges = (Array.isArray(edges) ? edges : [])
-      .map((edge) => ({
-        source: normalizeOptionalString(edge?.source),
-        target: normalizeOptionalString(edge?.target),
-      }))
-      .filter(
-        (edge) =>
-          edge.source &&
-          edge.target &&
-          targetNodeIdSet.has(edge.source) &&
-          targetNodeIdSet.has(edge.target)
-      );
+    const layoutOrigin = readLayoutOriginFromPositions(
+      Array.from(absolutePositionByNodeId.values()),
+    );
+    const layoutEdges = edges.filter(
+      edge =>
+        edge.source &&
+        edge.target &&
+        targetNodeIdSet.has(edge.source) &&
+        targetNodeIdSet.has(edge.target),
+    );
     const layoutNodes = Array.from(targetNodesById.entries()).map(([nodeId, nodeCandidate]) => {
       const nodeDimensions = readNodeDimensions(nodeCandidate);
       return {
@@ -625,8 +346,8 @@
     });
 
     let hasPositionUpdates = false;
-    nodes = (Array.isArray(nodes) ? nodes : []).map((nodeCandidate) => {
-      const nodeId = normalizeOptionalString(nodeCandidate?.id);
+    nodes = nodes.map(nodeCandidate => {
+      const nodeId = nodeCandidate.id;
       if (!nodeId || !targetNodeIdSet.has(nodeId)) {
         return nodeCandidate;
       }
@@ -638,7 +359,7 @@
 
       const nextRelativePosition = convertAbsolutePositionToNodeSpace(
         nodeCandidate,
-        layoutedAbsolutePosition
+        layoutedAbsolutePosition,
       );
       if (!nextRelativePosition) {
         return nodeCandidate;
@@ -662,7 +383,7 @@
   }
 
   function handleQuickActionViewRawJson() {
-    dispatch("viewrawjson");
+    onviewrawjson();
   }
 
   function handleQuickActionHelpAndHotkeys() {
@@ -675,7 +396,7 @@
   }
 
   function handleMetadataMutation(event) {
-    const mutationReason = normalizeOptionalString(event?.detail?.reason);
+    const mutationReason = event?.detail?.reason;
     emitFlowChange(mutationReason ?? "metadata-updated");
   }
 
@@ -687,11 +408,11 @@
 
       event.preventDefault();
       event.stopPropagation();
-      logDebugSchemaPropertyKeyForSelectedNode();
+      logDebugInfo();
       return;
     }
 
-    if (!nodeHelpOpen || normalizeOptionalString(event?.key) !== "Escape") {
+    if (!nodeHelpOpen || event?.key !== "Escape") {
       return;
     }
 
@@ -701,7 +422,7 @@
   }
 
   function isDebugSchemaKeyShortcut(event) {
-    const key = normalizeOptionalString(event?.key)?.toLowerCase();
+    const key = event?.key?.toLowerCase();
     if (key !== "d") {
       return false;
     }
@@ -714,350 +435,13 @@
     return event?.altKey !== true && event?.shiftKey !== true;
   }
 
-  function logDebugSchemaPropertyKeyForSelectedNode() {
-    const targetNode = resolveDebugTargetNode();
-    if (!targetNode) {
-      console.info("[node-editor][debug] Cmd/Ctrl+D: no runtime node available.");
-      return;
+  function logDebugInfo() {
+    const selectedNodes = nodes.filter(node => node.selected);
+    console.log(workspace.context);
+    console.log(workspace.state);
+    for (const node of selectedNodes) {
+      console.log(node);
     }
-
-    const nodeId = normalizeOptionalString(targetNode?.id) ?? "<unknown>";
-    const template = findTemplateForNodeId(nodeId);
-    const templateId = normalizeOptionalString(template?.templateId);
-    const schemaType = normalizeOptionalString(template?.schemaType);
-    const payloadType = normalizeOptionalString(targetNode?.data?.Type);
-    const schemaResolution = resolveSchemaPropertyResolutionForNode(nodeId);
-    const schemaDefinitionResolution = resolveMappedSchemaDefinitionForNode({
-      workspaceId: workspaceContext?.workspaceId,
-      templateId,
-      schemaType,
-      payloadType,
-      mappingsByWorkspace: DEBUG_NODE_SCHEMA_MAPPINGS_BY_WORKSPACE,
-    });
-    const hydratedSchemaInfo = isObject(targetNode?.data?.[NODE_SCHEMA_INFO_DATA_KEY])
-      ? targetNode.data[NODE_SCHEMA_INFO_DATA_KEY]
-      : null;
-    const fallbackKey =
-      schemaResolution.schemaPropertyPaths[0] ??
-      schemaResolution.schemaPropertyKeys[0] ??
-      schemaType ??
-      payloadType ??
-      "(root or unresolved)";
-
-    console.log(
-      "[node-editor][debug] schema/property key",
-      {
-        nodeId,
-        schemaPropertyKeys: schemaResolution.schemaPropertyKeys,
-        schemaPropertyPaths: schemaResolution.schemaPropertyPaths,
-        resolvedFromCache: schemaResolution.fromCache === true,
-        fallbackKey,
-        templateId: templateId ?? null,
-        schemaType: schemaType ?? null,
-        payloadType: payloadType ?? null,
-        schemaMappingWorkspaceId: schemaDefinitionResolution.workspaceId ?? null,
-        schemaMappingLookupKey: schemaDefinitionResolution.lookupKey ?? null,
-        mappedSchemaDefinition: schemaDefinitionResolution.schemaDefinition ?? null,
-        resolvedMappedSchema: schemaDefinitionResolution.resolvedSchema ?? null,
-        hydratedSchemaInfo,
-      }
-    );
-  }
-
-  function resolveSchemaPropertyResolutionForNode(nodeIdCandidate) {
-    const nodeId = normalizeOptionalString(nodeIdCandidate);
-    if (!nodeId) {
-      return {
-        schemaPropertyKeys: [],
-        schemaPropertyPaths: [],
-        fromCache: false,
-      };
-    }
-
-    const graphResolution = collectSchemaPropertyResolutionFromGraph(nodeId);
-    if (graphResolution.schemaPropertyKeys.length > 0 || graphResolution.schemaPropertyPaths.length > 0) {
-      debugSchemaResolutionCacheByNodeId.set(nodeId, {
-        schemaPropertyKeys: graphResolution.schemaPropertyKeys,
-        schemaPropertyPaths: graphResolution.schemaPropertyPaths,
-      });
-      return {
-        ...graphResolution,
-        fromCache: false,
-      };
-    }
-
-    const cachedResolution = debugSchemaResolutionCacheByNodeId.get(nodeId);
-    if (isDebugSchemaResolution(cachedResolution)) {
-      return {
-        schemaPropertyKeys: [...cachedResolution.schemaPropertyKeys],
-        schemaPropertyPaths: [...cachedResolution.schemaPropertyPaths],
-        fromCache: true,
-      };
-    }
-
-    return {
-      schemaPropertyKeys: [],
-      schemaPropertyPaths: [],
-      fromCache: false,
-    };
-  }
-
-  function collectSchemaPropertyResolutionFromGraph(nodeIdCandidate) {
-    const nodeId = normalizeOptionalString(nodeIdCandidate);
-    if (!nodeId) {
-      return {
-        schemaPropertyKeys: [],
-        schemaPropertyPaths: [],
-      };
-    }
-
-    const incomingSchemaLinksByTarget = buildIncomingSchemaLinksByTarget();
-    const incomingSchemaLinks = incomingSchemaLinksByTarget.get(nodeId) ?? [];
-    const schemaPropertyKeys = Array.from(
-      new Set(
-        incomingSchemaLinks
-          .map((incomingLink) => normalizeOptionalString(incomingLink?.schemaKey))
-          .filter(Boolean)
-      )
-    ).sort((left, right) => left.localeCompare(right));
-    const schemaPropertyPaths = collectSchemaPropertyPathsForNode(
-      nodeId,
-      incomingSchemaLinksByTarget
-    );
-
-    return {
-      schemaPropertyKeys,
-      schemaPropertyPaths,
-    };
-  }
-
-  function collectSchemaPropertyPathsForNode(
-    nodeIdCandidate,
-    incomingSchemaLinksByTarget
-  ) {
-    const nodeId = normalizeOptionalString(nodeIdCandidate);
-    if (!nodeId) {
-      return [];
-    }
-
-    const incomingByTarget =
-      incomingSchemaLinksByTarget instanceof Map ? incomingSchemaLinksByTarget : new Map();
-    const configuredRootNodeId = resolveSchemaPathRootNodeId();
-    const resolvedPaths = new Set();
-
-    function visit(currentNodeId, reversedSchemaPath, visitedNodeIds = new Set()) {
-      const normalizedCurrentNodeId = normalizeOptionalString(currentNodeId);
-      if (!normalizedCurrentNodeId || visitedNodeIds.has(normalizedCurrentNodeId)) {
-        return;
-      }
-
-      if (configuredRootNodeId && normalizedCurrentNodeId === configuredRootNodeId) {
-        if (reversedSchemaPath.length === 0) {
-          resolvedPaths.add(DEBUG_SCHEMA_ROOT_PATH);
-        } else {
-          resolvedPaths.add(
-            formatSchemaPropertyPath([...reversedSchemaPath].reverse())
-          );
-        }
-        return;
-      }
-
-      const incomingLinks = Array.isArray(incomingByTarget.get(normalizedCurrentNodeId))
-        ? incomingByTarget.get(normalizedCurrentNodeId)
-        : [];
-      if (incomingLinks.length === 0) {
-        if (!configuredRootNodeId && reversedSchemaPath.length === 0) {
-          resolvedPaths.add(DEBUG_SCHEMA_ROOT_PATH);
-        } else if (reversedSchemaPath.length > 0) {
-          resolvedPaths.add(
-            formatSchemaPropertyPath([...reversedSchemaPath].reverse())
-          );
-        }
-        return;
-      }
-
-      const nextVisitedNodeIds = new Set(visitedNodeIds);
-      nextVisitedNodeIds.add(normalizedCurrentNodeId);
-      for (const incomingLink of incomingLinks) {
-        const sourceNodeId = normalizeOptionalString(incomingLink?.sourceNodeId);
-        const schemaKey = normalizeOptionalString(incomingLink?.schemaKey);
-        if (!sourceNodeId || !schemaKey) {
-          continue;
-        }
-
-        visit(
-          sourceNodeId,
-          [...reversedSchemaPath, schemaKey],
-          nextVisitedNodeIds
-        );
-      }
-    }
-
-    visit(nodeId, []);
-
-    return Array.from(resolvedPaths).sort((left, right) =>
-      left.localeCompare(right)
-    );
-  }
-
-  function formatSchemaPropertyPath(schemaPathSegmentsCandidate) {
-    const segments = Array.isArray(schemaPathSegmentsCandidate)
-      ? schemaPathSegmentsCandidate
-      : [];
-    const normalizedSegments = segments
-      .map((segment) => normalizeOptionalString(segment))
-      .filter(Boolean);
-    if (normalizedSegments.length === 0) {
-      return DEBUG_SCHEMA_ROOT_PATH;
-    }
-
-    return normalizedSegments.join(".");
-  }
-
-  function resolveSchemaPathRootNodeId() {
-    const explicitRootNodeId = normalizeOptionalString(rootNodeId);
-    if (explicitRootNodeId) {
-      return explicitRootNodeId;
-    }
-
-    const resolvedRootNode = resolveRootNodeForNavigation();
-    return normalizeOptionalString(resolvedRootNode?.id);
-  }
-
-  function buildIncomingSchemaLinksByTarget() {
-    const normalizedEdges = Array.isArray(edges) ? edges : [];
-    const incomingSchemaLinksByTarget = new Map();
-    const dedupeKeysByTarget = new Map();
-
-    for (const edgeCandidate of normalizedEdges) {
-      const targetNodeId = normalizeOptionalString(edgeCandidate?.target);
-      const sourceNodeId = normalizeOptionalString(edgeCandidate?.source);
-      const schemaKey = resolveSchemaKeyForEdge(edgeCandidate);
-      if (!targetNodeId || !sourceNodeId || !schemaKey) {
-        continue;
-      }
-
-      if (!incomingSchemaLinksByTarget.has(targetNodeId)) {
-        incomingSchemaLinksByTarget.set(targetNodeId, []);
-      }
-      if (!dedupeKeysByTarget.has(targetNodeId)) {
-        dedupeKeysByTarget.set(targetNodeId, new Set());
-      }
-
-      const dedupeKey = `${sourceNodeId}\u0000${schemaKey}`;
-      const dedupeKeys = dedupeKeysByTarget.get(targetNodeId);
-      if (dedupeKeys.has(dedupeKey)) {
-        continue;
-      }
-      dedupeKeys.add(dedupeKey);
-
-      incomingSchemaLinksByTarget.get(targetNodeId).push({
-        sourceNodeId,
-        schemaKey,
-      });
-    }
-
-    return incomingSchemaLinksByTarget;
-  }
-
-  function resolveSchemaKeyForEdge(edgeCandidate) {
-    const explicitSchemaKey = normalizeOptionalString(edgeCandidate?.data?.schemaKey);
-    if (explicitSchemaKey) {
-      return explicitSchemaKey;
-    }
-
-    const sourceDescriptor = resolveSchemaDescriptorForEdgeSource(edgeCandidate);
-    return normalizeOptionalString(sourceDescriptor?.schemaKey);
-  }
-
-  function resolveSchemaDescriptorForEdgeSource(edgeCandidate) {
-    const sourceNodeId = normalizeOptionalString(edgeCandidate?.source);
-    if (!sourceNodeId) {
-      return undefined;
-    }
-
-    const sourceNode = findNodeById(sourceNodeId);
-    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
-      return resolveSchemaDescriptorForLinkOutput(sourceNodeId);
-    }
-
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    return readSourceConnectionDescriptor(sourceTemplate, edgeCandidate?.sourceHandle);
-  }
-
-  function resolveSchemaDescriptorForLinkOutput(
-    linkNodeId,
-    visitedLinkNodeIds = new Set()
-  ) {
-    const normalizedLinkNodeId = normalizeOptionalString(linkNodeId);
-    if (!normalizedLinkNodeId || visitedLinkNodeIds.has(normalizedLinkNodeId)) {
-      return undefined;
-    }
-
-    const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
-    nextVisitedLinkNodeIds.add(normalizedLinkNodeId);
-
-    const inputEdge = findInputEdgeForLinkNode(normalizedLinkNodeId);
-    if (!inputEdge) {
-      return undefined;
-    }
-
-    const sourceNodeId = normalizeOptionalString(inputEdge?.source);
-    if (!sourceNodeId) {
-      return undefined;
-    }
-
-    const sourceNode = findNodeById(sourceNodeId);
-    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
-      return resolveSchemaDescriptorForLinkOutput(
-        sourceNodeId,
-        nextVisitedLinkNodeIds
-      );
-    }
-
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    return readSourceConnectionDescriptor(sourceTemplate, inputEdge?.sourceHandle);
-  }
-
-  function isDebugSchemaResolution(candidate) {
-    if (!isObject(candidate)) {
-      return false;
-    }
-
-    return (
-      Array.isArray(candidate.schemaPropertyKeys) &&
-      Array.isArray(candidate.schemaPropertyPaths)
-    );
-  }
-
-  function resolveDebugTargetNode() {
-    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
-    if (normalizedNodes.length === 0) {
-      return undefined;
-    }
-
-    const selectedCustomNode = normalizedNodes.find(
-      (nodeCandidate) =>
-        nodeCandidate?.selected === true &&
-        normalizeOptionalString(nodeCandidate?.type) === CUSTOM_NODE_TYPE
-    );
-    if (selectedCustomNode) {
-      return selectedCustomNode;
-    }
-
-    const selectedRuntimeNode = normalizedNodes.find((nodeCandidate) => {
-      if (nodeCandidate?.selected !== true) {
-        return false;
-      }
-
-      const nodeType = normalizeOptionalString(nodeCandidate?.type);
-      return nodeType !== GROUP_NODE_TYPE && nodeType !== COMMENT_NODE_TYPE;
-    });
-    if (selectedRuntimeNode) {
-      return selectedRuntimeNode;
-    }
-
-    return resolveRootNodeForNavigation();
   }
 
   function handleWindowKeyUp(event) {
@@ -1072,21 +456,8 @@
     if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
       return;
     }
+    // TODO implement
 
-    const clipboardPayload = buildClipboardSelectionPayload({
-      nodes,
-      edges,
-      readAbsoluteNodePosition,
-      readNodeDimensions,
-      normalizeOptionalString,
-    });
-    const didWrite = writeClipboardSelectionPayload(
-      event?.clipboardData,
-      clipboardPayload
-    );
-    if (!didWrite) {
-      return;
-    }
     event.preventDefault();
     event.stopPropagation();
   }
@@ -1095,33 +466,8 @@
     if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
       return;
     }
+    // TODO implement
 
-    const clipboardPayload = buildClipboardSelectionPayload({
-      nodes,
-      edges,
-      readAbsoluteNodePosition,
-      readNodeDimensions,
-      normalizeOptionalString,
-    });
-    const didWrite = writeClipboardSelectionPayload(
-      event?.clipboardData,
-      clipboardPayload
-    );
-    if (!didWrite) {
-      return;
-    }
-
-    const cutResult = cutSelectedNodesFromFlowState({
-      nodes,
-      edges,
-      normalizeOptionalString,
-    });
-    if (cutResult?.didCut !== true) {
-      return;
-    }
-
-    nodes = cutResult.nodes;
-    edges = cutResult.edges;
     clearPendingSingleSourceReplacement();
     emitFlowChange("nodes-cut");
     event.preventDefault();
@@ -1129,12 +475,8 @@
   }
 
   function handleWindowPaste(event) {
+    // TODO implement
     if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
-      return;
-    }
-
-    const clipboardPayload = readClipboardSelectionPayload(event?.clipboardData);
-    if (!clipboardPayload) {
       return;
     }
 
@@ -1143,28 +485,6 @@
       return;
     }
 
-    const pasteResult = applyClipboardSelectionPayload({
-      clipboardPayload,
-      pasteAnchor,
-      nodes,
-      edges,
-      addEdgeWithConflictPruning,
-      normalizeOptionalString,
-      normalizeNodeType,
-      createUuid,
-      readNodeDimensions,
-      readGroupUnselectedZIndex,
-      groupNodeType: GROUP_NODE_TYPE,
-      commentNodeType: COMMENT_NODE_TYPE,
-      linkNodeType: LINK_NODE_TYPE,
-      rawJsonNodeType: RAW_JSON_NODE_TYPE,
-    });
-    if (pasteResult?.didPaste !== true) {
-      return;
-    }
-
-    nodes = pasteResult.nodes;
-    edges = pasteResult.edges;
     emitFlowChange("nodes-pasted");
     event.preventDefault();
     event.stopPropagation();
@@ -1183,10 +503,6 @@
   function openNodeSearchMenu() {
     closeAddNodeMenu();
     closeNodeHelpMenu();
-    const currentViewport = getViewport();
-    nodeSearchInitialViewport = isViewport(currentViewport)
-      ? { ...currentViewport }
-      : undefined;
     nodeSearchLastPreviewedNodeId = undefined;
     nodeSearchOpen = true;
     nodeSearchOpenVersion += 1;
@@ -1202,7 +518,7 @@
     nodeSearchInitialViewport = undefined;
     nodeSearchLastPreviewedNodeId = undefined;
 
-    if (restoreViewport && isViewport(initialViewport)) {
+    if (restoreViewport) {
       void setViewport(initialViewport, {
         duration: 250,
       });
@@ -1234,11 +550,11 @@
 
   function handleNodeHelpCustomizeKeybindsRequest() {
     closeNodeHelpMenu();
-    dispatch("customizekeybinds");
+    oncustomizekeybinds();
   }
 
   function handleNodeSearchPreview(event) {
-    const nodeId = normalizeOptionalString(event?.detail?.nodeId);
+    const nodeId = event?.detail?.nodeId;
     if (!nodeId || nodeId === nodeSearchLastPreviewedNodeId) {
       return;
     }
@@ -1248,7 +564,7 @@
   }
 
   function handleNodeSearchSelect(event) {
-    const nodeId = normalizeOptionalString(event?.detail?.nodeId);
+    const nodeId = event?.detail?.nodeId;
     if (!nodeId) {
       return;
     }
@@ -1262,8 +578,8 @@
     }
   }
 
-  function centerViewportOnNode(nodeIdCandidate) {
-    const targetNode = findNodeById(nodeIdCandidate);
+  function centerViewportOnNode(nodeId) {
+    const targetNode = findNodeById(nodeId);
     const targetPosition = readAbsoluteNodePosition(targetNode);
     if (!targetPosition) {
       return false;
@@ -1279,17 +595,16 @@
     return true;
   }
 
-  function selectOnlyNodeById(nodeIdCandidate) {
-    const nodeId = normalizeOptionalString(nodeIdCandidate);
+  function selectOnlyNodeById(nodeId) {
     if (!nodeId) {
       return false;
     }
 
     let hasSelectionChanges = false;
-    nodes = (Array.isArray(nodes) ? nodes : []).map((nodeCandidate) => {
-      const candidateNodeId = normalizeOptionalString(nodeCandidate?.id);
+    nodes = nodes.map(nodeCandidate => {
+      const candidateNodeId = nodeCandidate.id;
       const shouldSelect = candidateNodeId === nodeId;
-      if (Boolean(nodeCandidate?.selected) === shouldSelect) {
+      if (Boolean(nodeCandidate.selected) === shouldSelect) {
         return nodeCandidate;
       }
 
@@ -1300,8 +615,8 @@
       };
     });
 
-    edges = (Array.isArray(edges) ? edges : []).map((edgeCandidate) => {
-      if (edgeCandidate?.selected !== true) {
+    edges = edges.map(edgeCandidate => {
+      if (edgeCandidate.selected !== true) {
         return edgeCandidate;
       }
 
@@ -1313,6 +628,20 @@
     });
 
     return hasSelectionChanges;
+  }
+
+  async function revealNodeFromDocumentSelection(nodeId) {
+    if (!nodeId) {
+      return;
+    }
+
+    await tick();
+    const didCenterViewport = centerViewportOnNode(nodeId);
+    const didSelectionChange = selectOnlyNodeById(nodeId);
+    if (didSelectionChange) {
+      emitFlowChange("document-selection-revealed");
+      return;
+    }
   }
 
   function didEventOccurInsideAddMenu(event) {
@@ -1334,7 +663,7 @@
       return false;
     }
 
-    return event.composedPath().some((target) => {
+    return event.composedPath().some(target => {
       if (typeof target?.getAttribute !== "function") {
         return false;
       }
@@ -1348,7 +677,7 @@
       return;
     }
 
-    const { clientX, clientY } = readPointerCoordinates(event);
+    const { clientX, clientY } = event;
     lastPointerClientPosition = {
       x: clientX,
       y: clientY,
@@ -1383,11 +712,7 @@
     }
   }
 
-  function openAddNodeMenu(
-    pointerEvent,
-    sourceNodeId = undefined,
-    sourceHandleId = undefined
-  ) {
+  function openAddNodeMenu(pointerEvent, sourceNodeId = undefined, sourceHandleId = undefined) {
     closeNodeSearchMenu({ restoreViewport: false });
     closeNodeHelpMenu();
     const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
@@ -1420,11 +745,11 @@
       return;
     }
 
-    const isGroupNode = normalizeOptionalString(node?.type) === GROUP_NODE_TYPE;
+    const isGroupNode = node?.type === GROUP_NODE_TYPE;
     const isSelected = node?.selected === true;
     const isTitleBar = Boolean(
       typeof pointerEvent?.target?.closest === "function" &&
-        pointerEvent.target.closest(".group-title-drag-handle")
+        pointerEvent.target.closest(".group-title-drag-handle"),
     );
 
     if (!isGroupNode || isSelected || isTitleBar) {
@@ -1436,62 +761,32 @@
     openAddNodeMenu(pointerEvent);
   }
 
-  function handlePaneClick() {
-    if (skipNextPaneClickClose) {
-      skipNextPaneClickClose = false;
-      return;
-    }
-
+  const handlePaneClick = () => {
     closeAddNodeMenu();
-  }
+  };
 
   function handleConnectStart(_pointerEvent, params) {
-    const sourceNodeId = normalizeOptionalString(params?.nodeId);
-    const sourceHandleId = normalizeOptionalString(params?.handleId);
-    const handleType = normalizeOptionalString(params?.handleType);
+    const sourceNodeId = params?.nodeId;
+    const sourceHandleId = params?.handleId;
+    const handleType = params?.handleType;
     if (handleType && handleType !== "source") {
-      connectStartSourceNodeId = undefined;
-      connectStartSourceHandleId = undefined;
       clearPendingSingleSourceReplacement();
       return;
     }
 
-    connectStartSourceNodeId = sourceNodeId;
-    connectStartSourceHandleId = sourceHandleId;
     beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId);
   }
 
-  function handleConnectEnd(rawPointerEvent, rawConnectionState) {
-    const pointerEvent = extractPointerEvent(rawPointerEvent);
-    const connectionState = extractConnectionState(rawPointerEvent, rawConnectionState);
-    if (connectionState?.isValid) {
-      if (pendingSingleSourceReplacement) {
-        restorePendingSingleSourceReplacement();
-      }
-      connectStartSourceNodeId = undefined;
-      connectStartSourceHandleId = undefined;
-      return;
-    }
-
-    const sourceNodeId =
-      connectionState?.fromNode?.id ??
-      connectStartSourceNodeId ??
-      nodes?.[0]?.id ??
-      ROOT_NODE_ID;
-    const sourceHandleId =
-      extractSourceHandleId(connectionState) ??
-      connectStartSourceHandleId;
-
-    const addMenuOpened = openAddNodeMenu(pointerEvent, sourceNodeId, sourceHandleId);
-    if (addMenuOpened) {
-      // Prevent immediate close when the same mouse-up emits a pane click right after connect-end.
-      skipNextPaneClickClose = true;
-    } else {
+  const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
+    const addMenuOpened = openAddNodeMenu(
+      event,
+      connectionState.fromNode,
+      connectionState.fromHandle,
+    );
+    if (!addMenuOpened) {
       restorePendingSingleSourceReplacement();
     }
-    connectStartSourceNodeId = undefined;
-    connectStartSourceHandleId = undefined;
-  }
+  };
 
   function handleMenuSelect(event) {
     const entry = event?.detail?.template;
@@ -1500,11 +795,11 @@
     }
 
     if (isGenericGroupCreationEntry(entry)) {
-      const newGroupNode = {
+      const newGroupNode: GroupNodeType = {
         id: `Group-${createUuid()}`,
         type: GROUP_NODE_TYPE,
         data: {
-          $groupName: DEFAULT_GROUP_NAME,
+          name: DEFAULT_GROUP_NAME,
         },
         position: {
           ...pendingNodePosition,
@@ -1523,13 +818,13 @@
     }
 
     if (isGenericCommentCreationEntry(entry)) {
-      const newCommentNode = {
+      const newCommentNode: CommentNodeType = {
         id: `Comment-${createUuid()}`,
         type: COMMENT_NODE_TYPE,
         data: {
-          $commentName: COMMENT_DEFAULT_NAME,
-          $commentText: COMMENT_DEFAULT_TEXT,
-          $fontSize: COMMENT_DEFAULT_FONT_SIZE,
+          name: COMMENT_DEFAULT_NAME,
+          text: COMMENT_DEFAULT_TEXT,
+          fontSize: COMMENT_DEFAULT_FONT_SIZE,
         },
         position: {
           ...pendingNodePosition,
@@ -1546,46 +841,28 @@
     }
 
     if (isGenericRawJsonCreationEntry(entry)) {
-      const newRawJsonNode = {
+      const newRawJsonNode: RawJsonNodeType = {
         id: `Generic-${createUuid()}`,
         type: RAW_JSON_NODE_TYPE,
         data: {
-          label: RAW_JSON_DEFAULT_LABEL,
-          $fieldValues: {
-            [RAW_JSON_FIELD_ID]: RAW_JSON_DEFAULT_DATA,
-          },
+          data: RAW_JSON_DEFAULT_DATA,
         },
         position: {
           ...pendingNodePosition,
         },
-        origin: [0.5, 0.0],
+        origin: [0.5, 0],
       };
 
       nodes = [...nodes, newRawJsonNode];
 
-      const connection = pendingConnection;
-      if (connection?.sourceNodeId) {
-        const normalizedConnection = normalizeConnection({
-          id: createEdgeId({
-            sourceNodeId: connection.sourceNodeId,
-            sourceHandleId: connection.sourceHandleId,
-            targetNodeId: newRawJsonNode.id,
-            targetHandleId: RAW_JSON_INPUT_HANDLE_ID,
-          }),
-          source: connection.sourceNodeId,
-          ...(connection.sourceHandleId
-            ? { sourceHandle: connection.sourceHandleId }
-            : {}),
+      if (pendingConnection) {
+        const connection: Connection = {
+          ...pendingConnection,
           target: newRawJsonNode.id,
           targetHandle: RAW_JSON_INPUT_HANDLE_ID,
-        });
+        };
 
-        if (normalizedConnection) {
-          edges = addEdge(
-            normalizedConnection,
-            pruneConflictingInputEdges(edges, normalizedConnection)
-          );
-        }
+        edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
 
         clearPendingSingleSourceReplacement();
       }
@@ -1596,12 +873,10 @@
     }
 
     if (isGenericLinkCreationEntry(entry)) {
-      const newLinkNode = {
+      const newLinkNode: LinkNodeType = {
         id: `Link-${createUuid()}`,
         type: LINK_NODE_TYPE,
-        data: {
-          label: "Link",
-        },
+        data: {},
         position: {
           ...pendingNodePosition,
         },
@@ -1610,30 +885,14 @@
 
       nodes = [...nodes, newLinkNode];
 
-      const connection = pendingConnection;
-      if (connection?.sourceNodeId) {
-        const normalizedConnection = normalizeConnection({
-          id: createEdgeId({
-            sourceNodeId: connection.sourceNodeId,
-            sourceHandleId: connection.sourceHandleId,
-            targetNodeId: newLinkNode.id,
-            targetHandleId: LINK_INPUT_HANDLE_ID,
-          }),
-          source: connection.sourceNodeId,
-          ...(connection.sourceHandleId
-            ? { sourceHandle: connection.sourceHandleId }
-            : {}),
+      if (pendingConnection) {
+        const connection: Connection = {
+          ...pendingConnection,
           target: newLinkNode.id,
           targetHandle: LINK_INPUT_HANDLE_ID,
-        });
+        };
 
-        if (normalizedConnection) {
-          edges = addEdge(
-            normalizedConnection,
-            pruneConflictingInputEdges(edges, normalizedConnection)
-          );
-        }
-
+        edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
         clearPendingSingleSourceReplacement();
       }
 
@@ -1644,11 +903,13 @@
 
     const template = entry;
 
-    const newNodeId = `${normalizeNodeType(template.schemaType ?? template.defaultTypeName)}-${createUuid()}`;
-    const newNode = {
+    const newNodeId = `${template}-${createUuid()}`;
+    const newNode: DataNodeType = {
       id: newNodeId,
-      type: CUSTOM_NODE_TYPE,
-      data: buildNodeDataFromTemplate(template),
+      type: DATA_NODE_TYPE,
+      data: {
+        ...template,
+      },
       position: {
         ...pendingNodePosition,
       },
@@ -1657,35 +918,14 @@
 
     nodes = [...nodes, newNode];
 
-    const connection = pendingConnection;
-    if (connection?.sourceNodeId) {
-      const targetHandleId = chooseTargetHandleForConnection(
-        connection.sourceNodeId,
-        connection.sourceHandleId,
-        template
-      );
-      const normalizedConnection = normalizeConnection({
-        id: createEdgeId({
-          sourceNodeId: connection.sourceNodeId,
-          sourceHandleId: connection.sourceHandleId,
-          targetNodeId: newNodeId,
-          targetHandleId,
-        }),
-        source: connection.sourceNodeId,
-        ...(connection.sourceHandleId
-          ? { sourceHandle: connection.sourceHandleId }
-          : {}),
+    if (pendingConnection) {
+      const connection: Connection = {
+        ...pendingConnection,
         target: newNodeId,
-        ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
-      });
+        targetHandle: INPUT_HANDLE_ID,
+      };
 
-      if (normalizedConnection) {
-        edges = addEdge(
-          normalizedConnection,
-          pruneConflictingInputEdges(edges, normalizedConnection)
-        );
-      }
-
+      edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
       clearPendingSingleSourceReplacement();
     }
 
@@ -1693,24 +933,8 @@
     emitFlowChange("node-created");
   }
 
-  function createDefaultNodes() {
-    const defaultTemplate = getDefaultTemplate(workspaceContext);
-    if (!defaultTemplate) {
-      return [];
-    }
-
-    return [
-      {
-        id: ROOT_NODE_ID,
-        type: CUSTOM_NODE_TYPE,
-        data: buildNodeDataFromTemplate(defaultTemplate),
-        position: { x: 0, y: 50 },
-      },
-    ];
-  }
-
   function createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId) {
-    const { clientX, clientY } = readPointerCoordinates(pointerEvent);
+    const { clientX, clientY } = pointerEvent;
     const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
     if (!paneBounds) {
       return undefined;
@@ -1725,167 +949,47 @@
         x: clientX,
         y: clientY,
       }),
-      connection: createPendingConnection(sourceNodeId, sourceHandleId),
+      connection: { source: sourceNodeId, sourceHandle: sourceHandleId } as PendingConnection,
     };
-  }
-
-  function readPointerCoordinates(event) {
-    if (!event || typeof event !== "object") {
-      return { clientX: 0, clientY: 0 };
-    }
-
-    if ("changedTouches" in event && event.changedTouches.length > 0) {
-      const touch = event.changedTouches[0];
-      return {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-      };
-    }
-
-    return {
-      clientX: Number(event.clientX) || 0,
-      clientY: Number(event.clientY) || 0,
-    };
-  }
-
-  function extractPointerEvent(candidate) {
-    if (candidate && typeof candidate === "object" && candidate.event) {
-      return candidate.event;
-    }
-
-    return candidate;
-  }
-
-  function extractConnectionState(firstArg, secondArg) {
-    if (secondArg && typeof secondArg === "object") {
-      return secondArg;
-    }
-
-    if (firstArg && typeof firstArg === "object" && firstArg.connectionState) {
-      return firstArg.connectionState;
-    }
-
-    return undefined;
-  }
-
-  function extractSourceHandleId(connectionState) {
-    const candidates = [
-      connectionState?.fromHandle?.id,
-      connectionState?.fromHandleId,
-      connectionState?.sourceHandle,
-    ];
-
-    return candidates
-      .map(candidate => normalizeOptionalString(candidate))
-      .find(Boolean);
-  }
-
-  function normalizeConnection(connection) {
-    const sourceNodeId = normalizeOptionalString(connection?.source);
-    const targetNodeId = normalizeOptionalString(connection?.target);
-    if (!sourceNodeId || !targetNodeId) {
-      return undefined;
-    }
-
-    const normalizedConnection = {
-      source: sourceNodeId,
-      target: targetNodeId,
-    };
-    const connectionId = normalizeOptionalString(connection?.id);
-    if (connectionId) {
-      normalizedConnection.id = connectionId;
-    }
-
-    const sourceHandleId = normalizeOptionalString(connection?.sourceHandle);
-    if (sourceHandleId) {
-      normalizedConnection.sourceHandle = sourceHandleId;
-    }
-
-    const targetHandleId = normalizeOptionalString(connection?.targetHandle);
-    if (targetHandleId) {
-      normalizedConnection.targetHandle = targetHandleId;
-    }
-
-    return normalizedConnection;
   }
 
   function pruneConflictingInputEdges(existingEdges, connection) {
-    const targetNodeId = normalizeOptionalString(connection?.target);
+    const targetNodeId = connection?.target;
     if (!targetNodeId) {
-      return Array.isArray(existingEdges) ? existingEdges : [];
+      return existingEdges;
     }
 
-    const targetHandleId = normalizeOptionalString(connection?.targetHandle);
-    const normalizedEdges = Array.isArray(existingEdges) ? existingEdges : [];
+    const targetHandleId = connection?.targetHandle;
 
-    return normalizedEdges.filter((edge) => {
-      const edgeTargetNodeId = normalizeOptionalString(edge?.target);
-      if (edgeTargetNodeId !== targetNodeId) {
+    return existingEdges.filter(edge => {
+      if (edge.target !== targetNodeId) {
         return true;
       }
 
-      const edgeTargetHandleId = normalizeOptionalString(edge?.targetHandle);
       if (targetHandleId) {
-        return edgeTargetHandleId !== targetHandleId;
+        return edge.targetHandle !== targetHandleId;
       }
 
       return false;
     });
   }
 
-  function addEdgeWithConflictPruning(
-    existingEdges,
-    {
-      sourceNodeId,
-      sourceHandleId,
-      targetNodeId,
-      targetHandleId,
-    } = {}
-  ) {
-    const normalizedConnection = normalizeConnection({
-      id: createEdgeId({
-        sourceNodeId,
-        sourceHandleId,
-        targetNodeId,
-        targetHandleId,
-      }),
-      source: sourceNodeId,
-      ...(sourceHandleId ? { sourceHandle: sourceHandleId } : {}),
-      target: targetNodeId,
-      ...(targetHandleId ? { targetHandle: targetHandleId } : {}),
-    });
-    if (!normalizedConnection) {
-      return Array.isArray(existingEdges) ? existingEdges : [];
-    }
-
-    return addEdge(
-      normalizedConnection,
-      pruneConflictingInputEdges(existingEdges, normalizedConnection)
-    );
-  }
-
   function beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId) {
     clearPendingSingleSourceReplacement();
 
-    const normalizedSourceNodeId = normalizeOptionalString(sourceNodeId);
-    const normalizedSourceHandleId = normalizeOptionalString(sourceHandleId);
-    if (!normalizedSourceNodeId) {
+    if (!sourceNodeId) {
       return;
     }
 
-    const sourceMultiplicity = readSourceHandleMultiplicity(
-      normalizedSourceNodeId,
-      normalizedSourceHandleId
-    );
+    const sourceMultiplicity = readSourceHandleMultiplicity(sourceNodeId, sourceHandleId);
     if (sourceMultiplicity !== "single") {
       return;
     }
 
-    const normalizedEdges = Array.isArray(edges) ? edges : [];
     const retainedEdges = [];
     const removedEdges = [];
-    for (const edge of normalizedEdges) {
-      if (isEdgeFromSourceHandle(edge, normalizedSourceNodeId, normalizedSourceHandleId)) {
+    for (const edge of edges) {
+      if (isEdgeFromSourceHandle(edge, sourceNodeId, sourceHandleId)) {
         removedEdges.push(edge);
         continue;
       }
@@ -1899,26 +1003,17 @@
 
     edges = retainedEdges;
     pendingSingleSourceReplacement = {
-      sourceNodeId: normalizedSourceNodeId,
-      sourceHandleId: normalizedSourceHandleId,
+      sourceNodeId,
+      sourceHandleId,
       removedEdges,
     };
   }
 
   function readSourceHandleMultiplicity(sourceNodeId, sourceHandleId) {
     const sourceNode = findNodeById(sourceNodeId);
-    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
-      const linkSourceDescriptor = resolveSourceDescriptorForLinkOutput(
-        sourceNodeId
-      );
-      return linkSourceDescriptor?.connectionMultiplicity ?? "single";
-    }
+    const outputPins: NodePin[] | undefined = (sourceNode.data as any).outputPins;
+    const sourcePin = outputPins?.find(pin => pin.schemaKey === sourceHandleId);
 
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    const outputPins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
-    const sourcePin = outputPins.find(
-      (pin) => normalizeOptionalString(pin?.id) === sourceHandleId
-    );
     if (sourcePin?.isMap === true) {
       return "map";
     }
@@ -1928,70 +1023,6 @@
     }
 
     return "single";
-  }
-
-  function resolveSourceDescriptorForLinkOutput(linkNodeId, visitedLinkNodeIds = new Set()) {
-    const normalizedLinkNodeId = normalizeOptionalString(linkNodeId);
-    if (!normalizedLinkNodeId || visitedLinkNodeIds.has(normalizedLinkNodeId)) {
-      return undefined;
-    }
-
-    const nextVisitedLinkNodeIds = new Set(visitedLinkNodeIds);
-    nextVisitedLinkNodeIds.add(normalizedLinkNodeId);
-
-    const inputEdge = findInputEdgeForLinkNode(normalizedLinkNodeId);
-    if (!inputEdge) {
-      return undefined;
-    }
-
-    const sourceNodeId = normalizeOptionalString(inputEdge?.source);
-    if (!sourceNodeId) {
-      return undefined;
-    }
-
-    const sourceNode = findNodeById(sourceNodeId);
-    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
-      return resolveSourceDescriptorForLinkOutput(
-        sourceNodeId,
-        nextVisitedLinkNodeIds
-      );
-    }
-
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    const sourceOutputPins = Array.isArray(sourceTemplate?.outputPins)
-      ? sourceTemplate.outputPins
-      : [];
-    if (sourceOutputPins.length === 0) {
-      return undefined;
-    }
-
-    const normalizedSourceHandleId = normalizeOptionalString(inputEdge?.sourceHandle);
-    let sourcePin = sourceOutputPins.find(
-      (pin) => normalizeOptionalString(pin?.id) === normalizedSourceHandleId
-    );
-    if (!sourcePin && !normalizedSourceHandleId && sourceOutputPins.length === 1) {
-      sourcePin = sourceOutputPins[0];
-    }
-    if (!sourcePin) {
-      sourcePin = sourceOutputPins[0];
-    }
-    if (!sourcePin) {
-      return undefined;
-    }
-
-    const sourceConnectionDescriptor = readSourceConnectionDescriptor(
-      sourceTemplate,
-      sourcePin?.id
-    );
-
-    return {
-      connectionMultiplicity: readOutputPinConnectionMultiplicity(sourcePin),
-      pinType: normalizeOptionalString(sourcePin?.type),
-      nodeSelector: normalizeOptionalString(
-        sourceConnectionDescriptor?.nodeSelector
-      ),
-      schemaKey: normalizeOptionalString(sourceConnectionDescriptor?.schemaKey),
-    };
   }
 
   function readOutputPinConnectionMultiplicity(pin) {
@@ -2007,66 +1038,58 @@
   }
 
   function findInputEdgeForLinkNode(linkNodeId) {
-    const normalizedLinkNodeId = normalizeOptionalString(linkNodeId);
-    if (!normalizedLinkNodeId) {
+    if (!linkNodeId) {
       return undefined;
     }
 
-    const normalizedEdges = Array.isArray(edges) ? edges : [];
-    return normalizedEdges.find(
-      (edge) =>
-        normalizeOptionalString(edge?.target) === normalizedLinkNodeId &&
-        isLinkInputHandleId(edge?.targetHandle)
-    );
+    return edges.find(edge => edge.target === linkNodeId && isLinkInputHandleId(edge.targetHandle));
   }
 
   function isLinkInputHandleId(candidateHandleId) {
-    const normalizedHandleId = normalizeOptionalString(candidateHandleId);
-    return normalizedHandleId === undefined || normalizedHandleId === LINK_INPUT_HANDLE_ID;
+    return candidateHandleId == null || candidateHandleId === LINK_INPUT_HANDLE_ID;
   }
 
   function isLinkOutputHandleId(candidateHandleId) {
-    const normalizedHandleId = normalizeOptionalString(candidateHandleId);
-    return normalizedHandleId === undefined || normalizedHandleId === LINK_OUTPUT_HANDLE_ID;
+    return candidateHandleId == null || candidateHandleId === LINK_OUTPUT_HANDLE_ID;
   }
 
-  function findNodeById(nodeId) {
-    const normalizedNodeId = normalizeOptionalString(nodeId);
-    if (!normalizedNodeId) {
+  function findNodeById(nodeId: string) {
+    if (!nodeId) {
+      return undefined;
+    }
+    return nodes.find(node => node.id === nodeId);
+  }
+
+  function findHandle(nodeId: string, handleId: string) {
+    const node = findNodeById(nodeId);
+    if (!node) {
       return undefined;
     }
 
-    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
-    return normalizedNodes.find((node) => normalizeOptionalString(node?.id) === normalizedNodeId);
+    return node.handles.find(handle => handle.id === handleId);
   }
 
   function isEdgeFromSourceHandle(edge, sourceNodeId, sourceHandleId) {
-    if (normalizeOptionalString(edge?.source) !== sourceNodeId) {
+    if (edge?.source !== sourceNodeId) {
       return false;
     }
 
-    return normalizeOptionalString(edge?.sourceHandle) === sourceHandleId;
+    return edge?.sourceHandle === sourceHandleId;
   }
 
   function restorePendingSingleSourceReplacement() {
-    const removedEdges = Array.isArray(pendingSingleSourceReplacement?.removedEdges)
-      ? pendingSingleSourceReplacement.removedEdges
-      : [];
+    const removedEdges = pendingSingleSourceReplacement?.removedEdges ?? [];
     if (removedEdges.length === 0) {
       pendingSingleSourceReplacement = undefined;
       return;
     }
 
-    const normalizedEdges = Array.isArray(edges) ? edges : [];
-    const existingEdgeIds = new Set(
-      normalizedEdges
-        .map((edge) => normalizeOptionalString(edge?.id))
-        .filter((edgeId) => Boolean(edgeId))
-    );
+    const currentEdges = edges;
+    const existingEdgeIds = new Set(currentEdges.map(edge => edge.id).filter(Boolean));
     const restoredEdges = [];
 
     for (const removedEdge of removedEdges) {
-      const edgeId = normalizeOptionalString(removedEdge?.id);
+      const edgeId = removedEdge.id;
       if (edgeId && existingEdgeIds.has(edgeId)) {
         continue;
       }
@@ -2078,7 +1101,7 @@
       restoredEdges.push(removedEdge);
     }
 
-    edges = [...normalizedEdges, ...restoredEdges];
+    edges = [...currentEdges, ...restoredEdges];
     pendingSingleSourceReplacement = undefined;
   }
 
@@ -2086,123 +1109,25 @@
     pendingSingleSourceReplacement = undefined;
   }
 
-  function chooseTargetHandleForConnection(sourceNodeId, sourceHandleId, targetTemplate) {
-    const sourceNode = findNodeById(sourceNodeId);
-    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
-      const linkSourceDescriptor = resolveSourceDescriptorForLinkOutput(sourceNodeId);
-      return chooseCompatibleInputHandleId(linkSourceDescriptor?.pinType, targetTemplate);
-    }
-
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    const sourcePins = Array.isArray(sourceTemplate?.outputPins) ? sourceTemplate.outputPins : [];
-    const sourcePin = sourcePins.find((pin) => pin.id === sourceHandleId);
-    const sourcePinType =
-      typeof sourcePin?.type === "string" && sourcePin.type.trim() ? sourcePin.type.trim() : undefined;
-
-    return chooseCompatibleInputHandleId(sourcePinType, targetTemplate);
-  }
-
   function readSourceConnectionDescriptor(sourceTemplate, sourceHandleId) {
-    const sourceConnectionDescriptors = Array.isArray(sourceTemplate?.schemaConnections)
-      ? sourceTemplate.schemaConnections
-      : [];
+    const sourceConnectionDescriptors = sourceTemplate?.schemaConnections ?? [];
     if (sourceConnectionDescriptors.length === 0) {
       return undefined;
     }
 
-    const normalizedSourceHandleId = normalizeOptionalString(sourceHandleId);
     let matchedDescriptor = sourceConnectionDescriptors.find(
-      (descriptor) =>
-        normalizeOptionalString(descriptor?.outputPinId) === normalizedSourceHandleId
+      descriptor => descriptor?.outputPinId === sourceHandleId,
     );
-    if (!matchedDescriptor && !normalizedSourceHandleId && sourceConnectionDescriptors.length === 1) {
+    if (!matchedDescriptor && !sourceHandleId && sourceConnectionDescriptors.length === 1) {
       matchedDescriptor = sourceConnectionDescriptors[0];
     }
 
     return matchedDescriptor;
   }
 
-  function resolveNodeSelectorForSourceConnection(sourceNodeId, sourceHandleId) {
-    const sourceNode = findNodeById(sourceNodeId);
-    if (normalizeOptionalString(sourceNode?.type) === LINK_NODE_TYPE) {
-      const linkSourceDescriptor = resolveSourceDescriptorForLinkOutput(sourceNodeId);
-      return normalizeOptionalString(linkSourceDescriptor?.nodeSelector);
-    }
-
-    const sourceTemplate = findTemplateForNodeId(sourceNodeId);
-    const matchedDescriptor = readSourceConnectionDescriptor(sourceTemplate, sourceHandleId);
-    return normalizeOptionalString(matchedDescriptor?.nodeSelector);
-  }
-
   function findTemplateForNodeId(nodeId) {
-    const normalizedNodeId = normalizeOptionalString(nodeId);
-    if (!normalizedNodeId) {
-      return undefined;
-    }
-
-    const sourceNode = Array.isArray(nodes)
-      ? nodes.find((node) => node?.id === normalizedNodeId)
-      : undefined;
-    if (!sourceNode) {
-      return undefined;
-    }
-
-    const templateId = normalizeOptionalString(sourceNode?.data?.$templateId);
-
-    return (
-      (templateId ? getTemplateById(templateId, workspaceContext) : undefined) ??
-      findTemplateByTypeName(sourceNode?.data?.Type, workspaceContext)
-    );
-  }
-
-  function resolveAvailableAddEntries(
-    connection,
-    templateEntries = allTemplates,
-    candidateWorkspaceContext = workspaceContext
-  ) {
-    const sourceNodeId = normalizeOptionalString(connection?.sourceNodeId);
-    const sourceHandleId = normalizeOptionalString(connection?.sourceHandleId);
-    const genericEntries = resolveGenericAddEntries(sourceNodeId);
-    if (!Array.isArray(templateEntries) || templateEntries.length === 0) {
-      return genericEntries;
-    }
-
-    if (!sourceNodeId || !sourceHandleId) {
-      return [...genericEntries, ...templateEntries];
-    }
-
-    const selector = resolveNodeSelectorForSourceConnection(sourceNodeId, sourceHandleId);
-    if (!selector) {
-      return [...genericEntries, ...templateEntries];
-    }
-
-    const filteredTemplates = getTemplatesForNodeSelector(selector, candidateWorkspaceContext);
-    return Array.isArray(filteredTemplates) && filteredTemplates.length > 0
-      ? [...genericEntries, ...filteredTemplates]
-      : genericEntries;
-  }
-
-  function resolveGenericAddEntries(sourceNodeId) {
-    if (!sourceNodeId) {
-      return [...GENERIC_ADD_MENU_ENTRIES];
-    }
-
-    return GENERIC_ADD_MENU_ENTRIES.filter(
-      (entry) =>
-        !isGenericGroupCreationEntry(entry) &&
-        !isGenericCommentCreationEntry(entry)
-    );
-  }
-
-  function createEdgeId({
-    sourceNodeId,
-    sourceHandleId,
-    targetNodeId,
-    targetHandleId,
-  }) {
-    const sourcePart = sourceHandleId ? `${sourceNodeId}:${sourceHandleId}` : sourceNodeId;
-    const targetPart = targetHandleId ? `${targetNodeId}:${targetHandleId}` : targetNodeId;
-    return `${sourcePart}--${targetPart}--${createUuid()}`;
+    const node = nodes.find(node => node.id === nodeId);
+    return node.data.templateId;
   }
 
   function resolvePasteAnchorFlowPosition() {
@@ -2227,7 +1152,7 @@
     });
   }
 
-  function normalizeNodeType(candidate) {
+  function readNodeType(candidate) {
     if (typeof candidate === "string") {
       const cleaned = candidate.trim().replace(/\s+/g, "");
       if (cleaned) {
@@ -2236,30 +1161,6 @@
     }
 
     return "Node";
-  }
-
-  function normalizeOptionalString(value) {
-    return typeof value === "string" && value.trim() ? value.trim() : undefined;
-  }
-
-  function buildNodeDataFromTemplate(template) {
-    return {
-      label: template.label,
-      $templateId: template.templateId,
-      $fieldValues: template.buildInitialValues(),
-    };
-  }
-
-  function createPendingConnection(sourceNodeId, sourceHandleId) {
-    const normalizedSourceNodeId = normalizeOptionalString(sourceNodeId);
-    if (!normalizedSourceNodeId) {
-      return undefined;
-    }
-
-    return {
-      sourceNodeId: normalizedSourceNodeId,
-      sourceHandleId: normalizeOptionalString(sourceHandleId),
-    };
   }
 
   function createUuid() {
@@ -2278,7 +1179,7 @@
     initialFitInProgress = true;
     await tick();
 
-    const initialFitNodeIds = resolveInitialFitNodeIds(nodes, rootNodeId);
+    const initialFitNodeIds = resolveInitialFitNodeIds(nodes, workspace.state.rootNodeId);
     if (initialFitNodeIds.length > 0) {
       fitView({
         nodes: initialFitNodeIds,
@@ -2294,16 +1195,13 @@
   }
 
   function resolveInitialFitNodeIds(nodesCandidate, rootNodeIdCandidate) {
-    const nodeList = Array.isArray(nodesCandidate) ? nodesCandidate : [];
+    const nodeList = nodesCandidate;
     if (nodeList.length === 0) {
       return [];
     }
 
-    const resolvedRootNodeId =
-      normalizeOptionalString(rootNodeIdCandidate) ?? ROOT_NODE_ID;
-    const rootNode = nodeList.find(
-      (node) => normalizeOptionalString(node?.id) === resolvedRootNodeId
-    );
+    const resolvedRootNodeId = rootNodeIdCandidate ?? ROOT_NODE_ID;
+    const rootNode = nodeList.find(node => node.id === resolvedRootNodeId);
     if (!rootNode) {
       return [];
     }
@@ -2315,11 +1213,7 @@
 
     const fitNodeIdSet = new Set([resolvedRootNodeId]);
     for (const node of nodeList) {
-      const nodeId = normalizeOptionalString(node?.id);
-      if (!nodeId) {
-        continue;
-      }
-
+      const nodeId = node.id;
       const nodePosition = readNodePosition(node);
       if (!nodePosition) {
         continue;
@@ -2333,7 +1227,7 @@
       }
     }
 
-    return Array.from(fitNodeIdSet, (nodeId) => ({ id: nodeId }));
+    return Array.from(fitNodeIdSet, nodeId => ({ id: nodeId }));
   }
 
   function readNodePosition(nodeCandidate) {
@@ -2350,12 +1244,12 @@
     const width = readFiniteDimension(
       nodeCandidate?.width,
       nodeCandidate?.initialWidth,
-      nodeCandidate?.measured?.width
+      nodeCandidate?.measured?.width,
     );
     const height = readFiniteDimension(
       nodeCandidate?.height,
       nodeCandidate?.initialHeight,
-      nodeCandidate?.measured?.height
+      nodeCandidate?.measured?.height,
     );
 
     return width === undefined && height === undefined
@@ -2373,36 +1267,14 @@
     return undefined;
   }
 
-  function resolveRootNodeForNavigation() {
-    const explicitRootNodeId = normalizeOptionalString(rootNodeId);
-    const candidateRootNodeIds = [explicitRootNodeId, ROOT_NODE_ID].filter(Boolean);
-    for (const candidateRootNodeId of candidateRootNodeIds) {
-      const candidateRootNode = findNodeById(candidateRootNodeId);
-      if (candidateRootNode) {
-        return candidateRootNode;
-      }
-    }
-
-    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
-    const firstRuntimeNode = normalizedNodes.find((node) => {
-      const nodeType = normalizeOptionalString(node?.type);
-      return nodeType !== GROUP_NODE_TYPE && nodeType !== COMMENT_NODE_TYPE;
-    });
-    if (firstRuntimeNode) {
-      return firstRuntimeNode;
-    }
-
-    return normalizedNodes[0];
-  }
-
   function readAbsoluteNodePosition(nodeCandidate, visitedNodeIds = new Set()) {
     const relativePosition = readNodePosition(nodeCandidate);
     if (!relativePosition) {
       return undefined;
     }
 
-    const nodeId = normalizeOptionalString(nodeCandidate?.id);
-    const parentNodeId = normalizeOptionalString(nodeCandidate?.parentId);
+    const nodeId = nodeCandidate?.id;
+    const parentNodeId = nodeCandidate?.parentId;
     if (!parentNodeId) {
       return relativePosition;
     }
@@ -2432,25 +1304,16 @@
   }
 
   function resolveAutoLayoutSeedNodeIds() {
-    const normalizedNodes = Array.isArray(nodes) ? nodes : [];
-    const selectedNodeIds = normalizedNodes
-      .filter((nodeCandidate) => nodeCandidate?.selected === true && isAutoLayoutEligibleNode(nodeCandidate))
-      .map((nodeCandidate) => normalizeOptionalString(nodeCandidate?.id))
-      .filter(Boolean);
+    const selectedNodeIds = nodes
+      .filter(nodeCandidate => nodeCandidate?.selected === true)
+      .map(nodeCandidate => nodeCandidate.id);
 
     if (selectedNodeIds.length > 0) {
       return Array.from(new Set(selectedNodeIds));
     }
 
-    const rootNode = resolveRootNodeForNavigation();
-    const rootNodeId =
-      isAutoLayoutEligibleNode(rootNode) ? normalizeOptionalString(rootNode?.id) : undefined;
+    const rootNodeId = workspace.state?.rootNodeId;
     return rootNodeId ? [rootNodeId] : [];
-  }
-
-  function isAutoLayoutEligibleNode(nodeCandidate) {
-    const nodeType = normalizeOptionalString(nodeCandidate?.type);
-    return nodeType !== GROUP_NODE_TYPE && nodeType !== COMMENT_NODE_TYPE;
   }
 
   function convertAbsolutePositionToNodeSpace(nodeCandidate, absolutePositionCandidate) {
@@ -2459,7 +1322,7 @@
       return undefined;
     }
 
-    const parentNodeId = normalizeOptionalString(nodeCandidate?.parentId);
+    const parentNodeId = nodeCandidate?.parentId;
     if (!parentNodeId) {
       return absolutePosition;
     }
@@ -2488,63 +1351,47 @@
   }
 
   function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
-    const width = normalizeGroupDimension(widthCandidate, DEFAULT_GROUP_WIDTH, MIN_GROUP_WIDTH);
-    const height = normalizeGroupDimension(heightCandidate, DEFAULT_GROUP_HEIGHT, MIN_GROUP_HEIGHT);
+    const width = readGroupDimension(widthCandidate, DEFAULT_GROUP_WIDTH, MIN_GROUP_WIDTH);
+    const height = readGroupDimension(heightCandidate, DEFAULT_GROUP_HEIGHT, MIN_GROUP_HEIGHT);
     const area = width * height;
     return GROUP_Z_INDEX_UNSELECTED - Math.round(area);
   }
 
-  function normalizeGroupDimension(candidateValue, fallbackValue, minValue) {
-    const normalizedValue = Number(candidateValue);
-    if (!Number.isFinite(normalizedValue)) {
+  function readGroupDimension(candidateValue, fallbackValue, minValue) {
+    const currentValue = Number(candidateValue);
+    if (!Number.isFinite(currentValue)) {
       return fallbackValue;
     }
 
-    return Math.max(minValue, normalizedValue);
-  }
-
-  function isViewport(candidateViewport) {
-    return (
-      Number.isFinite(candidateViewport?.x) &&
-      Number.isFinite(candidateViewport?.y) &&
-      Number.isFinite(candidateViewport?.zoom)
-    );
-  }
-
-  function isObject(value) {
-    return value !== null && typeof value === "object" && !Array.isArray(value);
+    return Math.max(minValue, currentValue);
   }
 
   function isGenericGroupCreationEntry(candidate) {
     return (
-      normalizeOptionalString(candidate?.kind) === "generic-action" &&
-      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_GROUP
+      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_GROUP
     );
   }
 
   function isGenericCommentCreationEntry(candidate) {
     return (
-      normalizeOptionalString(candidate?.kind) === "generic-action" &&
-      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_COMMENT
+      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_COMMENT
     );
   }
 
   function isGenericRawJsonCreationEntry(candidate) {
     return (
-      normalizeOptionalString(candidate?.kind) === "generic-action" &&
-      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_RAW_JSON
+      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_RAW_JSON
     );
   }
 
   function isGenericLinkCreationEntry(candidate) {
     return (
-      normalizeOptionalString(candidate?.kind) === "generic-action" &&
-      normalizeOptionalString(candidate?.actionId) === GENERIC_ACTION_CREATE_LINK
+      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_LINK
     );
   }
 
   function isDeleteKey(event) {
-    const key = normalizeOptionalString(event?.key);
+    const key = event?.key;
     return key === "Delete" || key === "Backspace";
   }
 
@@ -2562,7 +1409,7 @@
       return false;
     }
 
-    const tagName = normalizeOptionalString(target?.tagName)?.toLowerCase();
+    const tagName = typeof target?.tagName === "string" ? target.tagName.toLowerCase() : undefined;
     if (tagName === "input" || tagName === "textarea" || tagName === "select") {
       return true;
     }
@@ -2571,24 +1418,31 @@
       return true;
     }
 
-    const role = normalizeOptionalString(
-      typeof target?.getAttribute === "function" ? target.getAttribute("role") : undefined
-    )?.toLowerCase();
-    if (role === "textbox" || role === "searchbox" || role === "combobox" || role === "spinbutton") {
+    const roleValue =
+      typeof target?.getAttribute === "function" ? target.getAttribute("role") : undefined;
+    const role = typeof roleValue === "string" ? roleValue.toLowerCase() : undefined;
+    if (
+      role === "textbox" ||
+      role === "searchbox" ||
+      role === "combobox" ||
+      role === "spinbutton"
+    ) {
       return true;
     }
 
     if (typeof target?.closest === "function") {
       const editableAncestor = target.closest(
-        "input, textarea, select, [contenteditable], [role='textbox'], [role='searchbox'], [role='combobox'], [role='spinbutton']"
+        "input, textarea, select, [contenteditable], [role='textbox'], [role='searchbox'], [role='combobox'], [role='spinbutton']",
       );
       if (editableAncestor) {
-        const contentEditableValue = normalizeOptionalString(
+        const contentEditableValue =
           typeof editableAncestor.getAttribute === "function"
             ? editableAncestor.getAttribute("contenteditable")
-            : undefined
-        )?.toLowerCase();
-        if (contentEditableValue !== "false") {
+            : undefined;
+        if (
+          typeof contentEditableValue !== "string" ||
+          contentEditableValue.toLowerCase() !== "false"
+        ) {
           return true;
         }
       }
@@ -2606,16 +1460,10 @@
   on:pointermove|capture={handleWindowPointerMove}
   on:pointerdown|capture={handleWindowPointerDown}
   on:keyup={handleWindowKeyUp}
-  on:hytale-node-editor-group-mutation={handleMetadataMutation}
-  on:hytale-node-editor-comment-mutation={handleMetadataMutation}
-  on:hytale-node-editor-custom-mutation={handleMetadataMutation}
-  on:hytale-node-editor-raw-json-mutation={handleMetadataMutation}
-  on:hytale-node-editor-link-mutation={handleMetadataMutation}
 />
 
 <div
   class="relative w-full h-full overflow-hidden"
-  class:invisible={!initialViewportReady}
   bind:this={flowWrapperElement}
 >
   <SvelteFlow
@@ -2659,9 +1507,8 @@
     open={addMenuOpen}
     openVersion={addMenuOpenVersion}
     position={addMenuPosition}
-    templates={availableAddEntries}
-    on:close={closeAddNodeMenu}
-    on:select={handleMenuSelect}
+    onclose={closeAddNodeMenu}
+    onselect={handleMenuSelect}
   />
 
   <NodeHelpPanel

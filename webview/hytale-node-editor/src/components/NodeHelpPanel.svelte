@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, tick } from "svelte";
   import { CircleQuestionMark } from "lucide-svelte";
   import {
     NODE_EDITOR_QUICK_ACTION_IDS,
     NODE_EDITOR_QUICK_ACTIONS,
-  } from "../node-editor/nodeEditorQuickActions.ts";
+  } from "../node-editor/ui/nodeEditorQuickActions";
 
   export let open = false;
   export let openVersion = 0;
@@ -128,25 +128,25 @@
         : targetPlatform === "linux"
           ? defaultKeybinding.linux
           : defaultKeybinding.win;
-    return normalizeShortcutToTokens(platformKeybinding);
+    return readShortcutTokens(platformKeybinding);
   }
 
-  function normalizeShortcutToTokens(shortcutCandidate) {
-    const shortcut = normalizeOptionalString(shortcutCandidate);
+  function readShortcutTokens(shortcutCandidate) {
+    const shortcut = readString(shortcutCandidate);
     if (!shortcut) {
       return [];
     }
 
     return shortcut
       .split("+")
-      .map((keyToken) => normalizeOptionalString(keyToken))
+      .map((keyToken) => readString(keyToken))
       .filter(Boolean);
   }
 
   function detectPlatform() {
     const sourcePlatform =
-      normalizeOptionalString(globalThis?.navigator?.userAgentData?.platform) ??
-      normalizeOptionalString(globalThis?.navigator?.platform) ??
+      readString(globalThis?.navigator?.userAgentData?.platform) ??
+      readString(globalThis?.navigator?.platform) ??
       "";
     const platform = sourcePlatform.toLowerCase();
     if (platform.includes("mac")) {
@@ -160,8 +160,8 @@
     return "win";
   }
 
-  function normalizeOptionalString(value) {
-    return typeof value === "string" && value.trim() ? value.trim() : undefined;
+  function readString(value) {
+    return typeof value === "string" ? value : undefined;
   }
 </script>
 

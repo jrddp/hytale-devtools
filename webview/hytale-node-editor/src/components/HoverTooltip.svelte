@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onDestroy } from "svelte";
 
   export let text;
@@ -12,10 +12,10 @@
   let isVisible = false;
   let hoverTimer;
 
-  $: normalizedText = typeof text === "string" && text.trim() ? text.trim() : undefined;
-  $: normalizedDelayMs = Number.isFinite(delayMs) && delayMs >= 0 ? Math.floor(delayMs) : 0;
+  $: tooltipText = typeof text === "string" ? text : undefined;
+  $: tooltipDelayMs = Number(delayMs) || 0;
   $: placementClass = readPlacementClass(placement);
-  $: if (disabled || !normalizedText) {
+  $: if (disabled || !tooltipText) {
     hideTooltip();
   }
 
@@ -36,18 +36,18 @@
   }
 
   function scheduleTooltip() {
-    if (disabled || !normalizedText) {
+    if (disabled || !tooltipText) {
       return;
     }
     clearHoverTimer();
-    if (normalizedDelayMs === 0) {
+    if (tooltipDelayMs === 0) {
       isVisible = true;
       return;
     }
     hoverTimer = setTimeout(() => {
       isVisible = true;
       hoverTimer = undefined;
-    }, normalizedDelayMs);
+    }, tooltipDelayMs);
   }
 
   function handleMouseEnter() {
@@ -59,7 +59,7 @@
   }
 
   function handleFocusIn() {
-    if (disabled || !normalizedText) {
+    if (disabled || !tooltipText) {
       return;
     }
     clearHoverTimer();
@@ -99,12 +99,12 @@
   onfocusout={handleFocusOut}
 >
   <slot />
-  {#if isVisible && normalizedText}
+  {#if isVisible && tooltipText}
     <div
       role="tooltip"
       class="pointer-events-none absolute z-20 w-max max-w-64 whitespace-normal rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {placementClass} {tooltipClass}"
     >
-      {normalizedText}
+      {tooltipText}
     </div>
   {/if}
 </div>

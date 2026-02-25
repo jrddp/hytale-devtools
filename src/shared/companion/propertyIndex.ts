@@ -1,5 +1,5 @@
 import { asHytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
-import { PropertyNodeData } from './types';
+import { type PropertyNodeData } from './types';
 import { appendJsonPointer, escapeJsonPointerToken } from './schemaStore';
 
 export function buildPropertyKey(schemaFile: string, jsonPointer: string): string {

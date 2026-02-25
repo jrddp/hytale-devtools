@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { resolveHytaleDevtoolsValueList } from '../shared/hytaleDevtoolsValueList';
-import { LoadedIndexShard } from '../shared/companion/types';
+import { type LoadedIndexShard } from '../shared/companion/types';
 
 suite('Hytale Devtools Value List Test Suite', () => {
     test('literalChoice returns canonical values only', () => {

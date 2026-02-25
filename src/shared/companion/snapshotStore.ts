@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { asHytaleDevtoolsPayload } from '../hytaleDevtoolsPayload';
 import { resolveHytaleDevtoolsValueList } from '../hytaleDevtoolsValueList';
 import { resolveCompanionExportRoot } from './exportRoot';
@@ -16,15 +16,15 @@ import {
     resolveJsonPointer
 } from './schemaStore';
 import {
-    CompanionSchemaMappingsDocument,
-    CompanionSnapshot,
-    CompanionSnapshotState,
-    ResolvePropertyRequest,
-    ResolvePropertyResult,
-    ResolveSchemaDefinitionsBatchRequest,
-    ResolveSchemaDefinitionsBatchResult,
-    ResolveSchemaDefinitionResult,
-    ResolveSchemaDefinitionRequestItem
+    type CompanionSchemaMappingsDocument,
+    type CompanionSnapshot,
+    type CompanionSnapshotState,
+    type ResolvePropertyRequest,
+    type ResolvePropertyResult,
+    type ResolveSchemaDefinitionsBatchRequest,
+    type ResolveSchemaDefinitionsBatchResult,
+    type ResolveSchemaDefinitionResult,
+    type ResolveSchemaDefinitionRequestItem
 } from './types';
 
 const WATCH_INTERVAL_MS = 750;

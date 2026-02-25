@@ -1,129 +1,125 @@
-<script>
-  import { createEventDispatcher, tick } from 'svelte';
-  import { getDefaultPinColor } from '../node-editor/pinColorUtils.js';
+<script lang="ts">
+  import { tick } from "svelte";
+  import { getDefaultPinColor } from "../node-editor/utils/pinColorUtils";
+  import { workspace } from "../workspaceState.svelte";
+  import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
 
-  export let open = false;
-  export let openVersion = 0; // Used to trigger re-focusing when menu is re-opened.
-  export let position = { x: 0, y: 0 };
-  export let templates = [];
+  let {
+    open = false,
+    openVersion = 0,
+    position = { x: 0, y: 0 },
+    onclose,
+    onselect,
+  }: {
+    open: boolean;
+    openVersion: number;
+    position: { x: number; y: number };
+    onclose: () => void;
+    onselect: (template: any) => void;
+  } = $props();
 
-  const dispatch = createEventDispatcher();
+  interface IndexedTemplate {
+    flatIndex: number;
+    template: NodeTemplate;
+  }
 
-  let searchQuery = '';
-  let searchInput;
-  let menuElement;
-  let resultListElement;
+  let searchQuery = $state("");
+  let searchInput: HTMLInputElement | undefined = $state();
+  let menuElement: HTMLElement | undefined = $state();
+  let resultListElement: HTMLElement | undefined = $state();
   let activeIndex = 0;
-  let lastSearchQuery = '';
+  let lastSearchQuery = "";
   let lastFocusedOpenVersion = -1;
 
-  $: if (open && openVersion !== lastFocusedOpenVersion) {
-    searchQuery = '';
-    activeIndex = 0;
-    lastFocusedOpenVersion = openVersion;
-    tick().then(() => searchInput?.focus());
-  }
-
-  $: filteredTemplates = templates.filter((template) => {
-    const haystack = `${template.label} ${template.category ?? ''}`.toLowerCase();
-    return haystack.includes(searchQuery.trim().toLowerCase());
-  });
-
-  $: groupedTemplateEntries = annotateGroupedTemplates(groupTemplates(filteredTemplates));
-  $: flatTemplates = groupedTemplateEntries.flatMap((group) =>
-    group.items.map((item) => item.template)
+  let availableTemplates = $derived(
+    workspace.context ? Object.values(workspace.context.nodeTemplatesById) : [],
   );
 
-  $: if (searchQuery !== lastSearchQuery) {
-    lastSearchQuery = searchQuery;
-    activeIndex = 0;
-  }
+  let filteredTemplates = $derived(
+    availableTemplates
+      .filter(template => {
+        const haystack = `${template.defaultTitle} ${template.category ?? ""}`.toLowerCase();
+        return haystack.includes(searchQuery.trim().toLowerCase());
+      })
+      .map((template, index) => ({ flatIndex: index, template }) as IndexedTemplate),
+  );
 
-  $: if (activeIndex >= flatTemplates.length) {
-    activeIndex = Math.max(0, flatTemplates.length - 1);
-  }
+  let filteredTemplatesByCategory = $derived(
+    filteredTemplates.reduce(
+      (dict, idxTemplate) => {
+        const category = idxTemplate.template.category ?? "Uncategorized";
+        return { ...dict, [category]: [...(dict[category] ?? []), idxTemplate] };
+      },
+      {} as Record<string, IndexedTemplate[]>,
+    ),
+  );
 
-  $: if (open && flatTemplates.length > 0 && activeIndex >= 0) {
-    tick().then(() => {
-      scrollActiveTemplateIntoView();
-    });
-  }
-
-  function groupTemplates(sourceTemplates) {
-    const grouped = new Map();
-
-    for (const template of sourceTemplates) {
-      const category = typeof template?.category === 'string' && template.category.trim()
-        ? template.category.trim()
-        : 'Other';
-
-      if (!grouped.has(category)) {
-        grouped.set(category, []);
-      }
-      grouped.get(category).push(template);
+  $effect(() => {
+    if (open && openVersion !== lastFocusedOpenVersion) {
+      searchQuery = "";
+      activeIndex = 0;
+      lastFocusedOpenVersion = openVersion;
+      tick().then(() => searchInput?.focus());
     }
+  });
 
-    return Array.from(grouped.entries()).map(([category, items]) => ({
-      category,
-      items,
-    }));
-  }
+  $effect(() => {
+    if (searchQuery !== lastSearchQuery) {
+      lastSearchQuery = searchQuery;
+      activeIndex = 0;
+    }
+  });
 
-  function annotateGroupedTemplates(groups) {
-    let nextFlatIndex = 0;
-    return groups.map((group) => ({
-      category: group.category,
-      items: group.items.map((template) => ({
-        template,
-        flatIndex: nextFlatIndex++,
-      })),
-    }));
-  }
+  $effect(() => {
+    if (activeIndex >= filteredTemplates.length) {
+      activeIndex = Math.max(0, filteredTemplates.length - 1);
+    }
+  });
 
-  function selectTemplate(template) {
-    dispatch('select', { template });
-  }
-
-  function closeMenu() {
-    dispatch('close');
-  }
+  $effect(() => {
+    if (open && filteredTemplates.length > 0 && activeIndex >= 0) {
+      tick().then(() => {
+        scrollActiveTemplateIntoView();
+      });
+    }
+  });
 
   function handleKeyDown(event) {
     if (!open) {
       return;
     }
 
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
-      closeMenu();
+      onclose();
       return;
     }
 
-    if (flatTemplates.length === 0) {
+    if (filteredTemplates.length === 0) {
       return;
     }
 
-    if (event.key === 'ArrowDown') {
+    if (event.key === "ArrowDown") {
       event.preventDefault();
       event.stopPropagation();
-      activeIndex = (activeIndex + 1) % flatTemplates.length;
+      activeIndex = (activeIndex + 1) % filteredTemplates.length;
       tick().then(() => scrollActiveTemplateIntoView());
       return;
     }
 
-    if (event.key === 'ArrowUp') {
+    if (event.key === "ArrowUp") {
       event.preventDefault();
       event.stopPropagation();
-      activeIndex = (activeIndex - 1 + flatTemplates.length) % flatTemplates.length;
+      activeIndex = (activeIndex - 1 + filteredTemplates.length) % filteredTemplates.length;
       tick().then(() => scrollActiveTemplateIntoView());
       return;
     }
 
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
-      selectTemplate(flatTemplates[activeIndex] ?? flatTemplates[0]);
+      onselect(filteredTemplates[activeIndex] ?? filteredTemplates[0]);
     }
   }
 
@@ -131,22 +127,10 @@
     const itemElements = resultListElement?.querySelectorAll?.('[data-add-node-menu-item="true"]');
     const activeItemElement = itemElements?.[activeIndex];
 
+    // FIXME
+
     if (!resultListElement || !activeItemElement) {
       return;
-    }
-
-    const itemTop = activeItemElement.offsetTop;
-    const itemBottom = itemTop + activeItemElement.offsetHeight;
-    const viewTop = resultListElement.scrollTop;
-    const viewBottom = viewTop + resultListElement.clientHeight;
-
-    if (itemTop < viewTop) {
-      resultListElement.scrollTop = itemTop;
-      return;
-    }
-
-    if (itemBottom > viewBottom) {
-      resultListElement.scrollTop = itemBottom - resultListElement.clientHeight;
     }
   }
 
@@ -155,13 +139,13 @@
   }
 
   function setActiveTemplate(flatIndex) {
-    if (flatIndex >= 0 && flatIndex < flatTemplates.length) {
+    if (flatIndex >= 0 && flatIndex < filteredTemplates.length) {
       activeIndex = flatIndex;
     }
   }
 
   function readTemplateColor(template) {
-    if (typeof template?.nodeColor === 'string' && template.nodeColor.trim()) {
+    if (typeof template?.nodeColor === "string" && template.nodeColor.trim()) {
       return template.nodeColor.trim();
     }
 
@@ -195,16 +179,18 @@
       class="relative mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-auto pr-0.5"
       role="listbox"
     >
-      {#if groupedTemplateEntries.length === 0}
+      {#if Object.keys(filteredTemplatesByCategory).length === 0}
         <div class="text-xs text-vsc-muted">No matching node types</div>
       {:else}
-        {#each groupedTemplateEntries as group}
+        {#each Object.entries(filteredTemplatesByCategory) as [category, templates]}
           <div class="flex flex-col gap-1.5">
-            <div class="flex items-center gap-2 px-1 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">
-              <span>{group.category}</span>
-              <span class="h-px flex-1 bg-vsc-editor-widget-border"></span>
+            <div
+              class="flex items-center gap-2 px-1 text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted"
+            >
+              <span>{category}</span>
+              <span class="flex-1 h-px bg-vsc-editor-widget-border"></span>
             </div>
-            {#each group.items as item (item.flatIndex)}
+            {#each templates as item (item.template.defaultTitle)}
               <button
                 data-add-node-menu-item="true"
                 class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip"
@@ -216,7 +202,7 @@
                 role="option"
                 type="button"
                 onmouseenter={() => setActiveTemplate(item.flatIndex)}
-                onclick={() => selectTemplate(item.template)}
+                onclick={() => onselect(item.template)}
               >
                 <span
                   aria-hidden="true"
@@ -224,8 +210,10 @@
                   style="background-color: {readTemplateColor(item.template)};"
                 ></span>
 
-                <span class="min-w-0 flex-1">
-                  <span class="block truncate text-xs font-semibold">{item.template.label}</span>
+                <span class="flex-1 min-w-0">
+                  <span class="block text-xs font-semibold truncate"
+                    >{item.template.defaultTitle}</span
+                  >
                 </span>
               </button>
             {/each}

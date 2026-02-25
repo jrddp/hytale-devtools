@@ -1,12 +1,12 @@
 import {
     asHytaleDevtoolsPayload,
-    HytaleDevtoolsAssetPathSemantics,
-    HytaleDevtoolsInlineOrReferenceSemantics,
-    HytaleDevtoolsLocalizationLocaleStrategy,
+    type HytaleDevtoolsAssetPathSemantics,
+    type HytaleDevtoolsInlineOrReferenceSemantics,
+    type HytaleDevtoolsLocalizationLocaleStrategy,
     HytaleDevtoolsPayload,
-    HytaleDevtoolsSymbolReferenceSource
+    type HytaleDevtoolsSymbolReferenceSource
 } from './hytaleDevtoolsPayload';
-import { LoadedIndexShard } from './companion/types';
+import { type LoadedIndexShard } from './companion/types';
 
 const INDEX_KIND_REGISTERED_ASSETS = 'registeredAssets';
 const INDEX_KIND_EXPORTS_BY_FAMILY = 'exportsByFamily';

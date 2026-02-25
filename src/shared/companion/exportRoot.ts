@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { resolvePatchlineFromWorkspace } from '../../utils/hytalePaths';
 
 export type SupportedPatchline = 'release' | 'pre-release';

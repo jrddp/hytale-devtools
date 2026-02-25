@@ -1,14 +1,17 @@
-<script>
-  import { getFieldLabel } from '../node-editor/fieldValueUtils.js';
+<script lang="ts">
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
 
-  export let field;
-  export let hasNestedFields = true;
+  let {
+    schemaKey,
+    label,
+    hasNestedFields = true,
+  }: NodeField & { onchange: (value: unknown) => void; hasNestedFields?: boolean } = $props();
 
-  $: label = getFieldLabel(field);
+  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
 </script>
 
 <div class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2">
-  <div class="text-xs font-bold uppercase text-vsc-muted">{label}</div>
+  <div class="text-xs font-bold uppercase text-vsc-muted">{fieldLabel}</div>
   <div class="flex flex-col gap-1.5">
     {#if hasNestedFields}
       <slot />

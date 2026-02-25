@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
-import { parseJsonc } from '../utils/jsonc';
 import { detectHytaleModWorkspace, rewriteLaunchArgs } from './changeModPatchline';
+import { safeParseJSONFile } from '../shared/fileUtils';
 
 const LAUNCH_CONFIG_RELATIVE_PATH = path.join('.vscode', 'launch.json');
 const COMPANION_CONFIG_RELATIVE_PATH = path.join('run', 'mods', 'kokeria_HytaleDevtoolsCompanion', 'config.json');
@@ -64,10 +64,9 @@ async function updateLaunchJsonForCompanionSupport(
         return;
     }
 
-    const rawContent = fs.readFileSync(launchConfigPath, 'utf8');
     let parsedDocument: LaunchConfigurationDocument;
     try {
-        parsedDocument = parseJsonc(rawContent) as LaunchConfigurationDocument;
+        parsedDocument = safeParseJSONFile(launchConfigPath) as LaunchConfigurationDocument;
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(`Launch config at "${launchConfigPath}" is not valid JSON: ${message}`);
