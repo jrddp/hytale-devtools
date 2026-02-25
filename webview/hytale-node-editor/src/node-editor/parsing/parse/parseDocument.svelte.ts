@@ -23,7 +23,7 @@ export interface Position {
 
 export type NodeAssetJson = {
   $NodeId?: string | undefined;
-  $Position?: Position | undefined;
+  $Position?: Position | undefined; // legacy only position definition
   $Comment?: string;
   [key: string]: unknown;
 };

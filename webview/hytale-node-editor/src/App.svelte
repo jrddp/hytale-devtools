@@ -137,7 +137,7 @@
 
     const payload: Extract<WebviewToExtensionMessage, { type: "apply" }> = {
       type: "apply",
-      text: JSON.stringify(serialized.state),
+      text: JSON.stringify(serialized, null, "\t"),
       sourceVersion,
     };
 

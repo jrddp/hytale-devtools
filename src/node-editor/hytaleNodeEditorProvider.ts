@@ -6,6 +6,7 @@ import type {
   ExtensionToWebviewMessage,
   WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
+import { LOGGER } from "../extension";
 
 type ViteManifestEntry = {
   file: string;
@@ -252,6 +253,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     updateWebview: () => void,
   ): Promise<void> {
     if (typeof message.text !== "string") {
+      LOGGER.error("Unable to apply edit from node editor! Message text not parsed as string.");
       return;
     }
 

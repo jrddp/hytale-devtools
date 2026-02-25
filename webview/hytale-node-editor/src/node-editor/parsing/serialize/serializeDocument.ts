@@ -44,9 +44,13 @@ export function serializeDocument(
     }
     unprocessedNodeIds.delete(nodeId);
     const node = nodesById.get(nodeId);
-    const json: NodeAssetJson = {};
+    let json: NodeAssetJson = {
+      $NodeId: node.id,
+      $Comment: (node.data.comment as string) ?? undefined,
+    };
     switch (node.type) {
       case "datanode":
+        // # Recursive serialize children
         node.data.outputPins.forEach(pin => {
           const connectedNodeIds = outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
           if (connectedNodeIds.length > 0) {
@@ -67,11 +71,17 @@ export function serializeDocument(
             }
           }
         });
+        // # Serialize fields
         Object.values(node.data.fieldsBySchemaKey).forEach(field => {
           json[field.schemaKey] = field.value;
         });
-        json.$NodeID = node.id;
-        json.$Comment = node.data.comment ?? undefined;
+        // # Serialize retained unparsed metadata and schema constants
+        json = {
+          ...json,
+          ...node.data.unparsedMetadata,
+          ...node.data.schemaConstants,
+        };
+        // # Process editor metadata
         nodeEditorMetadata.$Nodes[node.id] = {
           $Position: {
             $x: node.position.x,
@@ -131,7 +141,10 @@ export function serializeDocument(
 
   while (unprocessedNodeIds.size > 0) {
     const [nodeId] = unprocessedNodeIds;
-    nodeEditorMetadata.$FloatingNodes.push(recursiveSerializeNode(nodeId));
+    const newRoot = recursiveSerializeNode(nodeId);
+    if (newRoot) {
+      nodeEditorMetadata.$FloatingNodes.push(newRoot);
+    }
   }
 
   return {
