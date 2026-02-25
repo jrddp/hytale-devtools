@@ -3,16 +3,12 @@
   import { MessageCircleMore, Pencil } from "lucide-svelte";
   import { tick } from "svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
-  import {
-    CUSTOM_MUTATION_EVENT,
-    type DataNodeType,
-    INPUT_HANDLE_ID,
-  } from "../common";
+  import { CUSTOM_MUTATION_EVENT, type DataNodeType, INPUT_HANDLE_ID } from "../common";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { getDefaultPinColor } from "../node-editor/utils/pinColorUtils";
+  import { getDefaultPinColor, readColorForCss } from "../node-editor/utils/colors";
   import NodeCommentEditor from "./NodeCommentEditor.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
 
@@ -50,7 +46,6 @@
   let contentMinHeightPx = $derived(
     readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX,
   );
-  let nodeAccentColor = $derived(nodeColor ?? getDefaultPinColor());
   let nodeLabel = $derived(titleOverride ?? defaultTitle);
   let inputConnectionIndexPrefix = $derived(
     inputConnectionIndex !== undefined ? `[${inputConnectionIndex}]` : undefined,
@@ -276,7 +271,7 @@
   <div
     aria-hidden="true"
     class="absolute inset-x-0 top-0 z-10 h-1 rounded-t-lg pointer-events-none"
-    style="background-color: {nodeAccentColor};"
+    style="background-color: {readColorForCss(nodeColor)};"
   ></div>
 
   <div class="flex flex-col gap-1">

@@ -2,7 +2,6 @@
   console.log("Add Menu attempted to exist.");
 
   import { tick } from "svelte";
-  import { getDefaultPinColor } from "../node-editor/utils/pinColorUtils";
   import { workspace } from "../workspaceState.svelte";
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import {
@@ -12,6 +11,7 @@
     LINK_TEMPLATE_ID,
     RAW_JSON_TEMPLATE_ID,
   } from "src/common";
+  import { readColorForCss } from "src/node-editor/utils/colors";
 
   let {
     open = false,
@@ -196,14 +196,6 @@
       activeIndex = flatIndex;
     }
   }
-
-  function readTemplateColor(template) {
-    if (typeof template?.nodeColor === "string" && template.nodeColor.trim()) {
-      return template.nodeColor.trim();
-    }
-
-    return getDefaultPinColor();
-  }
 </script>
 
 {#if open}
@@ -260,7 +252,7 @@
                 <span
                   aria-hidden="true"
                   class="relative h-8 w-2.5"
-                  style="background-color: {readTemplateColor(item.template)};"
+                  style="background-color: {readColorForCss(item.template.nodeColor)};"
                 ></span>
 
                 <span class="flex-1 min-w-0">

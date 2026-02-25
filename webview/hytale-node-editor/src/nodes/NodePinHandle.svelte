@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Handle, Position } from "@xyflow/svelte";
   import HoverTooltip from "../components/HoverTooltip.svelte";
-  import { getDefaultPinColor, readPinColor } from "../node-editor/utils/pinColorUtils";
+  import { readColorForCss } from "../node-editor/utils/colors";
 
   export let id;
   export let type = "target";
@@ -20,7 +20,6 @@
   $: pinWidth = readPinWidth(width);
   $: pinDiameter = readPinDiameter(pinWidth);
   $: pinLabel = typeof label === "string" ? label : "";
-  $: pinColor = readPinColor(color) ?? getDefaultPinColor();
   $: pinMultiplicity = readConnectionMultiplicity(connectionMultiplicity);
   $: pinSideClass = pinSide === "right" ? "right-0" : "left-0";
   $: pinShapeClass = readPinShapeClass(pinMultiplicity, pinSide);
@@ -94,7 +93,7 @@
   position={pinPosition}
   {id}
   style="top: {pinTop}; height: {pinDiameter};"
-  class="w-px! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! [transform:translate(0,-50%)]"
+  class="w-px! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! transform-[translate(0,-50%)]"
 >
   {#if showTooltip && pinLabel}
     <HoverTooltip
@@ -107,16 +106,18 @@
       <span
         aria-hidden="true"
         class="absolute top-1/2 -translate-y-1/2 {pinSideClass} {pinShapeClass}"
-        style="width: {pinWidth}; height: {pinDiameter}; background-color: {pinColor}; clip-path: {pinClipPath ||
-          'none'};"
+        style="width: {pinWidth}; height: {pinDiameter}; background-color: {readColorForCss(
+          color,
+        )}; clip-path: {pinClipPath || 'none'};"
       ></span>
     </HoverTooltip>
   {:else}
     <span
       aria-hidden="true"
       class="absolute top-1/2 -translate-y-1/2 {pinSideClass} {pinShapeClass}"
-      style="width: {pinWidth}; height: {pinDiameter}; background-color: {pinColor}; clip-path: {pinClipPath ||
-        'none'};"
+      style="width: {pinWidth}; height: {pinDiameter}; background-color: {readColorForCss(
+        color,
+      )}; clip-path: {pinClipPath || 'none'};"
     ></span>
   {/if}
 </Handle>
