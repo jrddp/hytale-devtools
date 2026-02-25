@@ -3,7 +3,7 @@
   import { Pencil } from "lucide-svelte";
   import { tick } from "svelte";
   import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
-  import { GROUP_MUTATION_EVENT } from "../node-editor/graph/graphTypes";
+  import { GROUP_MUTATION_EVENT } from "../common";
 
   const DEFAULT_GROUP_NAME = "Group";
   const MIN_GROUP_WIDTH = 180;

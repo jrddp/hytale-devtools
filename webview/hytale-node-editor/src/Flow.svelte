@@ -13,7 +13,12 @@
   import "@xyflow/svelte/dist/style.css";
   import { type Component, tick } from "svelte";
 
-  import { type NodePin } from "@shared/node-editor/workspaceTypes";
+  import { type NodePin, type NodeTemplate } from "@shared/node-editor/workspaceTypes";
+  import AddNodeMenu from "src/components/AddNodeMenu.svelte";
+  import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
+  import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
+  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
+  import { createNodeId } from "src/node-editor/utils/idUtils";
   import type {
     CommentNodeType,
     DataNodeType,
@@ -22,23 +27,25 @@
     GroupNodeType,
     LinkNodeType,
     RawJsonNodeType,
-  } from "./node-editor/graph/graphTypes";
+  } from "./common";
   import {
+    DEFAULT_COMMENT_FONT_SIZE,
+    DEFAULT_COMMENT_HEIGHT,
+    DEFAULT_COMMENT_WIDTH,
     COMMENT_NODE_TYPE,
+    COMMENT_TEMPLATE_ID,
     DATA_NODE_TYPE,
-    GENERIC_ACTION_CREATE_COMMENT,
-    GENERIC_ACTION_CREATE_GROUP,
-    GENERIC_ACTION_CREATE_LINK,
-    GENERIC_ACTION_CREATE_RAW_JSON,
-    GENERIC_ADD_CATEGORY,
     GROUP_NODE_TYPE,
+    GROUP_TEMPLATE_ID,
     INPUT_HANDLE_ID,
-    LINK_INPUT_HANDLE_ID,
     LINK_NODE_TYPE,
-    LINK_OUTPUT_HANDLE_ID,
-    RAW_JSON_INPUT_HANDLE_ID,
+    LINK_TEMPLATE_ID,
     RAW_JSON_NODE_TYPE,
-  } from "./node-editor/graph/graphTypes";
+    RAW_JSON_TEMPLATE_ID,
+    DEFAULT_GROUP_WIDTH,
+    DEFAULT_GROUP_HEIGHT,
+    DEFAULT_RAW_JSON_TEXT,
+  } from "./common";
   import {
     collectRecursiveDescendantNodeIds,
     layoutDirectedGraphWithNodeSizes,
@@ -49,23 +56,12 @@
     getNodeEditorQuickActionById,
     NODE_EDITOR_QUICK_ACTION_IDS,
   } from "./node-editor/ui/nodeEditorQuickActions";
-  import {
-    COMMENT_DEFAULT_FONT_SIZE,
-    COMMENT_DEFAULT_HEIGHT,
-    COMMENT_DEFAULT_NAME,
-    COMMENT_DEFAULT_TEXT,
-    COMMENT_DEFAULT_WIDTH,
-  } from "./node-editor/utils/commentMetadata";
   import CommentNode from "./nodes/CommentNode.svelte";
   import DataNode from "./nodes/DataNode.svelte";
   import GroupNode from "./nodes/GroupNode.svelte";
   import LinkNode from "./nodes/LinkNode.svelte";
   import RawJsonNode from "./nodes/RawJsonNode.svelte";
   import { workspace } from "./workspaceState.svelte";
-  import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
-  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
-  import AddNodeMenu from "src/components/AddNodeMenu.svelte";
-  import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
 
   let {
     nodes = $bindable([]),
@@ -90,10 +86,6 @@
   } = $props();
 
   const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
-  const DEFAULT_GROUP_WIDTH = 520;
-  const DEFAULT_GROUP_HEIGHT = 320;
-  const DEFAULT_GROUP_NAME = "Group";
-  const RAW_JSON_DEFAULT_DATA = "{\n\n}";
   const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
   const MIN_FLOW_ZOOM = 0;
   const SEARCH_NODE_FOCUS_DURATION_MS = 100;
@@ -101,37 +93,6 @@
   const GROUP_Z_INDEX_UNSELECTED = -10000;
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
-
-  const GENERIC_ADD_MENU_ENTRIES = [
-    {
-      kind: "generic-action",
-      actionId: GENERIC_ACTION_CREATE_GROUP,
-      category: GENERIC_ADD_CATEGORY,
-      label: "Create New Group",
-      nodeColor: "var(--vscode-focusBorder)",
-    },
-    {
-      kind: "generic-action",
-      actionId: GENERIC_ACTION_CREATE_COMMENT,
-      category: GENERIC_ADD_CATEGORY,
-      label: "Create New Comment",
-      nodeColor: "var(--vscode-descriptionForeground)",
-    },
-    {
-      kind: "generic-action",
-      actionId: GENERIC_ACTION_CREATE_RAW_JSON,
-      category: GENERIC_ADD_CATEGORY,
-      label: "Raw JSON Node",
-      nodeColor: "var(--vscode-focusBorder)",
-    },
-    {
-      kind: "generic-action",
-      actionId: GENERIC_ACTION_CREATE_LINK,
-      category: GENERIC_ADD_CATEGORY,
-      label: "Link",
-      nodeColor: "var(--vscode-descriptionForeground)",
-    },
-  ];
 
   const nodeTypes = {
     [COMMENT_NODE_TYPE]: CommentNode,
@@ -151,9 +112,9 @@
   let lastHandledLoadVersion = -1;
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
 
-  let addMenuOpen = false;
-  let addMenuOpenVersion = 0; // Used to trigger re-focusing when menu is re-opened.
-  let addMenuPosition: XYPosition = { x: 0, y: 0 };
+  let addMenuOpen = $state(false);
+  let addMenuOpenVersion = $state(0); // Used to trigger re-focusing when menu is re-opened.
+  let addMenuPosition: XYPosition = $state({ x: 0, y: 0 });
   let pendingNodePosition: XYPosition = { x: 0, y: 0 };
   let pendingConnection: PendingConnection | undefined;
   let hasAppliedInitialFit = false;
@@ -788,18 +749,13 @@
     }
   };
 
-  function handleMenuSelect(event) {
-    const entry = event?.detail?.template;
-    if (!entry) {
-      return;
-    }
-
-    if (isGenericGroupCreationEntry(entry)) {
+  function handleMenuSelect(template: NodeTemplate) {
+    if (template.templateId === GROUP_TEMPLATE_ID) {
       const newGroupNode: GroupNodeType = {
-        id: `Group-${createUuid()}`,
+        id: createNodeId("Group"),
         type: GROUP_NODE_TYPE,
         data: {
-          name: DEFAULT_GROUP_NAME,
+          name: "Group",
         },
         position: {
           ...pendingNodePosition,
@@ -817,20 +773,20 @@
       return;
     }
 
-    if (isGenericCommentCreationEntry(entry)) {
+    if (template.templateId === COMMENT_TEMPLATE_ID) {
       const newCommentNode: CommentNodeType = {
-        id: `Comment-${createUuid()}`,
+        id: createNodeId("Comment"),
         type: COMMENT_NODE_TYPE,
         data: {
-          name: COMMENT_DEFAULT_NAME,
-          text: COMMENT_DEFAULT_TEXT,
-          fontSize: COMMENT_DEFAULT_FONT_SIZE,
+          name: "Comment",
+          text: "",
+          fontSize: DEFAULT_COMMENT_FONT_SIZE,
         },
         position: {
           ...pendingNodePosition,
         },
-        width: COMMENT_DEFAULT_WIDTH,
-        height: COMMENT_DEFAULT_HEIGHT,
+        width: DEFAULT_COMMENT_WIDTH,
+        height: DEFAULT_COMMENT_HEIGHT,
         selected: false,
       };
 
@@ -840,12 +796,12 @@
       return;
     }
 
-    if (isGenericRawJsonCreationEntry(entry)) {
+    if (template.templateId === RAW_JSON_TEMPLATE_ID) {
       const newRawJsonNode: RawJsonNodeType = {
-        id: `Generic-${createUuid()}`,
+        id: createNodeId("Generic"),
         type: RAW_JSON_NODE_TYPE,
         data: {
-          data: RAW_JSON_DEFAULT_DATA,
+          data: DEFAULT_RAW_JSON_TEXT,
         },
         position: {
           ...pendingNodePosition,
@@ -859,7 +815,7 @@
         const connection: Connection = {
           ...pendingConnection,
           target: newRawJsonNode.id,
-          targetHandle: RAW_JSON_INPUT_HANDLE_ID,
+          targetHandle: INPUT_HANDLE_ID,
         };
 
         edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
@@ -872,9 +828,9 @@
       return;
     }
 
-    if (isGenericLinkCreationEntry(entry)) {
+    if (template.templateId === LINK_TEMPLATE_ID) {
       const newLinkNode: LinkNodeType = {
-        id: `Link-${createUuid()}`,
+        id: createNodeId(""), // original node editor creates links with blank types as the IDs for some reason
         type: LINK_NODE_TYPE,
         data: {},
         position: {
@@ -889,7 +845,7 @@
         const connection: Connection = {
           ...pendingConnection,
           target: newLinkNode.id,
-          targetHandle: LINK_INPUT_HANDLE_ID,
+          targetHandle: INPUT_HANDLE_ID,
         };
 
         edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
@@ -901,9 +857,7 @@
       return;
     }
 
-    const template = entry;
-
-    const newNodeId = `${template}-${createUuid()}`;
+    const newNodeId = createNodeId(template.templateId);
     const newNode: DataNodeType = {
       id: newNodeId,
       type: DATA_NODE_TYPE,
@@ -981,7 +935,14 @@
       return;
     }
 
-    const sourceMultiplicity = readSourceHandleMultiplicity(sourceNodeId, sourceHandleId);
+    const sourceNode = findNodeById(sourceNodeId);
+    let sourceMultiplicity = "single";
+    if (sourceNode.data.outputPins) {
+      sourceMultiplicity =
+        (sourceNode.data.outputPins as NodePin[]).find(pin => pin.schemaKey === sourceHandleId)
+          ?.type ?? "single";
+    }
+
     if (sourceMultiplicity !== "single") {
       return;
     }
@@ -1007,50 +968,6 @@
       sourceHandleId,
       removedEdges,
     };
-  }
-
-  function readSourceHandleMultiplicity(sourceNodeId, sourceHandleId) {
-    const sourceNode = findNodeById(sourceNodeId);
-    const outputPins: NodePin[] | undefined = (sourceNode.data as any).outputPins;
-    const sourcePin = outputPins?.find(pin => pin.schemaKey === sourceHandleId);
-
-    if (sourcePin?.isMap === true) {
-      return "map";
-    }
-
-    if (sourcePin?.multiple === true) {
-      return "multiple";
-    }
-
-    return "single";
-  }
-
-  function readOutputPinConnectionMultiplicity(pin) {
-    if (pin?.isMap === true) {
-      return "map";
-    }
-
-    if (pin?.multiple === true) {
-      return "multiple";
-    }
-
-    return "single";
-  }
-
-  function findInputEdgeForLinkNode(linkNodeId) {
-    if (!linkNodeId) {
-      return undefined;
-    }
-
-    return edges.find(edge => edge.target === linkNodeId && isLinkInputHandleId(edge.targetHandle));
-  }
-
-  function isLinkInputHandleId(candidateHandleId) {
-    return candidateHandleId == null || candidateHandleId === LINK_INPUT_HANDLE_ID;
-  }
-
-  function isLinkOutputHandleId(candidateHandleId) {
-    return candidateHandleId == null || candidateHandleId === LINK_OUTPUT_HANDLE_ID;
   }
 
   function findNodeById(nodeId: string) {
@@ -1109,27 +1026,6 @@
     pendingSingleSourceReplacement = undefined;
   }
 
-  function readSourceConnectionDescriptor(sourceTemplate, sourceHandleId) {
-    const sourceConnectionDescriptors = sourceTemplate?.schemaConnections ?? [];
-    if (sourceConnectionDescriptors.length === 0) {
-      return undefined;
-    }
-
-    let matchedDescriptor = sourceConnectionDescriptors.find(
-      descriptor => descriptor?.outputPinId === sourceHandleId,
-    );
-    if (!matchedDescriptor && !sourceHandleId && sourceConnectionDescriptors.length === 1) {
-      matchedDescriptor = sourceConnectionDescriptors[0];
-    }
-
-    return matchedDescriptor;
-  }
-
-  function findTemplateForNodeId(nodeId) {
-    const node = nodes.find(node => node.id === nodeId);
-    return node.data.templateId;
-  }
-
   function resolvePasteAnchorFlowPosition() {
     if (
       Number.isFinite(lastPointerClientPosition?.x) &&
@@ -1161,14 +1057,6 @@
     }
 
     return "Node";
-  }
-
-  function createUuid() {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-      return crypto.randomUUID();
-    }
-
-    return `${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`;
   }
 
   async function applyInitialFitOnce() {
@@ -1366,30 +1254,6 @@
     return Math.max(minValue, currentValue);
   }
 
-  function isGenericGroupCreationEntry(candidate) {
-    return (
-      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_GROUP
-    );
-  }
-
-  function isGenericCommentCreationEntry(candidate) {
-    return (
-      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_COMMENT
-    );
-  }
-
-  function isGenericRawJsonCreationEntry(candidate) {
-    return (
-      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_RAW_JSON
-    );
-  }
-
-  function isGenericLinkCreationEntry(candidate) {
-    return (
-      candidate?.kind === "generic-action" && candidate?.actionId === GENERIC_ACTION_CREATE_LINK
-    );
-  }
-
   function isDeleteKey(event) {
     const key = event?.key;
     return key === "Delete" || key === "Backspace";
@@ -1462,10 +1326,7 @@
   on:keyup={handleWindowKeyUp}
 />
 
-<div
-  class="relative w-full h-full overflow-hidden"
-  bind:this={flowWrapperElement}
->
+<div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>
   <SvelteFlow
     bind:nodes
     bind:edges

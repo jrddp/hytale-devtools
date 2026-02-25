@@ -1,8 +1,17 @@
 <script lang="ts">
+  console.log("Add Menu attempted to exist.");
+
   import { tick } from "svelte";
   import { getDefaultPinColor } from "../node-editor/utils/pinColorUtils";
   import { workspace } from "../workspaceState.svelte";
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
+  import {
+    COMMENT_TEMPLATE_ID,
+    GENERIC_CATEGORY,
+    GROUP_TEMPLATE_ID,
+    LINK_TEMPLATE_ID,
+    RAW_JSON_TEMPLATE_ID,
+  } from "src/common";
 
   let {
     open = false,
@@ -15,7 +24,7 @@
     openVersion: number;
     position: { x: number; y: number };
     onclose: () => void;
-    onselect: (template: any) => void;
+    onselect: (template: NodeTemplate) => void;
   } = $props();
 
   interface IndexedTemplate {
@@ -31,9 +40,53 @@
   let lastSearchQuery = "";
   let lastFocusedOpenVersion = -1;
 
-  let availableTemplates = $derived(
-    workspace.context ? Object.values(workspace.context.nodeTemplatesById) : [],
-  );
+  const GENERIC_TEMPLATES: NodeTemplate[] = [
+    {
+      templateId: GROUP_TEMPLATE_ID,
+      defaultTitle: "Add Group",
+      childTypes: {},
+      fieldsBySchemaKey: {},
+      inputPins: [],
+      outputPins: [],
+      schemaConstants: {},
+      category: GENERIC_CATEGORY,
+    },
+    {
+      templateId: COMMENT_TEMPLATE_ID,
+      defaultTitle: "Add Comment",
+      childTypes: {},
+      fieldsBySchemaKey: {},
+      inputPins: [],
+      outputPins: [],
+      schemaConstants: {},
+      category: GENERIC_CATEGORY,
+    },
+    {
+      templateId: LINK_TEMPLATE_ID,
+      defaultTitle: "Add Link",
+      childTypes: {},
+      fieldsBySchemaKey: {},
+      inputPins: [],
+      outputPins: [],
+      schemaConstants: {},
+      category: GENERIC_CATEGORY,
+    },
+    {
+      templateId: RAW_JSON_TEMPLATE_ID,
+      defaultTitle: "Raw JSON Node",
+      childTypes: {},
+      fieldsBySchemaKey: {},
+      inputPins: [],
+      outputPins: [],
+      schemaConstants: {},
+      category: GENERIC_CATEGORY,
+    },
+  ];
+
+  let availableTemplates = $derived([
+    ...GENERIC_TEMPLATES,
+    ...(workspace.context ? Object.values(workspace.context.nodeTemplatesById) : []),
+  ]);
 
   let filteredTemplates = $derived(
     availableTemplates
@@ -119,7 +172,7 @@
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
-      onselect(filteredTemplates[activeIndex] ?? filteredTemplates[0]);
+      onselect((filteredTemplates[activeIndex] ?? filteredTemplates[0]).template);
     }
   }
 
@@ -182,7 +235,7 @@
       {#if Object.keys(filteredTemplatesByCategory).length === 0}
         <div class="text-xs text-vsc-muted">No matching node types</div>
       {:else}
-        {#each Object.entries(filteredTemplatesByCategory) as [category, templates]}
+        {#each Object.entries(filteredTemplatesByCategory) as [category, templates] (category)}
           <div class="flex flex-col gap-1.5">
             <div
               class="flex items-center gap-2 px-1 text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted"
@@ -190,7 +243,7 @@
               <span>{category}</span>
               <span class="flex-1 h-px bg-vsc-editor-widget-border"></span>
             </div>
-            {#each templates as item (item.template.defaultTitle)}
+            {#each templates as item (item.template.templateId)}
               <button
                 data-add-node-menu-item="true"
                 class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip"

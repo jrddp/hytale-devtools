@@ -2,50 +2,44 @@
   import { useSvelteFlow } from "@xyflow/svelte";
   import { tick } from "svelte";
   import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
-  import {
-    COMMENT_MAX_FONT_SIZE,
-    COMMENT_MIN_FONT_SIZE,
-    COMMENT_MIN_HEIGHT,
-    COMMENT_MIN_WIDTH,
-    readCommentFontSize,
-    readCommentName,
-    readCommentText,
-  } from "../node-editor/utils/commentMetadata";
-  import { COMMENT_MUTATION_EVENT } from "../node-editor/graph/graphTypes";
+  import { COMMENT_MUTATION_EVENT, type CommentNodeType } from "../common";
 
-  export let id;
-  export let data = {};
-  export let selected = false;
-  export let dragging = false;
+  let { id, data, selected = false, dragging = false }: CommentNodeType = $props();
 
   const { updateNodeData, updateNode, getNodes, getEdges, updateEdge } = useSvelteFlow();
 
-  $: commentName = readCommentName(data?.name);
-  $: commentText = readCommentText(data?.text);
-  $: commentFontSizePx = readCommentFontSize(data?.fontSize);
-  $: titleFontSizePx = Math.max(11, Math.round(commentFontSizePx + 1));
-  $: commentLineHeightPx = Math.max(16, Math.round(commentFontSizePx * 1.35));
-  $: if (!isEditingTitle) {
-    titleDraft = commentName;
-  }
-  $: if (!isEditingText) {
-    textDraft = commentText;
-  }
-  $: if (!isEditingFontSize) {
-    fontSizeDraft = String(commentFontSizePx);
-  }
+  $effect(() => {
+    if (!isEditingTitle) {
+      titleDraft = data.name;
+    }
+  });
 
-  let isEditingTitle = false;
+  $effect(() => {
+    if (!isEditingText) {
+      textDraft = data.name;
+    }
+  });
+
+  $effect(() => {
+    if (!isEditingFontSize) {
+      fontSizeDraft = data.fontSize;
+    }
+  });
+
+  const MIN_FONT_SIZE = 8;
+  const MAX_FONT_SIZE = 128;
+
+  let isEditingTitle = $state(false);
   let isEditingText = false;
   let isEditingFontSize = false;
-  let titleDraft = "";
-  let textDraft = "";
-  let fontSizeDraft = "";
-  let titleInputElement;
+  let titleDraft = $state("");
+  let textDraft = $state("");
+  let fontSizeDraft = $derived(data.fontSize);
+  let titleInputElement = $state<HTMLInputElement | undefined>();
 
   async function beginTitleEditing() {
     isEditingTitle = true;
-    titleDraft = commentName;
+    titleDraft = data.name;
     await tick();
     titleInputElement?.focus();
     titleInputElement?.select();
@@ -56,8 +50,8 @@
       return;
     }
 
-    const nextTitle = readCommentName(titleDraft);
-    const didChange = nextTitle !== commentName;
+    const nextTitle = titleDraft;
+    const didChange = nextTitle !== data.name;
     if (didChange) {
       applyCommentPatch({
         name: nextTitle,
@@ -77,8 +71,8 @@
       return;
     }
 
-    const nextText = readCommentText(textDraft);
-    const didChange = nextText !== commentText;
+    const nextText = textDraft;
+    const didChange = nextText !== data.text;
     if (didChange) {
       applyCommentPatch({
         text: nextText,
@@ -95,7 +89,7 @@
     }
 
     isEditingText = false;
-    textDraft = commentText;
+    textDraft = data.text;
   }
 
   function handleTextInput(event) {
@@ -122,8 +116,8 @@
       return;
     }
 
-    const nextFontSize = readCommentFontSize(fontSizeDraft);
-    const didChange = nextFontSize !== commentFontSizePx;
+    const nextFontSize = fontSizeDraft;
+    const didChange = nextFontSize !== data.fontSize;
     if (didChange) {
       applyCommentPatch({
         fontSize: nextFontSize,
@@ -140,7 +134,7 @@
     }
 
     isEditingFontSize = false;
-    fontSizeDraft = String(commentFontSizePx);
+    fontSizeDraft = data.fontSize;
   }
 
   function handleFontSizeInput(event) {
@@ -169,7 +163,7 @@
     }
 
     isEditingTitle = false;
-    titleDraft = commentName;
+    titleDraft = data.name;
   }
 
   function handleTitleInputKeydown(event) {
@@ -244,11 +238,11 @@
     notifyCommentMutation("comment-resized");
   }
 
-  function applyCommentPatch(patch) {
+  function applyCommentPatch(patch: { name?: string; text?: string; fontSize?: number }) {
     updateNodeData(id, {
-      name: commentName,
-      text: commentText,
-      fontSize: commentFontSizePx,
+      name: data.name,
+      text: data.text,
+      fontSize: data.fontSize,
       ...patch,
     });
   }
@@ -264,10 +258,9 @@
           nodeId: id,
           reason,
         },
-      })
+      }),
     );
   }
-
 </script>
 
 <div
@@ -284,7 +277,7 @@
       <input
         bind:this={titleInputElement}
         class="nodrag min-w-0 flex-1 appearance-none rounded border border-vsc-input-border bg-vsc-input-bg px-1 py-0.5 font-semibold text-vsc-input-fg outline-none focus:border-vsc-focus"
-        style:font-size={`${titleFontSizePx}px`}
+        style:font-size={`${data.fontSize}px`}
         type="text"
         aria-label="Comment title"
         value={titleDraft}
@@ -294,14 +287,14 @@
       />
     {:else}
       <button
-        class="min-w-0 flex-1 truncate text-left font-semibold text-vsc-input-fg cursor-grab active:cursor-grabbing select-none"
-        style:font-size={`${titleFontSizePx}px`}
+        class="flex-1 min-w-0 font-semibold text-left truncate select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
+        style:font-size={`${data.fontSize}px`}
         type="button"
         ondblclick={beginTitleEditing}
         onkeydown={handleTitleDisplayKeydown}
-        aria-label={`Comment title: ${commentName}. Double click to rename`}
+        aria-label={`Comment title: ${data.name}. Double click to rename`}
       >
-        {commentName}
+        {data.name}
       </button>
     {/if}
 
@@ -312,8 +305,8 @@
       <input
         class="w-10 border-0 bg-transparent p-0 text-right text-[10px] font-semibold text-vsc-muted outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         type="number"
-        min={COMMENT_MIN_FONT_SIZE}
-        max={COMMENT_MAX_FONT_SIZE}
+        min={MIN_FONT_SIZE}
+        max={MAX_FONT_SIZE}
         step="1"
         aria-label="Comment font size"
         value={fontSizeDraft}
@@ -328,8 +321,7 @@
 
   <textarea
     class="nodrag h-[calc(100%-2.75rem)] w-full resize-none border-0 bg-transparent p-2 text-vsc-editor-fg outline-none placeholder:text-vsc-muted"
-    style:font-size={`${commentFontSizePx}px`}
-    style:line-height={`${commentLineHeightPx}px`}
+    style:font-size={`${data.fontSize}px`}
     aria-label="Comment text"
     placeholder="Write a note..."
     value={textDraft}
@@ -339,10 +331,5 @@
     onblur={commitTextEditing}
   ></textarea>
 
-  <ZoomCompensatedNodeResizer
-    isVisible={selected && !dragging}
-    minWidth={COMMENT_MIN_WIDTH}
-    minHeight={COMMENT_MIN_HEIGHT}
-    onResizeEnd={handleResizeEnd}
-  />
+  <ZoomCompensatedNodeResizer isVisible={selected && !dragging} onResizeEnd={handleResizeEnd} />
 </div>

@@ -10,19 +10,13 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import {
-    RAW_JSON_INPUT_HANDLE_ID,
-    RAW_JSON_MUTATION_EVENT,
-    type RawJsonNodeType,
-  } from "../node-editor/graph/graphTypes";
+  import { INPUT_HANDLE_ID, DEFAULT_RAW_JSON_TEXT, DEFAULT_RAW_JSON_LABEL, RAW_JSON_MUTATION_EVENT, type RawJsonNodeType } from "../common";
 
   const RAW_JSON_FIELD: NodeField = {
     schemaKey: "Data",
     label: "Data",
     type: "text",
   };
-  const RAW_JSON_DEFAULT_DATA = "{\n\n}";
-  const RAW_JSON_DEFAULT_LABEL = "Raw JSON Node";
   const NODE_MIN_WIDTH_PX = 288;
   const NODE_ACCENT_COLOR = "var(--vscode-focusBorder)";
   const PIN_WIDTH = 10;
@@ -36,7 +30,7 @@
   const NODE_TITLE_OVERRIDE_DATA_KEY = "nodeTitle";
   const NODE_INPUT_INDEX_DATA_KEY = "inputIndex";
 
-  const nodeLabel = $derived(data.titleOverride ?? RAW_JSON_DEFAULT_LABEL);
+  const nodeLabel = $derived(data.titleOverride ?? DEFAULT_RAW_JSON_LABEL);
   const inputConnectionIndex = $derived(
     readInputConnectionIndex(data?.[NODE_INPUT_INDEX_DATA_KEY]),
   );
@@ -46,7 +40,7 @@
   const commentInputId = $derived(`comment-${id ?? "node"}`);
   const commentValue = $derived(typeof data?.comment === "string" ? data.comment : "");
   const dataFieldValue = $derived(
-    typeof data?.data === "string" ? data.data : RAW_JSON_DEFAULT_DATA,
+    typeof data?.data === "string" ? data.data : DEFAULT_RAW_JSON_TEXT,
   );
 
   $effect(() => {
@@ -70,7 +64,7 @@
 
   function updateData(nextValue) {
     updateNodeData(id, {
-      data: typeof nextValue === "string" ? nextValue : String(nextValue ?? RAW_JSON_DEFAULT_DATA),
+      data: typeof nextValue === "string" ? nextValue : String(nextValue ?? DEFAULT_RAW_JSON_TEXT),
     });
     notifyRawJsonMutation("raw-json-field-updated");
   }
@@ -278,11 +272,11 @@
     />
   </div>
 
-  <div class="px-[18px] py-2">
+  <div class="px-4.5 py-2">
     <NodePinHandle
       type="target"
       side="left"
-      id={RAW_JSON_INPUT_HANDLE_ID}
+      id={INPUT_HANDLE_ID}
       top={PIN_TOP}
       width={PIN_WIDTH}
       label="Input"

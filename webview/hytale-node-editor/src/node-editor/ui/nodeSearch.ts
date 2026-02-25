@@ -4,7 +4,7 @@ import {
   GROUP_NODE_TYPE,
   LINK_NODE_TYPE,
   RAW_JSON_NODE_TYPE,
-} from "../graph/graphTypes.js";
+} from "../../common.js";
 import { getDefaultPinColor } from "../utils/pinColorUtils.js";
 
 const UNGROUPED_GROUP_ID = "__ungrouped__";

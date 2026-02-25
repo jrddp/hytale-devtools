@@ -7,7 +7,7 @@
     CUSTOM_MUTATION_EVENT,
     type DataNodeType,
     INPUT_HANDLE_ID,
-  } from "../node-editor/graph/graphTypes";
+  } from "../common";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,

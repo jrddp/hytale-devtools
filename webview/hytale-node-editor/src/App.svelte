@@ -14,7 +14,7 @@
     getNodeEditorQuickActionByCommandId,
     getNodeEditorQuickActionById,
   } from "./node-editor/ui/nodeEditorQuickActions";
-  import { type FlowEdge, type FlowNode } from "src/node-editor/graph/graphTypes";
+  import { type FlowEdge, type FlowNode } from "src/common";
   import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument.svelte";
   import { serializeDocument } from "src/node-editor/parsing/serialize/serializeDocument";
 

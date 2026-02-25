@@ -7,26 +7,30 @@ export const LINK_NODE_TYPE = "link";
 export const GROUP_NODE_TYPE = "group";
 export const COMMENT_NODE_TYPE = "comment";
 
-export const RAW_JSON_INPUT_HANDLE_ID = "input";
-export const LINK_INPUT_HANDLE_ID = "input";
+export const INPUT_HANDLE_ID = "input";
 export const LINK_OUTPUT_HANDLE_ID = "output";
 
-export const INPUT_HANDLE_ID = "input";
-export const GENERIC_ADD_CATEGORY = "Generic";
-export const GENERIC_ACTION_CREATE_GROUP = "create-group";
-export const GENERIC_ACTION_CREATE_COMMENT = "create-comment";
-export const GENERIC_ACTION_CREATE_RAW_JSON = "create-raw-json";
-export const GENERIC_ACTION_CREATE_LINK = "create-link";
+export const GENERIC_CATEGORY = "Generic";
+export const GROUP_TEMPLATE_ID = "$Group";
+export const COMMENT_TEMPLATE_ID = "$Comment";
+export const RAW_JSON_TEMPLATE_ID = "$RawJson";
+export const LINK_TEMPLATE_ID = "$Link";
+
 export const GROUP_MUTATION_EVENT = "hytale-node-editor-group-mutation";
 export const COMMENT_MUTATION_EVENT = "hytale-node-editor-comment-mutation";
 export const CUSTOM_MUTATION_EVENT = "hytale-node-editor-custom-mutation";
 export const RAW_JSON_MUTATION_EVENT = "hytale-node-editor-raw-json-mutation";
 export const LINK_MUTATION_EVENT = "hytale-node-editor-link-mutation";
-export const NODE_FIELD_VALUES_DATA_KEY = "values";
-export const NODE_SCHEMA_INFO_DATA_KEY = "schemaInfo";
-export const NODE_COMMENT_DATA_KEY = "comment";
-export const PAYLOAD_TEMPLATE_ID_KEY = "$TemplateId";
-export const PAYLOAD_EDITOR_FIELDS_KEY = "$EditorFields";
+
+export const DEFAULT_COMMENT_WIDTH = 200;
+export const DEFAULT_COMMENT_HEIGHT = 100;
+export const DEFAULT_COMMENT_FONT_SIZE = 9;
+
+export const DEFAULT_GROUP_WIDTH = 520;
+export const DEFAULT_GROUP_HEIGHT = 320;
+
+export const DEFAULT_RAW_JSON_TEXT = "{\n\n}";
+export const DEFAULT_RAW_JSON_LABEL = "Raw JSON Node";
 
 export interface NodeBase extends Record<string, unknown> {
   titleOverride?: string;

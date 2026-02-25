@@ -1,4 +1,4 @@
-import { FlowEdge, FlowNode } from "src/node-editor/graph/graphTypes";
+import { FlowEdge, FlowNode } from "src/common";
 import {
   AssetDocumentShape,
   NodeAssetJson,
@@ -44,12 +44,11 @@ export function serializeDocument(
     }
     unprocessedNodeIds.delete(nodeId);
     const node = nodesById.get(nodeId);
-    let json: NodeAssetJson = {
-      $NodeId: node.id,
-      $Comment: (node.data.comment as string) ?? undefined,
-    };
+    let json: NodeAssetJson = {};
     switch (node.type) {
       case "datanode":
+        json.$NodeId = node.id;
+        json.$Comment = node.data.comment ?? undefined;
         // # Recursive serialize children
         node.data.outputPins.forEach(pin => {
           const connectedNodeIds = outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
@@ -92,6 +91,7 @@ export function serializeDocument(
         break;
 
       case "comment":
+        // metadata only (full-node comments)
         nodeEditorMetadata.$Comments.push({
           $Position: {
             $x: node.position.x,
@@ -103,12 +103,15 @@ export function serializeDocument(
           $text: node.data.text,
           $fontSize: node.data.fontSize,
         });
+        json = undefined;
         break;
 
       case "rawjson":
-        Object.assign(json, JSON.parse(node.data.data));
-        json.$NodeID = node.id;
-        json.$Comment = node.data.comment;
+        json = {
+          $NodeId: node.id,
+          $Comment: node.data.comment,
+          ...JSON.parse(node.data.data),
+        };
         nodeEditorMetadata.$Nodes[node.id] = {
           $Position: {
             $x: node.position.x,
@@ -119,10 +122,13 @@ export function serializeDocument(
         break;
 
       case "link":
+        // metadata only
         // todo
+        json = undefined;
         break;
 
       case "group":
+        // metadata only
         nodeEditorMetadata.$Groups.push({
           $Position: {
             $x: node.position.x,
@@ -132,6 +138,7 @@ export function serializeDocument(
           $height: node.height,
           $name: node.data.name,
         });
+        json = undefined;
         break;
     }
     return json;

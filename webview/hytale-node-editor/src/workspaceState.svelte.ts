@@ -1,5 +1,5 @@
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
-import { type FlowEdge, type FlowNode } from "src/node-editor/graph/graphTypes";
+import { type FlowEdge, type FlowNode } from "src/common";
 
 export interface WorkspaceState {
   nodes: FlowNode[];

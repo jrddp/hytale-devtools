@@ -12,7 +12,10 @@ import {
   type LinkNodeType,
   type RawJsonNodeType,
   LINK_NODE_TYPE,
-} from "../../graph/graphTypes";
+  COMMENT_NODE_TYPE,
+  type CommentNodeType,
+  DEFAULT_RAW_JSON_TEXT,
+} from "../../../common";
 import { createNodeId } from "../../utils/idUtils";
 import { isObject } from "../../utils/valueUtils";
 
@@ -228,6 +231,10 @@ export function parseDocumentText(text: string): WorkspaceState {
       if (!nodeId) {
         nodeId = createNodeId("Generic");
       }
+      const data = {};
+      Object.entries(rootNode).forEach(([key, value]) => {
+        if (!key.startsWith("$")) data[key] = value;
+      });
       const jsonNode: RawJsonNodeType = {
         type: RAW_JSON_NODE_TYPE,
         id: nodeId,
@@ -236,7 +243,7 @@ export function parseDocumentText(text: string): WorkspaceState {
           y: position.$y,
         },
         data: {
-          data: JSON.stringify(localRoot, null, 2),
+          data: data ? JSON.stringify(data, null, "/t") : DEFAULT_RAW_JSON_TEXT,
           comment: rootNode.$Comment,
         },
       };
@@ -251,12 +258,10 @@ export function parseDocumentText(text: string): WorkspaceState {
   // process nodeEditorMetadata
   const nodeEditorMetadata = documentRoot.$NodeEditorMetadata;
   if (nodeEditorMetadata) {
-    // ##########
     // # $FloatingNodes
     for (const nodeJson of nodeEditorMetadata.$FloatingNodes ?? []) {
       recursiveParseNodes(nodeJson, null);
     }
-    // ##########
     // # $Nodes - positions and title overrides
     for (const [nodeId, info] of Object.entries(nodeEditorMetadata.$Nodes ?? {})) {
       const node = nodesById.get(nodeId);
@@ -268,7 +273,6 @@ export function parseDocumentText(text: string): WorkspaceState {
       node.position.y = info.$Position.$y;
       node.data.titleOverride = info.$Title;
     }
-    // ##########
     // # $Links
     for (const [linkId, linkData] of Object.entries(nodeEditorMetadata.$Links ?? {})) {
       const linkNode: LinkNodeType = {
@@ -310,10 +314,28 @@ export function parseDocumentText(text: string): WorkspaceState {
         }
       }
     }
-    // ##########
     // # $Groups
     for (const groupJson of nodeEditorMetadata.$Groups ?? []) {
       addNode(createGroupnode(groupJson));
+    }
+    // # $Comments
+    for (const commentJson of nodeEditorMetadata.$Comments ?? []) {
+      const commentNode: CommentNodeType = {
+        type: COMMENT_NODE_TYPE,
+        id: createNodeId("Comment"),
+        position: {
+          x: commentJson.$Position.$x,
+          y: commentJson.$Position.$y,
+        },
+        width: commentJson.$width,
+        height: commentJson.$height,
+        data: {
+          name: commentJson.$name,
+          text: commentJson.$text,
+          fontSize: commentJson.$fontSize,
+        },
+      };
+      addNode(commentNode);
     }
   }
 

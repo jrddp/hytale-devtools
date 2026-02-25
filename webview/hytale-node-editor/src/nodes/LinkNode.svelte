@@ -1,22 +1,11 @@
 <script lang="ts">
-  import { useNodeConnections, useSvelteFlow } from "@xyflow/svelte";
-  import { MessageCircleMore, Pencil } from "lucide-svelte";
-  import { onMount, tick } from "svelte";
-  import NodeCommentEditor from "./NodeCommentEditor.svelte";
-  import NodePinHandle from "./NodePinHandle.svelte";
+  import { useSvelteFlow } from "@xyflow/svelte";
+  import { tick } from "svelte";
+  import { LINK_MUTATION_EVENT, type LinkNodeType } from "../common";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { getDefaultPinColor } from "../node-editor/utils/pinColorUtils";
-  import {
-    DATA_NODE_TYPE,
-    LINK_INPUT_HANDLE_ID,
-    LINK_MUTATION_EVENT,
-    LINK_NODE_TYPE,
-    LINK_OUTPUT_HANDLE_ID,
-    type LinkNodeType,
-  } from "../node-editor/graph/graphTypes";
 
   const DEFAULT_NODE_LABEL = "Link";
   const DEFAULT_OUTPUT_LABEL = "Children";
@@ -162,15 +151,6 @@
         },
       }),
     );
-  }
-
-  function readString(candidate) {
-    return typeof candidate === "string" ? candidate : undefined;
-  }
-
-  function isLinkInputHandleId(candidateHandleId) {
-    const currentHandleId = readString(candidateHandleId);
-    return currentHandleId === undefined || currentHandleId === LINK_INPUT_HANDLE_ID;
   }
 </script>
 
