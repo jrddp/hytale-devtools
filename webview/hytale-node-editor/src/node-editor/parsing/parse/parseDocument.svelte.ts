@@ -158,16 +158,10 @@ export function parseDocumentText(text: string): WorkspaceState {
         nodeId = createNodeId(templateId);
       }
 
-      const nodeData: DataNodeData = {
-        ...template,
-        // shallow copy each field so they don't refer to the original template's definition
-        fieldsBySchemaKey: Object.fromEntries(
-          Object.entries(template.fieldsBySchemaKey).map(([schemaKey, field]) => [
-            schemaKey,
-            { ...field }, // shallow clone; leaves any nested proxies as-is
-          ]),
-        ),
-      };
+      // deep copy to avoid mutating the template
+      const nodeData: DataNodeData = structuredClone($state.snapshot(template));
+
+      // filter metadata keys
       const unprocessedData = new Set(Object.keys(localRoot).filter(key => !key.startsWith("$")));
 
       // # process children

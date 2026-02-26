@@ -130,22 +130,21 @@
   let lastHandledQuickActionRequestToken = -1;
   let lastPointerClientPosition = $state<XYPosition>();
   let pendingRestoredSessionState = undefined;
-  let didInitialGrouping = $state(false);
+  let regroupingQueued = $state(true);
   let lastRevealNodeRequestVersion = -1;
 
   // needs to be in an effect to wait for node measurements to be loaded
   $effect(() => {
-    if (!didInitialGrouping && workspace.getRootNode().measured) {
+    if (regroupingQueued && workspace.getRootNode().measured) {
       recalculateGroupParents();
-      didInitialGrouping = true;
+      regroupingQueued = false;
     }
   });
 
   $effect(() => {
     if (loadVersion !== lastHandledLoadVersion) {
-      console.log("flow load version changed", loadVersion);
       lastHandledLoadVersion = loadVersion;
-      didInitialGrouping = false;
+      regroupingQueued = true;
       clearPendingSingleSourceReplacement();
     }
   });

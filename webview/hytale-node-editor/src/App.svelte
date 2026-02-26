@@ -6,7 +6,7 @@
   } from "@shared/node-editor/messageTypes";
   import { SvelteFlowProvider } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
-  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument";
+  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument.svelte";
   import { workspace } from "src/workspace.svelte";
   import { onMount, tick } from "svelte";
   import Flow from "./Flow.svelte";
