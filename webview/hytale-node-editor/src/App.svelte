@@ -1,21 +1,19 @@
 <script lang="ts">
   import {
     type ExtensionToWebviewMessage,
-    type NodeEditorBootstrapPayload,
     type NodeEditorDocumentUpdateMessage,
-    type NodeEditorRevealSelectionMessage,
     type WebviewToExtensionMessage,
   } from "@shared/node-editor/messageTypes";
   import { SvelteFlowProvider } from "@xyflow/svelte";
-  import { workspace } from "./workspace.svelte";
-  import { onMount } from "svelte";
+  import { type VSCodeApi } from "src/common";
+  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument";
+  import { workspace } from "src/workspace.svelte";
+  import { onMount, tick } from "svelte";
   import Flow from "./Flow.svelte";
   import {
     getNodeEditorQuickActionByCommandId,
     getNodeEditorQuickActionById,
   } from "./node-editor/ui/nodeEditorQuickActions";
-  import { type VSCodeApi, type FlowEdge, type FlowNode } from "src/common";
-  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
 
@@ -42,7 +40,6 @@
 
   function handleMessage(event: MessageEvent<ExtensionToWebviewMessage>) {
     const message = event.data;
-    console.log(`Received message of type ${message.type}`, message);
 
     switch (message.type) {
       // should be called before initial update
@@ -81,7 +78,7 @@
   }
 
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage) {
-
+    if (message.version === workspace.sourceVersion) return;
     try {
       const { nodes, edges, rootNodeId } = parseDocumentText(message.text);
       workspace.nodes = nodes;

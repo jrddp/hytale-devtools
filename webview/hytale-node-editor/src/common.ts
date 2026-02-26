@@ -5,7 +5,7 @@ import type { Edge, Node, XYPosition } from "@xyflow/svelte";
 export const DATA_NODE_TYPE = "datanode";
 export const RAW_JSON_NODE_TYPE = "rawjson";
 export const LINK_NODE_TYPE = "link";
-export const GROUP_NODE_TYPE = "group";
+export const GROUP_NODE_TYPE = "groupnode";
 export const COMMENT_NODE_TYPE = "comment";
 
 export const INPUT_HANDLE_ID = "input";

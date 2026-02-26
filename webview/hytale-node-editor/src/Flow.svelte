@@ -29,12 +29,15 @@
     RawJsonNodeType,
   } from "./common";
   import {
-    DEFAULT_COMMENT_FONT_SIZE,
-    DEFAULT_COMMENT_HEIGHT,
-    DEFAULT_COMMENT_WIDTH,
     COMMENT_NODE_TYPE,
     COMMENT_TEMPLATE_ID,
     DATA_NODE_TYPE,
+    DEFAULT_COMMENT_FONT_SIZE,
+    DEFAULT_COMMENT_HEIGHT,
+    DEFAULT_COMMENT_WIDTH,
+    DEFAULT_GROUP_HEIGHT,
+    DEFAULT_GROUP_WIDTH,
+    DEFAULT_RAW_JSON_TEXT,
     GROUP_NODE_TYPE,
     GROUP_TEMPLATE_ID,
     INPUT_HANDLE_ID,
@@ -42,9 +45,6 @@
     LINK_TEMPLATE_ID,
     RAW_JSON_NODE_TYPE,
     RAW_JSON_TEMPLATE_ID,
-    DEFAULT_GROUP_WIDTH,
-    DEFAULT_GROUP_HEIGHT,
-    DEFAULT_RAW_JSON_TEXT,
   } from "./common";
   import {
     collectRecursiveDescendantNodeIds,
@@ -61,7 +61,8 @@
   import GroupNode from "./nodes/GroupNode.svelte";
   import LinkNode from "./nodes/LinkNode.svelte";
   import RawJsonNode from "./nodes/RawJsonNode.svelte";
-  import { applyDocumentState, workspace } from "./workspace.svelte";
+  import { applyDocumentState, workspace } from "src/workspace.svelte";
+  import { recalculateGroupParents } from "src/node-editor/utils/nodeUtils.svelte";
 
   let {
     nodes = $bindable([]),
@@ -127,13 +128,24 @@
   let nodeHelpOpenVersion = $state(0);
   let nodeSearchGroups = [];
   let lastHandledQuickActionRequestToken = -1;
-  let lastPointerClientPosition = undefined;
+  let lastPointerClientPosition = $state<XYPosition>();
   let pendingRestoredSessionState = undefined;
+  let didInitialGrouping = $state(false);
   let lastRevealNodeRequestVersion = -1;
+
+  // needs to be in an effect to wait for node measurements to be loaded
+  $effect(() => {
+    if (!didInitialGrouping && workspace.getRootNode().measured) {
+      recalculateGroupParents();
+      didInitialGrouping = true;
+    }
+  });
 
   $effect(() => {
     if (loadVersion !== lastHandledLoadVersion) {
+      console.log("flow load version changed", loadVersion);
       lastHandledLoadVersion = loadVersion;
+      didInitialGrouping = false;
       clearPendingSingleSourceReplacement();
     }
   });
@@ -172,6 +184,7 @@
   };
 
   function handleNodeDragStop() {
+    recalculateGroupParents();
     applyDocumentState("node-moved");
   }
 
@@ -223,7 +236,7 @@
   }
 
   function handleQuickActionGoToRoot() {
-    const root = findNodeById(workspace.rootNodeId);
+    const root = workspace.getRootNode();
     const targetX = root.position.x + root.width;
     const targetY = root.position.y + root.height / 2;
 
@@ -398,7 +411,7 @@
     }
   }
 
-  function handleWindowKeyUp(event) {
+  function handleWindowKeyUp(event: KeyboardEvent) {
     if (!isDeleteKey(event) || isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
       return;
     }
@@ -750,7 +763,6 @@
         height: DEFAULT_GROUP_HEIGHT,
         selected: false,
         draggable: false,
-        zIndex: readGroupUnselectedZIndex(DEFAULT_GROUP_WIDTH, DEFAULT_GROUP_HEIGHT),
       };
 
       nodes = [newGroupNode, ...nodes];
@@ -936,7 +948,7 @@
     const retainedEdges = [];
     const removedEdges = [];
     for (const edge of edges) {
-      if (isEdgeFromSourceHandle(edge, sourceNodeId, sourceHandleId)) {
+      if (edge.source === sourceNodeId && edge.sourceHandle === sourceHandleId) {
         removedEdges.push(edge);
         continue;
       }
@@ -961,23 +973,6 @@
       return undefined;
     }
     return nodes.find(node => node.id === nodeId);
-  }
-
-  function findHandle(nodeId: string, handleId: string) {
-    const node = findNodeById(nodeId);
-    if (!node) {
-      return undefined;
-    }
-
-    return node.handles.find(handle => handle.id === handleId);
-  }
-
-  function isEdgeFromSourceHandle(edge, sourceNodeId, sourceHandleId) {
-    if (edge?.source !== sourceNodeId) {
-      return false;
-    }
-
-    return edge?.sourceHandle === sourceHandleId;
   }
 
   function restorePendingSingleSourceReplacement() {
@@ -1032,17 +1027,6 @@
       x: paneBounds.left + paneBounds.width / 2,
       y: paneBounds.top + paneBounds.height / 2,
     });
-  }
-
-  function readNodeType(candidate) {
-    if (typeof candidate === "string") {
-      const cleaned = candidate.trim().replace(/\s+/g, "");
-      if (cleaned) {
-        return cleaned;
-      }
-    }
-
-    return "Node";
   }
 
   async function applyInitialFitOnce() {
@@ -1224,24 +1208,8 @@
     );
   }
 
-  function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
-    const width = readGroupDimension(widthCandidate, DEFAULT_GROUP_WIDTH, MIN_GROUP_WIDTH);
-    const height = readGroupDimension(heightCandidate, DEFAULT_GROUP_HEIGHT, MIN_GROUP_HEIGHT);
-    const area = width * height;
-    return GROUP_Z_INDEX_UNSELECTED - Math.round(area);
-  }
-
-  function readGroupDimension(candidateValue, fallbackValue, minValue) {
-    const currentValue = Number(candidateValue);
-    if (!Number.isFinite(currentValue)) {
-      return fallbackValue;
-    }
-
-    return Math.max(minValue, currentValue);
-  }
-
-  function isDeleteKey(event) {
-    const key = event?.key;
+  function isDeleteKey(event: KeyboardEvent) {
+    const key = event.key;
     return key === "Delete" || key === "Backspace";
   }
 
@@ -1303,26 +1271,27 @@
 </script>
 
 <svelte:window
-  on:keydown|capture={handleWindowKeyDown}
-  on:copy|capture={handleWindowCopy}
-  on:cut|capture={handleWindowCut}
-  on:paste|capture={handleWindowPaste}
-  on:pointermove|capture={handleWindowPointerMove}
-  on:pointerdown|capture={handleWindowPointerDown}
-  on:keyup={handleWindowKeyUp}
+  onkeydowncapture={handleWindowKeyDown}
+  oncopycapture={handleWindowCopy}
+  oncutcapture={handleWindowCut}
+  onpastecapture={handleWindowPaste}
+  onpointermovecapture={handleWindowPointerMove}
+  onpointerdowncapture={handleWindowPointerDown}
+  onkeyup={handleWindowKeyUp}
 />
 
 <div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>
   <SvelteFlow
     bind:nodes
     bind:edges
+    {nodeTypes}
     disableKeyboardA11y={addMenuOpen || nodeSearchOpen || nodeHelpOpen}
     selectionMode={SelectionMode.Full}
     multiSelectionKey={"Shift"}
     panActivationKey={"Shift"}
     selectNodesOnDrag={false}
+    zIndexMode={"auto"}
     minZoom={MIN_FLOW_ZOOM}
-    {nodeTypes}
     onconnect={handleConnect}
     onconnectstart={handleConnectStart}
     onconnectend={handleConnectEnd}

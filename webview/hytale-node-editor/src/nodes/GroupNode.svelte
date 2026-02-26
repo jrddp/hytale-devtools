@@ -1,28 +1,27 @@
 <script lang="ts">
   import { useSvelteFlow, useViewport } from "@xyflow/svelte";
-  import { Pencil } from "lucide-svelte";
+  import { Database, Pencil } from "lucide-svelte";
   import { tick } from "svelte";
   import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
+  import { type GroupNodeType } from "src/common";
   import { applyDocumentState } from "src/workspace.svelte";
 
-  const DEFAULT_GROUP_NAME = "Group";
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
   const GROUP_TITLE_BASE_SIZE_PX = 18;
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 5.5;
   const TITLEBAR_DRAG_DISTANCE_THRESHOLD_PX = 3;
-  const GROUP_Z_INDEX_UNSELECTED = -10000;
 
   let {
     id,
-    data = {},
+    position,
+    data,
     selected = false,
     dragging = false,
-    positionAbsoluteX = 0,
-    positionAbsoluteY = 0,
+    draggable = false,
     width = MIN_GROUP_WIDTH,
     height = MIN_GROUP_HEIGHT,
-  } = $props();
+  }: GroupNodeType = $props();
 
   const viewport = useViewport();
   const { updateNodeData, updateNode } = useSvelteFlow();
@@ -30,41 +29,29 @@
   let isEditingTitle = $state(false);
   let titleDraft = $state("");
   let titleInputElement = $state(undefined);
-  let appliedDraggable = $state(undefined);
-  let appliedZIndex = $state(undefined);
   let titlebarDragSession = $state(undefined);
 
-  let nodeName = $derived(readGroupName(data?.name));
-  let viewportZoom = $derived(readViewportZoom(viewport.current?.zoom));
-  let titleCompensationScale = $derived(readCompensatedTitleScale(viewportZoom));
+  let titleCompensationScale = $derived(readCompensatedTitleScale(viewport.current.zoom));
   let showInlineTitleDisplay = $derived(titleCompensationScale <= 1.001);
   let showInlineEditButton = $derived(showInlineTitleDisplay && !isEditingTitle);
 
   $effect(() => {
     if (!isEditingTitle) {
-      titleDraft = nodeName;
+      titleDraft = data.name;
     }
   });
 
   $effect(() => {
-    const nextDraggable = Boolean(selected);
-    const nextZIndex = readGroupUnselectedZIndex(width, height);
-    if (appliedDraggable === nextDraggable && appliedZIndex === nextZIndex) {
-      return;
+    if (selected) {
+      updateNode(id, { draggable: true });
+    } else {
+      updateNode(id, { draggable: false });
     }
-
-    appliedDraggable = nextDraggable;
-    appliedZIndex = nextZIndex;
-    updateNode(id, {
-      draggable: nextDraggable,
-      dragHandle: undefined,
-      zIndex: nextZIndex,
-    });
   });
 
   async function beginTitleEditing() {
     isEditingTitle = true;
-    titleDraft = nodeName;
+    titleDraft = data.name;
     await tick();
     titleInputElement?.focus();
     titleInputElement?.select();
@@ -86,7 +73,7 @@
     }
 
     isEditingTitle = false;
-    titleDraft = nodeName;
+    titleDraft = data.name;
   }
 
   function handleTitleInputKeydown(event) {
@@ -112,7 +99,7 @@
   }
 
   function updateName(candidateName) {
-    updateNodeData(id, { name: readGroupName(candidateName) });
+    updateNodeData(id, { name: candidateName });
   }
 
   function handleResizeEnd() {
@@ -136,8 +123,8 @@
       pointerId: event.pointerId,
       startClientX: Number(event.clientX) || 0,
       startClientY: Number(event.clientY) || 0,
-      startNodeX: readFiniteNumber(positionAbsoluteX),
-      startNodeY: readFiniteNumber(positionAbsoluteY),
+      startNodeX: position.x,
+      startNodeY: position.y,
       moved: false,
     };
 
@@ -165,7 +152,7 @@
       };
     }
 
-    const zoom = readViewportZoom(viewport.current?.zoom);
+    const zoom = viewport.current.zoom;
     updateNode(id, {
       position: {
         x: dragSession.startNodeX + deltaClientX / zoom,
@@ -202,14 +189,6 @@
     titlebarDragSession = undefined;
   }
 
-  function readGroupName(candidateName) {
-    return typeof candidateName === "string" ? candidateName : DEFAULT_GROUP_NAME;
-  }
-
-  function readViewportZoom(candidateZoom) {
-    return Number(candidateZoom) || 1;
-  }
-
   function readCompensatedTitleScale(zoom) {
     if (!Number.isFinite(zoom) || zoom >= 1) {
       return 1;
@@ -217,22 +196,6 @@
 
     const inverseScale = 1 / zoom;
     return Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, Math.max(1, inverseScale));
-  }
-
-  function readFiniteNumber(candidateNumber) {
-    return Number(candidateNumber) || 0;
-  }
-
-  function readGroupUnselectedZIndex(widthCandidate, heightCandidate) {
-    const width = readGroupDimension(widthCandidate, MIN_GROUP_WIDTH);
-    const height = readGroupDimension(heightCandidate, MIN_GROUP_HEIGHT);
-    const area = width * height;
-    return GROUP_Z_INDEX_UNSELECTED - Math.round(area);
-  }
-
-  function readGroupDimension(candidateDimension, minDimension) {
-    const dimension = Number(candidateDimension);
-    return Number.isFinite(dimension) ? dimension : minDimension;
   }
 </script>
 
@@ -258,7 +221,7 @@
           style:transform={`scale(${titleCompensationScale})`}
           type="text"
           value={titleDraft}
-          size={Math.max(1, titleDraft.length || nodeName.length)}
+          size={Math.max(1, titleDraft.length || data.name.length)}
           oninput={event => (titleDraft = event.currentTarget.value)}
           onkeydown={handleTitleInputKeydown}
           onblur={commitTitleEditing}
@@ -272,9 +235,9 @@
           type="button"
           ondblclick={beginTitleEditing}
           onkeydown={handleTitleDisplayKeydown}
-          aria-label={`Group title: ${nodeName}. Double click to rename`}
+          aria-label={`Group title: ${data.name}. Double click to rename`}
         >
-          {nodeName}
+          {data.name}
         </button>
 
         <button

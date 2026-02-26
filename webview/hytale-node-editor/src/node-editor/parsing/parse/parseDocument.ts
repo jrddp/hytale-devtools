@@ -1,4 +1,4 @@
-import { workspace, type WorkspaceState } from "../../../workspace.svelte";
+import { type WorkspaceState } from "../../../workspace.svelte";
 import {
   DATA_NODE_TYPE,
   type GroupNodeType,
@@ -15,9 +15,11 @@ import {
   COMMENT_NODE_TYPE,
   type CommentNodeType,
   DEFAULT_RAW_JSON_TEXT,
+  GROUP_NODE_TYPE,
 } from "../../../common";
 import { createNodeId } from "../../utils/idUtils";
 import { isObject } from "../../utils/valueUtils";
+import { workspace } from "src/workspace.svelte";
 
 export interface Position {
   $x: number;
@@ -32,6 +34,7 @@ export type NodeAssetJson = {
 };
 
 export type GroupJson = {
+  $NodeId?: string; // doesn't exist in base-game saved JSON, but makes things easier with VSCode's reserialization
   $Position: Position;
   $width: number;
   $height: number;
@@ -60,6 +63,7 @@ export type NodeEditorMetadata = {
   >;
   $Groups?: GroupJson[];
   $Comments?: {
+    $NodeId?: string; // doesn't exist in base-game saved JSON, but makes things easier with VSCode's reserialization
     $Position: Position;
     $width: number;
     $height: number;
@@ -337,7 +341,7 @@ export function parseDocumentText(text: string): WorkspaceState {
     for (const commentJson of nodeEditorMetadata.$Comments ?? []) {
       const commentNode: CommentNodeType = {
         type: COMMENT_NODE_TYPE,
-        id: createNodeId("Comment"),
+        id: commentJson.$NodeId ?? createNodeId("Comment"),
         position: {
           x: commentJson.$Position.$x,
           y: commentJson.$Position.$y,
@@ -367,8 +371,8 @@ export function parseDocumentText(text: string): WorkspaceState {
 
 function createGroupnode(groupJson: GroupJson): GroupNodeType {
   return {
-    type: "group",
-    id: createNodeId("Group"),
+    type: GROUP_NODE_TYPE,
+    id: groupJson.$NodeId ?? createNodeId("Group"),
     position: {
       x: groupJson.$Position.$x,
       y: groupJson.$Position.$y,

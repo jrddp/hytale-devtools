@@ -20,7 +20,7 @@ export default defineConfig({
     outDir: path.resolve(currentDir, "../../media/hytaleNodeEditor"),
     emptyOutDir: true,
     manifest: true,
-    sourcemap: true,
+    sourcemap: "inline",
     rollupOptions: {
       output: {
         entryFileNames: "main.js",

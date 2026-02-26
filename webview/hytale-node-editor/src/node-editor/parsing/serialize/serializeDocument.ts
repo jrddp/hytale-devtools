@@ -1,9 +1,17 @@
-import { type FlowNode } from "src/common";
+import {
+  COMMENT_NODE_TYPE,
+  DATA_NODE_TYPE,
+  GROUP_NODE_TYPE,
+  LINK_NODE_TYPE,
+  RAW_JSON_NODE_TYPE,
+  type FlowNode,
+} from "src/common";
 import {
   type AssetDocumentShape,
   type NodeAssetJson,
   type NodeEditorMetadata,
 } from "src/node-editor/parsing/parse/parseDocument";
+import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 import { workspace } from "src/workspace.svelte";
 
 export function serializeDocument(): AssetDocumentShape {
@@ -46,8 +54,9 @@ export function serializeDocument(): AssetDocumentShape {
     unprocessedNodeIds.delete(nodeId);
     const node = nodesById.get(nodeId);
     let json: NodeAssetJson = {};
+    const { x: absoluteX, y: absoluteY } = getAbsolutePosition(node);
     switch (node.type) {
-      case "datanode":
+      case DATA_NODE_TYPE:
         json.$NodeId = node.id;
         json.$Comment = node.data.comment ?? undefined;
         // # Recursive serialize children
@@ -84,19 +93,20 @@ export function serializeDocument(): AssetDocumentShape {
         // # Process editor metadata
         nodeEditorMetadata.$Nodes[node.id] = {
           $Position: {
-            $x: node.position.x,
-            $y: node.position.y,
+            $x: absoluteX,
+            $y: absoluteY,
           },
           $Title: node.data.titleOverride ?? undefined,
         };
         break;
 
-      case "comment":
+      case COMMENT_NODE_TYPE:
         // metadata only (full-node comments)
         nodeEditorMetadata.$Comments.push({
+          $NodeId: node.id,
           $Position: {
-            $x: node.position.x,
-            $y: node.position.y,
+            $x: absoluteX,
+            $y: absoluteY,
           },
           $width: node.width,
           $height: node.height,
@@ -107,7 +117,7 @@ export function serializeDocument(): AssetDocumentShape {
         json = undefined;
         break;
 
-      case "rawjson":
+      case RAW_JSON_NODE_TYPE:
         json = {
           $NodeId: node.id,
           $Comment: node.data.comment,
@@ -115,25 +125,26 @@ export function serializeDocument(): AssetDocumentShape {
         };
         nodeEditorMetadata.$Nodes[node.id] = {
           $Position: {
-            $x: node.position.x,
-            $y: node.position.y,
+            $x: absoluteX,
+            $y: absoluteY,
           },
           $Title: node.data.titleOverride ?? undefined,
         };
         break;
 
-      case "link":
+      case LINK_NODE_TYPE:
         // metadata only
         // todo
         json = undefined;
         break;
 
-      case "group":
+      case GROUP_NODE_TYPE:
         // metadata only
         nodeEditorMetadata.$Groups.push({
+          $NodeId: node.id,
           $Position: {
-            $x: node.position.x,
-            $y: node.position.y,
+            $x: absoluteX,
+            $y: absoluteY,
           },
           $width: node.width,
           $height: node.height,

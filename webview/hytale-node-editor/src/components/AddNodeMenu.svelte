@@ -1,6 +1,5 @@
 <script lang="ts">
   import { tick } from "svelte";
-  import { workspace } from "../workspace.svelte";
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import {
     COMMENT_TEMPLATE_ID,
@@ -10,6 +9,7 @@
     RAW_JSON_TEMPLATE_ID,
   } from "src/common";
   import { readColorForCss } from "src/node-editor/utils/colors";
+  import { workspace } from "src/workspace.svelte";
 
   let {
     open = false,
