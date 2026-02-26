@@ -3,7 +3,7 @@
   import { Pencil } from "lucide-svelte";
   import { tick } from "svelte";
   import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
-  import { GROUP_MUTATION_EVENT } from "../common";
+  import { applyDocumentState } from "src/workspace.svelte";
 
   const DEFAULT_GROUP_NAME = "Group";
   const MIN_GROUP_WIDTH = 180;
@@ -77,7 +77,7 @@
 
     updateName(titleDraft);
     isEditingTitle = false;
-    notifyGroupMutation("group-renamed");
+    applyDocumentState("group-renamed");
   }
 
   function cancelTitleEditing() {
@@ -116,7 +116,7 @@
   }
 
   function handleResizeEnd() {
-    notifyGroupMutation("group-resized");
+    applyDocumentState("group-resized");
   }
 
   function handleTitlebarPointerDown(event) {
@@ -186,7 +186,7 @@
       updateNode(id, {
         selected: true,
       });
-      notifyGroupMutation("group-moved");
+      applyDocumentState("group-moved");
       event.preventDefault();
     }
 
@@ -200,14 +200,6 @@
     }
 
     titlebarDragSession = undefined;
-  }
-
-  function notifyGroupMutation(reason) {
-    if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
-      return;
-    }
-
-    // TODO handle group mutation events AND other metadata mutation events
   }
 
   function readGroupName(candidateName) {

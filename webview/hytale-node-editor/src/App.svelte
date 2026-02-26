@@ -7,41 +7,32 @@
     type WebviewToExtensionMessage,
   } from "@shared/node-editor/messageTypes";
   import { SvelteFlowProvider } from "@xyflow/svelte";
-  import { workspace } from "./workspaceState.svelte";
+  import { workspace } from "./workspace.svelte";
   import { onMount } from "svelte";
   import Flow from "./Flow.svelte";
   import {
     getNodeEditorQuickActionByCommandId,
     getNodeEditorQuickActionById,
   } from "./node-editor/ui/nodeEditorQuickActions";
-  import { type FlowEdge, type FlowNode } from "src/common";
-  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument.svelte";
-  import { serializeDocument } from "src/node-editor/parsing/serialize/serializeDocument";
+  import { type VSCodeApi, type FlowEdge, type FlowNode } from "src/common";
+  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument";
 
-  type VscodeApi = {
-    postMessage: (message: WebviewToExtensionMessage) => void;
-    getState?: () => Record<string, unknown> | undefined;
-    setState?: (state: Record<string, unknown>) => unknown;
-  };
+  const { vscode } = $props<{ vscode: VSCodeApi }>();
 
-  const { vscode } = $props<{ vscode: VscodeApi }>();
+  $effect(() => {
+    workspace.vscode = vscode;
+  });
 
-  let documentPath = "";
-  let nodes: FlowNode[] = $derived(workspace.state ? workspace.state.nodes : []);
-  let edges: FlowEdge[] = $derived(workspace.state ? workspace.state.edges : []);
-  // last text pushed to VS Code; used to skip no-op apply messages.
-  let syncedText = "";
-  let sourceVersion = -1;
   // bumped for each parsed document update so Flow can run one-time load hooks.
-  let graphLoadVersion = 0;
-  let extensionError = "";
+  let graphLoadVersion = $state(0);
+  let extensionError = $state("");
   let quickActionRequest:
     | {
         token: number;
         actionId: string;
         commandId: string;
       }
-    | undefined = undefined;
+    | undefined = $state();
   let quickActionRequestToken = 0;
   let revealNodeId: string | undefined = undefined;
   let revealNodeRequestVersion = 0;
@@ -51,19 +42,18 @@
 
   function handleMessage(event: MessageEvent<ExtensionToWebviewMessage>) {
     const message = event.data;
-    if (!message) {
-      return;
-    }
+    console.log(`Received message of type ${message.type}`, message);
 
     switch (message.type) {
+      // should be called before initial update
       case "bootstrap":
-        handleBootstrapMessage(message);
-        return;
-      case "revealSelection":
-        handleRevealSelectionMessage(message);
+        workspace.context = message.workspaceContext;
         return;
       case "update":
         handleDocumentUpdateMessage(message);
+        return;
+      case "revealSelection":
+        // TODO implement
         return;
       case "error":
         extensionError =
@@ -90,38 +80,29 @@
     }
   }
 
-  function handleBootstrapMessage(message: NodeEditorBootstrapPayload) {
-    workspace.context = message.workspaceContext;
-  }
-
-  function handleRevealSelectionMessage(message: NodeEditorRevealSelectionMessage) {
-    // TODO implement
-  }
-
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage) {
-    sourceVersion = typeof message.version === "number" ? message.version : sourceVersion;
-    documentPath = typeof message.documentPath === "string" ? message.documentPath : documentPath;
 
     try {
-      const parsedState = parseDocumentText(message.text);
-      workspace.state = parsedState;
+      const { nodes, edges, rootNodeId } = parseDocumentText(message.text);
+      workspace.nodes = nodes;
+      workspace.edges = edges;
+      workspace.rootNodeId = rootNodeId;
+      workspace.sourceVersion = message.version;
+      workspace.isInitialized = true;
 
       graphLoadVersion += 1;
       extensionError = "";
     } catch (error) {
+      console.error(error);
       extensionError = error instanceof Error ? error.message : "could not parse flow json.";
     }
-  }
-
-  function handleFlowChange(event: string, nodes: FlowNode[], edges: FlowEdge[]) {
-    applyFlowState(nodes, edges);
   }
 
   function handleViewRawJsonRequest() {
     const payload: Extract<WebviewToExtensionMessage, { type: "openRawJson" }> = {
       type: "openRawJson",
     };
-    vscode.postMessage(payload);
+    workspace.vscode.postMessage(payload);
   }
 
   function handleCustomizeKeybindsRequest() {
@@ -129,18 +110,6 @@
       type: "openKeybindings",
       query: "Hytale Node Editor",
     };
-    vscode.postMessage(payload);
-  }
-
-  function applyFlowState(nextNodes: FlowNode[], nextEdges: FlowEdge[]) {
-    const serialized = serializeDocument(workspace.state.rootNodeId, nextNodes, nextEdges);
-
-    const payload: Extract<WebviewToExtensionMessage, { type: "apply" }> = {
-      type: "apply",
-      text: JSON.stringify(serialized, null, "\t"),
-      sourceVersion,
-    };
-
     vscode.postMessage(payload);
   }
 
@@ -165,16 +134,15 @@
 <main class="flex flex-col h-screen min-h-0">
   {#if extensionError}
     <div class="mx-3 mt-3 text-sm text-vsc-error">{extensionError}</div>
-  {:else if workspace.state}
+  {:else if workspace.isInitialized}
     <SvelteFlowProvider>
       <Flow
-        bind:nodes
-        bind:edges
+        bind:nodes={workspace.nodes}
+        bind:edges={workspace.edges}
         loadVersion={graphLoadVersion}
         {quickActionRequest}
         {revealNodeId}
         {revealNodeRequestVersion}
-        onflowchange={handleFlowChange}
         onviewrawjson={handleViewRawJsonRequest}
         oncustomizekeybinds={handleCustomizeKeybindsRequest}
       />

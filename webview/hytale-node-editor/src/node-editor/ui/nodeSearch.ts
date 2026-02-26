@@ -5,7 +5,6 @@ import {
   LINK_NODE_TYPE,
   RAW_JSON_NODE_TYPE,
 } from "../../common.js";
-import { getDefaultPinColor } from "../utils/pinColorUtils.js";
 
 const UNGROUPED_GROUP_ID = "__ungrouped__";
 const UNGROUPED_GROUP_LABEL = "Ungrouped";

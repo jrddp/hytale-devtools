@@ -3,14 +3,15 @@
   import { MessageCircleMore, Pencil } from "lucide-svelte";
   import { tick } from "svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
-  import { CUSTOM_MUTATION_EVENT, type DataNodeType, INPUT_HANDLE_ID } from "../common";
+  import { type DataNodeType, INPUT_HANDLE_ID } from "../common";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { getDefaultPinColor, readColorForCss } from "../node-editor/utils/colors";
+  import { readColorForCss } from "../node-editor/utils/colors";
   import NodeCommentEditor from "./NodeCommentEditor.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
+  import { applyDocumentState } from "src/workspace.svelte";
 
   let { id, data, selected = false, dragging = false }: DataNodeType = $props();
 
@@ -69,7 +70,7 @@
     updateNodeData(id, {
       titleOverride: nextLabel,
     });
-    notifyCustomMutation("custom-label-updated");
+    applyDocumentState("custom-label-updated");
   }
 
   function selectNodeFromTitleBar(event) {
@@ -170,7 +171,7 @@
     updateNodeData(id, {
       comment: nextComment ?? "",
     });
-    notifyCustomMutation("custom-comment-updated");
+    applyDocumentState("custom-comment-updated");
   }
 
   function updateField(schemaKey: string, nextValue: unknown) {
@@ -183,22 +184,7 @@
         },
       },
     });
-    notifyCustomMutation("custom-field-updated");
-  }
-
-  function notifyCustomMutation(reason) {
-    if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
-      return;
-    }
-
-    window.dispatchEvent(
-      new CustomEvent(CUSTOM_MUTATION_EVENT, {
-        detail: {
-          nodeId: id,
-          reason,
-        },
-      }),
-    );
+    applyDocumentState("custom-field-updated");
   }
 
   function readPinLabel(pin) {
@@ -360,12 +346,12 @@
     {/each}
 
     <div class="flex flex-col gap-2">
-      {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
+      {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field]}
         <FieldEditor {...field} onchange={value => updateField(field.schemaKey, value)} />
       {/each}
     </div>
 
-    {#each outputPins as pin, index (pin.schemaKey)}
+    {#each outputPins as pin, index}
       {@const pinTop = readPinTop(index, outputPins.length)}
       {@const pinMultiplicity = readOutputPinConnectionMultiplicity(pin)}
       <NodePinHandle

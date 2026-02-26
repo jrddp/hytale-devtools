@@ -1,8 +1,6 @@
 <script lang="ts">
-  console.log("Add Menu attempted to exist.");
-
   import { tick } from "svelte";
-  import { workspace } from "../workspaceState.svelte";
+  import { workspace } from "../workspace.svelte";
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import {
     COMMENT_TEMPLATE_ID,

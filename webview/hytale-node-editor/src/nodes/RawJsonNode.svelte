@@ -10,7 +10,14 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { INPUT_HANDLE_ID, DEFAULT_RAW_JSON_TEXT, DEFAULT_RAW_JSON_LABEL, RAW_JSON_MUTATION_EVENT, type RawJsonNodeType } from "../common";
+  import {
+    INPUT_HANDLE_ID,
+    DEFAULT_RAW_JSON_TEXT,
+    DEFAULT_RAW_JSON_LABEL,
+    RAW_JSON_MUTATION_EVENT,
+    type RawJsonNodeType,
+  } from "../common";
+  import { applyDocumentState } from "src/workspace.svelte";
 
   const RAW_JSON_FIELD: NodeField = {
     schemaKey: "Data",
@@ -49,24 +56,24 @@
     }
   });
 
-  let isEditingTitle = false;
-  let titleDraft = "";
-  let titleInputElement;
+  let isEditingTitle = $state(false);
+  let titleDraft = $state("");
+  let titleInputElement = $state<HTMLInputElement | undefined>();
+  let isCommentVisible = $state(false);
   let commentEditor;
-  let isCommentVisible = false;
 
   function updateLabel(nextLabel) {
     updateNodeData(id, {
       [NODE_TITLE_OVERRIDE_DATA_KEY]: nextLabel,
     });
-    notifyRawJsonMutation("raw-json-label-updated");
+    applyDocumentState("raw-json-label-updated");
   }
 
   function updateData(nextValue) {
     updateNodeData(id, {
       data: typeof nextValue === "string" ? nextValue : String(nextValue ?? DEFAULT_RAW_JSON_TEXT),
     });
-    notifyRawJsonMutation("raw-json-field-updated");
+    applyDocumentState("raw-json-field-updated");
   }
 
   function selectNodeFromTitleBar(event) {
@@ -167,22 +174,7 @@
     updateNodeData(id, {
       comment: typeof nextComment === "string" ? nextComment : String(nextComment ?? ""),
     });
-    notifyRawJsonMutation("raw-json-comment-updated");
-  }
-
-  function notifyRawJsonMutation(reason) {
-    if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
-      return;
-    }
-
-    window.dispatchEvent(
-      new CustomEvent(RAW_JSON_MUTATION_EVENT, {
-        detail: {
-          nodeId: id,
-          reason,
-        },
-      }),
-    );
+    applyDocumentState("raw-json-comment-updated");
   }
 
   function readInputConnectionIndex(candidateIndex) {

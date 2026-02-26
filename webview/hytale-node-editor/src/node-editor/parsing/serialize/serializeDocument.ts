@@ -1,15 +1,14 @@
-import { FlowEdge, FlowNode } from "src/common";
+import { type FlowNode } from "src/common";
 import {
-  AssetDocumentShape,
-  NodeAssetJson,
-  NodeEditorMetadata,
-} from "src/node-editor/parsing/parse/parseDocument.svelte";
+  type AssetDocumentShape,
+  type NodeAssetJson,
+  type NodeEditorMetadata,
+} from "src/node-editor/parsing/parse/parseDocument";
+import { workspace } from "src/workspace.svelte";
 
-export function serializeDocument(
-  rootNodeId: string,
-  nodes: FlowNode[],
-  edges: FlowEdge[],
-): AssetDocumentShape {
+export function serializeDocument(): AssetDocumentShape {
+  const { rootNodeId, nodes, edges } = workspace;
+
   const nodeEditorMetadata: NodeEditorMetadata = {
     $Nodes: {},
     $FloatingNodes: [],
@@ -18,20 +17,22 @@ export function serializeDocument(
     $Comments: [],
   };
 
-  // nodeId -> handle -> targetNodeId
-  const outgoingConnections: Map<string, Map<string, string[]>> = edges.reduce(
-    (map: Map<string, Map<string, string[]>>, edge) => {
-      if (!map.has(edge.source)) {
-        map.set(edge.source, new Map());
-      }
-      if (!map.get(edge.source).has(edge.sourceHandle)) {
-        map.get(edge.source).set(edge.sourceHandle, []);
-      }
-      map.get(edge.source).get(edge.sourceHandle).push(edge.target);
-      return map;
-    },
-    new Map(),
-  );
+  // parentId -> handleId -> childId
+  const outgoingConnections: Map<string, Map<string, string[]>> = new Map();
+  // childId -> parentId
+  const incomingConnections: Map<string, string> = new Map();
+
+  edges.forEach(edge => {
+    if (!outgoingConnections.has(edge.source)) {
+      outgoingConnections.set(edge.source, new Map());
+    }
+    if (!outgoingConnections.get(edge.source)!.has(edge.sourceHandle)) {
+      outgoingConnections.get(edge.source)!.set(edge.sourceHandle, []);
+    }
+    outgoingConnections.get(edge.source)!.get(edge.sourceHandle)!.push(edge.target);
+    incomingConnections.set(edge.target, edge.source);
+  });
+
   const nodesById: Map<string, FlowNode> = nodes.reduce((map, node) => {
     map.set(node.id, node);
     return map;
@@ -148,9 +149,15 @@ export function serializeDocument(
 
   while (unprocessedNodeIds.size > 0) {
     const [nodeId] = unprocessedNodeIds;
-    const newRoot = recursiveSerializeNode(nodeId);
-    if (newRoot) {
-      nodeEditorMetadata.$FloatingNodes.push(newRoot);
+    let newRootId = nodeId;
+    // only add parents of any subgraphs to floating nodes
+    while (incomingConnections.has(newRootId)) {
+      newRootId = incomingConnections.get(newRootId)!;
+    }
+
+    const serializedNewRoot = recursiveSerializeNode(newRootId);
+    if (serializedNewRoot) {
+      nodeEditorMetadata.$FloatingNodes.push(serializedNewRoot);
     }
   }
 

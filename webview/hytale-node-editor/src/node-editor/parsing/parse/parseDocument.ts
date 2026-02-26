@@ -1,4 +1,4 @@
-import { workspace, type WorkspaceState } from "../../../workspaceState.svelte";
+import { workspace, type WorkspaceState } from "../../../workspace.svelte";
 import {
   DATA_NODE_TYPE,
   type GroupNodeType,
@@ -125,14 +125,16 @@ export function parseDocumentText(text: string): WorkspaceState {
     nodesById.set(node.id, node);
   };
 
-  const recursiveParseNodes = (localRoot: unknown, variantOrTemplateID: string | null): string => {
+  const recursiveParseNodes = (
+    localRoot: NodeAssetJson,
+    variantOrTemplateID: string | null,
+  ): string => {
     let templateId: string;
-    let rootNode = localRoot as NodeAssetJson;
-    let nodeId = rootNode.$NodeId;
-    let position = rootNode.$Position ?? { $x: 0, $y: 0 };
+    let nodeId = localRoot.$NodeId;
+    let position = localRoot.$Position ?? { $x: 0, $y: 0 };
     const variantKind = variantKindsById[variantOrTemplateID];
     if (variantKind) {
-      const nodeType = localRoot[variantKind.VariantFieldName];
+      const nodeType = localRoot[variantKind.VariantFieldName] as string;
       if (nodeType) {
         templateId = variantKind.Variants[nodeType];
       }
@@ -154,8 +156,15 @@ export function parseDocumentText(text: string): WorkspaceState {
 
       const nodeData: DataNodeData = {
         ...template,
+        // shallow copy each field so they don't refer to the original template's definition
+        fieldsBySchemaKey: Object.fromEntries(
+          Object.entries(template.fieldsBySchemaKey).map(([schemaKey, field]) => [
+            schemaKey,
+            { ...field }, // shallow clone; leaves any nested proxies as-is
+          ]),
+        ),
       };
-      const unprocessedData = new Set(Object.keys(rootNode).filter(key => !key.startsWith("$")));
+      const unprocessedData = new Set(Object.keys(localRoot).filter(key => !key.startsWith("$")));
 
       // # process children
       for (const pin of template.outputPins) {
@@ -163,28 +172,34 @@ export function parseDocumentText(text: string): WorkspaceState {
         unprocessedData.delete(schemaKey);
         switch (pin.type) {
           case "single":
-            if (rootNode[schemaKey] !== undefined) {
+            if (localRoot[schemaKey] !== undefined) {
               let childId = recursiveParseNodes(
-                rootNode[schemaKey],
+                localRoot[schemaKey] as NodeAssetJson,
                 template.childTypes[schemaKey],
               );
               addEdge(nodeId, schemaKey, childId);
             }
             break;
           case "multiple":
-            if (Array.isArray(rootNode[schemaKey])) {
-              for (const child of rootNode[schemaKey] as unknown[]) {
-                let childId = recursiveParseNodes(child, template.childTypes[schemaKey]);
+            if (Array.isArray(localRoot[schemaKey])) {
+              for (const child of localRoot[schemaKey] as unknown[]) {
+                let childId = recursiveParseNodes(
+                  child as NodeAssetJson,
+                  template.childTypes[schemaKey],
+                );
                 addEdge(nodeId, schemaKey, childId);
               }
             }
             break;
           case "map":
-            if (typeof rootNode[schemaKey] === "object") {
+            if (typeof localRoot[schemaKey] === "object") {
               for (const [childKey, value] of Object.entries(
-                rootNode[schemaKey] as Record<string, unknown>,
+                localRoot[schemaKey] as Record<string, unknown>,
               )) {
-                let childId = recursiveParseNodes(value, template.childTypes[schemaKey]);
+                let childId = recursiveParseNodes(
+                  value as NodeAssetJson,
+                  template.childTypes[schemaKey],
+                );
                 addEdge(nodeId, schemaKey, childId);
               }
             }
@@ -194,8 +209,8 @@ export function parseDocumentText(text: string): WorkspaceState {
       // # process fields
       for (const key of Object.keys(nodeData.fieldsBySchemaKey)) {
         unprocessedData.delete(key);
-        const value = rootNode[key];
-        if (value) {
+        const value = localRoot[key];
+        if (value !== undefined) {
           nodeData.fieldsBySchemaKey[key].value = value;
         }
       }
@@ -204,16 +219,16 @@ export function parseDocumentText(text: string): WorkspaceState {
       nodeData.unparsedMetadata = {};
       for (const key of unprocessedData) {
         if (template.schemaConstants[key]) {
-          if (rootNode[key] != template.schemaConstants[key]) {
+          if (localRoot[key] != template.schemaConstants[key]) {
             console.warn(
               `Constant value for ${key} in asset doesn't match expected from template.`,
-              rootNode,
+              localRoot,
               template,
             );
           }
           continue;
         }
-        nodeData.unparsedMetadata[key] = rootNode[key];
+        nodeData.unparsedMetadata[key] = localRoot[key];
       }
 
       const dataNode: DataNodeType = {
@@ -223,7 +238,7 @@ export function parseDocumentText(text: string): WorkspaceState {
           x: position.$x,
           y: position.$y,
         },
-        data: { ...nodeData, comment: rootNode.$Comment },
+        data: { ...nodeData, comment: localRoot.$Comment },
       };
       addNode(dataNode);
     } else {
@@ -232,7 +247,7 @@ export function parseDocumentText(text: string): WorkspaceState {
         nodeId = createNodeId("Generic");
       }
       const data = {};
-      Object.entries(rootNode).forEach(([key, value]) => {
+      Object.entries(localRoot).forEach(([key, value]) => {
         if (!key.startsWith("$")) data[key] = value;
       });
       const jsonNode: RawJsonNodeType = {
@@ -243,8 +258,8 @@ export function parseDocumentText(text: string): WorkspaceState {
           y: position.$y,
         },
         data: {
-          data: data ? JSON.stringify(data, null, "/t") : DEFAULT_RAW_JSON_TEXT,
-          comment: rootNode.$Comment,
+          data: data ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT,
+          comment: localRoot.$Comment,
         },
       };
       addNode(jsonNode);

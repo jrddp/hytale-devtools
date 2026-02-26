@@ -258,6 +258,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     if (typeof message.sourceVersion === "number" && message.sourceVersion !== document.version) {
+      LOGGER.error("Version mismatch detected when applying edit from node editor.");
       await this.postError(webview, "The file changed in another editor. Please retry.");
       updateWebview();
       return;

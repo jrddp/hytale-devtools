@@ -61,7 +61,7 @@
   import GroupNode from "./nodes/GroupNode.svelte";
   import LinkNode from "./nodes/LinkNode.svelte";
   import RawJsonNode from "./nodes/RawJsonNode.svelte";
-  import { workspace } from "./workspaceState.svelte";
+  import { applyDocumentState, workspace } from "./workspace.svelte";
 
   let {
     nodes = $bindable([]),
@@ -70,7 +70,6 @@
     quickActionRequest = undefined,
     revealNodeId = undefined,
     revealNodeRequestVersion = 0,
-    onflowchange,
     onviewrawjson,
     oncustomizekeybinds,
   }: {
@@ -80,7 +79,6 @@
     quickActionRequest?: { token: number; actionId: string; commandId: string };
     revealNodeId?: string;
     revealNodeRequestVersion?: number;
-    onflowchange?: (event: string, nodes: FlowNode[], edges: FlowEdge[]) => void;
     onviewrawjson?: () => void;
     oncustomizekeybinds?: () => void;
   } = $props();
@@ -102,7 +100,7 @@
     [RAW_JSON_NODE_TYPE]: RawJsonNode,
   } as Record<string, Component>;
 
-  const { fitView, getViewport, screenToFlowPosition, setCenter, setViewport } = useSvelteFlow();
+  const { fitView, screenToFlowPosition, setCenter, setViewport } = useSvelteFlow();
 
   interface PendingConnection {
     source: string;
@@ -121,12 +119,12 @@
   let initialFitInProgress = false;
   let initialViewportReady = false;
   let pendingSingleSourceReplacement;
-  let nodeSearchOpen = false;
-  let nodeSearchOpenVersion = 0;
+  let nodeSearchOpen = $state(false);
+  let nodeSearchOpenVersion = $state(0);
   let nodeSearchInitialViewport = undefined;
   let nodeSearchLastPreviewedNodeId = undefined;
-  let nodeHelpOpen = false;
-  let nodeHelpOpenVersion = 0;
+  let nodeHelpOpen = $state(false);
+  let nodeHelpOpenVersion = $state(0);
   let nodeSearchGroups = [];
   let lastHandledQuickActionRequestToken = -1;
   let lastPointerClientPosition = undefined;
@@ -167,18 +165,14 @@
     }
   });
 
-  function emitFlowChange(reason) {
-    onflowchange(reason, nodes, edges);
-  }
-
   const handleConnect: OnConnect = connection => {
     edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
     clearPendingSingleSourceReplacement();
-    emitFlowChange("edge-created");
+    applyDocumentState("edge-created");
   };
 
   function handleNodeDragStop() {
-    emitFlowChange("node-moved");
+    applyDocumentState("node-moved");
   }
 
   function handleQuickActionMenuEvent(event) {
@@ -229,7 +223,7 @@
   }
 
   function handleQuickActionGoToRoot() {
-    const root = findNodeById(workspace.state.rootNodeId);
+    const root = findNodeById(workspace.rootNodeId);
     const targetX = root.position.x + root.width;
     const targetY = root.position.y + root.height / 2;
 
@@ -339,7 +333,7 @@
     });
 
     if (hasPositionUpdates) {
-      emitFlowChange("auto-layout-applied");
+      applyDocumentState("auto-layout-applied");
     }
   }
 
@@ -358,7 +352,7 @@
 
   function handleMetadataMutation(event) {
     const mutationReason = event?.detail?.reason;
-    emitFlowChange(mutationReason ?? "metadata-updated");
+    applyDocumentState(mutationReason ?? "metadata-updated");
   }
 
   function handleWindowKeyDown(event) {
@@ -398,8 +392,7 @@
 
   function logDebugInfo() {
     const selectedNodes = nodes.filter(node => node.selected);
-    console.log("workspace.context", workspace.context);
-    console.log("workspace.state", workspace.state);
+    console.log("workspace", workspace);
     for (const node of selectedNodes) {
       console.log(node);
     }
@@ -410,7 +403,7 @@
       return;
     }
 
-    queueMicrotask(() => emitFlowChange("elements-deleted"));
+    queueMicrotask(() => applyDocumentState("elements-deleted"));
   }
 
   function handleWindowCopy(event) {
@@ -430,7 +423,7 @@
     // TODO implement
 
     clearPendingSingleSourceReplacement();
-    emitFlowChange("nodes-cut");
+    applyDocumentState("nodes-cut");
     event.preventDefault();
     event.stopPropagation();
   }
@@ -446,7 +439,7 @@
       return;
     }
 
-    emitFlowChange("nodes-pasted");
+    applyDocumentState("nodes-pasted");
     event.preventDefault();
     event.stopPropagation();
   }
@@ -534,9 +527,6 @@
     centerViewportOnNode(nodeId);
     const didSelectionChange = selectOnlyNodeById(nodeId);
     closeNodeSearchMenu({ restoreViewport: false });
-    if (didSelectionChange) {
-      emitFlowChange("node-search-selected");
-    }
   }
 
   function centerViewportOnNode(nodeId) {
@@ -599,10 +589,6 @@
     await tick();
     const didCenterViewport = centerViewportOnNode(nodeId);
     const didSelectionChange = selectOnlyNodeById(nodeId);
-    if (didSelectionChange) {
-      emitFlowChange("document-selection-revealed");
-      return;
-    }
   }
 
   function didEventOccurInsideAddMenu(event) {
@@ -769,7 +755,7 @@
 
       nodes = [newGroupNode, ...nodes];
       closeAddNodeMenu();
-      emitFlowChange("group-created");
+      applyDocumentState("group-created");
       return;
     }
 
@@ -792,7 +778,7 @@
 
       nodes = [newCommentNode, ...nodes];
       closeAddNodeMenu();
-      emitFlowChange("comment-created");
+      applyDocumentState("comment-created");
       return;
     }
 
@@ -824,7 +810,7 @@
       }
 
       closeAddNodeMenu();
-      emitFlowChange("raw-json-node-created");
+      applyDocumentState("raw-json-node-created");
       return;
     }
 
@@ -853,7 +839,7 @@
       }
 
       closeAddNodeMenu();
-      emitFlowChange("link-node-created");
+      applyDocumentState("link-node-created");
       return;
     }
 
@@ -884,7 +870,7 @@
     }
 
     closeAddNodeMenu();
-    emitFlowChange("node-created");
+    applyDocumentState("data-node-created");
   }
 
   function createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId) {
@@ -1067,7 +1053,7 @@
     initialFitInProgress = true;
     await tick();
 
-    const initialFitNodeIds = resolveInitialFitNodeIds(nodes, workspace.state.rootNodeId);
+    const initialFitNodeIds = resolveInitialFitNodeIds(nodes, workspace.rootNodeId);
     if (initialFitNodeIds.length > 0) {
       fitView({
         nodes: initialFitNodeIds,
@@ -1200,7 +1186,7 @@
       return Array.from(new Set(selectedNodeIds));
     }
 
-    const rootNodeId = workspace.state?.rootNodeId;
+    const rootNodeId = workspace.rootNodeId;
     return rootNodeId ? [rootNodeId] : [];
   }
 

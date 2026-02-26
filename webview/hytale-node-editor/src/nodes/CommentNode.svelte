@@ -3,6 +3,7 @@
   import { tick } from "svelte";
   import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
   import { COMMENT_MUTATION_EVENT, type CommentNodeType } from "../common";
+  import { applyDocumentState } from "src/workspace.svelte";
 
   let { id, data, selected = false, dragging = false }: CommentNodeType = $props();
 
@@ -56,7 +57,7 @@
       applyCommentPatch({
         name: nextTitle,
       });
-      notifyCommentMutation("comment-renamed");
+      applyDocumentState("comment-renamed");
     }
 
     isEditingTitle = false;
@@ -77,7 +78,7 @@
       applyCommentPatch({
         text: nextText,
       });
-      notifyCommentMutation("comment-text-updated");
+      applyDocumentState("comment-text-updated");
     }
 
     isEditingText = false;
@@ -122,7 +123,7 @@
       applyCommentPatch({
         fontSize: nextFontSize,
       });
-      notifyCommentMutation("comment-font-size-updated");
+      applyDocumentState("comment-font-size-updated");
     }
 
     isEditingFontSize = false;
@@ -235,7 +236,7 @@
   }
 
   function handleResizeEnd() {
-    notifyCommentMutation("comment-resized");
+    applyDocumentState("comment-resized");
   }
 
   function applyCommentPatch(patch: { name?: string; text?: string; fontSize?: number }) {
@@ -245,21 +246,6 @@
       fontSize: data.fontSize,
       ...patch,
     });
-  }
-
-  function notifyCommentMutation(reason) {
-    if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
-      return;
-    }
-
-    window.dispatchEvent(
-      new CustomEvent(COMMENT_MUTATION_EVENT, {
-        detail: {
-          nodeId: id,
-          reason,
-        },
-      }),
-    );
   }
 </script>
 

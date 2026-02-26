@@ -6,6 +6,7 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
+  import { applyDocumentState } from "src/workspace.svelte";
 
   const DEFAULT_NODE_LABEL = "Link";
   const DEFAULT_OUTPUT_LABEL = "Children";
@@ -33,7 +34,7 @@
     updateNodeData(id, {
       titleOverride: nextLabel,
     });
-    notifyLinkMutation("link-label-updated");
+    applyDocumentState("link-label-updated");
   }
 
   function updateComment(nextComment) {
@@ -41,7 +42,7 @@
     updateNodeData(id, {
       comment: currentComment,
     });
-    notifyLinkMutation("link-comment-updated");
+    applyDocumentState("link-comment-updated");
   }
 
   function selectNodeFromTitleBar(event) {
@@ -136,21 +137,6 @@
 
   function handleCommentSelect(event) {
     selectNodeFromTitleBar(event.detail?.originalEvent);
-  }
-
-  function notifyLinkMutation(reason) {
-    if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
-      return;
-    }
-
-    window.dispatchEvent(
-      new CustomEvent(LINK_MUTATION_EVENT, {
-        detail: {
-          nodeId: id,
-          reason,
-        },
-      }),
-    );
   }
 </script>
 

@@ -1,3 +1,4 @@
+import { WebviewToExtensionMessage } from "@shared/node-editor/messageTypes";
 import { NodePin, NodeTemplate } from "@shared/node-editor/workspaceTypes";
 import type { Edge, Node, XYPosition } from "@xyflow/svelte";
 
@@ -18,7 +19,6 @@ export const LINK_TEMPLATE_ID = "$Link";
 
 export const GROUP_MUTATION_EVENT = "hytale-node-editor-group-mutation";
 export const COMMENT_MUTATION_EVENT = "hytale-node-editor-comment-mutation";
-export const CUSTOM_MUTATION_EVENT = "hytale-node-editor-custom-mutation";
 export const RAW_JSON_MUTATION_EVENT = "hytale-node-editor-raw-json-mutation";
 export const LINK_MUTATION_EVENT = "hytale-node-editor-link-mutation";
 
@@ -31,6 +31,12 @@ export const DEFAULT_GROUP_HEIGHT = 320;
 
 export const DEFAULT_RAW_JSON_TEXT = "{\n\n}";
 export const DEFAULT_RAW_JSON_LABEL = "Raw JSON Node";
+
+export type VSCodeApi = {
+  postMessage: (message: WebviewToExtensionMessage) => void;
+  getState?: () => Record<string, unknown> | undefined;
+  setState?: (state: Record<string, unknown>) => unknown;
+};
 
 export interface NodeBase extends Record<string, unknown> {
   titleOverride?: string;
