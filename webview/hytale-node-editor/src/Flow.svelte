@@ -266,7 +266,7 @@
     const targetNodesById = new Map();
     const absolutePositionByNodeId = new Map();
     for (const targetNodeId of targetNodeIds) {
-      const targetNode = findNodeById(targetNodeId);
+      const targetNode = workspace.getNodeById(targetNodeId);
       if (!targetNode) {
         continue;
       }
@@ -542,7 +542,7 @@
   }
 
   function centerViewportOnNode(nodeId) {
-    const targetNode = findNodeById(nodeId);
+    const targetNode = workspace.getNodeById(nodeId);
     const targetPosition = readAbsoluteNodePosition(targetNode);
     if (!targetPosition) {
       return false;
@@ -932,7 +932,7 @@
       return;
     }
 
-    const sourceNode = findNodeById(sourceNodeId);
+    const sourceNode = workspace.getNodeById(sourceNodeId);
     let sourceMultiplicity = "single";
     if (sourceNode.data.outputPins) {
       sourceMultiplicity =
@@ -965,13 +965,6 @@
       sourceHandleId,
       removedEdges,
     };
-  }
-
-  function findNodeById(nodeId: string) {
-    if (!nodeId) {
-      return undefined;
-    }
-    return nodes.find(node => node.id === nodeId);
   }
 
   function restorePendingSingleSourceReplacement() {
@@ -1140,7 +1133,7 @@
       return relativePosition;
     }
 
-    const parentNode = findNodeById(parentNodeId);
+    const parentNode = workspace.getNodeById(parentNodeId);
     if (!parentNode) {
       return relativePosition;
     }
@@ -1184,7 +1177,7 @@
       return absolutePosition;
     }
 
-    const parentNode = findNodeById(parentNodeId);
+    const parentNode = workspace.getNodeById(parentNodeId);
     if (!parentNode) {
       return absolutePosition;
     }
