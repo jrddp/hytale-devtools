@@ -1,15 +1,15 @@
 <script lang="ts">
   import { useSvelteFlow, useViewport } from "@xyflow/svelte";
-  import { Database, Pencil } from "lucide-svelte";
-  import { tick } from "svelte";
-  import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
+  import { Pencil } from "lucide-svelte";
+  import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
   import { type GroupNodeType } from "src/common";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
+  import { tick } from "svelte";
 
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
   const GROUP_TITLE_BASE_SIZE_PX = 18;
-  const GROUP_TITLE_MAX_COMPENSATION_SCALE = 5.5;
+  const GROUP_TITLE_MAX_COMPENSATION_SCALE = 12;
   const TITLEBAR_DRAG_DISTANCE_THRESHOLD_PX = 3;
 
   let { id, position, data, selected = false, dragging = false }: GroupNodeType = $props();
@@ -207,7 +207,7 @@
     onpointerenter={() => (hoveringTitlebar = true)}
     onpointerleave={() => (hoveringTitlebar = false)}
   >
-    <div class="flex items-end min-w-0 gap-1 overflow-visible">
+    <div class="flex items-end min-w-0 gap-1 overflow-visible z-10">
       {#if isEditingTitle}
         <input
           bind:this={titleInputElement}
@@ -260,7 +260,7 @@
   ></div>
 
   <ZoomCompensatedNodeResizer
-    isVisible={selected}
+    isVisible={selected && !dragging}
     minWidth={MIN_GROUP_WIDTH}
     minHeight={MIN_GROUP_HEIGHT}
     onResizeEnd={handleResizeEnd}

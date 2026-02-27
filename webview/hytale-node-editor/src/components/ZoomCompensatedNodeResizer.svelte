@@ -1,26 +1,41 @@
 <script lang="ts">
-  import { NodeResizer, useViewport } from "@xyflow/svelte";
+  import { NodeResizer, type OnResizeEnd, useViewport } from "@xyflow/svelte";
 
-  export let isVisible = false;
-  export let autoScale = false;
-  export let minWidth = 0;
-  export let minHeight = 0;
-  export let color = "var(--vscode-focusBorder)";
-  export let handleClass = "rounded-sm border border-vsc-focus bg-vsc-editor-widget-bg";
-  export let lineClass = "border-vsc-focus";
-  export let onResizeEnd = undefined;
+  const RESIZER_HANDLE_BASE_SIZE_PX = 10;
+  const RESIZER_HANDLE_MAX_COMPENSATION_SCALE = 5.5;
 
-  const RESIZER_HANDLE_BASE_SIZE_PX = 8;
-  const RESIZER_HANDLE_MAX_COMPENSATION_SCALE = 12;
+  type Props = {
+    isVisible?: boolean;
+    minWidth?: number;
+    minHeight?: number;
+    maxWidth?: number;
+    maxHeight?: number;
+    color?: string;
+    handleClass?: string;
+    lineClass?: string;
+    onResizeEnd?: OnResizeEnd;
+  };
+
+  let {
+    isVisible = false,
+    minWidth = 10,
+    minHeight = 10,
+    maxWidth = Number.MAX_VALUE,
+    maxHeight = Number.MAX_VALUE,
+    color = "var(--vscode-focusBorder)",
+    handleClass = "rounded-sm border border-vsc-focus bg-vsc-editor-widget-bg",
+    lineClass = "border-vsc-focus",
+    onResizeEnd = undefined,
+  }: Props = $props();
 
   const viewport = useViewport();
 
-  $: viewportZoom = readViewportZoom(viewport.current?.zoom);
-  $: resizerHandleCompensationScale = readResizerHandleCompensationScale(viewportZoom);
-  $: resizerHandleSizePx = Math.round(RESIZER_HANDLE_BASE_SIZE_PX * resizerHandleCompensationScale);
-  $: computedHandleStyle = `width:${resizerHandleSizePx}px;height:${resizerHandleSizePx}px;`;
+  let viewportZoom = $derived(readViewportZoom(viewport.current.zoom));
+  let handleCompensationScale = $derived(readHandleCompensationScale(viewportZoom));
+  let handleSizePx = $derived(Math.round(RESIZER_HANDLE_BASE_SIZE_PX * handleCompensationScale));
+  let computedHandleStyle = $derived(`width:${handleSizePx}px;height:${handleSizePx}px;`);
 
-  function readViewportZoom(candidateZoom) {
+  function readViewportZoom(candidateZoom: unknown) {
     const zoom = Number(candidateZoom);
     if (!Number.isFinite(zoom) || zoom <= 0) {
       return 1;
@@ -29,7 +44,7 @@
     return zoom;
   }
 
-  function readResizerHandleCompensationScale(zoom) {
+  function readHandleCompensationScale(zoom: number) {
     if (!Number.isFinite(zoom) || zoom >= 1) {
       return 1;
     }
@@ -41,12 +56,14 @@
 
 <NodeResizer
   {isVisible}
-  {autoScale}
+  autoScale={false}
   {minWidth}
   {minHeight}
+  {maxWidth}
+  {maxHeight}
   {color}
   {handleClass}
   handleStyle={computedHandleStyle}
   {lineClass}
-  onResizeEnd={onResizeEnd}
+  {onResizeEnd}
 />
