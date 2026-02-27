@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import {
+    type Component,
+    ComponentType,
+    createEventDispatcher,
+    type SvelteComponentTyped,
+  } from "svelte";
   import { Panel } from "@xyflow/svelte";
   import {
     ArrowLeftToLine,
@@ -11,33 +16,31 @@
   } from "lucide-svelte";
   import HoverTooltip from "./HoverTooltip.svelte";
   import {
-    NODE_EDITOR_QUICK_ACTION_IDS,
+    type NodeEditorQuickActionDefinition,
+    type NodeEditorQuickActionId,
     getNodeEditorQuickActionById,
   } from "../node-editor/ui/nodeEditorQuickActions";
 
-  const dispatch = createEventDispatcher();
-  const MENU_ITEMS = [
-    { id: NODE_EDITOR_QUICK_ACTION_IDS.GO_TO_ROOT, icon: ArrowLeftToLine },
-    { id: NODE_EDITOR_QUICK_ACTION_IDS.FIT_FULL_VIEW, icon: Binoculars },
-    { key: "separator-navigation", separator: true },
-    { id: NODE_EDITOR_QUICK_ACTION_IDS.SEARCH_NODES, icon: Search },
-    { id: NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES, icon: Network },
-    { key: "separator-utility", separator: true },
-    { id: NODE_EDITOR_QUICK_ACTION_IDS.VIEW_RAW_JSON, icon: Braces },
-    { id: NODE_EDITOR_QUICK_ACTION_IDS.HELP_AND_HOTKEYS, icon: CircleQuestionMark },
-  ];
-  const RESOLVED_MENU_ITEMS = MENU_ITEMS
-    .map((item) => {
-      if (item.separator) {
-        return item;
-      }
+  type MenuItem = { type: "action"; id: NodeEditorQuickActionId; icon: any };
+  type MenuSeparatorItem = { type: "separator"; id: string };
+  type MenuItemWithAction = MenuItem & { action: NodeEditorQuickActionDefinition };
 
-      return {
-        ...item,
-        action: getNodeEditorQuickActionById(item.id),
-      };
-    })
-    .filter((item) => item.separator === true || Boolean(item?.action));
+  const MENU_ITEMS = [
+    { type: "action" as const, id: "go-to-root" as const, icon: ArrowLeftToLine },
+    { type: "action" as const, id: "fit-full-view" as const, icon: Binoculars },
+    { type: "separator" as const, id: "separator-navigation" },
+    { type: "action" as const, id: "search-nodes" as const, icon: Search },
+    { type: "action" as const, id: "auto-position-nodes" as const, icon: Network },
+    { type: "separator" as const, id: "separator-utility" },
+    { type: "action" as const, id: "view-raw-json" as const, icon: Braces },
+    { type: "action" as const, id: "help-and-hotkeys" as const, icon: CircleQuestionMark },
+  ].map(item =>
+    item.type === "action"
+      ? { ...item, action: getNodeEditorQuickActionById(item.id as NodeEditorQuickActionId) }
+      : item,
+  ) as (MenuItemWithAction | MenuSeparatorItem)[];
+
+  const dispatch = createEventDispatcher();
 
   function emitAction(action) {
     if (!action?.eventName) {
@@ -48,9 +51,7 @@
   }
 
   function readItemIconClass(item) {
-    return item?.id === NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES
-      ? "-rotate-90"
-      : undefined;
+    return item?.id === "auto-position-nodes" ? "-rotate-90" : undefined;
   }
 </script>
 
@@ -59,19 +60,19 @@
     aria-label="Node editor quick actions"
     class="flex items-center gap-1 rounded-xl border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-0.5 shadow-2xl"
   >
-    {#each RESOLVED_MENU_ITEMS as item (item.key ?? item.id)}
-      {#if item.separator}
+    {#each MENU_ITEMS as item (item.id)}
+      {#if item.type === "separator"}
         <span aria-hidden="true" class="mx-0.5 h-5 w-px bg-vsc-editor-widget-border"></span>
       {:else}
         <HoverTooltip text={item.action.name} placement="bottom" delayMs={220}>
           <button
             type="button"
             aria-label={item.action.name}
-            class="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-vsc-muted transition-colors hover:border-vsc-editor-widget-border hover:bg-vsc-list-hover hover:text-vsc-editor-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+            class="flex items-center justify-center w-8 h-8 transition-colors border border-transparent rounded-md text-vsc-muted hover:border-vsc-editor-widget-border hover:bg-vsc-list-hover hover:text-vsc-editor-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
             onclick={() => emitAction(item.action)}
           >
             <svelte:component
-              this={item.icon}
+              this={item.icon as Component}
               class={readItemIconClass(item)}
               size={16}
               strokeWidth={2}

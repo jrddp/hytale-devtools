@@ -11,6 +11,7 @@
   import { onMount, tick } from "svelte";
   import Flow from "./Flow.svelte";
   import {
+    type NodeEditorQuickActionId,
     getNodeEditorQuickActionByCommandId,
     getNodeEditorQuickActionById,
   } from "./node-editor/ui/nodeEditorQuickActions";
@@ -27,7 +28,7 @@
   let quickActionRequest:
     | {
         token: number;
-        actionId: string;
+        actionId: NodeEditorQuickActionId;
         commandId: string;
       }
     | undefined = $state();
@@ -57,7 +58,9 @@
           typeof message.message === "string" ? message.message : "unknown editor error.";
         return;
       case "triggerQuickAction": {
-        const actionFromId = getNodeEditorQuickActionById(message?.actionId);
+        const actionFromId = getNodeEditorQuickActionById(
+          message?.actionId as NodeEditorQuickActionId | undefined,
+        );
         const actionFromCommand = getNodeEditorQuickActionByCommandId(message?.commandId);
         const quickAction = actionFromId ?? actionFromCommand;
         if (!quickAction) {

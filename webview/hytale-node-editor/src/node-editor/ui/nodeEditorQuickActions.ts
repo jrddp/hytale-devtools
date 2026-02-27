@@ -1,14 +1,10 @@
-export const NODE_EDITOR_QUICK_ACTION_IDS = Object.freeze({
-	GO_TO_ROOT: 'go-to-root',
-	FIT_FULL_VIEW: 'fit-full-view',
-	SEARCH_NODES: 'search-nodes',
-	AUTO_POSITION_NODES: 'auto-position-nodes',
-	VIEW_RAW_JSON: 'view-raw-json',
-	HELP_AND_HOTKEYS: 'help-and-hotkeys'
-});
-
 export type NodeEditorQuickActionId =
-	(typeof NODE_EDITOR_QUICK_ACTION_IDS)[keyof typeof NODE_EDITOR_QUICK_ACTION_IDS];
+	| 'go-to-root'
+	| 'fit-full-view'
+	| 'search-nodes'
+	| 'auto-position-nodes'
+	| 'view-raw-json'
+	| 'help-and-hotkeys';
 
 export type NodeEditorQuickActionDefinition = Readonly<{
 	id: NodeEditorQuickActionId;
@@ -25,13 +21,13 @@ export type NodeEditorQuickActionDefinition = Readonly<{
 
 export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition[] = Object.freeze([
 	{
-		id: NODE_EDITOR_QUICK_ACTION_IDS.GO_TO_ROOT,
+		id: 'go-to-root',
 		eventName: 'gotoroot',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.goToRoot',
 		name: 'Go to root'
 	},
 	{
-		id: NODE_EDITOR_QUICK_ACTION_IDS.FIT_FULL_VIEW,
+		id: 'fit-full-view',
 		eventName: 'fitfullview',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.fitFullView',
 		name: 'Fit full view',
@@ -42,7 +38,7 @@ export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition
 		}
 	},
 	{
-		id: NODE_EDITOR_QUICK_ACTION_IDS.SEARCH_NODES,
+		id: 'search-nodes',
 		eventName: 'searchnodes',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.searchNodes',
 		name: 'Search nodes',
@@ -54,7 +50,7 @@ export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition
 		}
 	},
 	{
-		id: NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES,
+		id: 'auto-position-nodes',
 		eventName: 'autopositionnodes',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.autoPositionNodes',
 		name: 'Auto position nodes',
@@ -65,13 +61,13 @@ export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition
 		}
 	},
 	{
-		id: NODE_EDITOR_QUICK_ACTION_IDS.VIEW_RAW_JSON,
+		id: 'view-raw-json',
 		eventName: 'viewrawjson',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.viewRawJson',
 		name: 'View raw json'
 	},
 	{
-		id: NODE_EDITOR_QUICK_ACTION_IDS.HELP_AND_HOTKEYS,
+		id: 'help-and-hotkeys',
 		eventName: 'helphotkeys',
 		commandId: 'hytale-devtools.nodeEditor.quickAction.helpAndHotkeys',
 		name: 'Show help',
@@ -83,10 +79,10 @@ export const NODE_EDITOR_QUICK_ACTIONS: readonly NodeEditorQuickActionDefinition
 	}
 ]);
 
-const QUICK_ACTION_BY_ID = new Map(
+const QUICK_ACTION_BY_ID = new Map<NodeEditorQuickActionId, NodeEditorQuickActionDefinition>(
 	NODE_EDITOR_QUICK_ACTIONS.map((quickAction) => [quickAction.id, quickAction])
 );
-const QUICK_ACTION_BY_EVENT_NAME = new Map(
+const QUICK_ACTION_BY_EVENT_NAME = new Map<string, NodeEditorQuickActionDefinition>(
 	NODE_EDITOR_QUICK_ACTIONS.map((quickAction) => [quickAction.eventName, quickAction])
 );
 const QUICK_ACTION_BY_COMMAND_ID = new Map<string, NodeEditorQuickActionDefinition>();
@@ -99,9 +95,9 @@ for (const quickAction of NODE_EDITOR_QUICK_ACTIONS) {
 }
 
 export function getNodeEditorQuickActionById(
-	actionId: string | undefined
+	actionId: NodeEditorQuickActionId | undefined
 ): NodeEditorQuickActionDefinition | undefined {
-	return actionId ? QUICK_ACTION_BY_ID.get(actionId as NodeEditorQuickActionId) : undefined;
+	return actionId ? QUICK_ACTION_BY_ID.get(actionId) : undefined;
 }
 
 export function getNodeEditorQuickActionByEventName(

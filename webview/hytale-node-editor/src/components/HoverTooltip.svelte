@@ -7,7 +7,7 @@
   export let placement = "bottom";
   export let wrapperClass = "";
   export let tooltipClass = "";
-  export let groupAriaLabel;
+  export let groupAriaLabel = undefined;
 
   let isVisible = false;
   let hoverTimer;

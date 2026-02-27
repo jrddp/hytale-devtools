@@ -2,7 +2,7 @@
   import { createEventDispatcher, tick } from "svelte";
   import { CircleQuestionMark } from "lucide-svelte";
   import {
-    NODE_EDITOR_QUICK_ACTION_IDS,
+    type NodeEditorQuickActionId,
     NODE_EDITOR_QUICK_ACTIONS,
   } from "../node-editor/ui/nodeEditorQuickActions";
 
@@ -11,11 +11,11 @@
 
   const dispatch = createEventDispatcher();
   const QUICK_ACTION_DISPLAY_ORDER = [
-    NODE_EDITOR_QUICK_ACTION_IDS.SEARCH_NODES,
-    NODE_EDITOR_QUICK_ACTION_IDS.FIT_FULL_VIEW,
-    NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES,
-    NODE_EDITOR_QUICK_ACTION_IDS.HELP_AND_HOTKEYS,
-  ];
+    "search-nodes",
+    "fit-full-view",
+    "auto-position-nodes",
+    "help-and-hotkeys",
+  ] as NodeEditorQuickActionId[];
   const ADD_NODE_ACTION_ROW = {
     label: "Add node",
     combos: [["Right click"]],

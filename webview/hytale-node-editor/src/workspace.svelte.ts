@@ -5,6 +5,8 @@ import { type FlowEdge, type FlowNode, type VSCodeApi } from "src/common";
 import { serializeDocument } from "src/node-editor/parsing/serialize/serializeDocument";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 
+export type SelectionType = "replace" | "add";
+
 export interface WorkspaceState {
   nodes: FlowNode[];
   edges: FlowEdge[];
@@ -27,9 +29,24 @@ export class Workspace {
   rootNodeId = $state<string>();
   vscode = $state<VSCodeApi>();
   sourceVersion = $state(-1);
+  selectedNodes = $derived(this.nodes.filter(node => node.selected));
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));
+  /** Gets effective selection of nodes - including children of directly selected nodes */
+  private effectivelySelectedNodes = $derived.by(() => {
+    // note: nodes order always includes parents first so this guarentees that we mark parents selection first
+    // we are intentionally starting set as empty instead of using selectedNodes
+    const selectedNodeIds = new Set();
+    const selectedNodeList = [];
+    for (const node of this.nodes) {
+      if (node.selected || selectedNodeIds.has(node.parentId)) {
+        selectedNodeIds.add(node.id);
+        selectedNodeList.push(node);
+      }
+    }
+    return selectedNodeList;
+  });
   /** parentId -> handleId -> edge */
   private outgoingConnections = $derived.by(() => {
     const outgoingConnections: Map<string, Map<string, FlowEdge[]>> = new Map();
@@ -65,6 +82,61 @@ export class Workspace {
 
   searchNodesCollidingWith(bbox: BBox) {
     return this.spatialIndex.search(bbox);
+  }
+
+  getEffectivelySelectedNodes(): FlowNode[] {
+    return [...this.effectivelySelectedNodes];
+  }
+
+  getOutgoingConnections(nodeId: string): Map<string, FlowEdge[]> | undefined {
+    const original = this.outgoingConnections.get(nodeId);
+    if (!original) {
+      return undefined;
+    }
+    // shallow copy internal edge lists
+    return new Map(
+      Array.from(original.entries()).map(([handleId, edges]) => [handleId, [...edges]]),
+    );
+  }
+
+  getOutgoingConnectionsForHandle(nodeId: string, handleId: string): FlowEdge[] {
+    const outgoingConnections = this.outgoingConnections.get(nodeId)?.get(handleId) ?? [];
+    return [...outgoingConnections];
+  }
+
+  getIncomingConnection(nodeId: string): FlowEdge | undefined {
+    return this.incomingConnections.get(nodeId);
+  }
+
+  selectNode(nodeId: string, selectionType: SelectionType): void {
+    this.nodes.map(node => {
+      if (node.id === nodeId) {
+        return node.selected ? node : { ...node, selected: true };
+      } else {
+        switch (selectionType) {
+          case "replace":
+            return node.selected ? { ...node, selected: false } : node;
+          case "add":
+            return node;
+        }
+      }
+    });
+  }
+
+  selectNodes(nodeIds: string[], selectionType: SelectionType): void {
+    const idSet = new Set(nodeIds);
+    this.nodes.map(node => {
+      if (idSet.has(node.id)) {
+        return node.selected ? node : { ...node, selected: true };
+      } else {
+        switch (selectionType) {
+          case "replace":
+            return node.selected ? { ...node, selected: false } : node;
+          case "add":
+            return node;
+        }
+      }
+    });
   }
 }
 

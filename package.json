@@ -159,6 +159,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@tailwindcss/vite": "^4.1.13",
+    "@types/d3-flextree": "^2.1.4",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@types/rbush": "^4.0.0",
@@ -179,8 +180,8 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^15.2.2",
-    "@dagrejs/dagre": "^2.0.4",
     "@xyflow/svelte": "^1.5.0",
+    "d3-flextree": "^2.1.2",
     "lucide-svelte": "^0.564.0",
     "rbush": "^4.0.1"
   }

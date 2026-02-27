@@ -13,12 +13,20 @@
   import "@xyflow/svelte/dist/style.css";
   import { type Component, tick } from "svelte";
 
-  import { type NodePin, type NodeTemplate } from "@shared/node-editor/workspaceTypes";
+  import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import AddNodeMenu from "src/components/AddNodeMenu.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
   import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
+  import { getAutoPositionedMappings } from "src/node-editor/layout/autoLayout";
   import { createNodeId } from "src/node-editor/utils/idUtils";
+  import {
+    getAbsoluteCenterPosition,
+    pruneConflictingEdges,
+    recalculateGroupParents,
+    resolveInitialFitNodeIds,
+  } from "src/node-editor/utils/nodeUtils.svelte";
+  import { applyDocumentState, workspace } from "src/workspace.svelte";
   import type {
     CommentNodeType,
     DataNodeType,
@@ -47,22 +55,20 @@
     RAW_JSON_TEMPLATE_ID,
   } from "./common";
   import {
-    collectRecursiveDescendantNodeIds,
-    layoutDirectedGraphWithNodeSizes,
-    readLayoutOriginFromPositions,
-  } from "./node-editor/layout/autoLayout";
+    isDebugSchemaKeyShortcut,
+    isDeleteOrBackspace,
+    isShortcutBlockedByEditableTarget,
+  } from "./node-editor/ui/flowKeyboard";
   import {
     getNodeEditorQuickActionByEventName,
     getNodeEditorQuickActionById,
-    NODE_EDITOR_QUICK_ACTION_IDS,
+    type NodeEditorQuickActionId,
   } from "./node-editor/ui/nodeEditorQuickActions";
   import CommentNode from "./nodes/CommentNode.svelte";
   import DataNode from "./nodes/DataNode.svelte";
   import GroupNode from "./nodes/GroupNode.svelte";
   import LinkNode from "./nodes/LinkNode.svelte";
   import RawJsonNode from "./nodes/RawJsonNode.svelte";
-  import { applyDocumentState, workspace } from "src/workspace.svelte";
-  import { recalculateGroupParents } from "src/node-editor/utils/nodeUtils.svelte";
 
   let {
     nodes = $bindable([]),
@@ -77,7 +83,11 @@
     nodes?: FlowNode[];
     edges?: FlowEdge[];
     loadVersion?: number;
-    quickActionRequest?: { token: number; actionId: string; commandId: string };
+    quickActionRequest?: {
+      token: number;
+      actionId: NodeEditorQuickActionId;
+      commandId: string;
+    };
     revealNodeId?: string;
     revealNodeRequestVersion?: number;
     onviewrawjson?: () => void;
@@ -101,11 +111,22 @@
     [RAW_JSON_NODE_TYPE]: RawJsonNode,
   } as Record<string, Component>;
 
-  const { fitView, screenToFlowPosition, setCenter, setViewport } = useSvelteFlow();
+  const {
+    fitView,
+    screenToFlowPosition,
+    setCenter: setViewportCenter,
+    setViewport,
+  } = useSvelteFlow();
 
   interface PendingConnection {
     source: string;
     sourceHandle: string;
+  }
+
+  interface PendingSingleSourceReplacement {
+    sourceNodeId: string;
+    sourceHandleId: string | undefined;
+    removedEdges: FlowEdge[];
   }
 
   let lastHandledLoadVersion = -1;
@@ -119,7 +140,7 @@
   let hasAppliedInitialFit = false;
   let initialFitInProgress = false;
   let initialViewportReady = false;
-  let pendingSingleSourceReplacement;
+  let pendingSourceReplacement: PendingSingleSourceReplacement | undefined;
   let nodeSearchOpen = $state(false);
   let nodeSearchOpenVersion = $state(0);
   let nodeSearchInitialViewport = undefined;
@@ -133,7 +154,6 @@
   let regroupingQueued = $state(true);
   let lastRevealNodeRequestVersion = -1;
 
-  // needs to be in an effect to wait for node measurements to be loaded
   $effect(() => {
     if (regroupingQueued && workspace.getRootNode().measured) {
       recalculateGroupParents();
@@ -164,7 +184,7 @@
       quickActionRequest.token !== lastHandledQuickActionRequestToken
     ) {
       lastHandledQuickActionRequestToken = quickActionRequest.token;
-      if (!isKeyboardShortcutBlockedByFocusedInput()) {
+      if (!isShortcutBlockedByEditableTarget()) {
         handleQuickActionById(quickActionRequest?.actionId);
       }
     }
@@ -177,7 +197,8 @@
   });
 
   const handleConnect: OnConnect = connection => {
-    edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
+    pruneConflictingEdges(connection);
+    edges = addEdge(connection, edges);
     clearPendingSingleSourceReplacement();
     applyDocumentState("edge-created");
   };
@@ -187,8 +208,8 @@
     applyDocumentState("node-moved");
   }
 
-  function handleQuickActionMenuEvent(event) {
-    const quickAction = getNodeEditorQuickActionByEventName(event?.type);
+  function handleQuickActionMenuEvent(event: Event) {
+    const quickAction = getNodeEditorQuickActionByEventName(event.type);
     if (!quickAction) {
       return;
     }
@@ -196,29 +217,29 @@
     handleQuickActionById(quickAction.id);
   }
 
-  function handleQuickActionById(actionIdCandidate) {
+  function handleQuickActionById(actionIdCandidate: NodeEditorQuickActionId | undefined) {
     const quickAction = getNodeEditorQuickActionById(actionIdCandidate);
     if (!quickAction) {
       return;
     }
 
     switch (quickAction.id) {
-      case NODE_EDITOR_QUICK_ACTION_IDS.GO_TO_ROOT:
+      case "go-to-root":
         handleQuickActionGoToRoot();
         return;
-      case NODE_EDITOR_QUICK_ACTION_IDS.FIT_FULL_VIEW:
+      case "fit-full-view":
         handleQuickActionFitFullView();
         return;
-      case NODE_EDITOR_QUICK_ACTION_IDS.SEARCH_NODES:
+      case "search-nodes":
         handleQuickActionSearchNodes();
         return;
-      case NODE_EDITOR_QUICK_ACTION_IDS.AUTO_POSITION_NODES:
+      case "auto-position-nodes":
         handleQuickActionAutoPositionNodes();
         return;
-      case NODE_EDITOR_QUICK_ACTION_IDS.VIEW_RAW_JSON:
+      case "view-raw-json":
         handleQuickActionViewRawJson();
         return;
-      case NODE_EDITOR_QUICK_ACTION_IDS.HELP_AND_HOTKEYS:
+      case "help-and-hotkeys":
         handleQuickActionHelpAndHotkeys();
         return;
       default:
@@ -239,7 +260,7 @@
     const targetX = root.position.x + root.width;
     const targetY = root.position.y + root.height / 2;
 
-    void setCenter(targetX, targetY, {
+    void setViewportCenter(targetX, targetY, {
       zoom: 1.2,
       duration: 250,
     });
@@ -250,103 +271,30 @@
   }
 
   function handleQuickActionAutoPositionNodes() {
-    const autoLayoutSeedNodeIds = resolveAutoLayoutSeedNodeIds();
-    const nodeIds = nodes.map(nodeCandidate => nodeCandidate.id);
-    const targetNodeIds = collectRecursiveDescendantNodeIds({
-      seedNodeIds: autoLayoutSeedNodeIds,
-      edges,
-      allowedNodeIds: nodeIds,
-    });
-    if (targetNodeIds.length === 0) {
-      console.info("[node-editor] Quick action could not resolve nodes for auto-layout.");
-      return;
+    let targetNodes = workspace.getEffectivelySelectedNodes();
+
+    // autolayout the root tree if no other selection was made
+    if (targetNodes.length === 0) {
+      targetNodes = [workspace.getRootNode()];
     }
 
-    const targetNodeIdSet = new Set(targetNodeIds);
-    const targetNodesById = new Map();
-    const absolutePositionByNodeId = new Map();
-    for (const targetNodeId of targetNodeIds) {
-      const targetNode = workspace.getNodeById(targetNodeId);
-      if (!targetNode) {
-        continue;
-      }
+    const nodePositionMappings = getAutoPositionedMappings(targetNodes);
 
-      const absolutePosition = readAbsoluteNodePosition(targetNode);
+    workspace.nodes = nodes.map(node => {
+      const nodeId = node.id;
+      const absolutePosition = nodePositionMappings.get(nodeId);
       if (!absolutePosition) {
-        continue;
+        return node;
       }
-
-      targetNodesById.set(targetNodeId, targetNode);
-      absolutePositionByNodeId.set(targetNodeId, absolutePosition);
-    }
-
-    if (targetNodesById.size === 0 || absolutePositionByNodeId.size === 0) {
-      return;
-    }
-
-    const layoutOrigin = readLayoutOriginFromPositions(
-      Array.from(absolutePositionByNodeId.values()),
-    );
-    const layoutEdges = edges.filter(
-      edge =>
-        edge.source &&
-        edge.target &&
-        targetNodeIdSet.has(edge.source) &&
-        targetNodeIdSet.has(edge.target),
-    );
-    const layoutNodes = Array.from(targetNodesById.entries()).map(([nodeId, nodeCandidate]) => {
-      const nodeDimensions = readNodeDimensions(nodeCandidate);
       return {
-        id: nodeId,
-        width: nodeDimensions?.width,
-        height: nodeDimensions?.height,
+        ...node,
+        parentId: undefined,
+        position: absolutePosition,
       };
     });
-    const layoutedPositionByNodeId = layoutDirectedGraphWithNodeSizes({
-      nodes: layoutNodes,
-      edges: layoutEdges,
-      spacing: {
-        marginX: 0,
-        marginY: 0,
-      },
-      origin: layoutOrigin,
-    });
+    recalculateGroupParents();
 
-    let hasPositionUpdates = false;
-    nodes = nodes.map(nodeCandidate => {
-      const nodeId = nodeCandidate.id;
-      if (!nodeId || !targetNodeIdSet.has(nodeId)) {
-        return nodeCandidate;
-      }
-
-      const layoutedAbsolutePosition = layoutedPositionByNodeId.get(nodeId);
-      if (!layoutedAbsolutePosition) {
-        return nodeCandidate;
-      }
-
-      const nextRelativePosition = convertAbsolutePositionToNodeSpace(
-        nodeCandidate,
-        layoutedAbsolutePosition,
-      );
-      if (!nextRelativePosition) {
-        return nodeCandidate;
-      }
-
-      const currentPosition = readNodePosition(nodeCandidate);
-      if (!currentPosition || areNodePositionsDifferent(currentPosition, nextRelativePosition)) {
-        hasPositionUpdates = true;
-        return {
-          ...nodeCandidate,
-          position: nextRelativePosition,
-        };
-      }
-
-      return nodeCandidate;
-    });
-
-    if (hasPositionUpdates) {
-      applyDocumentState("auto-layout-applied");
-    }
+    applyDocumentState("auto-layout-applied");
   }
 
   function handleQuickActionViewRawJson() {
@@ -355,21 +303,16 @@
 
   function handleQuickActionHelpAndHotkeys() {
     if (nodeHelpOpen) {
-      closeNodeHelpMenu();
+      nodeHelpOpen = false;
       return;
     }
 
     openNodeHelpMenu();
   }
 
-  function handleMetadataMutation(event) {
-    const mutationReason = event?.detail?.reason;
-    applyDocumentState(mutationReason ?? "metadata-updated");
-  }
-
-  function handleWindowKeyDown(event) {
+  function handleWindowKeyDown(event: KeyboardEvent) {
     if (isDebugSchemaKeyShortcut(event)) {
-      if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+      if (isShortcutBlockedByEditableTarget(event.target)) {
         return;
       }
 
@@ -379,27 +322,13 @@
       return;
     }
 
-    if (!nodeHelpOpen || event?.key !== "Escape") {
+    if (!nodeHelpOpen || event.key !== "Escape") {
       return;
     }
 
     event.preventDefault();
     event.stopPropagation();
-    closeNodeHelpMenu();
-  }
-
-  function isDebugSchemaKeyShortcut(event) {
-    const key = event?.key?.toLowerCase();
-    if (key !== "d") {
-      return false;
-    }
-
-    const hasPrimaryModifier = Boolean(event?.metaKey || event?.ctrlKey);
-    if (!hasPrimaryModifier) {
-      return false;
-    }
-
-    return event?.altKey !== true && event?.shiftKey !== true;
+    nodeHelpOpen = false;
   }
 
   function logDebugInfo() {
@@ -411,15 +340,15 @@
   }
 
   function handleWindowKeyUp(event: KeyboardEvent) {
-    if (!isDeleteKey(event) || isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+    if (!isDeleteOrBackspace(event) || isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
 
     queueMicrotask(() => applyDocumentState("elements-deleted"));
   }
 
-  function handleWindowCopy(event) {
-    if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+  function handleWindowCopy(event: ClipboardEvent) {
+    if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
     // TODO implement
@@ -428,8 +357,8 @@
     event.stopPropagation();
   }
 
-  function handleWindowCut(event) {
-    if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+  function handleWindowCut(event: ClipboardEvent) {
+    if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
     // TODO implement
@@ -440,9 +369,9 @@
     event.stopPropagation();
   }
 
-  function handleWindowPaste(event) {
+  function handleWindowPaste(event: ClipboardEvent) {
     // TODO implement
-    if (isKeyboardShortcutBlockedByFocusedInput(event?.target)) {
+    if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
 
@@ -456,10 +385,6 @@
     event.stopPropagation();
   }
 
-  function handleWindowPointerMove(event) {
-    updateLastPointerClientPosition(event);
-  }
-
   function closeAddNodeMenu() {
     addMenuOpen = false;
     pendingConnection = undefined;
@@ -468,7 +393,9 @@
 
   function openNodeSearchMenu() {
     closeAddNodeMenu();
-    closeNodeHelpMenu();
+    if (nodeHelpOpen) {
+      nodeHelpOpen = false;
+    }
     nodeSearchLastPreviewedNodeId = undefined;
     nodeSearchOpen = true;
     nodeSearchOpenVersion += 1;
@@ -491,10 +418,6 @@
     }
   }
 
-  function handleNodeSearchCloseRequest() {
-    closeNodeSearchMenu({ restoreViewport: true });
-  }
-
   function openNodeHelpMenu() {
     closeAddNodeMenu();
     closeNodeSearchMenu({ restoreViewport: false });
@@ -502,105 +425,54 @@
     nodeHelpOpenVersion += 1;
   }
 
-  function closeNodeHelpMenu() {
-    if (!nodeHelpOpen) {
-      return;
-    }
-
-    nodeHelpOpen = false;
-  }
-
   function handleNodeHelpCloseRequest() {
-    closeNodeHelpMenu();
+    if (nodeHelpOpen) {
+      nodeHelpOpen = false;
+    }
   }
 
   function handleNodeHelpCustomizeKeybindsRequest() {
-    closeNodeHelpMenu();
+    if (nodeHelpOpen) {
+      nodeHelpOpen = false;
+    }
     oncustomizekeybinds();
   }
 
-  function handleNodeSearchPreview(event) {
-    const nodeId = event?.detail?.nodeId;
-    if (!nodeId || nodeId === nodeSearchLastPreviewedNodeId) {
-      return;
-    }
-
-    nodeSearchLastPreviewedNodeId = nodeId;
-    centerViewportOnNode(nodeId);
-  }
-
-  function handleNodeSearchSelect(event) {
-    const nodeId = event?.detail?.nodeId;
+  function handleNodeSearchSelect(event: CustomEvent<{ nodeId: string }>) {
+    const nodeId = event.detail?.nodeId;
     if (!nodeId) {
       return;
     }
 
     nodeSearchLastPreviewedNodeId = nodeId;
     centerViewportOnNode(nodeId);
-    const didSelectionChange = selectOnlyNodeById(nodeId);
+    workspace.selectNode(nodeId, "replace");
     closeNodeSearchMenu({ restoreViewport: false });
   }
 
   function centerViewportOnNode(nodeId) {
     const targetNode = workspace.getNodeById(nodeId);
-    const targetPosition = readAbsoluteNodePosition(targetNode);
-    if (!targetPosition) {
+    if (!targetNode) {
       return false;
     }
 
-    const targetDimensions = readNodeDimensions(targetNode);
-    const targetX = targetPosition.x + (targetDimensions?.width ?? 0) / 2;
-    const targetY = targetPosition.y + (targetDimensions?.height ?? 0) / 2;
-    void setCenter(targetX, targetY, {
+    const { x: targetX, y: targetY } = getAbsoluteCenterPosition(targetNode);
+
+    void setViewportCenter(targetX, targetY, {
       zoom: SEARCH_NODE_FOCUS_ZOOM,
       duration: SEARCH_NODE_FOCUS_DURATION_MS,
     });
     return true;
   }
 
-  function selectOnlyNodeById(nodeId) {
-    if (!nodeId) {
-      return false;
-    }
-
-    let hasSelectionChanges = false;
-    nodes = nodes.map(nodeCandidate => {
-      const candidateNodeId = nodeCandidate.id;
-      const shouldSelect = candidateNodeId === nodeId;
-      if (Boolean(nodeCandidate.selected) === shouldSelect) {
-        return nodeCandidate;
-      }
-
-      hasSelectionChanges = true;
-      return {
-        ...nodeCandidate,
-        selected: shouldSelect,
-      };
-    });
-
-    edges = edges.map(edgeCandidate => {
-      if (edgeCandidate.selected !== true) {
-        return edgeCandidate;
-      }
-
-      hasSelectionChanges = true;
-      return {
-        ...edgeCandidate,
-        selected: false,
-      };
-    });
-
-    return hasSelectionChanges;
-  }
-
-  async function revealNodeFromDocumentSelection(nodeId) {
+  async function revealNodeFromDocumentSelection(nodeId: string | undefined) {
     if (!nodeId) {
       return;
     }
 
     await tick();
-    const didCenterViewport = centerViewportOnNode(nodeId);
-    const didSelectionChange = selectOnlyNodeById(nodeId);
+    centerViewportOnNode(nodeId);
+    workspace.selectNode(nodeId, "replace");
   }
 
   function didEventOccurInsideAddMenu(event) {
@@ -631,7 +503,7 @@
     });
   }
 
-  function updateLastPointerClientPosition(event) {
+  function updateLastPointerClientPosition(event: PointerEvent) {
     if (!didEventOccurInsideFlowWrapper(event)) {
       return;
     }
@@ -659,7 +531,7 @@
     return flowWrapperElement.contains(event.target);
   }
 
-  function handleWindowPointerDown(event) {
+  function handleWindowPointerDown(event: PointerEvent) {
     updateLastPointerClientPosition(event);
 
     if (addMenuOpen && !didEventOccurInsideAddMenu(event)) {
@@ -673,7 +545,9 @@
 
   function openAddNodeMenu(pointerEvent, sourceNodeId = undefined, sourceHandleId = undefined) {
     closeNodeSearchMenu({ restoreViewport: false });
-    closeNodeHelpMenu();
+    if (nodeHelpOpen) {
+      nodeHelpOpen = false;
+    }
     const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
     if (!addMenuRequest) {
       return false;
@@ -733,7 +607,7 @@
       return;
     }
 
-    beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId);
+    startSourceReplacementPreview(sourceNodeId, sourceHandleId);
   }
 
   const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
@@ -815,7 +689,8 @@
           targetHandle: INPUT_HANDLE_ID,
         };
 
-        edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
+        pruneConflictingEdges(connection);
+        workspace.edges = addEdge(connection, edges);
 
         clearPendingSingleSourceReplacement();
       }
@@ -845,7 +720,8 @@
           targetHandle: INPUT_HANDLE_ID,
         };
 
-        edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
+        pruneConflictingEdges(connection);
+        edges = addEdge(connection, edges);
         clearPendingSingleSourceReplacement();
       }
 
@@ -876,13 +752,39 @@
         targetHandle: INPUT_HANDLE_ID,
       };
 
-      edges = addEdge(connection, pruneConflictingInputEdges(edges, connection));
+      pruneConflictingEdges(connection);
+      edges = addEdge(connection, edges);
       clearPendingSingleSourceReplacement();
     }
 
     closeAddNodeMenu();
     applyDocumentState("data-node-created");
   }
+
+  const windowEvents = {
+    onkeydowncapture: handleWindowKeyDown,
+    oncopycapture: handleWindowCopy,
+    oncutcapture: handleWindowCut,
+    onpastecapture: handleWindowPaste,
+    onpointermovecapture: (event: PointerEvent) => updateLastPointerClientPosition(event),
+    onpointerdowncapture: handleWindowPointerDown,
+    onkeyup: handleWindowKeyUp,
+  };
+
+  const svelteFlowEvents = {
+    onconnect: handleConnect,
+    onconnectstart: handleConnectStart,
+    onconnectend: handleConnectEnd,
+    onnodedragstop: handleNodeDragStop,
+    onnodecontextmenu: handleNodeContextMenu,
+    onpaneclick: handlePaneClick,
+    onpanecontextmenu: handlePaneContextMenu,
+  };
+
+  const addNodeMenuEvents = {
+    onclose: closeAddNodeMenu,
+    onselect: handleMenuSelect,
+  };
 
   function createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId) {
     const { clientX, clientY } = pointerEvent;
@@ -904,63 +806,20 @@
     };
   }
 
-  function pruneConflictingInputEdges(existingEdges, connection) {
-    const targetNodeId = connection?.target;
-    if (!targetNodeId) {
-      return existingEdges;
-    }
-
-    const targetHandleId = connection?.targetHandle;
-
-    return existingEdges.filter(edge => {
-      if (edge.target !== targetNodeId) {
-        return true;
-      }
-
-      if (targetHandleId) {
-        return edge.targetHandle !== targetHandleId;
-      }
-
-      return false;
-    });
-  }
-
-  function beginSingleSourceReplacementPreview(sourceNodeId, sourceHandleId) {
+  /** Temporarily replaces conflicting edges and stores relevant state.  */
+  function startSourceReplacementPreview(sourceNodeId: string, sourceHandleId: string) {
     clearPendingSingleSourceReplacement();
 
     if (!sourceNodeId) {
       return;
     }
 
-    const sourceNode = workspace.getNodeById(sourceNodeId);
-    let sourceMultiplicity = "single";
-    if (sourceNode.data.outputPins) {
-      sourceMultiplicity =
-        (sourceNode.data.outputPins as NodePin[]).find(pin => pin.schemaKey === sourceHandleId)
-          ?.type ?? "single";
-    }
+    const removedEdges = pruneConflictingEdges({
+      source: sourceNodeId,
+      sourceHandle: sourceHandleId,
+    });
 
-    if (sourceMultiplicity !== "single") {
-      return;
-    }
-
-    const retainedEdges = [];
-    const removedEdges = [];
-    for (const edge of edges) {
-      if (edge.source === sourceNodeId && edge.sourceHandle === sourceHandleId) {
-        removedEdges.push(edge);
-        continue;
-      }
-
-      retainedEdges.push(edge);
-    }
-
-    if (removedEdges.length === 0) {
-      return;
-    }
-
-    edges = retainedEdges;
-    pendingSingleSourceReplacement = {
+    pendingSourceReplacement = {
       sourceNodeId,
       sourceHandleId,
       removedEdges,
@@ -968,9 +827,9 @@
   }
 
   function restorePendingSingleSourceReplacement() {
-    const removedEdges = pendingSingleSourceReplacement?.removedEdges ?? [];
+    const removedEdges = pendingSourceReplacement?.removedEdges ?? [];
     if (removedEdges.length === 0) {
-      pendingSingleSourceReplacement = undefined;
+      pendingSourceReplacement = undefined;
       return;
     }
 
@@ -992,11 +851,11 @@
     }
 
     edges = [...currentEdges, ...restoredEdges];
-    pendingSingleSourceReplacement = undefined;
+    pendingSourceReplacement = undefined;
   }
 
   function clearPendingSingleSourceReplacement() {
-    pendingSingleSourceReplacement = undefined;
+    pendingSourceReplacement = undefined;
   }
 
   function resolvePasteAnchorFlowPosition() {
@@ -1029,7 +888,12 @@
     initialFitInProgress = true;
     await tick();
 
-    const initialFitNodeIds = resolveInitialFitNodeIds(nodes, workspace.rootNodeId);
+    const initialFitNodeIds = resolveInitialFitNodeIds({
+      nodes,
+      rootNodeId: workspace.rootNodeId,
+      fallbackRootNodeId: ROOT_NODE_ID,
+      distanceLimit: INITIAL_FIT_ROOT_DISTANCE_LIMIT,
+    });
     if (initialFitNodeIds.length > 0) {
       fitView({
         nodes: initialFitNodeIds,
@@ -1043,233 +907,16 @@
     initialViewportReady = true;
     initialFitInProgress = false;
   }
-
-  function resolveInitialFitNodeIds(nodesCandidate, rootNodeIdCandidate) {
-    const nodeList = nodesCandidate;
-    if (nodeList.length === 0) {
-      return [];
-    }
-
-    const resolvedRootNodeId = rootNodeIdCandidate ?? ROOT_NODE_ID;
-    const rootNode = nodeList.find(node => node.id === resolvedRootNodeId);
-    if (!rootNode) {
-      return [];
-    }
-
-    const rootPosition = readNodePosition(rootNode);
-    if (!rootPosition) {
-      return [];
-    }
-
-    const fitNodeIdSet = new Set([resolvedRootNodeId]);
-    for (const node of nodeList) {
-      const nodeId = node.id;
-      const nodePosition = readNodePosition(node);
-      if (!nodePosition) {
-        continue;
-      }
-
-      const dx = nodePosition.x - rootPosition.x;
-      const dy = nodePosition.y - rootPosition.y;
-      const distance = Math.hypot(dx, dy);
-      if (distance <= INITIAL_FIT_ROOT_DISTANCE_LIMIT) {
-        fitNodeIdSet.add(nodeId);
-      }
-    }
-
-    return Array.from(fitNodeIdSet, nodeId => ({ id: nodeId }));
-  }
-
-  function readNodePosition(nodeCandidate) {
-    const x = nodeCandidate?.position?.x;
-    const y = nodeCandidate?.position?.y;
-    if (!Number.isFinite(x) || !Number.isFinite(y)) {
-      return undefined;
-    }
-
-    return { x, y };
-  }
-
-  function readNodeDimensions(nodeCandidate) {
-    const width = readFiniteDimension(
-      nodeCandidate?.width,
-      nodeCandidate?.initialWidth,
-      nodeCandidate?.measured?.width,
-    );
-    const height = readFiniteDimension(
-      nodeCandidate?.height,
-      nodeCandidate?.initialHeight,
-      nodeCandidate?.measured?.height,
-    );
-
-    return width === undefined && height === undefined
-      ? undefined
-      : { width: width ?? 0, height: height ?? 0 };
-  }
-
-  function readFiniteDimension(...candidates) {
-    for (const candidate of candidates) {
-      if (Number.isFinite(candidate)) {
-        return candidate;
-      }
-    }
-
-    return undefined;
-  }
-
-  function readAbsoluteNodePosition(nodeCandidate, visitedNodeIds = new Set()) {
-    const relativePosition = readNodePosition(nodeCandidate);
-    if (!relativePosition) {
-      return undefined;
-    }
-
-    const nodeId = nodeCandidate?.id;
-    const parentNodeId = nodeCandidate?.parentId;
-    if (!parentNodeId) {
-      return relativePosition;
-    }
-
-    if (nodeId && visitedNodeIds.has(nodeId)) {
-      return relativePosition;
-    }
-
-    const parentNode = workspace.getNodeById(parentNodeId);
-    if (!parentNode) {
-      return relativePosition;
-    }
-
-    const nextVisitedNodeIds = new Set(visitedNodeIds);
-    if (nodeId) {
-      nextVisitedNodeIds.add(nodeId);
-    }
-    const parentAbsolutePosition = readAbsoluteNodePosition(parentNode, nextVisitedNodeIds);
-    if (!parentAbsolutePosition) {
-      return relativePosition;
-    }
-
-    return {
-      x: parentAbsolutePosition.x + relativePosition.x,
-      y: parentAbsolutePosition.y + relativePosition.y,
-    };
-  }
-
-  function resolveAutoLayoutSeedNodeIds() {
-    const selectedNodeIds = nodes
-      .filter(nodeCandidate => nodeCandidate?.selected === true)
-      .map(nodeCandidate => nodeCandidate.id);
-
-    if (selectedNodeIds.length > 0) {
-      return Array.from(new Set(selectedNodeIds));
-    }
-
-    const rootNodeId = workspace.rootNodeId;
-    return rootNodeId ? [rootNodeId] : [];
-  }
-
-  function convertAbsolutePositionToNodeSpace(nodeCandidate, absolutePositionCandidate) {
-    const absolutePosition = readNodePosition({ position: absolutePositionCandidate });
-    if (!absolutePosition) {
-      return undefined;
-    }
-
-    const parentNodeId = nodeCandidate?.parentId;
-    if (!parentNodeId) {
-      return absolutePosition;
-    }
-
-    const parentNode = workspace.getNodeById(parentNodeId);
-    if (!parentNode) {
-      return absolutePosition;
-    }
-
-    const parentAbsolutePosition = readAbsoluteNodePosition(parentNode);
-    if (!parentAbsolutePosition) {
-      return absolutePosition;
-    }
-
-    return {
-      x: absolutePosition.x - parentAbsolutePosition.x,
-      y: absolutePosition.y - parentAbsolutePosition.y,
-    };
-  }
-
-  function areNodePositionsDifferent(leftPosition, rightPosition) {
-    return (
-      Math.abs(leftPosition.x - rightPosition.x) > 0.001 ||
-      Math.abs(leftPosition.y - rightPosition.y) > 0.001
-    );
-  }
-
-  function isDeleteKey(event: KeyboardEvent) {
-    const key = event.key;
-    return key === "Delete" || key === "Backspace";
-  }
-
-  function isKeyboardShortcutBlockedByFocusedInput(eventTarget = undefined) {
-    if (isEditableTarget(eventTarget)) {
-      return true;
-    }
-
-    const activeElement = globalThis?.document?.activeElement;
-    return isEditableTarget(activeElement);
-  }
-
-  function isEditableTarget(target) {
-    if (!target || typeof target !== "object") {
-      return false;
-    }
-
-    const tagName = typeof target?.tagName === "string" ? target.tagName.toLowerCase() : undefined;
-    if (tagName === "input" || tagName === "textarea" || tagName === "select") {
-      return true;
-    }
-
-    if (target?.isContentEditable === true) {
-      return true;
-    }
-
-    const roleValue =
-      typeof target?.getAttribute === "function" ? target.getAttribute("role") : undefined;
-    const role = typeof roleValue === "string" ? roleValue.toLowerCase() : undefined;
-    if (
-      role === "textbox" ||
-      role === "searchbox" ||
-      role === "combobox" ||
-      role === "spinbutton"
-    ) {
-      return true;
-    }
-
-    if (typeof target?.closest === "function") {
-      const editableAncestor = target.closest(
-        "input, textarea, select, [contenteditable], [role='textbox'], [role='searchbox'], [role='combobox'], [role='spinbutton']",
-      );
-      if (editableAncestor) {
-        const contentEditableValue =
-          typeof editableAncestor.getAttribute === "function"
-            ? editableAncestor.getAttribute("contenteditable")
-            : undefined;
-        if (
-          typeof contentEditableValue !== "string" ||
-          contentEditableValue.toLowerCase() !== "false"
-        ) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
 </script>
 
 <svelte:window
-  onkeydowncapture={handleWindowKeyDown}
-  oncopycapture={handleWindowCopy}
-  oncutcapture={handleWindowCut}
-  onpastecapture={handleWindowPaste}
-  onpointermovecapture={handleWindowPointerMove}
-  onpointerdowncapture={handleWindowPointerDown}
-  onkeyup={handleWindowKeyUp}
+  onkeydowncapture={windowEvents.onkeydowncapture}
+  oncopycapture={windowEvents.oncopycapture}
+  oncutcapture={windowEvents.oncutcapture}
+  onpastecapture={windowEvents.onpastecapture}
+  onpointermovecapture={windowEvents.onpointermovecapture}
+  onpointerdowncapture={windowEvents.onpointerdowncapture}
+  onkeyup={windowEvents.onkeyup}
 />
 
 <div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>
@@ -1284,13 +931,7 @@
     selectNodesOnDrag={false}
     zIndexMode={"auto"}
     minZoom={MIN_FLOW_ZOOM}
-    onconnect={handleConnect}
-    onconnectstart={handleConnectStart}
-    onconnectend={handleConnectEnd}
-    onnodedragstop={handleNodeDragStop}
-    onnodecontextmenu={handleNodeContextMenu}
-    onpaneclick={handlePaneClick}
-    onpanecontextmenu={handlePaneContextMenu}
+    {...svelteFlowEvents}
   >
     <Background bgColor={"var(--vscode-editor-background)"} />
     <NodeEditorActionMenu
@@ -1305,8 +946,16 @@
       open={nodeSearchOpen}
       openVersion={nodeSearchOpenVersion}
       groups={nodeSearchGroups}
-      on:close={handleNodeSearchCloseRequest}
-      on:preview={handleNodeSearchPreview}
+      on:close={() => closeNodeSearchMenu({ restoreViewport: true })}
+      on:preview={event => {
+        const nodeId = event.detail?.nodeId;
+        if (!nodeId || nodeId === nodeSearchLastPreviewedNodeId) {
+          return;
+        }
+
+        nodeSearchLastPreviewedNodeId = nodeId;
+        centerViewportOnNode(nodeId);
+      }}
       on:select={handleNodeSearchSelect}
     />
   </SvelteFlow>
@@ -1315,8 +964,7 @@
     open={addMenuOpen}
     openVersion={addMenuOpenVersion}
     position={addMenuPosition}
-    onclose={closeAddNodeMenu}
-    onselect={handleMenuSelect}
+    {...addNodeMenuEvents}
   />
 
   <NodeHelpPanel
