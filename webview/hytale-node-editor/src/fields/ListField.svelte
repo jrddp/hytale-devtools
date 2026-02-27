@@ -1,13 +1,22 @@
 <script lang="ts">
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import { isObject } from "src/node-editor/utils/valueUtils";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { isObject } from "src/node-editor/utils/valueUtils";
+  import { noMousePropogation } from "./fieldInteractions";
 
-  let { schemaKey, label, value, onchange }: NodeField & { onchange: (value: unknown) => void } =
-    $props();
+  let {
+    nodeId,
+    schemaKey,
+    label,
+    value,
+    onchange,
+  }: NodeField & {
+    nodeId?: string;
+    onchange: (value: unknown) => void;
+  } = $props();
 
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
   const listValue = $derived(Array.isArray(value) ? value : []);
@@ -76,6 +85,7 @@
 
 <div
   class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+  data-node-id={nodeId}
 >
   <div class="flex items-center justify-between gap-2">
     <div class="text-xs font-bold uppercase text-vsc-muted">{fieldLabel}</div>
@@ -101,6 +111,7 @@
                 type="checkbox"
                 checked={item}
                 onchange={event => updateBooleanItem(index, event.currentTarget.checked)}
+                {...noMousePropogation}
               />
             {:else if typeof item === "number"}
               <input
@@ -109,6 +120,7 @@
                 value={item}
                 onchange={event => updateNumberItem(index, event.currentTarget.value)}
                 onkeydown={handleEnterNavigation}
+                {...noMousePropogation}
               />
             {:else if isObject(item)}
               <textarea
@@ -116,6 +128,7 @@
                 rows="3"
                 value={formatObjectValue(item)}
                 onchange={event => updateObjectItem(index, event.currentTarget.value)}
+                {...noMousePropogation}
               ></textarea>
             {:else}
               <input
@@ -124,6 +137,7 @@
                 value={typeof item === "string" ? item : String(item ?? "")}
                 onchange={event => updateTextItem(index, event.currentTarget.value)}
                 onkeydown={handleEnterNavigation}
+                {...noMousePropogation}
               />
             {/if}
           </div>

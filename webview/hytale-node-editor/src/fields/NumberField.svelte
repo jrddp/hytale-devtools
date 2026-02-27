@@ -4,20 +4,22 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
+  import { buildFieldInputId, noMousePropogation } from "./fieldInteractions";
 
   let {
+    nodeId,
     schemaKey,
     type,
     label,
     value,
     onchange,
-  }: NodeField & { onchange: (value: unknown) => void } = $props();
+  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
 
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
   const committedNumericValue = $derived(Number.isFinite(Number(value)) ? Number(value) : 0);
   const committedValue = $derived(String(committedNumericValue));
   const step = $derived(type === "float" ? "any" : "1");
-  const inputId = $derived(`number-${schemaKey ?? "field"}-${type}`);
+  const inputId = $derived(buildFieldInputId("number", nodeId, schemaKey, type));
 
   let isEditing = $state(false);
   let draftValue = $state("");
@@ -72,7 +74,7 @@
 </script>
 
 <div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted" for={inputId}>{fieldLabel}</label>
+  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
   <input
     id={inputId}
     class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
@@ -83,5 +85,6 @@
     oninput={handleInput}
     onkeydown={handleEnterNavigation}
     onblur={commitEditing}
+    {...noMousePropogation}
   />
 </div>

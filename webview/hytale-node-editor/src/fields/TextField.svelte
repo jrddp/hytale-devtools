@@ -4,19 +4,24 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
+  import {
+    buildFieldInputId,
+    noMousePropogation
+  } from "./fieldInteractions";
 
   let {
+    nodeId,
     schemaKey,
     type,
     label,
     value,
     onchange,
-  }: NodeField & { onchange: (value: unknown) => void } = $props();
+  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
 
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
   const committedValue = $derived(typeof value === "string" ? value : String(value ?? ""));
   const isMultiline = $derived(type === "text");
-  const inputId = $derived(`text-${schemaKey ?? "field"}-${type}`);
+  const inputId = $derived(buildFieldInputId("text", nodeId, schemaKey, type));
 
   let isEditing = $state(false);
   let draftValue = $state("");
@@ -63,7 +68,7 @@
 </script>
 
 <div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted" for={inputId}>{fieldLabel}</label>
+  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
   {#if isMultiline}
     <textarea
       id={inputId}
@@ -73,6 +78,7 @@
       onfocus={beginEditing}
       oninput={handleInput}
       onblur={commitEditing}
+      {...noMousePropogation}
     ></textarea>
   {:else}
     <input
@@ -84,6 +90,7 @@
       oninput={handleInput}
       onkeydown={handleSingleLineEnter}
       onblur={commitEditing}
+      {...noMousePropogation}
     />
   {/if}
 </div>

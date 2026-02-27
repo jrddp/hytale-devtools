@@ -22,6 +22,8 @@
   let titleInputElement = $state(undefined);
   let titlebarDragSession = $state(undefined);
 
+  let hoveringTitlebar = $state(false);
+
   let titleCompensationScale = $derived(readCompensatedTitleScale(viewport.current.zoom));
   let showInlineTitleDisplay = $derived(titleCompensationScale <= 1.001);
   let showInlineEditButton = $derived(showInlineTitleDisplay && !isEditingTitle);
@@ -34,7 +36,7 @@
 
   $effect(() => {
     if (workspace.controlScheme === "mouse") {
-      updateNode(id, { draggable: selected });
+      updateNode(id, { draggable: selected || hoveringTitlebar });
     }
   });
 
@@ -200,12 +202,10 @@
   style="outline: {selected && !dragging ? '2px solid var(--vscode-focusBorder)' : 'none'};"
 >
   <div
-    class="absolute inset-x-0 top-0 flex items-end h-8 gap-1 px-2 pb-1 overflow-visible rounded-t-lg cursor-default group-title-drag-handle nopan bg-vsc-input-bg/60"
+    class="absolute inset-x-0 top-0 flex items-end h-8 gap-1 px-2 pb-1 overflow-visible rounded-t-lg group-title-drag-handle nopan bg-vsc-input-bg/60 draggable"
     role="presentation"
-    onpointerdown={handleTitlebarPointerDown}
-    onpointermove={handleTitlebarPointerMove}
-    onpointerup={handleTitlebarPointerUp}
-    onpointercancel={handleTitlebarPointerCancel}
+    onpointerenter={() => (hoveringTitlebar = true)}
+    onpointerleave={() => (hoveringTitlebar = false)}
   >
     <div class="flex items-end min-w-0 gap-1 overflow-visible">
       {#if isEditingTitle}

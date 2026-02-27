@@ -73,35 +73,6 @@
     applyDocumentState("custom-label-updated");
   }
 
-  function selectNodeFromTitleBar(event) {
-    // let SvelteFlow handle Shift-based additive/toggle selection semantics.
-    if (event?.shiftKey) {
-      return;
-    }
-
-    const isMultiSelect = Boolean(event?.metaKey || event?.ctrlKey);
-    const currentNodes = getNodes();
-
-    for (const node of currentNodes) {
-      const shouldSelect = node.id === id ? true : isMultiSelect ? Boolean(node.selected) : false;
-
-      if (node.selected !== shouldSelect) {
-        updateNode(node.id, { selected: shouldSelect });
-      }
-    }
-
-    if (isMultiSelect) {
-      return;
-    }
-
-    const currentEdges = getEdges();
-    for (const edge of currentEdges) {
-      if (edge.selected) {
-        updateEdge(edge.id, { selected: false });
-      }
-    }
-  }
-
   async function beginTitleEditing() {
     isEditingTitle = true;
     titleDraft = nodeLabel;
@@ -164,7 +135,7 @@
   }
 
   function handleCommentSelect(event) {
-    selectNodeFromTitleBar(event.detail?.originalEvent);
+    // selectNodeFromTitleBar(event.detail?.originalEvent);
   }
 
   function updateComment(nextComment) {
@@ -277,7 +248,6 @@
           class="flex items-center flex-1 gap-1 p-2 cursor-grab active:cursor-grabbing"
           role="group"
           aria-label="Node title bar"
-          onpointerdown={selectNodeFromTitleBar}
         >
           <button
             class="min-w-0 font-bold text-left border border-transparent rounded-md select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
@@ -347,7 +317,11 @@
 
     <div class="flex flex-col gap-2">
       {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field]}
-        <FieldEditor {...field} onchange={value => updateField(field.schemaKey, value)} />
+        <FieldEditor
+          nodeId={id}
+          {...field}
+          onchange={value => updateField(field.schemaKey, value)}
+        />
       {/each}
     </div>
 

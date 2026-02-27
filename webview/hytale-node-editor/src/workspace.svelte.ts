@@ -116,7 +116,7 @@ export class Workspace {
   }
 
   selectNode(nodeId: string, selectionType: SelectionType): void {
-    this.nodes.map(node => {
+    this.nodes = this.nodes.map(node => {
       if (node.id === nodeId) {
         return node.selected ? node : { ...node, selected: true };
       } else {
@@ -132,7 +132,7 @@ export class Workspace {
 
   selectNodes(nodeIds: string[], selectionType: SelectionType): void {
     const idSet = new Set(nodeIds);
-    this.nodes.map(node => {
+    this.nodes = this.nodes.map(node => {
       if (idSet.has(node.id)) {
         return node.selected ? node : { ...node, selected: true };
       } else {

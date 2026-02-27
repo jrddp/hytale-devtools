@@ -9,13 +9,14 @@
   import ListField from "./ListField.svelte";
 
   let {
+    nodeId,
     schemaKey,
     type,
     label,
     value,
     inputWidth,
     onchange,
-  }: NodeField & { onchange: (value: unknown) => void } = $props();
+  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
 </script>
 
 {#if type === "object"}
@@ -32,17 +33,17 @@
     {/each}
   </ObjectField> -->
 {:else if type === "list"}
-  <ListField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <ListField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {:else if type === "enum"}
-  <EnumField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <EnumField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {:else if type === "filepath"}
-  <FilePathField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <FilePathField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {:else if type === "intslider"}
-  <SliderField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <SliderField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {:else if type === "checkbox"}
-  <BooleanField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <BooleanField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {:else if type === "int" || type === "float"}
-  <NumberField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <NumberField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {:else}
-  <TextField {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <TextField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
 {/if}

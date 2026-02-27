@@ -189,52 +189,6 @@
     }
   }
 
-  function selectNodeFromTitleBar(event) {
-    if (isEditingTitle || isEditingFontSize) {
-      return;
-    }
-
-    const pointerButton = Number(event?.button);
-    if (Number.isFinite(pointerButton) && pointerButton !== 0) {
-      return;
-    }
-
-    const pointerTarget = event?.target;
-    if (
-      typeof pointerTarget?.closest === "function" &&
-      pointerTarget.closest("[data-comment-selection-exempt='true']")
-    ) {
-      return;
-    }
-
-    // let SvelteFlow handle Shift-based additive/toggle selection semantics.
-    if (event?.shiftKey) {
-      return;
-    }
-
-    const isMultiSelect = Boolean(event?.metaKey || event?.ctrlKey);
-    const currentNodes = getNodes();
-
-    for (const node of currentNodes) {
-      const shouldSelect = node.id === id ? true : isMultiSelect ? Boolean(node.selected) : false;
-
-      if (node.selected !== shouldSelect) {
-        updateNode(node.id, { selected: shouldSelect });
-      }
-    }
-
-    if (isMultiSelect) {
-      return;
-    }
-
-    const currentEdges = getEdges();
-    for (const edge of currentEdges) {
-      if (edge.selected) {
-        updateEdge(edge.id, { selected: false });
-      }
-    }
-  }
-
   function handleResizeEnd() {
     applyDocumentState("comment-resized");
   }
@@ -257,7 +211,6 @@
     class="flex items-center gap-2 border-b border-vsc-editor-widget-border bg-vsc-input-bg/70 px-2 py-1.5 cursor-grab active:cursor-grabbing"
     role="group"
     aria-label="Comment title bar"
-    onpointerup={selectNodeFromTitleBar}
   >
     {#if isEditingTitle}
       <input

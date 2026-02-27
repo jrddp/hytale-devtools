@@ -4,18 +4,20 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
+  import { buildFieldInputId, noMousePropogation } from "./fieldInteractions";
 
   let {
+    nodeId,
     schemaKey,
     type,
     label,
     value,
     onchange,
-  }: NodeField & { onchange: (value: unknown) => void } = $props();
+  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
 
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
   const committedValue = $derived(typeof value === "string" ? value : String(value ?? ""));
-  const inputId = $derived(`enum-${schemaKey ?? "field"}-${type}`);
+  const inputId = $derived(buildFieldInputId("enum", nodeId, schemaKey, type));
 
   let isEditing = $state(false);
   let draftText = $state("");
@@ -67,7 +69,7 @@
 </script>
 
 <div class="relative flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted" for={inputId}>{fieldLabel}</label>
+  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
   <input
     bind:this={inputElement}
     id={inputId}
@@ -78,5 +80,6 @@
     oninput={handleInput}
     onkeydown={handleKeyDown}
     onblur={() => commitEditing(false)}
+    {...noMousePropogation}
   />
 </div>

@@ -167,7 +167,7 @@
   }
 
   function handleCommentSelect(event) {
-    selectNodeFromTitleBar(event.detail?.originalEvent);
+    // selectNodeFromTitleBar(event.detail?.originalEvent);
   }
 
   function updateComment(nextComment) {
@@ -276,6 +276,6 @@
       color={NODE_ACCENT_COLOR}
     />
 
-    <FieldEditor {...RAW_JSON_FIELD} value={dataFieldValue} onchange={updateData} />
+    <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onchange={updateData} />
   </div>
 </div>

@@ -1,20 +1,25 @@
 <script lang="ts">
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import {
+    buildFieldInputId,
+    noMousePropogation
+  } from "./fieldInteractions";
 
   let {
+    nodeId,
     schemaKey,
     type,
     label,
     value,
     onchange,
-  }: NodeField & { onchange: (value: unknown) => void } = $props();
+  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
 
   const min = 0;
   const max = 100;
   const step = 1;
 
   const committedNumericValue = $derived(Number.isFinite(Number(value)) ? Number(value) : min);
-  const inputId = $derived(`slider-${schemaKey ?? "field"}-${type}`);
+  const inputId = $derived(buildFieldInputId("slider", nodeId, schemaKey, type));
 
   let draftNumericValue = $state(min);
   let hasPendingValue = $state(false);
@@ -38,8 +43,9 @@
     hasPendingValue = draftNumericValue !== committedNumericValue;
   }
 
-  function handlePointerDown() {
+  function handlePointerDown(e: PointerEvent) {
     lastInteractionMode = "pointer";
+    e.stopPropagation();
   }
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -80,19 +86,20 @@
 </script>
 
 <div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted" for={inputId}>{fieldLabel}</label>
+  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
   <input
     id={inputId}
-    class="nodrag w-full"
+    class="w-full nodrag"
     type="range"
     {min}
     {max}
     {step}
     value={draftNumericValue}
-    onpointerdown={handlePointerDown}
     oninput={handleInput}
     onchange={handleChange}
     onkeydown={handleKeyDown}
     onblur={handleBlur}
+    {...noMousePropogation}
+    onpointerdown={handlePointerDown}
   />
 </div>
