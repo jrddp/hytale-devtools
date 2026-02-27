@@ -925,11 +925,15 @@
     bind:edges
     {nodeTypes}
     disableKeyboardA11y={addMenuOpen || nodeSearchOpen || nodeHelpOpen}
+    deleteKey={["Delete", "Backspace"]}
     selectionMode={SelectionMode.Full}
-    multiSelectionKey={"Shift"}
-    panActivationKey={"Shift"}
     selectNodesOnDrag={false}
     zIndexMode={"auto"}
+    panOnDrag={workspace.controlScheme === "mouse"}
+    panOnScroll={workspace.controlScheme === "trackpad"}
+    multiSelectionKey={"Shift"}
+    selectionOnDrag={workspace.controlScheme === "trackpad"}
+    panActivationKey={workspace.controlScheme === "mouse" ? "Shift" : undefined}
     minZoom={MIN_FLOW_ZOOM}
     {...svelteFlowEvents}
   >

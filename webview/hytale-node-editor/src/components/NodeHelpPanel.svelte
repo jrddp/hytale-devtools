@@ -5,9 +5,9 @@
     type NodeEditorQuickActionId,
     NODE_EDITOR_QUICK_ACTIONS,
   } from "../node-editor/ui/nodeEditorQuickActions";
+  import { workspace } from "src/workspace.svelte";
 
-  export let open = false;
-  export let openVersion = 0;
+  const { open = false, openVersion = 0 } = $props();
 
   const dispatch = createEventDispatcher();
   const QUICK_ACTION_DISPLAY_ORDER = [
@@ -20,16 +20,21 @@
     label: "Add node",
     combos: [["Right click"]],
   };
-  const NAVIGATION_ROWS = [
+  const NAVIGATION_ROWS = $derived([
     {
       label: "Pan canvas",
-      combos: [["Shift", "Scroll"]],
+      combos: workspace.controlScheme === "mouse" ? [["Drag"]] : [["Scroll"]],
+    },
+    {
+      label: "Zoom",
+      combos: workspace.controlScheme === "mouse" ? [["Scroll"]] : [["Pinch"]],
     },
     {
       label: "Box select",
-      combos: [["Shift", "Drag"]],
+      combos: workspace.controlScheme === "mouse" ? [["Shift", "Drag"]] : [["Drag"]],
     },
-  ];
+  ]);
+
   const MAC_STANDARD_EDIT_ROWS = [
     {
       label: "Undo",
@@ -59,7 +64,10 @@
     },
     {
       label: "Redo",
-      combos: [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]],
+      combos: [
+        ["Ctrl", "Y"],
+        ["Ctrl", "Shift", "Z"],
+      ],
     },
     {
       label: "Copy",
@@ -78,14 +86,16 @@
   let panelElement;
   let lastFocusedOpenVersion = -1;
 
-  $: platform = detectPlatform();
-  $: actionRows = [ADD_NODE_ACTION_ROW, ...buildQuickActionRows(platform)];
-  $: standardEditRows = platform === "mac" ? MAC_STANDARD_EDIT_ROWS : DEFAULT_STANDARD_EDIT_ROWS;
+  const platform = detectPlatform();
+  const actionRows = [ADD_NODE_ACTION_ROW, ...buildQuickActionRows(platform)];
+  const standardEditRows = platform === "mac" ? MAC_STANDARD_EDIT_ROWS : DEFAULT_STANDARD_EDIT_ROWS;
 
-  $: if (open && openVersion !== lastFocusedOpenVersion) {
-    lastFocusedOpenVersion = openVersion;
-    tick().then(() => panelElement?.focus());
-  }
+  $effect(() => {
+    if (open && openVersion !== lastFocusedOpenVersion) {
+      lastFocusedOpenVersion = openVersion;
+      tick().then(() => panelElement?.focus());
+    }
+  });
 
   function handleCloseRequest() {
     dispatch("close");
@@ -101,19 +111,18 @@
 
   function buildQuickActionRows(targetPlatform) {
     const actionsById = new Map(
-      NODE_EDITOR_QUICK_ACTIONS.map((quickAction) => [quickAction.id, quickAction])
+      NODE_EDITOR_QUICK_ACTIONS.map(quickAction => [quickAction.id, quickAction]),
     );
 
-    return QUICK_ACTION_DISPLAY_ORDER
-      .map((quickActionId) => actionsById.get(quickActionId))
+    return QUICK_ACTION_DISPLAY_ORDER.map(quickActionId => actionsById.get(quickActionId))
       .filter(Boolean)
-      .map((quickAction) => ({
+      .map(quickAction => ({
         label: quickAction.name,
         combos: [readDefaultKeybindingTokens(quickAction, targetPlatform)].filter(
-          (combo) => Array.isArray(combo) && combo.length > 0
+          combo => Array.isArray(combo) && combo.length > 0,
         ),
       }))
-      .filter((row) => row.combos.length > 0);
+      .filter(row => row.combos.length > 0);
   }
 
   function readDefaultKeybindingTokens(quickAction, targetPlatform) {
@@ -139,7 +148,7 @@
 
     return shortcut
       .split("+")
-      .map((keyToken) => readString(keyToken))
+      .map(keyToken => readString(keyToken))
       .filter(Boolean);
   }
 
@@ -168,12 +177,12 @@
 {#if open}
   <div
     data-node-help-overlay="true"
-    class="absolute inset-0 z-50 flex items-center justify-center bg-black/15 p-4"
+    class="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/15"
   >
     <button
       type="button"
       aria-label="Close help"
-      class="absolute inset-0 border-0 bg-transparent p-0"
+      class="absolute inset-0 p-0 bg-transparent border-0"
       onpointerdown={handleBackdropPointerDown}
     ></button>
     <div
@@ -182,10 +191,10 @@
       aria-modal="true"
       aria-label="Default Keybinds"
       tabindex="-1"
-      class="relative w-[30rem] max-h-[72vh] max-w-[96vw] overflow-auto rounded-xl border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-3 text-vsc-editor-fg shadow-2xl outline-none focus:outline-none focus-visible:outline-none"
-      onpointerdown={(event) => event.stopPropagation()}
+      class="relative w-[30rem] max-w-[96vw] overflow-auto rounded-xl border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-3 text-vsc-editor-fg shadow-2xl outline-none focus:outline-none focus-visible:outline-none"
+      onpointerdown={event => event.stopPropagation()}
     >
-      <div class="mb-3 flex items-center justify-between gap-2">
+      <div class="flex items-center justify-between gap-2 mb-3">
         <div class="flex items-center gap-2">
           <CircleQuestionMark aria-hidden="true" size={15} strokeWidth={2} class="text-vsc-muted" />
           <h2 class="text-sm font-semibold">Default Keybinds</h2>
@@ -200,8 +209,12 @@
       </div>
 
       <div class="flex flex-col gap-4">
-        <section class="rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg p-2.5">
-          <h3 class="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">Editing</h3>
+        <section
+          class="rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg p-2.5"
+        >
+          <h3 class="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">
+            Editing
+          </h3>
           <div class="grid gap-2">
             {#each standardEditRows as row}
               <div class="flex items-center justify-between gap-3">
@@ -210,17 +223,19 @@
                   {#each row.combos as combo, comboIndex}
                     <span class="inline-flex items-center gap-1">
                       {#each combo as keyToken, keyIndex}
-                        <kbd class="rounded border border-vsc-editor-widget-border bg-vsc-input-bg px-1.5 py-0 text-[0.65rem] leading-4 text-vsc-input-fg">
+                        <kbd
+                          class="rounded border border-vsc-editor-widget-border bg-vsc-input-bg px-1.5 py-0 text-[0.65rem] leading-4 text-vsc-input-fg"
+                        >
                           {keyToken}
                         </kbd>
                         {#if keyIndex < combo.length - 1}
-                          <span class="text-[0.65rem] text-vsc-muted">+</span>
+                          <span class="text-[0.65rem] text-vsc-muted">+</span>updateControlSchemeSetting
                         {/if}
                       {/each}
                     </span>
                     {#if comboIndex < row.combos.length - 1}
                       <span class="px-1 text-[0.65rem] text-vsc-muted">or</span>
-                    {/if}
+                    {/if}updateControlSchemeSetting
                   {/each}
                 </div>
               </div>
@@ -228,8 +243,39 @@
           </div>
         </section>
 
-        <section class="rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg p-2.5">
-          <h3 class="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">Navigation</h3>
+        <section
+          class="rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg p-2.5"
+        >
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <h3 class="text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted">
+              Navigation
+            </h3>
+            <div class="flex items-center gap-2">
+              <h4 class="text-xs text-vsc-muted">Control Scheme:</h4>
+              <div class="flex items-center">
+                <button
+                  type="button"
+                  class="rounded-r-none inline-flex items-center rounded-md border border-vsc-button-secondary-fg bg-vsc-button-secondary-bg px-2 py-1 text-[0.7rem] font-medium text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+                  class:bg-vsc-list-active-bg={workspace.controlScheme === "mouse"}
+                  class:hover:bg-vsc-list-active-bg={workspace.controlScheme === "mouse"}
+                  class:text-vsc-list-active-fg={workspace.controlScheme === "mouse"}
+                  onclick={() => workspace.setControlScheme("mouse")}
+                >
+                  Mouse
+                </button>
+                <button
+                  type="button"
+                  class="rounded-l-none inline-flex items-center rounded-md border border-vsc-input-border bg-vsc-button-secondary-bg px-2 py-1 text-[0.7rem] font-medium text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+                  class:bg-vsc-list-active-bg={workspace.controlScheme === "trackpad"}
+                  class:hover:bg-vsc-list-active-bg={workspace.controlScheme === "trackpad"}
+                  class:text-vsc-list-active-fg={workspace.controlScheme === "trackpad"}
+                  onclick={() => workspace.setControlScheme("trackpad")}
+                >
+                  Trackpad
+                </button>
+              </div>
+            </div>
+          </div>
           <div class="grid gap-2">
             {#each NAVIGATION_ROWS as row}
               <div class="flex items-center justify-between gap-3">
@@ -238,7 +284,9 @@
                   {#each row.combos as combo, comboIndex}
                     <span class="inline-flex items-center gap-1">
                       {#each combo as keyToken, keyIndex}
-                        <kbd class="rounded border border-vsc-editor-widget-border bg-vsc-input-bg px-1.5 py-0 text-[0.65rem] leading-4 text-vsc-input-fg">
+                        <kbd
+                          class="rounded border border-vsc-editor-widget-border bg-vsc-input-bg px-1.5 py-0 text-[0.65rem] leading-4 text-vsc-input-fg"
+                        >
                           {keyToken}
                         </kbd>
                         {#if keyIndex < combo.length - 1}
@@ -256,8 +304,12 @@
           </div>
         </section>
 
-        <section class="rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg p-2.5">
-          <h3 class="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">Actions</h3>
+        <section
+          class="rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg p-2.5"
+        >
+          <h3 class="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-vsc-muted">
+            Actions
+          </h3>
           <div class="grid gap-2">
             {#each actionRows as row}
               <div class="flex items-center justify-between gap-3">
@@ -266,7 +318,9 @@
                   {#each row.combos as combo, comboIndex}
                     <span class="inline-flex items-center gap-1">
                       {#each combo as keyToken, keyIndex}
-                        <kbd class="rounded border border-vsc-editor-widget-border bg-vsc-input-bg px-1.5 py-0 text-[0.65rem] leading-4 text-vsc-input-fg">
+                        <kbd
+                          class="rounded border border-vsc-editor-widget-border bg-vsc-input-bg px-1.5 py-0 text-[0.65rem] leading-4 text-vsc-input-fg"
+                        >
                           {keyToken}
                         </kbd>
                         {#if keyIndex < combo.length - 1}
@@ -285,9 +339,11 @@
         </section>
       </div>
 
-      <div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-vsc-editor-widget-border pt-2">
+      <div
+        class="flex flex-wrap items-center justify-between gap-2 pt-2 mt-3 border-t border-vsc-editor-widget-border"
+      >
         <p class="text-[0.65rem] text-vsc-muted">
-          Keybinds can be customized in VSCode settings
+          Keybinds can be customized. These are the default.
         </p>
         <button
           type="button"

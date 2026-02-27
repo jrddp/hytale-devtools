@@ -46,6 +46,7 @@
       // should be called before initial update
       case "bootstrap":
         workspace.context = message.workspaceContext;
+        workspace.controlScheme = message.controlScheme;
         return;
       case "update":
         handleDocumentUpdateMessage(message);

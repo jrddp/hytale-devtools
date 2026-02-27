@@ -115,6 +115,19 @@
           "type": "string",
           "default": "",
           "description": "Default website for new mods."
+        },
+        "hytale-devtools.nodeEditor.controlScheme": {
+          "type": "string",
+          "enum": [
+            "mouse",
+            "trackpad"
+          ],
+          "enumDescriptions": [
+            "Pan with drag, zoom with scroll, and box-select with Shift+drag.",
+            "Pan with scroll, zoom with pinch, and box-select with drag."
+          ],
+          "default": "mouse",
+          "description": "Control scheme used by the Hytale Node Editor."
         }
       }
     },

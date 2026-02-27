@@ -1,4 +1,7 @@
-import { type WebviewToExtensionMessage } from "@shared/node-editor/messageTypes";
+import {
+  type NodeEditorControlScheme,
+  type WebviewToExtensionMessage,
+} from "@shared/node-editor/messageTypes";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
 import RBush, { type BBox } from "rbush";
 import { type FlowEdge, type FlowNode, type VSCodeApi } from "src/common";
@@ -23,7 +26,9 @@ class NodeRBush extends RBush<FlowNode> {
 
 export class Workspace {
   isInitialized = $state(false);
+  controlScheme = $state<NodeEditorControlScheme>("mouse");
   context = $state<NodeEditorWorkspaceContext>();
+
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
   rootNodeId = $state<string>();
@@ -137,6 +142,21 @@ export class Workspace {
         }
       }
     });
+  }
+
+  updateControlSchemeSetting(controlScheme: NodeEditorControlScheme): void {
+    if (this.controlScheme === controlScheme) {
+      return;
+    }
+
+    this.controlScheme = controlScheme;
+
+    const payload: Extract<WebviewToExtensionMessage, { type: "update-setting" }> = {
+      type: "update-setting",
+      setting: "controlScheme",
+      value: controlScheme,
+    };
+    this.vscode.postMessage(payload);
   }
 }
 

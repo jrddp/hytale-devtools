@@ -4,7 +4,7 @@
   import { tick } from "svelte";
   import ZoomCompensatedNodeResizer from "../components/ZoomCompensatedNodeResizer.svelte";
   import { type GroupNodeType } from "src/common";
-  import { applyDocumentState } from "src/workspace.svelte";
+  import { applyDocumentState, workspace } from "src/workspace.svelte";
 
   const MIN_GROUP_WIDTH = 180;
   const MIN_GROUP_HEIGHT = 120;
@@ -12,16 +12,7 @@
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 5.5;
   const TITLEBAR_DRAG_DISTANCE_THRESHOLD_PX = 3;
 
-  let {
-    id,
-    position,
-    data,
-    selected = false,
-    dragging = false,
-    draggable = false,
-    width = MIN_GROUP_WIDTH,
-    height = MIN_GROUP_HEIGHT,
-  }: GroupNodeType = $props();
+  let { id, position, data, selected = false, dragging = false }: GroupNodeType = $props();
 
   const viewport = useViewport();
   const { updateNodeData, updateNode } = useSvelteFlow();
@@ -42,10 +33,14 @@
   });
 
   $effect(() => {
-    if (selected) {
+    if (workspace.controlScheme === "mouse") {
+      updateNode(id, { draggable: selected });
+    }
+  });
+
+  $effect(() => {
+    if (workspace.controlScheme === "trackpad") {
       updateNode(id, { draggable: true });
-    } else {
-      updateNode(id, { draggable: false });
     }
   });
 

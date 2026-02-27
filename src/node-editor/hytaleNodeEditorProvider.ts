@@ -4,6 +4,7 @@ import { type ResolveSchemaDefinitionRequestItem } from "../shared/companion/typ
 import { resolveWorkspaceContext } from "./workspaceTemplates";
 import type {
   ExtensionToWebviewMessage,
+  NodeEditorControlScheme,
   WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
 import { LOGGER } from "../extension";
@@ -21,6 +22,9 @@ type WebviewAssetUris =
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const WEBVIEW_FIND_COMMAND_ID = "editor.action.webvieweditor.showFind";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
+const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
+const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
+const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
 
 export function registerHytaleNodeEditorProvider(
   context: vscode.ExtensionContext,
@@ -96,6 +100,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
         const payload: ExtensionToWebviewMessage = {
           type: "bootstrap",
           workspaceContext: workspaceContext,
+          controlScheme: readNodeEditorControlScheme(),
         };
         void webviewPanel.webview.postMessage(payload);
       };
@@ -155,6 +160,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
             return;
           case "openKeybindings":
             void this.openNodeEditorKeybindings(message.query);
+            return;
+          case "update-setting":
+            void this.updateNodeEditorSetting(message, webviewPanel.webview);
             return;
           default:
             return;
@@ -291,6 +299,29 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     await vscode.commands.executeCommand("workbench.action.openGlobalKeybindings", query);
   }
 
+  private async updateNodeEditorSetting(
+    message: Extract<WebviewToExtensionMessage, { type: "update-setting" }>,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    try {
+      switch (message.setting) {
+        case "controlScheme":
+          await vscode.workspace
+            .getConfiguration(EXTENSION_CONFIG_NAMESPACE)
+            .update(
+              NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY,
+              message.value,
+              vscode.ConfigurationTarget.Global,
+            );
+          return;
+      }
+    } catch (error) {
+      const details = error instanceof Error ? error.message : String(error);
+      LOGGER.error(`Failed to update node editor setting "${message.setting}": ${details}`);
+      await this.postError(webview, "Failed to persist node editor setting.");
+    }
+  }
+
   private async postError(webview: vscode.Webview, message: string): Promise<void> {
     const payload: ExtensionToWebviewMessage = {
       type: "error",
@@ -405,6 +436,17 @@ function normalizeTextEol(text: string, eol: vscode.EndOfLine): string {
   return text.replace(/\r\n|\r|\n/g, targetEol);
 }
 
+function readNodeEditorControlScheme(): NodeEditorControlScheme {
+  const configuredValue = vscode.workspace
+    .getConfiguration(EXTENSION_CONFIG_NAMESPACE)
+    .get<string>(NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY);
+  if (configuredValue === "trackpad") {
+    return "trackpad";
+  }
+
+  return DEFAULT_NODE_EDITOR_CONTROL_SCHEME;
+}
+
 function readNodeEditorQuickActionCommandIds(context: vscode.ExtensionContext): string[] {
   const packageJson = context.extension.packageJSON;
   if (!isObject(packageJson)) {
@@ -431,40 +473,6 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 function readNonEmptyString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
-}
-
-function normalizeHydrationRequestItems(
-  itemsCandidate: unknown,
-): ResolveSchemaDefinitionRequestItem[] {
-  if (!Array.isArray(itemsCandidate)) {
-    return [];
-  }
-
-  const normalizedItems: ResolveSchemaDefinitionRequestItem[] = [];
-  const seen = new Set<string>();
-  for (const itemCandidate of itemsCandidate) {
-    if (!isObject(itemCandidate)) {
-      continue;
-    }
-
-    const nodeId = readNonEmptyString(itemCandidate.nodeId);
-    const schemaDefinition = readNonEmptyString(itemCandidate.schemaDefinition);
-    if (!nodeId || !schemaDefinition) {
-      continue;
-    }
-
-    const dedupeKey = `${nodeId}\u0000${schemaDefinition}`;
-    if (seen.has(dedupeKey)) {
-      continue;
-    }
-    seen.add(dedupeKey);
-    normalizedItems.push({
-      nodeId,
-      schemaDefinition,
-    });
-  }
-
-  return normalizedItems;
 }
 
 function escapeHtml(value: string): string {
