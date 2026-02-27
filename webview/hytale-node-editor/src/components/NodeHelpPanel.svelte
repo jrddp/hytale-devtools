@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { type NodeEditorPlatform } from "@shared/node-editor/messageTypes";
   import { createEventDispatcher, tick } from "svelte";
   import { CircleQuestionMark } from "lucide-svelte";
   import {
+    type NodeEditorQuickActionDefinition,
     type NodeEditorQuickActionId,
     NODE_EDITOR_QUICK_ACTIONS,
   } from "../node-editor/ui/nodeEditorQuickActions";
@@ -86,9 +88,10 @@
   let panelElement;
   let lastFocusedOpenVersion = -1;
 
-  const platform = detectPlatform();
-  const actionRows = [ADD_NODE_ACTION_ROW, ...buildQuickActionRows(platform)];
-  const standardEditRows = platform === "mac" ? MAC_STANDARD_EDIT_ROWS : DEFAULT_STANDARD_EDIT_ROWS;
+  const actionRows = $derived([ADD_NODE_ACTION_ROW, ...buildQuickActionRows(workspace.platform)]);
+  const standardEditRows = $derived(
+    workspace.platform === "mac" ? MAC_STANDARD_EDIT_ROWS : DEFAULT_STANDARD_EDIT_ROWS,
+  );
 
   $effect(() => {
     if (open && openVersion !== lastFocusedOpenVersion) {
@@ -109,7 +112,7 @@
     dispatch("customizekeybinds");
   }
 
-  function buildQuickActionRows(targetPlatform) {
+  function buildQuickActionRows(targetPlatform: NodeEditorPlatform) {
     const actionsById = new Map(
       NODE_EDITOR_QUICK_ACTIONS.map(quickAction => [quickAction.id, quickAction]),
     );
@@ -125,7 +128,10 @@
       .filter(row => row.combos.length > 0);
   }
 
-  function readDefaultKeybindingTokens(quickAction, targetPlatform) {
+  function readDefaultKeybindingTokens(
+    quickAction: NodeEditorQuickActionDefinition,
+    targetPlatform: NodeEditorPlatform,
+  ) {
     const defaultKeybinding = quickAction?.defaultKeybinding;
     if (!defaultKeybinding) {
       return [];
@@ -140,37 +146,14 @@
     return readShortcutTokens(platformKeybinding);
   }
 
-  function readShortcutTokens(shortcutCandidate) {
-    const shortcut = readString(shortcutCandidate);
+  function readShortcutTokens(shortcut) {
     if (!shortcut) {
       return [];
     }
 
     return shortcut
       .split("+")
-      .map(keyToken => readString(keyToken))
       .filter(Boolean);
-  }
-
-  function detectPlatform() {
-    const sourcePlatform =
-      readString(globalThis?.navigator?.userAgentData?.platform) ??
-      readString(globalThis?.navigator?.platform) ??
-      "";
-    const platform = sourcePlatform.toLowerCase();
-    if (platform.includes("mac")) {
-      return "mac";
-    }
-
-    if (platform.includes("linux")) {
-      return "linux";
-    }
-
-    return "win";
-  }
-
-  function readString(value) {
-    return typeof value === "string" ? value : undefined;
   }
 </script>
 
@@ -229,13 +212,13 @@
                           {keyToken}
                         </kbd>
                         {#if keyIndex < combo.length - 1}
-                          <span class="text-[0.65rem] text-vsc-muted">+</span>updateControlSchemeSetting
+                          <span class="text-[0.65rem] text-vsc-muted">+</span>
                         {/if}
                       {/each}
                     </span>
                     {#if comboIndex < row.combos.length - 1}
                       <span class="px-1 text-[0.65rem] text-vsc-muted">or</span>
-                    {/if}updateControlSchemeSetting
+                    {/if}
                   {/each}
                 </div>
               </div>
@@ -259,7 +242,7 @@
                   class:bg-vsc-list-active-bg={workspace.controlScheme === "mouse"}
                   class:hover:bg-vsc-list-active-bg={workspace.controlScheme === "mouse"}
                   class:text-vsc-list-active-fg={workspace.controlScheme === "mouse"}
-                  onclick={() => workspace.setControlScheme("mouse")}
+                  onclick={() => workspace.updateControlSchemeSetting("mouse")}
                 >
                   Mouse
                 </button>
@@ -269,7 +252,7 @@
                   class:bg-vsc-list-active-bg={workspace.controlScheme === "trackpad"}
                   class:hover:bg-vsc-list-active-bg={workspace.controlScheme === "trackpad"}
                   class:text-vsc-list-active-fg={workspace.controlScheme === "trackpad"}
-                  onclick={() => workspace.setControlScheme("trackpad")}
+                  onclick={() => workspace.updateControlSchemeSetting("trackpad")}
                 >
                   Trackpad
                 </button>

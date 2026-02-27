@@ -1,5 +1,6 @@
 import {
   type NodeEditorControlScheme,
+  type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
@@ -27,6 +28,7 @@ class NodeRBush extends RBush<FlowNode> {
 export class Workspace {
   isInitialized = $state(false);
   controlScheme = $state<NodeEditorControlScheme>("mouse");
+  platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
 
   nodes = $state.raw<FlowNode[]>([]);

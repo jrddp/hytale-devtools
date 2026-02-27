@@ -3,11 +3,13 @@ import type { ResolveSchemaDefinitionResult } from "../companion/types";
 import { type NodeEditorWorkspaceContext } from "./workspaceTypes";
 
 export type NodeEditorControlScheme = "mouse" | "trackpad";
+export type NodeEditorPlatform = "win" | "linux" | "mac";
 
 export interface NodeEditorBootstrapPayload {
   type: "bootstrap";
   workspaceContext?: NodeEditorWorkspaceContext;
   controlScheme: NodeEditorControlScheme;
+  platform: NodeEditorPlatform;
 }
 
 export interface NodeEditorDocumentUpdateMessage {

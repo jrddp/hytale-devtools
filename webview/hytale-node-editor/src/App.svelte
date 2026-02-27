@@ -47,6 +47,7 @@
       case "bootstrap":
         workspace.context = message.workspaceContext;
         workspace.controlScheme = message.controlScheme;
+        workspace.platform = message.platform;
         return;
       case "update":
         handleDocumentUpdateMessage(message);

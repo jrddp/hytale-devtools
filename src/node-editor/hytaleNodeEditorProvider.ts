@@ -5,6 +5,7 @@ import { resolveWorkspaceContext } from "./workspaceTemplates";
 import type {
   ExtensionToWebviewMessage,
   NodeEditorControlScheme,
+  NodeEditorPlatform,
   WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
 import { LOGGER } from "../extension";
@@ -101,6 +102,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           type: "bootstrap",
           workspaceContext: workspaceContext,
           controlScheme: readNodeEditorControlScheme(),
+          platform: readNodeEditorPlatform(),
         };
         void webviewPanel.webview.postMessage(payload);
       };
@@ -445,6 +447,18 @@ function readNodeEditorControlScheme(): NodeEditorControlScheme {
   }
 
   return DEFAULT_NODE_EDITOR_CONTROL_SCHEME;
+}
+
+function readNodeEditorPlatform(): NodeEditorPlatform {
+  if (process.platform === "darwin") {
+    return "mac";
+  }
+
+  if (process.platform === "linux") {
+    return "linux";
+  }
+
+  return "win";
 }
 
 function readNodeEditorQuickActionCommandIds(context: vscode.ExtensionContext): string[] {
