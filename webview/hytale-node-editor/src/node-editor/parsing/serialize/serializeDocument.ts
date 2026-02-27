@@ -63,7 +63,7 @@ export function serializeDocument(): AssetDocumentShape {
         node.data.outputPins.forEach(pin => {
           const connectedNodeIds = outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
           if (connectedNodeIds.length > 0) {
-            switch (pin.type) {
+            switch (pin.multiplicity) {
               case "single":
                 json[pin.schemaKey] = recursiveSerializeNode(connectedNodeIds[0]);
                 break;
@@ -121,7 +121,7 @@ export function serializeDocument(): AssetDocumentShape {
         json = {
           $NodeId: node.id,
           $Comment: node.data.comment,
-          ...JSON.parse(node.data.data),
+          ...JSON.parse(node.data.jsonString),
         };
         nodeEditorMetadata.$Nodes[node.id] = {
           $Position: {

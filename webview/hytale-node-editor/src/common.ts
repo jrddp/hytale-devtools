@@ -10,6 +10,7 @@ export const COMMENT_NODE_TYPE = "comment";
 
 export const INPUT_HANDLE_ID = "input";
 export const LINK_OUTPUT_HANDLE_ID = "output";
+export const LINK_DEFAULT_OUTPUT_LABEL = "Children";
 
 export const GENERIC_CATEGORY = "Generic";
 export const GROUP_TEMPLATE_ID = "$Group";
@@ -38,32 +39,63 @@ export type VSCodeApi = {
   setState?: (state: Record<string, unknown>) => unknown;
 };
 
-export interface NodeBase extends Record<string, unknown> {
+export type NodeBase = Record<string, unknown> &
+  (
+    | {
+        hasOutputs: false;
+        // if this is a child of a multiple/map type pin, this indicates the list order among its siblings
+        inputConnectionIndex?: number;
+      }
+    | {
+        hasOutputs: true;
+        outputPins: NodePin[];
+        inputConnectionIndex?: number;
+      }
+  );
+
+// nodes with standard comment/title override abilities
+export interface StandardNode {
   titleOverride?: string;
   comment?: string;
-  inputConnectionIndex?: number;
+}
+
+// non-metadata nodes
+interface AssetDataNode {
   unparsedMetadata?: Record<string, unknown>;
 }
 
-export interface DataNodeData extends NodeBase, NodeTemplate {}
+export type DataNodeData = NodeBase &
+  StandardNode &
+  AssetDataNode &
+  NodeTemplate & {
+    hasOutputs: true;
+  };
 
-export interface RawJsonNodeData extends NodeBase {
-  data: string;
-}
+export type RawJsonNodeData = NodeBase &
+  StandardNode &
+  AssetDataNode & {
+    hasOutputs: false;
+    jsonString: string;
+  };
 
-export interface LinkNodeData extends NodeBase {}
+export type LinkNodeData = NodeBase &
+  StandardNode & {
+    hasOutputs: true;
+  };
 
-export interface GroupNodeData extends Record<string, unknown> {
+export type GroupNodeData = NodeBase & {
   name: string;
+  hasOutputs: false;
   unparsedMetadata?: Record<string, unknown>;
-}
+};
 
-export interface CommentNodeData extends Record<string, unknown> {
+export type CommentNodeData = NodeBase & {
+  hasOutputs: false;
   name: string;
   text: string;
   fontSize?: number;
   unparsedMetadata?: Record<string, unknown>;
-}
+};
 
 export type DataNodeType = Node<DataNodeData, typeof DATA_NODE_TYPE> & {
   type: typeof DATA_NODE_TYPE;

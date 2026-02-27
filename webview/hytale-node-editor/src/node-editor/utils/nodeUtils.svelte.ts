@@ -1,13 +1,30 @@
-import { type NodePin } from "@shared/node-editor/workspaceTypes";
-import { type Connection, type XYPosition } from "@xyflow/svelte";
+import { type NodeTemplate, type NodePin } from "@shared/node-editor/workspaceTypes";
+import { type XYPosition } from "@xyflow/svelte";
 import { type BBox } from "rbush";
 import {
+  DEFAULT_COMMENT_FONT_SIZE,
+  COMMENT_NODE_TYPE,
+  type CommentNodeData,
+  type CommentNodeType,
+  DATA_NODE_TYPE,
+  type DataNodeData,
   type DataNodeType,
+  DEFAULT_RAW_JSON_TEXT,
   type FlowEdge,
   type FlowNode,
   GROUP_NODE_TYPE,
+  type GroupNodeData,
   type GroupNodeType,
+  LINK_DEFAULT_OUTPUT_LABEL,
+  LINK_NODE_TYPE,
+  LINK_OUTPUT_HANDLE_ID,
+  type LinkNodeData,
+  type LinkNodeType,
+  RAW_JSON_NODE_TYPE,
+  type RawJsonNodeData,
+  type RawJsonNodeType,
 } from "src/common";
+import { createNodeId } from "src/node-editor/utils/idUtils";
 import { workspace } from "src/workspace.svelte";
 
 type PendingConnection = {
@@ -16,6 +33,104 @@ type PendingConnection = {
   target?: string;
   targetHandle?: string;
 } & ({ source: string; sourceHandle: string } | { source?: never; sourceHandle?: never }); // ensure source and sourceHandle always come in a pair
+
+export function createDataNodeType(
+  id: string,
+  position: XYPosition,
+  template: NodeTemplate,
+  data: Partial<DataNodeData>,
+): DataNodeType {
+  // deep copy to avoid mutating the template
+  const clonedTemplateData: NodeTemplate = structuredClone($state.snapshot(template));
+
+  return {
+    type: DATA_NODE_TYPE,
+    id,
+    position,
+    data: {
+      hasOutputs: true,
+      ...clonedTemplateData,
+      ...data,
+    },
+  };
+}
+
+export function createRawJsonNodeType(
+  id: string,
+  position: XYPosition,
+  data: Partial<RawJsonNodeData>,
+): RawJsonNodeType {
+  return {
+    type: RAW_JSON_NODE_TYPE,
+    id,
+    position,
+    data: {
+      hasOutputs: false,
+      jsonString: data.jsonString ?? DEFAULT_RAW_JSON_TEXT,
+    },
+  };
+}
+
+export function createLinkNodeType(
+  id: string,
+  position: XYPosition,
+  data: Partial<LinkNodeData>,
+): LinkNodeType {
+  return {
+    type: LINK_NODE_TYPE,
+    id,
+    position,
+    data: {
+      hasOutputs: true,
+      outputPins: data.outputPins ?? [
+        {
+          schemaKey: LINK_OUTPUT_HANDLE_ID,
+          localId: "Output",
+          label: LINK_DEFAULT_OUTPUT_LABEL,
+          multiplicity: "single",
+        },
+      ],
+    },
+  };
+}
+
+export function createCommentNodeType(
+  id: string,
+  position: XYPosition,
+  data: Partial<CommentNodeData>,
+): CommentNodeType {
+  return {
+    type: COMMENT_NODE_TYPE,
+    id,
+    position,
+    data: {
+      hasOutputs: false,
+      name: data.name ?? "",
+      text: data.text ?? "",
+      fontSize: data.fontSize ?? DEFAULT_COMMENT_FONT_SIZE,
+    },
+  };
+}
+
+export function createGroupNodeType(
+  id: string,
+  position: XYPosition,
+  width: number,
+  height: number,
+  data: Partial<GroupNodeData>,
+): GroupNodeType {
+  return {
+    type: GROUP_NODE_TYPE,
+    id,
+    position,
+    width,
+    height,
+    data: {
+      hasOutputs: false,
+      name: data.name ?? "Group",
+    },
+  };
+}
 
 export function recalculateGroupParents() {
   if (!workspace.getRootNode()?.measured) {
@@ -140,7 +255,7 @@ export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[]
       pin => pin.schemaKey === sourceHandle,
     );
 
-    if (outputPin && outputPin.type === "single") {
+    if (outputPin && outputPin.multiplicity === "single") {
       for (const edge of workspace.getOutgoingConnectionsForHandle(source, sourceHandle) ?? []) {
         prunedIds.add(edge.id);
         prunedEdges.push(edge);
@@ -240,7 +355,6 @@ export function getOrderedChildren(parentId: string): FlowNode[] {
 }
 
 /* Ordered based on y position (LOWER Y IS HIGHER) **/
-// todo make this based on an internal ordering variable so it is not render-dependent
 export function getOrderedChildrenForHandle(parentId: string, parentHandleId: string): FlowNode[] {
   const childIds = workspace
     .getOutgoingConnectionsForHandle(parentId, parentHandleId)
@@ -248,5 +362,5 @@ export function getOrderedChildrenForHandle(parentId: string, parentHandleId: st
   // y position descending to order nodes
   return childIds
     .map(childId => workspace.getNodeById(childId))
-    .sort((a, b) => getAbsolutePosition(a).y - getAbsolutePosition(b).y);
+    .sort((a, b) => (a.data.inputConnectionIndex ?? -1) - (b.data.inputConnectionIndex ?? -1));
 }

@@ -15,6 +15,7 @@ export interface WorkspaceState {
   nodes: FlowNode[];
   edges: FlowEdge[];
   rootNodeId: string;
+  arePositionsSet: boolean;
 }
 
 class NodeRBush extends RBush<FlowNode> {
@@ -30,6 +31,7 @@ export class Workspace {
   controlScheme = $state<NodeEditorControlScheme>("mouse");
   platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
+  arePositionsSet = $state(true);
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);

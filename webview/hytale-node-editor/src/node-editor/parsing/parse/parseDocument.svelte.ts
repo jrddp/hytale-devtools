@@ -25,6 +25,29 @@ import {
 import { type WorkspaceState } from "../../../workspace.svelte";
 import { createNodeId } from "../../utils/idUtils";
 import { isObject } from "../../utils/valueUtils";
+import {
+  createCommentNodeType,
+  createDataNodeType,
+  createGroupNodeType,
+  createLinkNodeType,
+  createRawJsonNodeType,
+} from "src/node-editor/utils/nodeUtils.svelte";
+import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
+
+function groupNodeFromJson(groupJson: GroupJson): GroupNodeType {
+  return createGroupNodeType(
+    groupJson.$NodeId ?? createNodeId("Group"),
+    {
+      x: groupJson.$Position.$x,
+      y: groupJson.$Position.$y,
+    },
+    groupJson.$width,
+    groupJson.$height,
+    {
+      name: groupJson.$name,
+    },
+  );
+}
 
 export function parseDocumentText(text: string): WorkspaceState {
   if (!workspace.context) {
@@ -105,17 +128,18 @@ export function parseDocumentText(text: string): WorkspaceState {
         nodeId = createNodeId(templateId);
       }
 
-      // deep copy to avoid mutating the template
-      const nodeData: DataNodeData = structuredClone($state.snapshot(template));
+      // deep copy to avoid mutating the template when parsing values (we're cloning twice, since we call it again in createDataNodeType, but it's a low priority optimization)
+      const clonedTemplateData: NodeTemplate = structuredClone($state.snapshot(template));
 
       // filter metadata keys
       const unprocessedData = new Set(Object.keys(localRoot).filter(key => !key.startsWith("$")));
+      const unparsedMetadata = {};
 
       // # process children
       for (const pin of template.outputPins) {
         const schemaKey = pin.schemaKey;
         unprocessedData.delete(schemaKey);
-        switch (pin.type) {
+        switch (pin.multiplicity) {
           case "single":
             if (localRoot[schemaKey] !== undefined) {
               let childId = recursiveParseNodes(
@@ -127,17 +151,20 @@ export function parseDocumentText(text: string): WorkspaceState {
             break;
           case "multiple":
             if (Array.isArray(localRoot[schemaKey])) {
-              for (const child of localRoot[schemaKey] as unknown[]) {
+              for (let i = 0; i < localRoot[schemaKey].length; i++) {
+                const child = localRoot[schemaKey][i];
                 let childId = recursiveParseNodes(
                   child as NodeAssetJson,
                   template.childTypes[schemaKey],
                 );
+                nodesById.get(childId).data.inputConnectionIndex = i;
                 addEdge(nodeId, schemaKey, childId);
               }
             }
             break;
           case "map":
             if (typeof localRoot[schemaKey] === "object") {
+              let i = 0;
               for (const [childKey, value] of Object.entries(
                 localRoot[schemaKey] as Record<string, unknown>,
               )) {
@@ -145,23 +172,24 @@ export function parseDocumentText(text: string): WorkspaceState {
                   value as NodeAssetJson,
                   template.childTypes[schemaKey],
                 );
+                nodesById.get(childId).data.inputConnectionIndex = i;
                 addEdge(nodeId, schemaKey, childId);
+                i++;
               }
             }
         }
       }
 
       // # process fields
-      for (const key of Object.keys(nodeData.fieldsBySchemaKey)) {
+      for (const key of Object.keys(clonedTemplateData.fieldsBySchemaKey)) {
         unprocessedData.delete(key);
         const value = localRoot[key];
         if (value !== undefined) {
-          nodeData.fieldsBySchemaKey[key].value = value;
+          clonedTemplateData.fieldsBySchemaKey[key].value = value;
         }
       }
 
       // carry over any unprocessed metadata
-      nodeData.unparsedMetadata = {};
       for (const key of unprocessedData) {
         if (template.schemaConstants[key]) {
           if (localRoot[key] != template.schemaConstants[key]) {
@@ -173,18 +201,18 @@ export function parseDocumentText(text: string): WorkspaceState {
           }
           continue;
         }
-        nodeData.unparsedMetadata[key] = localRoot[key];
+        unparsedMetadata[key] = localRoot[key];
       }
 
-      const dataNode: DataNodeType = {
-        type: DATA_NODE_TYPE,
-        id: nodeId,
-        position: {
-          x: position.$x,
-          y: position.$y,
+      const dataNode = createDataNodeType(
+        nodeId,
+        { x: position.$x, y: position.$y },
+        clonedTemplateData,
+        {
+          unparsedMetadata,
+          comment: localRoot.$Comment,
         },
-        data: { ...nodeData, comment: localRoot.$Comment },
-      };
+      );
       addNode(dataNode);
     } else {
       // # Template not found -> Raw Json Node
@@ -195,18 +223,11 @@ export function parseDocumentText(text: string): WorkspaceState {
       Object.entries(localRoot).forEach(([key, value]) => {
         if (!key.startsWith("$")) data[key] = value;
       });
-      const jsonNode: RawJsonNodeType = {
-        type: RAW_JSON_NODE_TYPE,
-        id: nodeId,
-        position: {
-          x: position.$x,
-          y: position.$y,
-        },
-        data: {
-          data: data ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT,
-          comment: localRoot.$Comment,
-        },
-      };
+      const jsonNode = createRawJsonNodeType(
+        nodeId,
+        { x: position.$x, y: position.$y },
+        { jsonString: data ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT },
+      );
       addNode(jsonNode);
     }
 
@@ -235,15 +256,11 @@ export function parseDocumentText(text: string): WorkspaceState {
     }
     // # $Links
     for (const [linkId, linkData] of Object.entries(nodeEditorMetadata.$Links ?? {})) {
-      const linkNode: LinkNodeType = {
-        type: LINK_NODE_TYPE,
-        id: linkId,
-        position: {
-          x: linkData.$Position.$x,
-          y: linkData.$Position.$y,
-        },
-        data: {},
-      };
+      const linkNode = createLinkNodeType(
+        linkId,
+        { x: linkData.$Position.$x, y: linkData.$Position.$y },
+        {},
+      );
       addNode(linkNode);
 
       // reorganize edges for link
@@ -276,52 +293,28 @@ export function parseDocumentText(text: string): WorkspaceState {
     }
     // # $Groups
     for (const groupJson of nodeEditorMetadata.$Groups ?? []) {
-      addNode(createGroupnode(groupJson));
+      addNode(groupNodeFromJson(groupJson));
     }
     // # $Comments
     for (const commentJson of nodeEditorMetadata.$Comments ?? []) {
-      const commentNode: CommentNodeType = {
-        type: COMMENT_NODE_TYPE,
-        id: commentJson.$NodeId ?? createNodeId("Comment"),
-        position: {
-          x: commentJson.$Position.$x,
-          y: commentJson.$Position.$y,
-        },
-        width: commentJson.$width,
-        height: commentJson.$height,
-        data: {
-          name: commentJson.$name,
-          text: commentJson.$text,
-          fontSize: commentJson.$fontSize,
-        },
-      };
+      const commentNode = createCommentNodeType(
+        commentJson.$NodeId ?? createNodeId("Comment"),
+        { x: commentJson.$Position.$x, y: commentJson.$Position.$y },
+        { name: commentJson.$name, text: commentJson.$text, fontSize: commentJson.$fontSize },
+      );
       addNode(commentNode);
     }
   }
 
   for (const groupJson of documentRoot.$Groups ?? []) {
-    addNode(createGroupnode(groupJson));
+    addNode(groupNodeFromJson(groupJson));
   }
 
   return {
     nodes: nodes,
     edges: edges,
     rootNodeId: rootId,
-  };
-}
-
-function createGroupnode(groupJson: GroupJson): GroupNodeType {
-  return {
-    type: GROUP_NODE_TYPE,
-    id: groupJson.$NodeId ?? createNodeId("Group"),
-    position: {
-      x: groupJson.$Position.$x,
-      y: groupJson.$Position.$y,
-    },
-    width: groupJson.$width,
-    height: groupJson.$height,
-    data: {
-      name: groupJson.$name,
-    },
+    // easiest to just assume all positions being 0 -> we should do autolayout
+    arePositionsSet: !nodes.every(node => node.position.x === 0 && node.position.y === 0),
   };
 }

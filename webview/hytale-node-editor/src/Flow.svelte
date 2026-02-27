@@ -3,10 +3,13 @@
     addEdge,
     Background,
     type Connection,
-    type OnConnect,
-    type OnConnectEnd,
+    type EdgeEvents,
+    type NodeEvents,
+    type NodeSelectionEvents,
+    type PaneEvents,
     SelectionMode,
     SvelteFlow,
+    type SvelteFlowProps,
     useSvelteFlow,
     type XYPosition,
   } from "@xyflow/svelte";
@@ -19,23 +22,22 @@
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
   import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
   import { getAutoPositionedMappings } from "src/node-editor/layout/autoLayout";
-  import { createNodeId } from "src/node-editor/utils/idUtils";
+  import { createNodeId, createUuidV4 } from "src/node-editor/utils/idUtils";
   import {
+    createCommentNodeType,
+    createDataNodeType,
+    createGroupNodeType,
+    createLinkNodeType,
+    createRawJsonNodeType,
     getAbsoluteCenterPosition,
+    getAbsolutePosition,
+    getNodeSiblingIds,
     pruneConflictingEdges,
     recalculateGroupParents,
     resolveInitialFitNodeIds,
   } from "src/node-editor/utils/nodeUtils.svelte";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
-  import type {
-    CommentNodeType,
-    DataNodeType,
-    FlowEdge,
-    FlowNode,
-    GroupNodeType,
-    LinkNodeType,
-    RawJsonNodeType,
-  } from "./common";
+  import type { FlowEdge, FlowNode } from "./common";
   import {
     COMMENT_NODE_TYPE,
     COMMENT_TEMPLATE_ID,
@@ -45,7 +47,6 @@
     DEFAULT_COMMENT_WIDTH,
     DEFAULT_GROUP_HEIGHT,
     DEFAULT_GROUP_WIDTH,
-    DEFAULT_RAW_JSON_TEXT,
     GROUP_NODE_TYPE,
     GROUP_TEMPLATE_ID,
     INPUT_HANDLE_ID,
@@ -116,6 +117,7 @@
     screenToFlowPosition,
     setCenter: setViewportCenter,
     setViewport,
+    updateNodeData,
   } = useSvelteFlow();
 
   interface PendingConnection {
@@ -153,6 +155,13 @@
   let pendingRestoredSessionState = undefined;
   let regroupingQueued = $state(true);
   let lastRevealNodeRequestVersion = -1;
+
+  $effect(() => {
+    if (!workspace.arePositionsSet && workspace.getRootNode().measured) {
+      handleQuickActionAutoPositionNodes(true);
+      workspace.arePositionsSet = true;
+    }
+  });
 
   $effect(() => {
     if (regroupingQueued && workspace.getRootNode().measured) {
@@ -195,18 +204,6 @@
       void applyInitialFitOnce();
     }
   });
-
-  const handleConnect: OnConnect = connection => {
-    pruneConflictingEdges(connection);
-    edges = addEdge(connection, edges);
-    clearPendingSingleSourceReplacement();
-    applyDocumentState("edge-created");
-  };
-
-  function handleNodeDragStop() {
-    recalculateGroupParents();
-    applyDocumentState("node-moved");
-  }
 
   function handleQuickActionMenuEvent(event: Event) {
     const quickAction = getNodeEditorQuickActionByEventName(event.type);
@@ -270,7 +267,7 @@
     openNodeSearchMenu();
   }
 
-  function handleQuickActionAutoPositionNodes() {
+  function handleQuickActionAutoPositionNodes(suppressDocumentUpdate = false) {
     let targetNodes = workspace.getEffectivelySelectedNodes();
 
     // autolayout the root tree if no other selection was made
@@ -294,7 +291,9 @@
     });
     recalculateGroupParents();
 
-    applyDocumentState("auto-layout-applied");
+    if (!suppressDocumentUpdate) {
+      applyDocumentState("auto-layout-applied");
+    }
   }
 
   function handleQuickActionViewRawJson() {
@@ -561,79 +560,16 @@
     return true;
   }
 
-  function handlePaneContextMenu(payload) {
-    const pointerEvent = payload?.event;
-    if (!pointerEvent) {
-      return;
-    }
-
-    pointerEvent.preventDefault();
-    openAddNodeMenu(pointerEvent);
-  }
-
-  function handleNodeContextMenu(payload) {
-    const pointerEvent = payload?.event;
-    const node = payload?.node;
-    if (!pointerEvent || !node) {
-      return;
-    }
-
-    const isGroupNode = node?.type === GROUP_NODE_TYPE;
-    const isSelected = node?.selected === true;
-    const isTitleBar = Boolean(
-      typeof pointerEvent?.target?.closest === "function" &&
-        pointerEvent.target.closest(".group-title-drag-handle"),
-    );
-
-    if (!isGroupNode || isSelected || isTitleBar) {
-      return;
-    }
-
-    pointerEvent.preventDefault();
-    pointerEvent.stopPropagation();
-    openAddNodeMenu(pointerEvent);
-  }
-
-  const handlePaneClick = () => {
-    closeAddNodeMenu();
-  };
-
-  function handleConnectStart(_pointerEvent, params) {
-    const sourceNodeId = params?.nodeId;
-    const sourceHandleId = params?.handleId;
-    const handleType = params?.handleType;
-    if (handleType && handleType !== "source") {
-      clearPendingSingleSourceReplacement();
-      return;
-    }
-
-    startSourceReplacementPreview(sourceNodeId, sourceHandleId);
-  }
-
-  const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-    const addMenuOpened = openAddNodeMenu(
-      event,
-      connectionState.fromNode,
-      connectionState.fromHandle,
-    );
-    if (!addMenuOpened) {
-      restorePendingSingleSourceReplacement();
-    }
-  };
-
   function handleMenuSelect(template: NodeTemplate) {
     if (template.templateId === GROUP_TEMPLATE_ID) {
-      const newGroupNode: GroupNodeType = {
-        id: createNodeId("Group"),
-        type: GROUP_NODE_TYPE,
-        data: {
-          name: "Group",
-        },
-        position: {
-          ...pendingNodePosition,
-        },
-        width: DEFAULT_GROUP_WIDTH,
-        height: DEFAULT_GROUP_HEIGHT,
+      const newGroupNode = {
+        ...createGroupNodeType(
+          createNodeId("Group"),
+          { ...pendingNodePosition },
+          DEFAULT_GROUP_WIDTH,
+          DEFAULT_GROUP_HEIGHT,
+          { name: "Group" },
+        ),
         selected: false,
         draggable: false,
       };
@@ -645,17 +581,16 @@
     }
 
     if (template.templateId === COMMENT_TEMPLATE_ID) {
-      const newCommentNode: CommentNodeType = {
-        id: createNodeId("Comment"),
-        type: COMMENT_NODE_TYPE,
-        data: {
-          name: "Comment",
-          text: "",
-          fontSize: DEFAULT_COMMENT_FONT_SIZE,
-        },
-        position: {
-          ...pendingNodePosition,
-        },
+      const newCommentNode = {
+        ...createCommentNodeType(
+          createNodeId("Comment"),
+          { ...pendingNodePosition },
+          {
+            name: "Comment",
+            text: "",
+            fontSize: DEFAULT_COMMENT_FONT_SIZE,
+          },
+        ),
         width: DEFAULT_COMMENT_WIDTH,
         height: DEFAULT_COMMENT_HEIGHT,
         selected: false,
@@ -668,15 +603,8 @@
     }
 
     if (template.templateId === RAW_JSON_TEMPLATE_ID) {
-      const newRawJsonNode: RawJsonNodeType = {
-        id: createNodeId("Generic"),
-        type: RAW_JSON_NODE_TYPE,
-        data: {
-          data: DEFAULT_RAW_JSON_TEXT,
-        },
-        position: {
-          ...pendingNodePosition,
-        },
+      const newRawJsonNode: FlowNode = {
+        ...createRawJsonNodeType(createNodeId("Generic"), { ...pendingNodePosition }, {}),
         origin: [0.5, 0],
       };
 
@@ -701,13 +629,12 @@
     }
 
     if (template.templateId === LINK_TEMPLATE_ID) {
-      const newLinkNode: LinkNodeType = {
-        id: createNodeId(""), // original node editor creates links with blank types as the IDs for some reason
-        type: LINK_NODE_TYPE,
-        data: {},
-        position: {
-          ...pendingNodePosition,
-        },
+      const newLinkNode: FlowNode = {
+        ...createLinkNodeType(
+          createUuidV4(), // original node editor creates links with blank types as the IDs for some reason
+          { ...pendingNodePosition },
+          {},
+        ),
         origin: [0.5, 0.0],
       };
 
@@ -731,15 +658,8 @@
     }
 
     const newNodeId = createNodeId(template.templateId);
-    const newNode: DataNodeType = {
-      id: newNodeId,
-      type: DATA_NODE_TYPE,
-      data: {
-        ...template,
-      },
-      position: {
-        ...pendingNodePosition,
-      },
+    const newNode: FlowNode = {
+      ...createDataNodeType(newNodeId, { ...pendingNodePosition }, template, {}),
       origin: [0.5, 0.0],
     };
 
@@ -771,14 +691,95 @@
     onkeyup: handleWindowKeyUp,
   };
 
-  const svelteFlowEvents = {
-    onconnect: handleConnect,
-    onconnectstart: handleConnectStart,
-    onconnectend: handleConnectEnd,
-    onnodedragstop: handleNodeDragStop,
-    onnodecontextmenu: handleNodeContextMenu,
-    onpaneclick: handlePaneClick,
-    onpanecontextmenu: handlePaneContextMenu,
+  const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
+    // # onconnect
+    onconnect: connection => {
+      pruneConflictingEdges(connection);
+      edges = addEdge(connection, edges);
+      clearPendingSingleSourceReplacement();
+      applyDocumentState("edge-created");
+    },
+    // # onconnectstart
+    onconnectstart: (_pointerEvent, params) => {
+      const sourceNodeId = params?.nodeId;
+      const sourceHandleId = params?.handleId;
+      const handleType = params?.handleType;
+      if (handleType && handleType !== "source") {
+        clearPendingSingleSourceReplacement();
+        return;
+      }
+
+      startSourceReplacementPreview(sourceNodeId, sourceHandleId);
+    },
+    // # onconnectend
+    onconnectend: (event, connectionState) => {
+      const addMenuOpened = openAddNodeMenu(
+        event,
+        connectionState.fromNode,
+        connectionState.fromHandle,
+      );
+      if (!addMenuOpened) {
+        restorePendingSingleSourceReplacement();
+      }
+    },
+    // # onnodedragstop
+    onnodedragstop: event => {
+
+      // reorder siblings based on y position
+      for (const node of event.nodes) {
+        getNodeSiblingIds(node.id, "same-parent-handle")
+          .map(id => workspace.getNodeById(id))
+          .sort((a, b) => {
+            // higher to lower (+Y IS DOWN)
+            return getAbsolutePosition(a).y - getAbsolutePosition(b).y;
+          })
+          .forEach((node, idx) => {
+            updateNodeData(node.id, {
+              inputConnectionIndex: idx,
+            });
+          });
+      }
+
+      recalculateGroupParents();
+      applyDocumentState("node-moved");
+    },
+    // # onnodecontextmenu
+    onnodecontextmenu: payload => {
+      const pointerEvent = payload?.event;
+      const node = payload?.node;
+      if (!pointerEvent || !node) {
+        return;
+      }
+
+      const isGroupNode = node?.type === GROUP_NODE_TYPE;
+      const isSelected = node?.selected === true;
+      const isTitleBar = Boolean(
+        typeof pointerEvent?.target?.closest === "function" &&
+          pointerEvent.target.closest(".group-title-drag-handle"),
+      );
+
+      if (!isGroupNode || isSelected || isTitleBar) {
+        return;
+      }
+
+      pointerEvent.preventDefault();
+      pointerEvent.stopPropagation();
+      openAddNodeMenu(pointerEvent);
+    },
+    // # onpaneclick
+    onpaneclick: () => {
+      closeAddNodeMenu();
+    },
+    // # onpanecontextmenu
+    onpanecontextmenu: payload => {
+      const pointerEvent = payload?.event;
+      if (!pointerEvent) {
+        return;
+      }
+
+      pointerEvent.preventDefault();
+      openAddNodeMenu(pointerEvent);
+    },
   };
 
   const addNodeMenuEvents = {

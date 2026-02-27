@@ -177,7 +177,7 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
         localId: input.Id,
         label: input.Label,
         color: input.Color,
-        type: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
+        multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
       };
     }) ?? [];
 
@@ -190,7 +190,7 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
           localId: output.Id,
           label: output.Label,
           color: output.Color,
-          type: type,
+          multiplicity: type,
         };
         return map;
       },
@@ -203,7 +203,8 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
 
   for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
     // strip postfix e.g. "$Pin" from schema key (see Root.json in ScriptableBrushes workspace)
-    schemaKey = schemaKey.substring(0, schemaKey.lastIndexOf("$"));
+    const postFixLoc = schemaKey.lastIndexOf("$");
+    schemaKey = schemaKey.substring(0, postFixLoc > 0 ? postFixLoc : schemaKey.length);
     if (typeof entry === "string") {
       if (fieldsByLocalId?.[entry]) {
         // entry is local contentId

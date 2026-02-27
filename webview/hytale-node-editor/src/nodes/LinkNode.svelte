@@ -9,9 +9,8 @@
   import { applyDocumentState } from "src/workspace.svelte";
 
   const DEFAULT_NODE_LABEL = "Link";
-  const DEFAULT_OUTPUT_LABEL = "Children";
+
   const DEFAULT_LINK_PIN_COLOR = "var(--vscode-descriptionForeground)";
-  const INPUT_LABEL = "Input";
   const PIN_WIDTH = 10;
   const PIN_TOP = "50%";
   const NODE_MIN_WIDTH_BASE_PX = 80;

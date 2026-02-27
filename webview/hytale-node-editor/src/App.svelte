@@ -85,11 +85,12 @@
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage) {
     if (message.version === workspace.sourceVersion) return;
     try {
-      const { nodes, edges, rootNodeId } = parseDocumentText(message.text);
+      const { nodes, edges, rootNodeId, arePositionsSet } = parseDocumentText(message.text);
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
       workspace.sourceVersion = message.version;
+      workspace.arePositionsSet = arePositionsSet;
       workspace.isInitialized = true;
 
       graphLoadVersion += 1;

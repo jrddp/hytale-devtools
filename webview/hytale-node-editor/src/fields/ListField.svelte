@@ -7,54 +7,33 @@
   } from "../node-editor/ui/focusNavigation";
   import { noMousePropogation } from "../utils/fieldUtils";
 
-  let {
-    inputId,
-    label,
-    initialValue,
-    onconfirm,
-  }: FieldProps<unknown[]> = $props();
+  // TODO lists can technically be types other than string. definition requires investigation.
+  let { inputId, label, initialValue, onconfirm }: FieldProps<unknown[]> = $props();
 
   let value = $state<unknown[]>([]);
-  let lastCommittedValue = $state<unknown[]>([]);
 
   $effect(() => {
-    if (serializeListValue(initialValue) !== serializeListValue(lastCommittedValue)) {
+    if (initialValue) {
       value = initialValue.slice();
-      lastCommittedValue = initialValue.slice();
     }
   });
 
-  function serializeListValue(listValue: unknown[]): string {
-    try {
-      return JSON.stringify(listValue);
-    } catch {
-      return "";
-    }
-  }
-
-  function confirmValue(nextValue = value) {
-    if (serializeListValue(nextValue) === serializeListValue(lastCommittedValue)) {
-      return;
-    }
-
+  function confirmValue(nextValue: unknown[]) {
+    value = nextValue;
     onconfirm(nextValue);
-    lastCommittedValue = nextValue;
   }
 
   function addItem() {
-    value = [...value, ""];
-    confirmValue();
+    confirmValue([...value, ""]);
   }
 
   function removeItem(index: number) {
-    value = value.filter((_, entryIndex) => entryIndex !== index);
-    confirmValue();
+    confirmValue(value.filter((_, entryIndex) => entryIndex !== index));
   }
 
   function updateItem(index: number, nextItem: unknown) {
     const nextList = value.slice();
     nextList[index] = nextItem;
-    value = nextList;
     confirmValue(nextList);
   }
 

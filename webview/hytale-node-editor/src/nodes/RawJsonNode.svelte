@@ -47,7 +47,7 @@
   const commentInputId = $derived(`comment-${id ?? "node"}`);
   const commentValue = $derived(typeof data?.comment === "string" ? data.comment : "");
   const dataFieldValue = $derived(
-    typeof data?.data === "string" ? data.data : DEFAULT_RAW_JSON_TEXT,
+    typeof data?.jsonString === "string" ? data.jsonString : DEFAULT_RAW_JSON_TEXT,
   );
 
   $effect(() => {

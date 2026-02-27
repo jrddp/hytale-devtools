@@ -23,7 +23,7 @@
 </script>
 
 {#if type === "object"}
-<!-- TODO implement object-type fields -->
+  <!-- TODO implement object-type fields -->
   <!-- <ObjectField {field} hasNestedFields={nestedFields.length > 0}>
     {#each nestedFields as nestedField}
       {#if typeof nestedField?.id === "string" && nestedField.id.trim()}
@@ -36,20 +36,30 @@
     {/each}
   </ObjectField> -->
 {:else if type === "list"}
-  <ListField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
+  <ListField {inputId} label={fieldLabel} initialValue={value as string[]} onconfirm={onvalidate} />
 {:else if type === "enum"}
-  <EnumField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
+  <EnumField {inputId} label={fieldLabel} initialValue={value as string} onconfirm={onvalidate} />
 {:else if type === "filepath"}
-  <FilePathField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
+  <FilePathField
+    {inputId}
+    label={fieldLabel}
+    initialValue={value as string}
+    onconfirm={onvalidate}
+  />
 {:else if type === "intslider"}
-  <SliderField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
+  <SliderField {inputId} label={fieldLabel} initialValue={value as number} onconfirm={onvalidate} />
 {:else if type === "checkbox"}
-  <BooleanField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
+  <BooleanField
+    {inputId}
+    label={fieldLabel}
+    initialValue={value as boolean}
+    onconfirm={onvalidate}
+  />
 {:else if type === "int" || type === "float"}
   <NumberField
     {inputId}
     label={fieldLabel}
-    initialValue={value}
+    initialValue={value as number}
     isFloat={type === "float"}
     onconfirm={onvalidate}
   />
@@ -57,7 +67,7 @@
   <TextField
     {inputId}
     label={fieldLabel}
-    initialValue={value}
+    initialValue={value as string}
     multiline={type === "text"}
     onconfirm={onvalidate}
   />

@@ -1,20 +1,27 @@
 <script lang="ts">
-  import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import type { Snippet } from "svelte";
 
   let {
-    schemaKey,
+    inputId,
     label,
     hasNestedFields = true,
-  }: NodeField & { onchange: (value: unknown) => void; hasNestedFields?: boolean } = $props();
-
-  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
+    children,
+  }: {
+    inputId: string;
+    label: string;
+    hasNestedFields?: boolean;
+    children?: Snippet;
+  } = $props();
 </script>
 
-<div class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2">
-  <div class="text-xs font-bold uppercase text-vsc-muted">{fieldLabel}</div>
+<div
+  id={inputId}
+  class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+>
+  <div class="text-xs font-bold uppercase text-vsc-muted">{label}</div>
   <div class="flex flex-col gap-1.5">
     {#if hasNestedFields}
-      <slot />
+      {@render children?.()}
     {:else}
       <div class="text-xs text-vsc-muted">No nested fields defined.</div>
     {/if}

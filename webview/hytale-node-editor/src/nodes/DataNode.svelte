@@ -48,9 +48,6 @@
     readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX,
   );
   let nodeLabel = $derived(titleOverride ?? defaultTitle);
-  let inputConnectionIndexPrefix = $derived(
-    inputConnectionIndex !== undefined ? `[${inputConnectionIndex}]` : undefined,
-  );
   let commentInputId = $derived(`comment-${id ?? "node"}`);
   let commentValue = $derived(typeof data?.comment === "string" ? data.comment : "");
 
@@ -242,13 +239,13 @@
           aria-label="Node title bar"
         >
           <button
-            class="min-w-0 font-bold text-left border border-transparent rounded-md select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
+            class="min-w-0 font-bold text-left border border-transparent rounded-md select-none text-vsc-input-fg cursor-grab active:cursor-grabbing my-auto"
             type="button"
             ondblclick={beginTitleEditing}
             onkeydown={handleTitleDisplayKeydown}
           >
-            {#if inputConnectionIndexPrefix !== undefined}
-              <span class="mr-1 text-vsc-muted">{inputConnectionIndexPrefix}</span>
+            {#if inputConnectionIndex !== undefined}
+              <span class="text-vsc-muted text-xs font-medium">{`[${inputConnectionIndex}]`}</span>
             {/if}
             <span>{nodeLabel}</span>
           </button>
