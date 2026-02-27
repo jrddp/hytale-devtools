@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
 import { detectHytaleModWorkspace } from "./commands/changeModPatchline";
 import { createCompanionSnapshotRuntime } from "./shared/companion/snapshotStore";
-import { getNodeEditorWorkspaces } from "./node-editor/workspaceTemplates";
+import { getNodeEditorWorkspaces } from "./node-editor/workspaceResolver";
 import { type NodeEditorWorkspace } from "./shared/node-editor/workspaceTypes";
 
 export let LOGGER: vscode.LogOutputChannel;

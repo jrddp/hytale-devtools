@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "node:fs";
 import { type ResolveSchemaDefinitionRequestItem } from "../shared/companion/types";
-import { resolveWorkspaceContext } from "./workspaceTemplates";
+import { resolveWorkspaceContext } from "./workspaceResolver";
 import type {
   ExtensionToWebviewMessage,
   NodeEditorControlScheme,

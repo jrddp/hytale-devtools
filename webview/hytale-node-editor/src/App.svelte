@@ -93,10 +93,11 @@
       workspace.isInitialized = true;
 
       graphLoadVersion += 1;
-      extensionError = "";
     } catch (error) {
       console.error(error);
-      extensionError = error instanceof Error ? error.message : "could not parse flow json.";
+      if (!extensionError) {
+        extensionError = error instanceof Error ? error.message : "could not parse flow json.";
+      }
     }
   }
 

@@ -16,7 +16,7 @@ import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 
 const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   "/Server/ScriptedBrushes/": {
-    workspaceName: "ScriptableBrushes",
+    workspaceName: "Scriptable Brushes",
     rootId: "DropList",
   },
   "/Server/HytaleGenerator/Biomes/": {
@@ -69,10 +69,18 @@ interface NodeContentDefinition {
 }
 
 interface NodeSchemaDefinition {
+  // keys are the strings to be saved in the schema itself
+  // ! keys may be postfixed with ${identifier}, presumably indicating a shared schemaKey that can be set by either a field OR a pin.
+  // ! this is only seen in the demo workspace so far - which also notably includes unique ContentDefinition for Reference.json that may be related
+  // ! See Demo Workspace DemoNode.json and Reference.json for reference.
+  // TODO research and handle that properly ^. since its unused, for now we'll just strip any $postfixes from the schema keys during processing.
   [key: string]:
     | {
         Node?: string;
         Pin?: string;
+        // they mix casings in workspaces sometimes.. e.g. ScriptableBrushes Root.json
+        node?: string;
+        pin?: string;
       }
     | string;
 }
@@ -193,7 +201,9 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
   const childTypes: Record<string, string> = {};
   const schemaConstants: Record<string, string> = {};
 
-  for (const [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
+  for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
+    // strip postfix e.g. "$Pin" from schema key (see Root.json in ScriptableBrushes workspace)
+    schemaKey = schemaKey.substring(0, schemaKey.lastIndexOf("$"));
     if (typeof entry === "string") {
       if (fieldsByLocalId?.[entry]) {
         // entry is local contentId
@@ -205,12 +215,23 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
       }
     } else {
       // entry defines pin information
-      if (entry.Pin && outputPinsByLocalId?.[entry.Pin]) {
-        outputPinsByLocalId[entry.Pin].schemaKey = schemaKey;
+      const pin = entry.Pin ?? entry.pin;
+      const node = entry.Node ?? entry.node;
+      if (!pin || !node) {
+        LOGGER.error(
+          `Pin and node expected but not parsed for schema key ${schemaKey} of template ${definition.Id}`,
+        );
+        continue;
       }
-      if (entry.Node) {
-        childTypes[schemaKey] = entry.Node;
+      if (!outputPinsByLocalId?.[pin]) {
+        LOGGER.error(
+          `Pin ${pin} not resolved to local id for schema key ${schemaKey} of template ${definition.Id}`,
+        );
+        continue;
       }
+
+      outputPinsByLocalId[pin].schemaKey = schemaKey;
+      childTypes[schemaKey] = node;
     }
   }
 
