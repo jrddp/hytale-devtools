@@ -10,7 +10,7 @@ import {
   type AssetDocumentShape,
   type NodeAssetJson,
   type NodeEditorMetadata,
-} from "src/node-editor/parsing/parse/parseDocument";
+} from "@shared/node-editor/assetTypes";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 import { workspace } from "src/workspace.svelte";
 
@@ -171,6 +171,8 @@ export function serializeDocument(): AssetDocumentShape {
       nodeEditorMetadata.$FloatingNodes.push(serializedNewRoot);
     }
   }
+
+  nodeEditorMetadata.$WorkspaceID = workspace.context.rootMenuName;
 
   return {
     ...rootNodeSerialized,

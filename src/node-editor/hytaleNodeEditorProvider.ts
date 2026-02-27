@@ -48,7 +48,7 @@ export function registerHytaleNodeEditorProvider(
 
 class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
   private readonly webviewPanelsByDocumentUri = new Map<string, vscode.WebviewPanel>();
-  private activeDocumentUri: string | undefined;
+  private activeDocumentPath: string | undefined;
   private nativeFindCommandRegistration: vscode.Disposable | undefined;
   private selectionSubscription: vscode.Disposable | undefined;
 
@@ -73,10 +73,10 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel: vscode.WebviewPanel,
   ): void {
     try {
-      const documentUri = document.uri.toString();
-      this.webviewPanelsByDocumentUri.set(documentUri, webviewPanel);
+      const documentPath = document.uri.fsPath;
+      this.webviewPanelsByDocumentUri.set(documentPath, webviewPanel);
       if (webviewPanel.active) {
-        this.activeDocumentUri = documentUri;
+        this.activeDocumentPath = documentPath;
       }
       this.updateNativeFindCommandRegistration();
 
@@ -90,11 +90,11 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
       const sendBootstrap = () => {
-        const workspaceContext = resolveWorkspaceContext(documentUri);
+        const workspaceContext = resolveWorkspaceContext(documentPath);
         if (!workspaceContext) {
           this.postError(
             webviewPanel.webview,
-            `Workspace context could not be resolved for path ${documentUri}.`,
+            `Workspace context could not be resolved for path ${documentPath}.`,
           );
           return;
         }
@@ -112,7 +112,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           type: "update",
           text: document.getText(),
           version: document.version,
-          documentPath: document.uri.fsPath || document.uri.toString(),
+          documentPath,
         };
         void webviewPanel.webview.postMessage(payload);
       };
@@ -125,9 +125,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
 
       const panelViewStateSubscription = webviewPanel.onDidChangeViewState(event => {
         if (event.webviewPanel.active) {
-          this.activeDocumentUri = documentUri;
-        } else if (this.activeDocumentUri === documentUri) {
-          this.activeDocumentUri = undefined;
+          this.activeDocumentPath = documentPath;
+        } else if (this.activeDocumentPath === documentPath) {
+          this.activeDocumentPath = undefined;
         }
 
         this.updateNativeFindCommandRegistration();
@@ -137,12 +137,12 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
         documentChangeSubscription.dispose();
         panelViewStateSubscription.dispose();
 
-        const existingPanel = this.webviewPanelsByDocumentUri.get(documentUri);
+        const existingPanel = this.webviewPanelsByDocumentUri.get(documentPath);
         if (existingPanel === webviewPanel) {
-          this.webviewPanelsByDocumentUri.delete(documentUri);
+          this.webviewPanelsByDocumentUri.delete(documentPath);
         }
-        if (this.activeDocumentUri === documentUri) {
-          this.activeDocumentUri = undefined;
+        if (this.activeDocumentPath === documentPath) {
+          this.activeDocumentPath = undefined;
         }
 
         this.updateNativeFindCommandRegistration();
@@ -203,8 +203,8 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
-    const activePanel = this.activeDocumentUri
-      ? this.webviewPanelsByDocumentUri.get(this.activeDocumentUri)
+    const activePanel = this.activeDocumentPath
+      ? this.webviewPanelsByDocumentUri.get(this.activeDocumentPath)
       : undefined;
     if (activePanel) {
       return activePanel;

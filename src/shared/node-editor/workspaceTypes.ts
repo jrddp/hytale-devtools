@@ -64,6 +64,8 @@ export interface NodeEditorWorkspace {
 export interface NodeEditorWorkspaceContext {
   rootTemplateOrVariantId: string;
   nodeTemplatesById: Record<string, NodeTemplate>;
+  // used to save $WorkspaceID - defined per root
+  rootMenuName: string;
   // category name -> list of template IDs
   templateCategories: Record<string, string[]>;
   variantKindsById: Record<string, VariantKindDefinition>;

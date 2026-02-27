@@ -1,83 +1,30 @@
-import { type WorkspaceState } from "../../../workspace.svelte";
 import {
-  DATA_NODE_TYPE,
-  type GroupNodeType,
-  INPUT_HANDLE_ID,
-  LINK_OUTPUT_HANDLE_ID,
-  RAW_JSON_NODE_TYPE,
-  type DataNodeData,
-  type DataNodeType,
-  type FlowEdge,
-  type FlowNode,
-  type LinkNodeType,
-  type RawJsonNodeType,
-  LINK_NODE_TYPE,
+  type AssetDocumentShape,
+  type GroupJson,
+  type NodeAssetJson,
+} from "@shared/node-editor/assetTypes";
+import { workspace } from "src/workspace.svelte";
+import {
   COMMENT_NODE_TYPE,
   type CommentNodeType,
+  DATA_NODE_TYPE,
+  type DataNodeData,
+  type DataNodeType,
   DEFAULT_RAW_JSON_TEXT,
+  type FlowEdge,
+  type FlowNode,
   GROUP_NODE_TYPE,
+  type GroupNodeType,
+  INPUT_HANDLE_ID,
+  LINK_NODE_TYPE,
+  LINK_OUTPUT_HANDLE_ID,
+  type LinkNodeType,
+  RAW_JSON_NODE_TYPE,
+  type RawJsonNodeType,
 } from "../../../common";
+import { type WorkspaceState } from "../../../workspace.svelte";
 import { createNodeId } from "../../utils/idUtils";
 import { isObject } from "../../utils/valueUtils";
-import { workspace } from "src/workspace.svelte";
-
-export interface Position {
-  $x: number;
-  $y: number;
-}
-
-export type NodeAssetJson = {
-  $NodeId?: string | undefined;
-  $Position?: Position | undefined; // legacy only position definition
-  $Comment?: string;
-  [key: string]: unknown;
-};
-
-export type GroupJson = {
-  $NodeId?: string; // doesn't exist in base-game saved JSON, but makes things easier with VSCode's reserialization
-  $Position: Position;
-  $width: number;
-  $height: number;
-  $name: string;
-};
-
-export type NodeEditorMetadata = {
-  $Nodes?: Record<
-    string,
-    {
-      $Position: Position;
-      $Title: string;
-    }
-  >;
-  $FloatingNodes?: NodeAssetJson[];
-  $Links?: Record<
-    string,
-    {
-      $Position: Position;
-      $Title: string;
-      inputConnections: string[]; // connections in the format of {NodeId}:{LocalPinId}
-      outputConnections: string[];
-      sourceEndpoint?: string;
-      targetEndpoint?: string;
-    }
-  >;
-  $Groups?: GroupJson[];
-  $Comments?: {
-    $NodeId?: string; // doesn't exist in base-game saved JSON, but makes things easier with VSCode's reserialization
-    $Position: Position;
-    $width: number;
-    $height: number;
-    $name: string;
-    $text: string;
-    $fontSize: number;
-  }[];
-  $WorkspaceID?: string;
-};
-
-export type AssetDocumentShape = {
-  $NodeEditorMetadata?: NodeEditorMetadata;
-  $Groups?: GroupJson[];
-} & NodeAssetJson;
 
 export function parseDocumentText(text: string): WorkspaceState {
   if (!workspace.context) {

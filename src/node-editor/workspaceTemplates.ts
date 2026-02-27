@@ -12,6 +12,7 @@ import {
   type NodeTemplate,
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
+import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 
 const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   "/Server/ScriptedBrushes/": {
@@ -301,18 +302,49 @@ export function resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceC
     return null;
   }
 
-  const rules = WORKSPACE_PATH_RULES[subpathMatch];
-  const workspace = nodeEditorWorkspaces[rules.workspaceName];
-  if (!workspace) {
-    return null;
+  const fileParse = safeParseJSONFile(assetPath) as AssetDocumentShape | undefined;
+  // ! $WorkspaceID actually saves the root menuname. e.g. "HytaleGenerator - Biome"
+  const parsedMenuName: string | undefined = fileParse?.$NodeEditorMetadata?.$WorkspaceID;
+  let workspace: NodeEditorWorkspace | undefined;
+  let rootDefinition: NodeEditorWorkspaceRootDefinition | undefined;
+  // match root/workspace by menu name. could be optimized but real world size would never be very large
+  if (parsedMenuName) {
+    let found = false;
+    for (const currentWorkspace of Object.values(nodeEditorWorkspaces)) {
+      if (found) {
+        break;
+      }
+      for (const root of Object.values(currentWorkspace.roots)) {
+        if (root.MenuName === parsedMenuName) {
+          workspace = currentWorkspace;
+          rootDefinition = root;
+          found = true;
+          break;
+        }
+      }
+    }
   }
 
-  const rootTemplateOrVariantId = workspace.roots[rules.rootId].RootNodeType;
+  if (!workspace || !rootDefinition) {
+    const matchedRule = WORKSPACE_PATH_RULES[subpathMatch];
+    workspace = nodeEditorWorkspaces[matchedRule.workspaceName];
+    if (!workspace) {
+      return null;
+    }
+    rootDefinition = workspace.roots[matchedRule.rootId];
+    if (!rootDefinition) {
+      LOGGER.warn(
+        `Root definition "${matchedRule.rootId}" not found in workspace "${workspace.workspaceName} when resolving ${assetPath}".`,
+      );
+      return null;
+    }
+  }
 
   return {
     nodeTemplatesById: workspace.nodeTemplatesById,
     variantKindsById: workspace.variantKindsById,
     templateCategories: workspace.templateCategories,
-    rootTemplateOrVariantId,
+    rootTemplateOrVariantId: rootDefinition.RootNodeType,
+    rootMenuName: rootDefinition.MenuName,
   };
 }
