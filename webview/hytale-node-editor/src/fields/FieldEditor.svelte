@@ -7,6 +7,7 @@
   import FilePathField from "./FilePathField.svelte";
   import EnumField from "./EnumField.svelte";
   import ListField from "./ListField.svelte";
+  import { buildFieldInputId } from "../utils/fieldUtils";
 
   let {
     nodeId,
@@ -14,9 +15,11 @@
     type,
     label,
     value,
-    inputWidth,
-    onchange,
-  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
+    onvalidate,
+  }: NodeField & { nodeId?: string; onvalidate: (value: unknown) => void } = $props();
+
+  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
+  const inputId = $derived(buildFieldInputId("field", nodeId, schemaKey, type));
 </script>
 
 {#if type === "object"}
@@ -33,17 +36,29 @@
     {/each}
   </ObjectField> -->
 {:else if type === "list"}
-  <ListField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <ListField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
 {:else if type === "enum"}
-  <EnumField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <EnumField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
 {:else if type === "filepath"}
-  <FilePathField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <FilePathField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
 {:else if type === "intslider"}
-  <SliderField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <SliderField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
 {:else if type === "checkbox"}
-  <BooleanField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <BooleanField {inputId} label={fieldLabel} initialValue={value} onconfirm={onvalidate} />
 {:else if type === "int" || type === "float"}
-  <NumberField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <NumberField
+    {inputId}
+    label={fieldLabel}
+    initialValue={value}
+    isFloat={type === "float"}
+    onconfirm={onvalidate}
+  />
 {:else}
-  <TextField {nodeId} {schemaKey} {type} {label} {value} {inputWidth} {onchange} />
+  <TextField
+    {inputId}
+    label={fieldLabel}
+    initialValue={value}
+    multiline={type === "text"}
+    onconfirm={onvalidate}
+  />
 {/if}

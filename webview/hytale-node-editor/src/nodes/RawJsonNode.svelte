@@ -276,6 +276,6 @@
       color={NODE_ACCENT_COLOR}
     />
 
-    <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onchange={updateData} />
+    <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onvalidate={updateData} />
   </div>
 </div>

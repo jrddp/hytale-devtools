@@ -1,42 +1,61 @@
 <script lang="ts">
-  import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import type { FieldProps } from "../utils/fieldUtils";
   import { isObject } from "src/node-editor/utils/valueUtils";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { noMousePropogation } from "./fieldInteractions";
+  import { noMousePropogation } from "../utils/fieldUtils";
 
   let {
-    nodeId,
-    schemaKey,
+    inputId,
     label,
-    value,
-    onchange,
-  }: NodeField & {
-    nodeId?: string;
-    onchange: (value: unknown) => void;
-  } = $props();
+    initialValue,
+    onconfirm,
+  }: FieldProps<unknown[]> = $props();
 
-  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
-  const listValue = $derived(Array.isArray(value) ? value : []);
+  let value = $state<unknown[]>([]);
+  let lastCommittedValue = $state<unknown[]>([]);
 
-  function emitValue(nextValue: unknown[]) {
-    onchange(nextValue);
+  $effect(() => {
+    if (serializeListValue(initialValue) !== serializeListValue(lastCommittedValue)) {
+      value = initialValue.slice();
+      lastCommittedValue = initialValue.slice();
+    }
+  });
+
+  function serializeListValue(listValue: unknown[]): string {
+    try {
+      return JSON.stringify(listValue);
+    } catch {
+      return "";
+    }
+  }
+
+  function confirmValue(nextValue = value) {
+    if (serializeListValue(nextValue) === serializeListValue(lastCommittedValue)) {
+      return;
+    }
+
+    onconfirm(nextValue);
+    lastCommittedValue = nextValue;
   }
 
   function addItem() {
-    emitValue([...listValue, ""]);
+    value = [...value, ""];
+    confirmValue();
   }
 
   function removeItem(index: number) {
-    emitValue(listValue.filter((_, entryIndex) => entryIndex !== index));
+    value = value.filter((_, entryIndex) => entryIndex !== index);
+    confirmValue();
   }
 
   function updateItem(index: number, nextItem: unknown) {
-    const nextList = listValue.slice();
+    const nextList = value.slice();
     nextList[index] = nextItem;
-    emitValue(nextList);
+    value = nextList;
+    confirmValue(nextList);
   }
 
   function updateTextItem(index: number, nextText: string) {
@@ -84,11 +103,11 @@
 </script>
 
 <div
+  id={inputId}
   class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
-  data-node-id={nodeId}
 >
   <div class="flex items-center justify-between gap-2">
-    <div class="text-xs font-bold uppercase text-vsc-muted">{fieldLabel}</div>
+    <div class="text-xs font-bold uppercase text-vsc-muted">{label}</div>
     <button
       class="px-2 py-1 text-xs border rounded-md border-vsc-button-border bg-vsc-button-secondary-bg text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
       type="button"
@@ -98,11 +117,11 @@
     </button>
   </div>
 
-  {#if listValue.length === 0}
+  {#if value.length === 0}
     <div class="text-xs text-vsc-muted">No items</div>
   {:else}
     <div class="flex flex-col gap-1.5">
-      {#each listValue as item, index}
+      {#each value as item, index}
         <div class="flex items-start gap-1.5">
           <div class="flex-1">
             {#if typeof item === "boolean"}

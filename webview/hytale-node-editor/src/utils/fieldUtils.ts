@@ -1,3 +1,10 @@
+export type FieldProps<T> = {
+  inputId: string;
+  label: string;
+  initialValue: T;
+  onconfirm: (value: T) => void;
+};
+
 export function buildFieldInputId(
   prefix: string,
   nodeId: string | undefined,
@@ -7,7 +14,7 @@ export function buildFieldInputId(
   return [prefix, nodeId, schemaKey, type].join("-");
 }
 
-/** Expand this object on field elements to prevent pointer events from propagating to Svelte Flow and selecting the node. */
+/** Expand this object on field elements to prevent pointer events from propagating to Svelte Flow and selecting the node */
 export const noMousePropogation = {
   onpointerdown: (e: PointerEvent) => e.stopPropagation(),
   onmousedown: (e: MouseEvent) => e.stopPropagation(),

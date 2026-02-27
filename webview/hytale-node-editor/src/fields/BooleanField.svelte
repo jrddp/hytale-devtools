@@ -1,33 +1,42 @@
 <script lang="ts">
-  import type { NodeField } from "@shared/node-editor/workspaceTypes";
-  import { buildFieldInputId, noMousePropogation } from "./fieldInteractions";
+  import type { FieldProps } from "../utils/fieldUtils";
+  import { noMousePropogation } from "../utils/fieldUtils";
 
   let {
-    nodeId,
-    schemaKey,
-    type,
+    inputId,
     label,
-    value,
-    onchange,
-  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
+    initialValue,
+    onconfirm,
+  }: FieldProps<boolean> = $props();
 
-  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
-  const checked = $derived(Boolean(value));
-  const inputId = $derived(buildFieldInputId("bool", nodeId, schemaKey, type));
+  let value = $state(false);
+  let lastCommittedValue = $state(false);
 
-  function emitValue(nextValue: boolean) {
-    onchange(nextValue);
+  $effect(() => {
+    if (initialValue !== lastCommittedValue) {
+      value = initialValue;
+      lastCommittedValue = initialValue;
+    }
+  });
+
+  function confirmValue() {
+    if (value === lastCommittedValue) {
+      return;
+    }
+
+    onconfirm(value);
+    lastCommittedValue = value;
   }
 </script>
 
 <div class="flex flex-row items-center justify-start gap-2">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
+  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
   <input
     id={inputId}
     class="w-4 h-4 nodrag"
     type="checkbox"
-    {checked}
-    onchange={event => emitValue(event.currentTarget.checked)}
+    bind:checked={value}
+    onchange={confirmValue}
     {...noMousePropogation}
   />
 </div>

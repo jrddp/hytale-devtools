@@ -208,14 +208,6 @@
     const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH + 4;
     return estimatedWidth;
   }
-
-  function readInputConnectionIndex(candidateIndex) {
-    if (candidateIndex === undefined || candidateIndex === null) {
-      return undefined;
-    }
-
-    return Number(candidateIndex);
-  }
 </script>
 
 <div
@@ -320,7 +312,7 @@
         <FieldEditor
           nodeId={id}
           {...field}
-          onchange={value => updateField(field.schemaKey, value)}
+          onvalidate={value => updateField(field.schemaKey, value)}
         />
       {/each}
     </div>

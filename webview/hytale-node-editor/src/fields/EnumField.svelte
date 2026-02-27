@@ -1,61 +1,35 @@
 <script lang="ts">
-  import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import type { FieldProps } from "../utils/fieldUtils";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { buildFieldInputId, noMousePropogation } from "./fieldInteractions";
+  import { noMousePropogation } from "../utils/fieldUtils";
 
   let {
-    nodeId,
-    schemaKey,
-    type,
+    inputId,
     label,
-    value,
-    onchange,
-  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
+    initialValue,
+    onconfirm,
+  }: FieldProps<string> = $props();
 
-  const fieldLabel = $derived(label ?? schemaKey ?? "Field");
-  const committedValue = $derived(typeof value === "string" ? value : String(value ?? ""));
-  const inputId = $derived(buildFieldInputId("enum", nodeId, schemaKey, type));
-
-  let isEditing = $state(false);
-  let draftText = $state("");
-  let inputElement: HTMLInputElement | undefined = undefined;
+  let value = $state("");
+  let lastCommittedValue = $state("");
 
   $effect(() => {
-    if (!isEditing) {
-      draftText = committedValue;
+    if (initialValue !== lastCommittedValue) {
+      value = initialValue;
+      lastCommittedValue = initialValue;
     }
   });
 
-  function emitValue(nextValue: string) {
-    onchange(nextValue);
-  }
-
-  function beginEditing() {
-    isEditing = true;
-  }
-
-  function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
-    draftText = event.currentTarget.value;
-  }
-
-  function commitEditing(moveFocus: boolean) {
-    if (!isEditing) {
+  function confirmValue() {
+    if (value === lastCommittedValue) {
       return;
     }
 
-    isEditing = false;
-    if (draftText !== committedValue) {
-      emitValue(draftText);
-    }
-
-    if (moveFocus) {
-      if (inputElement && !focusNextEditableInNode(inputElement)) {
-        inputElement.blur();
-      }
-    }
+    onconfirm(value);
+    lastCommittedValue = value;
   }
 
   function handleKeyDown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
@@ -64,22 +38,22 @@
     }
 
     event.preventDefault();
-    commitEditing(true);
+    confirmValue();
+    if (!focusNextEditableInNode(event.currentTarget)) {
+      event.currentTarget.blur();
+    }
   }
 </script>
 
 <div class="relative flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
+  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
   <input
-    bind:this={inputElement}
     id={inputId}
     class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
     type="text"
-    value={draftText}
-    onfocus={beginEditing}
-    oninput={handleInput}
+    bind:value
     onkeydown={handleKeyDown}
-    onblur={() => commitEditing(false)}
+    onblur={confirmValue}
     {...noMousePropogation}
   />
 </div>

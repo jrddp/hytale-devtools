@@ -1,87 +1,38 @@
 <script lang="ts">
-  import type { NodeField } from "@shared/node-editor/workspaceTypes";
-  import {
-    buildFieldInputId,
-    noMousePropogation
-  } from "./fieldInteractions";
+  import type { FieldProps } from "../utils/fieldUtils";
+  import { noMousePropogation } from "../utils/fieldUtils";
 
   let {
-    nodeId,
-    schemaKey,
-    type,
+    inputId,
     label,
-    value,
-    onchange,
-  }: NodeField & { nodeId?: string; onchange: (value: unknown) => void } = $props();
+    initialValue,
+    onconfirm,
+  }: FieldProps<number> = $props();
 
   const min = 0;
   const max = 100;
   const step = 1;
 
-  const committedNumericValue = $derived(Number.isFinite(Number(value)) ? Number(value) : min);
-  const inputId = $derived(buildFieldInputId("slider", nodeId, schemaKey, type));
-
-  let draftNumericValue = $state(min);
-  let hasPendingValue = $state(false);
-  let lastInteractionMode = $state<"unknown" | "pointer" | "keyboard">("unknown");
+  let value = $state(min);
+  let lastCommittedValue = $state(min);
 
   $effect(() => {
-    if (!hasPendingValue) {
-      draftNumericValue = committedNumericValue;
+    if (initialValue !== lastCommittedValue) {
+      value = initialValue;
+      lastCommittedValue = initialValue;
     }
   });
 
-  const fieldLabel = $derived(`${label ?? schemaKey ?? "Field"} (${draftNumericValue})`);
+  const fieldLabel = $derived(`${label} (${value})`);
 
-  function emitValue(nextValue: number) {
-    onchange(nextValue);
-  }
-
-  function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
-    const parsed = Number(event.currentTarget.value);
-    draftNumericValue = Number.isFinite(parsed) ? parsed : min;
-    hasPendingValue = draftNumericValue !== committedNumericValue;
-  }
-
-  function handlePointerDown(e: PointerEvent) {
-    lastInteractionMode = "pointer";
-    e.stopPropagation();
-  }
-
-  function handleKeyDown(event: KeyboardEvent) {
-    const navigationKeys = [
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowUp",
-      "ArrowDown",
-      "Home",
-      "End",
-      "PageUp",
-      "PageDown",
-    ];
-    if (navigationKeys.includes(event.key)) {
-      lastInteractionMode = "keyboard";
-    }
-  }
-
-  function commitPendingValue() {
-    if (!hasPendingValue) {
+  function confirmValue() {
+    const nextValue = value;
+    if (nextValue === lastCommittedValue) {
       return;
     }
 
-    emitValue(draftNumericValue);
-    hasPendingValue = false;
-  }
-
-  function handleChange() {
-    if (lastInteractionMode === "pointer") {
-      commitPendingValue();
-    }
-  }
-
-  function handleBlur() {
-    commitPendingValue();
-    lastInteractionMode = "unknown";
+    onconfirm(nextValue);
+    lastCommittedValue = nextValue;
   }
 </script>
 
@@ -94,12 +45,9 @@
     {min}
     {max}
     {step}
-    value={draftNumericValue}
-    oninput={handleInput}
-    onchange={handleChange}
-    onkeydown={handleKeyDown}
-    onblur={handleBlur}
+    bind:value
+    onchange={confirmValue}
+    onblur={confirmValue}
     {...noMousePropogation}
-    onpointerdown={handlePointerDown}
   />
 </div>
