@@ -248,7 +248,7 @@
                 </button>
                 <button
                   type="button"
-                  class="rounded-l-none inline-flex items-center rounded-md border border-vsc-input-border bg-vsc-button-secondary-bg px-2 py-1 text-[0.7rem] font-medium text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+                  class="rounded-l-none inline-flex items-center rounded-md border border-vsc-button-secondary-fg bg-vsc-button-secondary-bg px-2 py-1 text-[0.7rem] font-medium text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
                   class:bg-vsc-list-active-bg={workspace.controlScheme === "trackpad"}
                   class:hover:bg-vsc-list-active-bg={workspace.controlScheme === "trackpad"}
                   class:text-vsc-list-active-fg={workspace.controlScheme === "trackpad"}
