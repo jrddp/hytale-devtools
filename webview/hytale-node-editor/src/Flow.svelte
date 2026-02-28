@@ -1,116 +1,34 @@
 <script lang="ts">
   import {
-    addEdge,
     Background,
-    type Connection,
-    type EdgeEvents,
-    type NodeEvents,
-    type NodeSelectionEvents,
-    type PaneEvents,
+    Position,
     SelectionMode,
     SvelteFlow,
     type SvelteFlowProps,
     useSvelteFlow,
+    useViewport,
+    type Viewport,
     type XYPosition,
   } from "@xyflow/svelte";
   import "@xyflow/svelte/dist/style.css";
-  import { type Component, tick } from "svelte";
 
-  import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
-  import AddNodeMenu from "src/components/AddNodeMenu.svelte";
+  import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+  import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
-  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
-  import { getAutoPositionedMappings } from "src/node-editor/layout/autoLayout";
-  import { createNodeId, createUuidV4 } from "src/node-editor/utils/idUtils";
+  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, nodeTypes } from "src/constants";
   import {
-    createCommentNodeType,
-    createDataNodeType,
-    createGroupNodeType,
-    createLinkNodeType,
-    createRawJsonNodeType,
-    getAbsoluteCenterPosition,
-    getAbsolutePosition,
-    getNodeSiblingIds,
+    getSiblingOrderUpdates,
+    isValidConnection,
     pruneConflictingEdges,
     recalculateGroupParents,
-    resolveInitialFitNodeIds,
   } from "src/node-editor/utils/nodeUtils.svelte";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
+  import { untrack } from "svelte";
   import type { FlowEdge, FlowNode } from "./common";
-  import {
-    COMMENT_NODE_TYPE,
-    COMMENT_TEMPLATE_ID,
-    DATA_NODE_TYPE,
-    DEFAULT_COMMENT_FONT_SIZE,
-    DEFAULT_COMMENT_HEIGHT,
-    DEFAULT_COMMENT_WIDTH,
-    DEFAULT_GROUP_HEIGHT,
-    DEFAULT_GROUP_WIDTH,
-    GROUP_NODE_TYPE,
-    GROUP_TEMPLATE_ID,
-    INPUT_HANDLE_ID,
-    LINK_NODE_TYPE,
-    LINK_TEMPLATE_ID,
-    RAW_JSON_NODE_TYPE,
-    RAW_JSON_TEMPLATE_ID,
-  } from "./common";
-  import {
-    isDebugSchemaKeyShortcut,
-    isDeleteOrBackspace,
-    isShortcutBlockedByEditableTarget,
-  } from "./node-editor/ui/flowKeyboard";
-  import {
-    getNodeEditorQuickActionByEventName,
-    getNodeEditorQuickActionById,
-    type NodeEditorQuickActionId,
-  } from "./node-editor/ui/nodeEditorQuickActions";
-  import CommentNode from "./nodes/CommentNode.svelte";
-  import DataNode from "./nodes/DataNode.svelte";
-  import GroupNode from "./nodes/GroupNode.svelte";
-  import LinkNode from "./nodes/LinkNode.svelte";
-  import RawJsonNode from "./nodes/RawJsonNode.svelte";
-
-  let {
-    nodes = $bindable([]),
-    edges = $bindable([]),
-    loadVersion = 0,
-    quickActionRequest = undefined,
-    revealNodeId = undefined,
-    revealNodeRequestVersion = 0,
-    onviewrawjson,
-    oncustomizekeybinds,
-  }: {
-    nodes?: FlowNode[];
-    edges?: FlowEdge[];
-    loadVersion?: number;
-    quickActionRequest?: {
-      token: number;
-      actionId: NodeEditorQuickActionId;
-      commandId: string;
-    };
-    revealNodeId?: string;
-    revealNodeRequestVersion?: number;
-    onviewrawjson?: () => void;
-    oncustomizekeybinds?: () => void;
-  } = $props();
-
-  const ROOT_NODE_ID = "Node-00000000-0000-0000-0000-000000000000";
-  const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
-  const MIN_FLOW_ZOOM = 0;
-  const SEARCH_NODE_FOCUS_DURATION_MS = 100;
-  const SEARCH_NODE_FOCUS_ZOOM = 0.9;
-  const GROUP_Z_INDEX_UNSELECTED = -10000;
-  const MIN_GROUP_WIDTH = 180;
-  const MIN_GROUP_HEIGHT = 120;
-
-  const nodeTypes = {
-    [COMMENT_NODE_TYPE]: CommentNode,
-    [DATA_NODE_TYPE]: DataNode,
-    [GROUP_NODE_TYPE]: GroupNode,
-    [LINK_NODE_TYPE]: LinkNode,
-    [RAW_JSON_NODE_TYPE]: RawJsonNode,
-  } as Record<string, Component>;
+  import { isShortcutBlockedByEditableTarget } from "./node-editor/ui/flowKeyboard";
+  import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
+  import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
 
   const {
     fitView,
@@ -118,234 +36,190 @@
     setCenter: setViewportCenter,
     setViewport,
     updateNodeData,
+    updateNode,
   } = useSvelteFlow();
 
-  interface PendingConnection {
-    source: string;
-    sourceHandle: string;
-  }
+  let { nodes = $bindable([]), edges = $bindable([]) }: { nodes?: FlowNode[]; edges?: FlowEdge[] } =
+    $props();
 
-  interface PendingSingleSourceReplacement {
-    sourceNodeId: string;
-    sourceHandleId: string | undefined;
-    removedEdges: FlowEdge[];
-  }
+  const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
+  const MIN_FLOW_ZOOM = 0;
+  const SEARCH_NODE_FOCUS_DURATION_MS = 100;
+  const SEARCH_NODE_FOCUS_ZOOM = 0.9;
 
-  let lastHandledLoadVersion = -1;
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
 
-  let addMenuOpen = $state(false);
-  let addMenuOpenVersion = $state(0); // Used to trigger re-focusing when menu is re-opened.
-  let addMenuPosition: XYPosition = $state({ x: 0, y: 0 });
-  let pendingNodePosition: XYPosition = { x: 0, y: 0 };
-  let pendingConnection: PendingConnection | undefined;
-  let hasAppliedInitialFit = false;
-  let initialFitInProgress = false;
-  let initialViewportReady = false;
-  let pendingSourceReplacement: PendingSingleSourceReplacement | undefined;
-  let nodeSearchOpen = $state(false);
-  let nodeSearchOpenVersion = $state(0);
-  let nodeSearchInitialViewport = undefined;
-  let nodeSearchLastPreviewedNodeId = undefined;
-  let nodeHelpOpen = $state(false);
-  let nodeHelpOpenVersion = $state(0);
-  let nodeSearchGroups = [];
-  let lastHandledQuickActionRequestToken = -1;
-  let lastPointerClientPosition = $state<XYPosition>();
-  let pendingRestoredSessionState = undefined;
-  let regroupingQueued = $state(true);
-  let lastRevealNodeRequestVersion = -1;
+  let cursorPos = $state<XYPosition>();
+  let pendingSourceConnection: { source: string; sourceHandle: string } | undefined;
+  let pendingSourceConflictingEdges: FlowEdge[] = [];
+  let pendingTargetConnection: { target: string; targetHandle: string } | undefined;
+  let pendingTargetConflictingEdges: FlowEdge[] = [];
+  let pendingConnectionFrom: "source" | "target" | undefined;
 
+  let addMenuInstance:
+    | { screenPosition: XYPosition; spawnPosition: XYPosition; connectionFilter?: string }
+    | undefined = $state();
+  let searchMenuInstance:
+    | {
+        initialViewport: Viewport;
+        lastPreviewedNodeId?: string;
+      }
+    | undefined = $state();
+  let helpMenuOpen = $state(false);
+
+  // # Handle actions requests
   $effect(() => {
-    if (!workspace.arePositionsSet && workspace.getRootNode().measured) {
-      handleQuickActionAutoPositionNodes(true);
-      workspace.arePositionsSet = true;
-    }
+    console.log($state.snapshot(workspace.actionRequests));
+    void workspace.actionRequests;
+    void workspace.areNodesMeasured;
+    if (workspace.actionRequests.length > 0) untrack(() => handleActionRequests());
   });
 
-  $effect(() => {
-    if (regroupingQueued && workspace.getRootNode().measured) {
-      recalculateGroupParents();
-      regroupingQueued = false;
-    }
-  });
+  function handleActionRequests() {
+    // retain any actions that are not able to be processed yet
+    const retained = [];
+    for (const action of workspace.actionRequests) {
+      switch (action.type) {
+        case "reveal-node":
+          if (!workspace.areNodesMeasured) {
+            retained.push(action);
+            break;
+          }
+          const node = workspace.getNodeById(action.nodeId ?? workspace.rootNodeId);
+          if (!node) {
+            console.warn(`Attempted to reveal node ${action.nodeId} but it was not found.`);
+            continue;
+          }
+          setViewportCenter(
+            node.position.x + node.measured!.width! / 2,
+            node.position.y + node.measured!.height! / 2,
+            {
+              zoom: 1.2,
+              duration: 250,
+            },
+          );
+          break;
 
-  $effect(() => {
-    if (loadVersion !== lastHandledLoadVersion) {
-      lastHandledLoadVersion = loadVersion;
-      regroupingQueued = true;
-      clearPendingSingleSourceReplacement();
-    }
-  });
+        case "fit-view":
+          if (!workspace.areNodesMeasured) {
+            retained.push(action);
+            break;
+          }
+          fitView({
+            padding: 0.2,
+            minZoom: MIN_FLOW_ZOOM,
+            duration: action.duration ?? 250,
+          });
+          break;
 
-  $effect(() => {
-    if (revealNodeRequestVersion !== lastRevealNodeRequestVersion) {
-      lastRevealNodeRequestVersion = revealNodeRequestVersion;
-      if (loadVersion > 0) {
-        void revealNodeFromDocumentSelection(revealNodeId);
+        case "search-nodes":
+          searchMenuInstance = { initialViewport: useViewport().current };
+          break;
+
+        case "auto-position-nodes":
+          if (!workspace.areNodesMeasured) {
+            retained.push(action);
+            break;
+          }
+          let targetNodes = workspace.getEffectivelySelectedNodes();
+          if (targetNodes.length === 0) {
+            targetNodes = [workspace.getRootNode()];
+          }
+
+          const updates = getAutoPositionNodeUpdates(targetNodes);
+          if (updates.length > 0) {
+            updates.forEach(update => updateNode(...update));
+            recalculateGroupParents();
+            applyDocumentState("auto-layout-applied");
+          }
+          break;
+
+        case "view-raw-json":
+          workspace.vscode.postMessage({ type: "openRawJson" });
+          break;
+
+        case "help-and-hotkeys":
+          helpMenuOpen = !helpMenuOpen;
+          break;
+
+        case "customize-keybinds":
+          workspace.vscode.postMessage({ type: "openKeybindings", query: "Hytale Node Editor" });
+          break;
+        case "document-refresh":
+          if (!workspace.areNodesMeasured) {
+            retained.push(action);
+            break;
+          }
+          clearPendingConnection("both", true);
+          recalculateGroupParents();
+          break;
+        case "reveal-selection":
+          console.log("reveal-selection called but not implemented");
+          break;
+        default:
+          const _exhaustiveCheck: never = action;
       }
     }
-  });
+    // length check to avoid trigger reactivity when there is no change
+    if (retained.length !== workspace.actionRequests.length) workspace.actionRequests = retained;
+  }
 
-  $effect(() => {
-    if (
-      Number.isInteger(quickActionRequest?.token) &&
-      quickActionRequest.token !== lastHandledQuickActionRequestToken
-    ) {
-      lastHandledQuickActionRequestToken = quickActionRequest.token;
-      if (!isShortcutBlockedByEditableTarget()) {
-        handleQuickActionById(quickActionRequest?.actionId);
+  function clearPendingConnection(type: "source" | "target" | "both", restoreConflicts: boolean) {
+    if (type === "both" || type === pendingConnectionFrom) {
+      pendingConnectionFrom = undefined;
+    }
+    if (type === "source" || type === "both") {
+      pendingSourceConnection = undefined;
+      if (restoreConflicts) {
+        workspace.addEdges(pendingSourceConflictingEdges);
       }
+      pendingSourceConflictingEdges = [];
     }
-  });
-
-  $effect(() => {
-    if (!hasAppliedInitialFit && loadVersion > 0 && !pendingRestoredSessionState) {
-      void applyInitialFitOnce();
-    }
-  });
-
-  function handleQuickActionMenuEvent(event: Event) {
-    const quickAction = getNodeEditorQuickActionByEventName(event.type);
-    if (!quickAction) {
-      return;
-    }
-
-    handleQuickActionById(quickAction.id);
-  }
-
-  function handleQuickActionById(actionIdCandidate: NodeEditorQuickActionId | undefined) {
-    const quickAction = getNodeEditorQuickActionById(actionIdCandidate);
-    if (!quickAction) {
-      return;
-    }
-
-    switch (quickAction.id) {
-      case "go-to-root":
-        handleQuickActionGoToRoot();
-        return;
-      case "fit-full-view":
-        handleQuickActionFitFullView();
-        return;
-      case "search-nodes":
-        handleQuickActionSearchNodes();
-        return;
-      case "auto-position-nodes":
-        handleQuickActionAutoPositionNodes();
-        return;
-      case "view-raw-json":
-        handleQuickActionViewRawJson();
-        return;
-      case "help-and-hotkeys":
-        handleQuickActionHelpAndHotkeys();
-        return;
-      default:
-        return;
-    }
-  }
-
-  function handleQuickActionFitFullView() {
-    void fitView({
-      padding: 0.2,
-      minZoom: MIN_FLOW_ZOOM,
-      duration: 250,
-    });
-  }
-
-  function handleQuickActionGoToRoot() {
-    const root = workspace.getRootNode();
-    const targetX = root.position.x + root.width;
-    const targetY = root.position.y + root.height / 2;
-
-    void setViewportCenter(targetX, targetY, {
-      zoom: 1.2,
-      duration: 250,
-    });
-  }
-
-  function handleQuickActionSearchNodes() {
-    openNodeSearchMenu();
-  }
-
-  function handleQuickActionAutoPositionNodes(suppressDocumentUpdate = false) {
-    let targetNodes = workspace.getEffectivelySelectedNodes();
-
-    // autolayout the root tree if no other selection was made
-    if (targetNodes.length === 0) {
-      targetNodes = [workspace.getRootNode()];
-    }
-
-    const nodePositionMappings = getAutoPositionedMappings(targetNodes);
-
-    workspace.nodes = nodes.map(node => {
-      const nodeId = node.id;
-      const absolutePosition = nodePositionMappings.get(nodeId);
-      if (!absolutePosition) {
-        return node;
+    if (type === "target" || type === "both") {
+      pendingTargetConnection = undefined;
+      if (restoreConflicts) {
+        workspace.addEdges(pendingTargetConflictingEdges);
       }
-      return {
-        ...node,
-        parentId: undefined,
-        position: absolutePosition,
-      };
-    });
-    recalculateGroupParents();
-
-    if (!suppressDocumentUpdate) {
-      applyDocumentState("auto-layout-applied");
+      pendingTargetConflictingEdges = [];
     }
   }
 
-  function handleQuickActionViewRawJson() {
-    onviewrawjson();
-  }
-
-  function handleQuickActionHelpAndHotkeys() {
-    if (nodeHelpOpen) {
-      nodeHelpOpen = false;
-      return;
-    }
-
-    openNodeHelpMenu();
-  }
-
+  // ! window event
   function handleWindowKeyDown(event: KeyboardEvent) {
-    if (isDebugSchemaKeyShortcut(event)) {
-      if (isShortcutBlockedByEditableTarget(event.target)) {
-        return;
-      }
+    if (
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      isShortcutBlockedByEditableTarget(event.target)
+    ) {
+      return;
+    }
 
+    let captured = false;
+
+    switch (event.key) {
+      case "d":
+        if (event.metaKey) {
+          console.log("workspace", workspace);
+          if (workspace.selectedNodes) console.log(workspace.selectedNodes);
+        }
+        captured = true;
+        break;
+      case "Escape":
+        helpMenuOpen = false;
+        addMenuInstance = undefined;
+        searchMenuInstance = undefined;
+        captured = true;
+        break;
+    }
+
+    if (captured) {
       event.preventDefault();
       event.stopPropagation();
-      logDebugInfo();
-      return;
-    }
-
-    if (!nodeHelpOpen || event.key !== "Escape") {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    nodeHelpOpen = false;
-  }
-
-  function logDebugInfo() {
-    const selectedNodes = nodes.filter(node => node.selected);
-    console.log("workspace", workspace);
-    for (const node of selectedNodes) {
-      console.log(node);
     }
   }
 
-  function handleWindowKeyUp(event: KeyboardEvent) {
-    if (!isDeleteOrBackspace(event) || isShortcutBlockedByEditableTarget(event.target)) {
-      return;
-    }
-
-    queueMicrotask(() => applyDocumentState("elements-deleted"));
-  }
-
+  // ! window event
   function handleWindowCopy(event: ClipboardEvent) {
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
@@ -356,568 +230,161 @@
     event.stopPropagation();
   }
 
+  // ! window event
   function handleWindowCut(event: ClipboardEvent) {
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
     // TODO implement
 
-    clearPendingSingleSourceReplacement();
+    clearPendingConnection("both", true);
     applyDocumentState("nodes-cut");
     event.preventDefault();
     event.stopPropagation();
   }
 
+  // ! window event
   function handleWindowPaste(event: ClipboardEvent) {
     // TODO implement
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
-
-    const pasteAnchor = resolvePasteAnchorFlowPosition();
-    if (!pasteAnchor) {
-      return;
-    }
-
     applyDocumentState("nodes-pasted");
     event.preventDefault();
     event.stopPropagation();
   }
 
-  function closeAddNodeMenu() {
-    addMenuOpen = false;
-    pendingConnection = undefined;
-    restorePendingSingleSourceReplacement();
-  }
-
-  function openNodeSearchMenu() {
-    closeAddNodeMenu();
-    if (nodeHelpOpen) {
-      nodeHelpOpen = false;
-    }
-    nodeSearchLastPreviewedNodeId = undefined;
-    nodeSearchOpen = true;
-    nodeSearchOpenVersion += 1;
-  }
-
-  function closeNodeSearchMenu({ restoreViewport = false } = {}) {
-    if (!nodeSearchOpen) {
-      return;
-    }
-
-    const initialViewport = nodeSearchInitialViewport;
-    nodeSearchOpen = false;
-    nodeSearchInitialViewport = undefined;
-    nodeSearchLastPreviewedNodeId = undefined;
-
-    if (restoreViewport) {
-      void setViewport(initialViewport, {
-        duration: 250,
-      });
-    }
-  }
-
-  function openNodeHelpMenu() {
-    closeAddNodeMenu();
-    closeNodeSearchMenu({ restoreViewport: false });
-    nodeHelpOpen = true;
-    nodeHelpOpenVersion += 1;
-  }
-
-  function handleNodeHelpCloseRequest() {
-    if (nodeHelpOpen) {
-      nodeHelpOpen = false;
-    }
-  }
-
-  function handleNodeHelpCustomizeKeybindsRequest() {
-    if (nodeHelpOpen) {
-      nodeHelpOpen = false;
-    }
-    oncustomizekeybinds();
-  }
-
-  function handleNodeSearchSelect(event: CustomEvent<{ nodeId: string }>) {
-    const nodeId = event.detail?.nodeId;
-    if (!nodeId) {
-      return;
-    }
-
-    nodeSearchLastPreviewedNodeId = nodeId;
-    centerViewportOnNode(nodeId);
-    workspace.selectNode(nodeId, "replace");
-    closeNodeSearchMenu({ restoreViewport: false });
-  }
-
-  function centerViewportOnNode(nodeId) {
-    const targetNode = workspace.getNodeById(nodeId);
-    if (!targetNode) {
-      return false;
-    }
-
-    const { x: targetX, y: targetY } = getAbsoluteCenterPosition(targetNode);
-
-    void setViewportCenter(targetX, targetY, {
-      zoom: SEARCH_NODE_FOCUS_ZOOM,
-      duration: SEARCH_NODE_FOCUS_DURATION_MS,
-    });
-    return true;
-  }
-
-  async function revealNodeFromDocumentSelection(nodeId: string | undefined) {
-    if (!nodeId) {
-      return;
-    }
-
-    await tick();
-    centerViewportOnNode(nodeId);
-    workspace.selectNode(nodeId, "replace");
-  }
-
-  function didEventOccurInsideAddMenu(event) {
-    if (typeof event?.composedPath !== "function") {
-      return false;
-    }
-
-    return event.composedPath().some(target => {
-      if (typeof target?.getAttribute !== "function") {
-        return false;
-      }
-
-      return target.getAttribute("data-add-node-menu") === "true";
-    });
-  }
-
-  function didEventOccurInsideNodeSearchMenu(event) {
-    if (typeof event?.composedPath !== "function") {
-      return false;
-    }
-
-    return event.composedPath().some(target => {
-      if (typeof target?.getAttribute !== "function") {
-        return false;
-      }
-
-      return target.getAttribute("data-node-search-menu") === "true";
-    });
-  }
-
-  function updateLastPointerClientPosition(event: PointerEvent) {
-    if (!didEventOccurInsideFlowWrapper(event)) {
-      return;
-    }
-
-    const { clientX, clientY } = event;
-    lastPointerClientPosition = {
-      x: clientX,
-      y: clientY,
-    };
-  }
-
-  function didEventOccurInsideFlowWrapper(event) {
-    if (!flowWrapperElement) {
-      return false;
-    }
-
-    if (typeof event?.composedPath === "function") {
-      return event.composedPath().includes(flowWrapperElement);
-    }
-
-    if (!event?.target || typeof flowWrapperElement.contains !== "function") {
-      return false;
-    }
-
-    return flowWrapperElement.contains(event.target);
-  }
-
-  function handleWindowPointerDown(event: PointerEvent) {
-    updateLastPointerClientPosition(event);
-
-    if (addMenuOpen && !didEventOccurInsideAddMenu(event)) {
-      closeAddNodeMenu();
-    }
-
-    if (nodeSearchOpen && !didEventOccurInsideNodeSearchMenu(event)) {
-      closeNodeSearchMenu({ restoreViewport: true });
-    }
-  }
-
-  function openAddNodeMenu(pointerEvent, sourceNodeId = undefined, sourceHandleId = undefined) {
-    closeNodeSearchMenu({ restoreViewport: false });
-    if (nodeHelpOpen) {
-      nodeHelpOpen = false;
-    }
-    const addMenuRequest = createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId);
-    if (!addMenuRequest) {
-      return false;
-    }
-
-    addMenuPosition = addMenuRequest.position;
-    pendingNodePosition = addMenuRequest.nodePosition;
-    pendingConnection = addMenuRequest.connection;
-    addMenuOpen = true;
-    addMenuOpenVersion += 1;
-    return true;
-  }
-
-  function handleMenuSelect(template: NodeTemplate) {
-    if (template.templateId === GROUP_TEMPLATE_ID) {
-      const newGroupNode = {
-        ...createGroupNodeType(
-          createNodeId("Group"),
-          { ...pendingNodePosition },
-          DEFAULT_GROUP_WIDTH,
-          DEFAULT_GROUP_HEIGHT,
-          { name: "Group" },
-        ),
-        selected: false,
-        draggable: false,
-      };
-
-      nodes = [newGroupNode, ...nodes];
-      closeAddNodeMenu();
-      applyDocumentState("group-created");
-      return;
-    }
-
-    if (template.templateId === COMMENT_TEMPLATE_ID) {
-      const newCommentNode = {
-        ...createCommentNodeType(
-          createNodeId("Comment"),
-          { ...pendingNodePosition },
-          {
-            name: "Comment",
-            text: "",
-            fontSize: DEFAULT_COMMENT_FONT_SIZE,
-          },
-        ),
-        width: DEFAULT_COMMENT_WIDTH,
-        height: DEFAULT_COMMENT_HEIGHT,
-        selected: false,
-      };
-
-      nodes = [newCommentNode, ...nodes];
-      closeAddNodeMenu();
-      applyDocumentState("comment-created");
-      return;
-    }
-
-    if (template.templateId === RAW_JSON_TEMPLATE_ID) {
-      const newRawJsonNode: FlowNode = {
-        ...createRawJsonNodeType(createNodeId("Generic"), { ...pendingNodePosition }, {}),
-        origin: [0.5, 0],
-      };
-
-      nodes = [...nodes, newRawJsonNode];
-
-      if (pendingConnection) {
-        const connection: Connection = {
-          ...pendingConnection,
-          target: newRawJsonNode.id,
-          targetHandle: INPUT_HANDLE_ID,
-        };
-
-        pruneConflictingEdges(connection);
-        workspace.edges = addEdge(connection, edges);
-
-        clearPendingSingleSourceReplacement();
-      }
-
-      closeAddNodeMenu();
-      applyDocumentState("raw-json-node-created");
-      return;
-    }
-
-    if (template.templateId === LINK_TEMPLATE_ID) {
-      const newLinkNode: FlowNode = {
-        ...createLinkNodeType(
-          createUuidV4(), // original node editor creates links with blank types as the IDs for some reason
-          { ...pendingNodePosition },
-          {},
-        ),
-        origin: [0.5, 0.0],
-      };
-
-      nodes = [...nodes, newLinkNode];
-
-      if (pendingConnection) {
-        const connection: Connection = {
-          ...pendingConnection,
-          target: newLinkNode.id,
-          targetHandle: INPUT_HANDLE_ID,
-        };
-
-        pruneConflictingEdges(connection);
-        edges = addEdge(connection, edges);
-        clearPendingSingleSourceReplacement();
-      }
-
-      closeAddNodeMenu();
-      applyDocumentState("link-node-created");
-      return;
-    }
-
-    const newNodeId = createNodeId(template.templateId);
-    const newNode: FlowNode = {
-      ...createDataNodeType(newNodeId, { ...pendingNodePosition }, template, {}),
-      origin: [0.5, 0.0],
-    };
-
-    nodes = [...nodes, newNode];
-
-    if (pendingConnection) {
-      const connection: Connection = {
-        ...pendingConnection,
-        target: newNodeId,
-        targetHandle: INPUT_HANDLE_ID,
-      };
-
-      pruneConflictingEdges(connection);
-      edges = addEdge(connection, edges);
-      clearPendingSingleSourceReplacement();
-    }
-
-    closeAddNodeMenu();
-    applyDocumentState("data-node-created");
-  }
-
+  // # Window Events
   const windowEvents = {
     onkeydowncapture: handleWindowKeyDown,
     oncopycapture: handleWindowCopy,
     oncutcapture: handleWindowCut,
     onpastecapture: handleWindowPaste,
-    onpointermovecapture: (event: PointerEvent) => updateLastPointerClientPosition(event),
-    onpointerdowncapture: handleWindowPointerDown,
-    onkeyup: handleWindowKeyUp,
+    onpointermovecapture: (event: PointerEvent) => {
+      cursorPos = { x: event.clientX, y: event.clientY };
+    },
   };
 
+  // # Svelte Flow Events
   const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
-    // # onconnect
+    // ## On Connect
     onconnect: connection => {
       pruneConflictingEdges(connection);
-      edges = addEdge(connection, edges);
-      clearPendingSingleSourceReplacement();
+      workspace.addEdges([connection]);
       applyDocumentState("edge-created");
     },
-    // # onconnectstart
-    onconnectstart: (_pointerEvent, params) => {
-      const sourceNodeId = params?.nodeId;
-      const sourceHandleId = params?.handleId;
-      const handleType = params?.handleType;
-      if (handleType && handleType !== "source") {
-        clearPendingSingleSourceReplacement();
-        return;
+    // ## On Connect Start
+    onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
+      switch (handleType) {
+        case "source":
+          pendingSourceConnection = {
+            source: nodeId!,
+            sourceHandle: handleId!,
+          };
+          pendingSourceConflictingEdges = pruneConflictingEdges(pendingSourceConnection);
+          break;
+        case "target":
+          pendingTargetConnection = {
+            target: nodeId!,
+            targetHandle: handleId!,
+          };
+          pendingTargetConflictingEdges = pruneConflictingEdges(pendingTargetConnection);
+          break;
       }
-
-      startSourceReplacementPreview(sourceNodeId, sourceHandleId);
     },
-    // # onconnectend
+    // ## On Connect End
     onconnectend: (event, connectionState) => {
-      const addMenuOpened = openAddNodeMenu(
-        event,
-        connectionState.fromNode,
-        connectionState.fromHandle,
-      );
-      if (!addMenuOpened) {
-        restorePendingSingleSourceReplacement();
+      // spawn add menu if ended not on another pin and started from the parent node
+      if (!connectionState.isValid && connectionState.toPosition === Position.Left) {
+        addMenuInstance = {
+          screenPosition: connectionState.pointer!,
+          spawnPosition: screenToFlowPosition(connectionState.pointer!),
+          connectionFilter: connectionState.fromNode!.type,
+        };
       }
     },
-    // # onnodedragstop
+    // ## On Node Drag Stop
     onnodedragstop: event => {
-
       // reorder siblings based on y position
-      for (const node of event.nodes) {
-        getNodeSiblingIds(node.id, "same-parent-handle")
-          .map(id => workspace.getNodeById(id))
-          .sort((a, b) => {
-            // higher to lower (+Y IS DOWN)
-            return getAbsolutePosition(a).y - getAbsolutePosition(b).y;
-          })
-          .forEach((node, idx) => {
-            updateNodeData(node.id, {
-              inputConnectionIndex: idx,
-            });
-          });
-      }
+      event.nodes
+        .map(node => getSiblingOrderUpdates(node))
+        .flat()
+        .forEach(update => updateNodeData(...update));
 
       recalculateGroupParents();
       applyDocumentState("node-moved");
     },
-    // # onnodecontextmenu
-    onnodecontextmenu: payload => {
-      const pointerEvent = payload?.event;
-      const node = payload?.node;
-      if (!pointerEvent || !node) {
-        return;
+    // ## On Node Context Menu
+    onnodecontextmenu: ({ event: pointerEvent, node }) => {
+      // groups should open add menu on right click
+      if (node.type === GROUP_NODE_TYPE) {
+        const flowPosition = screenToFlowPosition({
+          x: pointerEvent.clientX,
+          y: pointerEvent.clientY,
+        });
+        addMenuInstance = {
+          screenPosition: { x: pointerEvent.clientX, y: pointerEvent.clientY },
+          spawnPosition: flowPosition,
+        };
+        pointerEvent.preventDefault();
+        pointerEvent.stopPropagation();
       }
-
-      const isGroupNode = node?.type === GROUP_NODE_TYPE;
-      const isSelected = node?.selected === true;
-      const isTitleBar = Boolean(
-        typeof pointerEvent?.target?.closest === "function" &&
-          pointerEvent.target.closest(".group-title-drag-handle"),
-      );
-
-      if (!isGroupNode || isSelected || isTitleBar) {
-        return;
-      }
-
-      pointerEvent.preventDefault();
-      pointerEvent.stopPropagation();
-      openAddNodeMenu(pointerEvent);
     },
-    // # onpaneclick
+    // ## On Pane Click (left click)
     onpaneclick: () => {
-      closeAddNodeMenu();
+      addMenuInstance = undefined;
+      searchMenuInstance = undefined;
+      helpMenuOpen = false;
     },
-    // # onpanecontextmenu
-    onpanecontextmenu: payload => {
-      const pointerEvent = payload?.event;
-      if (!pointerEvent) {
-        return;
-      }
-
-      pointerEvent.preventDefault();
-      openAddNodeMenu(pointerEvent);
+    // ## On Pane Context Menu (right click)
+    onpanecontextmenu: ({ event }) => {
+      const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+      addMenuInstance = {
+        screenPosition: { x: event.clientX, y: event.clientY },
+        spawnPosition: flowPosition,
+      };
+      event.preventDefault();
+    },
+    ondelete: ({ nodes, edges }) => {
+      applyDocumentState("elements-deleted");
     },
   };
 
-  const addNodeMenuEvents = {
-    onclose: closeAddNodeMenu,
-    onselect: handleMenuSelect,
+  // # Add Menu Events
+  const addMenuEvents: Partial<AddMenuProps> = {
+    // ## On Add Menu Cancel
+    oncancel: () => {
+      clearPendingConnection("both", true);
+    },
+
+    // ## On Template Selection (create new node)
+    onselection: template => {
+      const newNode: FlowNode = {
+        ...createNodeFromTemplate(template, addMenuInstance!.spawnPosition),
+        origin: [0.5, 0],
+      };
+      workspace.nodes = [...workspace.nodes, newNode];
+      if (pendingSourceConnection) {
+        workspace.addEdges([
+          { ...pendingSourceConnection, target: newNode.id, targetHandle: INPUT_HANDLE_ID },
+        ]);
+      }
+      clearPendingConnection("both", false);
+
+      recalculateGroupParents();
+      addMenuInstance = undefined;
+      applyDocumentState("node-created");
+    },
   };
-
-  function createAddNodeMenuRequest(pointerEvent, sourceNodeId, sourceHandleId) {
-    const { clientX, clientY } = pointerEvent;
-    const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
-    if (!paneBounds) {
-      return undefined;
-    }
-
-    return {
-      position: {
-        x: clientX - paneBounds.left,
-        y: clientY - paneBounds.top - 60,
-      },
-      nodePosition: screenToFlowPosition({
-        x: clientX,
-        y: clientY,
-      }),
-      connection: { source: sourceNodeId, sourceHandle: sourceHandleId } as PendingConnection,
-    };
-  }
-
-  /** Temporarily replaces conflicting edges and stores relevant state.  */
-  function startSourceReplacementPreview(sourceNodeId: string, sourceHandleId: string) {
-    clearPendingSingleSourceReplacement();
-
-    if (!sourceNodeId) {
-      return;
-    }
-
-    const removedEdges = pruneConflictingEdges({
-      source: sourceNodeId,
-      sourceHandle: sourceHandleId,
-    });
-
-    pendingSourceReplacement = {
-      sourceNodeId,
-      sourceHandleId,
-      removedEdges,
-    };
-  }
-
-  function restorePendingSingleSourceReplacement() {
-    const removedEdges = pendingSourceReplacement?.removedEdges ?? [];
-    if (removedEdges.length === 0) {
-      pendingSourceReplacement = undefined;
-      return;
-    }
-
-    const currentEdges = edges;
-    const existingEdgeIds = new Set(currentEdges.map(edge => edge.id).filter(Boolean));
-    const restoredEdges = [];
-
-    for (const removedEdge of removedEdges) {
-      const edgeId = removedEdge.id;
-      if (edgeId && existingEdgeIds.has(edgeId)) {
-        continue;
-      }
-
-      if (edgeId) {
-        existingEdgeIds.add(edgeId);
-      }
-
-      restoredEdges.push(removedEdge);
-    }
-
-    edges = [...currentEdges, ...restoredEdges];
-    pendingSourceReplacement = undefined;
-  }
-
-  function clearPendingSingleSourceReplacement() {
-    pendingSourceReplacement = undefined;
-  }
-
-  function resolvePasteAnchorFlowPosition() {
-    if (
-      Number.isFinite(lastPointerClientPosition?.x) &&
-      Number.isFinite(lastPointerClientPosition?.y)
-    ) {
-      return screenToFlowPosition({
-        x: lastPointerClientPosition.x,
-        y: lastPointerClientPosition.y,
-      });
-    }
-
-    const paneBounds = flowWrapperElement?.getBoundingClientRect?.();
-    if (!paneBounds) {
-      return undefined;
-    }
-
-    return screenToFlowPosition({
-      x: paneBounds.left + paneBounds.width / 2,
-      y: paneBounds.top + paneBounds.height / 2,
-    });
-  }
-
-  async function applyInitialFitOnce() {
-    if (hasAppliedInitialFit || initialFitInProgress) {
-      return;
-    }
-
-    initialFitInProgress = true;
-    await tick();
-
-    const initialFitNodeIds = resolveInitialFitNodeIds({
-      nodes,
-      rootNodeId: workspace.rootNodeId,
-      fallbackRootNodeId: ROOT_NODE_ID,
-      distanceLimit: INITIAL_FIT_ROOT_DISTANCE_LIMIT,
-    });
-    if (initialFitNodeIds.length > 0) {
-      fitView({
-        nodes: initialFitNodeIds,
-        padding: 0.2,
-        minZoom: MIN_FLOW_ZOOM,
-        duration: 0,
-      });
-    }
-
-    hasAppliedInitialFit = true;
-    initialViewportReady = true;
-    initialFitInProgress = false;
-  }
 </script>
 
 <svelte:window
+  // svelte won't let you ...spread window events :'(
   onkeydowncapture={windowEvents.onkeydowncapture}
   oncopycapture={windowEvents.oncopycapture}
   oncutcapture={windowEvents.oncutcapture}
   onpastecapture={windowEvents.onpastecapture}
   onpointermovecapture={windowEvents.onpointermovecapture}
-  onpointerdowncapture={windowEvents.onpointerdowncapture}
-  onkeyup={windowEvents.onkeyup}
 />
 
 <div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>
@@ -925,7 +392,7 @@
     bind:nodes
     bind:edges
     {nodeTypes}
-    disableKeyboardA11y={addMenuOpen || nodeSearchOpen || nodeHelpOpen}
+    disableKeyboardA11y={!!addMenuInstance || !!searchMenuInstance || helpMenuOpen}
     deleteKey={["Delete", "Backspace"]}
     selectionMode={SelectionMode.Full}
     selectNodesOnDrag={false}
@@ -936,46 +403,39 @@
     selectionOnDrag={workspace.controlScheme === "trackpad"}
     panActivationKey={workspace.controlScheme === "mouse" ? "Shift" : undefined}
     minZoom={MIN_FLOW_ZOOM}
+    onlyRenderVisibleElements={nodes.length >= 50}
+    connectionRadius={CONNECTION_RADIUS}
+    isValidConnection={connection => {
+      // todo abuse validation checking + connection radius detection to trigger events for snap/snapping handles (so we can preview the pruning)
+      // todo also while you're at it instead of *removing* conflicting edges we should render them as dashed lines it'll probably look better
+      return isValidConnection(connection);
+    }}
     {...svelteFlowEvents}
   >
     <Background bgColor={"var(--vscode-editor-background)"} />
-    <NodeEditorActionMenu
-      on:gotoroot={handleQuickActionMenuEvent}
-      on:fitfullview={handleQuickActionMenuEvent}
-      on:searchnodes={handleQuickActionMenuEvent}
-      on:autopositionnodes={handleQuickActionMenuEvent}
-      on:viewrawjson={handleQuickActionMenuEvent}
-      on:helphotkeys={handleQuickActionMenuEvent}
-    />
-    <NodeSearchPanel
-      open={nodeSearchOpen}
-      openVersion={nodeSearchOpenVersion}
-      groups={nodeSearchGroups}
-      on:close={() => closeNodeSearchMenu({ restoreViewport: true })}
-      on:preview={event => {
-        const nodeId = event.detail?.nodeId;
-        if (!nodeId || nodeId === nodeSearchLastPreviewedNodeId) {
-          return;
-        }
-
-        nodeSearchLastPreviewedNodeId = nodeId;
-        centerViewportOnNode(nodeId);
-      }}
-      on:select={handleNodeSearchSelect}
-    />
+    <NodeEditorActionMenu />
+    {#if searchMenuInstance}
+      <!-- <NodeSearchPanel
+        onclose={() => (searchMenuInstance = undefined)}
+        onpreview={(nodeId: string) => {
+          workspace.actionRequests.push({ type: "reveal-node", nodeId });
+          searchMenuInstance!.lastPreviewedNodeId = nodeId;
+        }}
+        onselect={(nodeId: string) => {
+          if (nodeId !== searchMenuInstance!.lastPreviewedNodeId) {
+            workspace.actionRequests.push({ type: "reveal-node", nodeId });
+          }
+        }}
+      /> -->
+    {/if}
   </SvelteFlow>
 
-  <AddNodeMenu
-    open={addMenuOpen}
-    openVersion={addMenuOpenVersion}
-    position={addMenuPosition}
-    {...addNodeMenuEvents}
-  />
+  {#if addMenuInstance}
+    {@const { screenPosition, connectionFilter } = addMenuInstance}
+    <AddNodeMenu {connectionFilter} {screenPosition} {...addMenuEvents} />
+  {/if}
 
-  <NodeHelpPanel
-    open={nodeHelpOpen}
-    openVersion={nodeHelpOpenVersion}
-    on:close={handleNodeHelpCloseRequest}
-    on:customizekeybinds={handleNodeHelpCustomizeKeybindsRequest}
-  />
+  {#if helpMenuOpen}
+    <NodeHelpPanel onclose={() => (helpMenuOpen = false)} />
+  {/if}
 </div>

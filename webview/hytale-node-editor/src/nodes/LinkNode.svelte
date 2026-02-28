@@ -1,7 +1,8 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
   import { tick } from "svelte";
-  import { LINK_MUTATION_EVENT, type LinkNodeType } from "../common";
+  import { type LinkNodeType } from "../common";
+  import { LINK_MUTATION_EVENT } from "src/constants";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,

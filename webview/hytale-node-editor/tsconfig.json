@@ -3,23 +3,18 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "strict": false,
     "allowArbitraryExtensions": true,
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": ".",
     "paths": {
       "@shared/*": ["../../src/shared/*"],
-      "src/*": ["src/*"]
+      "src/*": ["./src/*"]
     },
     "types": ["svelte"]
   },
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.svelte",
-    "../../src/shared/**/*.ts"
-  ],
+  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.svelte", "../../src/shared/**/*.ts"],
   "exclude": ["node_modules", "../../node_modules", "../../dist", "../../out", "../../media"]
 }

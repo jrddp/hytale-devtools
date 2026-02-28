@@ -3,8 +3,9 @@ import {
   DATA_NODE_TYPE,
   GROUP_NODE_TYPE,
   LINK_NODE_TYPE,
-  RAW_JSON_NODE_TYPE,
-} from "../../common.js";
+  RAW_JSON_NODE_TYPE
+} from "src/constants.js";
+import { isObject } from "src/node-editor/utils/valueUtils";
 
 const UNGROUPED_GROUP_ID = "__ungrouped__";
 const UNGROUPED_GROUP_LABEL = "Ungrouped";
@@ -295,6 +296,3 @@ function readFiniteNumber(candidate, fallback = 0) {
   return Number.isFinite(candidate) ? Number(candidate) : fallback;
 }
 
-function isObject(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}

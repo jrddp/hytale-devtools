@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
 import * as vscode from 'vscode';
+import { isObject } from '../shared/typeUtils';
 import { getHytaleHome, resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
 
 const execFileAsync = util.promisify(cp.execFile);
@@ -741,9 +742,6 @@ function toZipCommandError(error: unknown, action: string): Error {
     return new Error(`Failed to ${action}: ${message}`);
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null;
-}
 
 function hasDefinedRootPath(value: Record<string, unknown>): boolean {
     return Object.prototype.hasOwnProperty.call(value, 'rootPath');

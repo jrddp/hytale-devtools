@@ -1,135 +1,64 @@
-import { type NodeTemplate, type NodePin } from "@shared/node-editor/workspaceTypes";
-import { type XYPosition } from "@xyflow/svelte";
+import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+import { type NodePin } from "@shared/node-editor/workspaceTypes";
+import { type Connection, type XYPosition } from "@xyflow/svelte";
 import { type BBox } from "rbush";
 import {
-  DEFAULT_COMMENT_FONT_SIZE,
-  COMMENT_NODE_TYPE,
-  type CommentNodeData,
-  type CommentNodeType,
-  DATA_NODE_TYPE,
-  type DataNodeData,
   type DataNodeType,
-  DEFAULT_RAW_JSON_TEXT,
   type FlowEdge,
   type FlowNode,
-  GROUP_NODE_TYPE,
-  type GroupNodeData,
+  type FlowNodeData,
   type GroupNodeType,
-  LINK_DEFAULT_OUTPUT_LABEL,
-  LINK_NODE_TYPE,
-  LINK_OUTPUT_HANDLE_ID,
-  type LinkNodeData,
-  type LinkNodeType,
-  RAW_JSON_NODE_TYPE,
-  type RawJsonNodeData,
-  type RawJsonNodeType,
 } from "src/common";
-import { createNodeId } from "src/node-editor/utils/idUtils";
+import { GROUP_NODE_TYPE } from "src/constants";
 import { workspace } from "src/workspace.svelte";
 
-type PendingConnection = {
-  source?: string;
-  sourceHandle?: string;
-  target?: string;
-  targetHandle?: string;
-} & ({ source: string; sourceHandle: string } | { source?: never; sourceHandle?: never }); // ensure source and sourceHandle always come in a pair
+export type PendingConnection =
+  | {
+      source: string;
+      sourceHandle: string;
+      target?: string | null;
+      targetHandle?: string;
+    }
+  | {
+      source?: string | null;
+      sourceHandle?: string | null;
+      target: string;
+      targetHandle?: string | null;
+    };
 
-export function createDataNodeType(
-  id: string,
-  position: XYPosition,
-  template: NodeTemplate,
-  data: Partial<DataNodeData>,
-): DataNodeType {
-  // deep copy to avoid mutating the template
-  const clonedTemplateData: NodeTemplate = structuredClone($state.snapshot(template));
+// updateNodeData can't be called outside of a component, so we pass this.
+/** [nodeId, dataUpdates] -> use like updates.forEach((update) => updateNodeData(...update)) */
+export type NodeDataUpdates = [string, Partial<FlowNodeData>];
+export type NodeUpdates = [string, Partial<FlowNode>];
 
+export function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
   return {
-    type: DATA_NODE_TYPE,
-    id,
-    position,
-    data: {
-      hasOutputs: true,
-      ...clonedTemplateData,
-      ...data,
-    },
+    ...data,
+    schemaKey: INPUT_HANDLE_ID,
+    localId: "Input",
+    label: "Input",
+    multiplicity: "single",
   };
 }
 
-export function createRawJsonNodeType(
-  id: string,
-  position: XYPosition,
-  data: Partial<RawJsonNodeData>,
-): RawJsonNodeType {
-  return {
-    type: RAW_JSON_NODE_TYPE,
-    id,
-    position,
-    data: {
-      hasOutputs: false,
-      jsonString: data.jsonString ?? DEFAULT_RAW_JSON_TEXT,
-    },
-  };
+export function isValidConnection(connection: Connection | FlowEdge): boolean {
+  if (!connection.sourceHandle) return false;
+  const sourceNode = workspace.getNodeById(connection.source) as DataNodeType;
+  const targetNode = workspace.getNodeById(connection.target) as DataNodeType;
+  if (!sourceNode.data.childTypes || !targetNode.data.templateId) return false;
+  const variantKindOrTemplateId = sourceNode.data.childTypes[connection.sourceHandle];
+  const variantKind = workspace.context.variantKindsById[variantKindOrTemplateId];
+  const templateId = targetNode.data.templateId;
+  if (variantKind) {
+    return Object.values(variantKind.Variants).includes(templateId);
+  }
+  return variantKindOrTemplateId === templateId;
 }
 
-export function createLinkNodeType(
-  id: string,
-  position: XYPosition,
-  data: Partial<LinkNodeData>,
-): LinkNodeType {
-  return {
-    type: LINK_NODE_TYPE,
-    id,
-    position,
-    data: {
-      hasOutputs: true,
-      outputPins: data.outputPins ?? [
-        {
-          schemaKey: LINK_OUTPUT_HANDLE_ID,
-          localId: "Output",
-          label: LINK_DEFAULT_OUTPUT_LABEL,
-          multiplicity: "single",
-        },
-      ],
-    },
-  };
-}
-
-export function createCommentNodeType(
-  id: string,
-  position: XYPosition,
-  data: Partial<CommentNodeData>,
-): CommentNodeType {
-  return {
-    type: COMMENT_NODE_TYPE,
-    id,
-    position,
-    data: {
-      hasOutputs: false,
-      name: data.name ?? "",
-      text: data.text ?? "",
-      fontSize: data.fontSize ?? DEFAULT_COMMENT_FONT_SIZE,
-    },
-  };
-}
-
-export function createGroupNodeType(
-  id: string,
-  position: XYPosition,
-  width: number,
-  height: number,
-  data: Partial<GroupNodeData>,
-): GroupNodeType {
-  return {
-    type: GROUP_NODE_TYPE,
-    id,
-    position,
-    width,
-    height,
-    data: {
-      hasOutputs: false,
-      name: data.name ?? "Group",
-    },
-  };
+export function getOutputPin(nodeId: string, handleId: string): NodePin | undefined {
+  const node = workspace.getNodeById(nodeId);
+  if (!node.data.hasOutputs) return undefined;
+  return node.data.outputPins?.find(pin => pin.schemaKey === handleId);
 }
 
 export function recalculateGroupParents() {
@@ -289,9 +218,9 @@ export function getPositionRelativeTo(nodeA: FlowNode, nodeB?: FlowNode): XYPosi
 }
 
 export function getAbsoluteBoundingBox(node: FlowNode): BBox | undefined {
-  if (!node.measured) return undefined;
+  const { width, height } = node.measured ?? { width: node.width, height: node.height };
+  if (width == undefined || height == undefined) return undefined;
   const { x, y } = getAbsolutePosition(node);
-  const { width, height } = node.measured;
   return { minX: x, minY: y, maxX: x + width, maxY: y + height };
 }
 
@@ -363,4 +292,15 @@ export function getOrderedChildrenForHandle(parentId: string, parentHandleId: st
   return childIds
     .map(childId => workspace.getNodeById(childId))
     .sort((a, b) => (a.data.inputConnectionIndex ?? -1) - (b.data.inputConnectionIndex ?? -1));
+}
+export function getSiblingOrderUpdates(node: FlowNode): NodeDataUpdates[] {
+  return getNodeSiblingIds(node.id, "same-parent-handle")
+    .map(id => workspace.getNodeById(id))
+    .sort((a, b) => {
+      // higher to lower (+Y IS DOWN)
+      return getAbsolutePosition(a).y - getAbsolutePosition(b).y;
+    })
+    .map((node, idx) => {
+      return [node.id, { inputConnectionIndex: idx }];
+    });
 }

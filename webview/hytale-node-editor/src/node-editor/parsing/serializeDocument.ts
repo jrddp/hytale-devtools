@@ -1,11 +1,13 @@
 import {
+  type FlowNode,
+} from "src/common";
+import {
   COMMENT_NODE_TYPE,
   DATA_NODE_TYPE,
   GROUP_NODE_TYPE,
   LINK_NODE_TYPE,
-  RAW_JSON_NODE_TYPE,
-  type FlowNode,
-} from "src/common";
+  RAW_JSON_NODE_TYPE
+} from "src/constants";
 import {
   type AssetDocumentShape,
   type NodeAssetJson,

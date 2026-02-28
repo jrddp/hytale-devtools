@@ -40,37 +40,37 @@
         "category": "Hytale Devtools"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.goToRoot",
+        "command": "hytale-devtools.nodeEditor.quickAction.go-to-root",
         "title": "Go to Root",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.fitFullView",
+        "command": "hytale-devtools.nodeEditor.quickAction.fit-view",
         "title": "Fit Full View",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.searchNodes",
+        "command": "hytale-devtools.nodeEditor.quickAction.search-nodes",
         "title": "Search Nodes",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.autoPositionNodes",
+        "command": "hytale-devtools.nodeEditor.quickAction.auto-position-nodes",
         "title": "Auto Position Nodes",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.viewRawJson",
+        "command": "hytale-devtools.nodeEditor.quickAction.view-raw-json",
         "title": "View Raw JSON",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.helpAndHotkeys",
+        "command": "hytale-devtools.nodeEditor.quickAction.help-and-hotkeys",
         "title": "Show Help",
         "category": "Hytale Node Editor",
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
@@ -78,22 +78,22 @@
     ],
     "keybindings": [
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.searchNodes",
+        "command": "hytale-devtools.nodeEditor.quickAction.search-nodes",
         "key": "f",
         "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.fitFullView",
+        "command": "hytale-devtools.nodeEditor.quickAction.fit-view",
         "key": "v",
         "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.autoPositionNodes",
+        "command": "hytale-devtools.nodeEditor.quickAction.auto-position-nodes",
         "key": "l",
         "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
       },
       {
-        "command": "hytale-devtools.nodeEditor.quickAction.helpAndHotkeys",
+        "command": "hytale-devtools.nodeEditor.quickAction.help-and-hotkeys",
         "key": "shift+/",
         "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
       }

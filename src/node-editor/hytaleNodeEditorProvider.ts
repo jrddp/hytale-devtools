@@ -1,14 +1,15 @@
-import * as vscode from "vscode";
 import * as fs from "node:fs";
-import { type ResolveSchemaDefinitionRequestItem } from "../shared/companion/types";
-import { resolveWorkspaceContext } from "./workspaceResolver";
+import * as vscode from "vscode";
+import { LOGGER } from "../extension";
 import type {
+  ActionType,
   ExtensionToWebviewMessage,
   NodeEditorControlScheme,
   NodeEditorPlatform,
   WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
-import { LOGGER } from "../extension";
+import { isObject } from "../shared/typeUtils";
+import { resolveWorkspaceContext } from "./workspaceResolver";
 
 type ViteManifestEntry = {
   file: string;
@@ -39,7 +40,9 @@ export function registerHytaleNodeEditorProvider(
   const quickActionCommandRegistrations = readNodeEditorQuickActionCommandIds(context).map(
     commandId =>
       vscode.commands.registerCommand(commandId, () => {
-        void provider.triggerQuickActionByCommandId(commandId);
+        void provider.triggerQuickActionByCommandId(
+          getActionTypeFromCommandId(commandId) as ActionType | "go-to-root",
+        );
       }),
   );
 
@@ -60,8 +63,8 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       if (selection) {
         const webviewPanel = this.webviewPanelsByDocumentUri.get(uri);
         const payload: ExtensionToWebviewMessage = {
-          type: "revealSelection",
-          selection: selection,
+          type: "action",
+          request: { type: "reveal-selection", selection },
         };
         webviewPanel?.webview.postMessage(payload);
       }
@@ -184,22 +187,20 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     this.selectionSubscription = undefined;
   }
 
-  public async triggerQuickActionByCommandId(commandId: string): Promise<void> {
-    const normalizedCommandId = readNonEmptyString(commandId);
-    if (!normalizedCommandId) {
-      return;
-    }
-
+  public async triggerQuickActionByCommandId(actionType: ActionType | "go-to-root"): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
       return;
     }
 
-    const payload: ExtensionToWebviewMessage = {
-      type: "triggerQuickAction",
-      commandId: normalizedCommandId,
-    };
-    await targetPanel.webview.postMessage(payload);
+    if (actionType === "go-to-root") {
+      actionType = "reveal-node";
+    }
+
+    await targetPanel.webview.postMessage({
+      type: "action",
+      request: { type: actionType },
+    });
   }
 
   private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
@@ -229,7 +230,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
         this.nativeFindCommandRegistration = vscode.commands.registerCommand(
           WEBVIEW_FIND_COMMAND_ID,
           () => {
-            void this.triggerQuickActionByCommandId(WEBVIEW_FIND_COMMAND_ID);
+            void this.triggerQuickActionByCommandId("search-nodes");
           },
         );
       }
@@ -296,9 +297,11 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     });
   }
 
-  private async openNodeEditorKeybindings(queryCandidate: string | undefined): Promise<void> {
-    const query = readNonEmptyString(queryCandidate) ?? "Hytale Node Editor";
-    await vscode.commands.executeCommand("workbench.action.openGlobalKeybindings", query);
+  private async openNodeEditorKeybindings(query: string | undefined): Promise<void> {
+    await vscode.commands.executeCommand(
+      "workbench.action.openGlobalKeybindings",
+      query ?? "Hytale Node Editor",
+    );
   }
 
   private async updateNodeEditorSetting(
@@ -462,31 +465,33 @@ function readNodeEditorPlatform(): NodeEditorPlatform {
 }
 
 function readNodeEditorQuickActionCommandIds(context: vscode.ExtensionContext): string[] {
-  const packageJson = context.extension.packageJSON;
+  const packageJson = context.extension.packageJSON as any;
   if (!isObject(packageJson)) {
+    LOGGER.error("Commands unable to be parsed from package.json.");
     return [];
   }
 
-  const contributes = packageJson.contributes;
-  if (!isObject(contributes) || !Array.isArray(contributes.commands)) {
+  const commands = (packageJson.contributes as any)?.commands ?? [];
+
+  if (!commands) {
+    LOGGER.warn("No commands found in package.json contributes.");
     return [];
   }
 
-  const commandIds = contributes.commands
-    .filter(candidate => isObject(candidate))
-    .map(candidate => readNonEmptyString(candidate.command))
-    .filter((commandId): commandId is string =>
-      Boolean(commandId?.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX)),
+  const commandIds = commands
+    .map((command: any) => command.command)
+    .filter(
+      (commandId: string) => !!commandId?.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX),
     );
-  return Array.from(new Set(commandIds));
+  return commandIds;
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
+function getActionTypeFromCommandId(commandId: string): string | undefined {
+  if (commandId.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX)) {
+    return commandId.slice(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX.length);
+  }
 
-function readNonEmptyString(value: unknown): string | undefined {
-  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+  return undefined;
 }
 
 function escapeHtml(value: string): string {

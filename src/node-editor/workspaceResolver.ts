@@ -13,6 +13,7 @@ import {
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
+import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 
 const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   "/Server/ScriptedBrushes/": {
@@ -171,9 +172,9 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
   );
 
   const inputPins: NodePin[] =
-    definition.Inputs?.map(input => {
+    definition.Inputs?.map((input, idx) => {
       return {
-        schemaKey: null,
+        schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
         localId: input.Id,
         label: input.Label,
         color: input.Color,
@@ -186,7 +187,7 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
       (map, output) => {
         const type = output.IsMap ? "map" : output.Multiple ? "multiple" : "single";
         map[output.Id] = {
-          schemaKey: null,
+          schemaKey: "",
           localId: output.Id,
           label: output.Label,
           color: output.Color,

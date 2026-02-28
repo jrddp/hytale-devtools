@@ -7,7 +7,7 @@
   import FilePathField from "./FilePathField.svelte";
   import EnumField from "./EnumField.svelte";
   import ListField from "./ListField.svelte";
-  import { buildFieldInputId } from "../utils/fieldUtils";
+  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
 
   let {
     nodeId,

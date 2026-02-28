@@ -2,122 +2,77 @@
   import { Handle, Position } from "@xyflow/svelte";
   import HoverTooltip from "../components/HoverTooltip.svelte";
   import { readColorForCss } from "../node-editor/utils/colors";
+  import { type NodePin } from "@shared/node-editor/workspaceTypes";
+  import { PIN_WIDTH_PX } from "src/constants";
 
-  export let id;
-  export let type = "target";
-  export let side = "left";
-  export let top = "0px";
-  export let width = 12;
-  export let label = "";
-  export let showTooltip = false;
-  export let color = undefined;
-  export let connectionMultiplicity = "single";
+  const DIAMETER_PX = PIN_WIDTH_PX * 2;
 
-  $: pinSide = side === "right" ? "right" : "left";
-  $: pinPosition = pinSide === "right" ? Position.Right : Position.Left;
-  $: pinType = type === "source" ? "source" : "target";
-  $: pinTop = readTopValue(top);
-  $: pinWidth = readPinWidth(width);
-  $: pinDiameter = readPinDiameter(pinWidth);
-  $: pinLabel = typeof label === "string" ? label : "";
-  $: pinMultiplicity = readConnectionMultiplicity(connectionMultiplicity);
-  $: pinSideClass = pinSide === "right" ? "right-0" : "left-0";
-  $: pinShapeClass = readPinShapeClass(pinMultiplicity, pinSide);
-  $: pinClipPath = readPinClipPath(pinMultiplicity, pinSide);
-  $: tooltipPlacement = pinSide === "right" ? "right" : "left";
-  $: tooltipAriaLabel = pinLabel
-    ? `${pinSide === "right" ? "Output" : "Input"} pin ${pinLabel}`
-    : undefined;
+  const {
+    nodeId,
+    pin,
+    type,
+    showTooltip = false,
+    ...props
+  }: {
+    nodeId: string;
+    pin: NodePin;
+    type: "target" | "source";
+    showTooltip?: boolean;
+    class?: string;
+    style?: string;
+  } = $props();
 
-  function readTopValue(candidate) {
-    if (Number.isFinite(candidate)) {
-      return `${candidate}px`;
-    }
+  const id = $derived(pin.schemaKey);
 
-    if (typeof candidate === "string") {
-      return candidate;
-    }
+  const side = $derived(type === "source" ? "right" : "left");
+  // $: pinSideClass = side === "right" ? "right-0" : "left-0";
 
-    return "0px";
-  }
+  const cssColor = $derived(readColorForCss(pin.color));
 
-  function readPinWidth(candidate) {
-    if (Number.isFinite(candidate)) {
-      return `${Number(candidate)}px`;
-    }
+  const shapeClass = $derived(
+    pin.multiplicity === "map" || pin.multiplicity === "multiple"
+      ? "rounded-none"
+      : side === "right"
+        ? "rounded-l-full"
+        : "rounded-r-full",
+  );
 
-    if (typeof candidate === "string") {
-      return candidate;
-    }
-
-    return "12px";
-  }
-
-  function readPinDiameter(pinWidth) {
-    return `calc(${pinWidth} * 2)`;
-  }
-
-  function readConnectionMultiplicity(candidate) {
-    if (candidate === "map") {
-      return "map";
-    }
-
-    if (candidate === "multiple") {
-      return "multiple";
-    }
-
-    return "single";
-  }
-
-  function readPinShapeClass(multiplicity, pinSide) {
-    if (multiplicity === "map" || multiplicity === "multiple") {
-      return "rounded-none";
-    }
-
-    return pinSide === "right" ? "rounded-l-full" : "rounded-r-full";
-  }
-
-  function readPinClipPath(multiplicity, pinSide) {
-    if (multiplicity !== "map") {
-      return undefined;
-    }
-
-    return pinSide === "left"
-      ? "polygon(0 0, 100% 50%, 0 100%)"
-      : "polygon(100% 0, 0 50%, 100% 100%)";
-  }
+  const clipPath = $derived(
+    pin.multiplicity === "map"
+      ? side === "left"
+        ? "polygon(0 0, 100% 50%, 0 100%)"
+        : "polygon(100% 0, 0 50%, 100% 100%)"
+      : undefined,
+  );
 </script>
 
 <Handle
-  type={pinType}
-  position={pinPosition}
   {id}
-  style="top: {pinTop}; height: {pinDiameter};"
-  class="w-px! min-w-0! min-h-0! bg-transparent! border-none! overflow-visible! transform-[translate(0,-50%)]"
+  {type}
+  position={side == "left" ? Position.Left : Position.Right}
+  style="height: {DIAMETER_PX}px; {props.style}"
+  class="bg-transparent! w-px! min-w-0! min-h-0! border-none! overflow-visible! transform-[translate(0,-50%)] {props.class}"
 >
-  {#if showTooltip && pinLabel}
+  {#if showTooltip && pin.label}
     <HoverTooltip
-      text={pinLabel}
-      placement={tooltipPlacement}
+      text={pin.label}
+      placement={side}
       wrapperClass="block"
-      style="width: {pinWidth}; height: {pinDiameter};"
-      groupAriaLabel={tooltipAriaLabel}
+      style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px;"
     >
       <span
         aria-hidden="true"
-        class="absolute top-1/2 -translate-y-1/2 {pinSideClass} {pinShapeClass}"
-        style="width: {pinWidth}; height: {pinDiameter}; background-color: {readColorForCss(
-          color,
-        )}; clip-path: {pinClipPath || 'none'};"
+        class="absolute top-1/2 -translate-y-1/2 {shapeClass} {side == 'left' ? 'left-0' : 'right-0'}"
+        style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px; background-color: {cssColor}; clip-path: {clipPath ||
+          'none'};"
       ></span>
     </HoverTooltip>
   {:else}
     <span
       aria-hidden="true"
-      class="absolute top-1/2 -translate-y-1/2 {pinSideClass} {pinShapeClass}"
-      style="width: {pinWidth}; height: {pinDiameter}; background-color: {readColorForCss(
-        color,
-      )}; clip-path: {pinClipPath || 'none'};"
+      class="absolute top-1/2 -translate-y-1/2 {shapeClass} {side == 'left' ? 'left-0' : 'right-0'}"
+      style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px; background-color: {cssColor}; clip-path: {clipPath ||
+        'none'};"
     ></span>
   {/if}
 </Handle>

@@ -6,15 +6,10 @@
   } from "@shared/node-editor/messageTypes";
   import { SvelteFlowProvider } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
-  import { parseDocumentText } from "src/node-editor/parsing/parse/parseDocument.svelte";
+  import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
   import { workspace } from "src/workspace.svelte";
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
   import Flow from "./Flow.svelte";
-  import {
-    type NodeEditorQuickActionId,
-    getNodeEditorQuickActionByCommandId,
-    getNodeEditorQuickActionById,
-  } from "./node-editor/ui/nodeEditorQuickActions";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
 
@@ -24,57 +19,33 @@
 
   // bumped for each parsed document update so Flow can run one-time load hooks.
   let graphLoadVersion = $state(0);
+  let localWebviewState = $state<Record<string, unknown>>({});
   let extensionError = $state("");
-  let quickActionRequest:
-    | {
-        token: number;
-        actionId: NodeEditorQuickActionId;
-        commandId: string;
-      }
-    | undefined = $state();
-  let quickActionRequestToken = 0;
-  let revealNodeId: string | undefined = undefined;
-  let revealNodeRequestVersion = 0;
-  let localWebviewState: Record<string, unknown> = {};
   let isWebviewVisible =
     typeof document !== "undefined" ? document.visibilityState !== "hidden" : true;
 
   function handleMessage(event: MessageEvent<ExtensionToWebviewMessage>) {
     const message = event.data;
 
+    console.log("message received", message);
     switch (message.type) {
       // should be called before initial update
       case "bootstrap":
         workspace.context = message.workspaceContext;
         workspace.controlScheme = message.controlScheme;
         workspace.platform = message.platform;
+        workspace.actionRequests.push({ type: "fit-view", duration: 0 });
         return;
       case "update":
         handleDocumentUpdateMessage(message);
-        return;
-      case "revealSelection":
-        // TODO implement
+        workspace.actionRequests.push({ type: "document-refresh" });
         return;
       case "error":
         extensionError =
           typeof message.message === "string" ? message.message : "unknown editor error.";
         return;
-      case "triggerQuickAction": {
-        const actionFromId = getNodeEditorQuickActionById(
-          message?.actionId as NodeEditorQuickActionId | undefined,
-        );
-        const actionFromCommand = getNodeEditorQuickActionByCommandId(message?.commandId);
-        const quickAction = actionFromId ?? actionFromCommand;
-        if (!quickAction) {
-          return;
-        }
-
-        quickActionRequestToken += 1;
-        quickActionRequest = {
-          token: quickActionRequestToken,
-          actionId: quickAction.id,
-          commandId: quickAction.commandId,
-        };
+      case "action": {
+        workspace.actionRequests.push(message.request);
         return;
       }
       default:
@@ -90,8 +61,11 @@
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
       workspace.sourceVersion = message.version;
-      workspace.arePositionsSet = arePositionsSet;
       workspace.isInitialized = true;
+
+      if (!arePositionsSet) {
+        workspace.actionRequests.push({ type: "auto-position-nodes" });
+      }
 
       graphLoadVersion += 1;
     } catch (error) {
@@ -140,16 +114,7 @@
     <div class="mx-3 mt-3 text-sm text-vsc-error">{extensionError}</div>
   {:else if workspace.isInitialized}
     <SvelteFlowProvider>
-      <Flow
-        bind:nodes={workspace.nodes}
-        bind:edges={workspace.edges}
-        loadVersion={graphLoadVersion}
-        {quickActionRequest}
-        {revealNodeId}
-        {revealNodeRequestVersion}
-        onviewrawjson={handleViewRawJsonRequest}
-        oncustomizekeybinds={handleCustomizeKeybindsRequest}
-      />
+      <Flow bind:nodes={workspace.nodes} bind:edges={workspace.edges} />
     </SvelteFlowProvider>
   {/if}
 </main>

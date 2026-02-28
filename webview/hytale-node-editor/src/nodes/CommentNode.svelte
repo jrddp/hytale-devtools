@@ -2,7 +2,7 @@
   import { useSvelteFlow } from "@xyflow/svelte";
   import { applyDocumentState } from "src/workspace.svelte";
   import { tick } from "svelte";
-  import { type CommentNodeType } from "../common";
+  import { type CommentNodeType } from "../constants";
   import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
 
   let { id, data, selected = false, dragging = false }: CommentNodeType = $props();

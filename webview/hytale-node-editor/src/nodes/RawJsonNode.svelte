@@ -10,14 +10,11 @@
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import {
-    INPUT_HANDLE_ID,
-    DEFAULT_RAW_JSON_TEXT,
-    DEFAULT_RAW_JSON_LABEL,
-    RAW_JSON_MUTATION_EVENT,
-    type RawJsonNodeType,
-  } from "../common";
+  import { type RawJsonNodeType } from "../common";
+  import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+  import { DEFAULT_RAW_JSON_TEXT, DEFAULT_RAW_JSON_LABEL } from "src/constants";
   import { applyDocumentState } from "src/workspace.svelte";
+  import { getDefaultInputPin } from "src/node-editor/utils/nodeUtils.svelte";
 
   const RAW_JSON_FIELD: NodeField = {
     schemaKey: "Data",
@@ -26,7 +23,6 @@
   };
   const NODE_MIN_WIDTH_PX = 288;
   const NODE_ACCENT_COLOR = "var(--vscode-focusBorder)";
-  const PIN_WIDTH = 10;
   const PIN_TOP = "50%";
 
   let { id, data, selected = false, dragging = false }: RawJsonNodeType = $props();
@@ -49,6 +45,8 @@
   const dataFieldValue = $derived(
     typeof data?.jsonString === "string" ? data.jsonString : DEFAULT_RAW_JSON_TEXT,
   );
+
+  const inputPin = getDefaultInputPin({ color: NODE_ACCENT_COLOR });
 
   $effect(() => {
     if (!isEditingTitle) {
@@ -265,16 +263,7 @@
   </div>
 
   <div class="px-4.5 py-2">
-    <NodePinHandle
-      type="target"
-      side="left"
-      id={INPUT_HANDLE_ID}
-      top={PIN_TOP}
-      width={PIN_WIDTH}
-      label="Input"
-      showTooltip={true}
-      color={NODE_ACCENT_COLOR}
-    />
+    <NodePinHandle nodeId={id} pin={inputPin} type="target" />
 
     <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onvalidate={updateData} />
   </div>

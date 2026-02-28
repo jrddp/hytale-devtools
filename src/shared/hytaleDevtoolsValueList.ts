@@ -3,7 +3,6 @@ import {
     type HytaleDevtoolsAssetPathSemantics,
     type HytaleDevtoolsInlineOrReferenceSemantics,
     type HytaleDevtoolsLocalizationLocaleStrategy,
-    HytaleDevtoolsPayload,
     type HytaleDevtoolsSymbolReferenceSource
 } from './hytaleDevtoolsPayload';
 import { type LoadedIndexShard } from './companion/types';

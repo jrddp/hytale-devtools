@@ -3,6 +3,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { getHytaleHome, resolvePatchlineFromWorkspace } from "../utils/hytalePaths";
 import { safeParseJSONFile } from "../shared/fileUtils";
+import { isObject } from "../shared/typeUtils";
 
 const SUPPORTED_PATCHLINES = ["release", "pre-release"] as const;
 type SupportedPatchline = (typeof SUPPORTED_PATCHLINES)[number];
@@ -410,6 +411,3 @@ function deleteEmptyDirectoriesUpTo(startDirectory: string, stopDirectory: strin
   }
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}

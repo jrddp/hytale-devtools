@@ -1,3 +1,5 @@
+import { isObject } from "src/node-editor/utils/valueUtils";
+
 export const NODE_EDITOR_CLIPBOARD_MIME = "application/x-hytale-node-editor-selection+json";
 
 export function buildClipboardSelectionPayload({
@@ -37,7 +39,7 @@ export function buildClipboardSelectionPayload({
     const absoluteBounds = readAbsoluteNodeBounds(
       nodeCandidate,
       absolutePosition,
-      readNodeDimensions
+      readNodeDimensions,
     );
     if (!absoluteBounds) {
       continue;
@@ -68,13 +70,11 @@ export function buildClipboardSelectionPayload({
     x: (minX + maxX) / 2,
     y: (minY + maxY) / 2,
   };
-  const selectedNodeIdSet = new Set(
-    selectedNodeRecords.map((entry) => entry.sourceNodeId)
-  );
+  const selectedNodeIdSet = new Set(selectedNodeRecords.map(entry => entry.sourceNodeId));
   const edgeSnapshots = readInternalSelectedEdges(edges, selectedNodeIdSet, read);
 
   return {
-    nodes: selectedNodeRecords.map((entry) => ({
+    nodes: selectedNodeRecords.map(entry => ({
       sourceNodeId: entry.sourceNodeId,
       node: entry.node,
       offset: {
@@ -113,7 +113,7 @@ export function readClipboardSelectionPayload(clipboardData) {
   }
 
   const fromCustomMime = parseClipboardSelectionPayloadText(
-    clipboardData.getData(NODE_EDITOR_CLIPBOARD_MIME)
+    clipboardData.getData(NODE_EDITOR_CLIPBOARD_MIME),
   );
   if (fromCustomMime) {
     return fromCustomMime;
@@ -122,18 +122,14 @@ export function readClipboardSelectionPayload(clipboardData) {
   return parseClipboardSelectionPayloadText(clipboardData.getData("text/plain"));
 }
 
-export function cutSelectedNodesFromFlowState({
-  nodes,
-  edges,
-  readOptionalString,
-}: any = {}) {
+export function cutSelectedNodesFromFlowState({ nodes, edges, readOptionalString }: any = {}) {
   const read = createReadOptionalString(readOptionalString);
   const readdNodes = Array.isArray(nodes) ? nodes : [];
   const initiallySelectedNodeIds = new Set(
     readdNodes
-      .filter((nodeCandidate) => nodeCandidate?.selected === true)
-      .map((nodeCandidate) => read(nodeCandidate?.id))
-      .filter(Boolean)
+      .filter(nodeCandidate => nodeCandidate?.selected === true)
+      .map(nodeCandidate => read(nodeCandidate?.id))
+      .filter(Boolean),
   );
   if (initiallySelectedNodeIds.size === 0) {
     return {
@@ -143,18 +139,14 @@ export function cutSelectedNodesFromFlowState({
     };
   }
 
-  const cutNodeIds = collectDescendantNodeIds(
-    initiallySelectedNodeIds,
-    readdNodes,
-    read
-  );
-  const nextNodes = readdNodes.filter((nodeCandidate) => {
+  const cutNodeIds = collectDescendantNodeIds(initiallySelectedNodeIds, readdNodes, read);
+  const nextNodes = readdNodes.filter(nodeCandidate => {
     const nodeId = read(nodeCandidate?.id);
     return !nodeId || !cutNodeIds.has(nodeId);
   });
 
   const readdEdges = Array.isArray(edges) ? edges : [];
-  const nextEdges = readdEdges.filter((edgeCandidate) => {
+  const nextEdges = readdEdges.filter(edgeCandidate => {
     if (edgeCandidate?.selected === true) {
       return false;
     }
@@ -275,10 +267,10 @@ function readNodeDimensionsSafe(nodeCandidate, readNodeDimensions) {
   }
 
   const width = Number(
-    nodeCandidate?.width ?? nodeCandidate?.initialWidth ?? nodeCandidate?.measured?.width
+    nodeCandidate?.width ?? nodeCandidate?.initialWidth ?? nodeCandidate?.measured?.width,
   );
   const height = Number(
-    nodeCandidate?.height ?? nodeCandidate?.initialHeight ?? nodeCandidate?.measured?.height
+    nodeCandidate?.height ?? nodeCandidate?.initialHeight ?? nodeCandidate?.measured?.height,
   );
   return {
     width: Number.isFinite(width) ? width : 0,
@@ -350,9 +342,7 @@ function readPastedNodeIdPrefix(sourceNode, sourceNodeId, context) {
   if (readdSourceNodeId) {
     const separatorIndex = readdSourceNodeId.indexOf("-");
     const sourcePrefix =
-      separatorIndex > 0
-        ? readdSourceNodeId.slice(0, separatorIndex)
-        : readdSourceNodeId;
+      separatorIndex > 0 ? readdSourceNodeId.slice(0, separatorIndex) : readdSourceNodeId;
     const readdPrefix = context.readType(sourcePrefix);
     if (readdPrefix) {
       return readdPrefix;
@@ -379,15 +369,11 @@ function cloneSerializableValue(value) {
 }
 
 function createReadOptionalString(readOptionalString) {
-  return typeof readOptionalString === "function"
-    ? readOptionalString
-    : readOptionalStringInternal;
+  return typeof readOptionalString === "function" ? readOptionalString : readOptionalStringInternal;
 }
 
 function createReadNodeType(readNodeType) {
-  return typeof readNodeType === "function"
-    ? readNodeType
-    : readNodeTypeInternal;
+  return typeof readNodeType === "function" ? readNodeType : readNodeTypeInternal;
 }
 
 function createUuidFactory(createUuid) {
@@ -419,6 +405,3 @@ function readNodeTypeInternal(candidate) {
   return "Node";
 }
 
-function isObject(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}

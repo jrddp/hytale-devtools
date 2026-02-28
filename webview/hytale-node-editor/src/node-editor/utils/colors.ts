@@ -22,6 +22,9 @@ const COLOR_NAME_MAP = {
 
 export function readColorForCss(nodeDefinedColor?: string) {
   if (!nodeDefinedColor) return DEFAULT_COLOR;
+  if (nodeDefinedColor.startsWith("#") || nodeDefinedColor.startsWith("var")) {
+    return nodeDefinedColor;
+  }
   nodeDefinedColor = nodeDefinedColor.toLowerCase();
   if (COLOR_NAME_MAP[nodeDefinedColor]) return COLOR_NAME_MAP[nodeDefinedColor];
   const [r, g, b] = nodeDefinedColor.split(",");

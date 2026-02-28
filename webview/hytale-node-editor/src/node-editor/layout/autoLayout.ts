@@ -5,8 +5,11 @@ import {
   getAbsolutePosition,
   getOrderedChildren,
   getRootIds,
+  NodeDataUpdates,
+  NodeUpdates,
+  recalculateGroupParents,
 } from "src/node-editor/utils/nodeUtils.svelte";
-import { workspace } from "src/workspace.svelte";
+import { applyDocumentState, workspace } from "src/workspace.svelte";
 
 const SPACING_X = 150;
 const SPACING_Y = 75;
@@ -23,11 +26,11 @@ type HierarchyStructure = TreeNode & {
 /** * @returns A map of nodeId -> {x, y}, where {x, y} is the new absolute position of the node.
  * **Note:** Since positions are absolute, if groups have been calculated parentIds should be set to null then recalculated.
  */
-export function getAutoPositionedMappings(nodes: FlowNode[]): Map<string, XYPosition> {
+export function getAutoPositionNodeUpdates(nodes: FlowNode[]): NodeUpdates[] {
   // https://github.com/Klortho/d3-flextree
   const layout = flextree<TreeNode>({});
+  const updates: NodeUpdates[] = [];
 
-  const nodePositionMappings = new Map<string, XYPosition>();
   // all hierarchies should be disjoint since they are internally processed from unique roots
   for (const hierarchy of generateNodeHierarchies(nodes)) {
     const root = workspace.getNodeById(hierarchy.id);
@@ -36,21 +39,23 @@ export function getAutoPositionedMappings(nodes: FlowNode[]): Map<string, XYPosi
 
     const tree = layout.hierarchy(hierarchy); // load hierarchy
     layout(tree); // compute layout
-    tree.each(treeNode =>
+    tree.each(treeNode => {
       // ! d3-flextree only supports vertical layouts, so we'll just swap width and height and coordinates to make it horizontal.
-      nodePositionMappings.set(treeNode.data.id, {
+      const currenPosition = workspace.getNodeById(treeNode.data.id).position;
+      const newPosition = {
         x: treeNode.y + rootPosition.x,
-        // d3-flextree gives positions as it they were centered on the edge that they connect to, so we must reorient y based on node + root height
         y:
           treeNode.x +
           rootPosition.y -
           workspace.getNodeById(treeNode.data.id).measured.height / 2 +
           rootHeight / 2,
-      }),
-    );
+      };
+      if (newPosition.x === currenPosition.x && newPosition.y === currenPosition.y) return;
+      updates.push([treeNode.data.id, { position: newPosition }]);
+    });
   }
 
-  return nodePositionMappings;
+  return updates;
 }
 
 /** Includes all children of the provided nodes. */

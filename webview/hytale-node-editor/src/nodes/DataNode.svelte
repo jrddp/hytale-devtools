@@ -3,7 +3,6 @@
   import { MessageCircleMore, Pencil } from "lucide-svelte";
   import { tick } from "svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
-  import { type DataNodeType, INPUT_HANDLE_ID } from "../common";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
@@ -12,6 +11,8 @@
   import NodeCommentEditor from "./NodeCommentEditor.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
   import { applyDocumentState } from "src/workspace.svelte";
+  import { PIN_WIDTH_PX } from "src/constants";
+  import { type DataNodeType } from "src/common";
 
   let { id, data, selected = false, dragging = false }: DataNodeType = $props();
 
@@ -25,12 +26,11 @@
     inputConnectionIndex,
   } = $derived(data);
 
-  const { updateNodeData, updateNode, getNodes, getEdges, updateEdge } = useSvelteFlow();
+  const { updateNodeData } = useSvelteFlow();
   const PIN_TOP_START_PX = 16;
   const PIN_TOP_STEP_PX = 32;
   const PIN_TOP_MAX_PX = 220;
   const PIN_BOTTOM_CLEARANCE_PX = 32;
-  const PIN_WIDTH = 10;
   const NODE_MIN_WIDTH_WITH_CONTENT_PX = 288;
   const NODE_MIN_WIDTH_WITHOUT_CONTENT_PX = 80;
 
@@ -41,11 +41,11 @@
     (hasContentFields ? NODE_MIN_WIDTH_WITH_CONTENT_PX : NODE_MIN_WIDTH_WITHOUT_CONTENT_PX) +
       outputLabelColumnWidth,
   );
-  let contentPaddingLeftPx = $derived(PIN_WIDTH + 8);
+  let contentPaddingLeftPx = $derived(PIN_WIDTH_PX + 8);
   let contentRightPaddingPx = $derived(outputLabelColumnWidth + 8);
   let pinLaneCount = $derived(Math.max(inputPins.length, outputPins.length));
   let contentMinHeightPx = $derived(
-    readPinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX,
+    calculatePinTopPx(pinLaneCount - 1, pinLaneCount) + PIN_BOTTOM_CLEARANCE_PX,
   );
   let nodeLabel = $derived(titleOverride ?? defaultTitle);
   let commentInputId = $derived(`comment-${id ?? "node"}`);
@@ -155,39 +155,11 @@
     applyDocumentState("custom-field-updated");
   }
 
-  function readPinLabel(pin) {
-    if (typeof pin?.label === "string") {
-      return pin.label;
-    }
-
-    if (typeof pin?.id === "string") {
-      return pin.id;
-    }
-
-    return "";
-  }
-
-  function readOutputPinConnectionMultiplicity(pin) {
-    if (pin?.isMap === true) {
-      return "map";
-    }
-
-    if (pin?.multiple === true) {
-      return "multiple";
-    }
-
-    return "single";
-  }
-
-  function readPinTop(index, totalPins) {
-    return `${readPinTopPx(index, totalPins)}px`;
-  }
-
-  function readPinTopPx(index, totalPins) {
-    const total = Number(totalPins) || 1;
+  function calculatePinTopPx(index, totalPins?: number) {
+    totalPins = totalPins ?? 1;
     const indexValue = Number(index) || 0;
     const availableRange = Math.max(0, PIN_TOP_MAX_PX - PIN_TOP_START_PX);
-    const spacing = total <= 1 ? 0 : Math.min(PIN_TOP_STEP_PX, availableRange / (total - 1));
+    const spacing = totalPins <= 1 ? 0 : Math.min(PIN_TOP_STEP_PX, availableRange / (totalPins - 1));
 
     return PIN_TOP_START_PX + indexValue * spacing;
   }
@@ -198,11 +170,11 @@
     }
 
     const maxLabelLength = pins.reduce(
-      (maxLength, pin) => Math.max(maxLength, readPinLabel(pin).length),
+      (maxLength, pin) => Math.max(maxLength, pin.label?.length ?? 0),
       0,
     );
 
-    const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH + 4;
+    const estimatedWidth = maxLabelLength * 7 + PIN_WIDTH_PX + 4;
     return estimatedWidth;
   }
 </script>
@@ -239,13 +211,13 @@
           aria-label="Node title bar"
         >
           <button
-            class="min-w-0 font-bold text-left border border-transparent rounded-md select-none text-vsc-input-fg cursor-grab active:cursor-grabbing my-auto"
+            class="min-w-0 my-auto font-bold text-left border border-transparent rounded-md select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
             type="button"
             ondblclick={beginTitleEditing}
             onkeydown={handleTitleDisplayKeydown}
           >
             {#if inputConnectionIndex !== undefined}
-              <span class="text-vsc-muted text-xs font-medium">{`[${inputConnectionIndex}]`}</span>
+              <span class="text-xs font-medium text-vsc-muted">{`[${inputConnectionIndex}]`}</span>
             {/if}
             <span>{nodeLabel}</span>
           </button>
@@ -290,17 +262,13 @@
     style="padding-left: {contentPaddingLeftPx}px; padding-right: {contentRightPaddingPx}px; min-height: {contentMinHeightPx}px;"
   >
     {#each inputPins as pin, index}
-      {@const pinTop = readPinTop(index, inputPins.length)}
-      {@const pinLabel = readPinLabel(pin)}
+      {@const pinTop = calculatePinTopPx(1, 1)}
       <NodePinHandle
+        nodeId={id}
+        {pin}
         type="target"
-        side="left"
-        id={INPUT_HANDLE_ID + (index > 0 ? `-${index}` : "")}
-        top={pinTop}
-        width={PIN_WIDTH}
-        label={pinLabel}
         showTooltip={inputPins.length > 1}
-        color={pin.color}
+        style="top: {pinTop}px;"
       />
     {/each}
 
@@ -315,22 +283,19 @@
     </div>
 
     {#each outputPins as pin, index}
-      {@const pinTop = readPinTop(index, outputPins.length)}
-      {@const pinMultiplicity = readOutputPinConnectionMultiplicity(pin)}
+      {@const pinTop = calculatePinTopPx(index, outputPins.length)}
       <NodePinHandle
+        nodeId={id}
+        {pin}
         type="source"
-        side="right"
-        id={pin.schemaKey}
-        top={pinTop}
-        width={PIN_WIDTH}
-        color={pin.color}
-        connectionMultiplicity={pinMultiplicity}
+        showTooltip={inputPins.length > 1}
+        style="top: {pinTop}px;"
       />
       <div
         class="pointer-events-none absolute pr-1 -translate-y-1/2 text-right text-[11px] text-vsc-muted whitespace-nowrap"
-        style="top: {pinTop}; right: {PIN_WIDTH}px;"
+        style="top: {pinTop}px; right: {PIN_WIDTH_PX}px;"
       >
-        {readPinLabel(pin)}
+        {pin.label}
       </div>
     {/each}
   </div>

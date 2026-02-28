@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
 import { detectHytaleModWorkspace, rewriteLaunchArgs } from './changeModPatchline';
 import { safeParseJSONFile } from '../shared/fileUtils';
+import { isObject } from '../shared/typeUtils';
 
 const LAUNCH_CONFIG_RELATIVE_PATH = path.join('.vscode', 'launch.json');
 const COMPANION_CONFIG_RELATIVE_PATH = path.join('run', 'mods', 'kokeria_HytaleDevtoolsCompanion', 'config.json');
@@ -267,6 +268,3 @@ function normalizePathForJson(value: string): string {
     return value.replace(/\\/g, '/');
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null;
-}

@@ -1798,7 +1798,6 @@ public final class AssetRegistryExportService {
                 .thenComparing(record -> Objects.requireNonNullElse(record.file, ""));
     }
 
-    @Nonnull
     private static void writeArtifactsStage(
             @Nonnull Path outputDirectory,
             @Nonnull ExportContext context,

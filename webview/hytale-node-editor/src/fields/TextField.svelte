@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { FieldProps } from "../utils/fieldUtils";
+  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "../node-editor/ui/focusNavigation";
-  import { noMousePropogation } from "../utils/fieldUtils";
+  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
 
   let {
     inputId,

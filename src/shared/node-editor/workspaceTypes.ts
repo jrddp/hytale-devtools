@@ -30,7 +30,7 @@ export interface NodeField {
 }
 
 export interface NodePin {
-  schemaKey: string | null; // null for input pins
+  schemaKey: string; // null for input pins
   label?: string;
   color?: string;
   localId: string;

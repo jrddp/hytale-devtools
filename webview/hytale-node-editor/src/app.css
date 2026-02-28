@@ -1,38 +1,38 @@
 @import "tailwindcss";
 
 @theme inline {
-	--color-vsc-fg: var(--vscode-foreground);
-	--color-vsc-editor-fg: var(--vscode-editor-foreground);
-	--color-vsc-editor-widget-bg: var(--vscode-editorWidget-background);
-	--color-vsc-editor-widget-border: var(--vscode-editorWidget-border);
-	--color-vsc-input-bg: var(--vscode-input-background);
-	--color-vsc-input-fg: var(--vscode-input-foreground);
-	--color-vsc-input-border: var(--vscode-input-border);
-	--color-vsc-muted: var(--vscode-descriptionForeground);
-	--color-vsc-focus: var(--vscode-focusBorder);
-	--color-vsc-list-hover: var(--vscode-list-hoverBackground);
-	--color-vsc-list-active-bg: var(--vscode-list-activeSelectionBackground);
-	--color-vsc-list-active-fg: var(--vscode-list-activeSelectionForeground);
-	--color-vsc-button-secondary-bg: var(--vscode-button-secondaryBackground);
-	--color-vsc-button-secondary-fg: var(--vscode-button-secondaryForeground);
-	--color-vsc-button-secondary-hover: var(--vscode-button-secondaryHoverBackground);
-	--color-vsc-button-border: var(--vscode-button-border);
-	--color-vsc-error: var(--vscode-errorForeground);
+  --color-vsc-fg: var(--vscode-foreground);
+  --color-vsc-editor-fg: var(--vscode-editor-foreground);
+  --color-vsc-editor-widget-bg: var(--vscode-editorWidget-background);
+  --color-vsc-editor-widget-border: var(--vscode-editorWidget-border);
+  --color-vsc-input-bg: var(--vscode-input-background);
+  --color-vsc-input-fg: var(--vscode-input-foreground);
+  --color-vsc-input-border: var(--vscode-input-border);
+  --color-vsc-muted: var(--vscode-descriptionForeground);
+  --color-vsc-focus: var(--vscode-focusBorder);
+  --color-vsc-list-hover: var(--vscode-list-hoverBackground);
+  --color-vsc-list-active-bg: var(--vscode-list-activeSelectionBackground);
+  --color-vsc-list-active-fg: var(--vscode-list-activeSelectionForeground);
+  --color-vsc-button-secondary-bg: var(--vscode-button-secondaryBackground);
+  --color-vsc-button-secondary-fg: var(--vscode-button-secondaryForeground);
+  --color-vsc-button-secondary-hover: var(--vscode-button-secondaryHoverBackground);
+  --color-vsc-button-border: var(--vscode-button-border);
+  --color-vsc-error: var(--vscode-errorForeground);
 }
 
 @layer base {
-	html,
-	body,
-	#app {
-		width: 100%;
-		height: 100%;
-	}
+  html,
+  body,
+  #app {
+    width: 100%;
+    height: 100%;
+  }
 
-	body {
-		margin: 0;
-		padding: 0;
-		font-family: var(--vscode-font-family, sans-serif);
-		color: var(--vscode-editor-foreground);
-		background: var(--vscode-editor-background);
-	}
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--vscode-font-family, sans-serif);
+    color: var(--vscode-editor-foreground);
+    background: var(--vscode-editor-background);
+  }
 }

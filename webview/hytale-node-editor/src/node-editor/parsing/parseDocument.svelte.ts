@@ -3,50 +3,34 @@ import {
   type GroupJson,
   type NodeAssetJson,
 } from "@shared/node-editor/assetTypes";
-import { workspace } from "src/workspace.svelte";
-import {
-  COMMENT_NODE_TYPE,
-  type CommentNodeType,
-  DATA_NODE_TYPE,
-  type DataNodeData,
-  type DataNodeType,
-  DEFAULT_RAW_JSON_TEXT,
-  type FlowEdge,
-  type FlowNode,
-  GROUP_NODE_TYPE,
-  type GroupNodeType,
-  INPUT_HANDLE_ID,
-  LINK_NODE_TYPE,
-  LINK_OUTPUT_HANDLE_ID,
-  type LinkNodeType,
-  RAW_JSON_NODE_TYPE,
-  type RawJsonNodeType,
-} from "../../../common";
-import { type WorkspaceState } from "../../../workspace.svelte";
-import { createNodeId } from "../../utils/idUtils";
-import { isObject } from "../../utils/valueUtils";
-import {
-  createCommentNodeType,
-  createDataNodeType,
-  createGroupNodeType,
-  createLinkNodeType,
-  createRawJsonNodeType,
-} from "src/node-editor/utils/nodeUtils.svelte";
+import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
+import { type DataNodeType, type FlowEdge, type FlowNode, type GroupNodeType } from "src/common";
+import { DEFAULT_RAW_JSON_TEXT, LINK_OUTPUT_HANDLE_ID } from "src/constants";
+import {
+  COMMENT_TEMPLATE,
+  createNodeFromTemplate,
+  GROUP_TEMPLATE,
+  LINK_TEMPLATE,
+  RAW_JSON_TEMPLATE,
+} from "src/node-editor/utils/nodeFactory.svelte";
+import { workspace } from "src/workspace.svelte";
+import { type WorkspaceState } from "../../workspace.svelte";
+import { createNodeId } from "../utils/idUtils";
+import { isObject } from "../utils/valueUtils";
 
 function groupNodeFromJson(groupJson: GroupJson): GroupNodeType {
-  return createGroupNodeType(
-    groupJson.$NodeId ?? createNodeId("Group"),
+  return createNodeFromTemplate(
+    GROUP_TEMPLATE,
     {
       x: groupJson.$Position.$x,
       y: groupJson.$Position.$y,
     },
-    groupJson.$width,
-    groupJson.$height,
+    null,
     {
-      name: groupJson.$name,
+      titleOverride: groupJson.$name,
     },
-  );
+  ) as GroupNodeType;
 }
 
 export function parseDocumentText(text: string): WorkspaceState {
@@ -204,10 +188,10 @@ export function parseDocumentText(text: string): WorkspaceState {
         unparsedMetadata[key] = localRoot[key];
       }
 
-      const dataNode = createDataNodeType(
-        nodeId,
-        { x: position.$x, y: position.$y },
+      const dataNode = createNodeFromTemplate(
         clonedTemplateData,
+        { x: position.$x, y: position.$y },
+        nodeId,
         {
           unparsedMetadata,
           comment: localRoot.$Comment,
@@ -223,9 +207,10 @@ export function parseDocumentText(text: string): WorkspaceState {
       Object.entries(localRoot).forEach(([key, value]) => {
         if (!key.startsWith("$")) data[key] = value;
       });
-      const jsonNode = createRawJsonNodeType(
-        nodeId,
+      const jsonNode = createNodeFromTemplate(
+        RAW_JSON_TEMPLATE,
         { x: position.$x, y: position.$y },
+        nodeId,
         { jsonString: data ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT },
       );
       addNode(jsonNode);
@@ -256,10 +241,10 @@ export function parseDocumentText(text: string): WorkspaceState {
     }
     // # $Links
     for (const [linkId, linkData] of Object.entries(nodeEditorMetadata.$Links ?? {})) {
-      const linkNode = createLinkNodeType(
-        linkId,
+      const linkNode = createNodeFromTemplate(
+        LINK_TEMPLATE,
         { x: linkData.$Position.$x, y: linkData.$Position.$y },
-        {},
+        linkId,
       );
       addNode(linkNode);
 
@@ -297,10 +282,15 @@ export function parseDocumentText(text: string): WorkspaceState {
     }
     // # $Comments
     for (const commentJson of nodeEditorMetadata.$Comments ?? []) {
-      const commentNode = createCommentNodeType(
-        commentJson.$NodeId ?? createNodeId("Comment"),
+      const commentNode = createNodeFromTemplate(
+        COMMENT_TEMPLATE,
         { x: commentJson.$Position.$x, y: commentJson.$Position.$y },
-        { name: commentJson.$name, text: commentJson.$text, fontSize: commentJson.$fontSize },
+        commentJson.$NodeId ?? createNodeId("Comment"),
+        {
+          titleOverride: commentJson.$name,
+          comment: commentJson.$text,
+          fontSize: commentJson.$fontSize,
+        },
       );
       addNode(commentNode);
     }

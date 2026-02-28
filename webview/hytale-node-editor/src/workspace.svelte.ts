@@ -1,12 +1,17 @@
 import {
+  type ActionRequest,
   type NodeEditorControlScheme,
   type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
-import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
+import {
+  type NodeEditorWorkspaceContext,
+  type NodeTemplate,
+} from "@shared/node-editor/workspaceTypes";
+import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
 import { type FlowEdge, type FlowNode, type VSCodeApi } from "src/common";
-import { serializeDocument } from "src/node-editor/parsing/serialize/serializeDocument";
+import { serializeDocument } from "src/node-editor/parsing/serializeDocument";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 
 export type SelectionType = "replace" | "add";
@@ -21,7 +26,8 @@ export interface WorkspaceState {
 class NodeRBush extends RBush<FlowNode> {
   toBBox(node: FlowNode) {
     const { x, y } = getAbsolutePosition(node);
-    const { width, height } = node.measured;
+    const { width, height } = node.measured ?? { width: node.width, height: node.height };
+    if (width == undefined || height == undefined) return undefined;
     return { minX: x, minY: y, maxX: x + width, maxY: y + height };
   }
 }
@@ -32,11 +38,14 @@ export class Workspace {
   platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
   arePositionsSet = $state(true);
+  areNodesMeasured = $derived(!!this.getRootNode()?.measured?.width);
+
+  actionRequests = $state<ActionRequest[]>([]);
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
   rootNodeId = $state<string>();
-  vscode = $state<VSCodeApi>();
+  vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
 
@@ -85,8 +94,8 @@ export class Workspace {
     return this.nodesById.get(nodeId);
   }
 
-  getRootNode() {
-    return this.getNodeById(this.rootNodeId);
+  getRootNode(): FlowNode {
+    return this.getNodeById(this.rootNodeId!)!;
   }
 
   searchNodesCollidingWith(bbox: BBox) {
@@ -117,6 +126,19 @@ export class Workspace {
     return this.incomingConnections.get(nodeId);
   }
 
+  getValidTemplates(variantKindOrTemplateId: string | undefined): NodeTemplate[] {
+    const variantKind = this.context.variantKindsById[variantKindOrTemplateId];
+    if (variantKind) {
+      return Object.values(variantKind.Variants).map(
+        templateId => this.context.nodeTemplatesById[templateId],
+      );
+    }
+    if (variantKindOrTemplateId) {
+      return [this.context.nodeTemplatesById[variantKindOrTemplateId]];
+    }
+    return Object.values(this.context.nodeTemplatesById);
+  }
+
   selectNode(nodeId: string, selectionType: SelectionType): void {
     this.nodes = this.nodes.map(node => {
       if (node.id === nodeId) {
@@ -130,6 +152,14 @@ export class Workspace {
         }
       }
     });
+  }
+
+  addEdges(addedEdges: Connection[] | FlowEdge[]): void {
+    let newEdges = this.edges;
+    for (const edge of addedEdges) {
+      newEdges = addEdge(edge, newEdges);
+    }
+    this.edges = newEdges;
   }
 
   selectNodes(nodeIds: string[], selectionType: SelectionType): void {
