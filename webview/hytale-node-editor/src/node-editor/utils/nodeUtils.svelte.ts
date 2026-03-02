@@ -110,15 +110,6 @@ export function recalculateGroupParents() {
   // note: it's important that we retain the original order of nonGroupNodes, otherwise it will cause Z-flickering
   nonGroupNodes = nonGroupNodes.map(node => {
     const parentId = parentRemappings.get(node.id);
-    if (parentId != null) {
-      console.log("parent", workspace.getNodeById(parentId));
-      console.log("node", node);
-      console.log("parent position", $state.snapshot(workspace.getNodeById(parentId).position));
-      console.log("child position", $state.snapshot(node).position);
-      console.log("new position", getPositionRelativeTo(node, workspace.getNodeById(parentId)));
-      console.log("current child position", node.position);
-      console.log("current parent position", workspace.getNodeById(parentId)?.position);
-    }
     return {
       ...node,
       parentId,

@@ -50,6 +50,9 @@ export class Workspace {
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
   areNodesMeasured = $derived(this.nodes.every(node => node.measured !== undefined));
 
+  /** Nodes that have been copied to the clipboard normalized to their collective center */
+  copiedNodes = $state<FlowNode[]>([]);
+
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));
   /** Gets effective selection of nodes - including children of directly selected nodes */

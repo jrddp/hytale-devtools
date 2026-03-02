@@ -20,7 +20,9 @@
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { logVSCodeTheme } from "src/node-editor/dev/mockVSCodeTheme";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
+  import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import {
+    getAbsoluteCenterPosition,
     getAbsolutePosition,
     getSiblingOrderUpdates,
     isValidConnection,
@@ -40,6 +42,7 @@
     setViewport,
     updateNodeData,
     updateNode,
+    deleteElements,
   } = useSvelteFlow();
 
   const viewport = useViewport();
@@ -230,6 +233,7 @@
         addMenuInstance = undefined;
         searchMenuInstance = undefined;
         captured = true;
+        workspace.selectNodes([], "replace");
         break;
     }
 
@@ -239,36 +243,85 @@
     }
   }
 
-  // ! window event
+  /** @returns deep-copy clones of the nodes with their positions relative to their collective center */
+  function normalizeNodePositions(nodes: FlowNode[]) {
+    let minX = Number.POSITIVE_INFINITY,
+      minY = Number.POSITIVE_INFINITY,
+      maxX = Number.NEGATIVE_INFINITY,
+      maxY = Number.NEGATIVE_INFINITY;
+
+    for (const node of nodes) {
+      const position = getAbsoluteCenterPosition(node);
+      minX = Math.min(minX, position.x);
+      minY = Math.min(minY, position.y);
+      maxX = Math.max(maxX, position.x);
+      maxY = Math.max(maxY, position.y);
+    }
+
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    return nodes.map(node => {
+      structuredClone($state.snapshot(node));
+      const absolutePosition = getAbsolutePosition(node);
+      return {
+        ...node,
+        position: {
+          x: absolutePosition.x - centerX,
+          y: absolutePosition.y - centerY,
+        },
+        parentId: undefined,
+      };
+    });
+  }
+
   function handleWindowCopy(event: ClipboardEvent) {
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
-    // TODO implement
+    workspace.copiedNodes = normalizeNodePositions(workspace.getEffectivelySelectedNodes());
 
     event.preventDefault();
     event.stopPropagation();
   }
 
-  // ! window event
   function handleWindowCut(event: ClipboardEvent) {
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
-    // TODO implement
 
-    clearPendingConnection("both", true);
+    const nodesCut = workspace.getEffectivelySelectedNodes();
+    deleteElements({ nodes: nodesCut })
+    workspace.copiedNodes = normalizeNodePositions(nodesCut);
+    
     applyDocumentState("nodes-cut");
     event.preventDefault();
     event.stopPropagation();
   }
 
-  // ! window event
   function handleWindowPaste(event: ClipboardEvent) {
-    // TODO implement
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
+    const mouseFlowPosition = screenToFlowPosition(cursorPos);
+
+    // deselect existing nodes
+    workspace.nodes.forEach(node => {
+      updateNode(node.id, { selected: false });
+    });
+    
+    const pastedNodes = workspace.copiedNodes.map(node => {
+      return {
+        ...node,
+        position: {
+          x: node.position.x + mouseFlowPosition.x,
+          y: node.position.y + mouseFlowPosition.y,
+        },
+        selected: true,
+        id: node.id.split("-")[0] + "-" + createUuidV4(),
+      };
+    });
+
+    workspace.nodes = [...workspace.nodes, ...pastedNodes];
     applyDocumentState("nodes-pasted");
     event.preventDefault();
     event.stopPropagation();
