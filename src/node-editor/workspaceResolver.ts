@@ -318,9 +318,10 @@ export function getNodeEditorWorkspaces(fromPath: string): Record<string, NodeEd
 }
 
 export function resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceContext | null {
-  const subpathMatch = Object.keys(WORKSPACE_PATH_RULES).filter(subpath =>
-    assetPath.includes(subpath),
-  )[0];
+  const normalizedAssetPath = normalizeFileSystemPath(assetPath);
+  const subpathMatch = Object.keys(WORKSPACE_PATH_RULES).find(subpath =>
+    normalizedAssetPath.includes(subpath),
+  );
   if (!subpathMatch) {
     return null;
   }
@@ -370,4 +371,8 @@ export function resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceC
     rootTemplateOrVariantId: rootDefinition.RootNodeType,
     rootMenuName: rootDefinition.MenuName,
   };
+}
+
+function normalizeFileSystemPath(filePath: string): string {
+  return filePath.replace(/\\/g, "/");
 }
