@@ -65,6 +65,7 @@ interface NodeContentDefinition {
     Label?: string;
     Default?: unknown;
     Width?: number;
+    Fields?: NodeContentDefinition[];
     [key: string]: unknown;
   };
 }
@@ -155,22 +156,24 @@ function contentTypeToFieldComponentType(type: NodeContentDefinitionType): Field
   }
 }
 
+function fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeField[] {
+  return content.map(content => {
+    return {
+      schemaKey: content.Id,
+      localId: content.Id,
+      type: contentTypeToFieldComponentType(content.Type),
+      label: content.Options?.Label,
+      value: content.Options?.Default,
+      inputWidth: content.Options?.Width,
+      subfields: content.Options?.Fields
+        ? fieldsFromContentDefinitions(content.Options.Fields)
+        : undefined,
+    };
+  });
+}
+
 // from exact json definition to optimized usage structure
 function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplate {
-  const fieldsByLocalId = definition.Content?.reduce(
-    (map, content) => {
-      map[content.Id] = {
-        schemaKey: null,
-        type: contentTypeToFieldComponentType(content.Type),
-        label: content.Options?.Label,
-        value: content.Options?.Default,
-        inputWidth: content.Options?.Width,
-      };
-      return map;
-    },
-    {} as Record<string, NodeField>,
-  );
-
   const inputPins: NodePin[] =
     definition.Inputs?.map((input, idx) => {
       return {
@@ -197,6 +200,11 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
       },
       {} as Record<string, NodePin>,
     ) ?? {};
+
+  const fieldsByLocalId: Record<string, NodeField> = {};
+  for (const field of fieldsFromContentDefinitions(definition.Content ?? [])) {
+    fieldsByLocalId[field.localId] = field;
+  }
 
   const fieldsBySchemaKey: Record<string, NodeField> = {};
   const childTypes: Record<string, string> = {};

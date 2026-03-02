@@ -6,10 +6,11 @@ export type FieldProps<T> = {
 };
 
 export function buildFieldInputId(
-  nodeId: string | undefined,
-  schemaKey: string | undefined,
+  nodeId: string,
+  schemaKey: string,
+  parentSchemaKey?: string,
 ): string {
-  return ["field", nodeId, schemaKey].join("-");
+  return ["field", nodeId, parentSchemaKey, schemaKey].filter(Boolean).join("-");
 }
 
 /** Expand this object on field elements to prevent pointer events from propagating to Svelte Flow and selecting the node */

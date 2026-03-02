@@ -26,7 +26,7 @@
 <BaseNode {id} {...props}>
   <div class="flex flex-col gap-2">
     {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field]}
-      <FieldEditor nodeId={id} {...field} onvalidate={value => updateField(schemaKey, value)} />
+      <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
     {/each}
   </div>
 </BaseNode>

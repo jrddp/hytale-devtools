@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { NodeField } from "@shared/node-editor/workspaceTypes";
   import { isObject } from "@shared/typeUtils";
   import { Panel, type XYPosition } from "@xyflow/svelte";
   import { Search } from "lucide-svelte";
@@ -40,6 +41,19 @@
     inputId?: string;
   }
 
+  const aggregateEntries = (entryList: ContentEntry[], fields: NodeField[], parentTag?: string,  parentObject?: object): void => {
+    for (const field of fields) {
+      const value = parentObject ? parentObject[field.schemaKey] : field.value;
+      let str = parentTag ? parentTag + "." : "";
+      str += (field.label ?? field.schemaKey);
+      if (isObject(value)) {
+        aggregateEntries(entryList, field.subfields ?? [], str, value as object);
+      } else {
+        entryList.push({ content: (str + ": " + String(value)).trim() });
+      }
+    }
+  }
+
   /** @returns {content, itemid?} where itemid is the calculated ID of any field item that should be focused upon selection */
   function getInnerContent(node: FlowNode): ContentEntry[] {
     const content: ContentEntry[] = [{ content: node.data.templateId }];
@@ -50,21 +64,7 @@
       // todo give json string unique id
       content.push({ content: node.data.jsonString as string });
     }
-    for (const field of Object.values(node.data.fieldsBySchemaKey)) {
-      if (field.value === undefined) {
-        continue;
-      }
-      let str = (field.label ?? field.schemaKey) + ":";
-      // we add the " " separately to make it easier to search deliberately for fields with values
-      if (isObject(field.value)) {
-        str += " " + JSON.stringify(field.value);
-      } else {
-        if (String(field.value).trim().length > 0) {
-          str += " " + String(field.value);
-        }
-      }
-      content.push({ content: str, inputId: buildFieldInputId(node.id, field.schemaKey) });
-    }
+    aggregateEntries(content, Object.values(node.data.fieldsBySchemaKey));
     // const parentList = getGroupList(node.id)
     //   .map(parent => workspace.getNodeById(parent))
     //   .map(parent => parent.data.titleOverride ?? parent.data.defaultTitle)

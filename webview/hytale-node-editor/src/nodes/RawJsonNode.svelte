@@ -30,5 +30,5 @@
 </script>
 
 <BaseNode {id} {...props}>
-  <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onvalidate={updateData} />
+  <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onconfirm={updateData} />
 </BaseNode>

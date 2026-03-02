@@ -27,6 +27,8 @@ export interface NodeField {
   label?: string;
   value?: unknown;
   inputWidth?: number;
+  subfields?: NodeField[];
+  localId: string;
 }
 
 export interface NodePin {

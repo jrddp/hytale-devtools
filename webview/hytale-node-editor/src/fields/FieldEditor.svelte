@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import ObjectField from "src/fields/ObjectField.svelte";
   import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import BooleanField from "./BooleanField.svelte";
   import EnumField from "./EnumField.svelte";
@@ -15,53 +16,47 @@
     type,
     label,
     value,
-    onvalidate,
-  }: NodeField & { nodeId?: string; onvalidate: (value: unknown) => void } = $props();
+    subfields,
+    onconfirm,
+    parentSchemaKey,
+  }: NodeField & {
+    nodeId?: string;
+    onconfirm: (value: unknown) => void;
+    parentSchemaKey?: string;
+    initialValue?: unknown;
+  } = $props();
 
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
-  const inputId = $derived(buildFieldInputId(nodeId, schemaKey));
+  const inputId = $derived(buildFieldInputId(nodeId, schemaKey, parentSchemaKey));
 </script>
 
 {#if type === "object"}
-  <!-- TODO implement object-type fields -->
-  <!-- <ObjectField {field} hasNestedFields={nestedFields.length > 0}>
-    {#each nestedFields as nestedField}
-      {#if typeof nestedField?.id === "string" && nestedField.id.trim()}
-        <svelte:self
-          field={nestedField}
-          value={currentValue?.[nestedField.id]}
-          on:change={event => updateNestedField(nestedField.id, event.detail.value)}
-        />
-      {/if}
-    {/each}
-  </ObjectField> -->
+  <ObjectField
+    {inputId}
+    {nodeId}
+    {schemaKey}
+    label={fieldLabel}
+    initialValue={value as object}
+    {onconfirm}
+    {subfields}
+  />
 {:else if type === "list"}
-  <ListField {inputId} label={fieldLabel} initialValue={value as string[]} onconfirm={onvalidate} />
+  <ListField {inputId} label={fieldLabel} initialValue={value as string[]} {onconfirm} />
 {:else if type === "enum"}
-  <EnumField {inputId} label={fieldLabel} initialValue={value as string} onconfirm={onvalidate} />
+  <EnumField {inputId} label={fieldLabel} initialValue={value as string} {onconfirm} />
 {:else if type === "filepath"}
-  <FilePathField
-    {inputId}
-    label={fieldLabel}
-    initialValue={value as string}
-    onconfirm={onvalidate}
-  />
+  <FilePathField {inputId} label={fieldLabel} initialValue={value as string} {onconfirm} />
 {:else if type === "intslider"}
-  <SliderField {inputId} label={fieldLabel} initialValue={value as number} onconfirm={onvalidate} />
+  <SliderField {inputId} label={fieldLabel} initialValue={value as number} {onconfirm} />
 {:else if type === "checkbox"}
-  <BooleanField
-    {inputId}
-    label={fieldLabel}
-    initialValue={value as boolean}
-    onconfirm={onvalidate}
-  />
+  <BooleanField {inputId} label={fieldLabel} initialValue={value as boolean} {onconfirm} />
 {:else if type === "int" || type === "float"}
   <NumberField
     {inputId}
     label={fieldLabel}
     initialValue={value as number}
     isFloat={type === "float"}
-    onconfirm={onvalidate}
+    {onconfirm}
   />
 {:else}
   <TextField
@@ -69,6 +64,6 @@
     label={fieldLabel}
     initialValue={value as string}
     multiline={type === "text"}
-    onconfirm={onvalidate}
+    {onconfirm}
   />
 {/if}

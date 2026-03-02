@@ -1,17 +1,28 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { type NodeField } from "@shared/node-editor/workspaceTypes";
+  import FieldEditor from "src/fields/FieldEditor.svelte";
+  import { type FieldProps } from "src/node-editor/utils/fieldUtils";
 
   let {
+    nodeId,
     inputId,
     label,
-    hasNestedFields = true,
-    children,
-  }: {
-    inputId: string;
-    label: string;
-    hasNestedFields?: boolean;
-    children?: Snippet;
-  } = $props();
+    initialValue,
+    onconfirm,
+    schemaKey,
+    subfields,
+  }: FieldProps<object> & { subfields: NodeField[]; nodeId: string; schemaKey: string } = $props();
+
+  let value = $derived<object>(initialValue ? structuredClone($state.snapshot(initialValue)) : {});
+  let lastCommittedValue = $derived<object>(initialValue ? structuredClone($state.snapshot(initialValue)) : {});
+
+  function confirmValue(schemaKey: string, childValue: unknown) {
+    value[schemaKey] = childValue;
+    if (JSON.stringify(value) !== JSON.stringify(lastCommittedValue)) {
+      lastCommittedValue = structuredClone($state.snapshot(value));
+      onconfirm(lastCommittedValue);
+    }
+  }
 </script>
 
 <div
@@ -20,10 +31,14 @@
 >
   <div class="text-xs font-bold uppercase text-vsc-muted">{label}</div>
   <div class="flex flex-col gap-1.5">
-    {#if hasNestedFields}
-      {@render children?.()}
-    {:else}
-      <div class="text-xs text-vsc-muted">No nested fields defined.</div>
-    {/if}
+    {#each subfields as field}
+      <FieldEditor
+        {nodeId}
+        parentSchemaKey={schemaKey}
+        {...field}
+        value={value[field.schemaKey]}
+        onconfirm={value => confirmValue(field.schemaKey, value)}
+      />
+    {/each}
   </div>
 </div>
