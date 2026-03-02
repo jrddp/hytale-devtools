@@ -4,6 +4,7 @@
   import { Search } from "lucide-svelte";
   import { type FlowNode } from "src/common";
   import { readColorForCss } from "src/node-editor/utils/colors";
+  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import { getAbsoluteCenterPosition } from "src/node-editor/utils/nodeUtils.svelte";
   import { workspace } from "src/workspace.svelte";
   import { onMount, untrack } from "svelte";
@@ -14,14 +15,14 @@
     viewportCenter,
   }: {
     oncancel: () => void;
-    onselection: (node: FlowNode, matchedContent: string) => void;
+    onselection: (node: FlowNode, inputId?: string) => void;
     viewportCenter: XYPosition;
   } = $props();
   interface SearchedNode {
     node: FlowNode;
     effectiveTitle: string;
     distanceToViewport: number;
-    innerContent: string[];
+    innerContent: ContentEntry[];
   }
 
   let searchQuery = $state("");
@@ -34,13 +35,20 @@
 
   const allNodes = $derived(workspace.nodes);
 
-  function getInnerContent(node: FlowNode): string[] {
-    const content = [node.data.templateId];
+  interface ContentEntry {
+    content: string;
+    inputId?: string;
+  }
+
+  /** @returns {content, itemid?} where itemid is the calculated ID of any field item that should be focused upon selection */
+  function getInnerContent(node: FlowNode): ContentEntry[] {
+    const content: ContentEntry[] = [{ content: node.data.templateId }];
     if (node.data.comment) {
-      content.push(node.data.comment);
+      content.push({ content: node.data.comment });
     }
     if (node.data.jsonString) {
-      content.push(node.data.jsonString as string);
+      // todo give json string unique id
+      content.push({ content: node.data.jsonString as string });
     }
     for (const field of Object.values(node.data.fieldsBySchemaKey)) {
       if (field.value === undefined) {
@@ -51,9 +59,11 @@
       if (isObject(field.value)) {
         str += " " + JSON.stringify(field.value);
       } else {
-        str += " " + String(field.value);
+        if (String(field.value).trim().length > 0) {
+          str += " " + String(field.value);
+        }
       }
-      content.push(str);
+      content.push({ content: str, inputId: buildFieldInputId(node.id, field.schemaKey) });
     }
     // const parentList = getGroupList(node.id)
     //   .map(parent => workspace.getNodeById(parent))
@@ -83,15 +93,15 @@
   });
 
   // matched node and the subtitle to display (display searched content if the search matches something other than the title)
-  const matchedNodes: [SearchedNode, string][] = $derived.by(() => {
+  const matchedNodes: [SearchedNode, ContentEntry][] = $derived.by(() => {
     return enrichedNodes.reduce((acc, node) => {
       if (searchQuery.trim() === "") {
-        acc.push([node, node.node.data.templateId]);
+        acc.push([node, { content: node.node.data.templateId }]);
       } else if (node.effectiveTitle.toLowerCase().includes(searchQuery.toLowerCase())) {
-        acc.push([node, `Name: ${node.effectiveTitle}`]);
+        acc.push([node, { content: `Name: ${node.effectiveTitle}` }]);
       } else {
-        const contentMatch = node.innerContent.find(content =>
-          content.toLowerCase().includes(searchQuery.toLowerCase()),
+        const contentMatch = node.innerContent.find(entry =>
+          entry.content.toLowerCase().includes(searchQuery.toLowerCase()),
         );
         if (contentMatch) {
           acc.push([node, contentMatch]);
@@ -121,7 +131,7 @@
         break;
       case "Enter":
         if (matchedNodes.length === 0) return;
-        onselection(activeNode, matchedContent);
+        onselection(activeNode, matchedContent?.inputId);
         break;
       case "ArrowDown":
         if (matchedNodes.length === 0) return;
@@ -179,7 +189,7 @@
         {#if matchedNodes.length === 0}
           <div class="px-1 py-4 text-xs text-vsc-muted">No matching nodes</div>
         {:else}
-          {#each matchedNodes as [item, subtitle], index}
+          {#each matchedNodes as [item, contentMatch], index}
             {@const isActive = index === activeIndex}
             <button
               role="option"
@@ -191,6 +201,9 @@
               data-active={isActive}
               aria-selected={isActive}
               onpointerenter={() => (activeIndex = index)}
+              onclick={() => {
+                onselection(item.node, contentMatch.inputId);
+              }}
             >
               <span
                 aria-hidden="true"
@@ -200,7 +213,9 @@
 
               <div class="flex flex-col items-start justify-center ml-6">
                 <div class="font-semibold truncate">{item.effectiveTitle}</div>
-                <div class="text-xs truncate text-vsc-muted whitespace-nowrap">{subtitle}</div>
+                <div class="text-xs truncate text-vsc-muted whitespace-nowrap">
+                  {contentMatch.content}
+                </div>
               </div>
             </button>
           {/each}

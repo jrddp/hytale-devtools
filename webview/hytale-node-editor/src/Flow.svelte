@@ -20,7 +20,6 @@
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { logVSCodeTheme } from "src/node-editor/dev/mockVSCodeTheme";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
-  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import {
     getAbsolutePosition,
     getSiblingOrderUpdates,
@@ -452,17 +451,16 @@
           setViewport(searchMenuInstance!.initialViewport, { duration: 250 });
           searchMenuInstance = undefined;
         }}
-        onselection={(node, matchedContent) => {
+        onselection={(node, inputId) => {
           workspace.actionRequests.push({ type: "reveal-node", nodeId: node.id });
           workspace.selectNode(node.id, "replace");
           searchMenuInstance = undefined;
           // focus field that matched the search
-          const potentialSchemaKey = matchedContent.split(": ")[0];
-          if (node.data.fieldsBySchemaKey[potentialSchemaKey]) {
-            const id = buildFieldInputId(node.id, potentialSchemaKey);
-            const inputElement = document.getElementById(id);
+          if (inputId) {
+            const inputElement = document.getElementById(inputId);
             if (inputElement) {
               inputElement.focus();
+              // inputElement.select();
             }
           }
         }}
