@@ -1,6 +1,6 @@
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import tsParser from "@typescript-eslint/parser";
-import sveltePlugin from "eslint-plugin-svelte";
+import tsPlugin from "@typescript-eslint/eslint-plugin"
+import tsParser from "@typescript-eslint/parser"
+import sveltePlugin from "eslint-plugin-svelte"
 
 const consistentTypeImportsRule = [
   "warn",
@@ -42,12 +42,26 @@ export default [
   },
   ...sveltePlugin.configs["flat/base"],
   {
-    files: ["webview/**/*.svelte", "webview/**/*.svelte.ts"],
+    files: ["webview/**/*.svelte"],
     languageOptions: {
       parserOptions: {
         parser: tsParser,
         extraFileExtensions: [".svelte"],
       },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
+    rules: {
+      "@typescript-eslint/consistent-type-imports": consistentTypeImportsRule,
+    },
+  },
+  {
+    files: ["webview/**/*.svelte.ts", "webview/**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 2022,
+      sourceType: "module",
     },
     plugins: {
       "@typescript-eslint": tsPlugin,

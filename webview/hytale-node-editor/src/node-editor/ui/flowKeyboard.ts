@@ -23,7 +23,9 @@ function isEditableTarget(target: EventTarget | null | undefined) {
   return Boolean(element?.closest?.(EDITABLE_SELECTOR));
 }
 
-export function isShortcutBlockedByEditableTarget(eventTarget?: EventTarget | null) {
+export function isShortcutBlockedByEditableTarget(
+  eventTarget?: EventTarget | null,
+) {
   if (isEditableTarget(eventTarget)) {
     return true;
   }

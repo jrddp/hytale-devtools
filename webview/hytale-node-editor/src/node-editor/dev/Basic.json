@@ -1,0 +1,278 @@
+{
+  "$Title": "[ROOT] Biome",
+  "$Position": {
+    "$x": -4228,
+    "$y": -4226
+  },
+  "Name": "Basic",
+  "Terrain": {
+    "$Position": {
+      "$x": -3366,
+      "$y": -4882
+    },
+    "Type": "DAOTerrain",
+    "Density": {
+      "$Position": {
+        "$x": -3160,
+        "$y": -4896
+      },
+      "Type": "Sum",
+      "Skip": false,
+      "Inputs": [
+        {
+          "$Position": {
+            "$x": -2522,
+            "$y": -5102
+          },
+          "Type": "SimplexNoise2D",
+          "Skip": false,
+          "Lacunarity": 10,
+          "Persistence": 0.05,
+          "Octaves": 1,
+          "Scale": 150,
+          "Seed": "A"
+        },
+        {
+          "$Position": {
+            "$x": -2526,
+            "$y": -4727
+          },
+          "Type": "CurveMapper",
+          "Skip": false,
+          "Curve": {
+            "$Position": {
+              "$x": -1905,
+              "$y": -4491
+            },
+            "Type": "Manual",
+            "Points": [
+              {
+                "$Position": {
+                  "$x": -1252,
+                  "$y": -4633
+                },
+                "In": 0,
+                "Out": 1
+              },
+              {
+                "$Position": {
+                  "$x": -1245,
+                  "$y": -4481
+                },
+                "In": 50,
+                "Out": -1
+              }
+            ]
+          },
+          "Inputs": [
+            {
+              "$Position": {
+                "$x": -1888,
+                "$y": -4737
+              },
+              "Type": "BaseHeight",
+              "Skip": false,
+              "BaseHeightName": "Base",
+              "Distance": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "MaterialProvider": {
+    "$Position": {
+      "$x": -3434,
+      "$y": -4060
+    },
+    "Type": "Solidity",
+    "Solid": {
+      "$Position": {
+        "$x": -2735,
+        "$y": -4075
+      },
+      "Type": "Queue",
+      "Queue": [
+        {
+          "$Position": {
+            "$x": -2095,
+            "$y": -4064
+          },
+          "Type": "Constant",
+          "Material": {
+            "$Position": {
+              "$x": -1452,
+              "$y": -4072
+            },
+            "Solid": "Rock_Stone"
+          }
+        }
+      ]
+    },
+    "Empty": {
+      "$Position": {
+        "$x": -2763,
+        "$y": -3479
+      },
+      "Type": "Queue",
+      "Queue": [
+        {
+          "$Comment": "REQUIRED",
+          "$Position": {
+            "$x": -2103,
+            "$y": -3465
+          },
+          "Type": "Constant",
+          "Material": {
+            "$Position": {
+              "$x": -1460,
+              "$y": -3460
+            },
+            "Solid": "Empty"
+          }
+        }
+      ]
+    }
+  },
+  "Props": [
+    {
+      "$Position": {
+        "$x": -2435,
+        "$y": -3018
+      },
+      "Skip": false,
+      "Runtime": 0,
+      "Positions": {
+        "$Position": {
+          "$x": -1843,
+          "$y": -3106
+        },
+        "Type": "Mesh2D",
+        "Skip": false,
+        "PointsY": 0,
+        "PointGenerator": {
+          "$Position": {
+            "$x": -1145,
+            "$y": -3182
+          },
+          "Type": "Mesh",
+          "Jitter": 0,
+          "ScaleX": 20,
+          "ScaleY": 40,
+          "ScaleZ": 20,
+          "Seed": "A"
+        }
+      },
+      "Assignments": {
+        "$Position": {
+          "$x": -1903,
+          "$y": -2842
+        },
+        "Type": "Constant",
+        "Prop": {
+          "$Position": {
+            "$x": -1277,
+            "$y": -2834
+          },
+          "Type": "Box",
+          "Skip": false,
+          "BoxBlockType": "BoxBlockType",
+          "Range": {
+            "$Position": {
+              "$x": -457,
+              "$y": -2692
+            },
+            "X": 2,
+            "Y": 2,
+            "Z": 2
+          },
+          "Material": {
+            "$Position": {
+              "$x": -472,
+              "$y": -2398
+            },
+            "Solid": "Soil_Dirt"
+          },
+          "Pattern": {
+            "$Position": {
+              "$x": -633,
+              "$y": -2996
+            },
+            "Type": "Floor",
+            "Skip": false,
+            "Origin": {
+              "$Position": {
+                "$x": 18,
+                "$y": -3095
+              },
+              "Type": "BlockType",
+              "Skip": false,
+              "Material": {
+                "$Position": {
+                  "$x": 648,
+                  "$y": -3100
+                }
+              }
+            },
+            "Floor": {
+              "$Position": {
+                "$x": 17,
+                "$y": -2943
+              },
+              "Type": "BlockType",
+              "Skip": false,
+              "Material": {
+                "$Position": {
+                  "$x": 651,
+                  "$y": -2941
+                },
+                "Solid": "Rock_Stone"
+              }
+            }
+          },
+          "Scanner": {
+            "$Position": {
+              "$x": 15,
+              "$y": -2790
+            },
+            "Type": "ColumnLinear",
+            "Skip": false,
+            "MaxY": 320,
+            "MinY": 0,
+            "RelativeToPosition": false,
+            "TopDownOrder": true,
+            "ResultCap": 1
+          }
+        }
+      }
+    }
+  ],
+  "EnvironmentProvider": {
+    "$Position": {
+      "$x": -3336,
+      "$y": -2918
+    },
+    "Type": "Constant",
+    "Environment": "Env_Zone1_Plains"
+  },
+  "TintProvider": {
+    "$Position": {
+      "$x": -3329,
+      "$y": -2706
+    },
+    "Type": "Constant",
+    "Color": "#5b9e28"
+  },
+  "$WorkspaceID": "HytaleGenerator - Biome",
+  "$Groups": [
+    {
+      "$Position": {
+        "$x": -3188.3125,
+        "$y": -5176.3125
+      },
+      "$width": 2362.3125,
+      "$height": 938.9375,
+      "$name": "Base"
+    }
+  ]
+}

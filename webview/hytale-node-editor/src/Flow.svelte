@@ -17,6 +17,8 @@
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, nodeTypes } from "src/constants";
+  import { logVSCodeTheme } from "src/node-editor/dev/mockVSCodeTheme";
+  import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
   import {
     getSiblingOrderUpdates,
     isValidConnection,
@@ -28,13 +30,11 @@
   import type { FlowEdge, FlowNode } from "./common";
   import { isShortcutBlockedByEditableTarget } from "./node-editor/ui/flowKeyboard";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
-  import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
 
   const {
     fitView,
     screenToFlowPosition,
     setCenter: setViewportCenter,
-    setViewport,
     updateNodeData,
     updateNode,
   } = useSvelteFlow();
@@ -95,7 +95,7 @@
             node.position.y + node.measured!.height! / 2,
             {
               zoom: 1.2,
-              duration: 250,
+              duration: action.duration ?? 250,
             },
           );
           break;
@@ -150,6 +150,12 @@
             retained.push(action);
             break;
           }
+          // reorder siblings based on y position
+          nodes
+            .map(node => getSiblingOrderUpdates(node))
+            .flat()
+            .forEach(update => updateNodeData(...update));
+
           clearPendingConnection("both", true);
           recalculateGroupParents();
           break;
@@ -202,6 +208,7 @@
         if (event.metaKey) {
           console.log("workspace", workspace);
           if (workspace.selectedNodes) console.log(workspace.selectedNodes);
+          logVSCodeTheme();
         }
         captured = true;
         break;
@@ -263,6 +270,11 @@
     onpointermovecapture: (event: PointerEvent) => {
       cursorPos = { x: event.clientX, y: event.clientY };
     },
+    onpointerdown: (event: PointerEvent) => {
+      if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) addMenuInstance = undefined;
+      if (!(event.target as HTMLElement)?.closest("[data-search-menu]"))
+        searchMenuInstance = undefined;
+    },
   };
 
   // # Svelte Flow Events
@@ -295,22 +307,20 @@
     // ## On Connect End
     onconnectend: (event, connectionState) => {
       // spawn add menu if ended not on another pin and started from the parent node
-      if (!connectionState.isValid && connectionState.toPosition === Position.Left) {
+      if (connectionState.fromPosition === Position.Right && connectionState.toNode === null) {
+        const fromNode = workspace.getNodeById(connectionState.fromNode!.id);
+        const connectionFilter = fromNode.data.childTypes[connectionState.fromHandle!.id];
         addMenuInstance = {
           screenPosition: connectionState.pointer!,
           spawnPosition: screenToFlowPosition(connectionState.pointer!),
-          connectionFilter: connectionState.fromNode!.type,
+          connectionFilter: connectionFilter,
         };
+      } else {
+        clearPendingConnection("both", true);
       }
     },
     // ## On Node Drag Stop
     onnodedragstop: event => {
-      // reorder siblings based on y position
-      event.nodes
-        .map(node => getSiblingOrderUpdates(node))
-        .flat()
-        .forEach(update => updateNodeData(...update));
-
       recalculateGroupParents();
       applyDocumentState("node-moved");
     },
@@ -355,6 +365,7 @@
     // ## On Add Menu Cancel
     oncancel: () => {
       clearPendingConnection("both", true);
+      addMenuInstance = undefined;
     },
 
     // ## On Template Selection (create new node)
@@ -371,7 +382,8 @@
       }
       clearPendingConnection("both", false);
 
-      recalculateGroupParents();
+      // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
+      workspace.actionRequests.push({ type: "document-refresh" });
       addMenuInstance = undefined;
       applyDocumentState("node-created");
     },
@@ -385,6 +397,7 @@
   oncutcapture={windowEvents.oncutcapture}
   onpastecapture={windowEvents.onpastecapture}
   onpointermovecapture={windowEvents.onpointermovecapture}
+  onpointerdown={windowEvents.onpointerdown}
 />
 
 <div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>

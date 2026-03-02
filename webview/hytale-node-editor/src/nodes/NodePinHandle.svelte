@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Handle, Position } from "@xyflow/svelte";
-  import HoverTooltip from "../components/HoverTooltip.svelte";
-  import { readColorForCss } from "../node-editor/utils/colors";
   import { type NodePin } from "@shared/node-editor/workspaceTypes";
+  import { Handle, Position } from "@xyflow/svelte";
   import { PIN_WIDTH_PX } from "src/constants";
+  import { readColorForCss } from "../node-editor/utils/colors";
 
   const DIAMETER_PX = PIN_WIDTH_PX * 2;
 
@@ -11,13 +10,11 @@
     nodeId,
     pin,
     type,
-    showTooltip = false,
     ...props
   }: {
     nodeId: string;
     pin: NodePin;
     type: "target" | "source";
-    showTooltip?: boolean;
     class?: string;
     style?: string;
   } = $props();
@@ -25,54 +22,31 @@
   const id = $derived(pin.schemaKey);
 
   const side = $derived(type === "source" ? "right" : "left");
-  // $: pinSideClass = side === "right" ? "right-0" : "left-0";
 
   const cssColor = $derived(readColorForCss(pin.color));
 
-  const shapeClass = $derived(
-    pin.multiplicity === "map" || pin.multiplicity === "multiple"
-      ? "rounded-none"
-      : side === "right"
-        ? "rounded-l-full"
-        : "rounded-r-full",
-  );
-
-  const clipPath = $derived(
-    pin.multiplicity === "map"
-      ? side === "left"
-        ? "polygon(0 0, 100% 50%, 0 100%)"
-        : "polygon(100% 0, 0 50%, 100% 100%)"
-      : undefined,
-  );
+  const clipPath = $derived.by(() => {
+    switch (pin.multiplicity) {
+      case "single":
+        // half-circle
+        return side === "left" ? "ellipse(100% 50% at 0% 50%)" : "ellipse(100% 50% at 100% 50%)";
+      case "multiple":
+        // rectangle
+        return "none";
+      case "map":
+        // half-hexagon
+        return side === "left"
+          ? "polygon(100% 25%, 50% 0, 0 0, 0 100%, 50% 100%, 100% 75%)"
+          : "polygon(0 25%, 50% 0, 100% 0, 100% 100%, 50% 100%, 0 75%)";
+    }
+  });
 </script>
 
 <Handle
   {id}
   {type}
   position={side == "left" ? Position.Left : Position.Right}
-  style="height: {DIAMETER_PX}px; {props.style}"
-  class="bg-transparent! w-px! min-w-0! min-h-0! border-none! overflow-visible! transform-[translate(0,-50%)] {props.class}"
->
-  {#if showTooltip && pin.label}
-    <HoverTooltip
-      text={pin.label}
-      placement={side}
-      wrapperClass="block"
-      style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px;"
-    >
-      <span
-        aria-hidden="true"
-        class="absolute top-1/2 -translate-y-1/2 {shapeClass} {side == 'left' ? 'left-0' : 'right-0'}"
-        style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px; background-color: {cssColor}; clip-path: {clipPath ||
-          'none'};"
-      ></span>
-    </HoverTooltip>
-  {:else}
-    <span
-      aria-hidden="true"
-      class="absolute top-1/2 -translate-y-1/2 {shapeClass} {side == 'left' ? 'left-0' : 'right-0'}"
-      style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px; background-color: {cssColor}; clip-path: {clipPath ||
-        'none'};"
-    ></span>
-  {/if}
-</Handle>
+  style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px; background-color: {cssColor}; clip-path: {clipPath ||
+    'none'}; {props.style}"
+  class="relative! top-auto! rounded-none! border-none! transform-none! {props.class}"
+/>

@@ -20,13 +20,15 @@ export interface WorkspaceState {
   nodes: FlowNode[];
   edges: FlowEdge[];
   rootNodeId: string;
-  arePositionsSet: boolean;
 }
 
 class NodeRBush extends RBush<FlowNode> {
   toBBox(node: FlowNode) {
     const { x, y } = getAbsolutePosition(node);
-    const { width, height } = node.measured ?? { width: node.width, height: node.height };
+    const { width, height } = node.measured ?? {
+      width: node.width,
+      height: node.height,
+    };
     if (width == undefined || height == undefined) return undefined;
     return { minX: x, minY: y, maxX: x + width, maxY: y + height };
   }
@@ -37,8 +39,6 @@ export class Workspace {
   controlScheme = $state<NodeEditorControlScheme>("mouse");
   platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
-  arePositionsSet = $state(true);
-  areNodesMeasured = $derived(!!this.getRootNode()?.measured?.width);
 
   actionRequests = $state<ActionRequest[]>([]);
 
@@ -48,6 +48,7 @@ export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
+  areNodesMeasured = $derived(this.nodes.every(node => node.measured !== undefined));
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));
@@ -136,7 +137,7 @@ export class Workspace {
     if (variantKindOrTemplateId) {
       return [this.context.nodeTemplatesById[variantKindOrTemplateId]];
     }
-    return Object.values(this.context.nodeTemplatesById);
+    return [];
   }
 
   selectNode(nodeId: string, selectionType: SelectionType): void {
@@ -207,6 +208,7 @@ export function applyDocumentState(reason?: string) {
     sourceVersion: workspace.sourceVersion,
   };
 
+  workspace.actionRequests.push({ type: "document-refresh" });
   workspace.vscode.postMessage(payload);
   workspace.sourceVersion++;
 }

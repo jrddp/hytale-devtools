@@ -15,7 +15,7 @@ export type VSCodeApi = {
   setState?: (state: Record<string, unknown>) => unknown;
 };
 
-export type NodeBase = Record<string, unknown> &
+export type NodeBaseData = Record<string, unknown> &
   NodeTemplate & {
     // if this is a child of a multiple/map type pin, this indicates the list order among its siblings
     inputConnectionIndex?: number;
@@ -25,26 +25,29 @@ export type NodeBase = Record<string, unknown> &
 
 // non-metadata nodes
 
-export type DataNodeData = NodeBase & {
+export type DataNodeData = NodeBaseData & {
   unparsedMetadata?: Record<string, unknown>;
 };
 
-export type RawJsonNodeData = NodeBase & {
+export type RawJsonNodeData = NodeBaseData & {
   jsonString: string;
 };
 
-export type LinkNodeData = NodeBase & {};
+export type LinkNodeData = NodeBaseData & {};
 
-export type GroupNodeData = NodeBase;
+export type GroupNodeData = NodeBaseData;
 
-export type CommentNodeData = NodeBase & {
+export type CommentNodeData = NodeBaseData & {
   fontSize?: number;
 };
 
 export type DataNodeType = Node<DataNodeData, typeof DATA_NODE_TYPE> & {
   type: typeof DATA_NODE_TYPE;
 };
-export type RawJsonNodeType = Node<RawJsonNodeData, typeof RAW_JSON_NODE_TYPE> & {
+export type RawJsonNodeType = Node<
+  RawJsonNodeData,
+  typeof RAW_JSON_NODE_TYPE
+> & {
   type: typeof RAW_JSON_NODE_TYPE;
 };
 export type LinkNodeType = Node<LinkNodeData, typeof LINK_NODE_TYPE> & {
@@ -56,7 +59,10 @@ export type GroupNodeType = Node<GroupNodeData, typeof GROUP_NODE_TYPE> & {
   width: number;
   height: number;
 };
-export type CommentNodeType = Node<CommentNodeData, typeof COMMENT_NODE_TYPE> & {
+export type CommentNodeType = Node<
+  CommentNodeData,
+  typeof COMMENT_NODE_TYPE
+> & {
   type: typeof COMMENT_NODE_TYPE;
 };
 

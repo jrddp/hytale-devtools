@@ -8,7 +8,7 @@ import type {
   FlowNodeData,
   GroupNodeType,
   LinkNodeType,
-  NodeBase,
+  NodeBaseData,
   RawJsonNodeType,
 } from "src/common";
 import {
@@ -97,7 +97,7 @@ export function createNodeFromTemplate(
   id?: string,
   data?: Partial<FlowNodeData>,
 ): FlowNode {
-  let node: { position: XYPosition; data: NodeBase } = {
+  let node: { position: XYPosition; data: NodeBaseData } = {
     position,
     // deep copy to avoid mutating the template
     data: { ...structuredClone($state.snapshot(template)) },

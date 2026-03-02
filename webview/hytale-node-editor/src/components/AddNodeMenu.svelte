@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
-  import { XYPosition } from "@xyflow/svelte";
+  import { type XYPosition } from "@xyflow/svelte";
   import { readColorForCss } from "src/node-editor/utils/colors";
   import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
   import { workspace } from "src/workspace.svelte";
@@ -16,17 +16,36 @@
 
   const { screenPosition, connectionFilter, oncancel, onselection }: AddMenuProps = $props();
 
+  let containerElement = $state<HTMLDivElement>();
+
   let searchQuery = $state("");
   let activeIndex = $state(0);
   let searchInput: HTMLInputElement | undefined = $state();
   let resultListElement: HTMLElement | undefined = $state();
+  let minContainerHeight = $derived(
+    Math.min(containerElement?.getBoundingClientRect().height ?? 326, 326),
+  );
+  let maxContainerHeight = $derived(
+    Math.max(window.outerHeight - screenPosition.y - 8, minContainerHeight),
+  );
+  let top = $derived(Math.min(screenPosition.y, window.outerHeight - minContainerHeight - 8));
+  let left = $derived(
+    Math.min(
+      screenPosition.x,
+      window.outerWidth - (containerElement?.getBoundingClientRect().width ?? 0),
+    ),
+  );
 
-  let availableTemplates = $derived.by(() => [
-    ...(connectionFilter
-      ? GENERIC_TEMPLATES.filter(template => template.inputPins) // only allow templates that can connect
-      : GENERIC_TEMPLATES),
-    ...workspace.getValidTemplates(connectionFilter),
-  ]);
+  let availableTemplates = $derived.by(() => {
+    if (connectionFilter !== undefined) {
+      return [
+        ...workspace.getValidTemplates(connectionFilter),
+        ...GENERIC_TEMPLATES.filter(template => template.inputPins.length > 0), // only allow templates that can connect
+      ];
+    } else {
+      return [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];
+    }
+  });
 
   let searchedTemplatesUnordered = $derived(
     availableTemplates.filter(template => {
@@ -62,6 +81,7 @@
 
   onMount(() => {
     searchInput.focus();
+    console.log(containerElement.getBoundingClientRect());
   });
 
   function handleKeyDown(event) {
@@ -98,12 +118,15 @@
 </script>
 
 <div
+  bind:this={containerElement}
+  data-add-menu
   role="dialog"
   aria-label="Add node menu"
   tabindex="-1"
   class="absolute z-3001 w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
-  style:left={`${screenPosition.x}px`}
-  style:top={`${screenPosition.y}px`}
+  style:max-height={`${maxContainerHeight}px`}
+  style:left={`${Math.min(screenPosition.x, window.innerWidth - 264)}px`}
+  style:top={`${Math.min(screenPosition.y, window.innerHeight - minContainerHeight - 8)}px`}
   onkeydown={handleKeyDown}
 >
   <input
@@ -134,7 +157,7 @@
           {#each templates as template (template.templateId)}
             {@const isActive = template.templateId === activeTemplate.templateId}
             <button
-              class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip"
+              class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip scroll-m-8"
               class:border-vsc-focus={isActive}
               class:bg-vsc-list-active-bg={isActive}
               class:text-vsc-list-active-fg={isActive}

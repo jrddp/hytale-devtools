@@ -218,7 +218,10 @@ export function getPositionRelativeTo(nodeA: FlowNode, nodeB?: FlowNode): XYPosi
 }
 
 export function getAbsoluteBoundingBox(node: FlowNode): BBox | undefined {
-  const { width, height } = node.measured ?? { width: node.width, height: node.height };
+  const { width, height } = node.measured ?? {
+    width: node.width,
+    height: node.height,
+  };
   if (width == undefined || height == undefined) return undefined;
   const { x, y } = getAbsolutePosition(node);
   return { minX: x, minY: y, maxX: x + width, maxY: y + height };
@@ -241,7 +244,10 @@ export function getParentIdWithHandle(
   if (!incomingConnection) {
     return undefined;
   }
-  return { parentId: incomingConnection.source, parentHandleId: incomingConnection.sourceHandle };
+  return {
+    parentId: incomingConnection.source,
+    parentHandleId: incomingConnection.sourceHandle,
+  };
 }
 
 export function getChildIds(nodeId: string): string[] {
@@ -294,13 +300,18 @@ export function getOrderedChildrenForHandle(parentId: string, parentHandleId: st
     .sort((a, b) => (a.data.inputConnectionIndex ?? -1) - (b.data.inputConnectionIndex ?? -1));
 }
 export function getSiblingOrderUpdates(node: FlowNode): NodeDataUpdates[] {
-  return getNodeSiblingIds(node.id, "same-parent-handle")
-    .map(id => workspace.getNodeById(id))
-    .sort((a, b) => {
-      // higher to lower (+Y IS DOWN)
-      return getAbsolutePosition(a).y - getAbsolutePosition(b).y;
-    })
-    .map((node, idx) => {
-      return [node.id, { inputConnectionIndex: idx }];
-    });
+  const siblings = getNodeSiblingIds(node.id, "same-parent-handle");
+  if (siblings.length === 1) {
+    return [[node.id, { inputConnectionIndex: undefined }]];
+  } else {
+    return siblings
+      .map(id => workspace.getNodeById(id))
+      .sort((a, b) => {
+        // higher to lower (+Y IS DOWN)
+        return getAbsolutePosition(a).y - getAbsolutePosition(b).y;
+      })
+      .map((node, idx) => {
+        return [node.id, { inputConnectionIndex: idx }];
+      });
+  }
 }

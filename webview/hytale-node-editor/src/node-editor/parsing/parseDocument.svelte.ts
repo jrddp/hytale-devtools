@@ -29,6 +29,8 @@ function groupNodeFromJson(groupJson: GroupJson): GroupNodeType {
     null,
     {
       titleOverride: groupJson.$name,
+      width: groupJson.$width,
+      height: groupJson.$height,
     },
   ) as GroupNodeType;
 }
@@ -211,7 +213,9 @@ export function parseDocumentText(text: string): WorkspaceState {
         RAW_JSON_TEMPLATE,
         { x: position.$x, y: position.$y },
         nodeId,
-        { jsonString: data ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT },
+        {
+          jsonString: data ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT,
+        },
       );
       addNode(jsonNode);
     }
@@ -300,11 +304,14 @@ export function parseDocumentText(text: string): WorkspaceState {
     addNode(groupNodeFromJson(groupJson));
   }
 
+  // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
+  if (nodes.every(node => node.position.x === 0 && node.position.y === 0)) {
+    workspace.actionRequests.push({ type: "auto-position-nodes" });
+  }
+
   return {
     nodes: nodes,
     edges: edges,
     rootNodeId: rootId,
-    // easiest to just assume all positions being 0 -> we should do autolayout
-    arePositionsSet: !nodes.every(node => node.position.x === 0 && node.position.y === 0),
   };
 }

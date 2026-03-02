@@ -39,7 +39,7 @@ export function getAutoPositionNodeUpdates(nodes: FlowNode[]): NodeUpdates[] {
 
     const tree = layout.hierarchy(hierarchy); // load hierarchy
     layout(tree); // compute layout
-    tree.each(treeNode => {
+    tree.each((treeNode) => {
       // ! d3-flextree only supports vertical layouts, so we'll just swap width and height and coordinates to make it horizontal.
       const currenPosition = workspace.getNodeById(treeNode.data.id).position;
       const newPosition = {
@@ -50,7 +50,11 @@ export function getAutoPositionNodeUpdates(nodes: FlowNode[]): NodeUpdates[] {
           workspace.getNodeById(treeNode.data.id).measured.height / 2 +
           rootHeight / 2,
       };
-      if (newPosition.x === currenPosition.x && newPosition.y === currenPosition.y) return;
+      if (
+        newPosition.x === currenPosition.x &&
+        newPosition.y === currenPosition.y
+      )
+        return;
       updates.push([treeNode.data.id, { position: newPosition }]);
     });
   }
@@ -59,12 +63,16 @@ export function getAutoPositionNodeUpdates(nodes: FlowNode[]): NodeUpdates[] {
 }
 
 /** Includes all children of the provided nodes. */
-export function generateNodeHierarchies(nodes: FlowNode[]): HierarchyStructure[] {
-  const rootIds = getRootIds(nodes.map(node => node.id));
-  return rootIds.map(rootId => generateNodeHierarchyFromNodeId(rootId));
+export function generateNodeHierarchies(
+  nodes: FlowNode[],
+): HierarchyStructure[] {
+  const rootIds = getRootIds(nodes.map((node) => node.id));
+  return rootIds.map((rootId) => generateNodeHierarchyFromNodeId(rootId));
 }
 
-export function generateNodeHierarchyFromNodeId(nodeId: string): HierarchyStructure {
+export function generateNodeHierarchyFromNodeId(
+  nodeId: string,
+): HierarchyStructure {
   const node = workspace.getNodeById(nodeId);
   const orderedChildren = getOrderedChildren(nodeId);
   return {
@@ -73,6 +81,8 @@ export function generateNodeHierarchyFromNodeId(nodeId: string): HierarchyStruct
     // we also create spacing by mocking a large size instead of the original dimensions...
     // d3-flextree was chosen because its minimal footprint and efficient - other dependencies are heavier and generally overkill for a strict tree
     size: [node.measured.height + SPACING_Y, node.measured.width + SPACING_X],
-    children: orderedChildren.map(child => generateNodeHierarchyFromNodeId(child.id)),
+    children: orderedChildren.map((child) =>
+      generateNodeHierarchyFromNodeId(child.id),
+    ),
   };
 }

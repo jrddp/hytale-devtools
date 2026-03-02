@@ -40,7 +40,7 @@ export interface NodePin {
 // processed template for optimized usage. only uses schema keys, Content/Pin local keys are abstracted.
 export interface NodeTemplate {
   templateId: string;
-  defaultTitle?: string;
+  defaultTitle: string;
   category?: string;
   // schema key -> VariantKind or TemplateID for that child
   childTypes: Record<string, string>;

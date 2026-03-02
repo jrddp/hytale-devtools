@@ -15,6 +15,17 @@
     },
     "types": ["svelte"]
   },
-  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.svelte", "../../src/shared/**/*.ts"],
-  "exclude": ["node_modules", "../../node_modules", "../../dist", "../../out", "../../media"]
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.svelte",
+    "../../src/shared/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "../../node_modules",
+    "../../dist",
+    "../../out",
+    "../../media"
+  ]
 }

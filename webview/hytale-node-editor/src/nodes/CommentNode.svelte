@@ -1,46 +1,51 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
-  import { applyDocumentState } from "src/workspace.svelte";
   import { tick } from "svelte";
-  import { type CommentNodeType } from "../constants";
+  import { type CommentNodeType } from "src/common";
+  import { DEFAULT_COMMENT_FONT_SIZE } from "src/constants";
+  import { applyDocumentState } from "src/workspace.svelte";
   import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
+
+  const MIN_FONT_SIZE = 8;
+  const MAX_FONT_SIZE = 128;
 
   let { id, data, selected = false, dragging = false }: CommentNodeType = $props();
 
-  const { updateNodeData, updateNode, getNodes, getEdges, updateEdge } = useSvelteFlow();
+  const { updateNodeData } = useSvelteFlow();
+
+  const commentTitle = $derived(readCommentTitle(data));
+  const commentText = $derived(readCommentText(data));
+  const fontSizeValue = $derived(readCommentFontSize(data.fontSize));
+
+  let isEditingTitle = $state(false);
+  let isEditingText = $state(false);
+  let isEditingFontSize = $state(false);
+  let titleDraft = $state("");
+  let textDraft = $state("");
+  let fontSizeDraft = $state(DEFAULT_COMMENT_FONT_SIZE);
+  let titleInputElement = $state<HTMLInputElement | undefined>();
 
   $effect(() => {
     if (!isEditingTitle) {
-      titleDraft = data.name;
+      titleDraft = commentTitle;
     }
   });
 
   $effect(() => {
     if (!isEditingText) {
-      textDraft = data.name;
+      textDraft = commentText;
     }
   });
 
   $effect(() => {
     if (!isEditingFontSize) {
-      fontSizeDraft = data.fontSize;
+      fontSizeDraft = fontSizeValue;
     }
   });
 
-  const MIN_FONT_SIZE = 8;
-  const MAX_FONT_SIZE = 128;
-
-  let isEditingTitle = $state(false);
-  let isEditingText = false;
-  let isEditingFontSize = false;
-  let titleDraft = $state("");
-  let textDraft = $state("");
-  let fontSizeDraft = $derived(data.fontSize);
-  let titleInputElement = $state<HTMLInputElement | undefined>();
-
   async function beginTitleEditing() {
     isEditingTitle = true;
-    titleDraft = data.name;
+    titleDraft = commentTitle;
     await tick();
     titleInputElement?.focus();
     titleInputElement?.select();
@@ -52,10 +57,10 @@
     }
 
     const nextTitle = titleDraft;
-    const didChange = nextTitle !== data.name;
+    const didChange = nextTitle !== commentTitle;
     if (didChange) {
       applyCommentPatch({
-        name: nextTitle,
+        titleOverride: nextTitle,
       });
       applyDocumentState("comment-renamed");
     }
@@ -73,10 +78,10 @@
     }
 
     const nextText = textDraft;
-    const didChange = nextText !== data.text;
+    const didChange = nextText !== commentText;
     if (didChange) {
       applyCommentPatch({
-        text: nextText,
+        comment: nextText,
       });
       applyDocumentState("comment-text-updated");
     }
@@ -90,22 +95,22 @@
     }
 
     isEditingText = false;
-    textDraft = data.text;
+    textDraft = commentText;
   }
 
-  function handleTextInput(event) {
+  function handleTextInput(event: Event) {
     isEditingText = true;
-    textDraft = event.currentTarget.value;
+    textDraft = (event.currentTarget as HTMLTextAreaElement).value;
   }
 
-  function handleTextKeydown(event) {
+  function handleTextKeydown(event: KeyboardEvent) {
     if (event.key !== "Escape") {
       return;
     }
 
     event.preventDefault();
     cancelTextEditing();
-    event.currentTarget.blur();
+    (event.currentTarget as HTMLTextAreaElement).blur();
   }
 
   function beginFontSizeEditing() {
@@ -117,8 +122,8 @@
       return;
     }
 
-    const nextFontSize = fontSizeDraft;
-    const didChange = nextFontSize !== data.fontSize;
+    const nextFontSize = readCommentFontSize(fontSizeDraft);
+    const didChange = nextFontSize !== fontSizeValue;
     if (didChange) {
       applyCommentPatch({
         fontSize: nextFontSize,
@@ -135,26 +140,26 @@
     }
 
     isEditingFontSize = false;
-    fontSizeDraft = data.fontSize;
+    fontSizeDraft = fontSizeValue;
   }
 
-  function handleFontSizeInput(event) {
+  function handleFontSizeInput(event: Event) {
     isEditingFontSize = true;
-    fontSizeDraft = event.currentTarget.value;
+    fontSizeDraft = readCommentFontSize((event.currentTarget as HTMLInputElement).value);
   }
 
-  function handleFontSizeKeydown(event) {
+  function handleFontSizeKeydown(event: KeyboardEvent) {
     if (event.key === "Enter") {
       event.preventDefault();
       commitFontSizeEditing();
-      event.currentTarget.blur();
+      (event.currentTarget as HTMLInputElement).blur();
       return;
     }
 
     if (event.key === "Escape") {
       event.preventDefault();
       cancelFontSizeEditing();
-      event.currentTarget.blur();
+      (event.currentTarget as HTMLInputElement).blur();
     }
   }
 
@@ -164,10 +169,10 @@
     }
 
     isEditingTitle = false;
-    titleDraft = data.name;
+    titleDraft = commentTitle;
   }
 
-  function handleTitleInputKeydown(event) {
+  function handleTitleInputKeydown(event: KeyboardEvent) {
     if (event.key === "Enter") {
       event.preventDefault();
       commitTitleEditing();
@@ -182,7 +187,7 @@
     }
   }
 
-  function handleTitleDisplayKeydown(event) {
+  function handleTitleDisplayKeydown(event: KeyboardEvent) {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       void beginTitleEditing();
@@ -193,13 +198,45 @@
     applyDocumentState("comment-resized");
   }
 
-  function applyCommentPatch(patch: { name?: string; text?: string; fontSize?: number }) {
-    updateNodeData(id, {
-      name: data.name,
-      text: data.text,
-      fontSize: data.fontSize,
-      ...patch,
-    });
+  function applyCommentPatch(patch: {
+    titleOverride?: string;
+    comment?: string;
+    fontSize?: number;
+  }) {
+    updateNodeData(id, patch);
+  }
+
+  function readCommentTitle(commentData: Record<string, unknown>) {
+    if (typeof commentData?.titleOverride === "string") {
+      return commentData.titleOverride;
+    }
+    if (typeof commentData?.name === "string") {
+      return commentData.name;
+    }
+    return "Comment";
+  }
+
+  function readCommentText(commentData: Record<string, unknown>) {
+    if (typeof commentData?.comment === "string") {
+      return commentData.comment;
+    }
+    if (typeof commentData?.text === "string") {
+      return commentData.text;
+    }
+    return "";
+  }
+
+  function readCommentFontSize(candidateFontSize: unknown) {
+    if (candidateFontSize === undefined || candidateFontSize === null) {
+      return DEFAULT_COMMENT_FONT_SIZE;
+    }
+
+    const value = Number(candidateFontSize);
+    if (!Number.isFinite(value)) {
+      return DEFAULT_COMMENT_FONT_SIZE;
+    }
+
+    return Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, Math.round(value)));
   }
 </script>
 
@@ -216,7 +253,7 @@
       <input
         bind:this={titleInputElement}
         class="nodrag min-w-0 flex-1 appearance-none rounded border border-vsc-input-border bg-vsc-input-bg px-1 py-0.5 font-semibold text-vsc-input-fg outline-none focus:border-vsc-focus"
-        style:font-size={`${data.fontSize}px`}
+        style:font-size={`${fontSizeValue}px`}
         type="text"
         aria-label="Comment title"
         value={titleDraft}
@@ -227,13 +264,13 @@
     {:else}
       <button
         class="flex-1 min-w-0 font-semibold text-left truncate select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
-        style:font-size={`${data.fontSize}px`}
+        style:font-size={`${fontSizeValue}px`}
         type="button"
         ondblclick={beginTitleEditing}
         onkeydown={handleTitleDisplayKeydown}
-        aria-label={`Comment title: ${data.name}. Double click to rename`}
+        aria-label={`Comment title: ${commentTitle}. Double click to rename`}
       >
-        {data.name}
+        {commentTitle}
       </button>
     {/if}
 
@@ -260,7 +297,7 @@
 
   <textarea
     class="nodrag h-[calc(100%-2.75rem)] w-full resize-none border-0 bg-transparent p-2 text-vsc-editor-fg outline-none placeholder:text-vsc-muted"
-    style:font-size={`${data.fontSize}px`}
+    style:font-size={`${fontSizeValue}px`}
     aria-label="Comment text"
     placeholder="Write a note..."
     value={textDraft}

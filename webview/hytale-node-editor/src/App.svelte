@@ -34,7 +34,8 @@
         workspace.context = message.workspaceContext;
         workspace.controlScheme = message.controlScheme;
         workspace.platform = message.platform;
-        workspace.actionRequests.push({ type: "fit-view", duration: 0 });
+        // workspace.actionRequests.push({ type: "fit-view", duration: 0 });
+        workspace.actionRequests.push({ type: "reveal-node", duration: 0 });
         return;
       case "update":
         handleDocumentUpdateMessage(message);
@@ -56,16 +57,12 @@
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage) {
     if (message.version === workspace.sourceVersion) return;
     try {
-      const { nodes, edges, rootNodeId, arePositionsSet } = parseDocumentText(message.text);
+      const { nodes, edges, rootNodeId } = parseDocumentText(message.text);
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
       workspace.sourceVersion = message.version;
       workspace.isInitialized = true;
-
-      if (!arePositionsSet) {
-        workspace.actionRequests.push({ type: "auto-position-nodes" });
-      }
 
       graphLoadVersion += 1;
     } catch (error) {

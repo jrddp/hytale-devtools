@@ -6,7 +6,11 @@ const EDITABLE_SELECTOR = [
 ].join(", ");
 
 function isVisible(element) {
-  return Boolean(element?.offsetWidth || element?.offsetHeight || element?.getClientRects?.().length);
+  return Boolean(
+    element?.offsetWidth ||
+    element?.offsetHeight ||
+    element?.getClientRects?.().length,
+  );
 }
 
 export function getNodeEditorRoot(element) {
@@ -19,7 +23,9 @@ export function focusNextEditableInNode(currentElement) {
     return false;
   }
 
-  const editableElements = Array.from(root.querySelectorAll(EDITABLE_SELECTOR)).filter(isVisible);
+  const editableElements = Array.from(
+    root.querySelectorAll(EDITABLE_SELECTOR),
+  ).filter(isVisible);
   const currentIndex = editableElements.indexOf(currentElement);
   if (currentIndex < 0) {
     return false;

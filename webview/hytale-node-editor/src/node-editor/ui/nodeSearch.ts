@@ -3,7 +3,7 @@ import {
   DATA_NODE_TYPE,
   GROUP_NODE_TYPE,
   LINK_NODE_TYPE,
-  RAW_JSON_NODE_TYPE
+  RAW_JSON_NODE_TYPE,
 } from "src/constants.js";
 import { isObject } from "src/node-editor/utils/valueUtils";
 
@@ -43,12 +43,20 @@ export function buildNodeSearchGroups({ nodes, workspaceContext }: any = {}) {
       continue;
     }
 
-    const absolutePosition = readAbsoluteNodePosition(node, nodeById, absolutePositionByNodeId);
+    const absolutePosition = readAbsoluteNodePosition(
+      node,
+      nodeById,
+      absolutePositionByNodeId,
+    );
     if (!absolutePosition) {
       continue;
     }
 
-    const rootGroupDescriptor = readRootGroupDescriptor(node, nodeById, absolutePositionByNodeId);
+    const rootGroupDescriptor = readRootGroupDescriptor(
+      node,
+      nodeById,
+      absolutePositionByNodeId,
+    );
     const groupId = rootGroupDescriptor?.id ?? UNGROUPED_GROUP_ID;
     if (!rootGroupsById.has(groupId)) {
       rootGroupsById.set(groupId, {
@@ -69,7 +77,11 @@ export function buildNodeSearchGroups({ nodes, workspaceContext }: any = {}) {
       label: readNodeSearchLabel(node, workspaceContext),
       color: readNodeSearchColor(node, workspaceContext),
       position: absolutePosition,
-      searchValue: readSearchValue(node, workspaceContext, rootGroupDescriptor?.label),
+      searchValue: readSearchValue(
+        node,
+        workspaceContext,
+        rootGroupDescriptor?.label,
+      ),
     });
   }
 
@@ -90,13 +102,16 @@ export function filterNodeSearchGroups(groups, queryCandidate) {
   }
 
   return readdGroups
-    .map(group => ({
+    .map((group) => ({
       ...group,
-      items: (Array.isArray(group?.items) ? group.items : []).filter(item =>
-        (typeof item?.searchValue === "string" ? item.searchValue : "").includes(readdQuery),
+      items: (Array.isArray(group?.items) ? group.items : []).filter((item) =>
+        (typeof item?.searchValue === "string"
+          ? item.searchValue
+          : ""
+        ).includes(readdQuery),
       ),
     }))
-    .filter(group => group.items.length > 0);
+    .filter((group) => group.items.length > 0);
 }
 
 export function isNodeSearchEligible(nodeCandidate) {
@@ -105,13 +120,15 @@ export function isNodeSearchEligible(nodeCandidate) {
 
 export function compareNodeSearchEntries(leftEntry, rightEntry) {
   const yDelta =
-    readFiniteNumber(leftEntry?.position?.y) - readFiniteNumber(rightEntry?.position?.y);
+    readFiniteNumber(leftEntry?.position?.y) -
+    readFiniteNumber(rightEntry?.position?.y);
   if (Math.abs(yDelta) > 0.001) {
     return yDelta;
   }
 
   const xDelta =
-    readFiniteNumber(leftEntry?.position?.x) - readFiniteNumber(rightEntry?.position?.x);
+    readFiniteNumber(leftEntry?.position?.x) -
+    readFiniteNumber(rightEntry?.position?.x);
   if (Math.abs(xDelta) > 0.001) {
     return xDelta;
   }
@@ -150,13 +167,16 @@ function compareNodeSearchGroups(leftGroup, rightGroup) {
 function cloneGroupForSearch(groupCandidate) {
   return {
     ...groupCandidate,
-    items: Array.isArray(groupCandidate?.items) ? [...groupCandidate.items] : [],
+    items: Array.isArray(groupCandidate?.items)
+      ? [...groupCandidate.items]
+      : [],
   };
 }
 
 function readSearchValue(nodeCandidate, workspaceContext, groupLabelCandidate) {
   const nodeLabel = readNodeSearchLabel(nodeCandidate, workspaceContext);
-  const groupLabel = readOptionalString(groupLabelCandidate) ?? UNGROUPED_GROUP_LABEL;
+  const groupLabel =
+    readOptionalString(groupLabelCandidate) ?? UNGROUPED_GROUP_LABEL;
   const nodeId = readOptionalString(nodeCandidate?.id) ?? "";
   return `${nodeLabel} ${groupLabel} ${nodeId}`.toLowerCase();
 }
@@ -166,7 +186,11 @@ function readNodeSearchLabel(nodeCandidate, workspaceContext) {
   const nodeData = isObject(nodeCandidate?.data) ? nodeCandidate.data : {};
 
   if (nodeType === COMMENT_NODE_TYPE) {
-    return readOptionalString(nodeData?.name) ?? DEFAULT_COMMENT_LABEL;
+    return (
+      readOptionalString(nodeData?.titleOverride) ??
+      readOptionalString(nodeData?.name) ??
+      DEFAULT_COMMENT_LABEL
+    );
   }
 
   if (nodeType === LINK_NODE_TYPE) {
@@ -174,7 +198,9 @@ function readNodeSearchLabel(nodeCandidate, workspaceContext) {
   }
 
   if (nodeType === RAW_JSON_NODE_TYPE) {
-    return readOptionalString(nodeData?.titleOverride) ?? DEFAULT_RAW_JSON_LABEL;
+    return (
+      readOptionalString(nodeData?.titleOverride) ?? DEFAULT_RAW_JSON_LABEL
+    );
   }
 
   if (nodeType === DATA_NODE_TYPE) {
@@ -195,18 +221,28 @@ function readNodeSearchLabel(nodeCandidate, workspaceContext) {
   );
 }
 
-function readRootGroupDescriptor(nodeCandidate, nodeById, absolutePositionByNodeId) {
+function readRootGroupDescriptor(
+  nodeCandidate,
+  nodeById,
+  absolutePositionByNodeId,
+) {
   const directParentId = readOptionalString(nodeCandidate?.parentId);
   if (!directParentId) {
     return undefined;
   }
 
   const parentGroupNode = nodeById.get(directParentId);
-  if (!parentGroupNode || readOptionalString(parentGroupNode?.type) !== GROUP_NODE_TYPE) {
+  if (
+    !parentGroupNode ||
+    readOptionalString(parentGroupNode?.type) !== GROUP_NODE_TYPE
+  ) {
     return undefined;
   }
 
-  const groupLabel = readOptionalString(parentGroupNode?.data?.name) ?? "Group";
+  const groupLabel =
+    readOptionalString(parentGroupNode?.data?.titleOverride) ??
+    readOptionalString(parentGroupNode?.data?.name) ??
+    "Group";
   const groupPosition = readAbsoluteNodePosition(
     parentGroupNode,
     nodeById,
@@ -227,7 +263,11 @@ function readAbsoluteNodePosition(
   visitedNodeIds = new Set(),
 ) {
   const nodeId = readOptionalString(nodeCandidate?.id);
-  if (nodeId && absolutePositionByNodeId instanceof Map && absolutePositionByNodeId.has(nodeId)) {
+  if (
+    nodeId &&
+    absolutePositionByNodeId instanceof Map &&
+    absolutePositionByNodeId.has(nodeId)
+  ) {
     return absolutePositionByNodeId.get(nodeId);
   }
 
@@ -248,7 +288,8 @@ function readAbsoluteNodePosition(
     return relativePosition;
   }
 
-  const parentNode = nodeById instanceof Map ? nodeById.get(parentNodeId) : undefined;
+  const parentNode =
+    nodeById instanceof Map ? nodeById.get(parentNodeId) : undefined;
   if (!parentNode) {
     return relativePosition;
   }
@@ -295,4 +336,3 @@ function readOptionalString(value) {
 function readFiniteNumber(candidate, fallback = 0) {
   return Number.isFinite(candidate) ? Number(candidate) : fallback;
 }
-

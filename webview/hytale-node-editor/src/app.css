@@ -35,4 +35,9 @@
     color: var(--vscode-editor-foreground);
     background: var(--vscode-editor-background);
   }
+
+  .svelte-flow__handle.connecting {
+    cursor: not-allowed !important;
+    background-color: red !important;
+  }
 }

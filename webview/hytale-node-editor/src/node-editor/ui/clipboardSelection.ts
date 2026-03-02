@@ -1,6 +1,7 @@
 import { isObject } from "src/node-editor/utils/valueUtils";
 
-export const NODE_EDITOR_CLIPBOARD_MIME = "application/x-hytale-node-editor-selection+json";
+export const NODE_EDITOR_CLIPBOARD_MIME =
+  "application/x-hytale-node-editor-selection+json";
 
 export function buildClipboardSelectionPayload({
   nodes,
@@ -26,7 +27,9 @@ export function buildClipboardSelectionPayload({
       continue;
     }
 
-    const absolutePosition = readPosition(readAbsoluteNodePosition?.(nodeCandidate));
+    const absolutePosition = readPosition(
+      readAbsoluteNodePosition?.(nodeCandidate),
+    );
     if (!absolutePosition) {
       continue;
     }
@@ -70,11 +73,17 @@ export function buildClipboardSelectionPayload({
     x: (minX + maxX) / 2,
     y: (minY + maxY) / 2,
   };
-  const selectedNodeIdSet = new Set(selectedNodeRecords.map(entry => entry.sourceNodeId));
-  const edgeSnapshots = readInternalSelectedEdges(edges, selectedNodeIdSet, read);
+  const selectedNodeIdSet = new Set(
+    selectedNodeRecords.map((entry) => entry.sourceNodeId),
+  );
+  const edgeSnapshots = readInternalSelectedEdges(
+    edges,
+    selectedNodeIdSet,
+    read,
+  );
 
   return {
-    nodes: selectedNodeRecords.map(entry => ({
+    nodes: selectedNodeRecords.map((entry) => ({
       sourceNodeId: entry.sourceNodeId,
       node: entry.node,
       offset: {
@@ -119,16 +128,22 @@ export function readClipboardSelectionPayload(clipboardData) {
     return fromCustomMime;
   }
 
-  return parseClipboardSelectionPayloadText(clipboardData.getData("text/plain"));
+  return parseClipboardSelectionPayloadText(
+    clipboardData.getData("text/plain"),
+  );
 }
 
-export function cutSelectedNodesFromFlowState({ nodes, edges, readOptionalString }: any = {}) {
+export function cutSelectedNodesFromFlowState({
+  nodes,
+  edges,
+  readOptionalString,
+}: any = {}) {
   const read = createReadOptionalString(readOptionalString);
   const readdNodes = Array.isArray(nodes) ? nodes : [];
   const initiallySelectedNodeIds = new Set(
     readdNodes
-      .filter(nodeCandidate => nodeCandidate?.selected === true)
-      .map(nodeCandidate => read(nodeCandidate?.id))
+      .filter((nodeCandidate) => nodeCandidate?.selected === true)
+      .map((nodeCandidate) => read(nodeCandidate?.id))
       .filter(Boolean),
   );
   if (initiallySelectedNodeIds.size === 0) {
@@ -139,14 +154,18 @@ export function cutSelectedNodesFromFlowState({ nodes, edges, readOptionalString
     };
   }
 
-  const cutNodeIds = collectDescendantNodeIds(initiallySelectedNodeIds, readdNodes, read);
-  const nextNodes = readdNodes.filter(nodeCandidate => {
+  const cutNodeIds = collectDescendantNodeIds(
+    initiallySelectedNodeIds,
+    readdNodes,
+    read,
+  );
+  const nextNodes = readdNodes.filter((nodeCandidate) => {
     const nodeId = read(nodeCandidate?.id);
     return !nodeId || !cutNodeIds.has(nodeId);
   });
 
   const readdEdges = Array.isArray(edges) ? edges : [];
-  const nextEdges = readdEdges.filter(edgeCandidate => {
+  const nextEdges = readdEdges.filter((edgeCandidate) => {
     if (edgeCandidate?.selected === true) {
       return false;
     }
@@ -167,7 +186,11 @@ export function cutSelectedNodesFromFlowState({ nodes, edges, readOptionalString
   };
 }
 
-function readInternalSelectedEdges(edges, selectedNodeIdSet, readOptionalString) {
+function readInternalSelectedEdges(
+  edges,
+  selectedNodeIdSet,
+  readOptionalString,
+) {
   if (!(selectedNodeIdSet instanceof Set) || selectedNodeIdSet.size === 0) {
     return [];
   }
@@ -197,7 +220,11 @@ function readInternalSelectedEdges(edges, selectedNodeIdSet, readOptionalString)
   return snapshots;
 }
 
-function collectDescendantNodeIds(initialNodeIds, nodeCandidates, readOptionalString) {
+function collectDescendantNodeIds(
+  initialNodeIds,
+  nodeCandidates,
+  readOptionalString,
+) {
   const descendants = new Set(initialNodeIds);
   const readdNodes = Array.isArray(nodeCandidates) ? nodeCandidates : [];
   let didChange = true;
@@ -222,7 +249,11 @@ function collectDescendantNodeIds(initialNodeIds, nodeCandidates, readOptionalSt
   return descendants;
 }
 
-function readAbsoluteNodeBounds(nodeCandidate, absolutePosition, readNodeDimensions) {
+function readAbsoluteNodeBounds(
+  nodeCandidate,
+  absolutePosition,
+  readNodeDimensions,
+) {
   const resolvedPosition = readPosition(absolutePosition);
   if (!resolvedPosition) {
     return undefined;
@@ -256,10 +287,15 @@ function readNodeOrigin(nodeCandidate) {
 
 function readNodeDimensionsSafe(nodeCandidate, readNodeDimensions) {
   const fromCallback =
-    typeof readNodeDimensions === "function" ? readNodeDimensions(nodeCandidate) : undefined;
+    typeof readNodeDimensions === "function"
+      ? readNodeDimensions(nodeCandidate)
+      : undefined;
   const widthFromCallback = Number(fromCallback?.width);
   const heightFromCallback = Number(fromCallback?.height);
-  if (Number.isFinite(widthFromCallback) || Number.isFinite(heightFromCallback)) {
+  if (
+    Number.isFinite(widthFromCallback) ||
+    Number.isFinite(heightFromCallback)
+  ) {
     return {
       width: Number.isFinite(widthFromCallback) ? widthFromCallback : 0,
       height: Number.isFinite(heightFromCallback) ? heightFromCallback : 0,
@@ -267,10 +303,14 @@ function readNodeDimensionsSafe(nodeCandidate, readNodeDimensions) {
   }
 
   const width = Number(
-    nodeCandidate?.width ?? nodeCandidate?.initialWidth ?? nodeCandidate?.measured?.width,
+    nodeCandidate?.width ??
+      nodeCandidate?.initialWidth ??
+      nodeCandidate?.measured?.width,
   );
   const height = Number(
-    nodeCandidate?.height ?? nodeCandidate?.initialHeight ?? nodeCandidate?.measured?.height,
+    nodeCandidate?.height ??
+      nodeCandidate?.initialHeight ??
+      nodeCandidate?.measured?.height,
   );
   return {
     width: Number.isFinite(width) ? width : 0,
@@ -311,7 +351,11 @@ function cloneNodeForClipboard(nodeCandidate) {
 }
 
 function createPastedNodeId(sourceNode, sourceNodeId, usedNodeIds, context) {
-  const nodeIdPrefix = readPastedNodeIdPrefix(sourceNode, sourceNodeId, context);
+  const nodeIdPrefix = readPastedNodeIdPrefix(
+    sourceNode,
+    sourceNodeId,
+    context,
+  );
   let pastedNodeId = `${nodeIdPrefix}-${context.createId()}`;
   while (usedNodeIds.has(pastedNodeId)) {
     pastedNodeId = `${nodeIdPrefix}-${context.createId()}`;
@@ -342,7 +386,9 @@ function readPastedNodeIdPrefix(sourceNode, sourceNodeId, context) {
   if (readdSourceNodeId) {
     const separatorIndex = readdSourceNodeId.indexOf("-");
     const sourcePrefix =
-      separatorIndex > 0 ? readdSourceNodeId.slice(0, separatorIndex) : readdSourceNodeId;
+      separatorIndex > 0
+        ? readdSourceNodeId.slice(0, separatorIndex)
+        : readdSourceNodeId;
     const readdPrefix = context.readType(sourcePrefix);
     if (readdPrefix) {
       return readdPrefix;
@@ -369,11 +415,15 @@ function cloneSerializableValue(value) {
 }
 
 function createReadOptionalString(readOptionalString) {
-  return typeof readOptionalString === "function" ? readOptionalString : readOptionalStringInternal;
+  return typeof readOptionalString === "function"
+    ? readOptionalString
+    : readOptionalStringInternal;
 }
 
 function createReadNodeType(readNodeType) {
-  return typeof readNodeType === "function" ? readNodeType : readNodeTypeInternal;
+  return typeof readNodeType === "function"
+    ? readNodeType
+    : readNodeTypeInternal;
 }
 
 function createUuidFactory(createUuid) {
@@ -382,7 +432,10 @@ function createUuidFactory(createUuid) {
   }
 
   return function createUuidFallback() {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
       return crypto.randomUUID();
     }
 
@@ -404,4 +457,3 @@ function readNodeTypeInternal(candidate) {
 
   return "Node";
 }
-
