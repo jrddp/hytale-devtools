@@ -81,7 +81,6 @@
 
   onMount(() => {
     searchInput.focus();
-    console.log(containerElement.getBoundingClientRect());
   });
 
   function handleKeyDown(event) {
@@ -96,7 +95,6 @@
       case "ArrowDown":
         if (searchedTemplates.length === 0) return;
         activeIndex = (activeIndex + 1) % searchedTemplates.length;
-        console.log(searchedTemplates.length);
         queueMicrotask(() => scrollActiveTemplateIntoView());
         break;
       case "ArrowUp":

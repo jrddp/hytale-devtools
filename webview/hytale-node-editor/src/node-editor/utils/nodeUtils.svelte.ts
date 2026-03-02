@@ -62,7 +62,7 @@ export function getOutputPin(nodeId: string, handleId: string): NodePin | undefi
 }
 
 export function recalculateGroupParents() {
-  if (!workspace.getRootNode()?.measured) {
+  if (!workspace.areNodesMeasured) {
     console.error("recalculateGroupParents called before measurements loaded.");
     return;
   }
@@ -110,6 +110,15 @@ export function recalculateGroupParents() {
   // note: it's important that we retain the original order of nonGroupNodes, otherwise it will cause Z-flickering
   nonGroupNodes = nonGroupNodes.map(node => {
     const parentId = parentRemappings.get(node.id);
+    if (parentId != null) {
+      console.log("parent", workspace.getNodeById(parentId));
+      console.log("node", node);
+      console.log("parent position", $state.snapshot(workspace.getNodeById(parentId).position));
+      console.log("child position", $state.snapshot(node).position);
+      console.log("new position", getPositionRelativeTo(node, workspace.getNodeById(parentId)));
+      console.log("current child position", node.position);
+      console.log("current parent position", workspace.getNodeById(parentId)?.position);
+    }
     return {
       ...node,
       parentId,
@@ -314,4 +323,13 @@ export function getSiblingOrderUpdates(node: FlowNode): NodeDataUpdates[] {
         return [node.id, { inputConnectionIndex: idx }];
       });
   }
+}
+
+/** Returns list of node ids for the groups that the provided node is a descendent of, in order of parent to child. */
+export function getGroupList(nodeId: string): string[] {
+  const parentId = workspace.getNodeById(nodeId).parentId;
+  if (!parentId) {
+    return [];
+  }
+  return [...getGroupList(parentId), parentId];
 }

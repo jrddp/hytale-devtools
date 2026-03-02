@@ -16,10 +16,13 @@
   import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
-  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, nodeTypes } from "src/constants";
+  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
+  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { logVSCodeTheme } from "src/node-editor/dev/mockVSCodeTheme";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
+  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import {
+    getAbsolutePosition,
     getSiblingOrderUpdates,
     isValidConnection,
     pruneConflictingEdges,
@@ -35,9 +38,16 @@
     fitView,
     screenToFlowPosition,
     setCenter: setViewportCenter,
+    setViewport,
     updateNodeData,
     updateNode,
   } = useSvelteFlow();
+
+  const viewport = useViewport();
+  const getViewportCenter = (viewport: Viewport) => ({
+    x: (window.innerWidth / 2 - viewport.x) / viewport.zoom,
+    y: (window.innerHeight / 2 - viewport.y) / viewport.zoom,
+  });
 
   let { nodes = $bindable([]), edges = $bindable([]) }: { nodes?: FlowNode[]; edges?: FlowEdge[] } =
     $props();
@@ -54,7 +64,6 @@
   let pendingSourceConflictingEdges: FlowEdge[] = [];
   let pendingTargetConnection: { target: string; targetHandle: string } | undefined;
   let pendingTargetConflictingEdges: FlowEdge[] = [];
-  let pendingConnectionFrom: "source" | "target" | undefined;
 
   let addMenuInstance:
     | { screenPosition: XYPosition; spawnPosition: XYPosition; connectionFilter?: string }
@@ -62,15 +71,12 @@
   let searchMenuInstance:
     | {
         initialViewport: Viewport;
-        lastPreviewedNodeId?: string;
       }
     | undefined = $state();
   let helpMenuOpen = $state(false);
 
   // # Handle actions requests
   $effect(() => {
-    console.log($state.snapshot(workspace.actionRequests));
-    void workspace.actionRequests;
     void workspace.areNodesMeasured;
     if (workspace.actionRequests.length > 0) untrack(() => handleActionRequests());
   });
@@ -90,14 +96,17 @@
             console.warn(`Attempted to reveal node ${action.nodeId} but it was not found.`);
             continue;
           }
-          setViewportCenter(
-            node.position.x + node.measured!.width! / 2,
-            node.position.y + node.measured!.height! / 2,
-            {
-              zoom: 1.2,
-              duration: action.duration ?? 250,
-            },
+          const absolutePosition = getAbsolutePosition(node);
+          const width = node.measured!.width!;
+          const height = node.measured!.height!;
+          const maxZoom = Math.min(
+            (window.innerWidth / width) * 0.8,
+            (window.innerHeight / height) * 0.8,
           );
+          setViewportCenter(absolutePosition.x + width / 2, absolutePosition.y + height / 2, {
+            zoom: Math.min(1.2, maxZoom),
+            duration: action.duration ?? 250,
+          });
           break;
 
         case "fit-view":
@@ -113,7 +122,7 @@
           break;
 
         case "search-nodes":
-          searchMenuInstance = { initialViewport: useViewport().current };
+          searchMenuInstance = { initialViewport: $state.snapshot(viewport.current) };
           break;
 
         case "auto-position-nodes":
@@ -170,15 +179,18 @@
     if (retained.length !== workspace.actionRequests.length) workspace.actionRequests = retained;
   }
 
-  function clearPendingConnection(type: "source" | "target" | "both", restoreConflicts: boolean) {
-    if (type === "both" || type === pendingConnectionFrom) {
-      pendingConnectionFrom = undefined;
-    }
+  /** @returns true if there were conflicts to restore/remove */
+  function clearPendingConnection(
+    type: "source" | "target" | "both",
+    restoreConflicts: boolean,
+  ): boolean {
+    let hadConflicts = false;
     if (type === "source" || type === "both") {
       pendingSourceConnection = undefined;
       if (restoreConflicts) {
         workspace.addEdges(pendingSourceConflictingEdges);
       }
+      hadConflicts = pendingSourceConflictingEdges.length > 0;
       pendingSourceConflictingEdges = [];
     }
     if (type === "target" || type === "both") {
@@ -186,8 +198,10 @@
       if (restoreConflicts) {
         workspace.addEdges(pendingTargetConflictingEdges);
       }
+      hadConflicts = hadConflicts || pendingTargetConflictingEdges.length > 0;
       pendingTargetConflictingEdges = [];
     }
+    return hadConflicts;
   }
 
   // ! window event
@@ -207,7 +221,7 @@
       case "d":
         if (event.metaKey) {
           console.log("workspace", workspace);
-          if (workspace.selectedNodes) console.log(workspace.selectedNodes);
+          if (workspace.selectedNodes) console.log(...workspace.selectedNodes);
           logVSCodeTheme();
         }
         captured = true;
@@ -271,7 +285,12 @@
       cursorPos = { x: event.clientX, y: event.clientY };
     },
     onpointerdown: (event: PointerEvent) => {
-      if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) addMenuInstance = undefined;
+      if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
+        addMenuInstance = undefined;
+        if (clearPendingConnection("both", false)) {
+          applyDocumentState("connection-removed");
+        }
+      }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]"))
         searchMenuInstance = undefined;
     },
@@ -316,7 +335,8 @@
           connectionFilter: connectionFilter,
         };
       } else {
-        clearPendingConnection("both", true);
+        // restore conflicts if invalid
+        clearPendingConnection("both", !connectionState.isValid);
       }
     },
     // ## On Node Drag Stop
@@ -372,7 +392,6 @@
     onselection: template => {
       const newNode: FlowNode = {
         ...createNodeFromTemplate(template, addMenuInstance!.spawnPosition),
-        origin: [0.5, 0],
       };
       workspace.nodes = [...workspace.nodes, newNode];
       if (pendingSourceConnection) {
@@ -412,7 +431,7 @@
     zIndexMode={"auto"}
     panOnDrag={workspace.controlScheme === "mouse"}
     panOnScroll={workspace.controlScheme === "trackpad"}
-    multiSelectionKey={"Shift"}
+    multiSelectionKey={MULTISELECT_KEY}
     selectionOnDrag={workspace.controlScheme === "trackpad"}
     panActivationKey={workspace.controlScheme === "mouse" ? "Shift" : undefined}
     minZoom={MIN_FLOW_ZOOM}
@@ -428,18 +447,27 @@
     <Background bgColor={"var(--vscode-editor-background)"} />
     <NodeEditorActionMenu />
     {#if searchMenuInstance}
-      <!-- <NodeSearchPanel
-        onclose={() => (searchMenuInstance = undefined)}
-        onpreview={(nodeId: string) => {
-          workspace.actionRequests.push({ type: "reveal-node", nodeId });
-          searchMenuInstance!.lastPreviewedNodeId = nodeId;
+      <NodeSearchPanel
+        oncancel={() => {
+          setViewport(searchMenuInstance!.initialViewport, { duration: 250 });
+          searchMenuInstance = undefined;
         }}
-        onselect={(nodeId: string) => {
-          if (nodeId !== searchMenuInstance!.lastPreviewedNodeId) {
-            workspace.actionRequests.push({ type: "reveal-node", nodeId });
+        onselection={(node, matchedContent) => {
+          workspace.actionRequests.push({ type: "reveal-node", nodeId: node.id });
+          workspace.selectNode(node.id, "replace");
+          searchMenuInstance = undefined;
+          // focus field that matched the search
+          const potentialSchemaKey = matchedContent.split(": ")[0];
+          if (node.data.fieldsBySchemaKey[potentialSchemaKey]) {
+            const id = buildFieldInputId(node.id, potentialSchemaKey);
+            const inputElement = document.getElementById(id);
+            if (inputElement) {
+              inputElement.focus();
+            }
           }
         }}
-      /> -->
+        viewportCenter={getViewportCenter(searchMenuInstance!.initialViewport)}
+      />
     {/if}
   </SvelteFlow>
 

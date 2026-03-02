@@ -291,6 +291,8 @@ export function parseDocumentText(text: string): WorkspaceState {
         { x: commentJson.$Position.$x, y: commentJson.$Position.$y },
         commentJson.$NodeId ?? createNodeId("Comment"),
         {
+          width: commentJson.$width,
+          height: commentJson.$height,
           titleOverride: commentJson.$name,
           comment: commentJson.$text,
           fontSize: commentJson.$fontSize,

@@ -19,7 +19,7 @@ export const LINK_NODE_COLOR = "var(--vscode-descriptionForeground)";
 export const RAW_JSON_NODE_COLOR = "var(--vscode-focusBorder)";
 
 export const PIN_WIDTH_PX = 10;
-export const CONNECTION_RADIUS = 20;
+export const CONNECTION_RADIUS = 40;
 
 export const DATA_NODE_TYPE = "datanode";
 export const RAW_JSON_NODE_TYPE = "rawjson";
@@ -45,3 +45,5 @@ export const LINK_MUTATION_EVENT = "hytale-node-editor-link-mutation";
 
 export const DEFAULT_RAW_JSON_TEXT = "{\n\n}";
 export const DEFAULT_RAW_JSON_LABEL = "Raw JSON Node";
+
+export const MULTISELECT_KEY = "Shift";

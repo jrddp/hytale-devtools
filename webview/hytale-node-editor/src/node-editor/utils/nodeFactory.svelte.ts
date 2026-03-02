@@ -14,6 +14,8 @@ import type {
 import {
   COMMENT_NODE_TYPE,
   DATA_NODE_TYPE,
+  DEFAULT_COMMENT_HEIGHT,
+  DEFAULT_COMMENT_WIDTH,
   DEFAULT_GROUP_HEIGHT,
   DEFAULT_GROUP_WIDTH,
   DEFAULT_RAW_JSON_TEXT,
@@ -97,6 +99,7 @@ export function createNodeFromTemplate(
   id?: string,
   data?: Partial<FlowNodeData>,
 ): FlowNode {
+  let width, height;
   let node: { position: XYPosition; data: NodeBaseData } = {
     position,
     // deep copy to avoid mutating the template
@@ -104,8 +107,8 @@ export function createNodeFromTemplate(
   };
   switch (template.templateId) {
     case GROUP_TEMPLATE_ID:
-      const width = (data?.width as number) ?? DEFAULT_GROUP_WIDTH;
-      const height = (data?.height as number) ?? DEFAULT_GROUP_HEIGHT;
+      width = (data?.width as number) ?? DEFAULT_GROUP_WIDTH;
+      height = (data?.height as number) ?? DEFAULT_GROUP_HEIGHT;
       if (data) {
         data.width = undefined;
         data.height = undefined;
@@ -122,9 +125,17 @@ export function createNodeFromTemplate(
         },
       } as GroupNodeType;
     case COMMENT_TEMPLATE_ID:
+      width = (data?.width as number) ?? DEFAULT_COMMENT_WIDTH;
+      height = (data?.height as number) ?? DEFAULT_COMMENT_HEIGHT;
+      if (data) {
+        data.width = undefined;
+        data.height = undefined;
+      }
       return {
         ...node,
         id: id ?? createNodeId("Comment"),
+        width,
+        height,
         type: COMMENT_NODE_TYPE,
         data: { ...node.data, ...data },
       } as CommentNodeType;

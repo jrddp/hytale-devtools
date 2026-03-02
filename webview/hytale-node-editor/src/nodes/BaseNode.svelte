@@ -34,7 +34,8 @@
   let titleSizerWidth = $state(0);
   let isEditingTitle = $state(false);
   const commitTitle = () => {
-    effectiveTitle = effectiveTitle.length > 0 ? effectiveTitle.trim() : defaultTitle;
+    effectiveTitle = effectiveTitle.trim();
+    effectiveTitle = effectiveTitle.length > 0 ? effectiveTitle : defaultTitle;
     if (effectiveTitle !== lastComittedTitle) {
       updateNodeData(id, { titleOverride: effectiveTitle });
       lastComittedTitle = effectiveTitle;
@@ -43,7 +44,10 @@
     isEditingTitle = false;
   };
   $effect(() => {
-    if (isEditingTitle) titleInputElement.focus();
+    if (isEditingTitle) {
+      titleInputElement.focus();
+      titleInputElement.select();
+    }
     else titleInputElement?.blur();
   });
 
@@ -124,28 +128,37 @@
       {/if}
 
       <!-- Title -->
-      <input
-        bind:this={titleInputElement}
-        class="font-bold text-vsc-input-fg outline-none!"
-        style="width: {titleSizerWidth}px;"
-        type="text"
-        bind:value={effectiveTitle}
-        {...noMousePropogation}
-        onfocus={() => (isEditingTitle = true)}
-        onkeydown={handleTitleInputKeydown}
-        onblur={commitTitle}
-      />
-      <!-- Hidden Sizer -->
-      <div
-        class="absolute invisible font-bold whitespace-pre"
-        aria-hidden="true"
-        {@attach el => {
-          void effectiveTitle;
-          titleSizerWidth = el.getBoundingClientRect().width / viewport.current.zoom;
-        }}
-      >
-        {effectiveTitle}
-      </div>
+      {#if isEditingTitle}
+        <input
+          bind:this={titleInputElement}
+          class="font-bold text-vsc-input-fg outline-none!"
+          style="width: {titleSizerWidth}px;"
+          type="text"
+          bind:value={effectiveTitle}
+          {...noMousePropogation}
+          onfocus={() => (isEditingTitle = true)}
+          onkeydown={handleTitleInputKeydown}
+          onblur={commitTitle}
+        />
+        <!-- Hidden Sizer to update input width dynamically -->
+        <div
+          class="absolute invisible font-bold whitespace-pre"
+          aria-hidden="true"
+          {@attach el => {
+            void effectiveTitle;
+            titleSizerWidth = el.getBoundingClientRect().width / viewport.current.zoom;
+          }}
+        >
+          {effectiveTitle}
+        </div>
+      {:else}
+        <button
+          class="font-bold text-vsc-input-fg cursor-text outline-none!"
+          ondblclick={() => (isEditingTitle = true)}
+        >
+          {effectiveTitle}
+        </button>
+      {/if}
 
       <!-- Edit Comment Button -->
       <button
@@ -163,7 +176,7 @@
     <!-- Comment -->
     {#if isEditingComment || (currentComment && currentComment.length > 0)}
       <textarea
-        class="w-full p-1 pl-2 m-0 text-xs font-medium resize-none bg-vsc-input-bg text-vsc-muted"
+        class="w-full p-1 py-0.5 pl-2 m-0 text-xs font-medium resize-none bg-vsc-input-bg text-vsc-muted"
         style="height: {commentInputHeight}px"
         rows={1}
         bind:this={commentInputElement}

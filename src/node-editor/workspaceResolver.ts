@@ -2,6 +2,8 @@ import { existsSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 import { LOGGER, nodeEditorWorkspaces } from "../extension";
 import { safeParseJSONFile } from "../shared/fileUtils";
+import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
+import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 import {
   type FieldComponentType,
   type NodeEditorWorkspace,
@@ -12,8 +14,6 @@ import {
   type NodeTemplate,
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
-import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
-import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 
 const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   "/Server/ScriptedBrushes/": {
@@ -89,7 +89,7 @@ interface NodeSchemaDefinition {
 // definition as its stored in workspace node jsons
 type NodeTemplateDefinition = {
   Id: string;
-  Title?: string;
+  Title: string;
   Color?: string;
   Content?: NodeContentDefinition[];
   Outputs?: NodePinDefinition[];

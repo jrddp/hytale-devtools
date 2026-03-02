@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
-  import TextField from "./TextField.svelte";
+  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import BooleanField from "./BooleanField.svelte";
+  import EnumField from "./EnumField.svelte";
+  import FilePathField from "./FilePathField.svelte";
+  import ListField from "./ListField.svelte";
   import NumberField from "./NumberField.svelte";
   import SliderField from "./SliderField.svelte";
-  import FilePathField from "./FilePathField.svelte";
-  import EnumField from "./EnumField.svelte";
-  import ListField from "./ListField.svelte";
-  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
+  import TextField from "./TextField.svelte";
 
   let {
     nodeId,
@@ -19,7 +19,7 @@
   }: NodeField & { nodeId?: string; onvalidate: (value: unknown) => void } = $props();
 
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
-  const inputId = $derived(buildFieldInputId("field", nodeId, schemaKey, type));
+  const inputId = $derived(buildFieldInputId(nodeId, schemaKey));
 </script>
 
 {#if type === "object"}

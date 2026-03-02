@@ -1,125 +1,65 @@
 <script lang="ts">
   import { useSvelteFlow, useViewport } from "@xyflow/svelte";
-  import { Pencil } from "lucide-svelte";
   import { type GroupNodeType } from "src/common";
   import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
   import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "src/constants";
   import { isPlainEnterNavigationEvent } from "src/node-editor/ui/focusNavigation";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
-  import { tick } from "svelte";
 
   const GROUP_TITLE_BASE_SIZE_PX = 18;
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 12;
 
-  let { id, data, selected = false, dragging = false }: GroupNodeType = $props();
+  let { id, data, selected, dragging, draggable }: GroupNodeType = $props();
+
+  $effect(() => {
+    if (workspace.controlScheme === "mouse") {
+      updateNode(id, { draggable: selected || hoveringTitlebar });
+    } else if (!draggable) {
+      updateNode(id, { draggable: true });
+    }
+  });
 
   const viewport = useViewport();
   const { updateNodeData, updateNode } = useSvelteFlow();
 
-  const groupLabel = $derived(readGroupLabel(data));
-  const titleCompensationScale = $derived(readCompensatedTitleScale(viewport.current.zoom));
-
-  let isEditingTitle = $state(false);
-  let titleDraft = $state("");
   let titleInputElement = $state<HTMLInputElement | undefined>();
-  let hoveringTitlebar = $state(false);
-  let lastAppliedDraggable = $state<boolean | undefined>();
-
-  $effect(() => {
-    if (!isEditingTitle) {
-      titleDraft = groupLabel;
-    }
-  });
-
-  $effect(() => {
-    const nextDraggable = workspace.controlScheme === "mouse" ? selected || hoveringTitlebar : true;
-    if (lastAppliedDraggable === nextDraggable) {
-      return;
-    }
-
-    lastAppliedDraggable = nextDraggable;
-    updateNode(id, { draggable: nextDraggable });
-  });
-
-  async function beginTitleEditing() {
-    isEditingTitle = true;
-    titleDraft = groupLabel;
-    await tick();
-    titleInputElement?.focus();
-    titleInputElement?.select();
-  }
-
-  function commitTitleEditing() {
-    if (!isEditingTitle) {
-      return;
-    }
-
-    const nextTitle = titleDraft;
-    const didChange = nextTitle !== groupLabel;
-    if (didChange) {
-      updateNodeData(id, { titleOverride: nextTitle });
+  let titleSizerWidth = $state(0);
+  let lastComittedTitle = $derived(data.titleOverride ?? data.defaultTitle);
+  let effectiveTitle = $derived(data.titleOverride ?? data.defaultTitle);
+  let isEditingTitle = $state(false);
+  const titleCompensationScale = $derived(
+    Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, Math.max(1, 1 / viewport.current.zoom)),
+  );
+  const commitTitle = () => {
+    effectiveTitle = effectiveTitle.trim();
+    effectiveTitle = effectiveTitle.length > 0 ? effectiveTitle : data.defaultTitle;
+    if (effectiveTitle !== lastComittedTitle) {
+      updateNodeData(id, { titleOverride: effectiveTitle });
+      lastComittedTitle = effectiveTitle;
       applyDocumentState("group-renamed");
     }
-
     isEditingTitle = false;
-  }
+  };
 
-  function cancelTitleEditing() {
-    if (!isEditingTitle) {
-      return;
-    }
-
-    isEditingTitle = false;
-    titleDraft = groupLabel;
-  }
+  let hoveringTitlebar = $state(false);
 
   function handleTitleInputKeydown(event: KeyboardEvent) {
     if (isPlainEnterNavigationEvent(event)) {
       event.preventDefault();
-      commitTitleEditing();
+      commitTitle();
       titleInputElement?.blur();
       return;
     }
 
     if (event.key === "Escape") {
       event.preventDefault();
-      cancelTitleEditing();
+      commitTitle();
       titleInputElement?.blur();
-    }
-  }
-
-  function handleTitleDisplayKeydown(event: KeyboardEvent) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      void beginTitleEditing();
     }
   }
 
   function handleResizeEnd() {
     applyDocumentState("group-resized");
-  }
-
-  function readGroupLabel(groupData: Record<string, unknown>) {
-    if (typeof groupData?.titleOverride === "string") {
-      return groupData.titleOverride;
-    }
-    if (typeof groupData?.name === "string") {
-      return groupData.name;
-    }
-    if (typeof groupData?.defaultTitle === "string") {
-      return groupData.defaultTitle;
-    }
-    return "Group";
-  }
-
-  function readCompensatedTitleScale(candidateZoom: unknown) {
-    const zoom = Number(candidateZoom);
-    if (!Number.isFinite(zoom) || zoom >= 1) {
-      return 1;
-    }
-
-    const inverseScale = 1 / zoom;
-    return Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, Math.max(1, inverseScale));
   }
 </script>
 
@@ -128,6 +68,7 @@
   class:cursor-grabbing={dragging}
   style="outline: {selected && !dragging ? '2px solid var(--vscode-focusBorder)' : 'none'};"
 >
+  <!-- Title Bar -->
   <div
     class="absolute inset-x-0 top-0 flex items-end h-8 gap-1 px-2 pb-1 overflow-visible border-b rounded-t-lg border-vsc-editor-widget-border/80 bg-vsc-input-bg/60 cursor-grab active:cursor-grabbing"
     role="group"
@@ -139,38 +80,39 @@
       {#if isEditingTitle}
         <input
           bind:this={titleInputElement}
-          class="inline-block max-w-full px-0 py-0 font-semibold leading-none text-left transition-transform duration-100 ease-out origin-bottom-left bg-transparent border-0 rounded outline-none appearance-none nodrag whitespace-nowrap text-vsc-editor-fg ring-0 placeholder:text-vsc-muted focus:outline-none focus:ring-0"
+          class="inline-block px-0 py-0 font-semibold leading-none text-left transition-transform duration-100 ease-out origin-bottom-left bg-transparent border-0 rounded outline-none appearance-none w-fit nodrag whitespace-nowrap text-vsc-editor-fg ring-0 placeholder:text-vsc-muted focus:outline-none focus:ring-0"
           style:font-size={`${GROUP_TITLE_BASE_SIZE_PX}px`}
           style:transform={`scale(${titleCompensationScale})`}
           type="text"
           aria-label="Edit group title"
-          value={titleDraft}
-          size={Math.max(1, titleDraft.length || groupLabel.length)}
-          oninput={event => (titleDraft = event.currentTarget.value)}
+          bind:value={effectiveTitle}
+          style="width: {titleSizerWidth}px;"
           onkeydown={handleTitleInputKeydown}
-          onblur={commitTitleEditing}
+          onblur={commitTitle}
         />
+        <!-- Hidden Sizer to update input width dynamically -->
+        <div
+          class="absolute invisible font-semibold whitespace-pre"
+          aria-hidden="true"
+          {@attach el => {
+            void effectiveTitle;
+            titleSizerWidth =
+              (titleCompensationScale * el.getBoundingClientRect().width) / viewport.current.zoom;
+          }}
+        >
+          {effectiveTitle}
+        </div>
       {:else}
         <button
-          class="inline-block px-0 py-0 font-semibold leading-none text-left transition-transform duration-100 ease-out origin-bottom-left rounded cursor-grab active:cursor-grabbing whitespace-nowrap text-vsc-editor-fg"
+          class="inline-block px-0 py-0 font-semibold leading-none text-left transition-transform duration-100 ease-out origin-bottom-left rounded cursor-text whitespace-nowrap text-vsc-editor-fg"
           style:font-size={`${GROUP_TITLE_BASE_SIZE_PX}px`}
           style:transform={`scale(${titleCompensationScale})`}
           type="button"
-          ondblclick={beginTitleEditing}
-          onkeydown={handleTitleDisplayKeydown}
-          aria-label={`Group title: ${groupLabel}. Double click to rename`}
+          // ondblclick={() => (isEditingTitle = true)}
+          onclick={() => (isEditingTitle = true)}
+          aria-label={`Group title: ${effectiveTitle}. Double click to rename`}
         >
-          {groupLabel}
-        </button>
-
-        <button
-          class="inline-flex items-center justify-center rounded-md nodrag size-4 hover:backdrop-brightness-90"
-          type="button"
-          title="Edit group name"
-          aria-label="Edit group name"
-          onclick={beginTitleEditing}
-        >
-          <Pencil strokeWidth={2.5} aria-hidden="true" />
+          {effectiveTitle}
         </button>
       {/if}
     </div>
