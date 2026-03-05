@@ -22,6 +22,11 @@ export interface WorkspaceState {
   rootNodeId: string;
 }
 
+export interface CopiedSelection {
+  nodes: FlowNode[];
+  edges: FlowEdge[];
+}
+
 class NodeRBush extends RBush<FlowNode> {
   toBBox(node: FlowNode) {
     const { x, y } = getAbsolutePosition(node);
@@ -53,8 +58,8 @@ export class Workspace {
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
   areNodesMeasured = $derived(this.nodes.every(node => node.measured !== undefined));
 
-  /** Nodes that have been copied to the clipboard normalized to their collective center */
-  copiedNodes = $state<FlowNode[]>([]);
+  /** clipboard snapshot of copied/cut nodes plus edges fully contained within that selection */
+  copiedSelection = $state.raw<CopiedSelection>({ nodes: [], edges: [] });
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));

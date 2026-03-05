@@ -35,7 +35,7 @@ export interface NodeEditorDocumentUpdateMessage {
 export type ExtensionToWebviewMessage =
   | NodeEditorDocumentUpdateMessage
   | NodeEditorBootstrapPayload
-  | { type: "action"; request: ActionRequest; allowEditableTarget: boolean }
+  | { type: "action"; request: ActionRequest; allowEditableTarget?: boolean }
   | { type: "autocompletionValues"; fieldId: string; values: string[] }
   | { type: "error"; message: string };
 

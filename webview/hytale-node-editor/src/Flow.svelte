@@ -20,6 +20,7 @@
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { logVSCodeTheme } from "src/node-editor/dev/mockVSCodeTheme";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
+  import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import {
     getAbsoluteCenterPosition,
@@ -32,7 +33,6 @@
   import { applyDocumentState, workspace } from "src/workspace.svelte";
   import { untrack } from "svelte";
   import type { FlowEdge, FlowNode } from "./common";
-  import { isShortcutBlockedByEditableTarget } from "./node-editor/ui/flowKeyboard";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
   const {
@@ -261,24 +261,41 @@
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
     return nodes.map(node => {
-      structuredClone($state.snapshot(node));
+      const copiedNode = structuredClone($state.snapshot(node)) as FlowNode;
       const absolutePosition = getAbsolutePosition(node);
       return {
-        ...node,
+        ...copiedNode,
         position: {
           x: absolutePosition.x - centerX,
           y: absolutePosition.y - centerY,
         },
         parentId: undefined,
+        selected: false,
       };
     });
+  }
+
+  function buildCopiedSelection(nodes: FlowNode[]) {
+    const selectedNodeIds = new Set(nodes.map(node => node.id));
+    const copiedEdges = workspace.edges
+      .filter(edge => selectedNodeIds.has(edge.source) && selectedNodeIds.has(edge.target))
+      .map(edge => {
+        const copiedEdge = structuredClone($state.snapshot(edge)) as FlowEdge;
+        copiedEdge.selected = false;
+        return copiedEdge;
+      });
+
+    return {
+      nodes: normalizeNodePositions(nodes),
+      edges: copiedEdges,
+    };
   }
 
   function handleWindowCopy(event: ClipboardEvent) {
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
-    workspace.copiedNodes = normalizeNodePositions(workspace.getEffectivelySelectedNodes());
+    workspace.copiedSelection = buildCopiedSelection(workspace.getEffectivelySelectedNodes());
 
     event.preventDefault();
     event.stopPropagation();
@@ -290,10 +307,9 @@
     }
 
     const nodesCut = workspace.getEffectivelySelectedNodes();
-    deleteElements({ nodes: nodesCut })
-    workspace.copiedNodes = normalizeNodePositions(nodesCut);
-    
-    applyDocumentState("nodes-cut");
+    workspace.copiedSelection = buildCopiedSelection(nodesCut);
+
+    void deleteElements({ nodes: nodesCut });
     event.preventDefault();
     event.stopPropagation();
   }
@@ -303,25 +319,50 @@
       return;
     }
     const mouseFlowPosition = screenToFlowPosition(cursorPos);
+    const { nodes: copiedNodes, edges: copiedEdges } = workspace.copiedSelection;
 
     // deselect existing nodes
     workspace.nodes.forEach(node => {
       updateNode(node.id, { selected: false });
     });
-    
-    const pastedNodes = workspace.copiedNodes.map(node => {
+
+    const pastedNodeIds = new Map<string, string>();
+    const pastedNodes = copiedNodes.map(node => {
+      const pastedNode = structuredClone($state.snapshot(node)) as FlowNode;
+      const newNodeId = node.id.split("-")[0] + "-" + createUuidV4();
+      pastedNodeIds.set(node.id, newNodeId);
+
       return {
-        ...node,
+        ...pastedNode,
         position: {
           x: node.position.x + mouseFlowPosition.x,
           y: node.position.y + mouseFlowPosition.y,
         },
         selected: true,
-        id: node.id.split("-")[0] + "-" + createUuidV4(),
+        id: newNodeId,
       };
+    });
+    const pastedEdges = copiedEdges.flatMap(edge => {
+      const sourceId = pastedNodeIds.get(edge.source);
+      const targetId = pastedNodeIds.get(edge.target);
+      if (!sourceId || !targetId) {
+        return [];
+      }
+
+      const pastedEdge = structuredClone($state.snapshot(edge)) as FlowEdge;
+      return [
+        {
+          ...pastedEdge,
+          id: `${sourceId}:${pastedEdge.sourceHandle}-${targetId}`,
+          source: sourceId,
+          target: targetId,
+          selected: false,
+        },
+      ];
     });
 
     workspace.nodes = [...workspace.nodes, ...pastedNodes];
+    workspace.addEdges(pastedEdges);
     applyDocumentState("nodes-pasted");
     event.preventDefault();
     event.stopPropagation();

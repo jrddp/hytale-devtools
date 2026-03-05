@@ -1,11 +1,8 @@
 <script lang="ts">
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { isObject } from "src/node-editor/utils/valueUtils";
-  import {
-    focusNextEditableInNode,
-    isPlainEnterNavigationEvent,
-  } from "../node-editor/ui/focusNavigation";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
 
   // TODO lists can technically be types other than string. definition requires investigation.
   let { inputId, label, initialValue, onconfirm }: FieldProps<unknown[]> = $props();

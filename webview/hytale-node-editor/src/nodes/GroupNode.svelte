@@ -3,7 +3,7 @@
   import { type GroupNodeType } from "src/common";
   import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
   import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "src/constants";
-  import { isPlainEnterNavigationEvent } from "src/node-editor/ui/focusNavigation";
+  import { isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
 
   const GROUP_TITLE_BASE_SIZE_PX = 18;

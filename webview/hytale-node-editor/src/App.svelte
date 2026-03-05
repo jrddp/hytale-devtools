@@ -7,11 +7,11 @@
   import { SvelteFlowProvider } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
   import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
-  import { EDITABLE_SELECTOR } from "src/node-editor/ui/flowKeyboard";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import Flow from "./Flow.svelte";
+  import { EDITABLE_SELECTOR } from "src/node-editor/utils/flowKeyboard";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
 

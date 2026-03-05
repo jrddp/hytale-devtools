@@ -3,7 +3,7 @@
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { workspace } from "src/workspace.svelte";
   import { type SemanticReference } from "../../../../src/shared/schema/types";
-  import { focusNextEditableInNode } from "../node-editor/ui/focusNavigation";
+  import { focusNextEditableInNode } from "src/node-editor/utils/focusNavigation";
 
   let {
     inputId,
@@ -129,12 +129,12 @@
   }
 </script>
 
-<div class="relative flex flex-col gap-1 nodrag">
+<div class="relative flex flex-col gap-1">
   <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
   {#if multiline}
     <textarea
       id={inputId}
-      class="min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg h-20"
+      class="nodrag min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg h-20"
       rows="4"
       bind:value
       onblur={confirmValue}
@@ -143,7 +143,7 @@
   {:else}
     <input
       id={inputId}
-      class="w-64 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+      class="w-64 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
       class:rounded-b-none!={shouldAutocomplete && filteredAutocompleteValues.length > 0}
       type="text"
       bind:value

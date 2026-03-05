@@ -1,10 +1,7 @@
 <script lang="ts">
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import {
-    focusNextEditableInNode,
-    isPlainEnterNavigationEvent,
-  } from "../node-editor/ui/focusNavigation";
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
 
   // TODO support rgb format
   type ColorStringFormat = "hex" | "rgb";
