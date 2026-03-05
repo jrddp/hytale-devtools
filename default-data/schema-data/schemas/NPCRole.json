@@ -1,0 +1,5086 @@
+{
+  "$id": "NPCRole.json",
+  "title": "NPCRole",
+  "if": {
+    "type": "object",
+    "required": [
+      "Type"
+    ],
+    "hytale": {
+      "type": "object"
+    },
+    "properties": {
+      "Type": {
+        "type": "string",
+        "hytale": {
+          "type": "string"
+        },
+        "enum": [
+          "Variant",
+          "Generic",
+          "Abstract",
+          "Component"
+        ],
+        "hytaleDevtools": {
+          "semanticKind": "literalChoice",
+          "valueShape": "string",
+          "values": [
+            "Variant",
+            "Generic",
+            "Abstract",
+            "Component"
+          ],
+          "acceptedValues": [
+            "Variant",
+            "Generic",
+            "Abstract",
+            "Component"
+          ],
+          "role": "enum"
+        }
+      }
+    }
+  },
+  "then": {
+    "anyOf": [
+      {
+        "if": {
+          "type": "object",
+          "required": [
+            "Type"
+          ],
+          "hytale": {
+            "type": "object"
+          },
+          "properties": {
+            "Type": {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "const": "Variant"
+            }
+          }
+        },
+        "then": {
+          "$ref": "other.json#/definitions/NPC:Variant"
+        },
+        "else": false
+      },
+      {
+        "if": {
+          "type": "object",
+          "required": [
+            "Type"
+          ],
+          "hytale": {
+            "type": "object"
+          },
+          "properties": {
+            "Type": {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "const": "Generic"
+            }
+          }
+        },
+        "then": {
+          "$ref": "other.json#/definitions/NPC:Generic"
+        },
+        "else": false
+      },
+      {
+        "if": {
+          "type": "object",
+          "required": [
+            "Type"
+          ],
+          "hytale": {
+            "type": "object"
+          },
+          "properties": {
+            "Type": {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "const": "Abstract"
+            }
+          }
+        },
+        "then": {
+          "$ref": "other.json#/definitions/NPC:Abstract"
+        },
+        "else": false
+      },
+      {
+        "if": {
+          "type": "object",
+          "required": [
+            "Type"
+          ],
+          "hytale": {
+            "type": "object"
+          },
+          "properties": {
+            "Type": {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "const": "Component"
+            }
+          }
+        },
+        "then": {
+          "$ref": "other.json#/definitions/NPC:Component@18"
+        },
+        "else": false
+      },
+      {
+        "if": {
+          "type": "object",
+          "required": [
+            "Class",
+            "Type"
+          ],
+          "hytale": {
+            "type": "object"
+          },
+          "properties": {
+            "Type": {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "const": "Component"
+            }
+          }
+        },
+        "then": {
+          "anyOf": [
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "Role"
+                  }
+                }
+              },
+              "then": {
+                "title": "Role",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "Variant",
+                        "Generic",
+                        "Abstract",
+                        "Component"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "Variant",
+                          "Generic",
+                          "Abstract",
+                          "Component"
+                        ],
+                        "acceptedValues": [
+                          "Variant",
+                          "Generic",
+                          "Abstract",
+                          "Component"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Variant"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Variant@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Generic"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Generic@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Abstract"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Abstract@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@20"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": false,
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "Variant",
+                    "Generic",
+                    "Abstract",
+                    "Component"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "Path"
+                  }
+                }
+              },
+              "then": {
+                "title": "TransientPathDefinition",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "Component"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "Component"
+                        ],
+                        "acceptedValues": [
+                          "Component"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@21"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": {
+                  "$ref": "other.json#/definitions/NPC:Class:BuilderTransientPathDefinition@1"
+                },
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "Component"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "BodyMotion"
+                  }
+                }
+              },
+              "then": {
+                "title": "BodyMotion",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "Path",
+                        "MaintainDistance",
+                        "WanderInRect",
+                        "MatchLook",
+                        "Flee",
+                        "AimCharge",
+                        "Leave",
+                        "Sequence",
+                        "TakeOff",
+                        "Teleport",
+                        "Wander",
+                        "Nothing",
+                        "Land",
+                        "Timer",
+                        "WanderInCircle",
+                        "TestProbe",
+                        "Component",
+                        "Flock",
+                        "Seek"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "Path",
+                          "MaintainDistance",
+                          "WanderInRect",
+                          "MatchLook",
+                          "Flee",
+                          "AimCharge",
+                          "Leave",
+                          "Sequence",
+                          "TakeOff",
+                          "Teleport",
+                          "Wander",
+                          "Nothing",
+                          "Land",
+                          "Timer",
+                          "WanderInCircle",
+                          "TestProbe",
+                          "Component",
+                          "Flock",
+                          "Seek"
+                        ],
+                        "acceptedValues": [
+                          "Path",
+                          "MaintainDistance",
+                          "WanderInRect",
+                          "MatchLook",
+                          "Flee",
+                          "AimCharge",
+                          "Leave",
+                          "Sequence",
+                          "TakeOff",
+                          "Teleport",
+                          "Wander",
+                          "Nothing",
+                          "Land",
+                          "Timer",
+                          "WanderInCircle",
+                          "TestProbe",
+                          "Component",
+                          "Flock",
+                          "Seek"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Path"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Path@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "MaintainDistance"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:MaintainDistance@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "WanderInRect"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:WanderInRect@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "MatchLook"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:MatchLook@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Flee"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Flee@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "AimCharge"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:AimCharge@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Leave"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Leave@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Sequence"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Sequence@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TakeOff"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TakeOff@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Teleport"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Teleport@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Wander"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Wander@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Nothing"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Nothing@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Land"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Land@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Timer"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Timer@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "WanderInCircle"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:WanderInCircle@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TestProbe"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TestProbe@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@22"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Flock"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Flock@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Seek"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Seek@1"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": false,
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "Path",
+                    "MaintainDistance",
+                    "WanderInRect",
+                    "MatchLook",
+                    "Flee",
+                    "AimCharge",
+                    "Leave",
+                    "Sequence",
+                    "TakeOff",
+                    "Teleport",
+                    "Wander",
+                    "Nothing",
+                    "Land",
+                    "Timer",
+                    "WanderInCircle",
+                    "TestProbe",
+                    "Component",
+                    "Flock",
+                    "Seek"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "Action"
+                  }
+                }
+              },
+              "then": {
+                "title": "Action",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "FlockTarget",
+                        "Notify",
+                        "ToggleStateEvaluator",
+                        "Mount",
+                        "ReleaseTarget",
+                        "Remove",
+                        "TimerStart",
+                        "Nothing",
+                        "IgnoreForAvoidance",
+                        "MakePath",
+                        "OpenBarterShop",
+                        "Random",
+                        "Crouch",
+                        "Test",
+                        "RecomputePath",
+                        "ApplyEntityEffect",
+                        "CombatAbility",
+                        "Spawn",
+                        "SpawnParticles",
+                        "LeaveFlock",
+                        "SetAlarm",
+                        "ResetInstructions",
+                        "AddToHostileTargetMemory",
+                        "ParentState",
+                        "CompleteTask",
+                        "Log",
+                        "Timeout",
+                        "ResetBlockSensors",
+                        "SetBlockToPlace",
+                        "Sequence",
+                        "TimerPause",
+                        "SetMarkedTarget",
+                        "Role",
+                        "TriggerSpawners",
+                        "SetLeashPosition",
+                        "ResetSearchRays",
+                        "TriggerSpawnBeacon",
+                        "State",
+                        "Beacon",
+                        "PlaceBlock",
+                        "Inventory",
+                        "OverrideAttitude",
+                        "ModelAttachment",
+                        "SetStat",
+                        "PickUpItem",
+                        "PlaySound",
+                        "OpenShop",
+                        "FlockBeacon",
+                        "StartObjective",
+                        "SetInteractable",
+                        "SetFlag",
+                        "StorePosition",
+                        "PlayAnimation",
+                        "DropItem",
+                        "TimerContinue",
+                        "DisplayName",
+                        "TimerStop",
+                        "Component",
+                        "FlockState",
+                        "Die",
+                        "ResetPath",
+                        "TimerModify",
+                        "Attack",
+                        "Appearance",
+                        "LockOnInteractionTarget",
+                        "TimerRestart",
+                        "Despawn",
+                        "OverrideAltitude",
+                        "DelayDespawn",
+                        "JoinFlock"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "FlockTarget",
+                          "Notify",
+                          "ToggleStateEvaluator",
+                          "Mount",
+                          "ReleaseTarget",
+                          "Remove",
+                          "TimerStart",
+                          "Nothing",
+                          "IgnoreForAvoidance",
+                          "MakePath",
+                          "OpenBarterShop",
+                          "Random",
+                          "Crouch",
+                          "Test",
+                          "RecomputePath",
+                          "ApplyEntityEffect",
+                          "CombatAbility",
+                          "Spawn",
+                          "SpawnParticles",
+                          "LeaveFlock",
+                          "SetAlarm",
+                          "ResetInstructions",
+                          "AddToHostileTargetMemory",
+                          "ParentState",
+                          "CompleteTask",
+                          "Log",
+                          "Timeout",
+                          "ResetBlockSensors",
+                          "SetBlockToPlace",
+                          "Sequence",
+                          "TimerPause",
+                          "SetMarkedTarget",
+                          "Role",
+                          "TriggerSpawners",
+                          "SetLeashPosition",
+                          "ResetSearchRays",
+                          "TriggerSpawnBeacon",
+                          "State",
+                          "Beacon",
+                          "PlaceBlock",
+                          "Inventory",
+                          "OverrideAttitude",
+                          "ModelAttachment",
+                          "SetStat",
+                          "PickUpItem",
+                          "PlaySound",
+                          "OpenShop",
+                          "FlockBeacon",
+                          "StartObjective",
+                          "SetInteractable",
+                          "SetFlag",
+                          "StorePosition",
+                          "PlayAnimation",
+                          "DropItem",
+                          "TimerContinue",
+                          "DisplayName",
+                          "TimerStop",
+                          "Component",
+                          "FlockState",
+                          "Die",
+                          "ResetPath",
+                          "TimerModify",
+                          "Attack",
+                          "Appearance",
+                          "LockOnInteractionTarget",
+                          "TimerRestart",
+                          "Despawn",
+                          "OverrideAltitude",
+                          "DelayDespawn",
+                          "JoinFlock"
+                        ],
+                        "acceptedValues": [
+                          "FlockTarget",
+                          "Notify",
+                          "ToggleStateEvaluator",
+                          "Mount",
+                          "ReleaseTarget",
+                          "Remove",
+                          "TimerStart",
+                          "Nothing",
+                          "IgnoreForAvoidance",
+                          "MakePath",
+                          "OpenBarterShop",
+                          "Random",
+                          "Crouch",
+                          "Test",
+                          "RecomputePath",
+                          "ApplyEntityEffect",
+                          "CombatAbility",
+                          "Spawn",
+                          "SpawnParticles",
+                          "LeaveFlock",
+                          "SetAlarm",
+                          "ResetInstructions",
+                          "AddToHostileTargetMemory",
+                          "ParentState",
+                          "CompleteTask",
+                          "Log",
+                          "Timeout",
+                          "ResetBlockSensors",
+                          "SetBlockToPlace",
+                          "Sequence",
+                          "TimerPause",
+                          "SetMarkedTarget",
+                          "Role",
+                          "TriggerSpawners",
+                          "SetLeashPosition",
+                          "ResetSearchRays",
+                          "TriggerSpawnBeacon",
+                          "State",
+                          "Beacon",
+                          "PlaceBlock",
+                          "Inventory",
+                          "OverrideAttitude",
+                          "ModelAttachment",
+                          "SetStat",
+                          "PickUpItem",
+                          "PlaySound",
+                          "OpenShop",
+                          "FlockBeacon",
+                          "StartObjective",
+                          "SetInteractable",
+                          "SetFlag",
+                          "StorePosition",
+                          "PlayAnimation",
+                          "DropItem",
+                          "TimerContinue",
+                          "DisplayName",
+                          "TimerStop",
+                          "Component",
+                          "FlockState",
+                          "Die",
+                          "ResetPath",
+                          "TimerModify",
+                          "Attack",
+                          "Appearance",
+                          "LockOnInteractionTarget",
+                          "TimerRestart",
+                          "Despawn",
+                          "OverrideAltitude",
+                          "DelayDespawn",
+                          "JoinFlock"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "FlockTarget"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:FlockTarget@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Notify"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Notify@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ToggleStateEvaluator"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ToggleStateEvaluator@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Mount"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Mount@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ReleaseTarget"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ReleaseTarget@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Remove"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Remove@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TimerStart"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TimerStart@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Nothing"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Nothing@4"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "IgnoreForAvoidance"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:IgnoreForAvoidance@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "MakePath"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:MakePath@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "OpenBarterShop"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:OpenBarterShop@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Random"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Random@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Crouch"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Crouch@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Test"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Test@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "RecomputePath"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:RecomputePath@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ApplyEntityEffect"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ApplyEntityEffect@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "CombatAbility"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:CombatAbility@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Spawn"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Spawn@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SpawnParticles"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SpawnParticles@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "LeaveFlock"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:LeaveFlock@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetAlarm"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetAlarm@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ResetInstructions"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ResetInstructions@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "AddToHostileTargetMemory"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:AddToHostileTargetMemory@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ParentState"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ParentState@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "CompleteTask"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:CompleteTask@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Log"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Log@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Timeout"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Timeout@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ResetBlockSensors"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ResetBlockSensors@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetBlockToPlace"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetBlockToPlace@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Sequence"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Sequence@4"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TimerPause"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TimerPause@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetMarkedTarget"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetMarkedTarget@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Role"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Role@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TriggerSpawners"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TriggerSpawners@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetLeashPosition"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetLeashPosition@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ResetSearchRays"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ResetSearchRays@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TriggerSpawnBeacon"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TriggerSpawnBeacon@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "State"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:State@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Beacon"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Beacon@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "PlaceBlock"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:PlaceBlock@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Inventory"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Inventory@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "OverrideAttitude"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:OverrideAttitude@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ModelAttachment"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ModelAttachment@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetStat"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetStat@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "PickUpItem"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:PickUpItem@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "PlaySound"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:PlaySound@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "OpenShop"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:OpenShop@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "FlockBeacon"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:FlockBeacon@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "StartObjective"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:StartObjective@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetInteractable"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetInteractable@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SetFlag"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SetFlag@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "StorePosition"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:StorePosition@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "PlayAnimation"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:PlayAnimation@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "DropItem"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:DropItem@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TimerContinue"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TimerContinue@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "DisplayName"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:DisplayName@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TimerStop"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TimerStop@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@23"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "FlockState"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:FlockState@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Die"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Die@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ResetPath"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ResetPath@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TimerModify"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TimerModify@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Attack"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Attack@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Appearance"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Appearance@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "LockOnInteractionTarget"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:LockOnInteractionTarget@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "TimerRestart"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:TimerRestart@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Despawn"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Despawn@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "OverrideAltitude"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:OverrideAltitude@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "DelayDespawn"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:DelayDespawn@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "JoinFlock"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:JoinFlock@1"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": false,
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "FlockTarget",
+                    "Notify",
+                    "ToggleStateEvaluator",
+                    "Mount",
+                    "ReleaseTarget",
+                    "Remove",
+                    "TimerStart",
+                    "Nothing",
+                    "IgnoreForAvoidance",
+                    "MakePath",
+                    "OpenBarterShop",
+                    "Random",
+                    "Crouch",
+                    "Test",
+                    "RecomputePath",
+                    "ApplyEntityEffect",
+                    "CombatAbility",
+                    "Spawn",
+                    "SpawnParticles",
+                    "LeaveFlock",
+                    "SetAlarm",
+                    "ResetInstructions",
+                    "AddToHostileTargetMemory",
+                    "ParentState",
+                    "CompleteTask",
+                    "Log",
+                    "Timeout",
+                    "ResetBlockSensors",
+                    "SetBlockToPlace",
+                    "Sequence",
+                    "TimerPause",
+                    "SetMarkedTarget",
+                    "Role",
+                    "TriggerSpawners",
+                    "SetLeashPosition",
+                    "ResetSearchRays",
+                    "TriggerSpawnBeacon",
+                    "State",
+                    "Beacon",
+                    "PlaceBlock",
+                    "Inventory",
+                    "OverrideAttitude",
+                    "ModelAttachment",
+                    "SetStat",
+                    "PickUpItem",
+                    "PlaySound",
+                    "OpenShop",
+                    "FlockBeacon",
+                    "StartObjective",
+                    "SetInteractable",
+                    "SetFlag",
+                    "StorePosition",
+                    "PlayAnimation",
+                    "DropItem",
+                    "TimerContinue",
+                    "DisplayName",
+                    "TimerStop",
+                    "Component",
+                    "FlockState",
+                    "Die",
+                    "ResetPath",
+                    "TimerModify",
+                    "Attack",
+                    "Appearance",
+                    "LockOnInteractionTarget",
+                    "TimerRestart",
+                    "Despawn",
+                    "OverrideAltitude",
+                    "DelayDespawn",
+                    "JoinFlock"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "HeadMotion"
+                  }
+                }
+              },
+              "then": {
+                "title": "HeadMotion",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "Aim",
+                        "Timer",
+                        "Observe",
+                        "Watch",
+                        "Sequence",
+                        "Component",
+                        "Nothing"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "Aim",
+                          "Timer",
+                          "Observe",
+                          "Watch",
+                          "Sequence",
+                          "Component",
+                          "Nothing"
+                        ],
+                        "acceptedValues": [
+                          "Aim",
+                          "Timer",
+                          "Observe",
+                          "Watch",
+                          "Sequence",
+                          "Component",
+                          "Nothing"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Aim"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Aim@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Timer"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Timer@4"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Observe"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Observe@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Watch"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Watch@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Sequence"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Sequence@5"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@24"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Nothing"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Nothing@5"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": false,
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "Aim",
+                    "Timer",
+                    "Observe",
+                    "Watch",
+                    "Sequence",
+                    "Component",
+                    "Nothing"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "ActionList"
+                  }
+                }
+              },
+              "then": {
+                "title": "ActionList",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "Component"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "Component"
+                        ],
+                        "acceptedValues": [
+                          "Component"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@25"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": {
+                  "$ref": "other.json#/definitions/NPC:Class:BuilderActionList@1"
+                },
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "Component"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "Instruction"
+                  }
+                }
+              },
+              "then": {
+                "title": "Instruction",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "Random",
+                        "Reference",
+                        "Component"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "Random",
+                          "Reference",
+                          "Component"
+                        ],
+                        "acceptedValues": [
+                          "Random",
+                          "Reference",
+                          "Component"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Random"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Random@4"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Reference"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Reference@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@26"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": {
+                  "$ref": "other.json#/definitions/NPC:Class:BuilderInstruction@1"
+                },
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "Random",
+                    "Reference",
+                    "Component"
+                  ]
+                }
+              },
+              "else": false
+            },
+            {
+              "if": {
+                "type": "object",
+                "hytale": {
+                  "type": "object"
+                },
+                "properties": {
+                  "Class": {
+                    "type": "string",
+                    "hytale": {
+                      "type": "string"
+                    },
+                    "const": "Sensor"
+                  }
+                }
+              },
+              "then": {
+                "title": "Sensor",
+                "if": {
+                  "type": "object",
+                  "required": [
+                    "Type"
+                  ],
+                  "hytale": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "Type": {
+                      "type": "string",
+                      "hytale": {
+                        "type": "string"
+                      },
+                      "enum": [
+                        "InWater",
+                        "Nav",
+                        "Or",
+                        "DroppedItem",
+                        "IsBackingAway",
+                        "Count",
+                        "ValueProviderWrapper",
+                        "Random",
+                        "Light",
+                        "Damage",
+                        "Eval",
+                        "Player",
+                        "InteractionContext",
+                        "HasHostileTargetMemory",
+                        "CanPlaceBlock",
+                        "Flag",
+                        "SearchRay",
+                        "Not",
+                        "Switch",
+                        "BlockType",
+                        "And",
+                        "State",
+                        "EntityEvent",
+                        "FlockLeader",
+                        "Beacon",
+                        "Block",
+                        "CombatActionEvaluator",
+                        "HasInteracted",
+                        "MotionController",
+                        "Time",
+                        "Self",
+                        "Any",
+                        "InflictedDamage",
+                        "Target",
+                        "BlockChange",
+                        "Component",
+                        "Kill",
+                        "HasTask",
+                        "Age",
+                        "Path",
+                        "Mob",
+                        "ReadPosition",
+                        "Leash",
+                        "IsBusy",
+                        "OnGround",
+                        "FlockCombatDamage",
+                        "Weather",
+                        "InAir",
+                        "Timer",
+                        "CanInteract",
+                        "Alarm",
+                        "AdjustPosition",
+                        "Animation"
+                      ],
+                      "hytaleDevtools": {
+                        "semanticKind": "literalChoice",
+                        "valueShape": "string",
+                        "values": [
+                          "InWater",
+                          "Nav",
+                          "Or",
+                          "DroppedItem",
+                          "IsBackingAway",
+                          "Count",
+                          "ValueProviderWrapper",
+                          "Random",
+                          "Light",
+                          "Damage",
+                          "Eval",
+                          "Player",
+                          "InteractionContext",
+                          "HasHostileTargetMemory",
+                          "CanPlaceBlock",
+                          "Flag",
+                          "SearchRay",
+                          "Not",
+                          "Switch",
+                          "BlockType",
+                          "And",
+                          "State",
+                          "EntityEvent",
+                          "FlockLeader",
+                          "Beacon",
+                          "Block",
+                          "CombatActionEvaluator",
+                          "HasInteracted",
+                          "MotionController",
+                          "Time",
+                          "Self",
+                          "Any",
+                          "InflictedDamage",
+                          "Target",
+                          "BlockChange",
+                          "Component",
+                          "Kill",
+                          "HasTask",
+                          "Age",
+                          "Path",
+                          "Mob",
+                          "ReadPosition",
+                          "Leash",
+                          "IsBusy",
+                          "OnGround",
+                          "FlockCombatDamage",
+                          "Weather",
+                          "InAir",
+                          "Timer",
+                          "CanInteract",
+                          "Alarm",
+                          "AdjustPosition",
+                          "Animation"
+                        ],
+                        "acceptedValues": [
+                          "InWater",
+                          "Nav",
+                          "Or",
+                          "DroppedItem",
+                          "IsBackingAway",
+                          "Count",
+                          "ValueProviderWrapper",
+                          "Random",
+                          "Light",
+                          "Damage",
+                          "Eval",
+                          "Player",
+                          "InteractionContext",
+                          "HasHostileTargetMemory",
+                          "CanPlaceBlock",
+                          "Flag",
+                          "SearchRay",
+                          "Not",
+                          "Switch",
+                          "BlockType",
+                          "And",
+                          "State",
+                          "EntityEvent",
+                          "FlockLeader",
+                          "Beacon",
+                          "Block",
+                          "CombatActionEvaluator",
+                          "HasInteracted",
+                          "MotionController",
+                          "Time",
+                          "Self",
+                          "Any",
+                          "InflictedDamage",
+                          "Target",
+                          "BlockChange",
+                          "Component",
+                          "Kill",
+                          "HasTask",
+                          "Age",
+                          "Path",
+                          "Mob",
+                          "ReadPosition",
+                          "Leash",
+                          "IsBusy",
+                          "OnGround",
+                          "FlockCombatDamage",
+                          "Weather",
+                          "InAir",
+                          "Timer",
+                          "CanInteract",
+                          "Alarm",
+                          "AdjustPosition",
+                          "Animation"
+                        ],
+                        "role": "enum"
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "InWater"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:InWater@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Nav"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Nav@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Or"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Or@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "DroppedItem"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:DroppedItem@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "IsBackingAway"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:IsBackingAway@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Count"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Count@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ValueProviderWrapper"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ValueProviderWrapper@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Random"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Random@5"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Light"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Light@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Damage"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Damage@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Eval"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Eval@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Player"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Player@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "InteractionContext"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:InteractionContext@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "HasHostileTargetMemory"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:HasHostileTargetMemory@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "CanPlaceBlock"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:CanPlaceBlock@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Flag"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Flag@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "SearchRay"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:SearchRay@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Not"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Not@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Switch"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Switch@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "BlockType"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:BlockType@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "And"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:And@2"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "State"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:State@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "EntityEvent"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:EntityEvent@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "FlockLeader"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:FlockLeader@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Beacon"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Beacon@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Block"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Block@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "CombatActionEvaluator"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:CombatActionEvaluator@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "HasInteracted"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:HasInteracted@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "MotionController"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:MotionController@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Time"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Time@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Self"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Self@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Any"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Any@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "InflictedDamage"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:InflictedDamage@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Target"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Target@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "BlockChange"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:BlockChange@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Component"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Component@27"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Kill"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Kill@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "HasTask"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:HasTask@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Age"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Age@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Path"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Path@3"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Mob"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Mob@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "ReadPosition"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:ReadPosition@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Leash"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Leash@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "IsBusy"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:IsBusy@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "OnGround"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:OnGround@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "FlockCombatDamage"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:FlockCombatDamage@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Weather"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Weather@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "InAir"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:InAir@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Timer"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Timer@5"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "CanInteract"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:CanInteract@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Alarm"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Alarm@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "AdjustPosition"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:AdjustPosition@1"
+                      },
+                      "else": false
+                    },
+                    {
+                      "if": {
+                        "type": "object",
+                        "required": [
+                          "Type"
+                        ],
+                        "hytale": {
+                          "type": "object"
+                        },
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "hytale": {
+                              "type": "string"
+                            },
+                            "const": "Animation"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "other.json#/definitions/NPC:Animation@1"
+                      },
+                      "else": false
+                    }
+                  ]
+                },
+                "else": false,
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "InWater",
+                    "Nav",
+                    "Or",
+                    "DroppedItem",
+                    "IsBackingAway",
+                    "Count",
+                    "ValueProviderWrapper",
+                    "Random",
+                    "Light",
+                    "Damage",
+                    "Eval",
+                    "Player",
+                    "InteractionContext",
+                    "HasHostileTargetMemory",
+                    "CanPlaceBlock",
+                    "Flag",
+                    "SearchRay",
+                    "Not",
+                    "Switch",
+                    "BlockType",
+                    "And",
+                    "State",
+                    "EntityEvent",
+                    "FlockLeader",
+                    "Beacon",
+                    "Block",
+                    "CombatActionEvaluator",
+                    "HasInteracted",
+                    "MotionController",
+                    "Time",
+                    "Self",
+                    "Any",
+                    "InflictedDamage",
+                    "Target",
+                    "BlockChange",
+                    "Component",
+                    "Kill",
+                    "HasTask",
+                    "Age",
+                    "Path",
+                    "Mob",
+                    "ReadPosition",
+                    "Leash",
+                    "IsBusy",
+                    "OnGround",
+                    "FlockCombatDamage",
+                    "Weather",
+                    "InAir",
+                    "Timer",
+                    "CanInteract",
+                    "Alarm",
+                    "AdjustPosition",
+                    "Animation"
+                  ]
+                }
+              },
+              "else": false
+            }
+          ]
+        },
+        "else": false
+      }
+    ]
+  },
+  "else": false,
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "Variant",
+      "Generic",
+      "Abstract",
+      "Component"
+    ]
+  },
+  "hytale": {
+    "path": "NPC/Roles",
+    "extension": ".json"
+  }
+}

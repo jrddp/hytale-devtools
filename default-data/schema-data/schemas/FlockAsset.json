@@ -1,0 +1,26 @@
+{
+  "$id": "FlockAsset.json",
+  "title": "FlockAsset",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/RangeSizeFlockAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/WeightedSizeFlockAsset"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "defaultValue": "Default",
+    "values": [
+      "Default",
+      "Weighted"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "NPC/Flocks",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

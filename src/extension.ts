@@ -4,30 +4,48 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
 import { getNodeEditorWorkspaces } from "./node-editor/workspaceResolver";
-import { loadSchemaDefinitions, loadSchemaMappings } from "./schema/schemaLoader";
+import { createSchemaDataRuntime } from "./schema/schemaDataRuntime";
+import {
+  loadSchemaDefinitionsFromRoot,
+  loadSchemaMappingsFromRoot,
+} from "./schema/schemaLoader";
 import { type SchemaDocs } from "./schema/schemaPointerResolver";
-import { loadIndexes } from "./schema/symbolResolver";
+import { loadIndexesFromRoot } from "./schema/symbolResolver";
 import { type NodeEditorWorkspace } from "./shared/node-editor/workspaceTypes";
 import { type IndexKind, type SchemaMappings, type SymbolIndex } from "./shared/schema/types";
+import { resolvePatchlineForContext, resolveSchemaDataLocation } from "./utils/hytalePaths";
 
 export let LOGGER: vscode.LogOutputChannel;
 export let nodeEditorWorkspaces: Record<string, NodeEditorWorkspace>;
 export let schemaMappings: SchemaMappings;
 export let schemaDocs: SchemaDocs;
 export let indexes: Map<IndexKind, SymbolIndex>;
+
+function reloadSchemaData(context: vscode.ExtensionContext, reason: string): void {
+  const patchline = resolvePatchlineForContext(context);
+  const schemaDataLocation = resolveSchemaDataLocation(context, patchline);
+
+  schemaMappings = loadSchemaMappingsFromRoot(schemaDataLocation.rootPath);
+  schemaDocs = loadSchemaDefinitionsFromRoot(schemaDataLocation.rootPath);
+  indexes = loadIndexesFromRoot(schemaDataLocation.rootPath);
+
+  LOGGER.info(
+    `Loaded schema data from ${schemaDataLocation.source} (${schemaDataLocation.rootPath}) for ${patchline} patchline (${reason})`,
+  );
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   LOGGER = vscode.window.createOutputChannel("Hytale Devtools", { log: true });
   context.subscriptions.push(LOGGER);
 
-  // const companionSnapshotRuntime = createCompanionSnapshotRuntime(context);
-  // context.subscriptions.push(companionSnapshotRuntime);
+  const schemaDataRuntime = createSchemaDataRuntime(context, reason => {
+    reloadSchemaData(context, reason);
+  });
+  context.subscriptions.push(schemaDataRuntime);
 
-  schemaMappings = loadSchemaMappings(context);
-  schemaDocs = loadSchemaDefinitions(context);
-
-  indexes = loadIndexes(context);
+  reloadSchemaData(context, "extension activation");
 
   nodeEditorWorkspaces = getNodeEditorWorkspaces(
     context.asAbsolutePath(path.join("webview", "hytale-node-editor", "Workspaces")),

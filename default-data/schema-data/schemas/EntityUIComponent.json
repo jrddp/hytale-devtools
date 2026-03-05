@@ -1,0 +1,25 @@
+{
+  "$id": "EntityUIComponent.json",
+  "title": "EntityUIComponent",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/CombatTextUIComponent"
+    },
+    {
+      "$ref": "common.json#/definitions/EntityStatUIComponent"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "CombatText",
+      "EntityStat"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "Entity/UI",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

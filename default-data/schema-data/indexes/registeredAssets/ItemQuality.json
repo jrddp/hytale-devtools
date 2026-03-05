@@ -1,0 +1,48 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemQuality",
+  "path": "Server/Item/Qualities",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 11,
+  "values": {
+    "Common": {
+      "sourcedFromFile": "/Server/Item/Qualities/Common.json"
+    },
+    "Debug": {
+      "sourcedFromFile": "/Server/Item/Qualities/Debug.json"
+    },
+    "Default": {
+      "sourcedFromFile": null
+    },
+    "Developer": {
+      "sourcedFromFile": "/Server/Item/Qualities/Developer.json"
+    },
+    "Epic": {
+      "sourcedFromFile": "/Server/Item/Qualities/Epic.json"
+    },
+    "Junk": {
+      "sourcedFromFile": "/Server/Item/Qualities/Junk.json"
+    },
+    "Legendary": {
+      "sourcedFromFile": "/Server/Item/Qualities/Legendary.json"
+    },
+    "Rare": {
+      "sourcedFromFile": "/Server/Item/Qualities/Rare.json"
+    },
+    "Technical": {
+      "sourcedFromFile": "/Server/Item/Qualities/Technical.json"
+    },
+    "Template": {
+      "sourcedFromFile": "/Server/Item/Qualities/Template.json"
+    },
+    "Tool": {
+      "sourcedFromFile": "/Server/Item/Qualities/Tool.json"
+    },
+    "Uncommon": {
+      "sourcedFromFile": "/Server/Item/Qualities/Uncommon.json"
+    }
+  }
+}

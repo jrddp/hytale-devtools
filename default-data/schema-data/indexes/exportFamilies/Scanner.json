@@ -1,0 +1,41 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "exportsByFamily",
+  "key": "Scanner",
+  "values": {
+    "BasicForestTreeScanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/BasicForest.json"
+    },
+    "Desert1_Boab_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Boab.json"
+    },
+    "Desert1_Boulders_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders.json"
+    },
+    "Desert1_Dry_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Dry.json"
+    },
+    "Desert1_Oasis_Grasses_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Grasses.json"
+    },
+    "Desert1_Oasis_Plants_2_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Flowers_2.json"
+    },
+    "Desert1_Palm_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Palm.json"
+    },
+    "Desert1_Rocky_Trees_Dry_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Rocky.json"
+    },
+    "Desert1_Rocky_Trees_Palm_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Rocky.json"
+    },
+    "Plains1_Gorges_Boulder_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Boulders.json"
+    },
+    "Plains1_Gorges_Tree_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Forest_Clusters.json"
+    }
+  }
+}

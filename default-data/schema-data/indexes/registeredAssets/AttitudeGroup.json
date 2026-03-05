@@ -1,0 +1,90 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "AttitudeGroup",
+  "path": "Server/NPC/Attitude/Roles",
+  "extension": ".json",
+  "assetCount": 26,
+  "fileCount": 26,
+  "values": {
+    "Aggressive": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/LivingWorld/Aggressive.json"
+    },
+    "Attack_Dummy": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Tests/Attack_Dummy.json"
+    },
+    "Attack_Tests": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Tests/Attack_Tests.json"
+    },
+    "Cactee": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Creature/Mythic/Cactee.json"
+    },
+    "Critters": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Critters.json"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Empty.json"
+    },
+    "Feran": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Neutral/Feran.json"
+    },
+    "Goblin": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Goblin/Goblin.json"
+    },
+    "Goblin_Miner": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Goblin/Goblin_Miner.json"
+    },
+    "Golem": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Elemental/Golem.json"
+    },
+    "Kweebec": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Neutral/Kweebec.json"
+    },
+    "Neutral": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/LivingWorld/Neutral.json"
+    },
+    "Outlander": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Outlander/Outlander.json"
+    },
+    "Outlander_Cultist": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Outlander/Outlander_Cultist.json"
+    },
+    "Outlander_Ranged": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Outlander/Outlander_Ranged.json"
+    },
+    "Passive": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/LivingWorld/Passive.json"
+    },
+    "Predators": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Predators.json"
+    },
+    "PredatorsBig": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/PredatorsBig.json"
+    },
+    "Prey": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Prey.json"
+    },
+    "PreyBig": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/PreyBig.json"
+    },
+    "Scarak": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Scarak.json"
+    },
+    "Trork": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Trork/Trork.json"
+    },
+    "Trork_Hunter": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Trork/Trork_Hunter.json"
+    },
+    "Trork_Ranged": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Trork/Trork_Ranged.json"
+    },
+    "Vermin": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Vermin.json"
+    },
+    "Void": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Void.json"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$id": "GrowthModifierAsset.json",
+  "title": "GrowthModifierAsset",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/FertilizerGrowthModifierAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/LightLevelGrowthModifierAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/WaterGrowthModifierAsset"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "Fertilizer",
+      "LightLevel",
+      "Water"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "Farming/Modifiers",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

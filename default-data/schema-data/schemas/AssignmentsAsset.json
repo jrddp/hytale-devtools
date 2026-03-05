@@ -1,0 +1,37 @@
+{
+  "$id": "AssignmentsAsset.json",
+  "title": "AssignmentsAsset",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/ConstantAssignmentsAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/FieldFunctionAssignmentsAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ImportedAssignmentsAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SandwichAssignmentsAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/WeightedAssignmentsAsset"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "Constant",
+      "FieldFunction",
+      "Imported",
+      "Sandwich",
+      "Weighted"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "HytaleGenerator/Assignments",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

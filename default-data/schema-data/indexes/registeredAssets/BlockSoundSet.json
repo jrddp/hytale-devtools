@@ -1,0 +1,171 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockSoundSet",
+  "path": "Server/Item/Block/Sounds",
+  "extension": ".json",
+  "assetCount": 53,
+  "fileCount": 52,
+  "values": {
+    "Bone": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Bone.json"
+    },
+    "Bramble": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Bramble.json"
+    },
+    "Branch": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Branch.json"
+    },
+    "Brazier": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Brazier.json"
+    },
+    "Bush": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Bush.json"
+    },
+    "Cactus": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Cactus.json"
+    },
+    "Cactus_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Cactus_Large.json"
+    },
+    "Cactus_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Cactus_Small.json"
+    },
+    "Campfire": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Campfire.json"
+    },
+    "Clay_Pot_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Clay_Pot_Large.json"
+    },
+    "Clay_Pot_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Clay_Pot_Small.json"
+    },
+    "Cloth": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Cloth.json"
+    },
+    "Cocoon": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Cocoon.json"
+    },
+    "Coins": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Coins.json"
+    },
+    "Crystal": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Crystal.json"
+    },
+    "Default": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Default.json"
+    },
+    "Dirt": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Dirt.json"
+    },
+    "EMPTY": {
+      "sourcedFromFile": null
+    },
+    "Eggsac": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Eggsac.json"
+    },
+    "Fern": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Fern.json"
+    },
+    "Flame": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Flame.json"
+    },
+    "Gem": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Gem.json"
+    },
+    "Glass": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Glass.json"
+    },
+    "Grass": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Grass.json"
+    },
+    "Gravel": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Gravel.json"
+    },
+    "Ice": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Ice.json"
+    },
+    "Leaves": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Leaves.json"
+    },
+    "LeavesGround": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/LeavesGround.json"
+    },
+    "Metal": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Metal.json"
+    },
+    "Mud": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Mud.json"
+    },
+    "Mushroom": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Mushroom.json"
+    },
+    "Ore": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Ore.json"
+    },
+    "Plant": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Plant.json"
+    },
+    "Plushie": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Plushie.json"
+    },
+    "Poop": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Poop.json"
+    },
+    "Reed": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Reed.json"
+    },
+    "Rope": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Rope.json"
+    },
+    "Sand": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Sand.json"
+    },
+    "Seeds": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Seeds.json"
+    },
+    "Snow": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Snow.json"
+    },
+    "Soft": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Soft.json"
+    },
+    "Sticks": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Sticks.json"
+    },
+    "Stone": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Stone.json"
+    },
+    "Tall_Grass": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Tall_Grass.json"
+    },
+    "Tombstone": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Tombstone.json"
+    },
+    "Torch": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Torch.json"
+    },
+    "Trashpile": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Trashpile.json"
+    },
+    "Water": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Water.json"
+    },
+    "Web": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Web.json"
+    },
+    "Window": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Window.json"
+    },
+    "Window_Stone": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Window_Stone.json"
+    },
+    "Wood": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Wood.json"
+    },
+    "Wood_Breakable": {
+      "sourcedFromFile": "/Server/Item/Block/Sounds/Wood_Breakable.json"
+    }
+  }
+}

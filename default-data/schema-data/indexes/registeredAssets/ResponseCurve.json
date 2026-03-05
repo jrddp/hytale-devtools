@@ -1,0 +1,48 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ResponseCurve",
+  "path": "Server/ResponseCurves",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 12,
+  "values": {
+    "ConstantMidpoint": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/ConstantMidpoint.json"
+    },
+    "InverseExponential": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/InverseExponential.json"
+    },
+    "LateFalloff": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/LateFalloff.json"
+    },
+    "LateRise": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/LateRise.json"
+    },
+    "Linear": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/Linear.json"
+    },
+    "Quadratic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/Quadratic.json"
+    },
+    "ReverseLinear": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/ReverseLinear.json"
+    },
+    "SimpleDescendingLogistic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/SimpleDescendingLogistic.json"
+    },
+    "SimpleLogistic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/SimpleLogistic.json"
+    },
+    "SimpleParabola": {
+      "sourcedFromFile": "/Server/ResponseCurves/SineWave/SimpleParabola.json"
+    },
+    "TestExponential": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/TestExponential.json"
+    },
+    "TestLogistic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/TestLogistic.json"
+    }
+  }
+}

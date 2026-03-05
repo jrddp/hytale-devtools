@@ -1,0 +1,85 @@
+{
+  "$id": "Condition.json",
+  "title": "Condition",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/FlockSizeCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/HasTargetCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/IsInStateCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TargetMemoryCountCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/LineOfSightCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/NearbyCountCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/SelfStatAbsoluteCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/SelfStatPercentageCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/RandomiserCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/RecentSustainedDamageCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TargetDistanceCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TargetMovementStateCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TargetStatAbsoluteCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TargetStatPercentageCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TimeOfDayCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TimeSinceLastUsedCondition"
+    },
+    {
+      "$ref": "common.json#/definitions/TotalSustainedDamageCondition"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "FlockSize",
+      "HasTarget",
+      "IsInState",
+      "KnownTargetCount",
+      "LineOfSight",
+      "NearbyCount",
+      "OwnStatAbsolute",
+      "OwnStatPercent",
+      "Randomiser",
+      "RecentSustainedDamage",
+      "TargetDistance",
+      "TargetMovementState",
+      "TargetStatAbsolute",
+      "TargetStatPercent",
+      "TimeOfDay",
+      "TimeSinceLastUsed",
+      "TotalSustainedDamage"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "NPC/DecisionMaking/Conditions",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

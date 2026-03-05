@@ -1,0 +1,15 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "FieldcraftCategory",
+  "path": "Server/Item/Category/Fieldcraft",
+  "extension": ".json",
+  "assetCount": 1,
+  "fileCount": 1,
+  "values": {
+    "Tools": {
+      "sourcedFromFile": "/Server/Item/Category/Fieldcraft/Tools.json"
+    }
+  }
+}

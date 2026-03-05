@@ -1,0 +1,98 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "exportsByFamily",
+  "key": "Pattern",
+  "values": {
+    "Boreal1_Bushes_Dead_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Trees_Dead.json"
+    },
+    "Boreal1_Hedera_Mosses_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Mosses.json"
+    },
+    "Boreal1_Hedera_Trees_Basic_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Trees.json"
+    },
+    "Boreal1_Henges_Trees_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Henges_Bushes.json"
+    },
+    "Desert1_Boulders_Floor_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders_2.json"
+    },
+    "Desert1_Boulders_Pattern_Floor": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders.json"
+    },
+    "Desert1_Oasis_Feran_Floor_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Oasis.json"
+    },
+    "Desert1_Oasis_Feran_Hut_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Feran_Huts.json"
+    },
+    "Desert1_Oasis_Pattern_Boab": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Boab.json"
+    },
+    "Desert1_Oasis_Pattern_Dry": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Dry.json"
+    },
+    "Desert1_Oasis_Pattern_Floor_Grass": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Grasses.json"
+    },
+    "Desert1_Oasis_Pattern_Palm": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Palm.json"
+    },
+    "Desert1_Oasis_Plants_2_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Flowers_2.json"
+    },
+    "Desert1_Sticks_Dry_Floor": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Boab.json"
+    },
+    "Desert1_Trees_Dry_Floor": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Rocky.json"
+    },
+    "Floor_Grass_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Forest_Clusters.json"
+    },
+    "Forest1_River_Trees_Birch_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Forest1/Forest1_River_Trees_Birch.json"
+    },
+    "Forest1_River_Trees_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Forest1/Forest1_River_Trees.json"
+    },
+    "Plains1_Deeproot_Mosses_Inverted_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Mosses.json"
+    },
+    "Plains1_Deeproot_Mosses_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Mosses.json"
+    },
+    "Plains1_OakPattern_Floor": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Tree_Rings.json"
+    },
+    "Plains1_OakPattern_Floor_Grass": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Bushes.json"
+    },
+    "Plains1_OakPattern_Floor_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Trees.json"
+    },
+    "Plains1_Oak_Cave_Moss_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Cave_Moss.json"
+    },
+    "Plains1_Pebbles_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Boulders.json"
+    },
+    "Plains1_River_Pattern_Floor_Grass": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_River_Grasses.json"
+    },
+    "Taiga1_Mountains_Cliffs_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Cliffs.json"
+    },
+    "Volcanic1_Swamp_Bushes_Jungles_Pattern": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Bushes_Jungles.json"
+    },
+    "Volcanic1_Swamp_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Grasses.json"
+    },
+    "pattern1": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Runtime.json"
+    }
+  }
+}

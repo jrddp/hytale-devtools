@@ -1,0 +1,120 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemSoundSet",
+  "path": "Server/Audio/ItemSounds",
+  "extension": ".json",
+  "assetCount": 36,
+  "fileCount": 36,
+  "values": {
+    "ISS_Armor_Cloth": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Armor_Cloth.json"
+    },
+    "ISS_Armor_Heavy": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Armor_Heavy.json"
+    },
+    "ISS_Armor_Leather": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Armor_Leather.json"
+    },
+    "ISS_Blocks_Gravel": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Blocks_Gravel.json"
+    },
+    "ISS_Blocks_Soft": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Blocks_Soft.json"
+    },
+    "ISS_Blocks_Splatty": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Blocks_Splatty.json"
+    },
+    "ISS_Blocks_Stone": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Blocks_Stone.json"
+    },
+    "ISS_Blocks_Wood": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Blocks_Wood.json"
+    },
+    "ISS_Default": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Default.json"
+    },
+    "ISS_Items_Bones": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Bones.json"
+    },
+    "ISS_Items_Chest": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Chest.json"
+    },
+    "ISS_Items_Clay": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Clay.json"
+    },
+    "ISS_Items_Cloth": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Cloth.json"
+    },
+    "ISS_Items_Foliage": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Foliage.json"
+    },
+    "ISS_Items_Gadget": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Gadget.json"
+    },
+    "ISS_Items_Gems": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Gems.json"
+    },
+    "ISS_Items_Ingots": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Ingots.json"
+    },
+    "ISS_Items_Leather": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Leather.json"
+    },
+    "ISS_Items_Metal": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Metal.json"
+    },
+    "ISS_Items_Paper": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Paper.json"
+    },
+    "ISS_Items_Potion": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Potion.json"
+    },
+    "ISS_Items_Seeds": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Seeds.json"
+    },
+    "ISS_Items_Shells": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Shells.json"
+    },
+    "ISS_Items_Splatty": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Items_Splatty.json"
+    },
+    "ISS_Weapon_Blade_Small": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapon_Blade_Small.json"
+    },
+    "ISS_Weapon_Blunt_Large": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapon_Blunt_Large.json"
+    },
+    "ISS_Weapons_Arrows": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Arrows.json"
+    },
+    "ISS_Weapons_Blade_Large": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Blade_Large.json"
+    },
+    "ISS_Weapons_Blunt_Small": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Blunt_Small.json"
+    },
+    "ISS_Weapons_Books": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Books.json"
+    },
+    "ISS_Weapons_Shield_Metal": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Shield_Metal.json"
+    },
+    "ISS_Weapons_Shield_Wood": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Shield_Wood.json"
+    },
+    "ISS_Weapons_Stone_Large": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Stone_Large.json"
+    },
+    "ISS_Weapons_Stone_Small": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Stone_Small.json"
+    },
+    "ISS_Weapons_Wand": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Wand.json"
+    },
+    "ISS_Weapons_Wood": {
+      "sourcedFromFile": "/Server/Audio/ItemSounds/ISS_Weapons_Wood.json"
+    }
+  }
+}

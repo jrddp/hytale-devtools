@@ -1,0 +1,18 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "BarterShopAsset",
+  "path": "Server/BarterShops",
+  "extension": ".json",
+  "assetCount": 2,
+  "fileCount": 2,
+  "values": {
+    "Klops_Merchant": {
+      "sourcedFromFile": "/Server/BarterShops/Klops_Merchant.json"
+    },
+    "Kweebec_Merchant": {
+      "sourcedFromFile": "/Server/BarterShops/Kweebec_Merchant.json"
+    }
+  }
+}

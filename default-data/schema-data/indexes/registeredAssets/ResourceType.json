@@ -1,0 +1,384 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ResourceType",
+  "path": "Server/Item/ResourceTypes",
+  "extension": ".json",
+  "assetCount": 124,
+  "fileCount": 124,
+  "values": {
+    "Bone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Bone.json"
+    },
+    "Books": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Books.json"
+    },
+    "Bricks": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Bricks.json"
+    },
+    "Charcoal": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Charcoal.json"
+    },
+    "Clays": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Clays.json"
+    },
+    "Copper_Iron_Bar": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Copper_Iron_Bar.json"
+    },
+    "Fish": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish.json"
+    },
+    "Fish_Common": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Common.json"
+    },
+    "Fish_Epic": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Epic.json"
+    },
+    "Fish_Legendary": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Legendary.json"
+    },
+    "Fish_Rare": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Rare.json"
+    },
+    "Fish_Uncommon": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Uncommon.json"
+    },
+    "Flowers": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Flowers.json"
+    },
+    "Foods": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Foods.json"
+    },
+    "Fruits": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fruits.json"
+    },
+    "Fuel": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fuel.json"
+    },
+    "Ice": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Ice.json"
+    },
+    "Meats": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Meats.json"
+    },
+    "Metal_Bars": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Metal_Bars.json"
+    },
+    "Milk_Bucket": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Milk_Bucket.json"
+    },
+    "Milk_Mosshorn_Bucket": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Milk_Mosshorn_Bucket.json"
+    },
+    "Moss": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Moss.json"
+    },
+    "Mushrooms": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Mushrooms.json"
+    },
+    "Plant_Red": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Plant_Red.json"
+    },
+    "Prototype_Rock_Concrete": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Prototype_Rock_Concrete.json"
+    },
+    "Prototype_Rock_Concrete_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Prototype_Rock_Concrete_Brick.json"
+    },
+    "Rock": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock.json"
+    },
+    "Rock_Aqua": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Aqua.json"
+    },
+    "Rock_Aqua_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Aqua_Brick.json"
+    },
+    "Rock_Basalt": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Basalt.json"
+    },
+    "Rock_Basalt_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Basalt_Brick.json"
+    },
+    "Rock_Calcite": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Calcite.json"
+    },
+    "Rock_Calcite_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Calcite_Brick.json"
+    },
+    "Rock_Chalk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Chalk.json"
+    },
+    "Rock_Chalk_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Chalk_Brick.json"
+    },
+    "Rock_Gold_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Gold_Brick.json"
+    },
+    "Rock_Ledge": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Ledge.json"
+    },
+    "Rock_Ledge_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Ledge_Brick.json"
+    },
+    "Rock_Lime": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Lime.json"
+    },
+    "Rock_Lime_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Lime_Brick.json"
+    },
+    "Rock_Marble": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Marble.json"
+    },
+    "Rock_Marble_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Marble_Brick.json"
+    },
+    "Rock_Peach": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Peach.json"
+    },
+    "Rock_Peach_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Peach_Brick.json"
+    },
+    "Rock_Quartzite": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Quartzite.json"
+    },
+    "Rock_Quartzite_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Quartzite_Brick.json"
+    },
+    "Rock_Runic_Blue_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Blue_Brick.json"
+    },
+    "Rock_Runic_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Brick.json"
+    },
+    "Rock_Runic_Dark_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Dark_Brick.json"
+    },
+    "Rock_Runic_Teal_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Teal_Brick.json"
+    },
+    "Rock_Sandstone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone.json"
+    },
+    "Rock_Sandstone_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_Brick.json"
+    },
+    "Rock_Sandstone_Red": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_Red.json"
+    },
+    "Rock_Sandstone_Red_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_Red_Brick.json"
+    },
+    "Rock_Sandstone_White": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_White.json"
+    },
+    "Rock_Sandstone_White_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_White_Brick.json"
+    },
+    "Rock_Shale": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Shale.json"
+    },
+    "Rock_Shale_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Shale_Brick.json"
+    },
+    "Rock_Slate": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Slate.json"
+    },
+    "Rock_Slate_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Slate_Brick.json"
+    },
+    "Rock_Stone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Stone.json"
+    },
+    "Rock_Stone_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Stone_Brick.json"
+    },
+    "Rock_Stone_Mossy": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Stone_Mossy.json"
+    },
+    "Rock_Volcanic": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Volcanic.json"
+    },
+    "Rock_Volcanic_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Volcanic_Brick.json"
+    },
+    "Rubble": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rubble.json"
+    },
+    "Salvage_Adamantite": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Adamantite.json"
+    },
+    "Salvage_Bronze": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Bronze.json"
+    },
+    "Salvage_Cobalt": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Cobalt.json"
+    },
+    "Salvage_Copper": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Copper.json"
+    },
+    "Salvage_Gold": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Gold.json"
+    },
+    "Salvage_Iron": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Iron.json"
+    },
+    "Salvage_Mithril": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Mithril.json"
+    },
+    "Salvage_Onyxium": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Onyxium.json"
+    },
+    "Salvage_Prisma": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Prisma.json"
+    },
+    "Salvage_Silver": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Silver.json"
+    },
+    "Salvage_Stone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Stone.json"
+    },
+    "Salvage_Thorium": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Thorium.json"
+    },
+    "Salvage_Wood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Wood.json"
+    },
+    "Sands": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Sands.json"
+    },
+    "Soil_Clay_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Clay_Brick.json"
+    },
+    "Soil_Clay_Ocean_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Clay_Ocean_Brick.json"
+    },
+    "Soil_Hive_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Hive_Brick.json"
+    },
+    "Soil_Hive_Corrupted": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Hive_Corrupted.json"
+    },
+    "Soil_Hive_Corrupted_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Hive_Corrupted_Brick.json"
+    },
+    "Soil_Snow_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Snow_Brick.json"
+    },
+    "Soils": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soils.json"
+    },
+    "Vegetables": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Vegetables.json"
+    },
+    "Wood_All": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_All.json"
+    },
+    "Wood_All_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_All_Trunk.json"
+    },
+    "Wood_Blackwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood.json"
+    },
+    "Wood_Blackwood_Deadwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood_Deadwood.json"
+    },
+    "Wood_Blackwood_Deadwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood_Deadwood_Trunk.json"
+    },
+    "Wood_Blackwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood_Trunk.json"
+    },
+    "Wood_Darkwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Darkwood.json"
+    },
+    "Wood_Darkwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Darkwood_Trunk.json"
+    },
+    "Wood_Deadwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Deadwood.json"
+    },
+    "Wood_Deadwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Deadwood_Trunk.json"
+    },
+    "Wood_Drywood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood.json"
+    },
+    "Wood_Drywood_Goldenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood_Goldenwood.json"
+    },
+    "Wood_Drywood_Goldenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood_Goldenwood_Trunk.json"
+    },
+    "Wood_Drywood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood_Trunk.json"
+    },
+    "Wood_Goldenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Goldenwood.json"
+    },
+    "Wood_Goldenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Goldenwood_Trunk.json"
+    },
+    "Wood_Greenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Greenwood.json"
+    },
+    "Wood_Greenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Greenwood_Trunk.json"
+    },
+    "Wood_Hardwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Hardwood.json"
+    },
+    "Wood_Hardwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Hardwood_Trunk.json"
+    },
+    "Wood_Ice": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Ice.json"
+    },
+    "Wood_Ice_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Ice_Trunk.json"
+    },
+    "Wood_Lightwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood.json"
+    },
+    "Wood_Lightwood_Softwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood_Softwood.json"
+    },
+    "Wood_Lightwood_Softwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood_Softwood_Trunk.json"
+    },
+    "Wood_Lightwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood_Trunk.json"
+    },
+    "Wood_Planks": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Planks.json"
+    },
+    "Wood_Redwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Redwood.json"
+    },
+    "Wood_Redwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Redwood_Trunk.json"
+    },
+    "Wood_Softwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Softwood.json"
+    },
+    "Wood_Softwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Softwood_Trunk.json"
+    },
+    "Wood_Tropicalwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood.json"
+    },
+    "Wood_Tropicalwood_Greenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood_Greenwood.json"
+    },
+    "Wood_Tropicalwood_Greenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood_Greenwood_Trunk.json"
+    },
+    "Wood_Tropicalwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood_Trunk.json"
+    },
+    "Wood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Trunk.json"
+    }
+  }
+}

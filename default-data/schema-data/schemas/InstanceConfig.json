@@ -1,0 +1,942 @@
+{
+  "type": "object",
+  "$id": "InstanceConfig.json",
+  "title": "Instance Configuration",
+  "description": "Configuration for a single world. Settings in here only affect the world this configuration belongs to.\n\nInstances share this configuration but ignore certain parameters (e.g. UUID). In this case the configuration willbe cloned before loading the instance.",
+  "markdownDescription": "Configuration for a single world. Settings in here only affect the world this configuration belongs to.\n\nInstances share this configuration but ignore certain parameters (e.g. *UUID*). In this case the configuration willbe cloned before loading the instance.",
+  "hytale": {
+    "type": "object",
+    "path": "Instances",
+    "extension": "instance.bson",
+    "mergesProperties": true,
+    "uiEditorIgnore": true
+  },
+  "properties": {
+    "Version": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer"
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "UUID": {
+      "anyOf": [
+        {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "hytale": {
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "DisplayName": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The player facing name of this world.",
+      "markdownDescription": "The player facing name of this world.",
+      "hytale": {
+        "type": "string"
+      }
+    },
+    "Seed": {
+      "type": "integer",
+      "description": "The seed of the world, used for world generation.\n\nIf a seed is not set then one will be randomly generated.",
+      "markdownDescription": "The seed of the world, used for world generation.\n\nIf a seed is not set then one will be randomly generated.",
+      "hytale": {
+        "type": "integer"
+      }
+    },
+    "SpawnPoint": {
+      "description": "Deprecated: Please use SpawnProvider instead.",
+      "markdownDescription": "**Deprecated**: Please use **SpawnProvider** instead.",
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/Transform"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "SpawnProvider": {
+      "description": "Sets the spawn provider for the world. \n\nThis controls where new players will enter the world at. This can be provided by world generation in some cases.",
+      "markdownDescription": "Sets the spawn provider for the world. \n\nThis controls where new players will enter the world at. This can be provided by world generation in some cases.",
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/FitToHeightMapSpawnProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/GlobalSpawnProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/IndividualSpawnProvider"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Id",
+            "defaultValue": "Global",
+            "values": [
+              "FitToHeightMap",
+              "Global",
+              "Individual"
+            ]
+          },
+          "hytale": {
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "WorldGen": {
+      "description": "Sets the world generator that will be used by the world.",
+      "markdownDescription": "Sets the world generator that will be used by the world.",
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/DummyWorldGenProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/FlatWorldGenProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/HytaleWorldGenProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/HandleProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/VoidWorldGenProvider"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "defaultValue": "Hytale",
+            "values": [
+              "Dummy",
+              "Flat",
+              "Hytale",
+              "HytaleGenerator",
+              "Void"
+            ]
+          },
+          "hytale": {
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "WorldMap": {
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/DisabledWorldMapProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/WorldGenWorldMapProvider"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "defaultValue": "WorldGen",
+            "values": [
+              "Disabled",
+              "WorldGen"
+            ]
+          },
+          "hytale": {
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ChunkStorage": {
+      "description": "Sets the storage system that will be used by the world to store chunks.",
+      "markdownDescription": "Sets the storage system that will be used by the world to store chunks.",
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/EmptyChunkStorageProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/DefaultChunkStorageProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/IndexedStorageChunkStorageProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/MigrationChunkStorageProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/RocksDbChunkStorageProvider"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "defaultValue": "Hytale",
+            "values": [
+              "Empty",
+              "Hytale",
+              "IndexedStorage",
+              "Migration",
+              "RocksDb"
+            ]
+          },
+          "hytale": {
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ChunkConfig": {
+      "description": "Configuration for chunk related settings",
+      "markdownDescription": "Configuration for chunk related settings",
+      "default": {},
+      "$ref": "common.json#/definitions/ChunkConfig"
+    },
+    "IsTicking": {
+      "type": "boolean",
+      "description": "Sets whether chunks in this world are ticking or not.",
+      "markdownDescription": "Sets whether chunks in this world are ticking or not.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsBlockTicking": {
+      "type": "boolean",
+      "description": "Sets whether blocks in this world are ticking or not.",
+      "markdownDescription": "Sets whether blocks in this world are ticking or not.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsPvpEnabled": {
+      "type": "boolean",
+      "description": "Sets whether PvP is allowed in this world or not.",
+      "markdownDescription": "Sets whether PvP is allowed in this world or not.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "IsFallDamageEnabled": {
+      "type": "boolean",
+      "description": "Sets whether fall damage is allowed in this world or not.",
+      "markdownDescription": "Sets whether fall damage is allowed in this world or not.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsGameTimePaused": {
+      "type": "boolean",
+      "description": "Sets whether the game time is paused.\n\nThis effects things like day/night cycles and things that rely on those.",
+      "markdownDescription": "Sets whether the game time is paused.\n\nThis effects things like day/night cycles and things that rely on those.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "GameTime": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The current time of day in the world.",
+      "markdownDescription": "The current time of day in the world.",
+      "hytale": {
+        "type": "string"
+      }
+    },
+    "ForcedWeather": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Sets the type of weather that is being forced to be active in this world.",
+      "markdownDescription": "Sets the type of weather that is being forced to be active in this world.",
+      "hytaleAssetRef": "Weather",
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "registryDomain",
+          "key": "Weather"
+        }
+      }
+    },
+    "ClientEffects": {
+      "description": "Settings for the client's weather and post-processing effects in this world.",
+      "markdownDescription": "Settings for the client's weather and post-processing effects in this world.",
+      "anyOf": [
+        {
+          "default": {
+            "SunHeightPercent": 100.0,
+            "SunAngleDegrees": 0.0,
+            "BloomIntensity": 0.30000001192092896,
+            "BloomPower": 8.0,
+            "SunIntensity": 0.25,
+            "SunshaftIntensity": 0.30000001192092896,
+            "SunshaftScaleFactor": 4.0
+          },
+          "$ref": "common.json#/definitions/ClientEffectWorldSettings"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "PregenerateRegion": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/Box"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "RequiredPlugins": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Sets the plugins that are required to be enabled for this world to function.",
+      "markdownDescription": "Sets the plugins that are required to be enabled for this world to function.",
+      "hytale": {
+        "type": "object"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "hytale": {
+          "type": "string"
+        }
+      },
+      "propertyNames": {
+        "hytale": {
+          "type": "string"
+        }
+      }
+    },
+    "GameMode": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "GameMode",
+      "description": "Sets the default gamemode for this world.",
+      "markdownDescription": "Sets the default gamemode for this world.",
+      "enumDescriptions": [
+        "The normal gamemode for players playing the game.",
+        "Makes the player invulnerable and grants them the ability to fly."
+      ],
+      "markdownEnumDescriptions": [
+        "The normal gamemode for players playing the game.",
+        "Makes the player invulnerable and grants them the ability to fly."
+      ],
+      "hytale": {
+        "type": "Enum"
+      },
+      "enum": [
+        "Adventure",
+        "Creative"
+      ],
+      "hytaleDevtools": {
+        "semanticKind": "literalChoice",
+        "valueShape": "string",
+        "values": [
+          "Adventure",
+          "Creative"
+        ],
+        "acceptedValues": [
+          "Adventure",
+          "Creative"
+        ],
+        "role": "enum",
+        "normalizeToCanonical": false
+      }
+    },
+    "IsSpawningNPC": {
+      "type": "boolean",
+      "description": "Whether NPCs can spawn in this world or not.",
+      "markdownDescription": "Whether NPCs can spawn in this world or not.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsSpawnMarkersEnabled": {
+      "type": "boolean",
+      "description": "Whether spawn markers are enabled for this world.",
+      "markdownDescription": "Whether spawn markers are enabled for this world.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsAllNPCFrozen": {
+      "type": "boolean",
+      "description": "Whether all NPCs are frozen for this world",
+      "markdownDescription": "Whether all NPCs are frozen for this world",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "GameplayConfig": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The gameplay configuration being used by this world",
+      "markdownDescription": "The gameplay configuration being used by this world",
+      "hytaleAssetRef": "GameplayConfig",
+      "hytale": {
+        "type": "string"
+      },
+      "default": "Default",
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "registryDomain",
+          "key": "GameplayConfig"
+        }
+      }
+    },
+    "Death": {
+      "description": "Inline death configuration overrides for this world. If set, these values take precedence over the referenced GameplayConfig.",
+      "markdownDescription": "Inline death configuration overrides for this world. If set, these values take precedence over the referenced GameplayConfig.",
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/DeathConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "DaytimeDurationSeconds": {
+      "type": "integer",
+      "description": "Override for the duration of daytime in seconds. If set, takes precedence over the referenced GameplayConfig.",
+      "markdownDescription": "Override for the duration of daytime in seconds. If set, takes precedence over the referenced GameplayConfig.",
+      "hytale": {
+        "type": "integer"
+      }
+    },
+    "NighttimeDurationSeconds": {
+      "type": "integer",
+      "description": "Override for the duration of nighttime in seconds. If set, takes precedence over the referenced GameplayConfig.",
+      "markdownDescription": "Override for the duration of nighttime in seconds. If set, takes precedence over the referenced GameplayConfig.",
+      "hytale": {
+        "type": "integer"
+      }
+    },
+    "IsCompassUpdating": {
+      "type": "boolean",
+      "description": "Whether the compass is updating in this world",
+      "markdownDescription": "Whether the compass is updating in this world",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsSavingPlayers": {
+      "type": "boolean",
+      "description": "Whether the configuration for player's is being saved for players in this world.",
+      "markdownDescription": "Whether the configuration for player's is being saved for players in this world.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsSavingChunks": {
+      "type": "boolean",
+      "description": "Whether the chunk data is allowed to be saved to the disk for this world.",
+      "markdownDescription": "Whether the chunk data is allowed to be saved to the disk for this world.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "SaveNewChunks": {
+      "type": "boolean",
+      "description": "Whether newly generated chunks should be marked for saving or not.\nEnabling this can prevent random chunks from being out of place if/when worldgen changes but will increase the size of the world on disk.",
+      "markdownDescription": "Whether newly generated chunks should be marked for saving or not.\nEnabling this can prevent random chunks from being out of place if/when worldgen changes but will increase the size of the world on disk.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsUnloadingChunks": {
+      "type": "boolean",
+      "description": "Whether the chunks should be unloaded like normally, or should be prevented from unloading at all.",
+      "markdownDescription": "Whether the chunks should be unloaded like normally, or should be prevented from unloading at all.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "IsObjectiveMarkersEnabled": {
+      "type": "boolean",
+      "description": "Whether objective markers are enabled for this world.",
+      "markdownDescription": "Whether objective markers are enabled for this world.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": true
+    },
+    "DeleteOnUniverseStart": {
+      "type": "boolean",
+      "description": "Whether this world should be deleted when loaded from Universe start. By default this is when going through the world folders in the universe directory.",
+      "markdownDescription": "Whether this world should be deleted when loaded from Universe start. By default this is when going through the world folders in the universe directory.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "DeleteOnRemove": {
+      "type": "boolean",
+      "description": "Whether this world should be deleted once its been removed from the server",
+      "markdownDescription": "Whether this world should be deleted once its been removed from the server",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "Instance": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Instance specific configuration.",
+      "markdownDescription": "Instance specific configuration.",
+      "hytale": {
+        "type": "object"
+      }
+    },
+    "ResourceStorage": {
+      "description": "Sets the storage system that will be used to store resources.",
+      "markdownDescription": "Sets the storage system that will be used to store resources.",
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/DiskResourceStorageProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/EmptyResourceStorageProvider"
+            },
+            {
+              "$ref": "common.json#/definitions/DefaultResourceStorageProvider"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "defaultValue": "Hytale",
+            "values": [
+              "Disk",
+              "Empty",
+              "Hytale"
+            ]
+          },
+          "hytale": {
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Plugin": {
+      "type": "object",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "properties": {
+        "CreativeHub": {
+          "type": "object",
+          "title": "CreativeHubWorldConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "StartupInstance": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The name of the instance to spawn players into when they first join this world.",
+              "markdownDescription": "The name of the instance to spawn players into when they first join this world.",
+              "hytale": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "Instance": {
+          "type": "object",
+          "title": "InstanceWorldConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "RemovalConditions": {
+              "type": "array",
+              "description": "The set of conditions that have to be met to remove the world.\n\nIf no conditions are provided (e.g. a empty list) then the world will not be removed automatically",
+              "markdownDescription": "The set of conditions that have to be met to remove the world.\n\nIf no conditions are provided (e.g. a empty list) then the world will not be removed automatically",
+              "hytale": {
+                "type": "array"
+              },
+              "items": {
+                "title": "Type Selector",
+                "anyOf": [
+                  {
+                    "$ref": "common.json#/definitions/IdleTimeoutCondition"
+                  },
+                  {
+                    "$ref": "common.json#/definitions/PortalRemovalCondition"
+                  },
+                  {
+                    "$ref": "common.json#/definitions/TimeoutCondition"
+                  },
+                  {
+                    "$ref": "common.json#/definitions/WorldEmptyCondition"
+                  }
+                ],
+                "hytaleSchemaTypeField": {
+                  "property": "Type",
+                  "values": [
+                    "IdleTimeout",
+                    "Portal",
+                    "Timeout",
+                    "WorldEmpty"
+                  ]
+                },
+                "hytale": {
+                  "mergesProperties": true
+                }
+              }
+            },
+            "ReturnPoint": {
+              "description": "The location to send players to when leaving this world.",
+              "markdownDescription": "The location to send players to when leaving this world.",
+              "anyOf": [
+                {
+                  "$ref": "common.json#/definitions/WorldReturnPoint"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "PreventReconnection": {
+              "type": "boolean",
+              "description": "Whether to prevent reconnecting into this world.\n\nPlayers that reconnect back into the world will forced out of the world to the return point (or their own).",
+              "markdownDescription": "Whether to prevent reconnecting into this world.\n\nPlayers that reconnect back into the world will forced out of the world to the return point (or their own).",
+              "hytale": {
+                "type": "boolean"
+              },
+              "default": false
+            },
+            "Discovery": {
+              "description": "Optional discovery configuration for displaying an event title when a player enters this instance for the first time.",
+              "markdownDescription": "Optional discovery configuration for displaying an event title when a player enters this instance for the first time.",
+              "anyOf": [
+                {
+                  "$ref": "common.json#/definitions/InstanceDiscoveryConfig"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

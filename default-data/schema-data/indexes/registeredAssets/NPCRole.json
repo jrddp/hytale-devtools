@@ -1,0 +1,2832 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "NPCRole",
+  "path": "Server/NPC/Roles",
+  "extension": ".json",
+  "assetCount": 940,
+  "fileCount": 940,
+  "values": {
+    "Aquatic/Abyssal/Eel_Moray": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Abyssal/Eel_Moray.json"
+    },
+    "Aquatic/Abyssal/Shark_Hammerhead": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Abyssal/Shark_Hammerhead.json"
+    },
+    "Aquatic/Abyssal/Shellfish_Lava": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Abyssal/Shellfish_Lava.json"
+    },
+    "Aquatic/Abyssal/Trilobite": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Abyssal/Trilobite.json"
+    },
+    "Aquatic/Abyssal/Trilobite_Black": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Abyssal/Trilobite_Black.json"
+    },
+    "Aquatic/Abyssal/Whale_Humpback": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Abyssal/Whale_Humpback.json"
+    },
+    "Aquatic/Freshwater/Bluegill": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Bluegill.json"
+    },
+    "Aquatic/Freshwater/Catfish": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Catfish.json"
+    },
+    "Aquatic/Freshwater/Frostgill": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Frostgill.json"
+    },
+    "Aquatic/Freshwater/Minnow": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Minnow.json"
+    },
+    "Aquatic/Freshwater/Pike": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Pike.json"
+    },
+    "Aquatic/Freshwater/Piranha": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Piranha.json"
+    },
+    "Aquatic/Freshwater/Piranha_Black": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Piranha_Black.json"
+    },
+    "Aquatic/Freshwater/Salmon": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Salmon.json"
+    },
+    "Aquatic/Freshwater/Snapjaw": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Snapjaw.json"
+    },
+    "Aquatic/Freshwater/Trout_Rainbow": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Freshwater/Trout_Rainbow.json"
+    },
+    "Aquatic/Marine/Clownfish": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Clownfish.json"
+    },
+    "Aquatic/Marine/Crab": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Crab.json"
+    },
+    "Aquatic/Marine/Jellyfish_Blue": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Jellyfish_Blue.json"
+    },
+    "Aquatic/Marine/Jellyfish_Cyan": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Jellyfish_Cyan.json"
+    },
+    "Aquatic/Marine/Jellyfish_Green": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Jellyfish_Green.json"
+    },
+    "Aquatic/Marine/Jellyfish_Man_Of_War": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Jellyfish_Man_Of_War.json"
+    },
+    "Aquatic/Marine/Jellyfish_Red": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Jellyfish_Red.json"
+    },
+    "Aquatic/Marine/Jellyfish_Yellow": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Jellyfish_Yellow.json"
+    },
+    "Aquatic/Marine/Lobster": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Lobster.json"
+    },
+    "Aquatic/Marine/Pufferfish": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Pufferfish.json"
+    },
+    "Aquatic/Marine/Tang_Blue": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Tang_Blue.json"
+    },
+    "Aquatic/Marine/Tang_Chevron": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Tang_Chevron.json"
+    },
+    "Aquatic/Marine/Tang_Lemon_Peel": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Tang_Lemon_Peel.json"
+    },
+    "Aquatic/Marine/Tang_Sailfin": {
+      "sourcedFromFile": "Server/NPC/Roles/Aquatic/Marine/Tang_Sailfin.json"
+    },
+    "Avian/Aerial/Bat": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Bat.json"
+    },
+    "Avian/Aerial/Bat_Ice": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Bat_Ice.json"
+    },
+    "Avian/Aerial/Bluebird": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Bluebird.json"
+    },
+    "Avian/Aerial/Crow": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Crow.json"
+    },
+    "Avian/Aerial/Finch_Green": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Finch_Green.json"
+    },
+    "Avian/Aerial/Flamingo": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Flamingo.json"
+    },
+    "Avian/Aerial/Owl_Brown": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Owl_Brown.json"
+    },
+    "Avian/Aerial/Owl_Snow": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Owl_Snow.json"
+    },
+    "Avian/Aerial/Parrot": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Parrot.json"
+    },
+    "Avian/Aerial/Penguin": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Penguin.json"
+    },
+    "Avian/Aerial/Raven": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Raven.json"
+    },
+    "Avian/Aerial/Sparrow": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Sparrow.json"
+    },
+    "Avian/Aerial/Woodpecker": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Aerial/Woodpecker.json"
+    },
+    "Avian/Fowl/Duck": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Fowl/Duck.json"
+    },
+    "Avian/Fowl/Pigeon": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Fowl/Pigeon.json"
+    },
+    "Avian/Raptor/Archaeopteryx": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Raptor/Archaeopteryx.json"
+    },
+    "Avian/Raptor/Hawk": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Raptor/Hawk.json"
+    },
+    "Avian/Raptor/Pterodactyl": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Raptor/Pterodactyl.json"
+    },
+    "Avian/Raptor/Tetrabird": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Raptor/Tetrabird.json"
+    },
+    "Avian/Raptor/Vulture": {
+      "sourcedFromFile": "Server/NPC/Roles/Avian/Raptor/Vulture.json"
+    },
+    "Boss/Dragon_Fire": {
+      "sourcedFromFile": "Server/NPC/Roles/Boss/Dragon_Fire.json"
+    },
+    "Boss/Dragon_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/Boss/Dragon_Frost.json"
+    },
+    "Creature/Critter/Frog_Blue": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Frog_Blue.json"
+    },
+    "Creature/Critter/Frog_Green": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Frog_Green.json"
+    },
+    "Creature/Critter/Frog_Orange": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Frog_Orange.json"
+    },
+    "Creature/Critter/Gecko": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Gecko.json"
+    },
+    "Creature/Critter/Meerkat": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Meerkat.json"
+    },
+    "Creature/Critter/Mouse": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Mouse.json"
+    },
+    "Creature/Critter/Squirrel": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Critter/Squirrel.json"
+    },
+    "Creature/Livestock/Bison": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Bison.json"
+    },
+    "Creature/Livestock/Bison_Calf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Bison_Calf.json"
+    },
+    "Creature/Livestock/Boar": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Boar.json"
+    },
+    "Creature/Livestock/Boar_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Boar_Piglet.json"
+    },
+    "Creature/Livestock/Bunny": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Bunny.json"
+    },
+    "Creature/Livestock/Camel": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Camel.json"
+    },
+    "Creature/Livestock/Camel_Calf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Camel_Calf.json"
+    },
+    "Creature/Livestock/Chicken": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Chicken.json"
+    },
+    "Creature/Livestock/Chicken_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Chicken_Chick.json"
+    },
+    "Creature/Livestock/Chicken_Desert": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Chicken_Desert.json"
+    },
+    "Creature/Livestock/Chicken_Desert_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Chicken_Desert_Chick.json"
+    },
+    "Creature/Livestock/Cow": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Cow.json"
+    },
+    "Creature/Livestock/Cow_Calf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Cow_Calf.json"
+    },
+    "Creature/Livestock/Goat": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Goat.json"
+    },
+    "Creature/Livestock/Goat_Kid": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Goat_Kid.json"
+    },
+    "Creature/Livestock/Horse": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Horse.json"
+    },
+    "Creature/Livestock/Horse_Foal": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Horse_Foal.json"
+    },
+    "Creature/Livestock/Mouflon": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Mouflon.json"
+    },
+    "Creature/Livestock/Mouflon_Lamb": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Mouflon_Lamb.json"
+    },
+    "Creature/Livestock/Pig": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Pig.json"
+    },
+    "Creature/Livestock/Pig_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Pig_Piglet.json"
+    },
+    "Creature/Livestock/Pig_Wild": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Pig_Wild.json"
+    },
+    "Creature/Livestock/Pig_Wild_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Pig_Wild_Piglet.json"
+    },
+    "Creature/Livestock/Rabbit": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Rabbit.json"
+    },
+    "Creature/Livestock/Ram": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Ram.json"
+    },
+    "Creature/Livestock/Ram_Lamb": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Ram_Lamb.json"
+    },
+    "Creature/Livestock/Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Sheep.json"
+    },
+    "Creature/Livestock/Sheep_Lamb": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Sheep_Lamb.json"
+    },
+    "Creature/Livestock/Skrill": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Skrill.json"
+    },
+    "Creature/Livestock/Skrill_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Skrill_Chick.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Bison": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Bison.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Bison_Calf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Bison_Calf.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Boar": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Boar.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Boar_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Boar_Piglet.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Bunny": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Bunny.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Camel": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Camel.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Camel_Calf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Camel_Calf.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Chicken": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Chicken.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Chicken_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Chicken_Chick.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Chicken_Desert": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Chicken_Desert.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Chicken_Desert_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Chicken_Desert_Chick.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Cow": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Cow.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Cow_Calf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Cow_Calf.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Goat": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Goat.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Goat_Kid": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Goat_Kid.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Horse": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Horse.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Horse_Foal": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Horse_Foal.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Mosshorn": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Mosshorn.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Mosshorn_Plain": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Mosshorn_Plain.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Mouflon": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Mouflon.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Mouflon_Lamb": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Mouflon_Lamb.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Pig": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Pig.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Pig_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Pig_Piglet.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Pig_Wild": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Pig_Wild.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Pig_Wild_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Pig_Wild_Piglet.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Rabbit": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Rabbit.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Ram": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Ram.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Ram_Lamb": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Ram_Lamb.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Sheep.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Sheep_Lamb": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Sheep_Lamb.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Skrill": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Skrill.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Skrill_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Skrill_Chick.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Turkey": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Turkey.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Turkey_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Turkey_Chick.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Warthog": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Warthog.json"
+    },
+    "Creature/Livestock/Tamed/Tamed_Warthog_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Tamed/Tamed_Warthog_Piglet.json"
+    },
+    "Creature/Livestock/Turkey": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Turkey.json"
+    },
+    "Creature/Livestock/Turkey_Chick": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Turkey_Chick.json"
+    },
+    "Creature/Livestock/Warthog": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Warthog.json"
+    },
+    "Creature/Livestock/Warthog_Piglet": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Livestock/Warthog_Piglet.json"
+    },
+    "Creature/Mammal/Antelope": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Antelope.json"
+    },
+    "Creature/Mammal/Armadillo": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Armadillo.json"
+    },
+    "Creature/Mammal/Bear_Grizzly": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Bear_Grizzly.json"
+    },
+    "Creature/Mammal/Bear_Polar": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Bear_Polar.json"
+    },
+    "Creature/Mammal/Deer_Doe": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Deer_Doe.json"
+    },
+    "Creature/Mammal/Deer_Stag": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Deer_Stag.json"
+    },
+    "Creature/Mammal/Fox": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Fox.json"
+    },
+    "Creature/Mammal/Hyena": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Hyena.json"
+    },
+    "Creature/Mammal/Leopard_Snow": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Leopard_Snow.json"
+    },
+    "Creature/Mammal/Moose_Bull": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Moose_Bull.json"
+    },
+    "Creature/Mammal/Moose_Cow": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Moose_Cow.json"
+    },
+    "Creature/Mammal/Mosshorn": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Mosshorn.json"
+    },
+    "Creature/Mammal/Mosshorn_Plain": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Mosshorn_Plain.json"
+    },
+    "Creature/Mammal/Tiger_Sabertooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Tiger_Sabertooth.json"
+    },
+    "Creature/Mammal/Wolf_Black": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Wolf_Black.json"
+    },
+    "Creature/Mammal/Wolf_White": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mammal/Wolf_White.json"
+    },
+    "Creature/Mythic/Cactee": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Cactee.json"
+    },
+    "Creature/Mythic/Emberwulf": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Emberwulf.json"
+    },
+    "Creature/Mythic/Fen_Stalker": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Fen_Stalker.json"
+    },
+    "Creature/Mythic/Hatworm": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Hatworm.json"
+    },
+    "Creature/Mythic/Snapdragon": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Snapdragon.json"
+    },
+    "Creature/Mythic/Spark_Living": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Spark_Living.json"
+    },
+    "Creature/Mythic/Trillodon": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Trillodon.json"
+    },
+    "Creature/Mythic/Yeti": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Mythic/Yeti.json"
+    },
+    "Creature/Reptile/Crocodile": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Crocodile.json"
+    },
+    "Creature/Reptile/Lizard_Sand": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Lizard_Sand.json"
+    },
+    "Creature/Reptile/Raptor_Cave": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Raptor_Cave.json"
+    },
+    "Creature/Reptile/Rex_Cave": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Rex_Cave.json"
+    },
+    "Creature/Reptile/Toad_Rhino": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Toad_Rhino.json"
+    },
+    "Creature/Reptile/Toad_Rhino_Magma": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Toad_Rhino_Magma.json"
+    },
+    "Creature/Reptile/Tortoise": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Reptile/Tortoise.json"
+    },
+    "Creature/Vermin/Larva_Silk": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Larva_Silk.json"
+    },
+    "Creature/Vermin/Molerat": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Molerat.json"
+    },
+    "Creature/Vermin/Rat": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Rat.json"
+    },
+    "Creature/Vermin/Scorpion": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Scorpion.json"
+    },
+    "Creature/Vermin/Slug_Magma": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Slug_Magma.json"
+    },
+    "Creature/Vermin/Snail_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Snail_Frost.json"
+    },
+    "Creature/Vermin/Snail_Magma": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Snail_Magma.json"
+    },
+    "Creature/Vermin/Snake_Cobra": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Snake_Cobra.json"
+    },
+    "Creature/Vermin/Snake_Marsh": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Snake_Marsh.json"
+    },
+    "Creature/Vermin/Snake_Rattle": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Snake_Rattle.json"
+    },
+    "Creature/Vermin/Spider": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Spider.json"
+    },
+    "Creature/Vermin/Spider_Cave": {
+      "sourcedFromFile": "Server/NPC/Roles/Creature/Vermin/Spider_Cave.json"
+    },
+    "Elemental/Golem/Golem_Crystal_Earth": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Crystal_Earth.json"
+    },
+    "Elemental/Golem/Golem_Crystal_Flame": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Crystal_Flame.json"
+    },
+    "Elemental/Golem/Golem_Crystal_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Crystal_Frost.json"
+    },
+    "Elemental/Golem/Golem_Crystal_Sand": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Crystal_Sand.json"
+    },
+    "Elemental/Golem/Golem_Crystal_Thunder": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Crystal_Thunder.json"
+    },
+    "Elemental/Golem/Golem_Firesteel": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Firesteel.json"
+    },
+    "Elemental/Golem/Golem_Guardian_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Golem/Golem_Guardian_Void.json"
+    },
+    "Elemental/Spirit/Component_Instruction_Attack_Sequence_Spirit": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Spirit/Component_Instruction_Attack_Sequence_Spirit.json"
+    },
+    "Elemental/Spirit/Spirit_Ember": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Spirit/Spirit_Ember.json"
+    },
+    "Elemental/Spirit/Spirit_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Spirit/Spirit_Frost.json"
+    },
+    "Elemental/Spirit/Spirit_Root": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Spirit/Spirit_Root.json"
+    },
+    "Elemental/Spirit/Spirit_Thunder": {
+      "sourcedFromFile": "Server/NPC/Roles/Elemental/Spirit/Spirit_Thunder.json"
+    },
+    "Empty_Role": {
+      "sourcedFromFile": "Server/NPC/Roles/Empty_Role.json"
+    },
+    "Intelligent/Aggressive/Goblin/Components/Component_Goblin_Instruction_Alerted": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Components/Component_Goblin_Instruction_Alerted.json"
+    },
+    "Intelligent/Aggressive/Goblin/Components/Component_Goblin_Instruction_Pre_Checks": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Components/Component_Goblin_Instruction_Pre_Checks.json"
+    },
+    "Intelligent/Aggressive/Goblin/Components/Component_Instruction_Goblin_Panic": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Components/Component_Instruction_Goblin_Panic.json"
+    },
+    "Intelligent/Aggressive/Goblin/Components/Component_Instruction_Intelligent_Idle_Goblin": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Components/Component_Instruction_Intelligent_Idle_Goblin.json"
+    },
+    "Intelligent/Aggressive/Goblin/Edible_Goblin_Scrapper": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Edible_Goblin_Scrapper.json"
+    },
+    "Intelligent/Aggressive/Goblin/Edible_Rat": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Edible_Rat.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Duke": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Duke.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Duke_Phase_2": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Duke_Phase_2.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Duke_Phase_3_Fast": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Duke_Phase_3_Fast.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Duke_Phase_3_Slow": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Duke_Phase_3_Slow.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Hermit": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Hermit.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Lobber": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Lobber.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Lobber_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Lobber_Patrol.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Miner": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Miner.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Miner_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Miner_Patrol.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Ogre": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Ogre.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Ogre_Tutorial": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Ogre_Tutorial.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Scavenger": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Scavenger.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Scavenger_Battleaxe": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Scavenger_Battleaxe.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Scavenger_Sword": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Scavenger_Sword.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Scrapper": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Scrapper.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Scrapper_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Scrapper_Patrol.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Thief": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Thief.json"
+    },
+    "Intelligent/Aggressive/Goblin/Goblin_Thief_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Goblin_Thief_Patrol.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Duke_Phase_1": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Duke_Phase_1.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Duke_Phase_2": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Duke_Phase_2.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Duke_Phase_3": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Duke_Phase_3.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Lobber": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Lobber.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Miner": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Miner.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Ogre": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Ogre.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Ogre_Tutorial": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Ogre_Tutorial.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Scavenger": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Scavenger.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Scrapper": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Scrapper.json"
+    },
+    "Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Thief": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Goblin/Templates/Template_Goblin_Thief.json"
+    },
+    "Intelligent/Aggressive/Hedera": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Hedera.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Berserker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Berserker.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Brute": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Brute.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Cultist": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Cultist.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Cultist_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Cultist_Ranged.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Hunter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Hunter.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Hunter_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Hunter_Ranged.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Marauder": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Marauder.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Peon": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Peon.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Priest": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Priest.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Priest_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Priest_Ranged.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Sorcerer_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Sorcerer_Ranged.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Stalker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Stalker.json"
+    },
+    "Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Stalker_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Components/Component_Instruction_Attack_Sequence_Outlander_Stalker_Ranged.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Berserker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Berserker.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Brute": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Brute.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Cultist": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Cultist.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Hunter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Hunter.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Marauder": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Marauder.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Peon": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Peon.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Priest": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Priest.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Sorcerer": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Sorcerer.json"
+    },
+    "Intelligent/Aggressive/Outlander/Outlander_Stalker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Outlander_Stalker.json"
+    },
+    "Intelligent/Aggressive/Outlander/Wolf_Outlander_Priest": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Wolf_Outlander_Priest.json"
+    },
+    "Intelligent/Aggressive/Outlander/Wolf_Outlander_Sorcerer": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Outlander/Wolf_Outlander_Sorcerer.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Broodmother": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Broodmother.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Broodmother_Young": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Broodmother_Young.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Defender": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Defender.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Defender_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Defender_Patrol.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Fighter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Fighter.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Fighter_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Fighter_Patrol.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Louse": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Louse.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Seeker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Seeker.json"
+    },
+    "Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Seeker_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Dungeon/Dungeon_Scarak_Seeker_Patrol.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Broodmother": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Broodmother.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Defender": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Defender.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Defender_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Defender_Patrol.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Fighter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Fighter.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Fighter_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Fighter_Patrol.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Fighter_Royal_Guard": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Fighter_Royal_Guard.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Louse": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Louse.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Seeker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Seeker.json"
+    },
+    "Intelligent/Aggressive/Scarak/Scarak_Seeker_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Scarak_Seeker_Patrol.json"
+    },
+    "Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Broodmother": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Broodmother.json"
+    },
+    "Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Defender": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Defender.json"
+    },
+    "Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Louse": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Louse.json"
+    },
+    "Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Seeker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Scarak/Templates/Template_Scarak_Seeker.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Chieftain": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Chieftain.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Hunter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Hunter.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Hunter_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Hunter_Ranged.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Sentry": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Sentry.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Sentry_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Sentry_Ranged.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Warrior": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Attack_Sequence_Trork_Warrior.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Instruction_Flee_Trork_Shaman": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Instruction_Flee_Trork_Shaman.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Alerted": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Alerted.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Converge": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Converge.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Dropped_Meat": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Dropped_Meat.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Greeting": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Greeting.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Hybrid_Idle_Extra": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Hybrid_Idle_Extra.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Idle": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Idle.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Idle_Motion_Follow_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Idle_Motion_Follow_Path.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Idle_Motion_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Idle_Motion_Wander.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Offensive_Default": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Offensive_Default.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Panic": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Panic.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Pre_Checks": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Pre_Checks.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Reputation_Switch": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Reputation_Switch.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Return_Home": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Return_Home.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Search": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Search.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Shoot_Bush": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Shoot_Bush.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Sleep": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Sleep.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Spar": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Spar.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Warn": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Warn.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Warning_Shot": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Instruction_Warning_Shot.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Ranger_Instruction_Idle_Motion_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Ranger_Instruction_Idle_Motion_Wander.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Sensor_Can_Sleep": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Sensor_Can_Sleep.json"
+    },
+    "Intelligent/Aggressive/Trork/Components/Component_Trork_Sensor_Dropped_Meat": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Components/Component_Trork_Sensor_Dropped_Meat.json"
+    },
+    "Intelligent/Aggressive/Trork/Templates/Template_Trork_Chieftain": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Templates/Template_Trork_Chieftain.json"
+    },
+    "Intelligent/Aggressive/Trork/Templates/Template_Trork_Companion": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Templates/Template_Trork_Companion.json"
+    },
+    "Intelligent/Aggressive/Trork/Templates/Template_Trork_Hybrid": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Templates/Template_Trork_Hybrid.json"
+    },
+    "Intelligent/Aggressive/Trork/Templates/Template_Trork_Mage": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Templates/Template_Trork_Mage.json"
+    },
+    "Intelligent/Aggressive/Trork/Templates/Template_Trork_Melee": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Templates/Template_Trork_Melee.json"
+    },
+    "Intelligent/Aggressive/Trork/Templates/Template_Trork_Ranger": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Templates/Template_Trork_Ranger.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Brawler": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Brawler.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Chieftain": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Chieftain.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Doctor_Witch": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Doctor_Witch.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Guard": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Guard.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Hunter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Hunter.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Mauler": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Mauler.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Sentry": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Sentry.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Sentry_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Sentry_Patrol.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Shaman": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Shaman.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Unarmed": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Unarmed.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Warrior": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Warrior.json"
+    },
+    "Intelligent/Aggressive/Trork/Trork_Warrior_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Trork_Warrior_Patrol.json"
+    },
+    "Intelligent/Aggressive/Trork/Wolf_Trork_Hunter": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Wolf_Trork_Hunter.json"
+    },
+    "Intelligent/Aggressive/Trork/Wolf_Trork_Shaman": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Aggressive/Trork/Wolf_Trork_Shaman.json"
+    },
+    "Intelligent/Neutral/Bramblekin": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Bramblekin.json"
+    },
+    "Intelligent/Neutral/Bramblekin_Shaman": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Bramblekin_Shaman.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Feran_Instruction_Search": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Feran_Instruction_Search.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Feran_Instruction_Threaten": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Feran_Instruction_Threaten.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Feran_Sensor_Low_HP": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Feran_Sensor_Low_HP.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Feran_Sensor_Scarak": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Feran_Sensor_Scarak.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Burrower": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Burrower.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Civilian": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Civilian.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Cub": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Cub.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Longtooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Longtooth.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Longtooth_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Longtooth_Ranged.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Sharptooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Sharptooth.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Sharptooth_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Sharptooth_Ranged.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Windwalker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Instruction_Attack_Sequence_Feran_Windwalker.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Sensor_Feran_Day": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Sensor_Feran_Day.json"
+    },
+    "Intelligent/Neutral/Feran/Component_Sensor_Feran_Sharptooth_Wakeup": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Component_Sensor_Feran_Sharptooth_Wakeup.json"
+    },
+    "Intelligent/Neutral/Feran/Feran_Burrower": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Feran_Burrower.json"
+    },
+    "Intelligent/Neutral/Feran/Feran_Civilian": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Feran_Civilian.json"
+    },
+    "Intelligent/Neutral/Feran/Feran_Cub": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Feran_Cub.json"
+    },
+    "Intelligent/Neutral/Feran/Feran_Longtooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Feran_Longtooth.json"
+    },
+    "Intelligent/Neutral/Feran/Feran_Sharptooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Feran_Sharptooth.json"
+    },
+    "Intelligent/Neutral/Feran/Feran_Windwalker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Feran_Windwalker.json"
+    },
+    "Intelligent/Neutral/Feran/Templates/Template_Feran_Burrower": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Templates/Template_Feran_Burrower.json"
+    },
+    "Intelligent/Neutral/Feran/Templates/Template_Feran_Civilian": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Templates/Template_Feran_Civilian.json"
+    },
+    "Intelligent/Neutral/Feran/Templates/Template_Feran_Cub": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Templates/Template_Feran_Cub.json"
+    },
+    "Intelligent/Neutral/Feran/Templates/Template_Feran_Sharptooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Templates/Template_Feran_Sharptooth.json"
+    },
+    "Intelligent/Neutral/Feran/Templates/Template_Feran_Windwalker": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Feran/Templates/Template_Feran_Windwalker.json"
+    },
+    "Intelligent/Neutral/Kweebec/Component_Instruction_Attack_Sequence_Kweebec_Sapling_Razorleaf": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Component_Instruction_Attack_Sequence_Kweebec_Sapling_Razorleaf.json"
+    },
+    "Intelligent/Neutral/Kweebec/Component_Kweebec_Instruction_Panic": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Component_Kweebec_Instruction_Panic.json"
+    },
+    "Intelligent/Neutral/Kweebec/Component_Kweebec_Instruction_Search": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Component_Kweebec_Instruction_Search.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Elder": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Elder.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Merchant": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Prisoner": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Prisoner.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Razorleaf": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Razorleaf.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Razorleaf_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Razorleaf_Patrol.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Rootling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Rootling.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Sapling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Sapling.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Sapling_Orange": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Sapling_Orange.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Sapling_Pink": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Sapling_Pink.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Seedling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Seedling.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Sproutling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Sproutling.json"
+    },
+    "Intelligent/Neutral/Kweebec/Kweebec_Sproutling_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Sproutling_Patrol.json"
+    },
+    "Intelligent/Neutral/Kweebec/Templates/Template_Kweebec_Razorleaf": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Templates/Template_Kweebec_Razorleaf.json"
+    },
+    "Intelligent/Neutral/Kweebec/Templates/Template_Kweebec_Sapling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Templates/Template_Kweebec_Sapling.json"
+    },
+    "Intelligent/Neutral/Kweebec/Templates/Template_Kweebec_Youngling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Templates/Template_Kweebec_Youngling.json"
+    },
+    "Intelligent/Neutral/Tuluk/Tuluk_Fisherman": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Neutral/Tuluk/Tuluk_Fisherman.json"
+    },
+    "Intelligent/Passive/Component_Instruction_Klops_Idle": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Component_Instruction_Klops_Idle.json"
+    },
+    "Intelligent/Passive/Klops_Gentleman": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Klops_Gentleman.json"
+    },
+    "Intelligent/Passive/Klops_Merchant": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Klops_Merchant.json"
+    },
+    "Intelligent/Passive/Klops_Merchant_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Klops_Merchant_Patrol.json"
+    },
+    "Intelligent/Passive/Klops_Merchant_Wandering": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Klops_Merchant_Wandering.json"
+    },
+    "Intelligent/Passive/Klops_Miner": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Klops_Miner.json"
+    },
+    "Intelligent/Passive/Klops_Miner_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Klops_Miner_Patrol.json"
+    },
+    "Intelligent/Passive/Quest_Master": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Quest_Master.json"
+    },
+    "Intelligent/Passive/Slothian": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Slothian.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Bluebird": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Bluebird.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Bunny": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Bunny.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Deer_Doe": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Deer_Doe.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Deer_Stag": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Deer_Stag.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Duck": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Duck.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Feran": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Feran.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Feran_Longtooth": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Feran_Longtooth.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Finch_Green": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Finch_Green.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Frog_Blue": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Frog_Blue.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Frog_Green": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Frog_Green.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Frog_Orange": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Frog_Orange.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Klops": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Klops.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Klops_Merchant": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Klops_Merchant.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Elder": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Elder.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Merchant": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Merchant.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol1": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol1.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol2": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol2.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol3": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol3.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol4": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol4.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol5": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Razorleaf_Patrol5.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Rootling_Static": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Rootling_Static.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Seedling": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Seedling.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Seedling_Static": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Seedling_Static.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Kweebec_Static": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Kweebec_Static.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Mithril_Guard": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Mithril_Guard.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Owl_Brown": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Owl_Brown.json"
+    },
+    "Intelligent/Passive/Temple/Temple_Squirrel": {
+      "sourcedFromFile": "Server/NPC/Roles/Intelligent/Passive/Temple/Temple_Squirrel.json"
+    },
+    "Undead/Chicken_Undead": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Chicken_Undead.json"
+    },
+    "Undead/Cow_Undead": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Cow_Undead.json"
+    },
+    "Undead/Ghoul": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Ghoul.json"
+    },
+    "Undead/Horse_Skeleton": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Horse_Skeleton.json"
+    },
+    "Undead/Horse_Skeleton_Armored": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Horse_Skeleton_Armored.json"
+    },
+    "Undead/Hound_Bleached": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Hound_Bleached.json"
+    },
+    "Undead/Pig_Undead": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Pig_Undead.json"
+    },
+    "Undead/Shadow_Knight": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Shadow_Knight.json"
+    },
+    "Undead/Skeleton/Risen_Gunner": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Risen_Gunner.json"
+    },
+    "Undead/Skeleton/Risen_Knight": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Risen_Knight.json"
+    },
+    "Undead/Skeleton/Skeleton": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Archer": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Archer.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Archer_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Archer_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Archer_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Archer_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Archmage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Archmage.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Archmage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Archmage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Archmage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Archmage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Fighter": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Fighter.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Fighter_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Fighter_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Fighter_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Fighter_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Knight": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Knight.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Knight_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Knight_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Knight_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Knight_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Mage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Mage.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Mage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Mage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Mage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Mage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Ranger": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Ranger.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Ranger_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Ranger_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Ranger_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Ranger_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Scout": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Scout.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Scout_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Scout_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Scout_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Scout_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Soldier": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Soldier.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Soldier_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Soldier_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton/Skeleton_Soldier_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton/Skeleton_Soldier_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Alchemist": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Alchemist.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Alchemist_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Alchemist_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Alchemist_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Alchemist_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Archer": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Archer.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Archer_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Archer_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Archer_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Archer_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Gunner": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Gunner.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Gunner_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Gunner_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Gunner_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Gunner_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Knight": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Knight.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Knight_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Knight_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Knight_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Knight_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Lancer": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Lancer.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Lancer_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Lancer_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Lancer_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Lancer_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Praetorian": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Praetorian.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Praetorian_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Praetorian_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Praetorian_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Praetorian_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Soldier": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Soldier.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Soldier_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Soldier_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Soldier_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Soldier_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Wizard": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Wizard.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Wizard_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Wizard_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Wizard_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Burnt/Skeleton_Burnt_Wizard_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archer": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archer.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archer_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archer_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archer_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archer_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archmage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archmage.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archmage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archmage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archmage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Archmage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Fighter": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Fighter.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Fighter_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Fighter_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Fighter_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Fighter_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Knight": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Knight.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Knight_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Knight_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Knight_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Knight_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Mage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Mage.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Mage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Mage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Mage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Mage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Ranger": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Ranger.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Ranger_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Ranger_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Ranger_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Ranger_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Scout": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Scout.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Scout_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Scout_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Scout_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Scout_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Soldier": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Soldier.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Soldier_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Soldier_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Soldier_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Frost/Skeleton_Frost_Soldier_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Fighter": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Fighter.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Fighter_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Fighter_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Fighter_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Fighter_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Footman": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Footman.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Footman_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Footman_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Footman_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Footman_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Head": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Head.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Mage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Mage.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Mage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Mage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Mage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Incandescent/Skeleton_Incandescent_Mage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Captain": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Captain.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Captain_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Captain_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Captain_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Captain_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Gunner": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Gunner.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Gunner_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Gunner_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Gunner_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Gunner_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Striker": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Striker.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Striker_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Striker_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Striker_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Pirate/Skeleton_Pirate_Striker_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Archer": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Archer.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Assassin": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Assassin.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Mage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Mage.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Soldier": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Dungeon/Dungeon_Skeleton_Sand_Soldier.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archer": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archer.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archer_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archer_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archer_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archer_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archmage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archmage.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archmage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archmage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archmage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Archmage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Assassin": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Assassin.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Assassin_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Assassin_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Assassin_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Assassin_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Guard": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Guard.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Guard_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Guard_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Guard_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Guard_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Mage": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Mage.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Mage_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Mage_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Mage_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Mage_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Ranger": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Ranger.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Ranger_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Ranger_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Ranger_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Ranger_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Scout": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Scout.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Scout_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Scout_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Scout_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Scout_Wander.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Soldier": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Soldier.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Soldier_Patrol": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Soldier_Patrol.json"
+    },
+    "Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Soldier_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Skeleton/Skeleton_Sand/Skeleton_Sand_Soldier_Wander.json"
+    },
+    "Undead/Werewolf": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Werewolf.json"
+    },
+    "Undead/Wraith": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Wraith.json"
+    },
+    "Undead/Wraith_Lantern": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Wraith_Lantern.json"
+    },
+    "Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie.json"
+    },
+    "Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie_Burnt": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie_Burnt.json"
+    },
+    "Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie_Frost.json"
+    },
+    "Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie_Sand": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Components/Component_Instruction_Attack_Sequence_Zombie_Sand.json"
+    },
+    "Undead/Zombie/Templates/Template_Aggressive_Zombies": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Templates/Template_Aggressive_Zombies.json"
+    },
+    "Undead/Zombie/Zombie": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie.json"
+    },
+    "Undead/Zombie/Zombie_Aberrant": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie_Aberrant.json"
+    },
+    "Undead/Zombie/Zombie_Aberrant_Big": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie_Aberrant_Big.json"
+    },
+    "Undead/Zombie/Zombie_Aberrant_Small": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie_Aberrant_Small.json"
+    },
+    "Undead/Zombie/Zombie_Burnt": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie_Burnt.json"
+    },
+    "Undead/Zombie/Zombie_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie_Frost.json"
+    },
+    "Undead/Zombie/Zombie_Sand": {
+      "sourcedFromFile": "Server/NPC/Roles/Undead/Zombie/Zombie_Sand.json"
+    },
+    "Void/Component_Instruction_Attack_Sequence_Eye_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Component_Instruction_Attack_Sequence_Eye_Void.json"
+    },
+    "Void/Crawler_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Crawler_Void.json"
+    },
+    "Void/Eye_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Eye_Void.json"
+    },
+    "Void/Larva_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Larva_Void.json"
+    },
+    "Void/Spawn_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Spawn_Void.json"
+    },
+    "Void/Spectre_Void": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Spectre_Void.json"
+    },
+    "Void/Templates/Template_Eye": {
+      "sourcedFromFile": "Server/NPC/Roles/Void/Templates/Template_Eye.json"
+    },
+    "_Core/BlankTemplate": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/BlankTemplate.json"
+    },
+    "_Core/Components/ActionLists/Component_ActionList_Sleep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/ActionLists/Component_ActionList_Sleep.json"
+    },
+    "_Core/Components/ActionLists/Component_ActionList_Wake": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/ActionLists/Component_ActionList_Wake.json"
+    },
+    "_Core/Components/Component_Instruction_Attack_Sequence_Cactee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Component_Instruction_Attack_Sequence_Cactee.json"
+    },
+    "_Core/Components/Component_Instruction_Cactee_Idle_Motion": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Component_Instruction_Cactee_Idle_Motion.json"
+    },
+    "_Core/Components/Flock/Template_Instruction_Flock_Attack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Flock/Template_Instruction_Flock_Attack.json"
+    },
+    "_Core/Components/Flock/Template_Instruction_Flock_Attack_State": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Flock/Template_Instruction_Flock_Attack_State.json"
+    },
+    "_Core/Components/Flock/Template_Instruction_Flock_Join": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Flock/Template_Instruction_Flock_Join.json"
+    },
+    "_Core/Components/Flock/Template_Instruction_Flock_Motion": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Flock/Template_Instruction_Flock_Motion.json"
+    },
+    "_Core/Components/Paths/Component_Path_Square": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Paths/Component_Path_Square.json"
+    },
+    "_Core/Components/Selectors/Combat/Component_Instruction_Combat_Throw_NPC": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Combat/Component_Instruction_Combat_Throw_NPC.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Alerted": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Alerted.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Alerted_With_Friendly": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Alerted_With_Friendly.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Greet": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Greet.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Idle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Idle.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Multitarget_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Multitarget_Flee.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Panic": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Panic.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Return_Home": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Return_Home.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Generic_Search": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Search.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Intelligent_Idle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Intelligent_Idle.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Interaction_Complete_Task_Simple": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Interaction_Complete_Task_Simple.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Interaction_Mount": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Interaction_Mount.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Interaction_Reputation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Interaction_Reputation.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Interaction_Simple": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Interaction_Simple.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Wild_Panic_Aggressive": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Wild_Panic_Aggressive.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Wild_Panic_Passive": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Wild_Panic_Passive.json"
+    },
+    "_Core/Components/Selectors/Component_Instruction_Wild_Sleep_State": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Wild_Sleep_State.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Day": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Day.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Is_Indoors": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Is_Indoors.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Leads_Flock": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Leads_Flock.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Lost_Target_Detection": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Lost_Target_Detection.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Night": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Night.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Player_Hidden_Nearby": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Player_Hidden_Nearby.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Scent_By_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Scent_By_Attitude.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Sight": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Sight.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Sight_By_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Sight_By_Attitude.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Sight_Or_Sound_Combined": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Sight_Or_Sound_Combined.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Sight_With_Light_By_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Sight_With_Light_By_Attitude.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Sound": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Sound.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Sound_By_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Sound_By_Attitude.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Standard_Detection": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Standard_Detection.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Target_Hidden_Nearby": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Target_Hidden_Nearby.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Threatened": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Threatened.json"
+    },
+    "_Core/Components/Sensors/Component_Sensor_Timed_Nap": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Component_Sensor_Timed_Nap.json"
+    },
+    "_Core/Components/Sensors/Test_Is_Indoors_Component": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Sensors/Test_Is_Indoors_Component.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Allied_Damage_Check": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Allied_Damage_Check.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Attack_Sequence_Temp": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Attack_Sequence_Temp.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Attack_Sequence_Temp_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Attack_Sequence_Temp_Ranged.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Clear_Status_Animation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Clear_Status_Animation.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Combat_Back_Off": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Combat_Back_Off.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Combat_Retreat": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Combat_Retreat.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Combat_Target_Swap": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Combat_Target_Swap.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Damage_Check": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Damage_Check.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Graze": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Graze.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Chase": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Chase.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Configurable_Leashed_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Configurable_Leashed_Wander.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Follow_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Follow_Path.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Leashed_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Leashed_Wander.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Wander.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Wander_Far": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Idle_Motion_Wander_Far.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Intelligent_Switch_To_Ranged_Attack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Intelligent_Switch_To_Ranged_Attack.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Leash_To_Flock_Leader": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Leash_To_Flock_Leader.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Null": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Null.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Play_Animation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Play_Animation.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Play_Animation_In_State_For_Duration": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Play_Animation_In_State_For_Duration.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Sight_Or_Sound_Check": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Sight_Or_Sound_Check.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Simple_Combat_Action_Evaluator": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Simple_Combat_Action_Evaluator.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Simple_Soft_Leash": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Simple_Soft_Leash.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Soft_Leash": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Soft_Leash.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Spread_Out": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Spread_Out.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_State_Timeout": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_State_Timeout.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Stationary_Idle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Stationary_Idle.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Target_Adjusted_Attack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Target_Adjusted_Attack.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Target_Adjusted_Attack_Melee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Target_Adjusted_Attack_Melee.json"
+    },
+    "_Core/Components/Steps/Component_Instruction_Waking_Idle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Components/Steps/Component_Instruction_Waking_Idle.json"
+    },
+    "_Core/Template_Placeholder": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Template_Placeholder.json"
+    },
+    "_Core/Templates/Template_Animal_Neutral": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Animal_Neutral.json"
+    },
+    "_Core/Templates/Template_Beasts_Passive_Cactee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Beasts_Passive_Cactee.json"
+    },
+    "_Core/Templates/Template_Beasts_Passive_Critter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Beasts_Passive_Critter.json"
+    },
+    "_Core/Templates/Template_Birds_Passive": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Birds_Passive.json"
+    },
+    "_Core/Templates/Template_Edible_Critter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Edible_Critter.json"
+    },
+    "_Core/Templates/Template_Intelligent": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Intelligent.json"
+    },
+    "_Core/Templates/Template_Livestock": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Livestock.json"
+    },
+    "_Core/Templates/Template_Predator": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Predator.json"
+    },
+    "_Core/Templates/Template_Spirit": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Spirit.json"
+    },
+    "_Core/Templates/Template_Summoned_Ally": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Summoned_Ally.json"
+    },
+    "_Core/Templates/Template_Swimming_Aggressive": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Swimming_Aggressive.json"
+    },
+    "_Core/Templates/Template_Swimming_Passive": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Swimming_Passive.json"
+    },
+    "_Core/Templates/Template_Temple": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Templates/Template_Temple.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Bird": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Bird.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Player": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Player.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Trork_Hunter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Trork_Hunter.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Trork_Leader": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Trork_Leader.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Trork_Soldier": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Trork_Soldier.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Trork_Soldier_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Trork_Soldier_Path.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Trork_Soldier_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Trork_Soldier_Wander.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Trork_Wolf": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Trork_Wolf.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Wolf": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Wolf.json"
+    },
+    "_Core/Tests/Beacons/Test_Beacon_Wolf_Leader": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Beacon_Wolf_Leader.json"
+    },
+    "_Core/Tests/Beacons/Test_Capped_Beacon": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Capped_Beacon.json"
+    },
+    "_Core/Tests/Beacons/Test_Notify_Action": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Notify_Action.json"
+    },
+    "_Core/Tests/Beacons/Test_Receive_Beacon": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Beacons/Test_Receive_Beacon.json"
+    },
+    "_Core/Tests/Benchmark/Test_Benchmark_Sensor_80": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Benchmark/Test_Benchmark_Sensor_80.json"
+    },
+    "_Core/Tests/Birds/Test_Bird": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Desired_Altitude_Weight": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Desired_Altitude_Weight.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Flee.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Land": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Land.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Land_Ray": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Land_Ray.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Land_Seeds": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Land_Seeds.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Override_Altitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Override_Altitude.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Seek": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Seek.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_TakeOff": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_TakeOff.json"
+    },
+    "_Core/Tests/Birds/Test_Bird_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Birds/Test_Bird_Wander.json"
+    },
+    "_Core/Tests/BlockSensor/Test_Block_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/BlockSensor/Test_Block_Sensor.json"
+    },
+    "_Core/Tests/BlockSensor/Test_Block_Sensor_Mobile": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/BlockSensor/Test_Block_Sensor_Mobile.json"
+    },
+    "_Core/Tests/BlockSensor/Test_Block_Sensor_Reservation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/BlockSensor/Test_Block_Sensor_Reservation.json"
+    },
+    "_Core/Tests/BlockSensor/Test_Sensor_Search_Ray": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/BlockSensor/Test_Sensor_Search_Ray.json"
+    },
+    "_Core/Tests/Combat/Test_Attack_Bow": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Attack_Bow.json"
+    },
+    "_Core/Tests/Combat/Test_Attack_On_Death": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Attack_On_Death.json"
+    },
+    "_Core/Tests/Combat/Test_Attack_Switch": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Attack_Switch.json"
+    },
+    "_Core/Tests/Combat/Test_Bow_Target": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Bow_Target.json"
+    },
+    "_Core/Tests/Combat/Test_Combat_Mitigation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Combat_Mitigation.json"
+    },
+    "_Core/Tests/Combat/Test_Combat_Sensor_Charge": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Combat_Sensor_Charge.json"
+    },
+    "_Core/Tests/Combat/Test_Deal_Friendly_Damage": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Deal_Friendly_Damage.json"
+    },
+    "_Core/Tests/Combat/Test_Entity_Effect": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Entity_Effect.json"
+    },
+    "_Core/Tests/Combat/Test_Goblin_Attack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Goblin_Attack.json"
+    },
+    "_Core/Tests/Combat/Test_Guided_Block": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Guided_Block.json"
+    },
+    "_Core/Tests/Combat/Test_Guided_Bow": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Guided_Bow.json"
+    },
+    "_Core/Tests/Combat/Test_Inflicted_Damage": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Inflicted_Damage.json"
+    },
+    "_Core/Tests/Combat/Test_Sensor_Height_Bow": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Sensor_Height_Bow.json"
+    },
+    "_Core/Tests/Combat/Test_Shooter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Shooter.json"
+    },
+    "_Core/Tests/Combat/Test_Take_Friendly_Damage": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Combat/Test_Take_Friendly_Damage.json"
+    },
+    "_Core/Tests/Components/Template_Age_Sensor_Test": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Components/Template_Age_Sensor_Test.json"
+    },
+    "_Core/Tests/Components/Test_Action_List_Component": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Components/Test_Action_List_Component.json"
+    },
+    "_Core/Tests/Components/Test_Component_Action_List": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Components/Test_Component_Action_List.json"
+    },
+    "_Core/Tests/Components/Test_Component_Attack_Sequence": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Components/Test_Component_Attack_Sequence.json"
+    },
+    "_Core/Tests/Components/Test_Component_Set_State": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Components/Test_Component_Set_State.json"
+    },
+    "_Core/Tests/Components/Test_Template_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Components/Test_Template_Sensor.json"
+    },
+    "_Core/Tests/ComputableComponents/Test_Component_Instruction_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ComputableComponents/Test_Component_Instruction_Flee.json"
+    },
+    "_Core/Tests/ComputableComponents/Test_Component_Instruction_Seek": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ComputableComponents/Test_Component_Instruction_Seek.json"
+    },
+    "_Core/Tests/ComputableComponents/Test_Computable_Component_Template": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ComputableComponents/Test_Computable_Component_Template.json"
+    },
+    "_Core/Tests/ComputableComponents/Test_Computable_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ComputableComponents/Test_Computable_Flee.json"
+    },
+    "_Core/Tests/ComputableComponents/Test_Computable_Null": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ComputableComponents/Test_Computable_Null.json"
+    },
+    "_Core/Tests/ComputableComponents/Test_Computable_Seek": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ComputableComponents/Test_Computable_Seek.json"
+    },
+    "_Core/Tests/Culling/Test_Culling_No_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Culling/Test_Culling_No_Wander.json"
+    },
+    "_Core/Tests/Culling/Test_Culling_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Culling/Test_Culling_Wander.json"
+    },
+    "_Core/Tests/Culling/Test_Template_Instruction_Culling": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Culling/Test_Template_Instruction_Culling.json"
+    },
+    "_Core/Tests/Culling/Test_Template_Instruction_Switch": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Culling/Test_Template_Instruction_Switch.json"
+    },
+    "_Core/Tests/Failing/Test_Fail_ItemInHand": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Failing/Test_Fail_ItemInHand.json"
+    },
+    "_Core/Tests/Flocking/Test_Dog_Flock": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Dog_Flock.json"
+    },
+    "_Core/Tests/Flocking/Test_Flock_Damage": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Flock_Damage.json"
+    },
+    "_Core/Tests/Flocking/Test_Flock_Mixed": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Flock_Mixed.json"
+    },
+    "_Core/Tests/Flocking/Test_Flock_Mixed_Member": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Flock_Mixed_Member.json"
+    },
+    "_Core/Tests/Flocking/Test_Flock_Mixed_Member_2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Flock_Mixed_Member_2.json"
+    },
+    "_Core/Tests/Flocking/Test_Flock_Pos": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Flock_Pos.json"
+    },
+    "_Core/Tests/Flocking/Test_Pack_Aggressive": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Pack_Aggressive.json"
+    },
+    "_Core/Tests/Flocking/Test_Pack_Tame": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Pack_Tame.json"
+    },
+    "_Core/Tests/Flocking/Test_Sheep_Flock": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Sheep_Flock.json"
+    },
+    "_Core/Tests/Flocking/Test_Sheep_Flock2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Flocking/Test_Sheep_Flock2.json"
+    },
+    "_Core/Tests/Groups/Test_Group_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Groups/Test_Group_Sheep.json"
+    },
+    "_Core/Tests/Groups/Test_Group_Wolf": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Groups/Test_Group_Wolf.json"
+    },
+    "_Core/Tests/Groups/Test_Tag_PlayerTestModel_G": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Groups/Test_Tag_PlayerTestModel_G.json"
+    },
+    "_Core/Tests/Groups/Test_Tag_PlayerTestModel_V": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Groups/Test_Tag_PlayerTestModel_V.json"
+    },
+    "_Core/Tests/Groups/Test_Tag_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Groups/Test_Tag_Sensor.json"
+    },
+    "_Core/Tests/Groups/Test_Tag_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Groups/Test_Tag_Sheep.json"
+    },
+    "_Core/Tests/HotboxTests/Static": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/HotboxTests/Static.json"
+    },
+    "_Core/Tests/HotboxTests/Static2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/HotboxTests/Static2.json"
+    },
+    "_Core/Tests/HotboxTests/Static3": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/HotboxTests/Static3.json"
+    },
+    "_Core/Tests/HotboxTests/Static4": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/HotboxTests/Static4.json"
+    },
+    "_Core/Tests/Integration/Test_Attack_Flying_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Attack_Flying_Ranged.json"
+    },
+    "_Core/Tests/Integration/Test_Attack_Melee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Attack_Melee.json"
+    },
+    "_Core/Tests/Integration/Test_Attack_Melee_All": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Attack_Melee_All.json"
+    },
+    "_Core/Tests/Integration/Test_Attack_Melee_Charged": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Attack_Melee_Charged.json"
+    },
+    "_Core/Tests/Integration/Test_Attack_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Attack_Ranged.json"
+    },
+    "_Core/Tests/Integration/Test_Dummy": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Dummy.json"
+    },
+    "_Core/Tests/Integration/Test_Dummy_Stationary": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Integration/Test_Dummy_Stationary.json"
+    },
+    "_Core/Tests/Intelligence/Test_Kweebec_Playing": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Intelligence/Test_Kweebec_Playing.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Attitude.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Complete_Bounty": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Complete_Bounty.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Complete_Task": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Complete_Task.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Component": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Component.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Follow": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Follow.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Purchase": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Purchase.json"
+    },
+    "_Core/Tests/Interaction/Test_Interaction_Shear": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Interaction_Shear.json"
+    },
+    "_Core/Tests/Interaction/Test_Multiple_Interactions": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Multiple_Interactions.json"
+    },
+    "_Core/Tests/Interaction/Test_Start_Objective": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Interaction/Test_Start_Objective.json"
+    },
+    "_Core/Tests/Inventory/Test_Hotbar_SetItem": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Hotbar_SetItem.json"
+    },
+    "_Core/Tests/Inventory/Test_Hotbar_Weapon_Swap": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Hotbar_Weapon_Swap.json"
+    },
+    "_Core/Tests/Inventory/Test_Inventory_Actions": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Inventory_Actions.json"
+    },
+    "_Core/Tests/Inventory/Test_Inventory_Add": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Inventory_Add.json"
+    },
+    "_Core/Tests/Inventory/Test_Inventory_Contents": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Inventory_Contents.json"
+    },
+    "_Core/Tests/Inventory/Test_Inventory_Remove": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Inventory_Remove.json"
+    },
+    "_Core/Tests/Inventory/Test_ItemInHand": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_ItemInHand.json"
+    },
+    "_Core/Tests/Inventory/Test_OffHand_Swap": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_OffHand_Swap.json"
+    },
+    "_Core/Tests/Inventory/Test_OffHand_Wielding": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_OffHand_Wielding.json"
+    },
+    "_Core/Tests/Inventory/Test_Sensor_Inventory": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Sensor_Inventory.json"
+    },
+    "_Core/Tests/Inventory/Test_Sensor_ItemInHand": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Sensor_ItemInHand.json"
+    },
+    "_Core/Tests/Inventory/Test_Sensor_ItemInInventory": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Inventory/Test_Sensor_ItemInInventory.json"
+    },
+    "_Core/Tests/Motion/Test_Ascent_Animation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Ascent_Animation.json"
+    },
+    "_Core/Tests/Motion/Test_Dive_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Dive_Flee.json"
+    },
+    "_Core/Tests/Motion/Test_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Flee.json"
+    },
+    "_Core/Tests/Motion/Test_Fly_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Fly_Flee.json"
+    },
+    "_Core/Tests/Motion/Test_Jumping": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Jumping.json"
+    },
+    "_Core/Tests/Motion/Test_Motion_Nothing": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Motion_Nothing.json"
+    },
+    "_Core/Tests/Motion/Test_Movement_State_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Movement_State_Sheep.json"
+    },
+    "_Core/Tests/Motion/Test_Random_Hotbar": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Random_Hotbar.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_Circle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_Circle.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_Circle1": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_Circle1.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_Circle2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_Circle2.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_Circle3": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_Circle3.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_Rect": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_Rect.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_RectAvoid": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_RectAvoid.json"
+    },
+    "_Core/Tests/Motion/Test_Sheep_Slow": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Sheep_Slow.json"
+    },
+    "_Core/Tests/Motion/Test_Walk_Base": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Walk_Base.json"
+    },
+    "_Core/Tests/Motion/Test_Walk_Flee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Walk_Flee.json"
+    },
+    "_Core/Tests/Motion/Test_Walk_Leave": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Walk_Leave.json"
+    },
+    "_Core/Tests/Motion/Test_Walk_Seek": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Walk_Seek.json"
+    },
+    "_Core/Tests/Motion/Test_Walk_Stay": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Walk_Stay.json"
+    },
+    "_Core/Tests/Motion/Test_Watch": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Watch.json"
+    },
+    "_Core/Tests/Motion/Test_Watch_NPC": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Test_Watch_NPC.json"
+    },
+    "_Core/Tests/Motion/Wander_Circle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Wander_Circle.json"
+    },
+    "_Core/Tests/Motion/Wander_Rect": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Wander_Rect.json"
+    },
+    "_Core/Tests/Motion/Wander_Simple": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Motion/Wander_Simple.json"
+    },
+    "_Core/Tests/Pathfinding/Test_Find_Entity": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Pathfinding/Test_Find_Entity.json"
+    },
+    "_Core/Tests/Pathfinding/Test_Find_Entity_Last_Seen": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Pathfinding/Test_Find_Entity_Last_Seen.json"
+    },
+    "_Core/Tests/Paths/Test_Chained_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Chained_Path.json"
+    },
+    "_Core/Tests/Paths/Test_Inferred_Patrol_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Inferred_Patrol_Path.json"
+    },
+    "_Core/Tests/Paths/Test_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path.json"
+    },
+    "_Core/Tests/Paths/Test_Path_Avoid": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path_Avoid.json"
+    },
+    "_Core/Tests/Paths/Test_Path_Distance1": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path_Distance1.json"
+    },
+    "_Core/Tests/Paths/Test_Path_Distance2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path_Distance2.json"
+    },
+    "_Core/Tests/Paths/Test_Path_Line": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path_Line.json"
+    },
+    "_Core/Tests/Paths/Test_Path_Loop": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path_Loop.json"
+    },
+    "_Core/Tests/Paths/Test_Path_View": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Path_View.json"
+    },
+    "_Core/Tests/Paths/Test_Patrol_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Patrol_Path.json"
+    },
+    "_Core/Tests/Paths/Test_Sensor_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Sensor_Path.json"
+    },
+    "_Core/Tests/Paths/Test_Transient_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Paths/Test_Transient_Path.json"
+    },
+    "_Core/Tests/ReferenceSelector/Test_Reference_Instruction": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ReferenceSelector/Test_Reference_Instruction.json"
+    },
+    "_Core/Tests/ReferenceSelector/Test_Reference_Instruction_Impl": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ReferenceSelector/Test_Reference_Instruction_Impl.json"
+    },
+    "_Core/Tests/ReferenceSelector/Test_Reference_Instruction_Simple": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ReferenceSelector/Test_Reference_Instruction_Simple.json"
+    },
+    "_Core/Tests/ReferenceSelector/Test_Reference_Required_Feature": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/ReferenceSelector/Test_Reference_Required_Feature.json"
+    },
+    "_Core/Tests/Spawning/Test_Spawn": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Spawning/Test_Spawn.json"
+    },
+    "_Core/Tests/Spawning/Test_Spawn_Action": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Spawning/Test_Spawn_Action.json"
+    },
+    "_Core/Tests/States/Test_Set_State_From_Component": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_Set_State_From_Component.json"
+    },
+    "_Core/Tests/States/Test_State_Evaluator": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_State_Evaluator.json"
+    },
+    "_Core/Tests/States/Test_State_Evaluator_Nearby": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_State_Evaluator_Nearby.json"
+    },
+    "_Core/Tests/States/Test_State_Evaluator_Sleep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_State_Evaluator_Sleep.json"
+    },
+    "_Core/Tests/States/Test_State_Evaluator_Toggle": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_State_Evaluator_Toggle.json"
+    },
+    "_Core/Tests/States/Test_State_Transitions": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_State_Transitions.json"
+    },
+    "_Core/Tests/States/Test_Sub_States": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/States/Test_Sub_States.json"
+    },
+    "_Core/Tests/TemplateTests/Component_Test_Action_Sequence": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Component_Test_Action_Sequence.json"
+    },
+    "_Core/Tests/TemplateTests/Component_Test_Inventory_Action_Reference": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Component_Test_Inventory_Action_Reference.json"
+    },
+    "_Core/Tests/TemplateTests/Component_Test_Local_States": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Component_Test_Local_States.json"
+    },
+    "_Core/Tests/TemplateTests/Component_Test_Local_States_2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Component_Test_Local_States_2.json"
+    },
+    "_Core/Tests/TemplateTests/Test_Player_Hidden_Template": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Test_Player_Hidden_Template.json"
+    },
+    "_Core/Tests/TemplateTests/Test_Template_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Test_Template_Sheep.json"
+    },
+    "_Core/Tests/TemplateTests/Test_Template_Variant": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Test_Template_Variant.json"
+    },
+    "_Core/Tests/TemplateTests/Test_Template_Variant_of_Variant": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Test_Template_Variant_of_Variant.json"
+    },
+    "_Core/Tests/TemplateTests/Test_Template_Wander": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/TemplateTests/Test_Template_Wander.json"
+    },
+    "_Core/Tests/Test_Action_List": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Action_List.json"
+    },
+    "_Core/Tests/Test_Action_Model_Attachment": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Action_Model_Attachment.json"
+    },
+    "_Core/Tests/Test_And": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_And.json"
+    },
+    "_Core/Tests/Test_Animation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Animation.json"
+    },
+    "_Core/Tests/Test_Animation_State_Change": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Animation_State_Change.json"
+    },
+    "_Core/Tests/Test_Attitude_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Attitude_Sensor.json"
+    },
+    "_Core/Tests/Test_Attitude_Sensor_Wolf": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Attitude_Sensor_Wolf.json"
+    },
+    "_Core/Tests/Test_Attributes": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Attributes.json"
+    },
+    "_Core/Tests/Test_Attributes_Modify": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Attributes_Modify.json"
+    },
+    "_Core/Tests/Test_Block_Change": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Block_Change.json"
+    },
+    "_Core/Tests/Test_Blocking_Animation": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Blocking_Animation.json"
+    },
+    "_Core/Tests/Test_Count_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Count_Sheep.json"
+    },
+    "_Core/Tests/Test_Crouch": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Crouch.json"
+    },
+    "_Core/Tests/Test_Delay": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Delay.json"
+    },
+    "_Core/Tests/Test_DisplayName_Spam": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_DisplayName_Spam.json"
+    },
+    "_Core/Tests/Test_Dog_Tame": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Dog_Tame.json"
+    },
+    "_Core/Tests/Test_Dragon": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Dragon.json"
+    },
+    "_Core/Tests/Test_Dragon_Frost": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Dragon_Frost.json"
+    },
+    "_Core/Tests/Test_Drop_Item": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Drop_Item.json"
+    },
+    "_Core/Tests/Test_Entity_Damage_Event": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Entity_Damage_Event.json"
+    },
+    "_Core/Tests/Test_Entity_Flock_Damage_Event": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Entity_Flock_Damage_Event.json"
+    },
+    "_Core/Tests/Test_Entity_Sensor_Crouch": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Entity_Sensor_Crouch.json"
+    },
+    "_Core/Tests/Test_Eval_IsEmpty": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Eval_IsEmpty.json"
+    },
+    "_Core/Tests/Test_Flags": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Flags.json"
+    },
+    "_Core/Tests/Test_Fly": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Fly.json"
+    },
+    "_Core/Tests/Test_Hover_Parrot": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Hover_Parrot.json"
+    },
+    "_Core/Tests/Test_Implicit_Any": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Implicit_Any.json"
+    },
+    "_Core/Tests/Test_In_Water": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_In_Water.json"
+    },
+    "_Core/Tests/Test_Inactive_Delay": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Inactive_Delay.json"
+    },
+    "_Core/Tests/Test_Invulnerable": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Invulnerable.json"
+    },
+    "_Core/Tests/Test_Light_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Light_Sensor.json"
+    },
+    "_Core/Tests/Test_Locked_Target": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Locked_Target.json"
+    },
+    "_Core/Tests/Test_Model_Change": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Model_Change.json"
+    },
+    "_Core/Tests/Test_NPCGroup_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_NPCGroup_Sensor.json"
+    },
+    "_Core/Tests/Test_Particle_Emotions": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Particle_Emotions.json"
+    },
+    "_Core/Tests/Test_Pet": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Pet.json"
+    },
+    "_Core/Tests/Test_Pet_Lantern": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Pet_Lantern.json"
+    },
+    "_Core/Tests/Test_Place_Block": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Place_Block.json"
+    },
+    "_Core/Tests/Test_Place_Blocks": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Place_Blocks.json"
+    },
+    "_Core/Tests/Test_Position_Adjustment_Wrapper": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Position_Adjustment_Wrapper.json"
+    },
+    "_Core/Tests/Test_Probe": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Probe.json"
+    },
+    "_Core/Tests/Test_Random_Display_Name_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Random_Display_Name_Sheep.json"
+    },
+    "_Core/Tests/Test_Random_Instruction": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Random_Instruction.json"
+    },
+    "_Core/Tests/Test_Random_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Random_Sensor.json"
+    },
+    "_Core/Tests/Test_Read_Position_From_Target": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Read_Position_From_Target.json"
+    },
+    "_Core/Tests/Test_Relative_Turn_Speed": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Relative_Turn_Speed.json"
+    },
+    "_Core/Tests/Test_Sensor_Age": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Sensor_Age.json"
+    },
+    "_Core/Tests/Test_Sensor_DroppedItem": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Sensor_DroppedItem.json"
+    },
+    "_Core/Tests/Test_Sensor_DroppedItem_Hoover": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Sensor_DroppedItem_Hoover.json"
+    },
+    "_Core/Tests/Test_Sensor_Height": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Sensor_Height.json"
+    },
+    "_Core/Tests/Test_Sensor_Stat": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Sensor_Stat.json"
+    },
+    "_Core/Tests/Test_ShapeChange": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_ShapeChange.json"
+    },
+    "_Core/Tests/Test_Shoot_At_Block": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Shoot_At_Block.json"
+    },
+    "_Core/Tests/Test_Soft_Leash": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Soft_Leash.json"
+    },
+    "_Core/Tests/Test_Species_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Species_Attitude.json"
+    },
+    "_Core/Tests/Test_Split_Entity_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Split_Entity_Sensor.json"
+    },
+    "_Core/Tests/Test_Spots_Me_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Spots_Me_Sheep.json"
+    },
+    "_Core/Tests/Test_Standing_On_Block_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Standing_On_Block_Sensor.json"
+    },
+    "_Core/Tests/Test_Stats_Health": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Stats_Health.json"
+    },
+    "_Core/Tests/Test_Store_Read_Position": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Store_Read_Position.json"
+    },
+    "_Core/Tests/Test_Switch": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Switch.json"
+    },
+    "_Core/Tests/Test_Teleport": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Teleport.json"
+    },
+    "_Core/Tests/Test_Throw_NPC": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Throw_NPC.json"
+    },
+    "_Core/Tests/Test_TreeMode_Instruction": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_TreeMode_Instruction.json"
+    },
+    "_Core/Tests/Test_Trigger_Spawners": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Trigger_Spawners.json"
+    },
+    "_Core/Tests/Test_Weather_Sensor": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Weather_Sensor.json"
+    },
+    "_Core/Tests/Test_Wolf_Pack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Test_Wolf_Pack.json"
+    },
+    "_Core/Tests/Timer/Test_Alarm": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Timer/Test_Alarm.json"
+    },
+    "_Core/Tests/Timer/Test_Timer": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Timer/Test_Timer.json"
+    },
+    "_Core/Tests/Timer/Test_Timer_Random": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Timer/Test_Timer_Random.json"
+    },
+    "_Core/Tests/Timer/Test_Timer_Repeating": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/Timer/Test_Timer_Repeating.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_1": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_1.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_10": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_10.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_11": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_11.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_2": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_2.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_3": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_3.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_4": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_4.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_5": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_5.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_6": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_6.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_7": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_7.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_8": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_8.json"
+    },
+    "_Core/Tests/UnifiedSelector/Test_Unified_9": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests/UnifiedSelector/Test_Unified_9.json"
+    },
+    "_Core/Tests_Development/Template_Combat_Balancing": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Template_Combat_Balancing.json"
+    },
+    "_Core/Tests_Development/Test_Action_Random": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Action_Random.json"
+    },
+    "_Core/Tests_Development/Test_Altitude_Filter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Altitude_Filter.json"
+    },
+    "_Core/Tests_Development/Test_ApplyForce": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_ApplyForce.json"
+    },
+    "_Core/Tests_Development/Test_Apply_EntityEffect": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Apply_EntityEffect.json"
+    },
+    "_Core/Tests_Development/Test_Bow_Charge": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Bow_Charge.json"
+    },
+    "_Core/Tests_Development/Test_Can_Join_Flock": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Can_Join_Flock.json"
+    },
+    "_Core/Tests_Development/Test_Charge_Aiming": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Charge_Aiming.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Absolute_Stat": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Absolute_Stat.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Action_Charge": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Action_Charge.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Action_Evaluator": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Action_Evaluator.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Action_Evaluator_Damage": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Action_Evaluator_Damage.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Action_Evaluator_Movement_State": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Action_Evaluator_Movement_State.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Action_Evaluator_No_Ranged": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Action_Evaluator_No_Ranged.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Balancing": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Balancing.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Charged_Attack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Charged_Attack.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Elite_Goblin": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Elite_Goblin.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Knight": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Knight.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Long_Basic_Attack_Cooldown": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Long_Basic_Attack_Cooldown.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Sensor_Sheep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Sensor_Sheep.json"
+    },
+    "_Core/Tests_Development/Test_Combat_Target_Count": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Combat_Target_Count.json"
+    },
+    "_Core/Tests_Development/Test_Die": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Die.json"
+    },
+    "_Core/Tests_Development/Test_Disabled_Combat_Collector": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Disabled_Combat_Collector.json"
+    },
+    "_Core/Tests_Development/Test_EntityFilter_Walk": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_EntityFilter_Walk.json"
+    },
+    "_Core/Tests_Development/Test_FX_Trail": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_FX_Trail.json"
+    },
+    "_Core/Tests_Development/Test_Head_Motion_Sequence": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Head_Motion_Sequence.json"
+    },
+    "_Core/Tests_Development/Test_Inside_Block_Filter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Inside_Block_Filter.json"
+    },
+    "_Core/Tests_Development/Test_InteractionVars_Template": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_InteractionVars_Template.json"
+    },
+    "_Core/Tests_Development/Test_InteractionVars_Variant": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_InteractionVars_Variant.json"
+    },
+    "_Core/Tests_Development/Test_Item_Attitude": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Item_Attitude.json"
+    },
+    "_Core/Tests_Development/Test_Maintain_Distance": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Maintain_Distance.json"
+    },
+    "_Core/Tests_Development/Test_Maintain_Distance_Melee": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Maintain_Distance_Melee.json"
+    },
+    "_Core/Tests_Development/Test_Manual_Beacon": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Manual_Beacon.json"
+    },
+    "_Core/Tests_Development/Test_Only_Basic_Attacks": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Only_Basic_Attacks.json"
+    },
+    "_Core/Tests_Development/Test_Patrol_Path": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Patrol_Path.json"
+    },
+    "_Core/Tests_Development/Test_Patrol_Path_Sweep": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Patrol_Path_Sweep.json"
+    },
+    "_Core/Tests_Development/Test_Prioritiser_Provided_Filter": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Prioritiser_Provided_Filter.json"
+    },
+    "_Core/Tests_Development/Test_Remove": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Remove.json"
+    },
+    "_Core/Tests_Development/Test_Separate_Head_Body_Motion": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Separate_Head_Body_Motion.json"
+    },
+    "_Core/Tests_Development/Test_Set_Stat": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Set_Stat.json"
+    },
+    "_Core/Tests_Development/Test_Simple_Positioning": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Simple_Positioning.json"
+    },
+    "_Core/Tests_Development/Test_Sword_Attack_Charge": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Sword_Attack_Charge.json"
+    },
+    "_Core/Tests_Development/Test_TorchHolder": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_TorchHolder.json"
+    },
+    "_Core/Tests_Development/Test_Weapon_Attack": {
+      "sourcedFromFile": "Server/NPC/Roles/_Core/Tests_Development/Test_Weapon_Attack.json"
+    }
+  }
+}

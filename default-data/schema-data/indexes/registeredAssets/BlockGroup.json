@@ -1,0 +1,141 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockGroup",
+  "path": "Server/Item/Groups",
+  "extension": ".json",
+  "assetCount": 43,
+  "fileCount": 43,
+  "values": {
+    "FullBlocks_Aqua": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Aqua.json"
+    },
+    "FullBlocks_Aqua_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Aqua_Brick.json"
+    },
+    "FullBlocks_Basalt": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Basalt.json"
+    },
+    "FullBlocks_Basalt_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Basalt_Brick.json"
+    },
+    "FullBlocks_Blackwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Blackwood.json"
+    },
+    "FullBlocks_Calcite": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Calcite.json"
+    },
+    "FullBlocks_Calcite_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Calcite_Brick.json"
+    },
+    "FullBlocks_Clay_Ocean_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Clay_Ocean_Brick.json"
+    },
+    "FullBlocks_Darkwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Darkwood.json"
+    },
+    "FullBlocks_Deadwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Deadwood.json"
+    },
+    "FullBlocks_Drywood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Drywood.json"
+    },
+    "FullBlocks_Gold_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Gold_Brick.json"
+    },
+    "FullBlocks_Goldenwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Goldenwood.json"
+    },
+    "FullBlocks_Greenwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Greenwood.json"
+    },
+    "FullBlocks_Hardwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Hardwood.json"
+    },
+    "FullBlocks_Ledgestone": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Ledgestone.json"
+    },
+    "FullBlocks_Ledgestone_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Ledgestone_Brick.json"
+    },
+    "FullBlocks_Lightwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Lightwood.json"
+    },
+    "FullBlocks_Limestone": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Limestone.json"
+    },
+    "FullBlocks_Limestone_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Limestone_Brick.json"
+    },
+    "FullBlocks_Marble": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Marble.json"
+    },
+    "FullBlocks_Marble_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Marble_Brick.json"
+    },
+    "FullBlocks_Peach_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Peach_Brick.json"
+    },
+    "FullBlocks_Quartzite": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Quartzite.json"
+    },
+    "FullBlocks_Quartzite_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Quartzite_Brick.json"
+    },
+    "FullBlocks_Redwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Redwood.json"
+    },
+    "FullBlocks_SandStone_Red": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_SandStone_Red.json"
+    },
+    "FullBlocks_SandStone_Red_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_SandStone_Red_Brick.json"
+    },
+    "FullBlocks_SandStone_White": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_SandStone_White.json"
+    },
+    "FullBlocks_SandStone_White_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_SandStone_White_Brick.json"
+    },
+    "FullBlocks_Sandstone": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Sandstone.json"
+    },
+    "FullBlocks_Sandstone_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Sandstone_Brick.json"
+    },
+    "FullBlocks_Shale": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Shale.json"
+    },
+    "FullBlocks_Shale_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Shale_Brick.json"
+    },
+    "FullBlocks_Slate": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Slate.json"
+    },
+    "FullBlocks_Slate_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Slate_Brick.json"
+    },
+    "FullBlocks_Softwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Softwood.json"
+    },
+    "FullBlocks_Stone": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Stone.json"
+    },
+    "FullBlocks_Stone_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Stone_Brick.json"
+    },
+    "FullBlocks_Stone_Mossy": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Stone_Mossy.json"
+    },
+    "FullBlocks_Tropicalwood": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Tropicalwood.json"
+    },
+    "FullBlocks_Volcanic": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Volcanic.json"
+    },
+    "FullBlocks_Volcanic_Brick": {
+      "sourcedFromFile": "/Server/Item/Groups/FullBlocks_Volcanic_Brick.json"
+    }
+  }
+}

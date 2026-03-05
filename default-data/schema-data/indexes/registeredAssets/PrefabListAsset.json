@@ -1,0 +1,243 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "PrefabListAsset",
+  "path": "Server/PrefabList",
+  "extension": ".json",
+  "assetCount": 77,
+  "fileCount": 77,
+  "values": {
+    "ForestBrush_Boulders": {
+      "sourcedFromFile": "/Server/PrefabList/ForestBrush_Boulders.json"
+    },
+    "Trees": {
+      "sourcedFromFile": "/Server/PrefabList/Trees.json"
+    },
+    "Trees_Amber": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Amber.json"
+    },
+    "Trees_Amber_Trunk": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Amber_Trunk.json"
+    },
+    "Trees_Ash": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash.json"
+    },
+    "Trees_Ash_Dead": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_Dead.json"
+    },
+    "Trees_Ash_Moss": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_Moss.json"
+    },
+    "Trees_Ash_swamp": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_swamp.json"
+    },
+    "Trees_Ash_swamp_dead": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_swamp_dead.json"
+    },
+    "Trees_Ash_twisted": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_twisted.json"
+    },
+    "Trees_Ash_twisted_Giant": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_twisted_Giant.json"
+    },
+    "Trees_Ash_twisted_Large": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Ash_twisted_Large.json"
+    },
+    "Trees_Aspen": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Aspen.json"
+    },
+    "Trees_Autumn": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Autumn.json"
+    },
+    "Trees_Autumn_Stumps": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Autumn_Stumps.json"
+    },
+    "Trees_Azure": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Azure.json"
+    },
+    "Trees_Bamboo": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Bamboo.json"
+    },
+    "Trees_Banyan": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Banyan.json"
+    },
+    "Trees_Beech": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Beech.json"
+    },
+    "Trees_Beech_Dry": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Beech_Dry.json"
+    },
+    "Trees_Beech_Mountain": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Beech_Mountain.json"
+    },
+    "Trees_Birch": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Birch.json"
+    },
+    "Trees_Boab": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Boab.json"
+    },
+    "Trees_Burnt": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Burnt.json"
+    },
+    "Trees_Burnt_Roots": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Burnt_Roots.json"
+    },
+    "Trees_Burnt_dead": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Burnt_dead.json"
+    },
+    "Trees_Cedar": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Cedar.json"
+    },
+    "Trees_Cedar_Burnt": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Cedar_Burnt.json"
+    },
+    "Trees_Cedar_Logs": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Cedar_Logs.json"
+    },
+    "Trees_Crystal": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Crystal.json"
+    },
+    "Trees_Dry": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Dry.json"
+    },
+    "Trees_Dry_Dead": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Dry_Dead.json"
+    },
+    "Trees_Fig_Blue": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fig_Blue.json"
+    },
+    "Trees_Fir": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir.json"
+    },
+    "Trees_Fir_Autumn": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir_Autumn.json"
+    },
+    "Trees_Fir_Dead": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir_Dead.json"
+    },
+    "Trees_Fir_Dead_Large": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir_Dead_Large.json"
+    },
+    "Trees_Fir_Logs": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir_Logs.json"
+    },
+    "Trees_Fir_Snow": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir_Snow.json"
+    },
+    "Trees_Fir_red": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fir_red.json"
+    },
+    "Trees_Fire_Burning": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Fire_Burning.json"
+    },
+    "Trees_Gum": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Gum.json"
+    },
+    "Trees_Jungle": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle.json"
+    },
+    "Trees_Jungle1": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle1.json"
+    },
+    "Trees_Jungle2": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle2.json"
+    },
+    "Trees_Jungle3": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle3.json"
+    },
+    "Trees_Jungle_Crystal": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle_Crystal.json"
+    },
+    "Trees_Jungle_Crystal_Red": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle_Crystal_Red.json"
+    },
+    "Trees_Jungle_Ferns": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle_Ferns.json"
+    },
+    "Trees_Jungle_Island1": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle_Island1.json"
+    },
+    "Trees_Jungle_Island2": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle_Island2.json"
+    },
+    "Trees_Jungle_Mushroom": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Jungle_Mushroom.json"
+    },
+    "Trees_Logs": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Logs.json"
+    },
+    "Trees_Maple": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Maple.json"
+    },
+    "Trees_Maple_Stumps": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Maple_Stumps.json"
+    },
+    "Trees_Mushroom": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Mushroom.json"
+    },
+    "Trees_Oak": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Oak.json"
+    },
+    "Trees_Oak_Moss": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Oak_Moss.json"
+    },
+    "Trees_Oak_Stumps": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Oak_Stumps.json"
+    },
+    "Trees_Palm": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Palm.json"
+    },
+    "Trees_Palm_Green": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Palm_Green.json"
+    },
+    "Trees_Palo": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Palo.json"
+    },
+    "Trees_Petrified": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Petrified.json"
+    },
+    "Trees_Petrified_Coral_Bulbs": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Petrified_Coral_Bulbs.json"
+    },
+    "Trees_Petrified_Dead": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Petrified_Dead.json"
+    },
+    "Trees_Petrified_Logs": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Petrified_Logs.json"
+    },
+    "Trees_Poisoned": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Poisoned.json"
+    },
+    "Trees_Redwood": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Redwood.json"
+    },
+    "Trees_Redwood_Logs": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Redwood_Logs.json"
+    },
+    "Trees_Redwood_Stumps": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Redwood_Stumps.json"
+    },
+    "Trees_Rocks": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Rocks.json"
+    },
+    "Trees_Sallow": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Sallow.json"
+    },
+    "Trees_Silver": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Silver.json"
+    },
+    "Trees_Stormbark_Stumps": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Stormbark_Stumps.json"
+    },
+    "Trees_Willow": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Willow.json"
+    },
+    "Trees_Wisteria": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Wisteria.json"
+    },
+    "Trees_Zone5": {
+      "sourcedFromFile": "/Server/PrefabList/Trees_Zone5.json"
+    }
+  }
+}

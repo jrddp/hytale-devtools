@@ -1,0 +1,374 @@
+{
+  "type": "object",
+  "$id": "ScriptedBrushAsset.json",
+  "title": "ScriptedBrushAsset",
+  "description": "A scripted brush asset containing multiple brush operations that will be executed sequentially",
+  "markdownDescription": "A scripted brush asset containing multiple brush operations that will be executed sequentially",
+  "hytale": {
+    "type": "object",
+    "path": "ScriptedBrushes",
+    "extension": ".json",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another ScriptedBrushAsset most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **ScriptedBrushAsset** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "ScriptedBrushAsset"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "parentDomain",
+          "key": "ScriptedBrushAsset",
+          "excludeSelf": true
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Operations": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "The list of brush operations to execute sequentially",
+      "markdownDescription": "The list of brush operations to execute sequentially",
+      "hytale": {
+        "type": "array"
+      },
+      "items": {
+        "title": "Type Selector",
+        "anyOf": [
+          {
+            "$ref": "common.json#/definitions/AppendMaskOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/AppendMaskFromToolArgOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/BreakpointOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/ClearOperationMaskOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/DebugBrushOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/DeleteOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/SetDensity"
+          },
+          {
+            "$ref": "common.json#/definitions/DimensionsOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/DisableHoldInteractionOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/EchoOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/EchoOnceOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/ErodeOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/ExitOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/HeightmapLayerOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/HistoryMaskOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/IgnoreExistingBrushDataOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpToIndexOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpIfBlockTypeOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpIfClickType"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpIfCompareOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpIfStringMatchOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpIfToolArgOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/JumpToRandomIndex"
+          },
+          {
+            "$ref": "common.json#/definitions/LayerOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LiftOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoadBrushConfigOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoadIntFromToolArgOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoadLoopFromToolArgOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoadMaterialFromToolArgOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoadOperationsFromAssetOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoopOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/CircleOffsetAndLoopOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/CircleOffsetFromArgOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/LoopRandomOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/MaskOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/MaterialOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/MeltOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/OffsetOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/PastePrefabOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/BlockPatternOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/PersistentDataOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/RandomizeDimensionsOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/RandomOffsetOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/ReplaceOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/RunCommandOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/SaveBrushConfigOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/SaveIndexOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/SetOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/ShapeOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/SmoothOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/UseBrushMaskOperation"
+          },
+          {
+            "$ref": "common.json#/definitions/UseOperationMaskOperation"
+          }
+        ],
+        "hytaleSchemaTypeField": {
+          "property": "Id",
+          "values": [
+            "appendmask",
+            "appendmaskfromtoolarg",
+            "breakpoint",
+            "clearoperationmask",
+            "debug",
+            "delete",
+            "density",
+            "dimensions",
+            "disableonhold",
+            "echo",
+            "echoonce",
+            "erode",
+            "exit",
+            "heightmaplayer",
+            "historymask",
+            "ignorebrushsettings",
+            "jump",
+            "jumpifblocktype",
+            "jumpifclicktype",
+            "jumpifcompare",
+            "jumpifequal",
+            "jumpiftoolarg",
+            "jumprandom",
+            "layer",
+            "lift",
+            "loadbrushconfig",
+            "loadint",
+            "loadloop",
+            "loadmaterial",
+            "loadoperationsfromasset",
+            "loop",
+            "loopcircle",
+            "loopcirclefromarg",
+            "looprandom",
+            "mask",
+            "material",
+            "melt",
+            "offset",
+            "pasteprefab",
+            "pattern",
+            "persistentdata",
+            "randomdimensions",
+            "randomoffset",
+            "replace",
+            "runcommand",
+            "savebrushconfig",
+            "saveindex",
+            "set",
+            "shape",
+            "smooth",
+            "usebrushmask",
+            "useoperationmask"
+          ]
+        },
+        "hytale": {
+          "mergesProperties": true
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

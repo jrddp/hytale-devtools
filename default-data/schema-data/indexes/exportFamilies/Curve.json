@@ -1,0 +1,14 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "exportsByFamily",
+  "key": "Curve",
+  "values": {
+    "Generative_Buildings_Floors": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Buildings.json"
+    },
+    "RedwoodCliffMainCurve": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Taiga1_Redwood_2dCliffs.json"
+    }
+  }
+}

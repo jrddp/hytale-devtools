@@ -1,0 +1,33 @@
+{
+  "$id": "TagPattern.json",
+  "title": "TagPattern",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/AndPatternOp"
+    },
+    {
+      "$ref": "common.json#/definitions/EqualsTagOp"
+    },
+    {
+      "$ref": "common.json#/definitions/NotPatternOp"
+    },
+    {
+      "$ref": "common.json#/definitions/OrPatternOp"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Op",
+    "values": [
+      "And",
+      "Equals",
+      "Not",
+      "Or"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "TagPatterns",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

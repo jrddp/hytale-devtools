@@ -1,0 +1,63 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemToolSpec",
+  "path": "Server/Item/Unarmed/Gathering",
+  "extension": ".json",
+  "assetCount": 17,
+  "fileCount": 17,
+  "values": {
+    "Benches": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Benches.json"
+    },
+    "Branches": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Branches.json"
+    },
+    "Cloths": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Cloths.json"
+    },
+    "DungeonBlocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/DungeonBlocks.json"
+    },
+    "OreAdamantite": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreAdamantite.json"
+    },
+    "OreCobalt": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreCobalt.json"
+    },
+    "OreCopper": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreCopper.json"
+    },
+    "OreGold": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreGold.json"
+    },
+    "OreIron": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreIron.json"
+    },
+    "OreMithril": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreMithril.json"
+    },
+    "OreSilver": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreSilver.json"
+    },
+    "OreThorium": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreThorium.json"
+    },
+    "Rocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Rocks.json"
+    },
+    "SoftBlocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/SoftBlocks.json"
+    },
+    "Soils": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Soils.json"
+    },
+    "VolcanicRocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/VolcanicRocks.json"
+    },
+    "Woods": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Woods.json"
+    }
+  }
+}

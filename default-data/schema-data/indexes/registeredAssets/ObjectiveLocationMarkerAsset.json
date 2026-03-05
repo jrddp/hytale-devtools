@@ -1,0 +1,24 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ObjectiveLocationMarkerAsset",
+  "path": "Server/Objective/ObjectiveLocationMarkers",
+  "extension": ".json",
+  "assetCount": 4,
+  "fileCount": 4,
+  "values": {
+    "ObjectiveLocationMarker_Gameplay_Trailer": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_Gameplay_Trailer.json"
+    },
+    "ObjectiveLocationMarker_KillSpawnBeacon": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_KillSpawnBeacon.json"
+    },
+    "ObjectiveLocationMarker_Test": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_Test.json"
+    },
+    "ObjectiveLocationMarker_Trigger": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_Trigger.json"
+    }
+  }
+}

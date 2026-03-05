@@ -1,0 +1,29 @@
+{
+  "$id": "ResponseCurve.json",
+  "title": "ResponseCurve",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/ExponentialResponseCurve"
+    },
+    {
+      "$ref": "common.json#/definitions/LogisticResponseCurve"
+    },
+    {
+      "$ref": "common.json#/definitions/SineWaveResponseCurve"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "Exponential",
+      "Logistic",
+      "SineWave"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "ResponseCurves",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$id": "BalanceAsset.json",
+  "title": "BalanceAsset",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/CombatBalanceAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/BalanceAsset"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "defaultValue": "Default",
+    "values": [
+      "CombatActionEvaluator",
+      "Default"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "NPC/Balancing",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

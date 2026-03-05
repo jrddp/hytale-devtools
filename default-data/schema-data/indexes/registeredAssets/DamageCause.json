@@ -1,0 +1,57 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "DamageCause",
+  "path": "Server/Entity/Damage",
+  "extension": ".json",
+  "assetCount": 15,
+  "fileCount": 15,
+  "values": {
+    "Bludgeoning": {
+      "sourcedFromFile": "/Server/Entity/Damage/Bludgeoning.json"
+    },
+    "Command": {
+      "sourcedFromFile": "/Server/Entity/Damage/Command.json"
+    },
+    "Drowning": {
+      "sourcedFromFile": "/Server/Entity/Damage/Drowning.json"
+    },
+    "Elemental": {
+      "sourcedFromFile": "/Server/Entity/Damage/Elemental.json"
+    },
+    "Environment": {
+      "sourcedFromFile": "/Server/Entity/Damage/Environment.json"
+    },
+    "Environmental": {
+      "sourcedFromFile": "/Server/Entity/Damage/Environmental.json"
+    },
+    "Fall": {
+      "sourcedFromFile": "/Server/Entity/Damage/Fall.json"
+    },
+    "Fire": {
+      "sourcedFromFile": "/Server/Entity/Damage/Fire.json"
+    },
+    "Ice": {
+      "sourcedFromFile": "/Server/Entity/Damage/Ice.json"
+    },
+    "OutOfWorld": {
+      "sourcedFromFile": "/Server/Entity/Damage/OutOfWorld.json"
+    },
+    "Physical": {
+      "sourcedFromFile": "/Server/Entity/Damage/Physical.json"
+    },
+    "Poison": {
+      "sourcedFromFile": "/Server/Entity/Damage/Poison.json"
+    },
+    "Projectile": {
+      "sourcedFromFile": "/Server/Entity/Damage/Projectile.json"
+    },
+    "Slashing": {
+      "sourcedFromFile": "/Server/Entity/Damage/Slashing.json"
+    },
+    "Suffocation": {
+      "sourcedFromFile": "/Server/Entity/Damage/Suffocation.json"
+    }
+  }
+}

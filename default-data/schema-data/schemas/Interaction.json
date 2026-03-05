@@ -1,0 +1,416 @@
+{
+  "$id": "Interaction.json",
+  "title": "Interaction",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/AddItemInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ApplyEffectInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ApplyForceInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/BedInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/BlockConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/BreakBlockInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/BuilderToolInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CameraInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CameraShakeInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CanBreakRespawnPointInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CancelChainInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChainFlagInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChainingInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChangeActiveSlotInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChangeBlockInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChangeFarmingStageInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChangeStatInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChangeStatWithModifierInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChangeStateInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ChargingInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CheckUniqueItemUsageInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ClearEntityEffectInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ContextualUseNPCInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CooldownConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/CycleBlockGroupInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/DamageEntityInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/DestroyBlockInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/DestroyConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/DoorInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/EffectConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/EquipItemInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ExitInstanceInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ExplodeInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/FertilizeSoilInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/FirstClickInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/HarvestCropInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/HubPortalInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/IncreaseBackpackCapacityInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/IncrementCooldownInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/InterruptInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/LaunchPadInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/LaunchProjectileInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/LearnRecipeInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/MemoriesConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ModifyInventoryInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/MountInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/MovementConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/OpenBenchPageInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/OpenContainerInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/OpenCustomUIInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/OpenItemStackContainerInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/OpenPageInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/OpenProcessingBenchInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ParallelInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PickBlockInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PickupItemInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PlaceBlockInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PlaceFluidInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PlacementCountConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/EnterPortalInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ReturnPortalInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PrefabSelectionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/PrefabSetAnchorInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ProjectileInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/RefillContainerInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/RemoveEntityInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/RepeatInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ReplaceInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ResetCooldownInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/RunOnBlockTypesInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/RunRootInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SeatingInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SelectInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SendMessageInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SerialInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SetMemoriesCapacityInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SimpleInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SpawnDeployableAtHitLocationInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SpawnDeployableFromRaycastInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SpawnMinecartInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SpawnNPCInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/SpawnPrefabInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/StartObjectiveInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/StatsConditionInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/StatsConditionWithModifierInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/TeleportConfigInstanceInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/TeleportInstanceInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/TeleporterInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/ToggleGliderInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/TriggerCooldownInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/TriggerSpawnMarkersInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/UseBlockInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/UseCaptureCrateInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/UseCoopInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/UseEntityInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/UseNPCInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/UseWateringCanInteraction"
+    },
+    {
+      "$ref": "common.json#/definitions/WieldingInteraction"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "AddItem",
+      "ApplyEffect",
+      "ApplyForce",
+      "Bed",
+      "BlockCondition",
+      "BreakBlock",
+      "BuilderTool",
+      "Camera",
+      "CameraShake",
+      "CanBreakRespawnPoint",
+      "CancelChain",
+      "ChainFlag",
+      "Chaining",
+      "ChangeActiveSlot",
+      "ChangeBlock",
+      "ChangeFarmingStage",
+      "ChangeStat",
+      "ChangeStatWithModifier",
+      "ChangeState",
+      "Charging",
+      "CheckUniqueItemUsage",
+      "ClearEntityEffect",
+      "Condition",
+      "ContextualUseNPC",
+      "CooldownCondition",
+      "CycleBlockGroup",
+      "DamageEntity",
+      "DestroyBlock",
+      "DestroyCondition",
+      "Door",
+      "EffectCondition",
+      "EquipItem",
+      "ExitInstance",
+      "Explode",
+      "FertilizeSoil",
+      "FirstClick",
+      "HarvestCrop",
+      "HubPortal",
+      "IncreaseBackpackCapacity",
+      "IncrementCooldown",
+      "Interrupt",
+      "LaunchPad",
+      "LaunchProjectile",
+      "LearnRecipe",
+      "MemoriesCondition",
+      "ModifyInventory",
+      "Mount",
+      "MovementCondition",
+      "OpenBenchPage",
+      "OpenContainer",
+      "OpenCustomUI",
+      "OpenItemStackContainer",
+      "OpenPage",
+      "OpenProcessingBench",
+      "Parallel",
+      "PickBlock",
+      "PickupItem",
+      "PlaceBlock",
+      "PlaceFluid",
+      "PlacementCountCondition",
+      "Portal",
+      "PortalReturn",
+      "PrefabSelectionInteraction",
+      "PrefabSetAnchorInteraction",
+      "Projectile",
+      "RefillContainer",
+      "RemoveEntity",
+      "Repeat",
+      "Replace",
+      "ResetCooldown",
+      "RunOnBlockTypes",
+      "RunRootInteraction",
+      "Seating",
+      "Selector",
+      "SendMessage",
+      "Serial",
+      "SetMemoriesCapacity",
+      "Simple",
+      "SpawnDeployableAtHitLocation",
+      "SpawnDeployableFromRaycast",
+      "SpawnMinecart",
+      "SpawnNPC",
+      "SpawnPrefab",
+      "StartObjective",
+      "StatsCondition",
+      "StatsConditionWithModifier",
+      "TeleportConfigInstance",
+      "TeleportInstance",
+      "Teleporter",
+      "ToggleGlider",
+      "TriggerCooldown",
+      "TriggerSpawnMarkers",
+      "UseBlock",
+      "UseCaptureCrate",
+      "UseCoop",
+      "UseEntity",
+      "UseNPC",
+      "UseWateringCan",
+      "Wielding"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "internalKeys": [
+      "*Change_Active_Slot"
+    ],
+    "path": "Item/Interactions",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

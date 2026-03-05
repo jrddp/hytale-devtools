@@ -1,0 +1,513 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "AmbienceFX",
+  "path": "Server/Audio/AmbienceFX",
+  "extension": ".json",
+  "assetCount": 167,
+  "fileCount": 166,
+  "values": {
+    "AmbFX_Caves": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Cave/AmbFX_Caves.json"
+    },
+    "AmbFX_Caves_Spiders": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Cave/AmbFX_Caves_Spiders.json"
+    },
+    "AmbFX_Caves_Volcanic": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Cave/AmbFX_Caves_Volcanic.json"
+    },
+    "AmbFX_Dungeons": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Dungeon/AmbFX_Dungeons.json"
+    },
+    "AmbFX_Fallback_Wind_Base_Low": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/AmbFX_Fallback_Wind_Base_Low.json"
+    },
+    "AmbFX_Forgotten_Temple_Energy": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Energy.json"
+    },
+    "AmbFX_Forgotten_Temple_Exterior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Exterior.json"
+    },
+    "AmbFX_Forgotten_Temple_Exterior_Birds": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Exterior_Birds.json"
+    },
+    "AmbFX_Forgotten_Temple_Exterior_Wind": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Exterior_Wind.json"
+    },
+    "AmbFX_Forgotten_Temple_Global": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Global.json"
+    },
+    "AmbFX_Forgotten_Temple_Grand_Interior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Grand_Interior.json"
+    },
+    "AmbFX_Forgotten_Temple_Heart": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Heart.json"
+    },
+    "AmbFX_Forgotten_Temple_Tent_Interior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Tent_Interior.json"
+    },
+    "AmbFX_Forgotten_Temple_Tree_Interior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/AmbFX_Forgotten_Temple_Tree_Interior.json"
+    },
+    "AmbFX_Mage_Tower": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Mage_Tower/AmbFX_Mage_Tower.json"
+    },
+    "AmbFX_Mineshaft": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Mineshaft/AmbFX_Mineshaft.json"
+    },
+    "AmbFX_Placeholder": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/AmbFX_Placeholder.json"
+    },
+    "AmbFX_Portals_Hedera": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Dread_Wade/AmbFX_Portals_Hedera.json"
+    },
+    "AmbFX_Portals_Hedera_Wind_Base": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Dread_Wade/AmbFX_Portals_Hedera_Wind_Base.json"
+    },
+    "AmbFX_Underwater": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Underwater/Underwater/AmbFX_Underwater.json"
+    },
+    "AmbFX_Void": {
+      "sourcedFromFile": "/private/tmp/Test04/src/main/resources/Server/Audio/AmbienceFX/AmbFX_Void.json"
+    },
+    "AmbFX_Weather_Rain_Exterior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Rain_Exterior.json"
+    },
+    "AmbFX_Weather_Rain_Interior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Interior/AmbFX_Weather_Rain_Interior.json"
+    },
+    "AmbFX_Weather_Rain_Light_Exterior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Rain_Light_Exterior.json"
+    },
+    "AmbFX_Weather_Rainstorm": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Rainstorm.json"
+    },
+    "AmbFX_Weather_Sandstorm": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Sandstorm.json"
+    },
+    "AmbFX_Weather_Sandstorm_Close": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Sandstorm_Close.json"
+    },
+    "AmbFX_Weather_Sandstorm_Low": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Sandstorm_Low.json"
+    },
+    "AmbFX_Weather_Snow": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Snow.json"
+    },
+    "AmbFX_Weather_Snowstorm": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Weather/Exterior/AmbFX_Weather_Snowstorm.json"
+    },
+    "AmbFX_Zone1_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Dungeon/AmbFX_Zone1_Dungeon.json"
+    },
+    "AmbFX_Zone1_Forest_Autumn_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Day/Autumn/AmbFX_Zone1_Forest_Autumn_Day.json"
+    },
+    "AmbFX_Zone1_Forest_Azure_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Day/Azure/AmbFX_Zone1_Forest_Azure_Day.json"
+    },
+    "AmbFX_Zone1_Forest_Gen_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Day/Gen/AmbFX_Zone1_Forest_Gen_Day.json"
+    },
+    "AmbFX_Zone1_Forest_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Night/AmbFX_Zone1_Forest_Night.json"
+    },
+    "AmbFX_Zone1_Kweebec_Village": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Kweebec/AmbFX_Zone1_Kweebec_Village.json"
+    },
+    "AmbFX_Zone1_Mountain": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Mountain/AmbFX_Zone1_Mountain.json"
+    },
+    "AmbFX_Zone1_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Night/AmbFX_Zone1_Night.json"
+    },
+    "AmbFX_Zone1_Plains_Gen_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Plains/Day/AmbFX_Zone1_Plains_Gen_Day.json"
+    },
+    "AmbFX_Zone1_Plains_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Plains/Night/AmbFX_Zone1_Plains_Night.json"
+    },
+    "AmbFX_Zone1_Shore": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Shore/AmbFX_Zone1_Shore.json"
+    },
+    "AmbFX_Zone1_Sunrise": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Sunrise/AmbFX_Zone1_Sunrise.json"
+    },
+    "AmbFX_Zone1_Sunset": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Sunset/AmbFX_Zone1_Sunset.json"
+    },
+    "AmbFX_Zone1_Swamp_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Swamp/Day/AmbFX_Zone1_Swamp_Day.json"
+    },
+    "AmbFX_Zone1_Swamp_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Swamp/Night/AmbFX_Zone1_Swamp_Night.json"
+    },
+    "AmbFX_Zone1_Swamp_Sunrise": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Sunrise/AmbFX_Zone1_Swamp_Sunrise.json"
+    },
+    "AmbFX_Zone1_Swamp_Sunset": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Sunset/AmbFX_Zone1_Swamp_Sunset.json"
+    },
+    "AmbFX_Zone1_Trork_Camp": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Trork/AmbFX_Zone1_Trork_Camp.json"
+    },
+    "AmbFX_Zone1_Wind_Base_Low": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Wind/AmbFX_Zone1_Wind_Base_Low.json"
+    },
+    "AmbFX_Zone1_Wind_Base_Medium": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Wind/AmbFX_Zone1_Wind_Base_Medium.json"
+    },
+    "AmbFX_Zone1_Wind_Base_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Global/Wind/AmbFX_Zone1_Wind_Base_Night.json"
+    },
+    "AmbFX_Zone2_Desert_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone2/Environments/Desert/AmbFX_Zone2_Desert_Day.json"
+    },
+    "AmbFX_Zone2_Savanna_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone2/Environments/Savannah/AmbFX_Zone2_Savanna_Day.json"
+    },
+    "AmbFX_Zone2_Scrub_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone2/Environments/Scrub_Brushland/AmbFX_Zone2_Scrub_Day.json"
+    },
+    "AmbFX_Zone2_Wind_Base_Low": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone2/Global/Wind/AmbFX_Zone2_Wind_Base_Low.json"
+    },
+    "AmbFX_Zone2_Wind_Base_Medium": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone2/Global/Wind/AmbFX_Zone2_Wind_Base_Medium.json"
+    },
+    "AmbFX_Zone3_Cave": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Cave/AmbFX_Zone3_Cave.json"
+    },
+    "AmbFX_Zone3_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Dungeon/AmbFX_Zone3_Dungeon.json"
+    },
+    "AmbFX_Zone3_Forest_Active_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Forest/Day/AmbFX_Zone3_Forest_Active_Day.json"
+    },
+    "AmbFX_Zone3_Forest_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Forest/Night/AmbFX_Zone3_Forest_Night.json"
+    },
+    "AmbFX_Zone3_Frozen_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Glacier/AmbFX_Zone3_Frozen_Day.json"
+    },
+    "AmbFX_Zone3_Frozen_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Glacier/AmbFX_Zone3_Frozen_Night.json"
+    },
+    "AmbFX_Zone3_Glacier_Crevasse": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Glacier/AmbFX_Zone3_Glacier_Crevasse.json"
+    },
+    "AmbFX_Zone3_Mountain_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Mountain/Day/AmbFX_Zone3_Mountain_Day.json"
+    },
+    "AmbFX_Zone3_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Night/AmbFX_Zone3_Night.json"
+    },
+    "AmbFX_Zone3_Plains_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Plains/Day/AmbFX_Zone3_Plains_Day.json"
+    },
+    "AmbFX_Zone3_Plains_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Plains/Night/AmbFX_Zone3_Plains_Night.json"
+    },
+    "AmbFX_Zone3_Sunrise": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Sunrise/AmbFX_Zone3_Sunrise.json"
+    },
+    "AmbFX_Zone3_Sunset": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Sunset/AmbFX_Zone3_Sunset.json"
+    },
+    "AmbFX_Zone3_Wind_Base_Low": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Wind/AmbFX_Zone3_Wind_Base_Low.json"
+    },
+    "AmbFX_Zone3_Wind_Base_Medium": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Wind/AmbFX_Zone3_Wind_Base_Medium.json"
+    },
+    "AmbFX_Zone3_Wind_Base_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Wind/AmbFX_Zone3_Wind_Base_Night.json"
+    },
+    "AmbFX_Zone4_Forest": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone4/Environments/AmbFX_Zone4_Forest.json"
+    },
+    "AmbFX_Zone4_Jungle_Base": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone4/Environments/AmbFX_Zone4_Jungle_Base.json"
+    },
+    "AmbFX_Zone4_Jungle_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone4/Environments/AmbFX_Zone4_Jungle_Day.json"
+    },
+    "AmbFX_Zone4_Wastes": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone4/Environments/AmbFX_Zone4_Wastes.json"
+    },
+    "AmbFX_Zone4_Wind_Base_Low": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone4/Wind/AmbFX_Zone4_Wind_Base_Low.json"
+    },
+    "AmbFX_Zone4_Wind_Base_Medium": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone4/Wind/AmbFX_Zone4_Wind_Base_Medium.json"
+    },
+    "Emit_Fluid_Water": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Global/Underwater/Emitters/Emit_Fluid_Water.json"
+    },
+    "Emit_Portals_Hedera": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Dread_Wade/Emit_Portals_Hedera.json"
+    },
+    "Emit_Portals_Hedera_Wind": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Dread_Wade/Emit_Portals_Hedera_Wind.json"
+    },
+    "Emit_Zone1_Forest_Autumn_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Day/Autumn/Emitters/Emit_Zone1_Forest_Autumn_Day.json"
+    },
+    "Emit_Zone1_Forest_Azure": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Day/Azure/Emitters/Emit_Zone1_Forest_Azure.json"
+    },
+    "Emit_Zone1_Forest_Gen_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Day/Gen/Emitters/Emit_Zone1_Forest_Gen_Day.json"
+    },
+    "Emit_Zone1_Forest_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Forest/Night/Emitters/Emit_Zone1_Forest_Night.json"
+    },
+    "Emit_Zone1_Kweebec_Village": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Kweebec/Emitters/Emit_Zone1_Kweebec_Village.json"
+    },
+    "Emit_Zone1_Mountain_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Mountain/Day/Emitters/Emit_Zone1_Mountain_Day.json"
+    },
+    "Emit_Zone1_Plains_Gen_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Plains/Day/Emitters/Emit_Zone1_Plains_Gen_Day.json"
+    },
+    "Emit_Zone1_Plains_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Plains/Night/Emitters/Emit_Zone1_Plains_Night.json"
+    },
+    "Emit_Zone1_Shore": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Shore/Emit_Zone1_Shore.json"
+    },
+    "Emit_Zone1_Shore_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Shore/Day/Emitters/Emit_Zone1_Shore_Day.json"
+    },
+    "Emit_Zone1_Swamp_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Swamp/Day/Emitters/Emit_Zone1_Swamp_Day.json"
+    },
+    "Emit_Zone1_Swamp_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Swamp/Night/Emitters/Emit_Zone1_Swamp_Night.json"
+    },
+    "Emit_Zone1_Trork_Camp": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone1/Environments/Trork/Emitters/Emit_Zone1_Trork_Camp.json"
+    },
+    "Emit_Zone3_Cave": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Cave/Emitters/Emit_Zone3_Cave.json"
+    },
+    "Emit_Zone3_Forest_Active_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Forest/Day/Emitters/Emit_Zone3_Forest_Active_Day.json"
+    },
+    "Emit_Zone3_Forest_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Forest/Night/Emitters/Emit_Zone3_Forest_Night.json"
+    },
+    "Emit_Zone3_Hedera": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Hedera/Emitters/Emit_Zone3_Hedera.json"
+    },
+    "Emit_Zone3_Mountain_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Environments/Mountain/Day/Emitters/Emit_Zone3_Mountain_Day.json"
+    },
+    "Emit_Zone3_Wind_Emitters": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Zone3/Global/Wind/Emitters/Emit_Zone3_Wind_Emitters.json"
+    },
+    "Empty": {
+      "sourcedFromFile": null
+    },
+    "Mus_Creative_Hub": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Unique/Mus_Creative_Hub.json"
+    },
+    "Mus_Fallback_Overground": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Global/Mus_Fallback_Overground.json"
+    },
+    "Mus_Fallback_Underground": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Global/Mus_Fallback_Underground.json"
+    },
+    "Mus_Forgotten_Temple": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Unique/Mus_Forgotten_Temple.json"
+    },
+    "Mus_Portal_VoidEvent": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Unique/Mus_Portal_VoidEvent.json"
+    },
+    "Mus_Zone0": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone0/Mus_Zone0.json"
+    },
+    "Mus_Zone1_Cave_Deep": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Cave_Deep.json"
+    },
+    "Mus_Zone1_Cave_Shallow": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Cave_Shallow.json"
+    },
+    "Mus_Zone1_Cave_Volcanic": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Cave_Volcanic.json"
+    },
+    "Mus_Zone1_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Day.json"
+    },
+    "Mus_Zone1_Day_Rain": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Day_Rain.json"
+    },
+    "Mus_Zone1_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Dungeon.json"
+    },
+    "Mus_Zone1_Dungeon_Boss": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Dungeon_Boss.json"
+    },
+    "Mus_Zone1_Dungeon_Goblin_Boss_Ogre": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Dungeon_Goblin_Boss_Ogre.json"
+    },
+    "Mus_Zone1_Kweebec_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Kweebec_Day.json"
+    },
+    "Mus_Zone1_Kweebec_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Kweebec_Night.json"
+    },
+    "Mus_Zone1_MageTower": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_MageTower.json"
+    },
+    "Mus_Zone1_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Night.json"
+    },
+    "Mus_Zone1_Night_Rain": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Night_Rain.json"
+    },
+    "Mus_Zone1_Sunrise": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Sunrise.json"
+    },
+    "Mus_Zone1_Trork_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Trork_Day.json"
+    },
+    "Mus_Zone1_Trork_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone1/Mus_Zone1_Trork_Night.json"
+    },
+    "Mus_Zone2_Cave_Deep": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Cave_Deep.json"
+    },
+    "Mus_Zone2_Cave_Shallow": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Cave_Shallow.json"
+    },
+    "Mus_Zone2_Cave_Volcanic": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Cave_Volcanic.json"
+    },
+    "Mus_Zone2_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Day.json"
+    },
+    "Mus_Zone2_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Dungeon.json"
+    },
+    "Mus_Zone2_Feran_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Feran_Day.json"
+    },
+    "Mus_Zone2_Feran_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Feran_Night.json"
+    },
+    "Mus_Zone2_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Night.json"
+    },
+    "Mus_Zone2_Sand_Storm_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Sand_Storm_Day.json"
+    },
+    "Mus_Zone2_Sand_Storm_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Sand_Storm_Night.json"
+    },
+    "Mus_Zone2_Scarak": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Scarak.json"
+    },
+    "Mus_Zone2_Thunder_Storm_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Thunder_Storm_Day.json"
+    },
+    "Mus_Zone2_Thunder_Storm_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone2/Mus_Zone2_Thunder_Storm_Night.json"
+    },
+    "Mus_Zone3_Cave_Deep": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Cave_Deep.json"
+    },
+    "Mus_Zone3_Cave_Shallow": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Cave_Shallow.json"
+    },
+    "Mus_Zone3_Cave_Volcanic": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Cave_Volcanic.json"
+    },
+    "Mus_Zone3_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Day.json"
+    },
+    "Mus_Zone3_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Dungeon.json"
+    },
+    "Mus_Zone3_Hedera": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Hedera.json"
+    },
+    "Mus_Zone3_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Night.json"
+    },
+    "Mus_Zone3_Outlander_Day": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Outlander_Day.json"
+    },
+    "Mus_Zone3_Outlander_Night": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone3/Mus_Zone3_Outlander_Night.json"
+    },
+    "Mus_Zone4_Dark": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone4/Mus_Zone4_Dark.json"
+    },
+    "Mus_Zone4_Jungle": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Music/Zone4/Mus_Zone4_Jungle.json"
+    },
+    "RevZ_Forgotten_Temple_Exterior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/RevZ_Forgotten_Temple_Exterior.json"
+    },
+    "RevZ_Forgotten_Temple_Generic_Interior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/RevZ_Forgotten_Temple_Generic_Interior.json"
+    },
+    "RevZ_Forgotten_Temple_Grand_Interior": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Ambience/Unique/Forgotten_Temple/RevZ_Forgotten_Temple_Grand_Interior.json"
+    },
+    "Rev_Zone_Cave": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Underground/Rev_Zone_Cave.json"
+    },
+    "Rev_Zone_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Dungeon.json"
+    },
+    "Rev_Zone_Encounter": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Encounter.json"
+    },
+    "Rev_Zone_Forest": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Forest/Rev_Zone_Forest.json"
+    },
+    "Rev_Zone_Kweebec_Village": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Kweebec_Village.json"
+    },
+    "Rev_Zone_Mage_Tower": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Mage_Tower.json"
+    },
+    "Rev_Zone_Mineshaft": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Mineshaft.json"
+    },
+    "Rev_Zone_Mountain": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Mountain/Rev_Zone_Mountain.json"
+    },
+    "Rev_Zone_Mountain_Snow": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Mountain/Rev_Zone_Mountain_Snow.json"
+    },
+    "Rev_Zone_Plains": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Plains/Rev_Zone_Plains.json"
+    },
+    "Rev_Zone_Plains_Snow": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Plains/Rev_Zone_Plains_Snow.json"
+    },
+    "Rev_Zone_Swamp": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Swamp/Rev_Zone_Swamp.json"
+    },
+    "Rev_Zone_Swamp_Foggy": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Swamp/Rev_Zone_Swamp_Foggy.json"
+    },
+    "Rev_Zone_Temple": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Temple.json"
+    },
+    "Rev_Zone_Trork_Camp": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/ReverbZones/Prefabs/Rev_Zone_Trork_Camp.json"
+    },
+    "Z2_Dungeon": {
+      "sourcedFromFile": "/Server/Audio/AmbienceFX/Z2_Dungeon.json"
+    },
+    "test": {
+      "sourcedFromFile": "/private/tmp/Test04/src/main/resources/Server/Audio/AmbienceFX/test.json"
+    }
+  }
+}

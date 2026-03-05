@@ -14,7 +14,7 @@ import {
   type SymbolIndexShard,
   type UIDataSetIndexShard,
 } from "../shared/schema/types";
-import { resolveCompanionExportRootFromPatchline } from "../utils/hytalePaths";
+import { resolveSchemaDataLocation } from "../utils/hytalePaths";
 
 // directory name -> indexKind
 const indexRoots: Record<string, IndexKind> = {
@@ -27,12 +27,10 @@ const indexRoots: Record<string, IndexKind> = {
 };
 
 export function loadIndexes(context: vscode.ExtensionContext): Map<IndexKind, SymbolIndex> {
-  const exportRoot = resolveCompanionExportRootFromPatchline(
-    context.globalStorageUri.fsPath,
-    // todo make this patchline-agnostic
-    "release",
-  );
+  return loadIndexesFromRoot(resolveSchemaDataLocation(context).rootPath);
+}
 
+export function loadIndexesFromRoot(exportRoot: string): Map<IndexKind, SymbolIndex> {
   const indexes = new Map<IndexKind, SymbolIndex>();
 
   for (const [directoryName, indexKind] of Object.entries(indexRoots)) {

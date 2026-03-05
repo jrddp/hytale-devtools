@@ -1,0 +1,111 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "ModelVFX",
+  "path": "Server/Entity/ModelVFX",
+  "extension": ".json",
+  "assetCount": 33,
+  "fileCount": 33,
+  "values": {
+    "Bow_Signature_Status": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Bow_Signature_Status.json"
+    },
+    "Burn": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Burn.json"
+    },
+    "Creative": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Creative.json"
+    },
+    "Creative_Tool": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Creative_Tool.json"
+    },
+    "Crossbow_Signature_Status": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Crossbow_Signature_Status.json"
+    },
+    "Crown_Gold": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Crown_Gold.json"
+    },
+    "Dagger_Dash": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Dagger_Dash.json"
+    },
+    "Dagger_Signature": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Dagger_Signature.json"
+    },
+    "Death": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Death.json"
+    },
+    "Drop_Epic": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Epic.json"
+    },
+    "Drop_Legendary": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Legendary.json"
+    },
+    "Drop_Rare": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Rare.json"
+    },
+    "Drop_Uncommon": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Uncommon.json"
+    },
+    "Erosion_Test": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Erosion_Test.json"
+    },
+    "Freeze": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Freeze.json"
+    },
+    "Intangible": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Intangible.json"
+    },
+    "Intangible_Dark": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Intangible_Dark.json"
+    },
+    "Mace_Signature": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Mace_Signature.json"
+    },
+    "Poison": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Poison.json"
+    },
+    "Portal_Teleport": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Portal_Teleport.json"
+    },
+    "PrototypeBlockPlaceFail": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/PrototypeBlockPlaceFail.json"
+    },
+    "PrototypeBlockPlaceSuccess": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/PrototypeBlockPlaceSuccess.json"
+    },
+    "PrototypePastePreview": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/PrototypePastePreview.json"
+    },
+    "Prototype_CreativeTool_ModelVFX": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Prototype_CreativeTool_ModelVFX.json"
+    },
+    "Prototype_CreativeTool_Sel_ModelVFX": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Prototype_CreativeTool_Sel_ModelVFX.json"
+    },
+    "Stoneskin": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Stoneskin.json"
+    },
+    "Sword_Signature_Status": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Sword_Signature_Status.json"
+    },
+    "Sword_Test": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Sword_Test.json"
+    },
+    "Test2": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Test2.json"
+    },
+    "Trinket": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Trinket.json"
+    },
+    "Trinket_Empowered": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Trinket_Empowered.json"
+    },
+    "Trinket_Last_Stand_Skull": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Trinket_Last_Stand_Skull.json"
+    },
+    "test": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/test.json"
+    }
+  }
+}

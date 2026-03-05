@@ -1,0 +1,21 @@
+{
+  "$id": "WorldStructureAsset.json",
+  "title": "WorldStructureAsset",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/BasicWorldStructureAsset"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "NoiseRange"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "HytaleGenerator/WorldStructures",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

@@ -1,0 +1,696 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "Condition",
+  "path": "Server/NPC/DecisionMaking/Conditions",
+  "extension": ".json",
+  "assetCount": 228,
+  "fileCount": 1,
+  "values": {
+    "**CAE_Goblin_Duke_Phase_1_CombatActionEvaluator_AvailableActions_SelectTarget_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Fire_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Fire_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Ice_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Ice_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Lightning_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Lightning_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Spawn_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Spawn_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Fire_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Fire_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Ice_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Ice_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Lightning_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Lightning_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Spawn_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Spawn_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Fire_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Fire_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Ice_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Ice_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Lightning_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Lightning_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Spawn_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Spawn_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_FleeBomb_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_LargeBomb_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_Ranged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_Ranged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_Flee_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_Melee_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_SwingDown_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_SwingDown_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Charged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Heal_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Heal_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Ranged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_MeleeState_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_MeleeState_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_SelectTargetRanged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_SelectTarget_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_MeleeState_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_MeleeState_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_SelectTargetRanged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_SelectTarget_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_MeleeState_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_MeleeState_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_SelectTargetRanged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_SelectTarget_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_Melee_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_Ranged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_Ranged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_SwingDown_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_SwingDown_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_BackOff_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_BackOff_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_BackOff_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Default_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Default_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Default_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Scream_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Scream_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Summon_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_Summon_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_VineBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_VineBlock_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Hedera_CombatActionEvaluator_AvailableActions_VineBlock_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Rat_CombatActionEvaluator_AvailableActions_SelectTarget_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_BackOff_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_BackOff_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_BackOff_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Charge_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Charge_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Default_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Default_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Default_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Default_Conditions_3": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Default_Conditions_4": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_ShieldBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_ShieldBlock_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_ShieldBlock_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Summon_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Summon_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Summon_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_AvailableActions_MeleeAttack_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_AvailableActions_MeleeAttack_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_AvailableActions_SelfHeal_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Charge_CombatActionEvaluator_AvailableActions_Charge_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_HealFriendly_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_HealFriendly_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_MeleeAttack2_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_MeleeAttack2_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_MeleeAttack_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_MeleeAttack_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_RangedAttack_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_RangedAttack_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_SelfHeal_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_SelfHeal_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_ThrowItem_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_ThrowItem_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_Damage_CombatActionEvaluator_AvailableActions_HasDamage_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_Damage_CombatActionEvaluator_AvailableActions_TooMuchDamage_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_Movement_State_CombatActionEvaluator_AvailableActions_Crouching_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_Movement_State_CombatActionEvaluator_AvailableActions_Standing_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_HealFriendly_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_HealFriendly_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_MeleeAttack_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_SelfHeal_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_SelfHeal_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Charged_Attack_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Charged_Attack_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Default_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Default_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Default_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Strafe_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Strafe_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Strafe_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordSignature_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeBlock_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeBlock_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeCharged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeCharged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeCharged_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeSignature_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Default_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Default_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Default_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Strafe_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Strafe_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Strafe_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordBlock_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordCharged_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordSignature_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeBlock_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeBlock_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeBlock_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeCharged_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeCharged_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeCharged_Conditions_2": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeSignature_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Long_Basic_Attack_Cooldown_CombatActionEvaluator_AvailableActions_RangedAttack_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Long_Basic_Attack_Cooldown_CombatActionEvaluator_AvailableActions_RangedAttack_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Target_Count_CombatActionEvaluator_AvailableActions_MeleeAttack2_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Target_Count_CombatActionEvaluator_AvailableActions_MeleeAttack_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Combat_Target_Count_CombatActionEvaluator_AvailableActions_SelfHeal_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Only_Basic_Attacks_CombatActionEvaluator_AvailableActions_SelectTarget_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Behind_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Behind_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Flanks_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Flanks_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Front_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "**CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Front_Conditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_1_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_1_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Lobber_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Lobber_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Miner_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Miner_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Ogre_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Ogre_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scavenger_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scavenger_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scrapper_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Goblin_Scrapper_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Hedera_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Hedera_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Rat_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Rat_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Charge_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Charge_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Damage_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Damage_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Movement_State_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Movement_State_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Charged_Attack_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Charged_Attack_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Long_Basic_Attack_Cooldown_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Long_Basic_Attack_Cooldown_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Target_Count_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Combat_Target_Count_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Only_Basic_Attacks_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Only_Basic_Attacks_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Simple_Positioning_CombatActionEvaluator_RunConditions_0": {
+      "sourcedFromFile": null
+    },
+    "*CAE_Test_Simple_Positioning_CombatActionEvaluator_RunConditions_1": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Nearby_StateEvaluator_Options_0_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Nearby_StateEvaluator_Options_1_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Sleep_StateEvaluator_Options_0_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Sleep_StateEvaluator_Options_1_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Sleep_StateEvaluator_Options_2_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_StateEvaluator_Options_0_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_StateEvaluator_Options_1_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Toggle_StateEvaluator_Options_0_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "*Test_State_Evaluator_Toggle_StateEvaluator_Options_1_Conditions_0": {
+      "sourcedFromFile": null
+    },
+    "Linear_HP_Condition": {
+      "sourcedFromFile": "/Server/NPC/DecisionMaking/Conditions/Linear_HP_Condition.json"
+    }
+  }
+}

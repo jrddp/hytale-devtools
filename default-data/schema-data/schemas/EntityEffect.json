@@ -1,0 +1,641 @@
+{
+  "type": "object",
+  "$id": "EntityEffect.json",
+  "title": "EntityEffect",
+  "hytale": {
+    "type": "object",
+    "path": "Entity/Effects",
+    "extension": ".json",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another EntityEffect most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **EntityEffect** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "EntityEffect"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "parentDomain",
+          "key": "EntityEffect",
+          "excludeSelf": true
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of this entity effect that will be displayed in the UI. This must be a localization key.",
+      "markdownDescription": "The name of this entity effect that will be displayed in the UI. This must be a localization key.",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      }
+    },
+    "ApplicationEffects": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/ApplicationEffects",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "WorldRemovalSoundEventId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytaleAssetRef": "SoundEvent",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "registryDomain",
+          "key": "SoundEvent"
+        }
+      }
+    },
+    "LocalRemovalSoundEventId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytaleAssetRef": "SoundEvent",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "registryDomain",
+          "key": "SoundEvent"
+        }
+      }
+    },
+    "DamageCalculator": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/DamageCalculator",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "DamageCalculatorCooldown": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "number",
+              "hytale": {
+                "type": "number"
+              },
+              "minimum": 0.0,
+              "default": 0.0
+            },
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^(-?Infinity|NaN)$"
+            }
+          ],
+          "hytale": {
+            "type": "Number",
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "DamageEffects": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/DamageEffects",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "StatModifierEffects": {
+      "description": "Effects to play when stat modifiers are applied and updated.",
+      "markdownDescription": "Effects to play when stat modifiers are applied and updated.",
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/DamageEffects",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ModelOverride": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/ModelOverride",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ModelChange": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "A model to change the affected entity's appearance to.",
+      "markdownDescription": "A model to change the affected entity's appearance to.",
+      "hytaleAssetRef": "ModelAsset",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "string",
+        "target": "value",
+        "source": {
+          "type": "registryDomain",
+          "key": "ModelAsset"
+        }
+      }
+    },
+    "RawStatModifiers": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "hytale": {
+        "type": "object"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "$ref": "common.json#/definitions/StaticModifier"
+        }
+      },
+      "propertyNames": {
+        "hytaleAssetRef": "EntityStatType",
+        "hytale": {
+          "type": "string"
+        }
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "objectKey",
+        "target": "objectKey",
+        "source": {
+          "type": "registryDomain",
+          "key": "EntityStatType"
+        },
+        "excludeExistingObjectKeys": true
+      }
+    },
+    "StatModifiers": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map of string to float",
+      "description": "Modifiers to apply to EntityStats.",
+      "markdownDescription": "Modifiers to apply to EntityStats.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "number",
+        "hytale": {
+          "type": "number"
+        }
+      },
+      "propertyNames": {
+        "hytaleAssetRef": "EntityStatType",
+        "hytale": {
+          "type": "string"
+        }
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "objectKey",
+        "target": "objectKey",
+        "source": {
+          "type": "registryDomain",
+          "key": "EntityStatType"
+        },
+        "excludeExistingObjectKeys": true
+      }
+    },
+    "ValueType": {
+      "type": "string",
+      "title": "ValueType",
+      "description": "Enum to specify if the StatModifiers must be considered as absolute values or percent. Default value is Absolute. When using ValueType.Absolute, '100' matches the max value.",
+      "markdownDescription": "Enum to specify if the StatModifiers must be considered as absolute values or percent. Default value is Absolute. When using ValueType.Absolute, '100' matches the max value.",
+      "enumDescriptions": [
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Percent",
+        "Absolute"
+      ],
+      "default": "Absolute",
+      "hytaleDevtools": {
+        "semanticKind": "literalChoice",
+        "valueShape": "string",
+        "values": [
+          "Percent",
+          "Absolute"
+        ],
+        "acceptedValues": [
+          "Percent",
+          "Absolute"
+        ],
+        "role": "enum",
+        "normalizeToCanonical": false
+      }
+    },
+    "Duration": {
+      "description": "Value used by default unless specified otherwise in the method's call.",
+      "markdownDescription": "Value used by default unless specified otherwise in the method's call.",
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "number",
+              "hytale": {
+                "type": "number"
+              },
+              "default": 0.0
+            },
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^(-?Infinity|NaN)$"
+            }
+          ],
+          "hytale": {
+            "type": "Number",
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "OverlapBehavior": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "OverlapBehavior",
+      "description": "Value used by default unless specified otherwise in the method's call.",
+      "markdownDescription": "Value used by default unless specified otherwise in the method's call.",
+      "enumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Extend",
+        "Overwrite",
+        "Ignore"
+      ],
+      "default": "Ignore",
+      "hytaleDevtools": {
+        "semanticKind": "literalChoice",
+        "valueShape": "string",
+        "values": [
+          "Extend",
+          "Overwrite",
+          "Ignore"
+        ],
+        "acceptedValues": [
+          "Extend",
+          "Overwrite",
+          "Ignore"
+        ],
+        "role": "enum",
+        "normalizeToCanonical": false
+      }
+    },
+    "Infinite": {
+      "type": "boolean",
+      "description": "Value used by default unless specified otherwise in the method's call.",
+      "markdownDescription": "Value used by default unless specified otherwise in the method's call.",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": false
+    },
+    "Debuff": {
+      "type": "boolean",
+      "description": "Value used by default unless specified otherwise in the method's call.",
+      "markdownDescription": "Value used by default unless specified otherwise in the method's call.",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": false
+    },
+    "Locale": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "[Deprecated - DeathMessageKey instead] Use An optional translation key, used to display the damage cause upon death.",
+      "markdownDescription": "[Deprecated - DeathMessageKey instead] Use An optional translation key, used to display the damage cause upon death.",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      }
+    },
+    "StatusEffectIcon": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Value used by default unless specified otherwise in the method's call.",
+      "markdownDescription": "Value used by default unless specified otherwise in the method's call.",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      }
+    },
+    "RemovalBehavior": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "RemovalBehavior",
+      "description": "Value used by default unless specified otherwise in the method's call.",
+      "markdownDescription": "Value used by default unless specified otherwise in the method's call.",
+      "enumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Complete",
+        "Infinite",
+        "Duration"
+      ],
+      "default": "Complete",
+      "hytaleDevtools": {
+        "semanticKind": "literalChoice",
+        "valueShape": "string",
+        "values": [
+          "Complete",
+          "Infinite",
+          "Duration"
+        ],
+        "acceptedValues": [
+          "Complete",
+          "Infinite",
+          "Duration"
+        ],
+        "role": "enum",
+        "normalizeToCanonical": false
+      }
+    },
+    "Invulnerable": {
+      "type": "boolean",
+      "description": "Determines whether this effect applies the invulnerable component to the entity whilst active.",
+      "markdownDescription": "Determines whether this effect applies the invulnerable component to the entity whilst active.",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": false
+    },
+    "DamageResistance": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "$ref": "common.json#/definitions/StaticModifier"
+        }
+      },
+      "propertyNames": {
+        "hytaleAssetRef": "DamageCause",
+        "hytale": {
+          "type": "string"
+        }
+      },
+      "hytaleDevtools": {
+        "semanticKind": "symbolReference",
+        "valueShape": "objectKey",
+        "target": "objectKey",
+        "source": {
+          "type": "registryDomain",
+          "key": "DamageCause"
+        },
+        "excludeExistingObjectKeys": true
+      }
+    },
+    "DeathMessageKey": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Localization key used on the death screen when this EntityEffect kills a player.",
+      "markdownDescription": "Localization key used on the death screen when this EntityEffect kills a player.",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

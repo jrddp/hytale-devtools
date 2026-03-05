@@ -1,0 +1,36 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "MacroCommandBuilder",
+  "path": "Server/MacroCommands",
+  "extension": ".json",
+  "assetCount": 8,
+  "fileCount": 8,
+  "values": {
+    "DeleteCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/DeleteCommand.json"
+    },
+    "FillSignatureCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/FillSignatureCommand.json"
+    },
+    "HealCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/HealCommand.json"
+    },
+    "NearDeathCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/NearDeathCommand.json"
+    },
+    "NoonCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/NoonCommand.json"
+    },
+    "ResetRotationCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/ResetRotationCommand.json"
+    },
+    "SetTimeAndGoHome": {
+      "sourcedFromFile": "/Server/MacroCommands/_Examples/SetTimeAndGoHome.json"
+    },
+    "UnstuckCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/UnstuckCommand.json"
+    }
+  }
+}

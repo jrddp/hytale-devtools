@@ -1,0 +1,289 @@
+{
+  "$id": "DensityAsset.json",
+  "title": "DensityAsset",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/AbsDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/AmplitudeDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/AmplitudeConstantAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/AnchorDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/AngleDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/AxisDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/BaseHeightDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CacheDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/Cache2dDensityAsset_Deprecated"
+    },
+    {
+      "$ref": "common.json#/definitions/CeilingDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CellNoise2DDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CellNoise3DDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CellWallDistanceDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ClampDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ConstantDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CubeDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CuboidDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CurveMapperDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/CylinderDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/DistanceDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/DistanceToBiomeEdgeDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/EllipsoidDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ExportedDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/FastGradientWarpDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/FloorDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/GradientDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/GradientWarpDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ImportedDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/InverterDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/MaxDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/MinDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/MixDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/MultiMixDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/MultiplierDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/NormalizerDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/OffsetDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/OffsetConstantAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/PipelineDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/PlaneDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/Positions3DDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/PositionsCellNoiseDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/PositionsPinchDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/PositionsTwistDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/PowDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/RotatorDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ScaleDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ShellDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SimplexNoise2dDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SimplexNoise3DDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SliderDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SmoothCeilingDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SmoothClampDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SmoothFloorDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SmoothMaxDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SmoothMinDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SqrtDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SumDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SwitchDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/SwitchStateDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/TerrainDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/VectorWarpDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/XOverrideDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/XValueDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/YOverrideDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/YSampledDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/YValueDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ZOverrideDensityAsset"
+    },
+    {
+      "$ref": "common.json#/definitions/ZValueDensityAsset"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "Abs",
+      "Amplitude",
+      "AmplitudeConstant",
+      "Anchor",
+      "Angle",
+      "Axis",
+      "BaseHeight",
+      "Cache",
+      "Cache2D",
+      "Ceiling",
+      "CellNoise2D",
+      "CellNoise3D",
+      "CellWallDistance",
+      "Clamp",
+      "Constant",
+      "Cube",
+      "Cuboid",
+      "CurveMapper",
+      "Cylinder",
+      "Distance",
+      "DistanceToBiomeEdge",
+      "Ellipsoid",
+      "Exported",
+      "FastGradientWarp",
+      "Floor",
+      "Gradient",
+      "GradientWarp",
+      "Imported",
+      "Inverter",
+      "Max",
+      "Min",
+      "Mix",
+      "MultiMix",
+      "Multiplier",
+      "Normalizer",
+      "Offset",
+      "OffsetConstant",
+      "Pipeline",
+      "Plane",
+      "Positions3D",
+      "PositionsCellNoise",
+      "PositionsPinch",
+      "PositionsTwist",
+      "Pow",
+      "Rotator",
+      "Scale",
+      "Shell",
+      "SimplexNoise2D",
+      "SimplexNoise3D",
+      "Slider",
+      "SmoothCeiling",
+      "SmoothClamp",
+      "SmoothFloor",
+      "SmoothMax",
+      "SmoothMin",
+      "Sqrt",
+      "Sum",
+      "Switch",
+      "SwitchState",
+      "Terrain",
+      "VectorWarp",
+      "XOverride",
+      "XValue",
+      "YOverride",
+      "YSampled",
+      "YValue",
+      "ZOverride",
+      "ZValue"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "HytaleGenerator/Density",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

@@ -1,0 +1,714 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockBoundingBoxes",
+  "path": "Server/Item/Block/Hitboxes",
+  "extension": ".json",
+  "assetCount": 234,
+  "fileCount": 233,
+  "values": {
+    "Banner": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Banner.json"
+    },
+    "Beam": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Beam/Beam.json"
+    },
+    "Beam_Thin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Beam/Beam_Thin.json"
+    },
+    "Bed": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed.json"
+    },
+    "Bed_Ancient": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Ancient.json"
+    },
+    "Bed_Crude": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Crude.json"
+    },
+    "Bed_Desert": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Desert.json"
+    },
+    "Bed_Feran": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Feran.json"
+    },
+    "Bed_Flat": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Flat.json"
+    },
+    "Bed_Frozen_Castle": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Frozen_Castle.json"
+    },
+    "Bed_Human_Ruins": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Human_Ruins.json"
+    },
+    "Bed_Jungle": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Jungle.json"
+    },
+    "Bed_Kweebec": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Kweebec.json"
+    },
+    "Bed_Lumberjack": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Lumberjack.json"
+    },
+    "Bed_Tavern": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Tavern.json"
+    },
+    "Bed_Temple_Dark": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Temple_Dark.json"
+    },
+    "Bed_Temple_Emerald": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Temple_Emerald.json"
+    },
+    "Bed_Temple_Light": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Temple_Light.json"
+    },
+    "Bed_Village": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bed/Bed_Village.json"
+    },
+    "Bench": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bench/Bench.json"
+    },
+    "Bench_Alchemy": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Alchemy.json"
+    },
+    "Bench_Architect": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Architect.json"
+    },
+    "Bench_Armor": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Armor.json"
+    },
+    "Bench_Armory": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Armory.json"
+    },
+    "Bench_Backrest": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Bench/Bench_Backrest.json"
+    },
+    "Bench_Campfire": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Campfire.json"
+    },
+    "Bench_Cooking": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Cooking.json"
+    },
+    "Bench_Farming": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Farming.json"
+    },
+    "Bench_Furnace": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Furnace.json"
+    },
+    "Bench_Loom": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Loom.json"
+    },
+    "Bench_Lumbermill": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Lumbermill.json"
+    },
+    "Bench_Salvage": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Salvage.json"
+    },
+    "Bench_Tannery": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Tannery.json"
+    },
+    "Bench_Trough": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Trough.json"
+    },
+    "Bench_Weapon": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Weapon.json"
+    },
+    "Bench_Workbench": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Workbench.json"
+    },
+    "Bench_Workbench2": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Workbench2.json"
+    },
+    "Bench_Workbench3": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Bench/Bench_Workbench3.json"
+    },
+    "Block_Five_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Five_Eighth.json"
+    },
+    "Block_Five_Quarter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Five_Quarter.json"
+    },
+    "Block_Flat": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Flat.json"
+    },
+    "Block_Half": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Half.json"
+    },
+    "Block_One_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_One_Eighth.json"
+    },
+    "Block_Quarter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Quarter.json"
+    },
+    "Block_Seven_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Seven_Eighth.json"
+    },
+    "Block_Three_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Three_Eighth.json"
+    },
+    "Block_Three_Quarter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Three_Quarter.json"
+    },
+    "Block_Vertical_Five_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Five_Eighth.json"
+    },
+    "Block_Vertical_Flat": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Flat.json"
+    },
+    "Block_Vertical_Half": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Half.json"
+    },
+    "Block_Vertical_One_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_One_Eighth.json"
+    },
+    "Block_Vertical_Quarter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Quarter.json"
+    },
+    "Block_Vertical_Seven_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Seven_Eighth.json"
+    },
+    "Block_Vertical_Three_Eighth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Three_Eighth.json"
+    },
+    "Block_Vertical_Three_Quarter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Block/Block_Vertical_Three_Quarter.json"
+    },
+    "Blood_Leaf_Stage_1": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Blood_Leaf/Blood_Leaf_Stage_1.json"
+    },
+    "Blood_Leaf_Stage_2": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Blood_Leaf/Blood_Leaf_Stage_2.json"
+    },
+    "Blood_Leaf_Stage_3": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Blood_Leaf/Blood_Leaf_Stage_3.json"
+    },
+    "Boat": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Vehicle/Boat.json"
+    },
+    "Book": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Book.json"
+    },
+    "Branch": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Branch/Branch.json"
+    },
+    "Branch_Corner": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Branch/Branch_Corner.json"
+    },
+    "Branch_Short": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Branch/Branch_Short.json"
+    },
+    "Brazier": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Brazier/Brazier.json"
+    },
+    "Brazier_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Brazier/Brazier_Large.json"
+    },
+    "Brazier_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Brazier/Brazier_Small.json"
+    },
+    "Brazier_Tall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Brazier/Brazier_Tall.json"
+    },
+    "Cage_Trork": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Cage/Cage_Trork.json"
+    },
+    "Chain": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Chain/Chain.json"
+    },
+    "Chain_Diagonal": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Chain/Chain_Diagonal.json"
+    },
+    "Chair": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chair/Chair.json"
+    },
+    "Chair_Frozen_Castle": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chair/Chair_Frozen_Castle.json"
+    },
+    "Chair_Scrap": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chair/Chair_Scrap.json"
+    },
+    "Chair_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chair/Chair_Small.json"
+    },
+    "Chair_Tall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chair/Chair_Tall.json"
+    },
+    "Chandelier": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chandelier.json"
+    },
+    "Chest_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chest/Chest_Large.json"
+    },
+    "Chest_Large_Legendary": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chest/Chest_Large_Legendary.json"
+    },
+    "Chest_Large_Legendary_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chest/Chest_Large_Legendary_Open.json"
+    },
+    "Chest_Large_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chest/Chest_Large_Open.json"
+    },
+    "Chest_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chest/Chest_Small.json"
+    },
+    "Chest_Small_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Chest/Chest_Small_Open.json"
+    },
+    "Coffin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Coffin.json"
+    },
+    "Coop_Chicken": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Coop/Coop_Chicken.json"
+    },
+    "Desk": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Desk.json"
+    },
+    "Door": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door.json"
+    },
+    "Door_Kweebec": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Kweebec.json"
+    },
+    "Door_Kweebec_Open_In": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Kweebec_Open_In.json"
+    },
+    "Door_Kweebec_Open_Out": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Kweebec_Open_Out.json"
+    },
+    "Door_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Large.json"
+    },
+    "Door_Large_Open_In": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Large_Open_In.json"
+    },
+    "Door_Large_Open_In_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Large_Open_In_Interaction.json"
+    },
+    "Door_Large_Open_Out": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Large_Open_Out.json"
+    },
+    "Door_Large_Open_Out_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Large_Open_Out_Interaction.json"
+    },
+    "Door_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Medium.json"
+    },
+    "Door_Medium_Open_In": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Medium_Open_In.json"
+    },
+    "Door_Medium_Open_In_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Medium_Open_In_Interaction.json"
+    },
+    "Door_Medium_Open_Out": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Medium_Open_Out.json"
+    },
+    "Door_Medium_Open_Out_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Medium_Open_Out_Interaction.json"
+    },
+    "Door_Open_In": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Open_In.json"
+    },
+    "Door_Open_In_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Open_In_Interaction.json"
+    },
+    "Door_Open_Out": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Open_Out.json"
+    },
+    "Door_Open_Out_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Open_Out_Interaction.json"
+    },
+    "Door_Scarak_Hive_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Scarak_Hive_Large.json"
+    },
+    "Door_Scarak_Hive_Large_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Scarak_Hive_Large_Open.json"
+    },
+    "Door_Scarak_Hive_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Scarak_Hive_Medium.json"
+    },
+    "Door_Scarak_Hive_Medium_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Scarak_Hive_Medium_Open.json"
+    },
+    "Door_Sliding_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door/Door_Sliding_Open.json"
+    },
+    "Door_Temple_Scarak_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Temple_Scarak_Large.json"
+    },
+    "Door_Temple_Scarak_Large_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Temple_Scarak_Large_Open.json"
+    },
+    "Door_Temple_Scarak_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Temple_Scarak_Medium.json"
+    },
+    "Door_Temple_Scarak_Medium_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Temple_Scarak_Medium_Open.json"
+    },
+    "Door_Temple_Wind_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Temple_Wind_Large.json"
+    },
+    "Door_Temple_Wind_Large_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Large/Door_Temple_Wind_Large_Open.json"
+    },
+    "Door_Temple_Wind_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Temple_Wind_Medium.json"
+    },
+    "Door_Temple_Wind_Medium_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Door_Medium/Door_Temple_Wind_Medium_Open.json"
+    },
+    "Fence": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence.json"
+    },
+    "Fence_Corner": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Corner.json"
+    },
+    "Fence_Corner_Thick": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Corner_Thick.json"
+    },
+    "Fence_Corner_Thin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Corner_Thin.json"
+    },
+    "Fence_Gate": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Gate.json"
+    },
+    "Fence_Gate_Open_In": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Gate_Open_In.json"
+    },
+    "Fence_Gate_Open_In_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Gate_Open_In_Interaction.json"
+    },
+    "Fence_Gate_Open_Out": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Gate_Open_Out.json"
+    },
+    "Fence_Gate_Open_Out_Interaction": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Gate_Open_Out_Interaction.json"
+    },
+    "Fence_Thick": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Thick.json"
+    },
+    "Fence_Thin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Fence/Fence_Thin.json"
+    },
+    "Food_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Food/Food_Large.json"
+    },
+    "Food_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Food/Food_Medium.json"
+    },
+    "Food_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Food/Food_Small.json"
+    },
+    "Full": {
+      "sourcedFromFile": null
+    },
+    "Furniture_Stool": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Furniture_Stool.json"
+    },
+    "Kweebec_Ancient": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Kweebec_Ancient.json"
+    },
+    "Ladder": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Ladder/Ladder.json"
+    },
+    "Lamp_Tall_Lumberjack": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Lamp/Lamp_Tall_Lumberjack.json"
+    },
+    "Lantern_Village_Ceiling": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Lantern/Lantern_Village_Ceiling.json"
+    },
+    "Minecart": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Vehicle/Minecart.json"
+    },
+    "Mushroom_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Mushroom/Mushroom_Full.json"
+    },
+    "Mushroom_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Mushroom/Mushroom_Large.json"
+    },
+    "Mushroom_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Mushroom/Mushroom_Medium.json"
+    },
+    "Mushroom_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Mushroom/Mushroom_Small.json"
+    },
+    "Pad_Portal": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Pad_Portal.json"
+    },
+    "Painting": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Painting/Painting.json"
+    },
+    "Painting_1x2": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Painting/Painting_1x2.json"
+    },
+    "Painting_2x1": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Painting/Painting_2x1.json"
+    },
+    "Painting_2x2": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Painting/Painting_2x2.json"
+    },
+    "Painting_3x2": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Painting/Painting_3x2.json"
+    },
+    "Plant_Crop_Apple_Block": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Crop_Apple_Block.json"
+    },
+    "Plant_Crop_Apple_Block_Wall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Crop_Apple_Block_Wall.json"
+    },
+    "Plant_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Full.json"
+    },
+    "Plant_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Large.json"
+    },
+    "Plant_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Medium.json"
+    },
+    "Plant_Seed": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Seed.json"
+    },
+    "Plant_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Small.json"
+    },
+    "Plant_Tall_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Tall_Full.json"
+    },
+    "Plant_Tall_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Tall_Large.json"
+    },
+    "Plant_Tall_Medium": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Tall_Medium.json"
+    },
+    "Plant_Tall_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Plant_Tall_Small.json"
+    },
+    "Platform": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform.json"
+    },
+    "Platform_Bracket": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Bracket.json"
+    },
+    "Platform_Half": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Half.json"
+    },
+    "Platform_Half_Bracket_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Half_Bracket_Full.json"
+    },
+    "Platform_Thick": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Thick.json"
+    },
+    "Platform_Thick_Half": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Thick_Half.json"
+    },
+    "Platform_Thick_Half_Bracket_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Thick_Half_Bracket_Full.json"
+    },
+    "Platform_Thin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Thin.json"
+    },
+    "Platform_Thin_Half": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Thin_Half.json"
+    },
+    "Platform_Thin_Half_Bracket_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Platform/Platform_Thin_Half_Bracket_Full.json"
+    },
+    "Plinth": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Plinth.json"
+    },
+    "Portal_3x3": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Portal/Portal_3x3.json"
+    },
+    "Pot_Tall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Pot/Pot_Tall.json"
+    },
+    "Potion": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Food/Potion.json"
+    },
+    "Pumpkin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Pumpkin/Pumpkin.json"
+    },
+    "Pumpkin_Baby": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Pumpkin/Pumpkin_Baby.json"
+    },
+    "Pumpkin_Young": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Pumpkin/Pumpkin_Young.json"
+    },
+    "Raft": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Vehicle/Raft.json"
+    },
+    "Rail": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Rail/Rail.json"
+    },
+    "Roof_Corner_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Left.json"
+    },
+    "Roof_Corner_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Right.json"
+    },
+    "Roof_Corner_Shallow_Inverted_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Shallow_Inverted_Left.json"
+    },
+    "Roof_Corner_Shallow_Inverted_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Shallow_Inverted_Right.json"
+    },
+    "Roof_Corner_Shallow_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Shallow_Left.json"
+    },
+    "Roof_Corner_Shallow_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Shallow_Right.json"
+    },
+    "Roof_Corner_Steep_Inverted_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Steep_Inverted_Left.json"
+    },
+    "Roof_Corner_Steep_Inverted_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Roofs/Roof_Corner_Steep_Inverted_Right.json"
+    },
+    "Rope": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Rope/Rope.json"
+    },
+    "Rope_Diagonal": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Rope/Rope_Diagonal.json"
+    },
+    "Rubble": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Rock/Rubble.json"
+    },
+    "Scarecrow": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Scarecrow.json"
+    },
+    "Shutter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Shutter.json"
+    },
+    "Sign_Side": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Sign/Sign_Side.json"
+    },
+    "Sign_Tall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Sign/Sign_Tall.json"
+    },
+    "Sign_Top": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Sign/Sign_Top.json"
+    },
+    "Sign_Wall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Sign/Sign_Wall.json"
+    },
+    "Stairs": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs.json"
+    },
+    "Stairs_Corner_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Corner_Left.json"
+    },
+    "Stairs_Corner_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Corner_Right.json"
+    },
+    "Stairs_Corner_Steep_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Corner_Steep_Left.json"
+    },
+    "Stairs_Corner_Steep_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Corner_Steep_Right.json"
+    },
+    "Stairs_Flat": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Flat.json"
+    },
+    "Stairs_Inverted_Corner_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Inverted_Corner_Left.json"
+    },
+    "Stairs_Inverted_Corner_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Inverted_Corner_Right.json"
+    },
+    "Stairs_Shallow": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Shallow.json"
+    },
+    "Stairs_Steep": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Steep.json"
+    },
+    "Stairs_Thin": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Thin.json"
+    },
+    "Stairs_Thin_Corner_Left": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Thin_Corner_Left.json"
+    },
+    "Stairs_Thin_Corner_Right": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Structure/Stairs/Stairs_Thin_Corner_Right.json"
+    },
+    "Stalactite_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Rock/Stalactite/Stalactite_Large.json"
+    },
+    "Stalactite_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Rock/Stalactite/Stalactite_Small.json"
+    },
+    "Statue": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Statue/Statue.json"
+    },
+    "Statue_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Statue/Statue_Full.json"
+    },
+    "Statue_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Statue/Statue_Large.json"
+    },
+    "Statue_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Statue/Statue_Small.json"
+    },
+    "Statue_Temple_Scarak": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Statue/Statue_Temple_Scarak.json"
+    },
+    "Table": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Table.json"
+    },
+    "Teleporter": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Teleporter.json"
+    },
+    "Tombstone_Village": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Tombstone/Tombstone_Village.json"
+    },
+    "Tool_Fishing_Trap": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Tools/Tool_Fishing_Trap.json"
+    },
+    "Tool_Fishing_Trap_Full": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Tools/Tool_Fishing_Trap_Full.json"
+    },
+    "Torch": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Torch/Torch.json"
+    },
+    "Torch_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Torch/Torch_Large.json"
+    },
+    "Torch_Small": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Torch/Torch_Small.json"
+    },
+    "Torch_Tall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Torch/Torch_Tall.json"
+    },
+    "Torch_Wall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Torch/Torch_Wall.json"
+    },
+    "Trap_Spike": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Trap_Spike.json"
+    },
+    "Trapdoor": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Trapdoor/Trapdoor.json"
+    },
+    "Trapdoor_Open": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Trapdoor/Trapdoor_Open.json"
+    },
+    "Wardrobe": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Wardrobe/Wardrobe.json"
+    },
+    "Water_Lily": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Water_Lily/Water_Lily.json"
+    },
+    "Water_Lily_Flower": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Plant/Water_Lily/Water_Lily_Flower.json"
+    },
+    "Window": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Window/Window.json"
+    },
+    "Window_Large": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Window/Window_Large.json"
+    },
+    "Window_Tall": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Window/Window_Tall.json"
+    },
+    "Window_Thick": {
+      "sourcedFromFile": "/Server/Item/Block/Hitboxes/Furniture/Window/Window_Thick.json"
+    }
+  }
+}

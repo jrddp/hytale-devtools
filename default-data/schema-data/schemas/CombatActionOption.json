@@ -1,0 +1,29 @@
+{
+  "$id": "CombatActionOption.json",
+  "title": "CombatActionOption",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/AbilityCombatAction"
+    },
+    {
+      "$ref": "common.json#/definitions/BasicAttackTargetCombatAction"
+    },
+    {
+      "$ref": "common.json#/definitions/StateCombatAction"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "Ability",
+      "SelectBasicAttackTarget",
+      "State"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "NPC/DecisionMaking/CombatActions",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}

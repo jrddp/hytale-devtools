@@ -1,0 +1,60 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "Fluid",
+  "path": "Server/Item/Block/Fluids",
+  "extension": ".json",
+  "assetCount": 16,
+  "fileCount": 14,
+  "values": {
+    "Empty": {
+      "sourcedFromFile": null
+    },
+    "Fire": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Fire.json"
+    },
+    "Lava": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Lava.json"
+    },
+    "Lava_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Lava_Source.json"
+    },
+    "Poison": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Poison.json"
+    },
+    "Poison_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Poison_Source.json"
+    },
+    "Slime": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime.json"
+    },
+    "Slime_Red": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime_Red.json"
+    },
+    "Slime_Red_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime_Red_Source.json"
+    },
+    "Slime_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime_Source.json"
+    },
+    "Tar": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Tar.json"
+    },
+    "Tar_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Tar_Source.json"
+    },
+    "Unknown": {
+      "sourcedFromFile": null
+    },
+    "Water": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Water.json"
+    },
+    "Water_Finite": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Water_Finite.json"
+    },
+    "Water_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Water_Source.json"
+    }
+  }
+}

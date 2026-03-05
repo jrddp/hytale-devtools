@@ -5,7 +5,19 @@ import * as vscode from "vscode";
 
 export type SupportedPatchline = "release" | "pre-release";
 
+export type SchemaDataLocation = {
+  rootPath: string;
+  source: "companion-export" | "default-data";
+};
+
 const DEFAULT_PATCHLINE: SupportedPatchline = "release";
+const DEFAULT_SCHEMA_DATA_RELATIVE_PATH = path.join("default-data", "schema-data");
+const EXPORT_MANIFEST_FILE_NAME = "export_manifest.json";
+const SCHEMA_MAPPINGS_FILE_NAME = "schema_mappings.json";
+const SCHEMAS_DIRECTORY_NAME = "schemas";
+const INDEXES_DIRECTORY_NAME = "indexes";
+
+export const SUPPORTED_PATCHLINES: SupportedPatchline[] = ["release", "pre-release"];
 
 export function getAssetsZipPath(patchline: string): string {
   return path.join(
@@ -68,12 +80,59 @@ export function resolveCompanionExportRootFromPatchline(
   return path.join(globalStoragePath, patchline);
 }
 
-export function resolveCompanionExportRoot(
-  context: vscode.ExtensionContext,
-  workspacePath: string,
-): string {
+export function resolveCompanionExportRoot(context: vscode.ExtensionContext): string {
   return resolveCompanionExportRootFromPatchline(
     context.globalStorageUri.fsPath,
     resolvePatchlineForContext(context),
+  );
+}
+
+export function resolveExportManifestPathFromPatchline(
+  globalStoragePath: string,
+  patchline: SupportedPatchline,
+): string {
+  return path.join(resolveCompanionExportRootFromPatchline(globalStoragePath, patchline), EXPORT_MANIFEST_FILE_NAME);
+}
+
+export function resolveDefaultSchemaDataRoot(extensionPath: string): string {
+  return path.join(extensionPath, DEFAULT_SCHEMA_DATA_RELATIVE_PATH);
+}
+
+export function resolveSchemaDataLocationFromPatchline(
+  globalStoragePath: string,
+  extensionPath: string,
+  patchline: SupportedPatchline,
+): SchemaDataLocation {
+  const companionExportRoot = resolveCompanionExportRootFromPatchline(globalStoragePath, patchline);
+  const exportManifestPath = path.join(companionExportRoot, EXPORT_MANIFEST_FILE_NAME);
+  const schemaMappingsPath = path.join(companionExportRoot, SCHEMA_MAPPINGS_FILE_NAME);
+  const schemasDirectoryPath = path.join(companionExportRoot, SCHEMAS_DIRECTORY_NAME);
+  const indexesDirectoryPath = path.join(companionExportRoot, INDEXES_DIRECTORY_NAME);
+  if (
+    fs.existsSync(exportManifestPath) &&
+    fs.existsSync(schemaMappingsPath) &&
+    fs.existsSync(schemasDirectoryPath) &&
+    fs.existsSync(indexesDirectoryPath)
+  ) {
+    return {
+      rootPath: companionExportRoot,
+      source: "companion-export",
+    };
+  }
+
+  return {
+    rootPath: resolveDefaultSchemaDataRoot(extensionPath),
+    source: "default-data",
+  };
+}
+
+export function resolveSchemaDataLocation(
+  context: vscode.ExtensionContext,
+  patchline: SupportedPatchline = resolvePatchlineForContext(context),
+): SchemaDataLocation {
+  return resolveSchemaDataLocationFromPatchline(
+    context.globalStorageUri.fsPath,
+    context.extensionPath,
+    patchline,
   );
 }

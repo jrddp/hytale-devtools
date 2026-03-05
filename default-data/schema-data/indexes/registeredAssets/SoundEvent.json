@@ -1,0 +1,3519 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "SoundEvent",
+  "path": "Server/Audio/SoundEvents",
+  "extension": ".json",
+  "assetCount": 1169,
+  "fileCount": 1168,
+  "values": {
+    "EMPTY": {
+      "sourcedFromFile": null
+    },
+    "SFX_Alchemy_Bench_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Alchemy_Bench_Close.json"
+    },
+    "SFX_Alchemy_Bench_Craft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Alchemy_Bench_Craft.json"
+    },
+    "SFX_Alchemy_Bench_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Alchemy_Bench_Open.json"
+    },
+    "SFX_Antelope_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Antelope/SFX_Antelope_Alerted.json"
+    },
+    "SFX_Antelope_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Antelope/SFX_Antelope_Death.json"
+    },
+    "SFX_Antelope_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Antelope/SFX_Antelope_Hurt.json"
+    },
+    "SFX_Antelope_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Antelope/SFX_Antelope_Run.json"
+    },
+    "SFX_Antelope_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Antelope/SFX_Antelope_Walk.json"
+    },
+    "SFX_Arcane_Workbench_Close_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Arcane_Workbench_Close_Local.json"
+    },
+    "SFX_Arcane_Workbench_Craft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Arcane_Workbench_Craft.json"
+    },
+    "SFX_Arcane_Workbench_Open_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Arcane_Workbench_Open_Local.json"
+    },
+    "SFX_Armour_Bench_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Armour_Bench_Close.json"
+    },
+    "SFX_Armour_Bench_Craft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Armour_Bench_Craft.json"
+    },
+    "SFX_Armour_Bench_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Armour_Bench_Open.json"
+    },
+    "SFX_Arrow_Fire_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Test/Arrow_Fire/SFX_Arrow_Fire_Hit.json"
+    },
+    "SFX_Arrow_Fire_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Test/Arrow_Fire/SFX_Arrow_Fire_Miss.json"
+    },
+    "SFX_Arrow_Frost_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Test/Arrow_Frost/SFX_Arrow_Frost_Hit.json"
+    },
+    "SFX_Arrow_Frost_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Test/Arrow_Frost/SFX_Arrow_Frost_Miss.json"
+    },
+    "SFX_Arrow_FullCharge_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/Arrow_FullCharge/SFX_Arrow_FullCharge_Hit.json"
+    },
+    "SFX_Arrow_FullCharge_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/Arrow_FullCharge/SFX_Arrow_FullCharge_Miss.json"
+    },
+    "SFX_Arrow_HalfCharge_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/Arrow_HalfCharge/SFX_Arrow_HalfCharge_Hit.json"
+    },
+    "SFX_Arrow_HalfCharge_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/Arrow_HalfCharge/SFX_Arrow_HalfCharge_Miss.json"
+    },
+    "SFX_Arrow_NoCharge_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/Arrow_NoCharge/SFX_Arrow_NoCharge_Hit.json"
+    },
+    "SFX_Arrow_NoCharge_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/Arrow_NoCharge/SFX_Arrow_NoCharge_Miss.json"
+    },
+    "SFX_Arrow_Whistle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Arrow/SFX_Arrow_Whistle.json"
+    },
+    "SFX_Attn_ExtremelyQuiet": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX_Attn_ExtremelyQuiet.json"
+    },
+    "SFX_Attn_Loud": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX_Attn_Loud.json"
+    },
+    "SFX_Attn_Moderate": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX_Attn_Moderate.json"
+    },
+    "SFX_Attn_Quiet": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX_Attn_Quiet.json"
+    },
+    "SFX_Attn_VeryLoud": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX_Attn_VeryLoud.json"
+    },
+    "SFX_Attn_VeryQuiet": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX_Attn_VeryQuiet.json"
+    },
+    "SFX_Avatar_Powers_Disable": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Avatar/SFX_Avatar_Powers_Disable.json"
+    },
+    "SFX_Avatar_Powers_Disable_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Avatar/SFX_Avatar_Powers_Disable_Local.json"
+    },
+    "SFX_Avatar_Powers_Enable": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Avatar/SFX_Avatar_Powers_Enable.json"
+    },
+    "SFX_Avatar_Powers_Enable_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Avatar/SFX_Avatar_Powers_Enable_Local.json"
+    },
+    "SFX_Axe_Crude_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Axe/Crude/SFX_Axe_Crude_Impact.json"
+    },
+    "SFX_Axe_Crude_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Axe/Crude/SFX_Axe_Crude_Swing.json"
+    },
+    "SFX_Axe_Iron_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Axe/Iron/SFX_Axe_Iron_Impact.json"
+    },
+    "SFX_Axe_Iron_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Axe/Iron/SFX_Axe_Iron_Swing.json"
+    },
+    "SFX_Axe_Special_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Axe/Special/SFX_Axe_Special_Impact.json"
+    },
+    "SFX_Axe_Special_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Axe/Special/SFX_Axe_Special_Swing.json"
+    },
+    "SFX_Axe_Stone_Trork_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Player/Axe/Axe_Stone_Trork/SFX_Axe_Stone_Trork_Hit.json"
+    },
+    "SFX_Axe_Stone_Trork_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Player/Axe/Axe_Stone_Trork/SFX_Axe_Stone_Trork_Miss.json"
+    },
+    "SFX_Bat_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bat/SFX_Bat_Alerted.json"
+    },
+    "SFX_Bat_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bat/SFX_Bat_Death.json"
+    },
+    "SFX_Bat_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bat/SFX_Bat_Hurt.json"
+    },
+    "SFX_Battleaxe_T1_Block_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Impacts/SFX_Battleaxe_T1_Block_Impact.json"
+    },
+    "SFX_Battleaxe_T1_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Impacts/SFX_Battleaxe_T1_Impact.json"
+    },
+    "SFX_Battleaxe_T1_Launch": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Charged/SFX_Battleaxe_T1_Launch.json"
+    },
+    "SFX_Battleaxe_T1_Launch_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Charged/SFX_Battleaxe_T1_Launch_Local.json"
+    },
+    "SFX_Battleaxe_T1_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Raise.json"
+    },
+    "SFX_Battleaxe_T1_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Raise_Local.json"
+    },
+    "SFX_Battleaxe_T1_Shove": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Shove.json"
+    },
+    "SFX_Battleaxe_T1_Shove_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Shove_Local.json"
+    },
+    "SFX_Battleaxe_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Swing.json"
+    },
+    "SFX_Battleaxe_T1_Swing_Charged": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Charged/SFX_Battleaxe_T1_Swing_Charged.json"
+    },
+    "SFX_Battleaxe_T1_Swing_Charged_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Charged/SFX_Battleaxe_T1_Swing_Charged_Local.json"
+    },
+    "SFX_Battleaxe_T1_Swing_Down_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Swing_Down_Local.json"
+    },
+    "SFX_Battleaxe_T1_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Swing_LR_Local.json"
+    },
+    "SFX_Battleaxe_T1_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T1_Swing_RL_Local.json"
+    },
+    "SFX_Battleaxe_T2_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Impacts/SFX_Battleaxe_T2_Impact.json"
+    },
+    "SFX_Battleaxe_T2_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T2_Raise.json"
+    },
+    "SFX_Battleaxe_T2_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T2_Raise_Local.json"
+    },
+    "SFX_Battleaxe_T2_Signature_End": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Signature/SFX_Battleaxe_T2_Signature_End.json"
+    },
+    "SFX_Battleaxe_T2_Signature_End_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Signature/SFX_Battleaxe_T2_Signature_End_Local.json"
+    },
+    "SFX_Battleaxe_T2_Signature_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Signature/SFX_Battleaxe_T2_Signature_Swing.json"
+    },
+    "SFX_Battleaxe_T2_Signature_Swing_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Signature/SFX_Battleaxe_T2_Signature_Swing_Local.json"
+    },
+    "SFX_Battleaxe_T2_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T2_Swing.json"
+    },
+    "SFX_Battleaxe_T2_Swing_Charged": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Charged/SFX_Battleaxe_T2_Swing_Charged.json"
+    },
+    "SFX_Battleaxe_T2_Swing_Charged_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/Charged/SFX_Battleaxe_T2_Swing_Charged_Local.json"
+    },
+    "SFX_Battleaxe_T2_Swing_Down_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T2_Swing_Down_Local.json"
+    },
+    "SFX_Battleaxe_T2_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T2_Swing_LR_Local.json"
+    },
+    "SFX_Battleaxe_T2_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Battleaxe/SFX_Battleaxe_T2_Swing_RL_Local.json"
+    },
+    "SFX_Bear_Grizzly_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Grizzly_Alerted.json"
+    },
+    "SFX_Bear_Grizzly_Attack": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Grizzly_Attack.json"
+    },
+    "SFX_Bear_Grizzly_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Grizzly_Death.json"
+    },
+    "SFX_Bear_Grizzly_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Grizzly_Hurt.json"
+    },
+    "SFX_Bear_Grizzly_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Grizzly_Run.json"
+    },
+    "SFX_Bear_Grizzly_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Grizzly_Sleep.json"
+    },
+    "SFX_Bear_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bear_Grizzly/SFX_Bear_Walk.json"
+    },
+    "SFX_Bench_Placeholder": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Bench_Placeholder.json"
+    },
+    "SFX_Bison_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bison/SFX_Bison_Alerted.json"
+    },
+    "SFX_Bison_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bison/SFX_Bison_Death.json"
+    },
+    "SFX_Bison_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bison/SFX_Bison_Hurt.json"
+    },
+    "SFX_Bison_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bison/SFX_Bison_Idle.json"
+    },
+    "SFX_Bison_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bison/SFX_Bison_Run.json"
+    },
+    "SFX_Bison_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Bison/SFX_Bison_Walk.json"
+    },
+    "SFX_Blunderbuss_Bullet_WhizBy": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Blunderbuss_Bullet/SFX_Blunderbuss_Bullet_WhizBy.json"
+    },
+    "SFX_Blunderbuss_Fire": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/Blunderbuss/SFX_Blunderbuss_Fire.json"
+    },
+    "SFX_Blunderbuss_Fire_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/Blunderbuss/SFX_Blunderbuss_Fire_Local.json"
+    },
+    "SFX_Blunderbuss_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Blunderbuss_Bullet/SFX_Blunderbuss_Hit.json"
+    },
+    "SFX_Blunderbuss_Load": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/Blunderbuss/SFX_Blunderbuss_Load.json"
+    },
+    "SFX_Blunderbuss_Load_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/Blunderbuss/SFX_Blunderbuss_Load_Local.json"
+    },
+    "SFX_Blunderbuss_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Blunderbuss_Bullet/SFX_Blunderbuss_Miss.json"
+    },
+    "SFX_Blunderbuss_No_Ammo": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/Blunderbuss/SFX_Blunderbuss_No_Ammo.json"
+    },
+    "SFX_Boar_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Boar/SFX_Boar_Alerted.json"
+    },
+    "SFX_Boar_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Boar/SFX_Boar_Death.json"
+    },
+    "SFX_Boar_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Boar/SFX_Boar_Hurt.json"
+    },
+    "SFX_Boar_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Boar/SFX_Boar_Run.json"
+    },
+    "SFX_Boar_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Boar/SFX_Boar_Sleep.json"
+    },
+    "SFX_Boar_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Boar/SFX_Boar_Walk.json"
+    },
+    "SFX_Bomb_Fire_Goblin_Bounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Player/Bomb/Bomb_Fire_Goblin/SFX_Bomb_Fire_Goblin_Bounce.json"
+    },
+    "SFX_Bomb_Fire_Goblin_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Player/Bomb/Bomb_Fire_Goblin/SFX_Bomb_Fire_Goblin_Death.json"
+    },
+    "SFX_Bomb_Fire_Goblin_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Player/Bomb/Bomb_Fire_Goblin/SFX_Bomb_Fire_Goblin_Hit.json"
+    },
+    "SFX_Bomb_Fire_Goblin_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Player/Bomb/Bomb_Fire_Goblin/SFX_Bomb_Fire_Goblin_Miss.json"
+    },
+    "SFX_Bomb_Fuse": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bomb/SFX_Bomb_Fuse.json"
+    },
+    "SFX_Bone_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bone/SFX_Bone_Break.json"
+    },
+    "SFX_Bone_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bone/SFX_Bone_Build.json"
+    },
+    "SFX_Bone_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bone/SFX_Bone_Hit.json"
+    },
+    "SFX_Bone_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bone/SFX_Bone_Land.json"
+    },
+    "SFX_Bone_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bone/SFX_Bone_Walk.json"
+    },
+    "SFX_Bow_No_Ammo": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_No_Ammo.json"
+    },
+    "SFX_Bow_T1_Block_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Block_Impact.json"
+    },
+    "SFX_Bow_T1_Draw": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Draw.json"
+    },
+    "SFX_Bow_T1_Draw_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Draw_Local.json"
+    },
+    "SFX_Bow_T1_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Raise.json"
+    },
+    "SFX_Bow_T1_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Raise_Local.json"
+    },
+    "SFX_Bow_T1_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Shoot.json"
+    },
+    "SFX_Bow_T1_Shoot_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Shoot_Local.json"
+    },
+    "SFX_Bow_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Swing.json"
+    },
+    "SFX_Bow_T1_Swing_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T1_Swing_Local.json"
+    },
+    "SFX_Bow_T2_Draw": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T2_Draw.json"
+    },
+    "SFX_Bow_T2_Draw_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T2_Draw_Local.json"
+    },
+    "SFX_Bow_T2_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T2_Shoot.json"
+    },
+    "SFX_Bow_T2_Shoot_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/SFX_Bow_T2_Shoot_Local.json"
+    },
+    "SFX_Bow_T2_Signature_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/Signature/SFX_Bow_T2_Signature_Loop.json"
+    },
+    "SFX_Bow_T2_Signature_Loop_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/Signature/SFX_Bow_T2_Signature_Loop_Local.json"
+    },
+    "SFX_Bow_T2_Signature_Nock": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/Signature/SFX_Bow_T2_Signature_Nock.json"
+    },
+    "SFX_Bow_T2_Signature_Nock_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/Signature/SFX_Bow_T2_Signature_Nock_Local.json"
+    },
+    "SFX_Bow_T2_Signature_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/Signature/SFX_Bow_T2_Signature_Shoot.json"
+    },
+    "SFX_Bow_T2_Signature_Shoot_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Bow/Signature/SFX_Bow_T2_Signature_Shoot_Local.json"
+    },
+    "SFX_Bramble_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bramble/SFX_Bramble_MoveIn.json"
+    },
+    "SFX_Branch_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Branch/SFX_Branch_Break.json"
+    },
+    "SFX_Branch_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Branch/SFX_Branch_Build.json"
+    },
+    "SFX_Branch_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Branch/SFX_Branch_Hit.json"
+    },
+    "SFX_Branch_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Branch/SFX_Branch_Land.json"
+    },
+    "SFX_Branch_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Branch/SFX_Branch_Walk.json"
+    },
+    "SFX_Brazier_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Brazier/SFX_Brazier_Break.json"
+    },
+    "SFX_Brazier_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Brazier/SFX_Brazier_Build.json"
+    },
+    "SFX_Bunny_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Bunny/SFX_Bunny_Alerted.json"
+    },
+    "SFX_Bunny_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Bunny/SFX_Bunny_Death.json"
+    },
+    "SFX_Bunny_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Bunny/SFX_Bunny_Hurt.json"
+    },
+    "SFX_Bush_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bush/SFX_Bush_Break.json"
+    },
+    "SFX_Bush_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bush/SFX_Bush_Hit.json"
+    },
+    "SFX_Bush_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Bush/SFX_Bush_MoveIn.json"
+    },
+    "SFX_Cactus_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cactus/SFX_Cactus_Break.json"
+    },
+    "SFX_Cactus_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cactus/SFX_Cactus_Hit.json"
+    },
+    "SFX_Cactus_Large_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cactus/SFX_Cactus_Large_Hit.json"
+    },
+    "SFX_Cactus_Small_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cactus/SFX_Cactus_Small_Break.json"
+    },
+    "SFX_Cactus_Small_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cactus/SFX_Cactus_Small_Hit.json"
+    },
+    "SFX_Calf_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Calf/SFX_Calf_Hurt.json"
+    },
+    "SFX_Calf_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Calf/SFX_Calf_Run.json"
+    },
+    "SFX_Calf_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Calf/SFX_Calf_Walk.json"
+    },
+    "SFX_Camel_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Alerted.json"
+    },
+    "SFX_Camel_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Death.json"
+    },
+    "SFX_Camel_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Hurt.json"
+    },
+    "SFX_Camel_Laydown": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Laydown.json"
+    },
+    "SFX_Camel_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Run.json"
+    },
+    "SFX_Camel_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Sleep.json"
+    },
+    "SFX_Camel_Wake": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Wake.json"
+    },
+    "SFX_Camel_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Camel/SFX_Camel_Walk.json"
+    },
+    "SFX_Campfire_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Campfire/SFX_Campfire_Break.json"
+    },
+    "SFX_Campfire_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Campfire/SFX_Campfire_Build.json"
+    },
+    "SFX_Campfire_Close_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Campfire_Close_Local.json"
+    },
+    "SFX_Campfire_Default_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Campfire/SFX_Campfire_Default_Loop.json"
+    },
+    "SFX_Campfire_Open_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Campfire_Open_Local.json"
+    },
+    "SFX_Campfire_Processing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Campfire_Processing.json"
+    },
+    "SFX_Campfire_Processing_End": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Campfire_Processing_End.json"
+    },
+    "SFX_Campfire_Processing_Failed": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Campfire_Processing_Failed.json"
+    },
+    "SFX_Candle_Default_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Candle/SFX_Candle_Default_Loop.json"
+    },
+    "SFX_Candle_Off": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Candle/SFX_Candle_Off.json"
+    },
+    "SFX_Capture_Crate_Capture_Fail_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Capture_Crate/SFX_Capture_Crate_Capture_Fail_Local.json"
+    },
+    "SFX_Capture_Crate_Capture_Succeed": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Capture_Crate/SFX_Capture_Crate_Capture_Succeed.json"
+    },
+    "SFX_Capture_Crate_Capture_Succeed_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Capture_Crate/SFX_Capture_Crate_Capture_Succeed_Local.json"
+    },
+    "SFX_Capture_Crate_Spawn_Fail_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Capture_Crate/SFX_Capture_Crate_Spawn_Fail_Local.json"
+    },
+    "SFX_Capture_Crate_Spawn_Succeed": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Capture_Crate/SFX_Capture_Crate_Spawn_Succeed.json"
+    },
+    "SFX_Cauldron_Bubbling": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cauldron/SFX_Cauldron_Bubbling.json"
+    },
+    "SFX_Cauldron_Bubbling_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cauldron/SFX_Cauldron_Bubbling_Small.json"
+    },
+    "SFX_Chest_Legendary_Close_Player": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Chests/SFX_Chest_Legendary_Close_Player.json"
+    },
+    "SFX_Chest_Legendary_FirstOpen_Player": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Chests/SFX_Chest_Legendary_FirstOpen_Player.json"
+    },
+    "SFX_Chest_Legendary_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Chests/SFX_Chest_Legendary_Loop.json"
+    },
+    "SFX_Chest_Legendary_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Chests/SFX_Chest_Legendary_Open.json"
+    },
+    "SFX_Chest_Wooden_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Chests/SFX_Chest_Wooden_Close.json"
+    },
+    "SFX_Chest_Wooden_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Chests/SFX_Chest_Wooden_Open.json"
+    },
+    "SFX_Chest_Wooden_Open_Player": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Chests/SFX_Chest_Wooden_Open_Player.json"
+    },
+    "SFX_Chick_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chick/SFX_Chick_Alerted.json"
+    },
+    "SFX_Chick_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chick/SFX_Chick_Death.json"
+    },
+    "SFX_Chick_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chick/SFX_Chick_Hurt.json"
+    },
+    "SFX_Chicken_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chicken/SFX_Chicken_Alerted.json"
+    },
+    "SFX_Chicken_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chicken/SFX_Chicken_Death.json"
+    },
+    "SFX_Chicken_Flee": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chicken/SFX_Chicken_Flee.json"
+    },
+    "SFX_Chicken_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chicken/SFX_Chicken_Hurt.json"
+    },
+    "SFX_Chicken_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chicken/SFX_Chicken_Run.json"
+    },
+    "SFX_Chicken_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Chicken/SFX_Chicken_Walk.json"
+    },
+    "SFX_Clay_Pot_Large_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Large/SFX_Clay_Pot_Large_Break.json"
+    },
+    "SFX_Clay_Pot_Large_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Large/SFX_Clay_Pot_Large_Build.json"
+    },
+    "SFX_Clay_Pot_Large_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Large/SFX_Clay_Pot_Large_Hit.json"
+    },
+    "SFX_Clay_Pot_Large_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Large/SFX_Clay_Pot_Large_Walk.json"
+    },
+    "SFX_Clay_Pot_Small_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Small/SFX_Clay_Pot_Small_Break.json"
+    },
+    "SFX_Clay_Pot_Small_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Small/SFX_Clay_Pot_Small_Build.json"
+    },
+    "SFX_Clay_Pot_Small_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Small/SFX_Clay_Pot_Small_Hit.json"
+    },
+    "SFX_Clay_Pot_Small_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Clay_Pot_Small/SFX_Clay_Pot_Small_Walk.json"
+    },
+    "SFX_Cloth_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cloth/SFX_Cloth_Break.json"
+    },
+    "SFX_Cloth_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cloth/SFX_Cloth_Build.json"
+    },
+    "SFX_Cloth_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cloth/SFX_Cloth_Hit.json"
+    },
+    "SFX_Cloth_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cloth/SFX_Cloth_Land.json"
+    },
+    "SFX_Cloth_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cloth/SFX_Cloth_Walk.json"
+    },
+    "SFX_Club_Meat_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Item/Meat/SFX_Club_Meat_Impact.json"
+    },
+    "SFX_Club_Meat_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Item/SFX_Club_Meat_Swing.json"
+    },
+    "SFX_Club_Special_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Club/Special/SFX_Club_Special_Impact.json"
+    },
+    "SFX_Club_Special_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Club/Special/SFX_Club_Special_Swing.json"
+    },
+    "SFX_Club_Steel_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Club/Steel/SFX_Club_Steel_Impact.json"
+    },
+    "SFX_Club_Steel_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Club/Steel/SFX_Club_Steel_Swing.json"
+    },
+    "SFX_Club_Wood_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Club/Wood/SFX_Club_Wood_Impact.json"
+    },
+    "SFX_Club_Wood_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Club/Wood/SFX_Club_Wood_Swing.json"
+    },
+    "SFX_Cocoon_Active": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cocoon/SFX_Cocoon_Active.json"
+    },
+    "SFX_Cocoon_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cocoon/SFX_Cocoon_Break.json"
+    },
+    "SFX_Cocoon_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cocoon/SFX_Cocoon_Build.json"
+    },
+    "SFX_Cocoon_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cocoon/SFX_Cocoon_Hit.json"
+    },
+    "SFX_Cocoon_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Cocoon/SFX_Cocoon_Walk.json"
+    },
+    "SFX_Coins_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Coins/SFX_Coins_Land.json"
+    },
+    "SFX_Coins_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Coins/SFX_Coins_Walk.json"
+    },
+    "SFX_Consume_Bread": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Consume_Bread.json"
+    },
+    "SFX_Consume_Bread_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Consume_Bread_Local.json"
+    },
+    "SFX_Cow_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Alerted.json"
+    },
+    "SFX_Cow_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Death.json"
+    },
+    "SFX_Cow_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Hurt.json"
+    },
+    "SFX_Cow_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Idle.json"
+    },
+    "SFX_Cow_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Run.json"
+    },
+    "SFX_Cow_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Sleep.json"
+    },
+    "SFX_Cow_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Cow/SFX_Cow_Walk.json"
+    },
+    "SFX_Crawler_Void_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Alerted.json"
+    },
+    "SFX_Crawler_Void_Alerted_02": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Alerted_02.json"
+    },
+    "SFX_Crawler_Void_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Death.json"
+    },
+    "SFX_Crawler_Void_Despawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Despawn.json"
+    },
+    "SFX_Crawler_Void_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Hurt.json"
+    },
+    "SFX_Crawler_Void_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Run.json"
+    },
+    "SFX_Crawler_Void_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Sleep.json"
+    },
+    "SFX_Crawler_Void_Spawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Spawn.json"
+    },
+    "SFX_Crawler_Void_Spawn_02": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Spawn_02.json"
+    },
+    "SFX_Crawler_Void_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Crawler_Void/SFX_Crawler_Void_Walk.json"
+    },
+    "SFX_Creative_Play_Add_Mask": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Add_Mask.json"
+    },
+    "SFX_Creative_Play_Brush_Erase": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Erase.json"
+    },
+    "SFX_Creative_Play_Brush_Mode": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Mode.json"
+    },
+    "SFX_Creative_Play_Brush_Paint_Base": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Paint_Base.json"
+    },
+    "SFX_Creative_Play_Brush_Paint_Idle_Layer": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Paint_Idle_Layer.json"
+    },
+    "SFX_Creative_Play_Brush_Paint_Move_Layer": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Paint_Move_Layer.json"
+    },
+    "SFX_Creative_Play_Brush_Shape": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Shape.json"
+    },
+    "SFX_Creative_Play_Brush_Stamp": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Brush_Stamp.json"
+    },
+    "SFX_Creative_Play_Error": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Error.json"
+    },
+    "SFX_Creative_Play_Eyedropper_Select": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Eyedropper_Select.json"
+    },
+    "SFX_Creative_Play_Paste": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Paste.json"
+    },
+    "SFX_Creative_Play_Selection_Drag": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Selection_Drag.json"
+    },
+    "SFX_Creative_Play_Selection_Place": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Selection_Place.json"
+    },
+    "SFX_Creative_Play_Selection_Scale": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Selection_Scale.json"
+    },
+    "SFX_Creative_Play_Selection_Widget": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Selection_Widget.json"
+    },
+    "SFX_Creative_Play_Set_Mask": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Creative_Play_Set_Mask.json"
+    },
+    "SFX_Crocodile_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Crocodile/SFX_Crocodile_Alerted.json"
+    },
+    "SFX_Crocodile_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Crocodile/SFX_Crocodile_Death.json"
+    },
+    "SFX_Crocodile_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Crocodile/SFX_Crocodile_Hurt.json"
+    },
+    "SFX_Crops_Grow": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Crops/SFX_Crops_Grow.json"
+    },
+    "SFX_Crops_Grow_Stage_Complete": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Crops/SFX_Crops_Grow_Stage_Complete.json"
+    },
+    "SFX_Crow_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Crow/SFX_Crow_Death.json"
+    },
+    "SFX_Crow_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Crow/SFX_Crow_Hurt.json"
+    },
+    "SFX_Crystal_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Crystal/SFX_Crystal_Break.json"
+    },
+    "SFX_Crystal_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Crystal/SFX_Crystal_Build.json"
+    },
+    "SFX_Crystal_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Crystal/SFX_Crystal_Hit.json"
+    },
+    "SFX_Crystal_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Crystal/SFX_Crystal_Walk.json"
+    },
+    "SFX_Daggers_T1_Guard": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Guard.json"
+    },
+    "SFX_Daggers_T1_Guard_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Guard_Local.json"
+    },
+    "SFX_Daggers_T1_Pounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Pounce.json"
+    },
+    "SFX_Daggers_T1_Pounce_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Pounce_Local.json"
+    },
+    "SFX_Daggers_T1_Slash_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/Impacts/SFX_Daggers_T1_Slash_Impact.json"
+    },
+    "SFX_Daggers_T1_Stab_Double_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/Impacts/SFX_Daggers_T1_Stab_Double_Impact.json"
+    },
+    "SFX_Daggers_T1_Stab_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/Impacts/SFX_Daggers_T1_Stab_Impact.json"
+    },
+    "SFX_Daggers_T1_Stab_Left_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Stab_Left_Local.json"
+    },
+    "SFX_Daggers_T1_Stab_Retreat": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Stab_Retreat.json"
+    },
+    "SFX_Daggers_T1_Stab_Retreat_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Stab_Retreat_Local.json"
+    },
+    "SFX_Daggers_T1_Stab_Right_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Stab_Right_Local.json"
+    },
+    "SFX_Daggers_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Swing.json"
+    },
+    "SFX_Daggers_T1_Swing_Double": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Swing_Double.json"
+    },
+    "SFX_Daggers_T1_Swing_Double_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Swing_Double_Local.json"
+    },
+    "SFX_Daggers_T1_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Swing_LR_Local.json"
+    },
+    "SFX_Daggers_T1_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T1_Swing_RL_Local.json"
+    },
+    "SFX_Daggers_T2_Guard": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Guard.json"
+    },
+    "SFX_Daggers_T2_Guard_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Guard_Local.json"
+    },
+    "SFX_Daggers_T2_Signature_P1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Signature_P1.json"
+    },
+    "SFX_Daggers_T2_Signature_P1_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Signature_P1_Local.json"
+    },
+    "SFX_Daggers_T2_Signature_P2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Signature_P2.json"
+    },
+    "SFX_Daggers_T2_Signature_P2_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Signature_P2_Local.json"
+    },
+    "SFX_Daggers_T2_Signature_P3": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Signature_P3.json"
+    },
+    "SFX_Daggers_T2_Signature_P3_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Signature_P3_Local.json"
+    },
+    "SFX_Daggers_T2_Slash_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/Impacts/SFX_Daggers_T2_Slash_Impact.json"
+    },
+    "SFX_Daggers_T2_Stab_Double_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/Impacts/SFX_Daggers_T2_Stab_Double_Impact.json"
+    },
+    "SFX_Daggers_T2_Stab_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/Impacts/SFX_Daggers_T2_Stab_Impact.json"
+    },
+    "SFX_Daggers_T2_Stab_Left_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Stab_Left_Local.json"
+    },
+    "SFX_Daggers_T2_Stab_Retreat": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Stab_Retreat.json"
+    },
+    "SFX_Daggers_T2_Stab_Retreat_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Stab_Retreat_Local.json"
+    },
+    "SFX_Daggers_T2_Stab_Right_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Stab_Right_Local.json"
+    },
+    "SFX_Daggers_T2_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Swing.json"
+    },
+    "SFX_Daggers_T2_Swing_Double": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Swing_Double.json"
+    },
+    "SFX_Daggers_T2_Swing_Double_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Swing_Double_Local.json"
+    },
+    "SFX_Daggers_T2_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Swing_LR_Local.json"
+    },
+    "SFX_Daggers_T2_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Daggers/SFX_Daggers_T2_Swing_RL_Local.json"
+    },
+    "SFX_Deer_Doe_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Doe_Alerted.json"
+    },
+    "SFX_Deer_Doe_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Doe_Death.json"
+    },
+    "SFX_Deer_Doe_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Doe_Hurt.json"
+    },
+    "SFX_Deer_Doe_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Doe_Run.json"
+    },
+    "SFX_Deer_Doe_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Doe_Sleep.json"
+    },
+    "SFX_Deer_Stag_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Stag_Alerted.json"
+    },
+    "SFX_Deer_Stag_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Stag_Death.json"
+    },
+    "SFX_Deer_Stag_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Stag_Hurt.json"
+    },
+    "SFX_Deer_Stag_Roar": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Stag_Roar.json"
+    },
+    "SFX_Deer_Stag_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Stag_Run.json"
+    },
+    "SFX_Deer_Stag_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Stag_Sleep.json"
+    },
+    "SFX_Deer_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Deer/SFX_Deer_Walk.json"
+    },
+    "SFX_Default_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Default/SFX_Default_Break.json"
+    },
+    "SFX_Default_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Default/SFX_Default_Build.json"
+    },
+    "SFX_Default_Clone": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Default/SFX_Default_Clone.json"
+    },
+    "SFX_Default_Harvest": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Default/SFX_Default_Harvest.json"
+    },
+    "SFX_Default_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Default/SFX_Default_Walk.json"
+    },
+    "SFX_Deployable_Totem_Heal_Despawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Deployables/SFX_Deployable_Totem_Heal_Despawn.json"
+    },
+    "SFX_Deployable_Totem_Heal_Effect_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Deployables/SFX_Deployable_Totem_Heal_Effect_Local.json"
+    },
+    "SFX_Deployable_Totem_Heal_Spawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Deployables/SFX_Deployable_Totem_Heal_Spawn.json"
+    },
+    "SFX_Deployable_Totem_Slowing_Despawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Deployables/SFX_Deployable_Totem_Slowing_Despawn.json"
+    },
+    "SFX_Deployable_Totem_Slowing_Effect_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Deployables/SFX_Deployable_Totem_Slowing_Effect_Local.json"
+    },
+    "SFX_Deployable_Totem_Slowing_Spawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Deployables/SFX_Deployable_Totem_Slowing_Spawn.json"
+    },
+    "SFX_Dirt_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Dirt_Break.json"
+    },
+    "SFX_Dirt_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Dirt_Build.json"
+    },
+    "SFX_Dirt_Clone": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Dirt_Clone.json"
+    },
+    "SFX_Dirt_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Dirt_Hit.json"
+    },
+    "SFX_Dirt_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Dirt_Land.json"
+    },
+    "SFX_Dirt_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Dirt_Walk.json"
+    },
+    "SFX_Discovery_Z1_Medium": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z1_Medium.json"
+    },
+    "SFX_Discovery_Z1_Short": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z1_Short.json"
+    },
+    "SFX_Discovery_Z2_Medium": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z2_Medium.json"
+    },
+    "SFX_Discovery_Z2_Short": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z2_Short.json"
+    },
+    "SFX_Discovery_Z3_Medium": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z3_Medium.json"
+    },
+    "SFX_Discovery_Z3_Short": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z3_Short.json"
+    },
+    "SFX_Discovery_Z4_Medium": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z4_Medium.json"
+    },
+    "SFX_Discovery_Z4_Short": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Discovery/SFX_Discovery_Z4_Short.json"
+    },
+    "SFX_Divine_Respawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/SFX_Divine_Respawn.json"
+    },
+    "SFX_Door_Ancient_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Ancient_Close.json"
+    },
+    "SFX_Door_Ancient_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Ancient_Open.json"
+    },
+    "SFX_Door_Crude_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Crude_Close.json"
+    },
+    "SFX_Door_Crude_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Crude_Open.json"
+    },
+    "SFX_Door_Desert_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Desert_Close.json"
+    },
+    "SFX_Door_Desert_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Desert_Open.json"
+    },
+    "SFX_Door_Jungle_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Jungle_Close.json"
+    },
+    "SFX_Door_Jungle_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Jungle_Open.json"
+    },
+    "SFX_Door_Lumberjack_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Lumberjack_Close.json"
+    },
+    "SFX_Door_Lumberjack_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Lumberjack_Open.json"
+    },
+    "SFX_Door_Temple_Dark_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Temple_Dark_Close.json"
+    },
+    "SFX_Door_Temple_Dark_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Temple_Dark_Open.json"
+    },
+    "SFX_Door_Temple_Light_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Temple_Light_Close.json"
+    },
+    "SFX_Door_Temple_Light_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Temple_Light_Open.json"
+    },
+    "SFX_Door_Wooden_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Wooden_Close.json"
+    },
+    "SFX_Door_Wooden_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Doors/SFX_Door_Wooden_Open.json"
+    },
+    "SFX_Drag_Armor_Cloth": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Armor_Cloth.json"
+    },
+    "SFX_Drag_Armor_Heavy": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Armor_Heavy.json"
+    },
+    "SFX_Drag_Armor_Leather": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Armor_Leather.json"
+    },
+    "SFX_Drag_Blocks_Gravel": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Blocks_Gravel.json"
+    },
+    "SFX_Drag_Blocks_Soft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Blocks_Soft.json"
+    },
+    "SFX_Drag_Blocks_Splatty": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Blocks_Splatty.json"
+    },
+    "SFX_Drag_Blocks_Stone": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Blocks_Stone.json"
+    },
+    "SFX_Drag_Blocks_Wood": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Blocks_Wood.json"
+    },
+    "SFX_Drag_Item_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Item_Default.json"
+    },
+    "SFX_Drag_Items_Bones": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Bones.json"
+    },
+    "SFX_Drag_Items_Chest": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Chest.json"
+    },
+    "SFX_Drag_Items_Clay": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Clay.json"
+    },
+    "SFX_Drag_Items_Cloth": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Cloth.json"
+    },
+    "SFX_Drag_Items_Foliage": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Foliage.json"
+    },
+    "SFX_Drag_Items_Gadget": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Gadget.json"
+    },
+    "SFX_Drag_Items_Gems": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Gems.json"
+    },
+    "SFX_Drag_Items_Ingots": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Ingots.json"
+    },
+    "SFX_Drag_Items_Leather": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Leather.json"
+    },
+    "SFX_Drag_Items_Metal": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Metal.json"
+    },
+    "SFX_Drag_Items_Paper": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Paper.json"
+    },
+    "SFX_Drag_Items_Potion": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Potion.json"
+    },
+    "SFX_Drag_Items_Seeds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Seeds.json"
+    },
+    "SFX_Drag_Items_Shells": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Shells.json"
+    },
+    "SFX_Drag_Items_Splatty": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Items_Splatty.json"
+    },
+    "SFX_Drag_Weapon_Blade_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapon_Blade_Small.json"
+    },
+    "SFX_Drag_Weapon_Blunt_Large": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapon_Blunt_Large.json"
+    },
+    "SFX_Drag_Weapons_Arrows": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Arrows.json"
+    },
+    "SFX_Drag_Weapons_Blade_Large": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Blade_Large.json"
+    },
+    "SFX_Drag_Weapons_Blunt_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Blunt_Small.json"
+    },
+    "SFX_Drag_Weapons_Books": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Books.json"
+    },
+    "SFX_Drag_Weapons_Shield_Metal": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Shield_Metal.json"
+    },
+    "SFX_Drag_Weapons_Shield_Wood": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Shield_Wood.json"
+    },
+    "SFX_Drag_Weapons_Stone_Large": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Stone_Large.json"
+    },
+    "SFX_Drag_Weapons_Stone_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Stone_Small.json"
+    },
+    "SFX_Drag_Weapons_Wand": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Wand.json"
+    },
+    "SFX_Drag_Weapons_Wood": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drag_Weapons_Wood.json"
+    },
+    "SFX_Dragon_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Mythic/Dragon/SFX_Dragon_Sleep.json"
+    },
+    "SFX_Drop_Armor_Cloth": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Armor_Cloth.json"
+    },
+    "SFX_Drop_Armor_Heavy": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Armor_Heavy.json"
+    },
+    "SFX_Drop_Armor_Leather": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Armor_Leather.json"
+    },
+    "SFX_Drop_Blocks_Gravel": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Blocks_Gravel.json"
+    },
+    "SFX_Drop_Blocks_Soft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Blocks_Soft.json"
+    },
+    "SFX_Drop_Blocks_Splatty": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Blocks_Splatty.json"
+    },
+    "SFX_Drop_Blocks_Stone": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Blocks_Stone.json"
+    },
+    "SFX_Drop_Blocks_Wood": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Blocks_Wood.json"
+    },
+    "SFX_Drop_Item_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Item_Default.json"
+    },
+    "SFX_Drop_Items_Bones": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Bones.json"
+    },
+    "SFX_Drop_Items_Chest": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Chest.json"
+    },
+    "SFX_Drop_Items_Clay": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Clay.json"
+    },
+    "SFX_Drop_Items_Cloth": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Cloth.json"
+    },
+    "SFX_Drop_Items_Foliage": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Foliage.json"
+    },
+    "SFX_Drop_Items_Gadget": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Gadget.json"
+    },
+    "SFX_Drop_Items_Gems": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Gems.json"
+    },
+    "SFX_Drop_Items_Ingots": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Ingots.json"
+    },
+    "SFX_Drop_Items_Leather": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Leather.json"
+    },
+    "SFX_Drop_Items_Metal": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Metal.json"
+    },
+    "SFX_Drop_Items_Paper": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Paper.json"
+    },
+    "SFX_Drop_Items_Potion": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Potion.json"
+    },
+    "SFX_Drop_Items_Seeds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Seeds.json"
+    },
+    "SFX_Drop_Items_Shells": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Shells.json"
+    },
+    "SFX_Drop_Items_Splatty": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Items_Splatty.json"
+    },
+    "SFX_Drop_Weapon_Blade_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapon_Blade_Small.json"
+    },
+    "SFX_Drop_Weapon_Blunt_Large": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapon_Blunt_Large.json"
+    },
+    "SFX_Drop_Weapons_Arrows": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Arrows.json"
+    },
+    "SFX_Drop_Weapons_Blade_Large": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Blade_Large.json"
+    },
+    "SFX_Drop_Weapons_Blunt_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Blunt_Small.json"
+    },
+    "SFX_Drop_Weapons_Books": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Books.json"
+    },
+    "SFX_Drop_Weapons_Shield_Metal": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Shield_Metal.json"
+    },
+    "SFX_Drop_Weapons_Shield_Wood": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Shield_Wood.json"
+    },
+    "SFX_Drop_Weapons_Stone_Large": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Stone_Large.json"
+    },
+    "SFX_Drop_Weapons_Stone_Small": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Stone_Small.json"
+    },
+    "SFX_Drop_Weapons_Wand": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Wand.json"
+    },
+    "SFX_Drop_Weapons_Wood": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Inventory/SFX_Drop_Weapons_Wood.json"
+    },
+    "SFX_Duck_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Duck/SFX_Duck_Alerted.json"
+    },
+    "SFX_Duck_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Duck/SFX_Duck_Death.json"
+    },
+    "SFX_Duck_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Duck/SFX_Duck_Hurt.json"
+    },
+    "SFX_Duck_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Duck/SFX_Duck_Run.json"
+    },
+    "SFX_Effect_Burn_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Effects/SFX_Effect_Burn_Local.json"
+    },
+    "SFX_Effect_Burn_World": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Effects/SFX_Effect_Burn_World.json"
+    },
+    "SFX_Effect_Poison_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Effects/SFX_Effect_Poison_Local.json"
+    },
+    "SFX_Effect_Poison_World": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Effects/SFX_Effect_Poison_World.json"
+    },
+    "SFX_Egg_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Egg/SFX_Egg_Hit.json"
+    },
+    "SFX_Egg_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Egg/SFX_Egg_Miss.json"
+    },
+    "SFX_Eggsac_Active": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Eggsac/SFX_Eggsac_Active.json"
+    },
+    "SFX_Emberwulf_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Alerted.json"
+    },
+    "SFX_Emberwulf_Attack_Bite": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Attack_Bite.json"
+    },
+    "SFX_Emberwulf_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Death.json"
+    },
+    "SFX_Emberwulf_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Hurt.json"
+    },
+    "SFX_Emberwulf_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Run.json"
+    },
+    "SFX_Emberwulf_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Sleep.json"
+    },
+    "SFX_Emberwulf_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Emberwulf/SFX_Emberwulf_Walk.json"
+    },
+    "SFX_Emit_Forgotten_Whispers": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Emitters/Temple/SFX_Emit_Forgotten_Whispers.json"
+    },
+    "SFX_Emit_Lake_Water": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Emitters/Lake/SFX_Emit_Lake_Water.json"
+    },
+    "SFX_Emit_Temple_Wisps": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Emitters/Temple/SFX_Emit_Temple_Wisps.json"
+    },
+    "SFX_Emit_Tree_Creak": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Emitters/Tree/SFX_Emit_Tree_Creak.json"
+    },
+    "SFX_Emit_Wind_Grass": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Env/SFX_Emit_Wind_Grass.json"
+    },
+    "SFX_Emit_Wind_Gusts": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Env/SFX_Emit_Wind_Gusts.json"
+    },
+    "SFX_Env_Emit_Fluid_Lava": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Env/SFX_Env_Emit_Fluid_Lava.json"
+    },
+    "SFX_Env_Emit_Fluid_Water": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Env/SFX_Env_Emit_Fluid_Water.json"
+    },
+    "SFX_Env_Emit_Fluid_Water_Far": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Env/SFX_Env_Emit_Fluid_Water_Far.json"
+    },
+    "SFX_Env_Emit_Geyzer": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Env/SFX_Env_Emit_Geyzer.json"
+    },
+    "SFX_Eye_Void_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Alerted.json"
+    },
+    "SFX_Eye_Void_Attack_Blast": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Attack_Blast.json"
+    },
+    "SFX_Eye_Void_Attack_Summon": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Attack_Summon.json"
+    },
+    "SFX_Eye_Void_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Death.json"
+    },
+    "SFX_Eye_Void_Fly_Movement": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Fly_Movement.json"
+    },
+    "SFX_Eye_Void_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Hurt.json"
+    },
+    "SFX_Eye_Void_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Eye_Void/SFX_Eye_Void_Idle.json"
+    },
+    "SFX_Fen_Stalker_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Alerted.json"
+    },
+    "SFX_Fen_Stalker_Attack_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Attack_Swing.json"
+    },
+    "SFX_Fen_Stalker_Attack_Swipe": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Attack_Swipe.json"
+    },
+    "SFX_Fen_Stalker_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Death.json"
+    },
+    "SFX_Fen_Stalker_Eat": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Eat.json"
+    },
+    "SFX_Fen_Stalker_Eat_Finish": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Eat_Finish.json"
+    },
+    "SFX_Fen_Stalker_Greet": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Greet.json"
+    },
+    "SFX_Fen_Stalker_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Hurt.json"
+    },
+    "SFX_Fen_Stalker_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Run.json"
+    },
+    "SFX_Fen_Stalker_Scared": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Scared.json"
+    },
+    "SFX_Fen_Stalker_Seek": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Seek.json"
+    },
+    "SFX_Fen_Stalker_Sniff": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fen_Stalker/SFX_Fen_Stalker_Sniff.json"
+    },
+    "SFX_Feran_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Feran/SFX_Feran_Death.json"
+    },
+    "SFX_Fern_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Fern/SFX_Fern_Break.json"
+    },
+    "SFX_Fern_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Fern/SFX_Fern_MoveIn.json"
+    },
+    "SFX_Fireball_Bounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Spells/Fireball/SFX_Fireball_Bounce.json"
+    },
+    "SFX_Fireball_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Spells/Fireball/SFX_Fireball_Death.json"
+    },
+    "SFX_Fireball_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Spells/Fireball/SFX_Fireball_Miss.json"
+    },
+    "SFX_Fish_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Fish/SFX_Fish_Death.json"
+    },
+    "SFX_Fish_Flee": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Fish/SFX_Fish_Flee.json"
+    },
+    "SFX_Fish_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Fish/SFX_Fish_Hurt.json"
+    },
+    "SFX_Flail_Charge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Flail/SFX_Flail_Charge.json"
+    },
+    "SFX_Flail_Charge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Flail/SFX_Flail_Charge_Local.json"
+    },
+    "SFX_Flail_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Flail/SFX_Flail_Swing.json"
+    },
+    "SFX_Flail_Swing_Left_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Flail/SFX_Flail_Swing_Left_Local.json"
+    },
+    "SFX_Flail_Swing_Right_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Flail/SFX_Flail_Swing_Right_Local.json"
+    },
+    "SFX_Flame_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Flame/SFX_Flame_Break.json"
+    },
+    "SFX_Flame_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Flame/SFX_Flame_Build.json"
+    },
+    "SFX_Flame_Default_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Flame/SFX_Flame_Default_Loop.json"
+    },
+    "SFX_Flamingo_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Flamingo/SFX_Flamingo_Alerted.json"
+    },
+    "SFX_Flamingo_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Flamingo/SFX_Flamingo_Death.json"
+    },
+    "SFX_Flamingo_Fly": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Flamingo/SFX_Flamingo_Fly.json"
+    },
+    "SFX_Flamingo_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Flamingo/SFX_Flamingo_Hurt.json"
+    },
+    "SFX_Forgotten_Temple_Emit_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Unique/SFX_Forgotten_Temple_Emit_Birds.json"
+    },
+    "SFX_Forgotten_Temple_Emit_Birds_Interior": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Unique/SFX_Forgotten_Temple_Emit_Birds_Interior.json"
+    },
+    "SFX_Fox_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fox/SFX_Fox_Alerted.json"
+    },
+    "SFX_Fox_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fox/SFX_Fox_Death.json"
+    },
+    "SFX_Fox_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fox/SFX_Fox_Hurt.json"
+    },
+    "SFX_Fox_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fox/SFX_Fox_Run.json"
+    },
+    "SFX_Fox_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Fox/SFX_Fox_Sleep.json"
+    },
+    "SFX_Frog_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Frog/SFX_Frog_Alerted.json"
+    },
+    "SFX_Frog_Croak": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Frog/SFX_Frog_Croak.json"
+    },
+    "SFX_Frog_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Frog/SFX_Frog_Death.json"
+    },
+    "SFX_Frog_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Frog/SFX_Frog_Hurt.json"
+    },
+    "SFX_Frog_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Frog/SFX_Frog_Idle.json"
+    },
+    "SFX_Frog_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Frog/SFX_Frog_Run.json"
+    },
+    "SFX_Furnace_Bench_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Furnace_Bench_Close.json"
+    },
+    "SFX_Furnace_Bench_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Furnace_Bench_Open.json"
+    },
+    "SFX_Furnace_Bench_Processing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Furnace_Bench_Processing.json"
+    },
+    "SFX_Furnace_Bench_Processing_Complete": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Furnace_Bench_Processing_Complete.json"
+    },
+    "SFX_Furnace_Bench_Processing_End": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Furnace_Bench_Processing_End.json"
+    },
+    "SFX_Furnace_Bench_Processing_Failed": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Furnace_Bench_Processing_Failed.json"
+    },
+    "SFX_Gecko_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Gecko/SFX_Gecko_Alerted.json"
+    },
+    "SFX_Gecko_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Gecko/SFX_Gecko_Death.json"
+    },
+    "SFX_Gecko_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Gecko/SFX_Gecko_Hurt.json"
+    },
+    "SFX_Gem_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gem/SFX_Gem_Break.json"
+    },
+    "SFX_Gem_Emit_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gem/SFX_Gem_Emit_Loop.json"
+    },
+    "SFX_Generic_Crafting_Failed": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Generic_Crafting_Failed.json"
+    },
+    "SFX_Glass_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Glass/SFX_Glass_Break.json"
+    },
+    "SFX_Global_Weather_Thunder": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Weather/SFX_Global_Weather_Thunder.json"
+    },
+    "SFX_Goat_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Goat/SFX_Goat_Run.json"
+    },
+    "SFX_Goat_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Goat/SFX_Goat_Walk.json"
+    },
+    "SFX_Goblin_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Goblin/SFX_Goblin_Alerted.json"
+    },
+    "SFX_Goblin_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Goblin/SFX_Goblin_Death.json"
+    },
+    "SFX_Goblin_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Goblin/SFX_Goblin_Hurt.json"
+    },
+    "SFX_Goblin_Lobber_Bomb_Bounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Goblin_Lobber_Bomb/SFX_Goblin_Lobber_Bomb_Bounce.json"
+    },
+    "SFX_Goblin_Lobber_Bomb_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Goblin_Lobber_Bomb/SFX_Goblin_Lobber_Bomb_Death.json"
+    },
+    "SFX_Goblin_Lobber_Bomb_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Goblin_Lobber_Bomb/SFX_Goblin_Lobber_Bomb_Hit.json"
+    },
+    "SFX_Goblin_Lobber_Bomb_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Goblin_Lobber_Bomb/SFX_Goblin_Lobber_Bomb_Miss.json"
+    },
+    "SFX_Goblin_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Goblin/SFX_Goblin_Run.json"
+    },
+    "SFX_Goblin_Search": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Goblin/SFX_Goblin_Search.json"
+    },
+    "SFX_Golem_Earth_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Alerted.json"
+    },
+    "SFX_Golem_Earth_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Death.json"
+    },
+    "SFX_Golem_Earth_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Hurt.json"
+    },
+    "SFX_Golem_Earth_Laydown": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Laydown.json"
+    },
+    "SFX_Golem_Earth_Slam": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Slam.json"
+    },
+    "SFX_Golem_Earth_Slam_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Slam_Impact.json"
+    },
+    "SFX_Golem_Earth_Spin": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Spin.json"
+    },
+    "SFX_Golem_Earth_Stomp": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Stomp.json"
+    },
+    "SFX_Golem_Earth_Stomp_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Stomp_Impact.json"
+    },
+    "SFX_Golem_Earth_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Swing.json"
+    },
+    "SFX_Golem_Earth_Swing_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Swing_Impact.json"
+    },
+    "SFX_Golem_Earth_Wake": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Earth/SFX_Golem_Earth_Wake.json"
+    },
+    "SFX_Golem_Firesteel_Alerted_01": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Firesteel/SFX_Golem_Firesteel_Alerted_01.json"
+    },
+    "SFX_Golem_Firesteel_Alerted_02": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Firesteel/SFX_Golem_Firesteel_Alerted_02.json"
+    },
+    "SFX_Golem_Firesteel_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Firesteel/SFX_Golem_Firesteel_Death.json"
+    },
+    "SFX_Golem_Firesteel_Laydown": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Firesteel/SFX_Golem_Firesteel_Laydown.json"
+    },
+    "SFX_Golem_Firesteel_Wake": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Firesteel/SFX_Golem_Firesteel_Wake.json"
+    },
+    "SFX_Golem_Frost_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Alerted.json"
+    },
+    "SFX_Golem_Frost_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Death.json"
+    },
+    "SFX_Golem_Frost_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Hurt.json"
+    },
+    "SFX_Golem_Frost_Laydown": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Laydown.json"
+    },
+    "SFX_Golem_Frost_Slam": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Slam.json"
+    },
+    "SFX_Golem_Frost_Slam_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Slam_Impact.json"
+    },
+    "SFX_Golem_Frost_Spin": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Spin.json"
+    },
+    "SFX_Golem_Frost_Stomp": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Stomp.json"
+    },
+    "SFX_Golem_Frost_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Swing.json"
+    },
+    "SFX_Golem_Frost_Swing_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Swing_Impact.json"
+    },
+    "SFX_Golem_Frost_Wake": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Frost/SFX_Golem_Frost_Wake.json"
+    },
+    "SFX_Golem_Sand_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Alerted.json"
+    },
+    "SFX_Golem_Sand_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Death.json"
+    },
+    "SFX_Golem_Sand_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Hurt.json"
+    },
+    "SFX_Golem_Sand_Laydown": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Laydown.json"
+    },
+    "SFX_Golem_Sand_Slam": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Slam.json"
+    },
+    "SFX_Golem_Sand_Slam_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Slam_Impact.json"
+    },
+    "SFX_Golem_Sand_Spin": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Spin.json"
+    },
+    "SFX_Golem_Sand_Stomp": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Stomp.json"
+    },
+    "SFX_Golem_Sand_Stomp_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Stomp_Impact.json"
+    },
+    "SFX_Golem_Sand_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Swing.json"
+    },
+    "SFX_Golem_Sand_Swing_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Swing_Impact.json"
+    },
+    "SFX_Golem_Sand_Wake": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Golem_Sand/SFX_Golem_Sand_Wake.json"
+    },
+    "SFX_Grass_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Grass/SFX_Grass_Break.json"
+    },
+    "SFX_Grass_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Grass/SFX_Grass_Build.json"
+    },
+    "SFX_Grass_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Grass/SFX_Grass_Hit.json"
+    },
+    "SFX_Grass_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Grass/SFX_Grass_Land.json"
+    },
+    "SFX_Grass_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Grass/SFX_Grass_Walk.json"
+    },
+    "SFX_Gravel_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gravel/SFX_Gravel_Break.json"
+    },
+    "SFX_Gravel_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gravel/SFX_Gravel_Build.json"
+    },
+    "SFX_Gravel_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gravel/SFX_Gravel_Hit.json"
+    },
+    "SFX_Gravel_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gravel/SFX_Gravel_Land.json"
+    },
+    "SFX_Gravel_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Gravel/SFX_Gravel_Walk.json"
+    },
+    "SFX_GunPvP_Assault_Rifle_Bullet_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Assault_Rifle_Bullet/SFX_GunPvP_Assault_Rifle_Bullet_Death.json"
+    },
+    "SFX_GunPvP_Grenade_Frag_Bounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Grenade_Frag/SFX_GunPvP_Grenade_Frag_Bounce.json"
+    },
+    "SFX_GunPvP_Grenade_Frag_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Grenade_Frag/SFX_GunPvP_Grenade_Frag_Death.json"
+    },
+    "SFX_GunPvP_Grenade_Frag_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Grenade_Frag/SFX_GunPvP_Grenade_Frag_Hit.json"
+    },
+    "SFX_GunPvP_Grenade_Frag_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Grenade_Frag/SFX_GunPvP_Grenade_Frag_Miss.json"
+    },
+    "SFX_GunPvP_Handgun_Bullet_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Handgun_Bullet/SFX_GunPvP_Handgun_Bullet_Death.json"
+    },
+    "SFX_Gun_Fire": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/SFX_Gun_Fire.json"
+    },
+    "SFX_Hand_Crossbow_T1_Block_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/Impacts/SFX_Hand_Crossbow_T1_Block_Impact.json"
+    },
+    "SFX_Hand_Crossbow_T1_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T1_Raise.json"
+    },
+    "SFX_Hand_Crossbow_T1_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T1_Raise_Local.json"
+    },
+    "SFX_Hand_Crossbow_T1_Shove": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T1_Shove.json"
+    },
+    "SFX_Hand_Crossbow_T1_Shove_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T1_Shove_Local.json"
+    },
+    "SFX_Hand_Crossbow_T2_Load": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T2_Load.json"
+    },
+    "SFX_Hand_Crossbow_T2_Load_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T2_Load_Local.json"
+    },
+    "SFX_Hand_Crossbow_T2_Reload_Start": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T2_Reload_Start.json"
+    },
+    "SFX_Hand_Crossbow_T2_Reload_Start_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Hand_Crossbow/SFX_Hand_Crossbow_T2_Reload_Start_Local.json"
+    },
+    "SFX_Handgun_Fire": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/SFX_Handgun_Fire.json"
+    },
+    "SFX_Handgun_Fire_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/SFX_Handgun_Fire_Local.json"
+    },
+    "SFX_Hatchet_T1_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Hatchet/SFX_Hatchet_T1_Swing_RL_Local.json"
+    },
+    "SFX_Hatchet_T2_Impact_Nice": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Hatchet/SFX_Hatchet_T2_Impact_Nice.json"
+    },
+    "SFX_Health_Potion_High_Drink": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Health_Potion_High_Drink.json"
+    },
+    "SFX_Health_Potion_High_Drink_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Health_Potion_High_Drink_Local.json"
+    },
+    "SFX_Health_Potion_Low_Drink": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Health_Potion_Low_Drink.json"
+    },
+    "SFX_Health_Potion_Low_Drink_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Health_Potion_Low_Drink_Local.json"
+    },
+    "SFX_Hedera_Scream": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Hedera/SFX_Hedera_Scream.json"
+    },
+    "SFX_Hoe_T1_Swing_Down_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Hoe/SFX_Hoe_T1_Swing_Down_Local.json"
+    },
+    "SFX_Hoe_T1_Till": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Hoe/SFX_Hoe_T1_Till.json"
+    },
+    "SFX_Horse_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Alerted.json"
+    },
+    "SFX_Horse_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Death.json"
+    },
+    "SFX_Horse_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Hurt.json"
+    },
+    "SFX_Horse_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Idle.json"
+    },
+    "SFX_Horse_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Run.json"
+    },
+    "SFX_Horse_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Sleep.json"
+    },
+    "SFX_Horse_Wake": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Horse/SFX_Horse_Wake.json"
+    },
+    "SFX_Hyena_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Hyena/SFX_Hyena_Alerted.json"
+    },
+    "SFX_Hyena_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Hyena/SFX_Hyena_Death.json"
+    },
+    "SFX_Hyena_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Hyena/SFX_Hyena_Hurt.json"
+    },
+    "SFX_Hyena_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Hyena/SFX_Hyena_Idle.json"
+    },
+    "SFX_Ice_Ball_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Ice_Ball/SFX_Ice_Ball_Death.json"
+    },
+    "SFX_Ice_Bolt_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Ice_Bolt/SFX_Ice_Bolt_Death.json"
+    },
+    "SFX_Ice_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ice/SFX_Ice_Break.json"
+    },
+    "SFX_Ice_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ice/SFX_Ice_Build.json"
+    },
+    "SFX_Ice_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ice/SFX_Ice_Hit.json"
+    },
+    "SFX_Ice_Item_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Item/Ice/SFX_Ice_Item_Impact.json"
+    },
+    "SFX_Ice_Item_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Item/Ice/SFX_Ice_Item_Swing.json"
+    },
+    "SFX_Ice_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ice/SFX_Ice_Land.json"
+    },
+    "SFX_Ice_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ice/SFX_Ice_Walk.json"
+    },
+    "SFX_Incorrect_Tool": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/SFX_Incorrect_Tool.json"
+    },
+    "SFX_Item_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/SFX_Item_Break.json"
+    },
+    "SFX_Item_Repair": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/SFX_Item_Repair.json"
+    },
+    "SFX_Klops_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Klops/SFX_Klops_Alerted.json"
+    },
+    "SFX_Klops_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Klops/SFX_Klops_Death.json"
+    },
+    "SFX_Klops_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Klops/SFX_Klops_Hurt.json"
+    },
+    "SFX_Klops_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Klops/SFX_Klops_Idle.json"
+    },
+    "SFX_Klops_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Klops/SFX_Klops_Run.json"
+    },
+    "SFX_Kweebec_Plushie_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Item/Kweebec_Plushie/SFX_Kweebec_Plushie_Impact.json"
+    },
+    "SFX_Lamb_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Lamb/SFX_Lamb_Alerted.json"
+    },
+    "SFX_Lamb_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Lamb/SFX_Lamb_Death.json"
+    },
+    "SFX_Lamb_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Lamb/SFX_Lamb_Hurt.json"
+    },
+    "SFX_Larva_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Larva/SFX_Larva_Alerted.json"
+    },
+    "SFX_Larva_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Larva/SFX_Larva_Death.json"
+    },
+    "SFX_Larva_Despawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Larva/SFX_Larva_Despawn.json"
+    },
+    "SFX_Larva_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Larva/SFX_Larva_Hurt.json"
+    },
+    "SFX_Larva_Spawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Larva/SFX_Larva_Spawn.json"
+    },
+    "SFX_LeavesGround_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/LeavesGround/SFX_LeavesGround_Break.json"
+    },
+    "SFX_LeavesGround_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/LeavesGround/SFX_LeavesGround_Hit.json"
+    },
+    "SFX_LeavesGround_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/LeavesGround/SFX_LeavesGround_Land.json"
+    },
+    "SFX_LeavesGround_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/LeavesGround/SFX_LeavesGround_Walk.json"
+    },
+    "SFX_Leaves_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Leaves/SFX_Leaves_Break.json"
+    },
+    "SFX_Leaves_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Leaves/SFX_Leaves_Hit.json"
+    },
+    "SFX_Leaves_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Leaves/SFX_Leaves_Walk.json"
+    },
+    "SFX_Leopard_Snow_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Leopard_Snow/SFX_Leopard_Snow_Alerted.json"
+    },
+    "SFX_Leopard_Snow_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Leopard_Snow/SFX_Leopard_Snow_Death.json"
+    },
+    "SFX_Leopard_Snow_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Leopard_Snow/SFX_Leopard_Snow_Hurt.json"
+    },
+    "SFX_Leopard_Snow_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Leopard_Snow/SFX_Leopard_Snow_Run.json"
+    },
+    "SFX_Light_Melee_T1_Block": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T1_Block.json"
+    },
+    "SFX_Light_Melee_T1_Guard_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/Impacts/SFX_Light_Melee_T1_Guard_Hit.json"
+    },
+    "SFX_Light_Melee_T1_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/Impacts/SFX_Light_Melee_T1_Impact.json"
+    },
+    "SFX_Light_Melee_T1_Lunge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T1_Lunge.json"
+    },
+    "SFX_Light_Melee_T1_Lunge_Charge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T1_Lunge_Charge.json"
+    },
+    "SFX_Light_Melee_T1_Shove": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T1_Shove.json"
+    },
+    "SFX_Light_Melee_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T1_Swing.json"
+    },
+    "SFX_Light_Melee_T2_Block": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T2_Block.json"
+    },
+    "SFX_Light_Melee_T2_Guard_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T2_Guard_Break.json"
+    },
+    "SFX_Light_Melee_T2_Guard_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/Impacts/SFX_Light_Melee_T2_Guard_Hit.json"
+    },
+    "SFX_Light_Melee_T2_Lunge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T2_Lunge.json"
+    },
+    "SFX_Light_Melee_T2_Lunge_Charge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T2_Lunge_Charge.json"
+    },
+    "SFX_Light_Melee_T2_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/SFX_Light_Melee_T2_Swing.json"
+    },
+    "SFX_Longsword_Special_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Longsword/Special/SFX_Longsword_Special_Impact.json"
+    },
+    "SFX_Longsword_Special_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Longsword/Special/SFX_Longsword_Special_Swing.json"
+    },
+    "SFX_Longsword_Steel_Charged_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Longsword/Steel/SFX_Longsword_Steel_Charged_Swing.json"
+    },
+    "SFX_Longsword_Steel_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Longsword/Steel/SFX_Longsword_Steel_Impact.json"
+    },
+    "SFX_Longsword_Steel_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Longsword/Steel/SFX_Longsword_Steel_Swing.json"
+    },
+    "SFX_Lumbermill_Bench_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Lumbermill_Bench_Close.json"
+    },
+    "SFX_Lumbermill_Bench_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Lumbermill_Bench_Open.json"
+    },
+    "SFX_Lumbermill_Bench_Processing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Lumbermill_Bench_Processing.json"
+    },
+    "SFX_Mace_T1_Block_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Impacts/SFX_Mace_T1_Block_Impact.json"
+    },
+    "SFX_Mace_T1_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Impacts/SFX_Mace_T1_Impact.json"
+    },
+    "SFX_Mace_T1_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Raise.json"
+    },
+    "SFX_Mace_T1_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Raise_Local.json"
+    },
+    "SFX_Mace_T1_Shove": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Shove.json"
+    },
+    "SFX_Mace_T1_Shove_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Shove_Local.json"
+    },
+    "SFX_Mace_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing.json"
+    },
+    "SFX_Mace_T1_Swing_Charged": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_Charged.json"
+    },
+    "SFX_Mace_T1_Swing_Charged_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_Charged_LR_Local.json"
+    },
+    "SFX_Mace_T1_Swing_Charged_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_Charged_RL_Local.json"
+    },
+    "SFX_Mace_T1_Swing_Charged_Up_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_Charged_Up_Local.json"
+    },
+    "SFX_Mace_T1_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_LR_Local.json"
+    },
+    "SFX_Mace_T1_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_RL_Local.json"
+    },
+    "SFX_Mace_T1_Swing_Up_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T1_Swing_Up_Local.json"
+    },
+    "SFX_Mace_T2_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Impacts/SFX_Mace_T2_Impact.json"
+    },
+    "SFX_Mace_T2_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Raise.json"
+    },
+    "SFX_Mace_T2_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Raise_Local.json"
+    },
+    "SFX_Mace_T2_Signature_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Signature/SFX_Mace_T2_Signature_Impact.json"
+    },
+    "SFX_Mace_T2_Signature_Impact_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Signature/SFX_Mace_T2_Signature_Impact_Local.json"
+    },
+    "SFX_Mace_T2_Signature_Launch": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Signature/SFX_Mace_T2_Signature_Launch.json"
+    },
+    "SFX_Mace_T2_Signature_Launch_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/Signature/SFX_Mace_T2_Signature_Launch_Local.json"
+    },
+    "SFX_Mace_T2_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing.json"
+    },
+    "SFX_Mace_T2_Swing_Charged": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_Charged.json"
+    },
+    "SFX_Mace_T2_Swing_Charged_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_Charged_LR_Local.json"
+    },
+    "SFX_Mace_T2_Swing_Charged_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_Charged_RL_Local.json"
+    },
+    "SFX_Mace_T2_Swing_Charged_Up_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_Charged_Up_Local.json"
+    },
+    "SFX_Mace_T2_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_LR_Local.json"
+    },
+    "SFX_Mace_T2_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_RL_Local.json"
+    },
+    "SFX_Mace_T2_Swing_Up_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Mace/SFX_Mace_T2_Swing_Up_Local.json"
+    },
+    "SFX_Meerkat_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Meerkat/SFX_Meerkat_Alerted.json"
+    },
+    "SFX_Meerkat_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Meerkat/SFX_Meerkat_Death.json"
+    },
+    "SFX_Meerkat_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Meerkat/SFX_Meerkat_Hurt.json"
+    },
+    "SFX_Meerkat_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Meerkat/SFX_Meerkat_Idle.json"
+    },
+    "SFX_Memories_Unlock_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Memories_Unlock_Local.json"
+    },
+    "SFX_Metal_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Metal/SFX_Metal_Break.json"
+    },
+    "SFX_Metal_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Metal/SFX_Metal_Build.json"
+    },
+    "SFX_Metal_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Metal/SFX_Metal_Hit.json"
+    },
+    "SFX_Metal_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Metal/SFX_Metal_Land.json"
+    },
+    "SFX_Metal_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Metal/SFX_Metal_Walk.json"
+    },
+    "SFX_Moose_Bull_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Moose_Bull/SFX_Moose_Bull_Alerted.json"
+    },
+    "SFX_Mouse_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Mouse/SFX_Mouse_Alerted.json"
+    },
+    "SFX_Mouse_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Mouse/SFX_Mouse_Death.json"
+    },
+    "SFX_Mouse_Flee": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Mouse/SFX_Mouse_Flee.json"
+    },
+    "SFX_Mouse_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Mouse/SFX_Mouse_Hurt.json"
+    },
+    "SFX_Mouse_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Mouse/SFX_Mouse_Run.json"
+    },
+    "SFX_Mouse_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Mouse/SFX_Mouse_Sleep.json"
+    },
+    "SFX_Mud_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mud/SFX_Mud_Break.json"
+    },
+    "SFX_Mud_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mud/SFX_Mud_Build.json"
+    },
+    "SFX_Mud_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mud/SFX_Mud_Hit.json"
+    },
+    "SFX_Mud_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mud/SFX_Mud_Land.json"
+    },
+    "SFX_Mud_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mud/SFX_Mud_Walk.json"
+    },
+    "SFX_Mug_Fill": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/SFX_Mug_Fill.json"
+    },
+    "SFX_Mug_Fill_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/SFX_Mug_Fill_Local.json"
+    },
+    "SFX_Mushroom_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mushroom/SFX_Mushroom_Break.json"
+    },
+    "SFX_Mushroom_Harvest": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Mushroom/SFX_Mushroom_Harvest.json"
+    },
+    "SFX_Music_Ducking_2db": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/SFX_Music_Ducking_2db.json"
+    },
+    "SFX_NPC_Unarmed_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Unarmed/SFX_NPC_Unarmed_Impact.json"
+    },
+    "SFX_NPC_Unarmed_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Unarmed/SFX_NPC_Unarmed_Swing.json"
+    },
+    "SFX_Ore_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ore/SFX_Ore_Break.json"
+    },
+    "SFX_Ore_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Ore/SFX_Ore_Hit.json"
+    },
+    "SFX_Outlander_Hunter_Arrow_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Outlander_Hunter_Arrow/SFX_Outlander_Hunter_Arrow_Hit.json"
+    },
+    "SFX_Outlander_Hunter_Arrow_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Outlander_Hunter_Arrow/SFX_Outlander_Hunter_Arrow_Miss.json"
+    },
+    "SFX_Outlander_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Outlander/SFX_Outlander_Hurt.json"
+    },
+    "SFX_Owl_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Owl/SFX_Owl_Alerted.json"
+    },
+    "SFX_Owl_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Owl/SFX_Owl_Death.json"
+    },
+    "SFX_Owl_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Owl/SFX_Owl_Hurt.json"
+    },
+    "SFX_Pickaxe_T1_Swing_Down_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Pickaxe/SFX_Pickaxe_T1_Swing_Down_Local.json"
+    },
+    "SFX_Pickaxe_T2_Impact_Nice": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Pickaxe/SFX_Pickaxe_T2_Impact_Nice.json"
+    },
+    "SFX_Pig_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Pig/SFX_Pig_Alerted.json"
+    },
+    "SFX_Pig_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Pig/SFX_Pig_Death.json"
+    },
+    "SFX_Pig_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Pig/SFX_Pig_Hurt.json"
+    },
+    "SFX_Pig_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Pig/SFX_Pig_Run.json"
+    },
+    "SFX_Pig_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Pig/SFX_Pig_Walk.json"
+    },
+    "SFX_Pigeon_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Pigeon/SFX_Pigeon_Death.json"
+    },
+    "SFX_Pigeon_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Pigeon/SFX_Pigeon_Hurt.json"
+    },
+    "SFX_Piglet_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Piglet/SFX_Piglet_Alerted.json"
+    },
+    "SFX_Piglet_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Piglet/SFX_Piglet_Death.json"
+    },
+    "SFX_Piglet_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Piglet/SFX_Piglet_Hurt.json"
+    },
+    "SFX_Piglet_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Piglet/SFX_Piglet_Run.json"
+    },
+    "SFX_Pistol_Fire": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/SFX_Pistol_Fire.json"
+    },
+    "SFX_Plant_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Plant/SFX_Plant_Break.json"
+    },
+    "SFX_Plant_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Plant/SFX_Plant_Hit.json"
+    },
+    "SFX_Plant_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Plant/SFX_Plant_MoveIn.json"
+    },
+    "SFX_Player_Climb_Down": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Climb_Down.json"
+    },
+    "SFX_Player_Climb_Side": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Climb_Side.json"
+    },
+    "SFX_Player_Climb_Up": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Climb_Up.json"
+    },
+    "SFX_Player_Craft_Item_Inventory": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Inventory/SFX_Player_Craft_Item_Inventory.json"
+    },
+    "SFX_Player_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Death.json"
+    },
+    "SFX_Player_Death_Drown": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Death_Drown.json"
+    },
+    "SFX_Player_Death_Fall": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Death_Fall.json"
+    },
+    "SFX_Player_Drop_Item": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Action/SFX_Player_Drop_Item.json"
+    },
+    "SFX_Player_Fall": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Fall.json"
+    },
+    "SFX_Player_Glide_Motion": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Glide_Motion.json"
+    },
+    "SFX_Player_Glide_Stationary": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Glide_Stationary.json"
+    },
+    "SFX_Player_Grab_Item": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Action/SFX_Player_Grab_Item.json"
+    },
+    "SFX_Player_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Hurt.json"
+    },
+    "SFX_Player_Hurt_Burn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Hurt_Burn.json"
+    },
+    "SFX_Player_Hurt_Drowning": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Hurt_Drowning.json"
+    },
+    "SFX_Player_Hurt_Fall": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Player_Hurt_Fall.json"
+    },
+    "SFX_Player_Jump": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Jump.json"
+    },
+    "SFX_Player_Mantle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Mantle.json"
+    },
+    "SFX_Player_Pickup_Item": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Action/SFX_Player_Pickup_Item.json"
+    },
+    "SFX_Player_Roll": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Roll.json"
+    },
+    "SFX_Player_Slide": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Slide.json"
+    },
+    "SFX_Player_Swim": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Swim.json"
+    },
+    "SFX_Player_Swim_Fast": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Swim_Fast.json"
+    },
+    "SFX_Player_Swim_Jump": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Movement/SFX_Player_Swim_Jump.json"
+    },
+    "SFX_Player_Unarmed_Swing_Left": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Unarmed/SFX_Player_Unarmed_Swing_Left.json"
+    },
+    "SFX_Player_Unarmed_Swing_Right": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Unarmed/SFX_Player_Unarmed_Swing_Right.json"
+    },
+    "SFX_Plushie_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Plushie/SFX_Plushie_Break.json"
+    },
+    "SFX_Plushie_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Plushie/SFX_Plushie_Build.json"
+    },
+    "SFX_Poop_Bounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Poop/SFX_Poop_Bounce.json"
+    },
+    "SFX_Poop_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Poop/SFX_Poop_Break.json"
+    },
+    "SFX_Poop_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Poop/SFX_Poop_Hit.json"
+    },
+    "SFX_Poop_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Poop/SFX_Poop_Walk.json"
+    },
+    "SFX_Portal_Neutral": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Portals/SFX_Portal_Neutral.json"
+    },
+    "SFX_Portal_Neutral_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Portals/SFX_Portal_Neutral_Open.json"
+    },
+    "SFX_Portal_Neutral_Teleport_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Magic/Portals/SFX_Portal_Neutral_Teleport_Local.json"
+    },
+    "SFX_Portal_Void": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Portal/SFX_Portal_Void.json"
+    },
+    "SFX_Potion_Drink_Success": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Health/SFX_Potion_Drink_Success.json"
+    },
+    "SFX_Processing_Placeholder": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Processing_Placeholder.json"
+    },
+    "SFX_Projectile_Poop_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Poop/SFX_Projectile_Poop_Hit.json"
+    },
+    "SFX_Rabbit_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Rabbit/SFX_Rabbit_Alerted.json"
+    },
+    "SFX_Rabbit_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Rabbit/SFX_Rabbit_Death.json"
+    },
+    "SFX_Rabbit_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Rabbit/SFX_Rabbit_Hurt.json"
+    },
+    "SFX_Rabbit_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Rabbit/SFX_Rabbit_Run.json"
+    },
+    "SFX_Rabbit_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Rabbit/SFX_Rabbit_Sleep.json"
+    },
+    "SFX_Ram_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Ram/SFX_Ram_Alerted.json"
+    },
+    "SFX_Ram_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Ram/SFX_Ram_Death.json"
+    },
+    "SFX_Ram_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Ram/SFX_Ram_Hurt.json"
+    },
+    "SFX_Ram_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Ram/SFX_Ram_Run.json"
+    },
+    "SFX_Ram_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Ram/SFX_Ram_Sleep.json"
+    },
+    "SFX_Raptor_Cave_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Raptor_Cave/SFX_Raptor_Cave_Alerted.json"
+    },
+    "SFX_Raptor_Cave_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Raptor_Cave/SFX_Raptor_Cave_Idle.json"
+    },
+    "SFX_Rat_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Rat/SFX_Rat_Death.json"
+    },
+    "SFX_Rat_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Rat/SFX_Rat_Hurt.json"
+    },
+    "SFX_Raven_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Raven/SFX_Raven_Alerted.json"
+    },
+    "SFX_Raven_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Raven/SFX_Raven_Death.json"
+    },
+    "SFX_Raven_Flee": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Raven/SFX_Raven_Flee.json"
+    },
+    "SFX_Raven_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Raven/SFX_Raven_Hurt.json"
+    },
+    "SFX_Reeds_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Reeds/SFX_Reeds_MoveIn.json"
+    },
+    "SFX_Rex_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Mythic/Rex/SFX_Rex_Alerted.json"
+    },
+    "SFX_Rex_Bite": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Mythic/Rex/SFX_Rex_Bite.json"
+    },
+    "SFX_Rex_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Mythic/Rex/SFX_Rex_Death.json"
+    },
+    "SFX_Rex_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Mythic/Rex/SFX_Rex_Hurt.json"
+    },
+    "SFX_Rex_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Mythic/Rex/SFX_Rex_Walk.json"
+    },
+    "SFX_Rifle_Fire": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/SFX_Rifle_Fire.json"
+    },
+    "SFX_Rifle_Fire_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Guns/SFX_Rifle_Fire_Local.json"
+    },
+    "SFX_Rope_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Rope/SFX_Rope_Break.json"
+    },
+    "SFX_Rope_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Rope/SFX_Rope_Build.json"
+    },
+    "SFX_Rope_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Rope/SFX_Rope_Land.json"
+    },
+    "SFX_Rope_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Rope/SFX_Rope_Walk.json"
+    },
+    "SFX_Rotate_Pitch_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Rotate_Pitch_Default.json"
+    },
+    "SFX_Rotate_Roll_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Rotate_Roll_Default.json"
+    },
+    "SFX_Rotate_Yaw_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/CreativePlay/Default/SFX_Rotate_Yaw_Default.json"
+    },
+    "SFX_Rubble_Bounce": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Rubble/SFX_Rubble_Bounce.json"
+    },
+    "SFX_Rubble_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/Rubble/SFX_Rubble_Hit.json"
+    },
+    "SFX_Sand_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Sand/SFX_Sand_Break.json"
+    },
+    "SFX_Sand_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Sand/SFX_Sand_Build.json"
+    },
+    "SFX_Sand_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Sand/SFX_Sand_Hit.json"
+    },
+    "SFX_Sand_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Sand/SFX_Sand_Land.json"
+    },
+    "SFX_Sand_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Sand/SFX_Sand_Walk.json"
+    },
+    "SFX_Scarak_Fighter_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/Fighter/SFX_Scarak_Fighter_Alerted.json"
+    },
+    "SFX_Scarak_Fighter_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/Fighter/SFX_Scarak_Fighter_Death.json"
+    },
+    "SFX_Scarak_Fighter_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/Fighter/SFX_Scarak_Fighter_Hurt.json"
+    },
+    "SFX_Scarak_Seeker_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/Seeker/SFX_Scarak_Seeker_Alerted.json"
+    },
+    "SFX_Scarak_Seeker_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/Seeker/SFX_Scarak_Seeker_Death.json"
+    },
+    "SFX_Scarak_Seeker_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/Seeker/SFX_Scarak_Seeker_Hurt.json"
+    },
+    "SFX_Scarak_Seeker_Spitball_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Projectiles/NPC/Scarak_Spitball/SFX_Scarak_Seeker_Spitball_Death.json"
+    },
+    "SFX_Scarak_Spitball_Fire": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scarak/SFX_Scarak_Spitball_Fire.json"
+    },
+    "SFX_Scorpion_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scorpion/SFX_Scorpion_Alerted.json"
+    },
+    "SFX_Scorpion_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scorpion/SFX_Scorpion_Death.json"
+    },
+    "SFX_Scorpion_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scorpion/SFX_Scorpion_Run.json"
+    },
+    "SFX_Scorpion_Threaten": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Scorpion/SFX_Scorpion_Threaten.json"
+    },
+    "SFX_Seeds_Place": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Seeds/SFX_Seeds_Place.json"
+    },
+    "SFX_Shark_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Shark/SFX_Shark_Death.json"
+    },
+    "SFX_Shark_Dive": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Shark/SFX_Shark_Dive.json"
+    },
+    "SFX_Shark_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Shark/SFX_Shark_Hurt.json"
+    },
+    "SFX_Shark_Swim": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Ocean/Shark/SFX_Shark_Swim.json"
+    },
+    "SFX_Shears_Activate": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/SFX_Shears_Activate.json"
+    },
+    "SFX_Sheep_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Sheep/SFX_Sheep_Alerted.json"
+    },
+    "SFX_Sheep_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Sheep/SFX_Sheep_Death.json"
+    },
+    "SFX_Sheep_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Sheep/SFX_Sheep_Hurt.json"
+    },
+    "SFX_Sheep_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Sheep/SFX_Sheep_Run.json"
+    },
+    "SFX_Sheep_Sheared": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Sheep/SFX_Sheep_Sheared.json"
+    },
+    "SFX_Sheep_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Sheep/SFX_Sheep_Walk.json"
+    },
+    "SFX_Shield_T1_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T1_Break.json"
+    },
+    "SFX_Shield_T1_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T1_Impact.json"
+    },
+    "SFX_Shield_T1_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T1_Raise.json"
+    },
+    "SFX_Shield_T1_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T1_Raise_Local.json"
+    },
+    "SFX_Shield_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T1_Swing.json"
+    },
+    "SFX_Shield_T1_Swing_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T1_Swing_Local.json"
+    },
+    "SFX_Shield_T2_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T2_Impact.json"
+    },
+    "SFX_Shield_T2_Raise": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T2_Raise.json"
+    },
+    "SFX_Shield_T2_Raise_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T2_Raise_Local.json"
+    },
+    "SFX_Shield_T2_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T2_Swing.json"
+    },
+    "SFX_Shield_T2_Swing_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shield/SFX_Shield_T2_Swing_Local.json"
+    },
+    "SFX_Shovel_T1_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Shovel/SFX_Shovel_T1_Swing_RL_Local.json"
+    },
+    "SFX_Shovel_T2_Impact_Nice": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Shovel/SFX_Shovel_T2_Impact_Nice.json"
+    },
+    "SFX_Skeleton_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Alerted.json"
+    },
+    "SFX_Skeleton_Death_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Death_1.json"
+    },
+    "SFX_Skeleton_Death_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Death_2.json"
+    },
+    "SFX_Skeleton_Death_3": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Death_3.json"
+    },
+    "SFX_Skeleton_Death_4": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Death_4.json"
+    },
+    "SFX_Skeleton_Despawn_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Despawn_1.json"
+    },
+    "SFX_Skeleton_Despawn_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Despawn_2.json"
+    },
+    "SFX_Skeleton_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Hurt.json"
+    },
+    "SFX_Skeleton_Mage_Spellbook_Charge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spellbook/SFX_Skeleton_Mage_Spellbook_Charge.json"
+    },
+    "SFX_Skeleton_Mage_Spellbook_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spellbook/SFX_Skeleton_Mage_Spellbook_Impact.json"
+    },
+    "SFX_Skeleton_Praetorian_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Alerted.json"
+    },
+    "SFX_Skeleton_Praetorian_Death_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Death_1.json"
+    },
+    "SFX_Skeleton_Praetorian_Death_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Death_2.json"
+    },
+    "SFX_Skeleton_Praetorian_Death_3": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Death_3.json"
+    },
+    "SFX_Skeleton_Praetorian_Death_4": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Death_4.json"
+    },
+    "SFX_Skeleton_Praetorian_Despawn_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Despawn_1.json"
+    },
+    "SFX_Skeleton_Praetorian_Despawn_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Despawn_2.json"
+    },
+    "SFX_Skeleton_Praetorian_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Hurt.json"
+    },
+    "SFX_Skeleton_Praetorian_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Run.json"
+    },
+    "SFX_Skeleton_Praetorian_Search_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Search_2.json"
+    },
+    "SFX_Skeleton_Praetorian_Spawn_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Spawn_1.json"
+    },
+    "SFX_Skeleton_Praetorian_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Praetorian/SFX_Skeleton_Praetorian_Walk.json"
+    },
+    "SFX_Skeleton_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Run.json"
+    },
+    "SFX_Skeleton_Search_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Search_2.json"
+    },
+    "SFX_Skeleton_Spawn_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Spawn_1.json"
+    },
+    "SFX_Skeleton_Spawn_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Spawn_2.json"
+    },
+    "SFX_Skeleton_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Skeleton/SFX_Skeleton_Walk.json"
+    },
+    "SFX_Sleep_Fail": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Sleep/SFX_Sleep_Fail.json"
+    },
+    "SFX_Sleep_Notification": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Sleep/SFX_Sleep_Notification.json"
+    },
+    "SFX_Sleep_Notification_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Sleep/SFX_Sleep_Notification_Loop.json"
+    },
+    "SFX_Sleep_Success": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Player/Sleep/SFX_Sleep_Success.json"
+    },
+    "SFX_Snake_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Snake/SFX_Snake_Alerted.json"
+    },
+    "SFX_Snake_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Snake/SFX_Snake_Death.json"
+    },
+    "SFX_Snake_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Snake/SFX_Snake_Hurt.json"
+    },
+    "SFX_Snake_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Snake/SFX_Snake_Idle.json"
+    },
+    "SFX_Snow_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Snow/SFX_Snow_Break.json"
+    },
+    "SFX_Snow_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Snow/SFX_Snow_Build.json"
+    },
+    "SFX_Snow_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Snow/SFX_Snow_Hit.json"
+    },
+    "SFX_Snow_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Snow/SFX_Snow_Land.json"
+    },
+    "SFX_Snow_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Snow/SFX_Snow_Walk.json"
+    },
+    "SFX_Soft_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Soft/SFX_Soft_Break.json"
+    },
+    "SFX_Soft_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Soft/SFX_Soft_Build.json"
+    },
+    "SFX_Soft_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Soft/SFX_Soft_Hit.json"
+    },
+    "SFX_Soft_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Dirt/SFX_Soft_Land.json"
+    },
+    "SFX_Soft_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Soft/SFX_Soft_Walk.json"
+    },
+    "SFX_Spark_Living_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spark_Living/SFX_Spark_Living_Alerted.json"
+    },
+    "SFX_Spark_Living_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spark_Living/SFX_Spark_Living_Death.json"
+    },
+    "SFX_Sparrow_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Sparrow/SFX_Sparrow_Alerted.json"
+    },
+    "SFX_Sparrow_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Sparrow/SFX_Sparrow_Death.json"
+    },
+    "SFX_Sparrow_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Sparrow/SFX_Sparrow_Hurt.json"
+    },
+    "SFX_Sparrow_Idle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Sparrow/SFX_Sparrow_Idle.json"
+    },
+    "SFX_Spawn_Void_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Spawn_Void/SFX_Spawn_Void_Alerted.json"
+    },
+    "SFX_Spawn_Void_Attack": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Spawn_Void/SFX_Spawn_Void_Attack.json"
+    },
+    "SFX_Spawn_Void_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Spawn_Void/SFX_Spawn_Void_Death.json"
+    },
+    "SFX_Spawn_Void_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Spawn_Void/SFX_Spawn_Void_Hurt.json"
+    },
+    "SFX_Spawn_Void_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Void/Spawn_Void/SFX_Spawn_Void_Run.json"
+    },
+    "SFX_Spear_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Impact.json"
+    },
+    "SFX_Spear_Lunge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Lunge.json"
+    },
+    "SFX_Spear_Lunge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Lunge_Local.json"
+    },
+    "SFX_Spear_Miss": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Miss.json"
+    },
+    "SFX_Spear_Projectile_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Projectile_Impact.json"
+    },
+    "SFX_Spear_Throw": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Throw.json"
+    },
+    "SFX_Spear_Throw_Charge": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Throw_Charge.json"
+    },
+    "SFX_Spear_Throw_Charge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Throw_Charge_Local.json"
+    },
+    "SFX_Spear_Throw_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Spear/SFX_Spear_Throw_Local.json"
+    },
+    "SFX_Spider_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spider/SFX_Spider_Alerted.json"
+    },
+    "SFX_Spider_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spider/SFX_Spider_Death.json"
+    },
+    "SFX_Spider_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spider/SFX_Spider_Run.json"
+    },
+    "SFX_Spirit_Root_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spirit_Root/SFX_Spirit_Root_Alerted.json"
+    },
+    "SFX_Spirit_Root_Death_01": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spirit_Root/SFX_Spirit_Root_Death_01.json"
+    },
+    "SFX_Spirit_Root_Death_02": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spirit_Root/SFX_Spirit_Root_Death_02.json"
+    },
+    "SFX_Spirit_Root_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spirit_Root/SFX_Spirit_Root_Hurt.json"
+    },
+    "SFX_Spirit_Root_Spawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Spirit_Root/SFX_Spirit_Root_Spawn.json"
+    },
+    "SFX_Squirrel_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Squirrel/SFX_Squirrel_Alerted.json"
+    },
+    "SFX_Squirrel_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Squirrel/SFX_Squirrel_Death.json"
+    },
+    "SFX_Squirrel_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Squirrel/SFX_Squirrel_Hurt.json"
+    },
+    "SFX_Squirrel_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Squirrel/SFX_Squirrel_Run.json"
+    },
+    "SFX_Staff_Charged_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/SFX_Staff_Charged_Loop.json"
+    },
+    "SFX_Staff_Fire_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/SFX_Staff_Fire_Shoot.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_1.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_1_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_1_Local.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_2.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_2_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_2_Local.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_3": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_3.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_3_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_3_Local.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_4": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_4.json"
+    },
+    "SFX_Staff_Flame_Consume_Charge_4_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Consume_Charge_4_Local.json"
+    },
+    "SFX_Staff_Flame_Fireball_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Fireball_Impact.json"
+    },
+    "SFX_Staff_Flame_Fireball_Launch": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Fireball_Launch.json"
+    },
+    "SFX_Staff_Flame_Fireball_Launch_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Fireball_Launch_Local.json"
+    },
+    "SFX_Staff_Flame_Flamethrower": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Flamethrower.json"
+    },
+    "SFX_Staff_Flame_Flamethrower_End": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Flamethrower_End.json"
+    },
+    "SFX_Staff_Flame_Flamethrower_End_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Flamethrower_End_Local.json"
+    },
+    "SFX_Staff_Flame_Flamethrower_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Flamethrower_Impact.json"
+    },
+    "SFX_Staff_Flame_Flamethrower_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Flamethrower_Local.json"
+    },
+    "SFX_Staff_Flame_Trap_Deploy": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Trap_Deploy.json"
+    },
+    "SFX_Staff_Flame_Trap_Despawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Trap_Despawn.json"
+    },
+    "SFX_Staff_Flame_Trap_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/Flame/SFX_Staff_Flame_Trap_Loop.json"
+    },
+    "SFX_Staff_Ice_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/SFX_Staff_Ice_Shoot.json"
+    },
+    "SFX_Stamina_Potion_Success": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Consumables/SFX_Stamina_Potion_Success.json"
+    },
+    "SFX_Sticks_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Sticks/SFX_Sticks_Break.json"
+    },
+    "SFX_Stone_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Stone/SFX_Stone_Break.json"
+    },
+    "SFX_Stone_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Stone/SFX_Stone_Build.json"
+    },
+    "SFX_Stone_Coffin_Open_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Items/Coffin/SFX_Stone_Coffin_Open_Close.json"
+    },
+    "SFX_Stone_Harvest": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Stone/SFX_Stone_Harvest.json"
+    },
+    "SFX_Stone_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Stone/SFX_Stone_Hit.json"
+    },
+    "SFX_Stone_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Stone/SFX_Stone_Land.json"
+    },
+    "SFX_Stone_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Stone/SFX_Stone_Walk.json"
+    },
+    "SFX_Sword_T1_Block_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Block_Local.json"
+    },
+    "SFX_Sword_T1_Lunge_Charge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Lunge_Charge_Local.json"
+    },
+    "SFX_Sword_T1_Lunge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Lunge_Local.json"
+    },
+    "SFX_Sword_T1_Shove_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Shove_Local.json"
+    },
+    "SFX_Sword_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Swing.json"
+    },
+    "SFX_Sword_T1_Swing_Down": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Swing_Down.json"
+    },
+    "SFX_Sword_T1_Swing_Down_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Swing_Down_Local.json"
+    },
+    "SFX_Sword_T1_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Swing_LR_Local.json"
+    },
+    "SFX_Sword_T1_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T1_Swing_RL_Local.json"
+    },
+    "SFX_Sword_T2_Block_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Block_Local.json"
+    },
+    "SFX_Sword_T2_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/Impacts/SFX_Sword_T2_Impact.json"
+    },
+    "SFX_Sword_T2_Lunge_Charge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Lunge_Charge_Local.json"
+    },
+    "SFX_Sword_T2_Lunge_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Lunge_Local.json"
+    },
+    "SFX_Sword_T2_Signature_Part_1": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Signature_Part_1.json"
+    },
+    "SFX_Sword_T2_Signature_Part_1_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Signature_Part_1_Local.json"
+    },
+    "SFX_Sword_T2_Signature_Part_2": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Signature_Part_2.json"
+    },
+    "SFX_Sword_T2_Signature_Part_2_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Signature_Part_2_Local.json"
+    },
+    "SFX_Sword_T2_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Swing.json"
+    },
+    "SFX_Sword_T2_Swing_Down": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Swing_Down.json"
+    },
+    "SFX_Sword_T2_Swing_Down_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Swing_Down_Local.json"
+    },
+    "SFX_Sword_T2_Swing_LR_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Swing_LR_Local.json"
+    },
+    "SFX_Sword_T2_Swing_RL_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Sword/SFX_Sword_T2_Swing_RL_Local.json"
+    },
+    "SFX_T1_Impact_Blunt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Shared/Impacts/SFX_T1_Impact_Blunt.json"
+    },
+    "SFX_Tall_Grass_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Tall_Grass/SFX_Tall_Grass_MoveIn.json"
+    },
+    "SFX_Test_Blip_A": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Test/SFX_Test_Blip_A.json"
+    },
+    "SFX_Test_Blip_B": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Test/SFX_Test_Blip_B.json"
+    },
+    "SFX_Test_Blip_C": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Test/SFX_Test_Blip_C.json"
+    },
+    "SFX_Tetrabird_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Tetrabird/SFX_Tetrabird_Alerted.json"
+    },
+    "SFX_Tetrabird_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Tetrabird/SFX_Tetrabird_Death.json"
+    },
+    "SFX_Tetrabird_Flee": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Tetrabird/SFX_Tetrabird_Flee.json"
+    },
+    "SFX_Tetrabird_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Tetrabird/SFX_Tetrabird_Hurt.json"
+    },
+    "SFX_Tetrabird_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Tetrabird/SFX_Tetrabird_Run.json"
+    },
+    "SFX_Tiger_Sabertooth_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Tiger_Sabertooth/SFX_Tiger_Sabertooth_Alerted.json"
+    },
+    "SFX_Tiger_Sabertooth_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Tiger_Sabertooth/SFX_Tiger_Sabertooth_Death.json"
+    },
+    "SFX_Tiger_Sabertooth_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Tiger_Sabertooth/SFX_Tiger_Sabertooth_Hurt.json"
+    },
+    "SFX_Tiger_Sabertooth_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Tiger_Sabertooth/SFX_Tiger_Sabertooth_Run.json"
+    },
+    "SFX_Toad_Rhino_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino/SFX_Toad_Rhino_Alerted.json"
+    },
+    "SFX_Toad_Rhino_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino/SFX_Toad_Rhino_Death.json"
+    },
+    "SFX_Toad_Rhino_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino/SFX_Toad_Rhino_Hurt.json"
+    },
+    "SFX_Toad_Rhino_Magma_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino_Magma/SFX_Toad_Rhino_Magma_Alerted.json"
+    },
+    "SFX_Toad_Rhino_Magma_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino_Magma/SFX_Toad_Rhino_Magma_Death.json"
+    },
+    "SFX_Toad_Rhino_Magma_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino_Magma/SFX_Toad_Rhino_Magma_Hurt.json"
+    },
+    "SFX_Toad_Rhino_Magma_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino_Magma/SFX_Toad_Rhino_Magma_Run.json"
+    },
+    "SFX_Toad_Rhino_Magma_Tongue_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino_Magma/SFX_Toad_Rhino_Magma_Tongue_Impact.json"
+    },
+    "SFX_Toad_Rhino_Magma_Tongue_Whoosh": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino_Magma/SFX_Toad_Rhino_Magma_Tongue_Whoosh.json"
+    },
+    "SFX_Toad_Rhino_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino/SFX_Toad_Rhino_Run.json"
+    },
+    "SFX_Toad_Rhino_Tongue_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino/SFX_Toad_Rhino_Tongue_Impact.json"
+    },
+    "SFX_Toad_Rhino_Tongue_Whoosh": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Toad_Rhino/SFX_Toad_Rhino_Tongue_Whoosh.json"
+    },
+    "SFX_Tombstone_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Tombstone/SFX_Tombstone_Break.json"
+    },
+    "SFX_Tool_T1_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/Shared/SFX_Tool_T1_Swing.json"
+    },
+    "SFX_Tool_Watering_Can_Water": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Tools/SFX_Tool_Watering_Can_Water.json"
+    },
+    "SFX_Torch_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Torch/SFX_Torch_Break.json"
+    },
+    "SFX_Torch_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Torch/SFX_Torch_Build.json"
+    },
+    "SFX_Torch_Default_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Torch/SFX_Torch_Default_Loop.json"
+    },
+    "SFX_Torch_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Torch/SFX_Torch_Impact.json"
+    },
+    "SFX_Torch_Off": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Torch/SFX_Torch_Off.json"
+    },
+    "SFX_Torch_On_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Torch/SFX_Torch_On_Loop.json"
+    },
+    "SFX_Torch_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Torch/SFX_Torch_Swing.json"
+    },
+    "SFX_Torch_Swing_Left_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Utility/SFX_Torch_Swing_Left_Local.json"
+    },
+    "SFX_Torch_Swing_Right_Local": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Utility/SFX_Torch_Swing_Right_Local.json"
+    },
+    "SFX_Tornado": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Staff/SFX_Tornado.json"
+    },
+    "SFX_Trashpile_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Trashpile/SFX_Trashpile_Land.json"
+    },
+    "SFX_Trashpile_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Trashpile/SFX_Trashpile_Walk.json"
+    },
+    "SFX_Trork_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Alerted.json"
+    },
+    "SFX_Trork_Chieftain_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork_Chieftain/SFX_Trork_Chieftain_Alerted.json"
+    },
+    "SFX_Trork_Chieftain_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork_Chieftain/SFX_Trork_Chieftain_Death.json"
+    },
+    "SFX_Trork_Chieftain_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork_Chieftain/SFX_Trork_Chieftain_Hurt.json"
+    },
+    "SFX_Trork_Chieftain_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork_Chieftain/SFX_Trork_Chieftain_Run.json"
+    },
+    "SFX_Trork_Chieftain_Search": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork_Chieftain/SFX_Trork_Chieftain_Search.json"
+    },
+    "SFX_Trork_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Death.json"
+    },
+    "SFX_Trork_Exertion": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Exertion.json"
+    },
+    "SFX_Trork_Hurt_01": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Hurt_01.json"
+    },
+    "SFX_Trork_Hurt_02": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Hurt_02.json"
+    },
+    "SFX_Trork_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Run.json"
+    },
+    "SFX_Trork_Search": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Search.json"
+    },
+    "SFX_Trork_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Intelligent/Trork/SFX_Trork_Sleep.json"
+    },
+    "SFX_Trork_Throwing_Axe": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Throwing_Axe/NPC/SFX_Trork_Throwing_Axe.json"
+    },
+    "SFX_Unarmed_Impact": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Unarmed/SFX_Unarmed_Impact.json"
+    },
+    "SFX_Unarmed_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Unarmed/SFX_Unarmed_Swing.json"
+    },
+    "SFX_Unbreakable_Block": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/SFX_Unbreakable_Block.json"
+    },
+    "SFX_Vulture_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Vulture/SFX_Vulture_Alerted.json"
+    },
+    "SFX_Vulture_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Vulture/SFX_Vulture_Death.json"
+    },
+    "SFX_Vulture_Flee": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Vulture/SFX_Vulture_Flee.json"
+    },
+    "SFX_Vulture_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Vulture/SFX_Vulture_Hurt.json"
+    },
+    "SFX_Wand_Fire_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Wand/SFX_Wand_Fire_Shoot.json"
+    },
+    "SFX_Wand_Ice_Shoot": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Wand/SFX_Wand_Ice_Shoot.json"
+    },
+    "SFX_Warthog_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Alerted.json"
+    },
+    "SFX_Warthog_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Death.json"
+    },
+    "SFX_Warthog_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Hurt.json"
+    },
+    "SFX_Warthog_Piglet_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Piglet_Alerted.json"
+    },
+    "SFX_Warthog_Piglet_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Piglet_Death.json"
+    },
+    "SFX_Warthog_Piglet_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Piglet_Hurt.json"
+    },
+    "SFX_Warthog_Piglet_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Piglet_Run.json"
+    },
+    "SFX_Warthog_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Run.json"
+    },
+    "SFX_Warthog_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Sleep.json"
+    },
+    "SFX_Warthog_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Livestock/Warthog/SFX_Warthog_Walk.json"
+    },
+    "SFX_Water_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Water/SFX_Water_MoveIn.json"
+    },
+    "SFX_Water_MoveOut": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Water/SFX_Water_MoveOut.json"
+    },
+    "SFX_Weapon_Bench_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Weapon_Bench_Close.json"
+    },
+    "SFX_Weapon_Bench_Craft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Weapon_Bench_Craft.json"
+    },
+    "SFX_Weapon_Bench_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Weapon_Bench_Open.json"
+    },
+    "SFX_Weapon_Charge_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Weapons/Charge/SFX_Weapon_Charge_Swing.json"
+    },
+    "SFX_Web_MoveIn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Web/SFX_Web_MoveIn.json"
+    },
+    "SFX_Window_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Window/SFX_Window_Break.json"
+    },
+    "SFX_Window_Stone_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Window/SFX_Window_Stone_Break.json"
+    },
+    "SFX_Wisp_Lamp_Loop": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Wisp_Lamp/SFX_Wisp_Lamp_Loop.json"
+    },
+    "SFX_Wolf_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Wolf/SFX_Wolf_Alerted.json"
+    },
+    "SFX_Wolf_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Wolf/SFX_Wolf_Death.json"
+    },
+    "SFX_Wolf_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Wolf/SFX_Wolf_Hurt.json"
+    },
+    "SFX_Wolf_Run": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Wolf/SFX_Wolf_Run.json"
+    },
+    "SFX_Wolf_Sleep": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Wolf/SFX_Wolf_Sleep.json"
+    },
+    "SFX_Wood_Break": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Wood/SFX_Wood_Break.json"
+    },
+    "SFX_Wood_Build": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Wood/SFX_Wood_Build.json"
+    },
+    "SFX_Wood_Hit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Wood/SFX_Wood_Hit.json"
+    },
+    "SFX_Wood_Land": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Wood/SFX_Wood_Land.json"
+    },
+    "SFX_Wood_Walk": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/BlockSounds/Wood/SFX_Wood_Walk.json"
+    },
+    "SFX_Woodpecker_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Woodpecker/SFX_Woodpecker_Death.json"
+    },
+    "SFX_Woodpecker_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Birds/Woodpecker/SFX_Woodpecker_Hurt.json"
+    },
+    "SFX_Workbench_Close": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Workbench_Close.json"
+    },
+    "SFX_Workbench_Craft": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Workbench_Craft.json"
+    },
+    "SFX_Workbench_Open": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/UI/Interactions/Benches/SFX_Workbench_Open.json"
+    },
+    "SFX_Workbench_Upgrade_Complete_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Workbench_Upgrade_Complete_Default.json"
+    },
+    "SFX_Workbench_Upgrade_Start_Default": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/Crafting/SFX_Workbench_Upgrade_Start_Default.json"
+    },
+    "SFX_Yeti_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Beasts/Yeti/SFX_Yeti_Alerted.json"
+    },
+    "SFX_Z1_Emit_Forest_Autumn_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Autumn_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Forest_Autumn_Day_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Autumn_Day_Insects.json"
+    },
+    "SFX_Z1_Emit_Forest_Autumn_Day_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Autumn_Day_Wind.json"
+    },
+    "SFX_Z1_Emit_Forest_Azure_Day_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Azure_Day_Insects.json"
+    },
+    "SFX_Z1_Emit_Forest_Azure_Day_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Azure_Day_Wind.json"
+    },
+    "SFX_Z1_Emit_Forest_Gen_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Gen_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Forest_Gen_Day_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Gen_Day_Insects.json"
+    },
+    "SFX_Z1_Emit_Forest_Gen_Day_Winds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Gen_Day_Winds.json"
+    },
+    "SFX_Z1_Emit_Forest_Moss_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Moss_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Forest_Moss_Day_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Moss_Day_Insects.json"
+    },
+    "SFX_Z1_Emit_Forest_Moss_Day_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Moss_Day_Wind.json"
+    },
+    "SFX_Z1_Emit_Forest_Night_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Night_Birds.json"
+    },
+    "SFX_Z1_Emit_Forest_Night_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Night_Insects.json"
+    },
+    "SFX_Z1_Emit_Forest_Night_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Forest_Night_Wind.json"
+    },
+    "SFX_Z1_Emit_Kweebec_Village_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Kweebec_Village_Wind.json"
+    },
+    "SFX_Z1_Emit_Mountain_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Mountain_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Plains_Gen_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Plains_Gen_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Plains_Gen_Day_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Plains_Gen_Day_Insects.json"
+    },
+    "SFX_Z1_Emit_Plains_Gen_Day_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Plains_Gen_Day_Wind.json"
+    },
+    "SFX_Z1_Emit_Plains_Gen_Night_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Plains_Gen_Night_Birds.json"
+    },
+    "SFX_Z1_Emit_Plains_Gen_Night_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Plains_Gen_Night_Insects.json"
+    },
+    "SFX_Z1_Emit_Plains_Gen_Night_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Plains_Gen_Night_Wind.json"
+    },
+    "SFX_Z1_Emit_Shore_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Shore_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Shore_Waves": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Shore_Waves.json"
+    },
+    "SFX_Z1_Emit_Shore_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Shore_Wind.json"
+    },
+    "SFX_Z1_Emit_Swamp_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Swamp_Day_Birds.json"
+    },
+    "SFX_Z1_Emit_Swamp_Day_Frogs": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Swamp_Day_Frogs.json"
+    },
+    "SFX_Z1_Emit_Swamp_Day_Insects": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Swamp_Day_Insects.json"
+    },
+    "SFX_Z1_Emit_Swamp_Day_Wind": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Swamp_Day_Wind.json"
+    },
+    "SFX_Z1_Emit_Swamp_Night_Frogs": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Swamp_Night_Frogs.json"
+    },
+    "SFX_Z1_Emit_Trork_Camp": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Emit_Trork_Camp.json"
+    },
+    "SFX_Z1_Shore_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z1/SFX_Z1_Shore_Day_Birds.json"
+    },
+    "SFX_Z3_Emit_Cave_Ice_Crackle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Cave_Ice_Crackle.json"
+    },
+    "SFX_Z3_Emit_Cave_Ice_Rumble": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Cave_Ice_Rumble.json"
+    },
+    "SFX_Z3_Emit_Cave_Ice_Stress": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Cave_Ice_Stress.json"
+    },
+    "SFX_Z3_Emit_Cave_Snow_Crackle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Cave_Snow_Crackle.json"
+    },
+    "SFX_Z3_Emit_Cave_Snow_Melt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Cave_Snow_Melt.json"
+    },
+    "SFX_Z3_Emit_Hedera_FX": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Hedera_FX.json"
+    },
+    "SFX_Z3_Emit_Hedera_PlantRustle": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Hedera_PlantRustle.json"
+    },
+    "SFX_Z3_Emit_Tree_Creak": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Tree_Creak.json"
+    },
+    "SFX_Z3_Emit_Wind_Leaves": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Wind_Leaves.json"
+    },
+    "SFX_Z3_Emit_Wind_Leaves_Stereo": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Emit_Wind_Leaves_Stereo.json"
+    },
+    "SFX_Z3_Forest_Day_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Forest_Day_Birds.json"
+    },
+    "SFX_Z3_Forest_Day_General": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Forest_Day_General.json"
+    },
+    "SFX_Z3_Forest_Night_Birds": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/Environments/Z3/SFX_Z3_Forest_Night_Birds.json"
+    },
+    "SFX_Zombie_Alerted": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Alerted.json"
+    },
+    "SFX_Zombie_Attack_Bite": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Attack_Bite.json"
+    },
+    "SFX_Zombie_Attack_Swing": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Attack_Swing.json"
+    },
+    "SFX_Zombie_Death": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Death.json"
+    },
+    "SFX_Zombie_Despawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Despawn.json"
+    },
+    "SFX_Zombie_Hurt": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Hurt.json"
+    },
+    "SFX_Zombie_Pursuit": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Pursuit.json"
+    },
+    "SFX_Zombie_ScratchBack": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_ScratchBack.json"
+    },
+    "SFX_Zombie_Spawn": {
+      "sourcedFromFile": "/Server/Audio/SoundEvents/SFX/NPC/Undead/Zombie/SFX_Zombie_Spawn.json"
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "CameraShake",
+  "path": "Server/Camera/CameraShake",
+  "extension": ".json",
+  "assetCount": 49,
+  "fileCount": 49,
+  "values": {
+    "Battleaxe_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Bash.json"
+    },
+    "Battleaxe_Downstrike": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Downstrike.json"
+    },
+    "Battleaxe_Downstrike_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Downstrike_Jump.json"
+    },
+    "Battleaxe_Frontflip_Chop": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Frontflip_Chop.json"
+    },
+    "Battleaxe_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Jump.json"
+    },
+    "Battleaxe_Sweep": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Sweep.json"
+    },
+    "Battleaxe_Swing_Diagonal_Left": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Diagonal_Left.json"
+    },
+    "Battleaxe_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Diagonal_Right.json"
+    },
+    "Battleaxe_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Horizontal.json"
+    },
+    "Battleaxe_Swing_Vertical": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Vertical.json"
+    },
+    "Battleaxe_Whirlwind": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Whirlwind.json"
+    },
+    "Block_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Block/Block_Swing_Diagonal_Right.json"
+    },
+    "Crossbow_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Crossbow/Crossbow_Bash.json"
+    },
+    "Daggers_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Bash.json"
+    },
+    "Daggers_Dash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Dash.json"
+    },
+    "Daggers_Dash_Side": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Dash_Side.json"
+    },
+    "Daggers_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Jump.json"
+    },
+    "Daggers_Land": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Land.json"
+    },
+    "Daggers_Slash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Slash.json"
+    },
+    "Daggers_Stab": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Stab.json"
+    },
+    "Daggers_Sweep": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Sweep.json"
+    },
+    "Daggers_Swing_Diagonal_Left": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Swing_Diagonal_Left.json"
+    },
+    "Daggers_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Swing_Diagonal_Right.json"
+    },
+    "Daggers_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Swing_Horizontal.json"
+    },
+    "Damage": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Damage/Damage.json"
+    },
+    "Damage_Fall": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Damage/Damage_Fall.json"
+    },
+    "Handgun_Shoot": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Handgun/Handgun_Shoot.json"
+    },
+    "Hatchet_Chop": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Hatchet/Hatchet_Chop.json"
+    },
+    "Hedera_Scream": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/NPC/Hedera_Scream.json"
+    },
+    "Hoe_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Hoe/Hoe_Swing_Horizontal.json"
+    },
+    "Impact": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Impact/Impact.json"
+    },
+    "Impact_Light": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Impact/Impact_Light.json"
+    },
+    "Impact_Strong": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Impact/Impact_Strong.json"
+    },
+    "Mace_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Bash.json"
+    },
+    "Mace_Explode": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Explode.json"
+    },
+    "Mace_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Jump.json"
+    },
+    "Mace_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Swing_Horizontal.json"
+    },
+    "Pickaxe_Mine": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Pickaxe/Pickaxe_Mine.json"
+    },
+    "Pickaxe_Mine_Impact": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Pickaxe/Pickaxe_Mine_Impact.json"
+    },
+    "Shield_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Shield/Shield_Bash.json"
+    },
+    "Shortbow_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Shortbow/Shortbow_Bash.json"
+    },
+    "Shovel_Dig": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Shovel/Shovel_Dig.json"
+    },
+    "Sword_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Bash.json"
+    },
+    "Sword_Spin": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Spin.json"
+    },
+    "Sword_Stab": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Stab.json"
+    },
+    "Sword_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Swing_Diagonal_Right.json"
+    },
+    "Sword_Swing_Vertical": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Swing_Vertical.json"
+    },
+    "Unarmed_Block_Impact": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Unarmed/Unarmed_Block_Impact.json"
+    },
+    "Unarmed_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Unarmed/Unarmed_Swing_Horizontal.json"
+    }
+  }
+}

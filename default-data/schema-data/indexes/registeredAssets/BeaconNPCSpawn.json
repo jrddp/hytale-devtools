@@ -1,0 +1,237 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "BeaconNPCSpawn",
+  "path": "Server/NPC/Spawn/Beacons",
+  "extension": ".json",
+  "assetCount": 75,
+  "fileCount": 75,
+  "values": {
+    "Edible_Goblin_Scrapper": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Edible_Goblin_Scrapper.json"
+    },
+    "Edible_Rat": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Edible_Rat.json"
+    },
+    "Goblin_Duke_Phase_1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Goblin_Duke_Phase_1.json"
+    },
+    "Goblin_Duke_Phase_2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Goblin_Duke_Phase_2.json"
+    },
+    "Goblin_Duke_Phase_3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Goblin_Duke_Phase_3.json"
+    },
+    "Portal_Void_Event_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Portals/Portal_Void_Event_Critter.json"
+    },
+    "Portal_Void_Event_Major": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Portals/Portal_Void_Event_Major.json"
+    },
+    "Portal_Void_Event_Minor": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Portals/Portal_Void_Event_Minor.json"
+    },
+    "Test_Kill_Spawn_Beacon_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Tests/Test_Kill_Spawn_Beacon_Marker.json"
+    },
+    "Zone1_Cave_Forests_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier2/Zone1_Cave_Forests_Aggro.json"
+    },
+    "Zone1_Cave_Forests_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier2/Zone1_Cave_Forests_Passive.json"
+    },
+    "Zone1_Cave_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave/Zone1_Cave_Goblin.json"
+    },
+    "Zone1_Cave_Plains_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier1/Zone1_Cave_Plains_Aggro.json"
+    },
+    "Zone1_Cave_Plains_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier1/Zone1_Cave_Plains_Passive.json"
+    },
+    "Zone1_Cave_Rat": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave/Zone1_Cave_Rat.json"
+    },
+    "Zone1_Cave_Spider": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave/Zone1_Cave_Spider.json"
+    },
+    "Zone1_Cave_Spider_Larva": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave/Zone1_Cave_Spider_Larva.json"
+    },
+    "Zone1_Cave_Swamps_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier3/Zone1_Cave_Swamps_Aggro.json"
+    },
+    "Zone1_Cave_Swamps_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier3/Zone1_Cave_Swamps_Passive.json"
+    },
+    "Zone1_Cave_Volcanic_T1_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier1/Zone1_Cave_Volcanic_T1_Aggro.json"
+    },
+    "Zone1_Cave_Volcanic_T1_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier1/Zone1_Cave_Volcanic_T1_Goblin.json"
+    },
+    "Zone1_Cave_Volcanic_T1_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier1/Zone1_Cave_Volcanic_T1_Passive.json"
+    },
+    "Zone1_Cave_Volcanic_T2_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier2/Zone1_Cave_Volcanic_T2_Aggro.json"
+    },
+    "Zone1_Cave_Volcanic_T2_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier2/Zone1_Cave_Volcanic_T2_Goblin.json"
+    },
+    "Zone1_Cave_Volcanic_T2_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier2/Zone1_Cave_Volcanic_T2_Passive.json"
+    },
+    "Zone1_Cave_Volcanic_T3_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier3/Zone1_Cave_Volcanic_T3_Aggro.json"
+    },
+    "Zone1_Cave_Volcanic_T3_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier3/Zone1_Cave_Volcanic_T3_Goblin.json"
+    },
+    "Zone1_Cave_Volcanic_T3_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Cave_Tier3/Zone1_Cave_Volcanic_T3_Passive.json"
+    },
+    "Zone1_Elemental_Circle_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Elemental_Circle_Tier1.json"
+    },
+    "Zone1_Elemental_Circle_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Elemental_Circle_Tier2.json"
+    },
+    "Zone1_Elemental_Circle_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Elemental_Circle_Tier3.json"
+    },
+    "Zone1_Mineshafts_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Mineshafts/Zone1_Mineshafts_Aggro.json"
+    },
+    "Zone1_Mineshafts_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Mineshafts/Zone1_Mineshafts_Passive.json"
+    },
+    "Zone1_Player_Local": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone1/Zone1_Player_Local.json"
+    },
+    "Zone2_Cave_Deserts_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier3/Zone2_Cave_Deserts_Aggro.json"
+    },
+    "Zone2_Cave_Deserts_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier3/Zone2_Cave_Deserts_Passive.json"
+    },
+    "Zone2_Cave_Rat": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave/Zone2_Cave_Rat.json"
+    },
+    "Zone2_Cave_Savanna_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier1/Zone2_Cave_Savanna_Aggro.json"
+    },
+    "Zone2_Cave_Savanna_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier1/Zone2_Cave_Savanna_Passive.json"
+    },
+    "Zone2_Cave_Scrub_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier2/Zone2_Cave_Scrub_Aggro.json"
+    },
+    "Zone2_Cave_Scrub_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier2/Zone2_Cave_Scrub_Passive.json"
+    },
+    "Zone2_Cave_Volcanic_T1_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier1/Zone2_Cave_Volcanic_T1_Aggro.json"
+    },
+    "Zone2_Cave_Volcanic_T1_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier1/Zone2_Cave_Volcanic_T1_Goblin.json"
+    },
+    "Zone2_Cave_Volcanic_T1_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier1/Zone2_Cave_Volcanic_T1_Passive.json"
+    },
+    "Zone2_Cave_Volcanic_T2_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier2/Zone2_Cave_Volcanic_T2_Aggro.json"
+    },
+    "Zone2_Cave_Volcanic_T2_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier2/Zone2_Cave_Volcanic_T2_Goblin.json"
+    },
+    "Zone2_Cave_Volcanic_T2_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier2/Zone2_Cave_Volcanic_T2_Passive.json"
+    },
+    "Zone2_Cave_Volcanic_T3_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier3/Zone2_Cave_Volcanic_T3_Aggro.json"
+    },
+    "Zone2_Cave_Volcanic_T3_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier3/Zone2_Cave_Volcanic_T3_Goblin.json"
+    },
+    "Zone2_Cave_Volcanic_T3_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Cave_Tier3/Zone2_Cave_Volcanic_T3_Passive.json"
+    },
+    "Zone2_Elemental_Circle_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Elemental_Circle_Tier1.json"
+    },
+    "Zone2_Elemental_Circle_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Elemental_Circle_Tier2.json"
+    },
+    "Zone2_Elemental_Circle_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone2/Zone2_Elemental_Circle_Tier3.json"
+    },
+    "Zone3_Cave_Forests_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier2/Zone3_Cave_Forests_Aggro.json"
+    },
+    "Zone3_Cave_Forests_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier2/Zone3_Cave_Forests_Passive.json"
+    },
+    "Zone3_Cave_Glacial_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier3/Zone3_Cave_Glacial_Aggro.json"
+    },
+    "Zone3_Cave_Glacial_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier3/Zone3_Cave_Glacial_Passive.json"
+    },
+    "Zone3_Cave_Tundra_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier1/Zone3_Cave_Tundra_Aggro.json"
+    },
+    "Zone3_Cave_Tundra_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier1/Zone3_Cave_Tundra_Passive.json"
+    },
+    "Zone3_Cave_Volcanic_T1_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier1/Zone3_Cave_Volcanic_T1_Aggro.json"
+    },
+    "Zone3_Cave_Volcanic_T1_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier1/Zone3_Cave_Volcanic_T1_Passive.json"
+    },
+    "Zone3_Cave_Volcanic_T2_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier2/Zone3_Cave_Volcanic_T2_Aggro.json"
+    },
+    "Zone3_Cave_Volcanic_T2_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier2/Zone3_Cave_Volcanic_T2_Passive.json"
+    },
+    "Zone3_Cave_Volcanic_T3_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier3/Zone3_Cave_Volcanic_T3_Aggro.json"
+    },
+    "Zone3_Cave_Volcanic_T3_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Cave_Tier3/Zone3_Cave_Volcanic_T3_Passive.json"
+    },
+    "Zone3_Elemental_Circle_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Elemental_Circle_Tier1.json"
+    },
+    "Zone3_Elemental_Circle_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Elemental_Circle_Tier2.json"
+    },
+    "Zone3_Elemental_Circle_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Elemental_Circle_Tier3.json"
+    },
+    "Zone3_Glacial_Henges_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone3/Zone3_Glacial_Henges_Aggro.json"
+    },
+    "Zone4_Cave_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone4/Zone4_Cave/Zone4_Cave_Aggro.json"
+    },
+    "Zone4_Cave_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone4/Zone4_Cave/Zone4_Cave_Passive.json"
+    },
+    "Zone4_Cave_Volcanic_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone4/Zone4_Cave_Volcanic/Zone4_Cave_Volcanic_Aggro.json"
+    },
+    "Zone4_Cave_Volcanic_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone4/Zone4_Cave_Volcanic/Zone4_Cave_Volcanic_Passive.json"
+    },
+    "Zone4_Sewers_Aggro": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone4/Zone4_Sewers/Zone4_Sewers_Aggro.json"
+    },
+    "Zone4_Sewers_Passive": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Beacons/Zone4/Zone4_Sewers/Zone4_Sewers_Passive.json"
+    }
+  }
+}

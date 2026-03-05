@@ -60,13 +60,17 @@ import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.lookup.ACodecMapCodec;
 import com.hypixel.hytale.codec.schema.SchemaContext;
 import com.hypixel.hytale.codec.schema.config.Schema;
+import com.hypixel.hytale.common.plugin.PluginManifest;
 import com.hypixel.hytale.common.util.java.ManifestUtil;
 import com.hypixel.hytale.protocol.packets.asseteditor.AssetEditorAssetType;
 import com.hypixel.hytale.server.core.asset.AssetRegistryLoader;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.plugin.PluginBase;
+import com.hypixel.hytale.server.core.plugin.PluginManager;
 import com.hypixel.hytale.server.core.util.BsonUtil;
 
 public final class AssetRegistryExportService {
+    private static final String EXPORT_MANIFEST_FILE = "export_manifest";
     private static final String SCHEMA_MAPPINGS_FILE = "schema_mappings";
     private static final String SCHEMAS_DIRECTORY = "schemas";
     private static final String INDEXES_DIRECTORY = "indexes";
@@ -156,7 +160,8 @@ public final class AssetRegistryExportService {
     public static void exportSnapshot(@Nonnull JavaPlugin plugin, @Nullable Path outputDirectoryOverride) {
         Path outputDirectory = resolveOutputDirectory(plugin, outputDirectoryOverride);
         String hytaleVersion = resolveHytaleServerVersion();
-        if (shouldSkipExport(plugin, outputDirectory, hytaleVersion)) {
+        ExportManifestSnapshot manifestSnapshot = createExportManifestSnapshot(hytaleVersion);
+        if (shouldSkipExport(plugin, outputDirectory, manifestSnapshot)) {
             return;
         }
 
@@ -175,7 +180,7 @@ public final class AssetRegistryExportService {
             List<IndexShard> indexShards = extractReferenceIndexesStage(context.stores, context.schemaDocuments,
                     propertyNodes);
 
-            writeArtifactsStage(outputDirectory, context, indexShards, hytaleVersion);
+            writeArtifactsStage(outputDirectory, context, indexShards, manifestSnapshot);
             cleanupRemovedArtifactsStage(outputDirectory);
 
             plugin.getLogger().at(Level.INFO).log(
@@ -197,45 +202,78 @@ public final class AssetRegistryExportService {
     private static boolean shouldSkipExport(
             @Nonnull JavaPlugin plugin,
             @Nonnull Path outputDirectory,
-            @Nonnull String currentHytaleVersion) {
-        String existingHytaleVersion = readExistingSnapshotHytaleVersion(outputDirectory);
-        if (existingHytaleVersion == null || !existingHytaleVersion.equals(currentHytaleVersion)) {
+            @Nonnull ExportManifestSnapshot currentManifestSnapshot) {
+        ExportManifestSnapshot existingManifestSnapshot = readExistingExportManifest(outputDirectory);
+        if (existingManifestSnapshot == null
+                || !Objects.equals(existingManifestSnapshot.hytaleVersion, currentManifestSnapshot.hytaleVersion)
+                || !existingManifestSnapshot.loadedPlugins.equals(currentManifestSnapshot.loadedPlugins)) {
             return false;
         }
 
         plugin.getLogger().at(Level.INFO).log(
-                "Same-version snapshot assets already found at %s (hytaleVersion=%s); skipping export.",
+                "Snapshot assets already match export manifest at %s (hytaleVersion=%s, loadedPlugins=%d); skipping export.",
                 outputDirectory,
-                currentHytaleVersion);
+                currentManifestSnapshot.hytaleVersion,
+                currentManifestSnapshot.loadedPlugins.size());
         return true;
     }
 
     @Nullable
-    private static String readExistingSnapshotHytaleVersion(@Nonnull Path outputDirectory) {
-        Path schemaMappingsPath = outputDirectory.resolve(SCHEMA_MAPPINGS_FILE + ".json");
-        if (!Files.isRegularFile(schemaMappingsPath)) {
+    private static ExportManifestSnapshot readExistingExportManifest(@Nonnull Path outputDirectory) {
+        Path exportManifestPath = outputDirectory.resolve(EXPORT_MANIFEST_FILE + ".json");
+        if (!Files.isRegularFile(exportManifestPath)) {
             return null;
         }
 
         try {
-            String rawJson = Files.readString(schemaMappingsPath, StandardCharsets.UTF_8);
+            String rawJson = Files.readString(exportManifestPath, StandardCharsets.UTF_8);
             if (rawJson.isBlank()) {
                 return null;
             }
 
-            BsonDocument schemaMappingsDocument = BsonDocument.parse(rawJson);
-            BsonValue hytaleVersion = schemaMappingsDocument.get("hytaleVersion");
-            if (hytaleVersion != null && hytaleVersion.isString()) {
-                String value = hytaleVersion.asString().getValue();
-                if (!value.isBlank()) {
-                    return value;
-                }
+            BsonDocument exportManifestDocument = BsonDocument.parse(rawJson);
+            BsonValue hytaleVersion = exportManifestDocument.get("hytaleVersion");
+            BsonValue loadedPlugins = exportManifestDocument.get("loadedPlugins");
+            if (hytaleVersion == null || !hytaleVersion.isString() || loadedPlugins == null || !loadedPlugins.isArray()) {
+                return null;
             }
+
+            return new ExportManifestSnapshot(
+                    hytaleVersion.asString().getValue(),
+                    loadedPlugins.asArray());
         } catch (IOException | RuntimeException ignored) {
             // If existing metadata is unreadable, proceed with a full export.
         }
 
         return null;
+    }
+
+    @Nonnull
+    private static ExportManifestSnapshot createExportManifestSnapshot(@Nonnull String hytaleVersion) {
+        return new ExportManifestSnapshot(hytaleVersion, collectLoadedPlugins());
+    }
+
+    @Nonnull
+    private static BsonArray collectLoadedPlugins() {
+        PluginManager pluginManager = PluginManager.get();
+        if (pluginManager == null) {
+            return new BsonArray();
+        }
+
+        List<PluginBase> plugins = new ArrayList<>(pluginManager.getPlugins());
+        plugins.sort(Comparator.comparing(plugin -> plugin.getIdentifier().toString()));
+
+        BsonArray loadedPlugins = new BsonArray();
+        for (PluginBase plugin : plugins) {
+            PluginManifest manifest = plugin.getManifest();
+            BsonDocument pluginDocument = new BsonDocument();
+            pluginDocument.put("identifier", new BsonString(plugin.getIdentifier().toString()));
+            pluginDocument.put(
+                    "version",
+                    new BsonString(manifest.getVersion() == null ? "" : manifest.getVersion().toString()));
+            loadedPlugins.add(pluginDocument);
+        }
+        return loadedPlugins;
     }
 
     @Nonnull
@@ -1990,19 +2028,31 @@ public final class AssetRegistryExportService {
             @Nonnull Path outputDirectory,
             @Nonnull ExportContext context,
             @Nonnull List<IndexShard> indexShards,
-            @Nonnull String hytaleVersion) throws IOException {
+            @Nonnull ExportManifestSnapshot manifestSnapshot) throws IOException {
         Files.createDirectories(outputDirectory);
 
         String generatedAt = Instant.now().toString();
 
         BsonDocument schemaMappingsDocument = new BsonDocument();
-        schemaMappingsDocument.put("hytaleVersion", new BsonString(hytaleVersion));
+        schemaMappingsDocument.put("hytaleVersion", new BsonString(manifestSnapshot.hytaleVersion));
         schemaMappingsDocument.put("generatedAt", new BsonString(generatedAt));
         schemaMappingsDocument.put("schemaMappings", context.schemaMappings);
         writeJson(outputDirectory, SCHEMA_MAPPINGS_FILE, schemaMappingsDocument);
         writeSchemas(outputDirectory, context.schemaDocuments);
 
-        writeIndexArtifacts(outputDirectory, indexShards, generatedAt, hytaleVersion);
+        writeIndexArtifacts(outputDirectory, indexShards, generatedAt, manifestSnapshot.hytaleVersion);
+        writeExportManifest(outputDirectory, manifestSnapshot, generatedAt);
+    }
+
+    private static void writeExportManifest(
+            @Nonnull Path outputDirectory,
+            @Nonnull ExportManifestSnapshot manifestSnapshot,
+            @Nonnull String exportedAt) {
+        BsonDocument exportManifestDocument = new BsonDocument();
+        exportManifestDocument.put("hytaleVersion", new BsonString(manifestSnapshot.hytaleVersion));
+        exportManifestDocument.put("loadedPlugins", manifestSnapshot.loadedPlugins);
+        exportManifestDocument.put("exportedAt", new BsonString(exportedAt));
+        writeJson(outputDirectory, EXPORT_MANIFEST_FILE, exportManifestDocument);
     }
 
     private static void writeIndexArtifacts(
@@ -2648,6 +2698,16 @@ public final class AssetRegistryExportService {
             this.schemaMappings = schemaMappings;
             this.schemaDocuments = schemaDocuments;
             this.stores = stores;
+        }
+    }
+
+    private static final class ExportManifestSnapshot {
+        private final String hytaleVersion;
+        private final BsonArray loadedPlugins;
+
+        private ExportManifestSnapshot(@Nonnull String hytaleVersion, @Nonnull BsonArray loadedPlugins) {
+            this.hytaleVersion = hytaleVersion;
+            this.loadedPlugins = loadedPlugins;
         }
     }
 

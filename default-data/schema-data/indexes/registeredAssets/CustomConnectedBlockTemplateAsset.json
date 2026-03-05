@@ -1,0 +1,45 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-05T05:52:02.375484Z",
+  "indexKind": "registeredAssets",
+  "key": "CustomConnectedBlockTemplateAsset",
+  "path": "Server/Item/CustomConnectedBlockTemplates",
+  "extension": ".json",
+  "assetCount": 11,
+  "fileCount": 11,
+  "values": {
+    "BookshelfConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/BookshelfConnectedBlockTemplate.json"
+    },
+    "BranchConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/BranchConnectedBlockTemplate.json"
+    },
+    "ChestConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/ChestConnectedBlockTemplate.json"
+    },
+    "CobbleCornerConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/CobbleCornerConnectedBlockTemplate.json"
+    },
+    "DoorConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/DoorConnectedBlockTemplate.json"
+    },
+    "DoorLargeConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/DoorLargeConnectedBlockTemplate.json"
+    },
+    "PillarConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/PillarConnectedBlockTemplate.json"
+    },
+    "RailsConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/RailsConnectedBlockTemplate.json"
+    },
+    "RoofConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/RoofConnectedBlockTemplate.json"
+    },
+    "VillageConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/VillageConnectedBlockTemplate.json"
+    },
+    "WallConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/WallConnectedBlockTemplate.json"
+    }
+  }
+}

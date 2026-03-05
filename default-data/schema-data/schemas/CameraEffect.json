@@ -1,0 +1,21 @@
+{
+  "$id": "CameraEffect.json",
+  "title": "CameraEffect",
+  "anyOf": [
+    {
+      "$ref": "common.json#/definitions/CameraShakeEffect"
+    }
+  ],
+  "hytaleSchemaTypeField": {
+    "property": "Type",
+    "values": [
+      "CameraShake"
+    ],
+    "parentPropertyKey": "Parent"
+  },
+  "hytale": {
+    "path": "Camera/CameraEffect",
+    "extension": ".json",
+    "mergesProperties": true
+  }
+}
