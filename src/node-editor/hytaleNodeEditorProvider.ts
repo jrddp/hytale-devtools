@@ -24,10 +24,20 @@ type WebviewAssetUris =
 
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const WEBVIEW_FIND_COMMAND_ID = "editor.action.webvieweditor.showFind";
+const WEBVIEW_SELECT_ALL_COMMAND_ID = "editor.action.selectAll";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
 const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
+
+const NATIVE_WEBVIEW_COMMANDS: ReadonlyArray<{
+  commandId: string;
+  actionType: ActionType;
+  allowEditableTarget?: boolean;
+}> = [
+  { commandId: WEBVIEW_FIND_COMMAND_ID, actionType: "search-nodes", allowEditableTarget: true },
+  { commandId: WEBVIEW_SELECT_ALL_COMMAND_ID, actionType: "select-all" },
+];
 
 export function registerHytaleNodeEditorProvider(
   context: vscode.ExtensionContext,
@@ -53,7 +63,7 @@ export function registerHytaleNodeEditorProvider(
 class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
   private readonly webviewPanelsByDocumentUri = new Map<string, vscode.WebviewPanel>();
   private activeDocumentPath: string | undefined;
-  private nativeFindCommandRegistration: vscode.Disposable | undefined;
+  private readonly nativeCommandRegistrations = new Map<string, vscode.Disposable>();
   private selectionSubscription: vscode.Disposable | undefined;
 
   constructor(private readonly context: vscode.ExtensionContext) {
@@ -82,7 +92,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       if (webviewPanel.active) {
         this.activeDocumentPath = documentPath;
       }
-      this.updateNativeFindCommandRegistration();
+      this.updateNativeCommandRegistrations();
 
       webviewPanel.webview.options = {
         enableScripts: true,
@@ -134,7 +144,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           this.activeDocumentPath = undefined;
         }
 
-        this.updateNativeFindCommandRegistration();
+        this.updateNativeCommandRegistrations();
       });
 
       webviewPanel.onDidDispose(() => {
@@ -149,7 +159,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           this.activeDocumentPath = undefined;
         }
 
-        this.updateNativeFindCommandRegistration();
+        this.updateNativeCommandRegistrations();
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: WebviewToExtensionMessage) => {
@@ -187,7 +197,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   public dispose(): void {
-    this.disposeNativeFindCommandRegistration();
+    this.disposeNativeCommandRegistrations();
     this.selectionSubscription?.dispose();
     this.selectionSubscription = undefined;
   }
@@ -230,27 +240,34 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     return undefined;
   }
 
-  private updateNativeFindCommandRegistration(): void {
+  private updateNativeCommandRegistrations(): void {
     if (this.hasActiveNodeEditorPanel()) {
-      if (!this.nativeFindCommandRegistration) {
-        this.nativeFindCommandRegistration = vscode.commands.registerCommand(
-          WEBVIEW_FIND_COMMAND_ID,
-          () => {
-            void this.triggerQuickActionByCommandId("search-nodes", true);
-          },
+      for (const command of NATIVE_WEBVIEW_COMMANDS) {
+        if (this.nativeCommandRegistrations.has(command.commandId)) {
+          continue;
+        }
+
+        this.nativeCommandRegistrations.set(
+          command.commandId,
+          vscode.commands.registerCommand(command.commandId, () => {
+            void this.triggerQuickActionByCommandId(
+              command.actionType,
+              command.allowEditableTarget ?? false,
+            );
+          }),
         );
       }
       return;
     }
 
-    this.disposeNativeFindCommandRegistration();
+    this.disposeNativeCommandRegistrations();
   }
 
-  private disposeNativeFindCommandRegistration(): void {
-    if (this.nativeFindCommandRegistration) {
-      this.nativeFindCommandRegistration.dispose();
-      this.nativeFindCommandRegistration = undefined;
+  private disposeNativeCommandRegistrations(): void {
+    for (const registration of this.nativeCommandRegistrations.values()) {
+      registration.dispose();
     }
+    this.nativeCommandRegistrations.clear();
   }
 
   private hasActiveNodeEditorPanel(): boolean {

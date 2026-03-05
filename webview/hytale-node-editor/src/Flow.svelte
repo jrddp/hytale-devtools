@@ -128,6 +128,13 @@
           });
           break;
 
+        case "select-all":
+          workspace.selectNodes(
+            workspace.nodes.map(node => node.id),
+            "replace",
+          );
+          break;
+
         case "search-nodes":
           searchMenuInstance = { initialViewport: $state.snapshot(viewport.current) };
           break;

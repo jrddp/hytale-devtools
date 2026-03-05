@@ -7,6 +7,7 @@ export type NodeEditorPlatform = "win" | "linux" | "mac";
 
 export type ActionRequest =
   | { type: "reveal-node"; nodeId?: string; duration?: number } // if nodeId is not provided, does go-to-root
+  | { type: "select-all" }
   | { type: "fit-view"; maxDistanceToRoot?: number; duration?: number }
   | { type: "search-nodes"; withQuery?: string }
   | { type: "auto-position-nodes"; seedNodeIds?: string[] }
