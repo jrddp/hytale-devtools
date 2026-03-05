@@ -155,8 +155,8 @@
     "watch:webview": "vite build --watch --config webview/hytale-node-editor/vite.config.mjs",
     "dev:webview": "vite --config webview/hytale-node-editor/vite.config.mjs",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "build:companion": "node scripts/build-companion.js",
-    "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production && pnpm run build:companion",
+    "build:companion": "cd companion-mod && ./gradlew build",
+    "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.cjs --production && pnpm run build:companion",
     "vsce:package": "vsce package --no-dependencies",
     "vsce:publish": "vsce publish --no-dependencies",
     "build:webview": "vite build --config webview/hytale-node-editor/vite.config.mjs",
@@ -165,17 +165,21 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "test:node-editor-parser": "pnpm run compile-tests:node-editor-parser && printf '{\"type\":\"module\"}\\n' > out-node-editor-parser-tests/package.json && node ./node_modules/mocha/bin/mocha.js \"out-node-editor-parser-tests/test/node-editor-parser/**/*.test.js\"",
+    "test:node-editor-parser:vitest": "vitest --config vitest.config.mts run test/node-editor-parser",
+    "test:node-editor-parser:vitest:watch": "vitest --config vitest.config.mts test/node-editor-parser",
+    "test:node-editor-parse-basic": "node test/node-editor-parser/parse-basic.mjs",
     "check-types": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\" \"webview/hytale-node-editor/src/**/*.svelte\"",
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@tailwindcss/vite": "^4.2.1",
     "@types/d3-flextree": "^2.1.4",
     "@types/mocha": "^10.0.10",
     "@types/node": "~20.19.35",
     "@types/rbush": "^4.0.0",
+    "@types/yauzl": "^2.10.3",
     "@types/vscode": "^1.109.0",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
@@ -186,17 +190,18 @@
     "eslint-plugin-svelte": "^3.15.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.8.1",
-    "svelte": "^5.53.5",
+    "svelte": "^5.53.6",
     "svelte-eslint-parser": "^1.5.1",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "vite": "^5.4.21"
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^15.2.2",
     "@xyflow/svelte": "^1.5.1",
     "d3-flextree": "^2.1.2",
     "lucide-svelte": "^0.564.0",
-    "rbush": "^4.0.1"
+    "rbush": "^4.0.1",
+    "yauzl": "^3.2.0"
   }
 }

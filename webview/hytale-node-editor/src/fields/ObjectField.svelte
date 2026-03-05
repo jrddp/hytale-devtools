@@ -11,10 +11,18 @@
     onconfirm,
     schemaKey,
     subfields,
-  }: FieldProps<object> & { subfields: NodeField[]; nodeId: string; schemaKey: string } = $props();
+    parentSchemaKey,
+  }: FieldProps<object> & {
+    subfields: NodeField[];
+    nodeId: string;
+    schemaKey: string;
+    parentSchemaKey?: string;
+  } = $props();
 
   let value = $derived<object>(initialValue ? structuredClone($state.snapshot(initialValue)) : {});
-  let lastCommittedValue = $derived<object>(initialValue ? structuredClone($state.snapshot(initialValue)) : {});
+  let lastCommittedValue = $derived<object>(
+    initialValue ? structuredClone($state.snapshot(initialValue)) : {},
+  );
 
   function confirmValue(schemaKey: string, childValue: unknown) {
     value[schemaKey] = childValue;
@@ -23,6 +31,10 @@
       onconfirm(lastCommittedValue);
     }
   }
+
+  let newParentSchemaKey = $derived(
+    parentSchemaKey ? parentSchemaKey + "-" + schemaKey : schemaKey,
+  );
 </script>
 
 <div
@@ -34,7 +46,7 @@
     {#each subfields as field}
       <FieldEditor
         {nodeId}
-        parentSchemaKey={schemaKey}
+        parentSchemaKey={newParentSchemaKey}
         {...field}
         value={value[field.schemaKey]}
         onconfirm={value => confirmValue(field.schemaKey, value)}

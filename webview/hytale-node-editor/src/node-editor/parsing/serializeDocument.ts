@@ -30,17 +30,14 @@ export function serializeDocument(): AssetDocumentShape {
   // childId -> parentId
   const incomingConnections: Map<string, string> = new Map();
 
-  edges.forEach((edge) => {
+  edges.forEach(edge => {
     if (!outgoingConnections.has(edge.source)) {
       outgoingConnections.set(edge.source, new Map());
     }
     if (!outgoingConnections.get(edge.source)!.has(edge.sourceHandle)) {
       outgoingConnections.get(edge.source)!.set(edge.sourceHandle, []);
     }
-    outgoingConnections
-      .get(edge.source)!
-      .get(edge.sourceHandle)!
-      .push(edge.target);
+    outgoingConnections.get(edge.source)!.get(edge.sourceHandle)!.push(edge.target);
     incomingConnections.set(edge.target, edge.source);
   });
 
@@ -48,16 +45,11 @@ export function serializeDocument(): AssetDocumentShape {
     map.set(node.id, node);
     return map;
   }, new Map());
-  const unprocessedNodeIds = nodes.reduce(
-    (set, node) => set.add(node.id),
-    new Set<string>(),
-  );
+  const unprocessedNodeIds = nodes.reduce((set, node) => set.add(node.id), new Set<string>());
 
   function recursiveSerializeNode(nodeId: string): NodeAssetJson {
     if (!unprocessedNodeIds.has(nodeId)) {
-      throw new Error(
-        `Circular reference detected for node ${nodeId}. This should not happen.`,
-      );
+      throw new Error(`Circular reference detected for node ${nodeId}. This should not happen.`);
     }
     unprocessedNodeIds.delete(nodeId);
     const node = nodesById.get(nodeId);
@@ -68,26 +60,20 @@ export function serializeDocument(): AssetDocumentShape {
         json.$NodeId = node.id;
         json.$Comment = node.data.comment ?? undefined;
         // # Recursive serialize children
-        node.data.outputPins.forEach((pin) => {
-          const connectedNodeIds =
-            outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
+        node.data.outputPins.forEach(pin => {
+          const connectedNodeIds = outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
           if (connectedNodeIds.length > 0) {
             switch (pin.multiplicity) {
               case "single":
-                json[pin.schemaKey] = recursiveSerializeNode(
-                  connectedNodeIds[0],
-                );
+                json[pin.schemaKey] = recursiveSerializeNode(connectedNodeIds[0]);
                 break;
               case "multiple":
-                json[pin.schemaKey] = connectedNodeIds.map((id) =>
-                  recursiveSerializeNode(id),
-                );
+                json[pin.schemaKey] = connectedNodeIds.map(id => recursiveSerializeNode(id));
                 break;
               case "map":
                 json[pin.schemaKey] = connectedNodeIds.reduce((map, id) => {
                   const node = nodesById.get(id);
-                  const key =
-                    (node.data.titleOverride as string | undefined) ?? id;
+                  const key = (node.data.titleOverride as string | undefined) ?? id;
                   map[key] = recursiveSerializeNode(id);
                   return map;
                 }, {});
@@ -95,7 +81,7 @@ export function serializeDocument(): AssetDocumentShape {
           }
         });
         // # Serialize fields
-        Object.values(node.data.fieldsBySchemaKey).forEach((field) => {
+        Object.values(node.data.fieldsBySchemaKey).forEach(field => {
           json[field.schemaKey] = field.value;
         });
         // # Serialize retained unparsed metadata and schema constants

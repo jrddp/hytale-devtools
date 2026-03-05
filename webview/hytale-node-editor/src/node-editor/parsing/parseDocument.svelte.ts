@@ -4,7 +4,7 @@ import {
   type NodeAssetJson,
 } from "@shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
-import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
+import { type NodeEditorWorkspaceContext, type NodeTemplate } from "@shared/node-editor/workspaceTypes";
 import { type DataNodeType, type FlowEdge, type FlowNode, type GroupNodeType } from "src/common";
 import { DEFAULT_RAW_JSON_TEXT, LINK_OUTPUT_HANDLE_ID } from "src/constants";
 import {
@@ -35,13 +35,16 @@ function groupNodeFromJson(groupJson: GroupJson): GroupNodeType {
   ) as GroupNodeType;
 }
 
-export function parseDocumentText(text: string): WorkspaceState {
-  if (!workspace.context) {
+export function parseDocumentText(
+  text: string,
+  workspaceContext: NodeEditorWorkspaceContext = workspace.context,
+): WorkspaceState {
+  if (!workspaceContext) {
     throw new Error(
       "Workspace context was not set before parsing document text. This should not happen.",
     );
   }
-  const { rootTemplateOrVariantId, variantKindsById, nodeTemplatesById } = workspace.context;
+  const { rootTemplateOrVariantId, variantKindsById, nodeTemplatesById } = workspaceContext;
 
   const documentRoot: AssetDocumentShape = JSON.parse(text);
   if (!isObject(documentRoot)) {
@@ -304,11 +307,6 @@ export function parseDocumentText(text: string): WorkspaceState {
 
   for (const groupJson of documentRoot.$Groups ?? []) {
     addNode(groupNodeFromJson(groupJson));
-  }
-
-  // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
-  if (nodes.every(node => node.position.x === 0 && node.position.y === 0)) {
-    workspace.actionRequests.push({ type: "auto-position-nodes" });
   }
 
   return {

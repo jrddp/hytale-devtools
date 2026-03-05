@@ -42,6 +42,9 @@ export class Workspace {
 
   actionRequests = $state<ActionRequest[]>([]);
 
+  autocompleteField = $state<string>();
+  autocompleteValues = $state<string[]>([]);
+
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
   rootNodeId = $state<string>();

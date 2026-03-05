@@ -1,5 +1,5 @@
 import { type Selection } from "vscode";
-import type { ResolveSchemaDefinitionResult } from "../companion/types";
+import { type SemanticReference } from "../schema/types";
 import { type NodeEditorWorkspaceContext } from "./workspaceTypes";
 
 export type NodeEditorControlScheme = "mouse" | "trackpad";
@@ -32,15 +32,11 @@ export interface NodeEditorDocumentUpdateMessage {
   documentPath: string;
 }
 
-export interface NodeEditorHydrateNodeSchemasResultMessage {
-  type: "hydrateNodeSchemasResult";
-  requestId: number;
-  results?: ResolveSchemaDefinitionResult[];
-}
 export type ExtensionToWebviewMessage =
   | NodeEditorDocumentUpdateMessage
   | NodeEditorBootstrapPayload
-  | { type: "action"; request: ActionRequest }
+  | { type: "action"; request: ActionRequest; allowEditableTarget: boolean }
+  | { type: "autocompletionValues"; fieldId: string; values: string[] }
   | { type: "error"; message: string };
 
 export type WebviewToExtensionMessage =
@@ -48,4 +44,5 @@ export type WebviewToExtensionMessage =
   | { type: "apply"; text: string; sourceVersion?: number }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }
+  | { type: "autocompleteRequest"; symbolLookup: SemanticReference; fieldId: string }
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme };

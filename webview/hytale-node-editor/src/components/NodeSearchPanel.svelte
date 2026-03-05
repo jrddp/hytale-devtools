@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NodeField } from "@shared/node-editor/workspaceTypes";
+  import { type NodeField } from "@shared/node-editor/workspaceTypes";
   import { isObject } from "@shared/typeUtils";
   import { Panel, type XYPosition } from "@xyflow/svelte";
   import { Search } from "lucide-svelte";
@@ -41,18 +41,38 @@
     inputId?: string;
   }
 
-  const aggregateEntries = (entryList: ContentEntry[], fields: NodeField[], parentTag?: string,  parentObject?: object): void => {
+  const aggregateEntries = (
+    entryList: ContentEntry[],
+    fields: NodeField[],
+    nodeId: string,
+    parentTag?: string,
+    parentSchemaKey?: string,
+    parentObject?: object,
+  ): void => {
     for (const field of fields) {
       const value = parentObject ? parentObject[field.schemaKey] : field.value;
       let str = parentTag ? parentTag + "." : "";
-      str += (field.label ?? field.schemaKey);
+      str += field.label ?? field.schemaKey;
       if (isObject(value)) {
-        aggregateEntries(entryList, field.subfields ?? [], str, value as object);
+        parentSchemaKey = parentSchemaKey
+          ? parentSchemaKey + "-" + field.schemaKey
+          : field.schemaKey;
+        aggregateEntries(
+          entryList,
+          field.subfields ?? [],
+          nodeId,
+          str,
+          parentSchemaKey,
+          value as object,
+        );
       } else {
-        entryList.push({ content: (str + ": " + String(value)).trim() });
+        entryList.push({
+          content: (str + ": " + String(value)).trim(),
+          inputId: buildFieldInputId(nodeId, field.schemaKey, parentSchemaKey),
+        });
       }
     }
-  }
+  };
 
   /** @returns {content, itemid?} where itemid is the calculated ID of any field item that should be focused upon selection */
   function getInnerContent(node: FlowNode): ContentEntry[] {
@@ -64,7 +84,7 @@
       // todo give json string unique id
       content.push({ content: node.data.jsonString as string });
     }
-    aggregateEntries(content, Object.values(node.data.fieldsBySchemaKey));
+    aggregateEntries(content, Object.values(node.data.fieldsBySchemaKey), node.id);
     // const parentList = getGroupList(node.id)
     //   .map(parent => workspace.getNodeById(parent))
     //   .map(parent => parent.data.titleOverride ?? parent.data.defaultTitle)

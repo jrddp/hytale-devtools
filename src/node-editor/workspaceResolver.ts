@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, statSync } from "fs";
 import { join } from "path";
-import { LOGGER, nodeEditorWorkspaces } from "../extension";
+import { LOGGER, nodeEditorWorkspaces, schemaDocs } from "../extension";
+import { resolvePointerMetadata, resolvePointerMetadataFromRef } from "../schema/schemaPointerResolver";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
@@ -173,7 +174,22 @@ function fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeFie
 }
 
 // from exact json definition to optimized usage structure
-function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplate {
+function templateFromDefinition(
+  definition: NodeTemplateDefinition,
+  schemaRef?: string,
+): NodeTemplate {
+  if (schemaRef) {
+    LOGGER.info(`Schema mapping for ${definition.Id}: ${schemaRef}`);
+  }
+  const schemaInfo = schemaRef
+    ? resolvePointerMetadataFromRef(schemaDocs, schemaRef, ["hytaleDevtools", "markdownDescription"], {
+        ignoreMetadataProperties: true,
+      })
+    : undefined;
+  if (schemaInfo) {
+    LOGGER.info(`Schema info for ${schemaRef}: ${JSON.stringify(schemaInfo, null, 2)}`);
+  }
+
   const inputPins: NodePin[] =
     definition.Inputs?.map((input, idx) => {
       return {
@@ -219,6 +235,9 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
         // entry is local contentId
         fieldsByLocalId[entry].schemaKey = schemaKey;
         fieldsBySchemaKey[schemaKey] = fieldsByLocalId[entry];
+        const schemaMetadata = schemaInfo?.properties[schemaKey]?.metadata;
+        fieldsBySchemaKey[schemaKey].symbolLookup = schemaMetadata?.["hytaleDevtools"];
+        fieldsBySchemaKey[schemaKey].markdownDescription = schemaMetadata?.["markdownDescription"];
       } else {
         // entry is a constant
         schemaConstants[schemaKey] = entry;
@@ -241,6 +260,8 @@ function templateFromDefinition(definition: NodeTemplateDefinition): NodeTemplat
       }
 
       outputPinsByLocalId[pin].schemaKey = schemaKey;
+      outputPinsByLocalId[pin].markdownDescription =
+        schemaInfo?.properties[schemaKey]?.metadata?.["markdownDescription"];
       childTypes[schemaKey] = node;
     }
   }
@@ -273,15 +294,23 @@ export function getNodeEditorWorkspaces(fromPath: string): Record<string, NodeEd
       );
       continue;
     }
-
+    // todo hydrate based on schema mappings
     const workspaceDefinition = safeParseJSONFile(_workspace) as NodeEditorWorkspaceDefinition;
+
+    const __schemaMappings = join(directoryPath, "__SchemaMappings.json");
+    let templateToSchemaRefs: Record<string, string> = {};
+    if (existsSync(__schemaMappings)) {
+      templateToSchemaRefs = safeParseJSONFile(__schemaMappings);
+    }
+
+    LOGGER.info(`Template to schema refs: ${JSON.stringify(templateToSchemaRefs, null, 2)}`);
 
     const templatesById: Record<string, NodeTemplate> = {};
 
     // recurse on each subdirectory
     const loadTemplates = (dir: string) => {
       for (const file of readdirSync(dir)) {
-        if (file === "_Workspace.json") {
+        if (file === "_Workspace.json" || file === "__SchemaMappings.json") {
           continue;
         }
 
@@ -291,7 +320,8 @@ export function getNodeEditorWorkspaces(fromPath: string): Record<string, NodeEd
           loadTemplates(filePath);
         } else {
           const templateDefinition = safeParseJSONFile(filePath) as NodeTemplateDefinition;
-          const template = templateFromDefinition(templateDefinition);
+          const schemaMapping = templateToSchemaRefs[templateDefinition.Id];
+          const template = templateFromDefinition(templateDefinition, schemaMapping);
           templatesById[template.templateId] = template;
         }
       }

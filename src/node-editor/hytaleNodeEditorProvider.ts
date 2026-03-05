@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as vscode from "vscode";
 import { LOGGER } from "../extension";
+import { getValuesBySemanticReference } from "../schema/symbolResolver";
 import type {
   ActionType,
   ExtensionToWebviewMessage,
@@ -152,6 +153,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: WebviewToExtensionMessage) => {
+        LOGGER.info(`Message received: ${JSON.stringify(message, null, 2)}`);
         switch (message.type) {
           case "ready":
             sendBootstrap();
@@ -169,6 +171,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           case "update-setting":
             void this.updateNodeEditorSetting(message, webviewPanel.webview);
             return;
+          case "autocompleteRequest":
+            LOGGER.info(`Autocomplete request received for field ${message.fieldId}`);
+            void this.autocompleteRequest(message, webviewPanel.webview);
           default:
             return;
         }
@@ -187,7 +192,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     this.selectionSubscription = undefined;
   }
 
-  public async triggerQuickActionByCommandId(actionType: ActionType | "go-to-root"): Promise<void> {
+  public async triggerQuickActionByCommandId(actionType: ActionType | "go-to-root", allowEditableTarget: boolean = false): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
       return;
@@ -200,6 +205,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     await targetPanel.webview.postMessage({
       type: "action",
       request: { type: actionType },
+      allowEditableTarget,
     });
   }
 
@@ -230,7 +236,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
         this.nativeFindCommandRegistration = vscode.commands.registerCommand(
           WEBVIEW_FIND_COMMAND_ID,
           () => {
-            void this.triggerQuickActionByCommandId("search-nodes");
+            void this.triggerQuickActionByCommandId("search-nodes", true);
           },
         );
       }
@@ -325,6 +331,19 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       LOGGER.error(`Failed to update node editor setting "${message.setting}": ${details}`);
       await this.postError(webview, "Failed to persist node editor setting.");
     }
+  }
+
+  private async autocompleteRequest(
+    message: Extract<WebviewToExtensionMessage, { type: "autocompleteRequest" }>,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    const matches = getValuesBySemanticReference(message.symbolLookup);
+    const payload: ExtensionToWebviewMessage = {
+      type: "autocompletionValues",
+      fieldId: message.fieldId,
+      values: matches,
+    };
+    await webview.postMessage(payload);
   }
 
   private async postError(webview: vscode.Webview, message: string): Promise<void> {

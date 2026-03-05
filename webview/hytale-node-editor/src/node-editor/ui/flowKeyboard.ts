@@ -11,7 +11,7 @@ export function isDeleteOrBackspace(event: KeyboardEvent) {
   return event.key === "Delete" || event.key === "Backspace";
 }
 
-const EDITABLE_SELECTOR =
+export const EDITABLE_SELECTOR =
   "input, textarea, select, [contenteditable]:not([contenteditable='false']), [role='textbox'], [role='searchbox'], [role='combobox'], [role='spinbutton']";
 
 function isEditableTarget(target: EventTarget | null | undefined) {

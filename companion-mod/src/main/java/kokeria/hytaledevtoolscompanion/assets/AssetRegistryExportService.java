@@ -40,6 +40,7 @@ import javax.annotation.Nullable;
 import org.bson.BsonArray;
 import org.bson.BsonBoolean;
 import org.bson.BsonDocument;
+import org.bson.BsonInt32;
 import org.bson.BsonNull;
 import org.bson.BsonString;
 import org.bson.BsonValue;
@@ -381,7 +382,7 @@ public final class AssetRegistryExportService {
                 semantic.valueShape = "objectKey";
                 semantic.extra.put("target", new BsonString("objectKey"));
                 BsonDocument source = new BsonDocument();
-                source.put("kind", new BsonString("literalSet"));
+                source.put("type", new BsonString("literalSet"));
                 source.put("allowedValues", toStringBsonArray(enumMapAllowedKeys));
                 semantic.extra.put("source", source);
                 semantic.extra.put("excludeExistingObjectKeys", BsonBoolean.TRUE);
@@ -453,7 +454,7 @@ public final class AssetRegistryExportService {
                 semantic.valueShape = inferValueShape(property, "string");
                 semantic.extra.put("target", new BsonString("value"));
                 BsonDocument source = new BsonDocument();
-                source.put("kind", new BsonString("localization"));
+                source.put("type", new BsonString("localization"));
                 source.put("localeStrategy", new BsonString("activeThenEnUs"));
                 semantic.extra.put("source", source);
                 semantics.put(propertyKey, semantic);
@@ -466,8 +467,8 @@ public final class AssetRegistryExportService {
                 semantic.valueShape = inferValueShape(property, "string");
                 semantic.extra.put("target", new BsonString("value"));
                 BsonDocument source = new BsonDocument();
-                source.put("kind", new BsonString("cosmeticDomain"));
-                source.put("domain", new BsonString(cosmeticDomain));
+                source.put("type", new BsonString("cosmeticDomain"));
+                source.put("key", new BsonString(cosmeticDomain));
                 semantic.extra.put("source", source);
                 semantics.put(propertyKey, semantic);
                 continue;
@@ -481,8 +482,8 @@ public final class AssetRegistryExportService {
                     semantic.valueShape = inferValueShape(property, "string");
                     semantic.extra.put("target", new BsonString("value"));
                     BsonDocument source = new BsonDocument();
-                    source.put("kind", new BsonString("parentDomain"));
-                    source.put("domain", new BsonString(parentDomain));
+                    source.put("type", new BsonString("parentDomain"));
+                    source.put("key", new BsonString(parentDomain));
                     String mapKey = stringValue(parentSettings, "mapKey");
                     if (mapKey != null && !mapKey.isBlank()) {
                         source.put("mapKey", new BsonString(mapKey));
@@ -504,8 +505,8 @@ public final class AssetRegistryExportService {
                 semantic.valueShape = inferValueShape(property, "string");
                 semantic.extra.put("target", new BsonString("value"));
                 BsonDocument source = new BsonDocument();
-                source.put("kind", new BsonString("uiDataSet"));
-                source.put("dataSet", new BsonString(uiDataSetInfo.dataSet));
+                source.put("type", new BsonString("uiDataSet"));
+                source.put("key", new BsonString(uiDataSetInfo.dataSet));
                 source.put("component", new BsonString(uiDataSetInfo.component));
                 semantic.extra.put("source", source);
                 semantics.put(propertyKey, semantic);
@@ -545,9 +546,9 @@ public final class AssetRegistryExportService {
             SemanticRecord semantic = new SemanticRecord(propertyKey, "symbolDefinition");
             semantic.valueShape = "string";
             BsonDocument namespace = new BsonDocument();
-            namespace.put("kind", new BsonString("importFamily"));
-            namespace.put("family", new BsonString(family));
-            semantic.extra.put("namespace", namespace);
+            namespace.put("type", new BsonString("importFamily"));
+            namespace.put("key", new BsonString(family));
+            semantic.extra.put("source", namespace);
             semantics.put(propertyKey, semantic);
         }
     }
@@ -561,8 +562,8 @@ public final class AssetRegistryExportService {
                 semantic.valueShape = "string";
                 semantic.extra.put("target", new BsonString("value"));
                 BsonDocument source = new BsonDocument();
-                source.put("kind", new BsonString("importFamily"));
-                source.put("family", new BsonString("BlockMask"));
+                source.put("type", new BsonString("importFamily"));
+                source.put("key", new BsonString("BlockMask"));
                 source.put("importForm", new BsonString("directImportField"));
                 semantic.extra.put("source", source);
                 semantics.put(propertyKey, semantic);
@@ -579,8 +580,8 @@ public final class AssetRegistryExportService {
             semantic.valueShape = "string";
             semantic.extra.put("target", new BsonString("value"));
             BsonDocument source = new BsonDocument();
-            source.put("kind", new BsonString("importFamily"));
-            source.put("family", new BsonString(family));
+            source.put("type", new BsonString("importFamily"));
+            source.put("key", new BsonString(family));
             source.put("importForm", new BsonString("typeImportedName"));
             semantic.extra.put("source", source);
             semantics.put(propertyKey, semantic);
@@ -600,8 +601,8 @@ public final class AssetRegistryExportService {
             semantic.valueShape = "string";
             semantic.extra.put("target", new BsonString("value"));
             BsonDocument source = new BsonDocument();
-            source.put("kind", new BsonString("referenceBundle"));
-            source.put("bundleType", new BsonString("DecimalConstants"));
+            source.put("type", new BsonString("referenceBundle"));
+            source.put("key", new BsonString("DecimalConstants"));
             semantic.extra.put("source", source);
             semantics.put(rule.propertyKey, semantic);
         }
@@ -617,9 +618,9 @@ public final class AssetRegistryExportService {
             SemanticRecord semantic = new SemanticRecord(propertyKey, "symbolDefinition");
             semantic.valueShape = "string";
             BsonDocument namespace = new BsonDocument();
-            namespace.put("kind", new BsonString("referenceBundle"));
-            namespace.put("bundleType", new BsonString("DecimalConstants"));
-            semantic.extra.put("namespace", namespace);
+            namespace.put("type", new BsonString("referenceBundle"));
+            namespace.put("key", new BsonString("DecimalConstants"));
+            semantic.extra.put("source", namespace);
             semantic.extra.put("valueField", new BsonString("Value"));
             semantics.put(propertyKey, semantic);
         }
@@ -783,7 +784,7 @@ public final class AssetRegistryExportService {
             @Nonnull Map<String, BsonDocument> schemaDocuments,
             @Nonnull Map<String, BsonDocument> propertyNodes) {
         Map<String, BsonArray> exportsByFamilyRaw = buildExportsByFamily(stores);
-        Map<String, BsonArray> registeredAssetsRaw = buildRegisteredAssets(stores);
+        RegisteredAssetsBuildResult registeredAssetsRaw = buildRegisteredAssets(stores);
         Map<String, BsonValue> referenceBundleByKind = buildReferenceBundleByKind(stores);
         Map<String, BsonArray> localizationKeysRaw = buildLocalizationKeys(stores);
         Map<String, BsonArray> cosmeticsByTypeRaw = buildCosmeticsByType(stores, propertyNodes);
@@ -791,14 +792,14 @@ public final class AssetRegistryExportService {
         BsonDocument commonAssetsByParentDirectory = buildCommonAssetsByParentDirectory(stores);
 
         Map<String, BsonValue> exportsByFamily = simplifyExportsByFamilyValueMaps(exportsByFamilyRaw);
-        Map<String, BsonValue> registeredAssets = simplifyRegisteredAssetsValueMaps(registeredAssetsRaw);
+        Map<String, BsonValue> registeredAssets = simplifyRegisteredAssetsValueMaps(registeredAssetsRaw.valuesByType);
         Map<String, BsonValue> localizationKeys = simplifyLocalizationValueMaps(localizationKeysRaw);
         Map<String, BsonValue> cosmeticsByType = simplifyToStringListValues(cosmeticsByTypeRaw);
         Map<String, BsonValue> uiDataSets = simplifyToStringListValues(uiDataSetsRaw);
 
         List<IndexShard> shards = new ArrayList<>();
         addIndexShards(shards, "exportsByFamily", "exportFamilies", exportsByFamily);
-        addIndexShards(shards, "registeredAssets", "registeredAssets", registeredAssets);
+        addRegisteredAssetIndexShards(shards, registeredAssets, registeredAssetsRaw.metadataByType);
         addIndexShards(shards, "referenceBundle", "referenceBundle", referenceBundleByKind);
         addIndexShards(shards, "localizationKeys", "localization", localizationKeys);
         addIndexShards(shards, "cosmeticsByType", "cosmeticDomain", cosmeticsByType);
@@ -821,6 +822,30 @@ public final class AssetRegistryExportService {
             String fileName = sanitizeIndexKey(key) + ".json";
             String relativePath = INDEXES_DIRECTORY + "/" + directory + "/" + fileName;
             shards.add(new IndexShard(indexKind, key, relativePath, entry.getValue()));
+        }
+    }
+
+    private static void addRegisteredAssetIndexShards(
+            @Nonnull List<IndexShard> shards,
+            @Nonnull Map<String, BsonValue> valuesByType,
+            @Nonnull Map<String, RegisteredAssetTypeMetadata> metadataByType) {
+        Set<String> types = new TreeSet<>();
+        types.addAll(valuesByType.keySet());
+        types.addAll(metadataByType.keySet());
+
+        for (String type : types) {
+            BsonValue values = valuesByType.get(type);
+            if (values == null) {
+                values = new BsonDocument();
+            }
+
+            RegisteredAssetTypeMetadata metadata = metadataByType.get(type);
+            String path = metadata == null ? null : metadata.path;
+            String extension = metadata == null ? null : metadata.extension;
+
+            String fileName = sanitizeIndexKey(type) + ".json";
+            String relativePath = INDEXES_DIRECTORY + "/registeredAssets/" + fileName;
+            shards.add(new IndexShard("registeredAssets", type, relativePath, values, path, extension));
         }
     }
 
@@ -1098,10 +1123,19 @@ public final class AssetRegistryExportService {
     }
 
     @Nonnull
-    private static Map<String, BsonArray> buildRegisteredAssets(@Nonnull AssetStore<?, ?, ?>[] stores) {
+    private static RegisteredAssetsBuildResult buildRegisteredAssets(@Nonnull AssetStore<?, ?, ?>[] stores) {
         Map<String, List<ValueRecord>> byType = new TreeMap<>();
+        Map<String, RegisteredAssetTypeMetadata> metadataByType = new TreeMap<>();
+        collectRegisteredAssetsFromAssetTypeHandlers(byType, metadataByType, stores);
+
         for (AssetStore<?, ?, ?> store : stores) {
             String type = store.getAssetClass().getSimpleName();
+            mergeRegisteredAssetTypeMetadata(
+                    metadataByType,
+                    type,
+                    resolveAssetStoreTypePath(store),
+                    normalizeAssetTypeExtension(store.getExtension()));
+
             for (Object key : store.getAssetMap().getAssetMap().keySet()) {
                 String name = stringOrNull(key);
                 if (name == null) {
@@ -1125,7 +1159,161 @@ public final class AssetRegistryExportService {
             result.put(entry.getKey(), array);
         }
 
-        return result;
+        return new RegisteredAssetsBuildResult(result, metadataByType);
+    }
+
+    private static void collectRegisteredAssetsFromAssetTypeHandlers(
+            @Nonnull Map<String, List<ValueRecord>> byType,
+            @Nonnull Map<String, RegisteredAssetTypeMetadata> metadataByType,
+            @Nonnull AssetStore<?, ?, ?>[] stores) {
+        AssetEditorPlugin assetEditorPlugin = AssetEditorPlugin.get();
+        if (assetEditorPlugin == null) {
+            return;
+        }
+
+        Set<Path> packRoots = collectPackRoots(stores);
+        for (AssetTypeHandler handler : assetEditorPlugin.getAssetTypeRegistry().getRegisteredAssetTypeHandlers()
+                .values()) {
+            AssetEditorAssetType config = handler.getConfig();
+            if (config == null || config.id == null || config.id.isBlank()) {
+                continue;
+            }
+
+            String type = config.id;
+            String path = normalizeAssetTypePath(config.path);
+            if (path == null) {
+                Path rootPath = handler.getRootPath();
+                path = rootPath == null ? null : normalizeAssetTypePath(rootPath.toString());
+            }
+            String extension = normalizeAssetTypeExtension(config.fileExtension);
+            mergeRegisteredAssetTypeMetadata(metadataByType, type, path, extension);
+
+            if (handler instanceof AssetStoreTypeHandler) {
+                continue;
+            }
+
+            if (packRoots.isEmpty() || path == null || extension == null) {
+                continue;
+            }
+
+            List<ValueRecord> records = byType.computeIfAbsent(type, ignored -> new ArrayList<>());
+            collectAssetTypeHandlerRecords(records, packRoots, path, extension);
+        }
+    }
+
+    private static void collectAssetTypeHandlerRecords(
+            @Nonnull List<ValueRecord> output,
+            @Nonnull Set<Path> packRoots,
+            @Nonnull String assetTypePath,
+            @Nonnull String assetTypeExtension) {
+        String extensionLower = assetTypeExtension.toLowerCase(Locale.ROOT);
+
+        for (Path packRoot : packRoots) {
+            Path assetRoot = packRoot.resolve(assetTypePath).normalize();
+            if (!Files.isDirectory(assetRoot)) {
+                continue;
+            }
+
+            try (Stream<Path> stream = Files.walk(assetRoot, Integer.MAX_VALUE, FileVisitOption.FOLLOW_LINKS)) {
+                stream.filter(Files::isRegularFile).forEach(path -> {
+                    String fileName = path.getFileName().toString();
+                    if (!fileName.toLowerCase(Locale.ROOT).endsWith(extensionLower)) {
+                        return;
+                    }
+
+                    String relativeName = toUnixPathString(assetRoot.relativize(path));
+                    String assetName = trimSuffixIgnoreCase(relativeName, assetTypeExtension);
+                    if (assetName.isBlank()) {
+                        return;
+                    }
+
+                    String file = toUnixPathString(packRoot.relativize(path));
+                    output.add(new ValueRecord(assetName, file));
+                });
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
+    private static void mergeRegisteredAssetTypeMetadata(
+            @Nonnull Map<String, RegisteredAssetTypeMetadata> metadataByType,
+            @Nonnull String type,
+            @Nullable String path,
+            @Nullable String extension) {
+        RegisteredAssetTypeMetadata existing = metadataByType.get(type);
+        if (existing == null) {
+            metadataByType.put(type, new RegisteredAssetTypeMetadata(path, extension));
+            return;
+        }
+
+        String resolvedPath = existing.path != null ? existing.path : path;
+        String resolvedExtension = existing.extension != null ? existing.extension : extension;
+        metadataByType.put(type, new RegisteredAssetTypeMetadata(resolvedPath, resolvedExtension));
+    }
+
+    @Nullable
+    private static String resolveAssetStoreTypePath(@Nonnull AssetStore<?, ?, ?> store) {
+        String path = normalizeAssetTypePath(store.getPath());
+        if (path == null) {
+            return null;
+        }
+
+        if (path.startsWith("Server/") || path.startsWith("Common/")) {
+            return path;
+        }
+
+        return "Server/" + path;
+    }
+
+    @Nullable
+    private static String normalizeAssetTypePath(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String normalized = value.trim().replace('\\', '/');
+        while (normalized.startsWith("./")) {
+            normalized = normalized.substring(2);
+        }
+        while (normalized.endsWith("/")) {
+            normalized = normalized.substring(0, normalized.length() - 1);
+        }
+        return normalized.isBlank() ? null : normalized;
+    }
+
+    @Nullable
+    private static String normalizeAssetTypeExtension(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String normalized = value.trim();
+        if (normalized.isBlank()) {
+            return null;
+        }
+
+        if (!normalized.startsWith(".")) {
+            normalized = "." + normalized;
+        }
+        return normalized;
+    }
+
+    @Nonnull
+    private static String toUnixPathString(@Nonnull Path path) {
+        return path.toString().replace('\\', '/');
+    }
+
+    @Nonnull
+    private static String trimSuffixIgnoreCase(@Nonnull String value, @Nonnull String suffix) {
+        if (value.length() < suffix.length()) {
+            return value;
+        }
+
+        int suffixStart = value.length() - suffix.length();
+        if (value.regionMatches(true, suffixStart, suffix, 0, suffix.length())) {
+            return value.substring(0, suffixStart);
+        }
+        return value;
     }
 
     @Nonnull
@@ -1832,9 +2020,46 @@ public final class AssetRegistryExportService {
             shardDocument.put("generatedAt", new BsonString(generatedAt));
             shardDocument.put("indexKind", new BsonString(shard.indexKind));
             shardDocument.put("key", new BsonString(shard.key));
+            if ("registeredAssets".equals(shard.indexKind)) {
+                shardDocument.put("path", nullableString(shard.path));
+                shardDocument.put("extension", nullableString(shard.extension));
+                shardDocument.put("assetCount", new BsonInt32(countRegisteredAssetValues(shard.values)));
+                shardDocument.put("fileCount", new BsonInt32(countRegisteredAssetsWithSourceFile(shard.values)));
+            }
             shardDocument.put("values", shard.values);
             writeJsonRelative(outputDirectory, shard.relativePath, shardDocument);
         }
+    }
+
+    private static int countRegisteredAssetValues(@Nonnull BsonValue values) {
+        if (values.isDocument()) {
+            return values.asDocument().size();
+        }
+        if (values.isArray()) {
+            return values.asArray().size();
+        }
+        return 0;
+    }
+
+    private static int countRegisteredAssetsWithSourceFile(@Nonnull BsonValue values) {
+        if (!values.isDocument()) {
+            return 0;
+        }
+
+        int count = 0;
+        for (BsonValue value : values.asDocument().values()) {
+            if (!value.isDocument()) {
+                continue;
+            }
+
+            BsonValue sourcedFromFile = value.asDocument().get("sourcedFromFile");
+            if (sourcedFromFile != null
+                    && sourcedFromFile.isString()
+                    && !sourcedFromFile.asString().getValue().isBlank()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private static void cleanupRemovedArtifactsStage(@Nonnull Path dataDirectory) throws IOException {
@@ -2030,12 +2255,49 @@ public final class AssetRegistryExportService {
 
     @Nullable
     private static String resolveColorMode(@Nonnull BsonDocument propertyNode) {
+        String directMode = mapColorModeFromNode(propertyNode);
+        if (directMode != null) {
+            return directMode;
+        }
+
+        for (String compositionKey : List.of("anyOf", "oneOf", "allOf")) {
+            BsonValue variants = propertyNode.get(compositionKey);
+            if (variants == null || !variants.isArray()) {
+                continue;
+            }
+
+            for (BsonValue variant : variants.asArray()) {
+                if (!variant.isDocument()) {
+                    continue;
+                }
+
+                String nestedMode = resolveColorMode(variant.asDocument());
+                if (nestedMode != null) {
+                    return nestedMode;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static String mapColorModeFromNode(@Nonnull BsonDocument propertyNode) {
         BsonDocument hytale = getDocument(propertyNode, "hytale");
         if (hytale == null) {
             return null;
         }
 
         String type = stringValue(hytale, "type");
+        if (type == null) {
+            return null;
+        }
+
+        return mapColorModeFromHytaleType(type);
+    }
+
+    @Nullable
+    private static String mapColorModeFromHytaleType(@Nullable String type) {
         if (type == null) {
             return null;
         }
@@ -2081,7 +2343,7 @@ public final class AssetRegistryExportService {
         if (!"Text".equals(component) && !"Dropdown".equals(component)) {
             return null;
         }
-        String dataSet = stringValue(uiEditorComponent, "dataSet");
+        String dataSet = stringValue(uiEditorComponent, "key");
         if (dataSet == null || dataSet.isBlank()) {
             return null;
         }
@@ -2091,8 +2353,8 @@ public final class AssetRegistryExportService {
     @Nonnull
     private static BsonDocument sourceRegistryDomain(@Nonnull String domain) {
         BsonDocument source = new BsonDocument();
-        source.put("kind", new BsonString("registryDomain"));
-        source.put("domain", new BsonString(domain));
+        source.put("type", new BsonString("registryDomain"));
+        source.put("key", new BsonString(domain));
         return source;
     }
 
@@ -2468,6 +2730,30 @@ public final class AssetRegistryExportService {
         }
     }
 
+    private static final class RegisteredAssetsBuildResult {
+        private final Map<String, BsonArray> valuesByType;
+        private final Map<String, RegisteredAssetTypeMetadata> metadataByType;
+
+        private RegisteredAssetsBuildResult(
+                @Nonnull Map<String, BsonArray> valuesByType,
+                @Nonnull Map<String, RegisteredAssetTypeMetadata> metadataByType) {
+            this.valuesByType = valuesByType;
+            this.metadataByType = metadataByType;
+        }
+    }
+
+    private static final class RegisteredAssetTypeMetadata {
+        private final String path;
+        private final String extension;
+
+        private RegisteredAssetTypeMetadata(
+                @Nullable String path,
+                @Nullable String extension) {
+            this.path = path;
+            this.extension = extension;
+        }
+    }
+
     private static final class DecimalConstantRecord {
         private final String name;
 
@@ -2501,16 +2787,30 @@ public final class AssetRegistryExportService {
         private final String key;
         private final String relativePath;
         private final BsonValue values;
+        private final String path;
+        private final String extension;
 
         private IndexShard(
                 @Nonnull String indexKind,
                 @Nonnull String key,
                 @Nonnull String relativePath,
                 @Nonnull BsonValue values) {
+            this(indexKind, key, relativePath, values, null, null);
+        }
+
+        private IndexShard(
+                @Nonnull String indexKind,
+                @Nonnull String key,
+                @Nonnull String relativePath,
+                @Nonnull BsonValue values,
+                @Nullable String path,
+                @Nullable String extension) {
             this.indexKind = indexKind;
             this.key = key;
             this.relativePath = relativePath;
             this.values = values;
+            this.path = path;
+            this.extension = extension;
         }
     }
 

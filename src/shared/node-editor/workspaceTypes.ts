@@ -1,3 +1,5 @@
+import { type SemanticReference } from "../schema/types";
+
 export type FieldComponentType =
   | "checkbox"
   | "enum"
@@ -29,6 +31,8 @@ export interface NodeField {
   inputWidth?: number;
   subfields?: NodeField[];
   localId: string;
+  symbolLookup?: SemanticReference;
+  markdownDescription?: string;
 }
 
 export interface NodePin {
@@ -37,6 +41,7 @@ export interface NodePin {
   color?: string;
   localId: string;
   multiplicity: "single" | "multiple" | "map";
+  markdownDescription?: string;
 }
 
 // processed template for optimized usage. only uses schema keys, Content/Pin local keys are abstracted.

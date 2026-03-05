@@ -20,7 +20,7 @@
     "src/**/*.ts",
     "src/**/*.svelte",
     "../../src/shared/**/*.ts"
-  ],
+, "../../src/schema/types.ts"  ],
   "exclude": [
     "node_modules",
     "../../node_modules",

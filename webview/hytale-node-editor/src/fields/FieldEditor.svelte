@@ -19,6 +19,7 @@
     subfields,
     onconfirm,
     parentSchemaKey,
+    symbolLookup,
   }: NodeField & {
     nodeId?: string;
     onconfirm: (value: unknown) => void;
@@ -34,6 +35,7 @@
   <ObjectField
     {inputId}
     {nodeId}
+    {parentSchemaKey}
     {schemaKey}
     label={fieldLabel}
     initialValue={value as object}
@@ -64,6 +66,7 @@
     label={fieldLabel}
     initialValue={value as string}
     multiline={type === "text"}
+    {symbolLookup}
     {onconfirm}
   />
 {/if}

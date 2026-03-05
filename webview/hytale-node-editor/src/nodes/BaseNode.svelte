@@ -47,8 +47,7 @@
     if (isEditingTitle) {
       titleInputElement.focus();
       titleInputElement.select();
-    }
-    else titleInputElement?.blur();
+    } else titleInputElement?.blur();
   });
 
   // # Comment State
@@ -105,19 +104,18 @@
 </script>
 
 <div
-  class="relative ring ring-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow] overflow-clip"
+  class="ring ring-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow] overflow-visible"
   style="min-width: {MIN_WIDTH_PX}px; outline: {selected
     ? '2px solid var(--vscode-focusBorder)'
     : 'none'}; {dragging && 'cursor-grabbing!'}"
 >
-  <div
-    aria-hidden="true"
-    class="absolute inset-x-0 top-0 h-1 pointer-events-none"
-    style="background-color: {cssColor};"
-  ></div>
-
   <!-- Node Header -->
-  <div class="bg-vsc-input-bg">
+  <div class="bg-vsc-input-bg relative overflow-clip! rounded-t-lg">
+    <div
+      aria-hidden="true"
+      class="absolute inset-x-0 top-0 h-1 pointer-events-none"
+      style="background-color: {cssColor};"
+    ></div>
     <!-- Title bar -->
     <div
       class="flex items-center gap-1 p-1 rounded-t-lg text-vsc-input-fg"

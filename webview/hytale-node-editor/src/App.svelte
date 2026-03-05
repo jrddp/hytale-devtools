@@ -7,6 +7,8 @@
   import { SvelteFlowProvider } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
   import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
+  import { EDITABLE_SELECTOR } from "src/node-editor/ui/flowKeyboard";
+  import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import Flow from "./Flow.svelte";
@@ -41,12 +43,19 @@
         handleDocumentUpdateMessage(message);
         workspace.actionRequests.push({ type: "document-refresh" });
         return;
+      case "autocompletionValues":
+        workspace.autocompleteField = message.fieldId;
+        // * values sorted at bottom
+        workspace.autocompleteValues = sortVariantsToBottom(message.values);
+        return;
       case "error":
         extensionError =
           typeof message.message === "string" ? message.message : "unknown editor error.";
         return;
       case "action": {
-        workspace.actionRequests.push(message.request);
+        if (message.allowEditableTarget || !document.activeElement?.matches(EDITABLE_SELECTOR)) {
+          workspace.actionRequests.push(message.request);
+        }
         return;
       }
       default:
@@ -64,6 +73,11 @@
       workspace.sourceVersion = message.version;
       workspace.isInitialized = true;
 
+      // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
+      if (nodes.every(node => node.position.x === 0 && node.position.y === 0)) {
+        workspace.actionRequests.push({ type: "auto-position-nodes" });
+      }
+
       graphLoadVersion += 1;
     } catch (error) {
       console.error(error);
@@ -73,20 +87,6 @@
     }
   }
 
-  function handleViewRawJsonRequest() {
-    const payload: Extract<WebviewToExtensionMessage, { type: "openRawJson" }> = {
-      type: "openRawJson",
-    };
-    workspace.vscode.postMessage(payload);
-  }
-
-  function handleCustomizeKeybindsRequest() {
-    const payload: Extract<WebviewToExtensionMessage, { type: "openKeybindings" }> = {
-      type: "openKeybindings",
-      query: "Hytale Node Editor",
-    };
-    vscode.postMessage(payload);
-  }
 
   onMount(() => {
     if (typeof vscode.getState === "function") {
