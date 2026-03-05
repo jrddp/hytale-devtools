@@ -66,6 +66,7 @@ interface NodeContentDefinition {
     Label?: string;
     Default?: unknown;
     Width?: number;
+    Values?: string[];
     Fields?: NodeContentDefinition[];
     [key: string]: unknown;
   };
@@ -159,6 +160,10 @@ function contentTypeToFieldComponentType(type: NodeContentDefinitionType): Field
 
 function fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeField[] {
   return content.map(content => {
+    const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
+      ? content.Options.Values.filter((value): value is string => typeof value === "string")
+      : undefined;
+
     return {
       schemaKey: content.Id,
       localId: content.Id,
@@ -166,6 +171,7 @@ function fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeFie
       label: content.Options?.Label,
       value: content.Options?.Default,
       inputWidth: content.Options?.Width,
+      overrideAutocompleteValues,
       subfields: content.Options?.Fields
         ? fieldsFromContentDefinitions(content.Options.Fields)
         : undefined,

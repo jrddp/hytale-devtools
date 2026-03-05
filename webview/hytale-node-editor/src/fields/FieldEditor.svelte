@@ -4,7 +4,6 @@
   import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import BooleanField from "./BooleanField.svelte";
   import ColorField from "./ColorField.svelte";
-  import EnumField from "./EnumField.svelte";
   import FilePathField from "./FilePathField.svelte";
   import ListField from "./ListField.svelte";
   import NumberField from "./NumberField.svelte";
@@ -21,6 +20,7 @@
     onconfirm,
     parentSchemaKey,
     symbolLookup,
+    overrideAutocompleteValues,
   }: NodeField & {
     nodeId?: string;
     onconfirm: (value: unknown) => void;
@@ -46,7 +46,14 @@
 {:else if type === "list"}
   <ListField {inputId} label={fieldLabel} initialValue={value as string[]} {onconfirm} />
 {:else if type === "enum"}
-  <EnumField {inputId} label={fieldLabel} initialValue={value as string} {onconfirm} />
+  <TextField
+    {inputId}
+    label={fieldLabel}
+    initialValue={value as string}
+    overrideAutocompleteValues={overrideAutocompleteValues}
+    {symbolLookup}
+    {onconfirm}
+  />
 {:else if type === "filepath"}
   <FilePathField {inputId} label={fieldLabel} initialValue={value as string} {onconfirm} />
 {:else if type === "intslider"}
@@ -69,6 +76,7 @@
     label={fieldLabel}
     initialValue={value as string}
     multiline={type === "text"}
+    {overrideAutocompleteValues}
     {symbolLookup}
     {onconfirm}
   />

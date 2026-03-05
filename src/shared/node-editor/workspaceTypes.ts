@@ -30,6 +30,7 @@ export interface NodeField {
   label?: string;
   value?: unknown;
   inputWidth?: number;
+  overrideAutocompleteValues?: string[];
   subfields?: NodeField[];
   localId: string;
   symbolLookup?: SemanticReference;

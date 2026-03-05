@@ -10,10 +10,12 @@
     label,
     initialValue,
     multiline = false,
+    overrideAutocompleteValues,
     symbolLookup,
     onconfirm,
   }: FieldProps<string> & {
     multiline?: boolean;
+    overrideAutocompleteValues?: string[];
     symbolLookup?: SemanticReference;
   } = $props();
 
@@ -35,9 +37,17 @@
     }
   });
 
-  let shouldAutocomplete = $derived(workspace.autocompleteField === inputId && isFocused);
+  let usesOverrideAutocomplete = $derived(overrideAutocompleteValues !== undefined);
+  let autocompleteValues = $derived(
+    usesOverrideAutocomplete
+      ? (overrideAutocompleteValues ?? [])
+      : workspace.autocompleteField === inputId
+        ? workspace.autocompleteValues
+        : [],
+  );
+  let shouldAutocomplete = $derived(isFocused && autocompleteValues.length > 0);
   let filteredAutocompleteValues = $derived(
-    workspace.autocompleteValues.filter(acValue => acValue.toLowerCase().includes(value.toLowerCase())),
+    autocompleteValues.filter(acValue => acValue.toLowerCase().includes(value.toLowerCase())),
   );
 
   function confirmValue() {
@@ -104,7 +114,7 @@
 
   function handleFocus() {
     isFocused = true;
-    if (symbolLookup !== undefined) {
+    if (!usesOverrideAutocomplete && symbolLookup !== undefined) {
       workspace.vscode.postMessage({
         type: "autocompleteRequest",
         symbolLookup: symbolLookup,
