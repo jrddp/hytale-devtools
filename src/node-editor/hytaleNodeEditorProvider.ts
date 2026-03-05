@@ -2,6 +2,10 @@ import * as fs from "node:fs";
 import * as vscode from "vscode";
 import { LOGGER } from "../extension";
 import { getValuesBySemanticReference } from "../schema/symbolResolver";
+import {
+  createEmptyNodeEditorClipboardSelection,
+  type NodeEditorClipboardSelection,
+} from "../shared/node-editor/clipboardTypes";
 import type {
   ActionType,
   ExtensionToWebviewMessage,
@@ -64,6 +68,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
   private readonly webviewPanelsByDocumentUri = new Map<string, vscode.WebviewPanel>();
   private activeDocumentPath: string | undefined;
   private readonly nativeCommandRegistrations = new Map<string, vscode.Disposable>();
+  private copiedSelection: NodeEditorClipboardSelection = createEmptyNodeEditorClipboardSelection();
   private selectionSubscription: vscode.Disposable | undefined;
 
   constructor(private readonly context: vscode.ExtensionContext) {
@@ -117,6 +122,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           workspaceContext: workspaceContext,
           controlScheme: readNodeEditorControlScheme(),
           platform: readNodeEditorPlatform(),
+          clipboard: this.copiedSelection,
         };
         void webviewPanel.webview.postMessage(payload);
       };
@@ -171,6 +177,9 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview, updateWebview);
+            return;
+          case "clipboard":
+            void this.updateClipboard(message.clipboard);
             return;
           case "openRawJson":
             void this.openRawJsonInTextEditor(document, webviewPanel);
@@ -361,6 +370,19 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       values: matches,
     };
     await webview.postMessage(payload);
+  }
+
+  private async updateClipboard(clipboard: NodeEditorClipboardSelection): Promise<void> {
+    this.copiedSelection = clipboard;
+
+    const payload: ExtensionToWebviewMessage = {
+      type: "clipboard",
+      clipboard: this.copiedSelection,
+    };
+
+    await Promise.all(
+      Array.from(this.webviewPanelsByDocumentUri.values(), panel => panel.webview.postMessage(payload)),
+    );
   }
 
   private async postError(webview: vscode.Webview, message: string): Promise<void> {

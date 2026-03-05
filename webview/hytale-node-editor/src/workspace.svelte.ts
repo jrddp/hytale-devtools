@@ -5,6 +5,10 @@ import {
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
 import {
+  createEmptyNodeEditorClipboardSelection,
+  type NodeEditorClipboardSelection,
+} from "@shared/node-editor/clipboardTypes";
+import {
   type NodeEditorWorkspaceContext,
   type NodeTemplate,
 } from "@shared/node-editor/workspaceTypes";
@@ -20,11 +24,6 @@ export interface WorkspaceState {
   nodes: FlowNode[];
   edges: FlowEdge[];
   rootNodeId?: string;
-}
-
-export interface CopiedSelection {
-  nodes: FlowNode[];
-  edges: FlowEdge[];
 }
 
 class NodeRBush extends RBush<FlowNode> {
@@ -59,7 +58,7 @@ export class Workspace {
   areNodesMeasured = $derived(this.nodes.every(node => node.measured !== undefined));
 
   /** clipboard snapshot of copied/cut nodes plus edges fully contained within that selection */
-  copiedSelection = $state.raw<CopiedSelection>({ nodes: [], edges: [] });
+  copiedSelection = $state.raw<NodeEditorClipboardSelection>(createEmptyNodeEditorClipboardSelection());
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));

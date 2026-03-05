@@ -12,6 +12,7 @@
   } from "@xyflow/svelte";
   import "@xyflow/svelte/dist/style.css";
 
+  import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
   import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
@@ -294,7 +295,7 @@
     });
   }
 
-  function buildCopiedSelection(nodes: FlowNode[]) {
+  function buildCopiedSelection(nodes: FlowNode[]): NodeEditorClipboardSelection {
     const selectedNodeIds = new Set(nodes.map(node => node.id));
     const copiedEdges = workspace.edges
       .filter(edge => selectedNodeIds.has(edge.source) && selectedNodeIds.has(edge.target))
@@ -310,11 +311,16 @@
     };
   }
 
+  function updateCopiedSelection(copiedSelection: NodeEditorClipboardSelection) {
+    workspace.copiedSelection = copiedSelection;
+    workspace.vscode.postMessage({ type: "clipboard", clipboard: copiedSelection });
+  }
+
   function handleWindowCopy(event: ClipboardEvent) {
     if (isShortcutBlockedByEditableTarget(event.target)) {
       return;
     }
-    workspace.copiedSelection = buildCopiedSelection(workspace.getEffectivelySelectedNodes());
+    updateCopiedSelection(buildCopiedSelection(workspace.getEffectivelySelectedNodes()));
 
     event.preventDefault();
     event.stopPropagation();
@@ -326,7 +332,7 @@
     }
 
     const nodesCut = workspace.getEffectivelySelectedNodes();
-    workspace.copiedSelection = buildCopiedSelection(nodesCut);
+    updateCopiedSelection(buildCopiedSelection(nodesCut));
 
     void deleteElements({ nodes: nodesCut });
     event.preventDefault();

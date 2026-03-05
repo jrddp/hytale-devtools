@@ -36,6 +36,7 @@
         workspace.context = message.workspaceContext;
         workspace.controlScheme = message.controlScheme;
         workspace.platform = message.platform;
+        workspace.copiedSelection = message.clipboard;
         // workspace.actionRequests.push({ type: "fit-view", duration: 0 });
         workspace.actionRequests.push({ type: "reveal-node", duration: 0 });
         return;
@@ -47,6 +48,9 @@
         workspace.autocompleteField = message.fieldId;
         // * values sorted at bottom
         workspace.autocompleteValues = sortVariantsToBottom(message.values);
+        return;
+      case "clipboard":
+        workspace.copiedSelection = message.clipboard;
         return;
       case "error":
         extensionError =

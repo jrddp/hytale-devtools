@@ -1,3 +1,4 @@
+import { type NodeEditorClipboardSelection } from "./clipboardTypes";
 import { type Selection } from "vscode";
 import { type SemanticReference } from "../schema/types";
 import { type NodeEditorWorkspaceContext } from "./workspaceTypes";
@@ -24,6 +25,7 @@ export interface NodeEditorBootstrapPayload {
   workspaceContext?: NodeEditorWorkspaceContext;
   controlScheme: NodeEditorControlScheme;
   platform: NodeEditorPlatform;
+  clipboard: NodeEditorClipboardSelection;
 }
 
 export interface NodeEditorDocumentUpdateMessage {
@@ -37,12 +39,14 @@ export type ExtensionToWebviewMessage =
   | NodeEditorDocumentUpdateMessage
   | NodeEditorBootstrapPayload
   | { type: "action"; request: ActionRequest; allowEditableTarget?: boolean }
+  | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "autocompletionValues"; fieldId: string; values: string[] }
   | { type: "error"; message: string };
 
 export type WebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "apply"; text: string; sourceVersion?: number }
+  | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }
   | { type: "autocompleteRequest"; symbolLookup: SemanticReference; fieldId: string }
