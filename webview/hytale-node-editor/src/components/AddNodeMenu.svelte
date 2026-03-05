@@ -35,8 +35,12 @@
       window.outerWidth - (containerElement?.getBoundingClientRect().width ?? 0),
     ),
   );
+  let isRootNodeMissing = $derived(workspace.getRootNode() === undefined);
 
   let availableTemplates = $derived.by(() => {
+    if (isRootNodeMissing) {
+      return workspace.getValidTemplates(workspace.context.rootTemplateOrVariantId);
+    }
     if (connectionFilter !== undefined) {
       return [
         ...workspace.getValidTemplates(connectionFilter),
@@ -133,7 +137,7 @@
     type="search"
     bind:value={searchQuery}
     onkeydown={handleKeyDown}
-    placeholder="Search nodes..."
+    placeholder={isRootNodeMissing ? "choose a root node" : "Search nodes..."}
   />
 
   <div
@@ -142,7 +146,9 @@
     role="listbox"
   >
     {#if searchedTemplatesByCategory.size === 0}
-      <div class="text-xs text-vsc-muted">No matching node types</div>
+      <div class="text-xs text-vsc-muted">
+        {isRootNodeMissing ? "No matching root node types" : "No matching node types"}
+      </div>
     {:else}
       {#each searchedTemplatesByCategory.entries() as [category, templates] (category)}
         <div class="flex flex-col gap-1.5">

@@ -47,12 +47,20 @@ export function serializeDocument(): AssetDocumentShape {
   }, new Map());
   const unprocessedNodeIds = nodes.reduce((set, node) => set.add(node.id), new Set<string>());
 
-  function recursiveSerializeNode(nodeId: string): NodeAssetJson {
+  function recursiveSerializeNode(nodeId: string | undefined): NodeAssetJson | undefined {
+    if (!nodeId) {
+      return undefined;
+    }
+
+    const node = nodesById.get(nodeId);
+    if (!node) {
+      return undefined;
+    }
+
     if (!unprocessedNodeIds.has(nodeId)) {
       throw new Error(`Circular reference detected for node ${nodeId}. This should not happen.`);
     }
     unprocessedNodeIds.delete(nodeId);
-    const node = nodesById.get(nodeId);
     let json: NodeAssetJson = {};
     const { x: absoluteX, y: absoluteY } = getAbsolutePosition(node);
     switch (node.type) {
@@ -173,6 +181,12 @@ export function serializeDocument(): AssetDocumentShape {
   }
 
   nodeEditorMetadata.$WorkspaceID = workspace.context.rootMenuName;
+
+  if (!rootNodeSerialized) {
+    return {
+      $NodeEditorMetadata: nodeEditorMetadata,
+    };
+  }
 
   return {
     ...rootNodeSerialized,

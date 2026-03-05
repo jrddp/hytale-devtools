@@ -136,6 +136,10 @@
   let matchedContent = $derived(matchedNodes.at(activeIndex)?.[1]);
   $effect(() => {
     void activeNode;
+    if (!activeNode) {
+      return;
+    }
+
     untrack(() => workspace.actionRequests.push({ type: "reveal-node", nodeId: activeNode.id }));
   });
 

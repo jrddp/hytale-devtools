@@ -19,7 +19,7 @@ export type SelectionType = "replace" | "add";
 export interface WorkspaceState {
   nodes: FlowNode[];
   edges: FlowEdge[];
-  rootNodeId: string;
+  rootNodeId?: string;
 }
 
 export interface CopiedSelection {
@@ -52,7 +52,7 @@ export class Workspace {
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
-  rootNodeId = $state<string>();
+  rootNodeId = $state<string | undefined>();
   vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
@@ -106,8 +106,8 @@ export class Workspace {
     return this.nodesById.get(nodeId);
   }
 
-  getRootNode(): FlowNode {
-    return this.getNodeById(this.rootNodeId!)!;
+  getRootNode(): FlowNode | undefined {
+    return this.rootNodeId ? this.getNodeById(this.rootNodeId) : undefined;
   }
 
   searchNodesCollidingWith(bbox: BBox) {

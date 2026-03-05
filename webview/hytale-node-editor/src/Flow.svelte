@@ -93,9 +93,14 @@
             retained.push(action);
             break;
           }
-          const node = workspace.getNodeById(action.nodeId ?? workspace.rootNodeId);
+          const targetNodeId = action.nodeId ?? workspace.rootNodeId;
+          if (!targetNodeId) {
+            break;
+          }
+
+          const node = workspace.getNodeById(targetNodeId);
           if (!node) {
-            console.warn(`Attempted to reveal node ${action.nodeId} but it was not found.`);
+            console.warn(`Attempted to reveal node ${targetNodeId} but it was not found.`);
             continue;
           }
           const absolutePosition = getAbsolutePosition(node);
@@ -134,7 +139,14 @@
           }
           let targetNodes = workspace.getEffectivelySelectedNodes();
           if (targetNodes.length === 0) {
-            targetNodes = [workspace.getRootNode()];
+            const rootNode = workspace.getRootNode();
+            if (rootNode) {
+              targetNodes = [rootNode];
+            } else if (workspace.nodes.length > 0) {
+              targetNodes = workspace.nodes;
+            } else {
+              break;
+            }
           }
 
           const updates = getAutoPositionNodeUpdates(targetNodes);
@@ -469,6 +481,9 @@
       event.preventDefault();
     },
     ondelete: ({ nodes, edges }) => {
+      if (nodes.some(node => node.id === workspace.rootNodeId)) {
+        workspace.rootNodeId = undefined;
+      }
       applyDocumentState("elements-deleted");
     },
   };
@@ -483,11 +498,14 @@
 
     // ## On Template Selection (create new node)
     onselection: template => {
+      const isCreatingRootNode = !workspace.getRootNode();
       const newNode: FlowNode = {
         ...createNodeFromTemplate(template, addMenuInstance!.spawnPosition),
       };
       workspace.nodes = [...workspace.nodes, newNode];
-      if (pendingSourceConnection) {
+      if (isCreatingRootNode) {
+        workspace.rootNodeId = newNode.id;
+      } else if (pendingSourceConnection) {
         workspace.addEdges([
           { ...pendingSourceConnection, target: newNode.id, targetHandle: INPUT_HANDLE_ID },
         ]);

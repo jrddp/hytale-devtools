@@ -88,6 +88,10 @@ export function parseDocumentText(
     nodesById.set(node.id, node);
   };
 
+  const documentHasRootNode = Object.keys(documentRoot).some(
+    key => key !== "$NodeEditorMetadata" && key !== "$Groups",
+  );
+
   const recursiveParseNodes = (
     localRoot: NodeAssetJson,
     variantOrTemplateID: string | null,
@@ -226,7 +230,9 @@ export function parseDocumentText(
     return nodeId;
   };
 
-  const rootId = recursiveParseNodes(documentRoot, rootTemplateOrVariantId);
+  const rootId = documentHasRootNode
+    ? recursiveParseNodes(documentRoot, rootTemplateOrVariantId)
+    : undefined;
 
   // process nodeEditorMetadata
   const nodeEditorMetadata = documentRoot.$NodeEditorMetadata;
