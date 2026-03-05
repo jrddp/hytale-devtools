@@ -3,6 +3,7 @@
   import ObjectField from "src/fields/ObjectField.svelte";
   import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import BooleanField from "./BooleanField.svelte";
+  import ColorField from "./ColorField.svelte";
   import EnumField from "./EnumField.svelte";
   import FilePathField from "./FilePathField.svelte";
   import ListField from "./ListField.svelte";
@@ -52,6 +53,8 @@
   <SliderField {inputId} label={fieldLabel} initialValue={value as number} {onconfirm} />
 {:else if type === "checkbox"}
   <BooleanField {inputId} label={fieldLabel} initialValue={value as boolean} {onconfirm} />
+{:else if type === "color"}
+  <ColorField {inputId} label={fieldLabel} initialValue={value as string} {onconfirm} />
 {:else if type === "int" || type === "float"}
   <NumberField
     {inputId}

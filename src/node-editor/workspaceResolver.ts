@@ -178,17 +178,11 @@ function templateFromDefinition(
   definition: NodeTemplateDefinition,
   schemaRef?: string,
 ): NodeTemplate {
-  if (schemaRef) {
-    LOGGER.info(`Schema mapping for ${definition.Id}: ${schemaRef}`);
-  }
   const schemaInfo = schemaRef
     ? resolvePointerMetadataFromRef(schemaDocs, schemaRef, ["hytaleDevtools", "markdownDescription"], {
         ignoreMetadataProperties: true,
       })
     : undefined;
-  if (schemaInfo) {
-    LOGGER.info(`Schema info for ${schemaRef}: ${JSON.stringify(schemaInfo, null, 2)}`);
-  }
 
   const inputPins: NodePin[] =
     definition.Inputs?.map((input, idx) => {
@@ -237,6 +231,9 @@ function templateFromDefinition(
         fieldsBySchemaKey[schemaKey] = fieldsByLocalId[entry];
         const schemaMetadata = schemaInfo?.properties[schemaKey]?.metadata;
         fieldsBySchemaKey[schemaKey].symbolLookup = schemaMetadata?.["hytaleDevtools"];
+        if (schemaMetadata?.["hytaleDevtools"]?.semanticKind === "color") {
+          fieldsBySchemaKey[schemaKey].type = "color";
+        }
         fieldsBySchemaKey[schemaKey].markdownDescription = schemaMetadata?.["markdownDescription"];
       } else {
         // entry is a constant
@@ -302,8 +299,6 @@ export function getNodeEditorWorkspaces(fromPath: string): Record<string, NodeEd
     if (existsSync(__schemaMappings)) {
       templateToSchemaRefs = safeParseJSONFile(__schemaMappings);
     }
-
-    LOGGER.info(`Template to schema refs: ${JSON.stringify(templateToSchemaRefs, null, 2)}`);
 
     const templatesById: Record<string, NodeTemplate> = {};
 

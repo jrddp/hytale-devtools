@@ -10,7 +10,8 @@ export type FieldComponentType =
   | "int"
   | "float"
   | "object"
-  | "intslider";
+  | "intslider"
+  | "color";
 export interface NodeEditorWorkspaceRootDefinition {
   RootNodeType: string;
   MenuName: string;
