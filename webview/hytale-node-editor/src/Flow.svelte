@@ -5,11 +5,13 @@
     SelectionMode,
     SvelteFlow,
     type SvelteFlowProps,
+    useStore,
     useSvelteFlow,
     useViewport,
     type Viewport,
     type XYPosition,
   } from "@xyflow/svelte";
+  import { getOverlappingArea, nodeToRect, pointToRendererPoint } from "@xyflow/system";
   import "@xyflow/svelte/dist/style.css";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
@@ -45,6 +47,7 @@
     updateNode,
     deleteElements,
   } = useSvelteFlow();
+  const flowStore = $derived(useStore<FlowNode, FlowEdge>());
 
   const viewport = useViewport();
   const getViewportCenter = (viewport: Viewport) => ({
@@ -62,6 +65,12 @@
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
   let multiselectModifierPressed = $state(false);
+  let lastUserSelectionRect = $state<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   let cursorPos = $state<XYPosition>();
   let pendingSourceConnection: { source: string; sourceHandle: string } | undefined;
@@ -83,6 +92,111 @@
   $effect(() => {
     void workspace.areNodesMeasured;
     if (workspace.actionRequests.length > 0) untrack(() => handleActionRequests());
+  });
+
+  // custom box-selection handling
+  // edges + nodes intersect partially, groups only intersect with full selection
+  function applySelectionBoxOverrides(domSelectionRect: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
+    const selectionOrigin = pointToRendererPoint(
+      { x: domSelectionRect.x, y: domSelectionRect.y },
+      [flowStore.viewport.x, flowStore.viewport.y, flowStore.viewport.zoom],
+    );
+    const selectionRect = {
+      x: selectionOrigin.x,
+      y: selectionOrigin.y,
+      width: domSelectionRect.width / flowStore.viewport.zoom,
+      height: domSelectionRect.height / flowStore.viewport.zoom,
+    };
+    const containerRect = flowStore.domNode?.getBoundingClientRect();
+    const defaultNodeSelectable = flowStore.elementsSelectable;
+    const defaultEdgeSelectable = flowStore.defaultEdgeOptions.selectable ?? true;
+
+    const selectedNodeIds = new Set<string>();
+    for (const internalNode of flowStore.nodeLookup.values()) {
+      const node = internalNode.internals.userNode;
+      const isSelectable = node.selectable ?? defaultNodeSelectable;
+      if (!isSelectable || internalNode.hidden) {
+        continue;
+      }
+
+      const nodeRect = nodeToRect(internalNode);
+      const nodeArea = nodeRect.width * nodeRect.height;
+      const overlappingArea = getOverlappingArea(selectionRect, nodeRect);
+      if (node.type === GROUP_NODE_TYPE) {
+        if (overlappingArea >= nodeArea) {
+          selectedNodeIds.add(node.id);
+        }
+      } else if (overlappingArea > 0) {
+        selectedNodeIds.add(node.id);
+      }
+    }
+
+    const nextNodes = flowStore.nodes.map(node => {
+      const shouldSelect = selectedNodeIds.has(node.id);
+      if (!!node.selected === shouldSelect) {
+        return node;
+      }
+
+      return { ...node, selected: shouldSelect };
+    });
+
+    const selectedEdgeIds = new Set<string>();
+    if (containerRect) {
+      for (const edge of flowStore.edges) {
+        const isSelectable = edge.selectable ?? defaultEdgeSelectable;
+        if (!isSelectable || edge.hidden) {
+          continue;
+        }
+
+        const edgeElement = flowStore.domNode?.querySelector<SVGGElement>(
+          `.svelte-flow__edge[data-id="${CSS.escape(edge.id)}"]`,
+        );
+        if (!edgeElement) {
+          continue;
+        }
+
+        const edgeRect = edgeElement.getBoundingClientRect();
+        const relativeEdgeRect = {
+          x: edgeRect.left - containerRect.left,
+          y: edgeRect.top - containerRect.top,
+          width: edgeRect.width,
+          height: edgeRect.height,
+        };
+        if (getOverlappingArea(domSelectionRect, relativeEdgeRect) > 0) {
+          selectedEdgeIds.add(edge.id);
+        }
+      }
+    }
+
+    const nextEdges = flowStore.edges.map(edge => {
+      const shouldSelect = selectedEdgeIds.has(edge.id);
+      if (!!edge.selected === shouldSelect) {
+        return edge;
+      }
+
+      return { ...edge, selected: shouldSelect };
+    });
+
+    if (nextNodes.some((node, index) => node !== flowStore.nodes[index])) {
+      flowStore.nodes = nextNodes;
+    }
+    if (nextEdges.some((edge, index) => edge !== flowStore.edges[index])) {
+      flowStore.edges = nextEdges;
+    }
+  }
+
+  $effect(() => {
+    if (flowStore.selectionRectMode !== "user" || !flowStore.selectionRect) {
+      return;
+    }
+
+    lastUserSelectionRect = { ...flowStore.selectionRect };
+    applySelectionBoxOverrides(flowStore.selectionRect);
   });
 
   function handleActionRequests() {
@@ -499,6 +613,14 @@
       searchMenuInstance = undefined;
       helpMenuOpen = false;
     },
+    onselectionend: () => {
+      if (!lastUserSelectionRect) {
+        return;
+      }
+
+      const selectionRect = lastUserSelectionRect;
+      requestAnimationFrame(() => applySelectionBoxOverrides(selectionRect));
+    },
     // ## On Pane Context Menu (right click)
     onpanecontextmenu: ({ event }) => {
       const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
@@ -568,7 +690,7 @@
     disableKeyboardA11y={!!addMenuInstance || !!searchMenuInstance || helpMenuOpen}
     deleteKey={["Delete", "Backspace"]}
     selectionKey={null}
-    selectionMode={SelectionMode.Full}
+    selectionMode={SelectionMode.Partial}
     selectNodesOnDrag={false}
     zIndexMode={"auto"}
     panOnDrag={workspace.controlScheme === "mouse" && !multiselectModifierPressed}
