@@ -1,6 +1,6 @@
 {
-  "Id": "Sphere.Positions",
-  "Title": "Sphere Positions",
+  "Id": "Bound.Positions",
+  "Title": "Bound Positions",
   "Color": "Blue",
   "Content" : [
     {
@@ -19,14 +19,6 @@
         "Label": "Skip",
         "Default" : false
       }
-    },
-    {
-      "Id": "Range",
-      "Type": "Float",
-      "Options": {
-        "Label": "Range",
-        "Default" : 0.0
-      }
     }
   ],
   "Outputs": [
@@ -35,6 +27,12 @@
       "Type": "PositionsConnection",
       "Color": "Blue",
       "Label" : "Positions"
+    },
+    {
+      "Id": "Bounds",
+      "Type": "DecimalBounds3d.Connection",
+      "Color": "Orange",
+      "Label" : "Bounds"
     }
   ],
   "Inputs": [
@@ -45,10 +43,13 @@
     }
   ],
   "Schema": {
-    "Type" : "Sphere",
+    "Type" : "Bound",
     "ExportAs" : "ExportAs",
     "Skip" : "Skip",
-    "Range" : "Range",
+    "Bounds" : {
+      "Node" : "DecimalBounds3d",
+      "Pin" : "Bounds"
+    },
     "Positions" : {
       "Node" : "PositionsVariants",
       "Pin" : "Positions"

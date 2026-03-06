@@ -6,6 +6,7 @@
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { applyDocumentState } from "src/workspace.svelte";
   import type { Snippet } from "svelte";
+  import HoverTooltip from "src/components/HoverTooltip.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
 
   const viewport = useViewport();
@@ -203,13 +204,15 @@
 
     <!-- Output Pins -->
     <div class="flex flex-col items-end flex-1 gap-2">
-      {#each outputPins as pin, index}
-        <div class="flex items-center gap-2">
-          <div class="text-xs text-vsc-muted whitespace-nowrap">
-            {pin.label}
+      {#each outputPins as pin}
+        <HoverTooltip text={pin.description} placement="left" wrapperClass="w-full">
+          <div class="flex items-center justify-end gap-2">
+            <div class="text-xs text-vsc-muted whitespace-nowrap">
+              {pin.label}
+            </div>
+            <NodePinHandle nodeId={id} {pin} type="source" />
           </div>
-          <NodePinHandle nodeId={id} {pin} type="source" />
-        </div>
+        </HoverTooltip>
       {/each}
     </div>
   </div>

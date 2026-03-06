@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Layer",
+  "Description": "Adds material layers to the brush. Connect LayerEntry nodes to this node.",
   "Title": "Layer",
   "Color": "blue",
   "Content": [],

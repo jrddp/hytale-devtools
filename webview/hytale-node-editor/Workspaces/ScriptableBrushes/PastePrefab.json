@@ -1,5 +1,6 @@
 ﻿{
   "Id": "PastePrefab",
+  "Description": "Paste a prefab at the offset point",
   "Title": "Paste Prefab",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "PrefabListAssetName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of a PrefabListAsset.",
         "Label": "Prefab List Asset Name",
         "Width": 250
       }
@@ -25,4 +27,3 @@
     "PrefabListAssetName": "PrefabListAssetName"
   }
 }
-

@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Loop",
+  "Description": "Loop nodes a set amount of times",
   "Title": "Loop Operations",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to repeat the loop",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "AdditionalRepetitions",
       "Type": "Int",
       "Options": {
+        "Description": "The extra amount of times to repeat the loop",
         "Label": "Additional Repetitions"
       }
     }
@@ -33,4 +36,3 @@
     "AdditionalRepetitions": "AdditionalRepetitions"
   }
 }
-

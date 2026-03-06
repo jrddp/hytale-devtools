@@ -23,6 +23,23 @@
     }
   ],
   "Outputs": [
+    {
+      "Id" : "SolidRotation",
+      "Type" : "OrthogonalRotation.Connection",
+      "Color" : "Orange",
+      "Multiple" : false,
+      "Label" : "SolidRotation",
+      "Fields": [
+        {
+          "Id" : "SolidBottomUp",
+          "Type" : "Checkbox",
+          "Options" : {
+            "Label" : "SolidBottomUp",
+            "Default" : false
+          }
+        }
+      ]
+    }
   ],
   "Inputs": [
     {
@@ -33,6 +50,11 @@
   ],
   "Schema": {
     "Solid" : "Solid",
-    "Fluid" : "Fluid"
+    "Fluid" : "Fluid",
+    "SolidBottomUp" : "SolidBottomUp",
+    "SolidRotation" : {
+      "Node" : "OrthogonalRotation",
+      "Pin" : "SolidRotation"
+    }
   }
 }

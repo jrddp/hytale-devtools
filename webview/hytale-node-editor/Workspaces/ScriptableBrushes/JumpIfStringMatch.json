@@ -1,5 +1,6 @@
 ﻿{
   "Id": "JumpIfStringMatch",
+  "Description": "Jump to a node if a string matches. Useful for macro commands.",
   "Title": "Jump If String Matches",
   "Color": "purple",
   "Content": [
@@ -43,4 +44,3 @@
     "RightSideOfStatement": "RightSideOfStatement"
   }
 }
-

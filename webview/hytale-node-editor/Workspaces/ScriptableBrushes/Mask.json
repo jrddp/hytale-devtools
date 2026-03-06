@@ -1,12 +1,14 @@
 ﻿{
   "Id": "Mask",
   "Title": "Set Operation Mask",
+  "Description": "Sets the operation mask to only modify blocks that match the mask.\n\nNOTE: This is not the same as Append Mask, as this node replaces the operation mask with it's contents and does not add to the current mask if there is one.",
   "Color": "green",
   "Content": [
     {
       "Id": "Mask",
       "Type": "SmallString",
       "Options": {
+        "Description": "Block mask to set as the operation mask.\n\nMask Symbols:\n\nDefault = TARGET_BLOCK\n! = NOT\n^ = NEIGHBORING\n< = BELOW\n> = ABOVE\n~ = NEXT TO\n\nExample:\nTo effect all blocks above Rock_Stone, do:>Rock_Stone",
         "Label": "Mask",
         "Width": 300
       }
@@ -25,4 +27,3 @@
     "Mask": "Mask"
   }
 }
-

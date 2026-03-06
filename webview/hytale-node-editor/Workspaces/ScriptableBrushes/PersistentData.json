@@ -1,5 +1,6 @@
 ﻿{
   "Id": "PersistentData",
+  "Description": "Store and operate on data that sticks around between executions.",
   "Title": "Persistent Data",
   "Color": "aqua",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the variable to modify.",
         "Label": "Stored Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "Operation",
       "Type": "Enum",
       "Options": {
+        "Description": "The operation to perform on the variable using the modifier.",
         "Label": "Operation",
         "Width": 120,
         "Values": [
@@ -31,6 +34,7 @@
       "Id": "Modifier",
       "Type": "Int",
       "Options": {
+        "Description": "The value to modify the variable by.",
         "Label": "Modifier"
       }
     }
@@ -50,4 +54,3 @@
     "Modifier": "Modifier"
   }
 }
-

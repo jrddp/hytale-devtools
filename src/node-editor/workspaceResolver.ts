@@ -62,7 +62,9 @@ type NodeContentDefinitionType =
 interface NodeContentDefinition {
   Id: string;
   Type: NodeContentDefinitionType;
+  Description?: string;
   Options?: {
+    Description?: string;
     Label?: string;
     Default?: unknown;
     Width?: number;
@@ -93,6 +95,7 @@ interface NodeSchemaDefinition {
 type NodeTemplateDefinition = {
   Id: string;
   Title: string;
+  Description?: string;
   Color?: string;
   Content?: NodeContentDefinition[];
   Outputs?: NodePinDefinition[];
@@ -107,11 +110,22 @@ type NodeTemplateDefinition = {
 
 interface NodePinDefinition {
   Id: string;
+  Description?: string;
   Type?: string;
   Color?: string;
   Label?: string;
   Multiple?: boolean;
   IsMap?: boolean;
+}
+
+function readDescription(...candidates: unknown[]): string | undefined {
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.length > 0) {
+      return candidate;
+    }
+  }
+
+  return undefined;
 }
 
 // structure of _Workspace.json
@@ -169,6 +183,7 @@ function fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeFie
       localId: content.Id,
       type: contentTypeToFieldComponentType(content.Type),
       label: content.Options?.Label,
+      description: readDescription(content.Description, content.Options?.Description),
       value: content.Options?.Default,
       inputWidth: content.Options?.Width,
       overrideAutocompleteValues,
@@ -185,7 +200,7 @@ function templateFromDefinition(
   schemaRef?: string,
 ): NodeTemplate {
   const schemaInfo = schemaRef
-    ? resolvePointerMetadataFromRef(schemaDocs, schemaRef, ["hytaleDevtools", "markdownDescription"], {
+    ? resolvePointerMetadataFromRef(schemaDocs, schemaRef, ["hytaleDevtools", "description"], {
         ignoreMetadataProperties: true,
       })
     : undefined;
@@ -196,6 +211,7 @@ function templateFromDefinition(
         schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
         localId: input.Id,
         label: input.Label,
+        description: readDescription(input.Description),
         color: input.Color,
         multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
       };
@@ -209,6 +225,7 @@ function templateFromDefinition(
           schemaKey: "",
           localId: output.Id,
           label: output.Label,
+          description: readDescription(output.Description),
           color: output.Color,
           multiplicity: type,
         };
@@ -240,7 +257,10 @@ function templateFromDefinition(
         if (schemaMetadata?.["hytaleDevtools"]?.semanticKind === "color") {
           fieldsBySchemaKey[schemaKey].type = "color";
         }
-        fieldsBySchemaKey[schemaKey].markdownDescription = schemaMetadata?.["markdownDescription"];
+        fieldsBySchemaKey[schemaKey].description = readDescription(
+          fieldsBySchemaKey[schemaKey].description,
+          schemaMetadata?.["description"],
+        );
       } else {
         // entry is a constant
         schemaConstants[schemaKey] = entry;
@@ -263,8 +283,10 @@ function templateFromDefinition(
       }
 
       outputPinsByLocalId[pin].schemaKey = schemaKey;
-      outputPinsByLocalId[pin].markdownDescription =
-        schemaInfo?.properties[schemaKey]?.metadata?.["markdownDescription"];
+      outputPinsByLocalId[pin].description = readDescription(
+        outputPinsByLocalId[pin].description,
+        schemaInfo?.properties[schemaKey]?.metadata?.["description"],
+      );
       childTypes[schemaKey] = node;
     }
   }
@@ -272,6 +294,7 @@ function templateFromDefinition(
   return {
     templateId: definition.Id,
     defaultTitle: definition.Title,
+    description: readDescription(definition.Description, schemaInfo?.hits?.[0]?.description),
     childTypes: childTypes,
     fieldsBySchemaKey: fieldsBySchemaKey,
     inputPins: inputPins,

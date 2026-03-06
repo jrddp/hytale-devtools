@@ -1,5 +1,6 @@
 ﻿{
   "Id": "UseBrushMask",
+  "Description": "Enable the brush tool's mask (the mask placed on the tool)",
   "Title": "Use Brush Mask",
   "Color": "green",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "UseBrushMask",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Enables or disables the brush's mask",
         "Label": "Use Brush Mask"
       }
     }
@@ -24,4 +26,3 @@
     "UseBrushMask": "UseBrushMask"
   }
 }
-

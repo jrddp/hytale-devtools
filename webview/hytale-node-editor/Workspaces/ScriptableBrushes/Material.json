@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Material",
+  "Description": "Changes the brush material",
   "Title": "Material",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "BlockType",
       "Type": "SmallString",
       "Options": {
+        "Description": "A single material, as a block ID, to set the block type to. You can also use Block Pattern operation to set a pattern (multiple) of blocks",
         "Label": "Block Type",
         "Width": 150
       }
@@ -25,4 +27,3 @@
     "BlockType": "BlockType"
   }
 }
-

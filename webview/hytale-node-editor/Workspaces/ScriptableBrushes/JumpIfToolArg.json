@@ -1,5 +1,6 @@
 {
   "Id": "JumpIfToolArg",
+  "Description": "Jump to a node based on a builder tool argument comparison.\n\nSupports checkbox/bool and dropdown/option types.",
   "Title": "Jump If Tool Arg",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "ArgName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The tool arg name from the brush item",
         "Label": "Arg Name",
         "Width": 150
       }
@@ -16,6 +18,7 @@
       "Type": "Enum",
       "Options": {
         "Label": "Comparison Type",
+        "Description": "The type of comparison to perform",
         "Width": 120,
         "Values": [
           "Equals",
@@ -28,6 +31,7 @@
       "Id": "ComparisonValue",
       "Type": "SmallString",
       "Options": {
+        "Description": "The value to compare against.\n\nFor boolean: 'true' or 'false'.\nfor string: the exact string or dropdown option.",
         "Label": "Comparison Value",
         "Width": 150
       }
@@ -36,6 +40,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to.",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -57,4 +62,3 @@
     "StoredIndexName": "StoredIndexName"
   }
 }
-

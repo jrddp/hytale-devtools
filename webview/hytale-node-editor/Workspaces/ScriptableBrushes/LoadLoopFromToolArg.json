@@ -1,5 +1,6 @@
 ﻿{
   "Id": "LoadLoopFromToolArg",
+  "Description": "Load an integer (number) from an integer tool arg and apply it to a loop.",
   "Title": "Load Loop From Tool Arg",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to.",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "ArgName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the integer (number) tool arg to load the value from",
         "Label": "Arg Name",
         "Width": 150
       }

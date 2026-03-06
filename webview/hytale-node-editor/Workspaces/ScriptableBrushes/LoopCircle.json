@@ -1,5 +1,6 @@
 ﻿{
   "Id": "LoopCircle",
+  "Description": "Loop and sets the offset in the shape of a circle each time",
   "Title": "Loop Previous And Set Offset In Circle",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to repeat the loop",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "NumberOfCirclePoints",
       "Type": "Int",
       "Options": {
+        "Description": "The amount of points on the circle to loop over",
         "Label": "Number Of Circle Points"
       }
     },
@@ -22,6 +25,7 @@
       "Id": "CircleRadius",
       "Type": "Int",
       "Options": {
+        "Description": "The radius of the circle",
         "Label": "Circle Radius"
       }
     },
@@ -29,6 +33,7 @@
       "Id": "FlipDirection",
       "Type": "Checkbox",
       "Options": {
+        "Description": "If checked, flips the direction the points on the circle are looped over",
         "Label": "Flip Direction"
       }
     },
@@ -36,6 +41,7 @@
       "Id": "RotateDirection",
       "Type": "Checkbox",
       "Options": {
+        "Description": "If checked, rotates the points on the circle that are looped over",
         "Label": "Rotate Direction"
       }
     }

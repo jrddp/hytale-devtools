@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Melt",
+  "Description": "Removes the top layer of blocks in the brush editing area",
   "Title": "Melt",
   "Color": "blue",
   "Inputs": [
@@ -14,4 +15,3 @@
     "Id": "melt"
   }
 }
-

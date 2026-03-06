@@ -1,5 +1,6 @@
 {
   "Id": "AppendMaskFromToolArg",
+  "Description": "Append an operation mask from a block tool arg with configurable filter type and optional additional blocks.",
   "Title": "Append Mask From Tool Arg",
   "Color": "green",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "ArgName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The block tool arg name from the brush item",
         "Label": "Arg Name",
         "Width": 150
       }
@@ -15,6 +17,8 @@
       "Id": "FilterType",
       "Type": "Enum",
       "Options": {
+        "Description": "The mask filter type to use with the block tool arg",
+        "Default": "TargetBlock",
         "Label": "Filter Type",
         "Width": 150,
         "Values": [
@@ -38,6 +42,7 @@
       "Id": "Invert",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Inverts the selected mask filter type.\n\n Example: To set the mask to not use blocks in the block tool arg, have:\n\nFilter Type = TargetBlock\nInvert = Checked",
         "Label": "Invert"
       }
     },
@@ -45,6 +50,7 @@
       "Id": "AdditionalBlocks",
       "Type": "SmallString",
       "Options": {
+        "Description": "Additional blocks to apply the filter type to for the mask\n\n Example: To filter out Rock_Basalt blocks in addition to my block tool arg, do:\n\nRock_Basalt",
         "Label": "Additional Blocks",
         "Width": 200
       }

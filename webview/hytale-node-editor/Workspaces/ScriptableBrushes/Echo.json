@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Echo",
+  "Description": "Print some text to chat.",
   "Title": "Echo to Chat",
   "Color": "orange",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Message",
       "Type": "String",
       "Options": {
+        "Description": "A message to print to chat when this operation is run",
         "Label": "Message",
         "Width": 350,
         "Height": 100

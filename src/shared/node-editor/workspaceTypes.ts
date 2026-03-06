@@ -28,28 +28,29 @@ export interface NodeField {
   schemaKey: string | null;
   type: FieldComponentType;
   label?: string;
+  description?: string;
   value?: unknown;
   inputWidth?: number;
   overrideAutocompleteValues?: string[];
   subfields?: NodeField[];
   localId: string;
   symbolLookup?: SemanticReference;
-  markdownDescription?: string;
 }
 
 export interface NodePin {
   schemaKey: string; // null for input pins
   label?: string;
+  description?: string;
   color?: string;
   localId: string;
   multiplicity: "single" | "multiple" | "map";
-  markdownDescription?: string;
 }
 
 // processed template for optimized usage. only uses schema keys, Content/Pin local keys are abstracted.
 export interface NodeTemplate {
   templateId: string;
   defaultTitle: string;
+  description?: string;
   category?: string;
   // schema key -> VariantKind or TemplateID for that child
   childTypes: Record<string, string>;

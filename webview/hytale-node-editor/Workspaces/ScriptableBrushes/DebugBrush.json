@@ -1,5 +1,6 @@
 {
   "Id": "DebugBrush",
+  "Description": "TECHNICAL:\n\nDebug options for scripted brushes.\n\nCan be used with Breakpoint nodes.",
   "Title": "Debug",
   "Color": "red",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "PrintOperations",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Prints the index and name of each operation from the brush.",
         "Label": "Print Operations"
       }
     },
@@ -14,11 +16,13 @@
       "Id": "StepThrough",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Enables manual step-through mode (pause after each operation).",
         "Label": "Step Through"
       }
     },
     {
       "Id": "EnableBreakpoints",
+      "Description": "Turns Breakpoint nodes on or off",
       "Type": "Checkbox",
       "Options": {
         "Label": "Enable Breakpoints"
@@ -28,6 +32,7 @@
       "Id": "OutputTarget",
       "Type": "Enum",
       "Options": {
+        "Description": "Where debug messages are sent (Chat, Console, or Both).",
         "Label": "Output Target",
         "Width": 120,
         "Values": ["Chat", "Console", "Both"]
@@ -37,6 +42,7 @@
       "Id": "BreakOnError",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Pause on error instead of stopping the entire brush from running",
         "Label": "Break On Error"
       }
     }
@@ -58,4 +64,3 @@
     "BreakOnError": "BreakOnError"
   }
 }
-

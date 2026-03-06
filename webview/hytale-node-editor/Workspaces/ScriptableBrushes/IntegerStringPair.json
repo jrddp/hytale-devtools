@@ -1,5 +1,6 @@
 {
   "Id": "IntegerStringPair",
+  "Description": "Adds a weighted index entry. Connect to Jump to Random Stored Index.",
   "Title": "Weighted Index Entry",
   "Color": "grey",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Left",
       "Type": "Int",
       "Options": {
+        "Description": "Weight value to associate with the index.",
         "Label": "Weight"
       }
     },
@@ -14,6 +16,7 @@
       "Id": "Right",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to associate with the weight value.",
         "Label": "Index Name",
         "Width": 150
       }

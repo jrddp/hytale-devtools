@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Set",
+  "Description": "Runs a set operation using the parameters of the brush configuration. This will load all the of the brushes current config and place the blocks in the world.\n\nSupports both blocks and fluids - if the pattern contains fluid items, it sets the fluid layer instead.",
   "Title": "Set Blocks",
   "Color": "green",
   "Inputs": [

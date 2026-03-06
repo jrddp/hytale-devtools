@@ -1,5 +1,6 @@
 {
   "Id": "DisableHoldInteraction",
+  "Description": "Disables the ability of the brush to activate multiple times on holding a button",
   "Title": "Disable Activate-On-Hold",
   "Color": "red",
   "Content": [],
@@ -15,4 +16,3 @@
     "Id": "disableonhold"
   }
 }
-

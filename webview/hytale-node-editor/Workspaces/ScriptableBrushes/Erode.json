@@ -1,12 +1,14 @@
 ﻿{
   "Id": "Erode",
   "Title": "Erode",
+  "Description": "Erodes blocks based on a selected preset",
   "Color": "blue",
   "Content": [
     {
       "Id": "ErodePreset",
       "Type": "Enum",
       "Options": {
+        "Description": "Presets to erode the area in the brush.\n\nDefault = The default erosion setting\nMelt = Removes blocks from the surface\nFill = Add blocks to the surface\nSmooth = Smoothes the surface\nLift = Raises blocks up by 1 on the surface\n",
         "Label": "Erode Preset",
         "Width": 120,
         "Values": [
@@ -33,4 +35,3 @@
     "ErodePreset": "ErodePreset"
   }
 }
-

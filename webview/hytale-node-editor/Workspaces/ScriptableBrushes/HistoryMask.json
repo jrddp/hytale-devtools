@@ -1,5 +1,6 @@
 ﻿{
   "Id": "HistoryMask",
+  "Description": "Allows you to mask to previously edited or non-edited blocks by the brush",
   "Title": "History Mask",
   "Color": "green",
   "Content": [
@@ -8,6 +9,7 @@
       "Type": "Enum",
       "Options": {
         "Label": "History Mask",
+        "Description": "History mask presets.\n\nNone = Edit any blocks\nOnly = Edit only the blocks that are edited with the brush\nNot = Edit only blocks that are NOT edited with the brush",
         "Width": 100,
         "Values": [
           "None",
@@ -30,4 +32,3 @@
     "HistoryMask": "HistoryMask"
   }
 }
-

@@ -1,5 +1,6 @@
 ﻿{
   "Id": "JumpIfClickType",
+  "Description": "Jump to a node based on the click type",
   "Title": "Jump If Click Type",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to.",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -38,4 +40,3 @@
     "ClickType": "ClickType"
   }
 }
-

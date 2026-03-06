@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Shape",
+  "Description": "Changes the shape of the brush",
   "Title": "Shape",
   "Color": "blue",
   "Content": [
@@ -34,4 +35,3 @@
     "Shape": "Shape"
   }
 }
-

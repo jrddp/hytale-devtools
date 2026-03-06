@@ -1,5 +1,6 @@
 ﻿{
   "Id": "SetDensity",
+  "Description": "Changes the likelyhood that a given block will be set.",
   "Title": "Density",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Density",
       "Type": "Int",
       "Options": {
+        "Description": "The random chance that any given block being set will actually get set, otherwise get cancelled.\n\nExample: a value of 30 is a 30% chance blocks will appear with a set operation.",
         "Label": "Density",
         "Min": 1,
         "Max": 100
@@ -26,4 +28,3 @@
     "Density": "Density"
   }
 }
-

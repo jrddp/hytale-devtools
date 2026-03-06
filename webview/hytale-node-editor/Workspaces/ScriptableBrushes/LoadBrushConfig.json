@@ -1,5 +1,6 @@
 {
   "Id": "LoadBrushConfig",
+  "Description": "Restore a saved brush config snapshot",
   "Title": "Load Brush Config Snapshot",
   "Color": "aqua",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the brush config snapshot to load",
         "Label": "Stored Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "ParametersToLoad",
       "Type": "List",
       "Options": {
+        "Description": "The parameters of the brush config snapshot to load. The possible parameters to load from the snapshot are:\n\nOffset\nDimensions\nThickness\nCapped\nPattern\nBrushMask\nOperationMask\nHistoryMask",
         "Label": "Parameters To Load",
         "ArrayElementType": "DataSettingFlags"
       }
@@ -34,4 +37,3 @@
     "ParametersToLoad": "ParametersToLoad"
   }
 }
-

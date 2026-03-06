@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Exit",
+  "Description": "Stops the brush from running.",
   "Title": "Exit",
   "Color": "purple",
   "Inputs": [
@@ -15,4 +16,3 @@
     "Id": "exit"
   }
 }
-

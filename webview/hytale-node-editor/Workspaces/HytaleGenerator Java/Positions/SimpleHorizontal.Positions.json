@@ -54,7 +54,7 @@
     },
     "Positions" : {
       "Node" : "PositionsVariants",
-      "Pin" : "PositionsConnection"
+      "Pin" : "Positions"
     }
   }
 }

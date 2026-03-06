@@ -17,6 +17,7 @@
   const { screenPosition, connectionFilter, oncancel, onselection }: AddMenuProps = $props();
 
   let containerElement = $state<HTMLDivElement>();
+  const DESCRIPTION_PANEL_WIDTH_PX = 248;
 
   let searchQuery = $state("");
   let activeIndex = $state(0);
@@ -76,6 +77,13 @@
   );
 
   let activeTemplate = $derived(searchedTemplates.at(activeIndex));
+  let activeTemplateDescription = $derived(activeTemplate?.description);
+  let showDescriptionOnLeft = $derived(
+    (containerElement?.getBoundingClientRect().right ?? screenPosition.x + 256) +
+      DESCRIPTION_PANEL_WIDTH_PX +
+      8 >
+      window.innerWidth,
+  );
 
   // reset index any time searchQuery changes
   $effect(() => {
@@ -120,71 +128,90 @@
 </script>
 
 <div
-  bind:this={containerElement}
   data-add-menu
-  role="dialog"
-  aria-label="Add node menu"
-  tabindex="-1"
-  class="absolute z-3001 w-64 max-h-[70vh] translate-x-2 translate-y-2 overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
-  style:max-height={`${maxContainerHeight}px`}
+  class="absolute z-3001 translate-x-2 translate-y-2 overflow-visible"
   style:left={`${Math.min(screenPosition.x, window.innerWidth - 264)}px`}
   style:top={`${Math.min(screenPosition.y, window.innerHeight - minContainerHeight - 8)}px`}
-  onkeydown={handleKeyDown}
 >
-  <input
-    bind:this={searchInput}
-    class="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-    type="search"
-    bind:value={searchQuery}
-    onkeydown={handleKeyDown}
-    placeholder={isRootNodeMissing ? "choose a root node" : "Search nodes..."}
-  />
-
   <div
-    bind:this={resultListElement}
-    class="relative mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-y-scroll pr-0.5"
-    role="listbox"
+    bind:this={containerElement}
+    role="dialog"
+    aria-label="Add node menu"
+    tabindex="-1"
+    class="w-64 max-h-[70vh] overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
+    style:max-height={`${maxContainerHeight}px`}
+    onkeydown={handleKeyDown}
   >
-    {#if searchedTemplatesByCategory.size === 0}
-      <div class="text-xs text-vsc-muted">
-        {isRootNodeMissing ? "No matching root node types" : "No matching node types"}
-      </div>
-    {:else}
-      {#each searchedTemplatesByCategory.entries() as [category, templates] (category)}
-        <div class="flex flex-col gap-1.5">
-          <div
-            class="flex items-center gap-2 px-1 text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted sticky top-0 bg-vsc-editor-widget-bg w-full z-10 pb-1 -mb-1"
-          >
-            <span>{category}</span>
-            <span class="flex-1 h-px bg-vsc-editor-widget-border"></span>
-          </div>
-          {#each templates as template (template.templateId)}
-            {@const isActive = template.templateId === activeTemplate.templateId}
-            <button
-              class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip scroll-m-8"
-              class:border-vsc-focus={isActive}
-              class:bg-vsc-list-active-bg={isActive}
-              class:text-vsc-list-active-fg={isActive}
-              data-active={isActive}
-              aria-selected={isActive}
-              role="option"
-              type="button"
-              onpointermove={() => (activeIndex = indexByTemplateId.get(template.templateId))}
-              onclick={() => onselection(template)}
-            >
-              <span
-                aria-hidden="true"
-                class="relative h-8 w-2.5"
-                style="background-color: {readColorForCss(template.nodeColor)};"
-              ></span>
+    <input
+      bind:this={searchInput}
+      class="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+      type="search"
+      bind:value={searchQuery}
+      onkeydown={handleKeyDown}
+      placeholder={isRootNodeMissing ? "choose a root node" : "Search nodes..."}
+    />
 
-              <span class="flex-1 min-w-0">
-                <span class="block text-xs font-semibold truncate">{template.defaultTitle}</span>
-              </span>
-            </button>
-          {/each}
+    <div
+      bind:this={resultListElement}
+      class="relative mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-y-scroll pr-0.5"
+      role="listbox"
+    >
+      {#if searchedTemplatesByCategory.size === 0}
+        <div class="text-xs text-vsc-muted">
+          {isRootNodeMissing ? "No matching root node types" : "No matching node types"}
         </div>
-      {/each}
-    {/if}
+      {:else}
+        {#each searchedTemplatesByCategory.entries() as [category, templates] (category)}
+          <div class="flex flex-col gap-1.5">
+            <div
+              class="flex items-center gap-2 px-1 text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted sticky top-0 bg-vsc-editor-widget-bg w-full z-10 pb-1 -mb-1"
+            >
+              <span>{category}</span>
+              <span class="flex-1 h-px bg-vsc-editor-widget-border"></span>
+            </div>
+            {#each templates as template (template.templateId)}
+              {@const isActive = template.templateId === activeTemplate.templateId}
+              <button
+                class="group flex w-full cursor-pointer items-center gap-2 rounded-lg border border-vsc-editor-widget-border bg-vsc-button-secondary-bg text-left text-vsc-button-secondary-fg transition-[border-color,background-color,color] overflow-clip scroll-m-8"
+                class:border-vsc-focus={isActive}
+                class:bg-vsc-list-active-bg={isActive}
+                class:text-vsc-list-active-fg={isActive}
+                data-active={isActive}
+                aria-selected={isActive}
+                role="option"
+                type="button"
+                onpointermove={() => (activeIndex = indexByTemplateId.get(template.templateId))}
+                onclick={() => onselection(template)}
+              >
+                <span
+                  aria-hidden="true"
+                  class="relative h-8 w-2.5"
+                  style="background-color: {readColorForCss(template.nodeColor)};"
+                ></span>
+
+                <span class="flex-1 min-w-0">
+                  <span class="block text-xs font-semibold truncate">{template.defaultTitle}</span>
+                </span>
+              </button>
+            {/each}
+          </div>
+        {/each}
+      {/if}
+    </div>
   </div>
+
+  {#if activeTemplateDescription}
+    <div
+      class="pointer-events-none absolute top-0 w-62 rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-3 py-2.5 text-vsc-editor-fg shadow-2xl"
+      class:left-[calc(100%+0.5rem)]={!showDescriptionOnLeft}
+      class:right-[calc(100%+0.5rem)]={showDescriptionOnLeft}
+    >
+      <div class="text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted">
+        {activeTemplate.defaultTitle}
+      </div>
+      <div class="mt-1.5 text-xs leading-4 text-vsc-input-fg whitespace-pre-line">
+        {activeTemplateDescription}
+      </div>
+    </div>
+  {/if}
 </div>

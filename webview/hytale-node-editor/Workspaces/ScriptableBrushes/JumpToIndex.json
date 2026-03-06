@@ -1,5 +1,6 @@
 ﻿{
   "Id": "JumpToIndex",
+  "Description": "Jump to a node",
   "Title": "Jump to Index",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to.",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -25,4 +27,3 @@
     "StoredIndexName": "StoredIndexName"
   }
 }
-

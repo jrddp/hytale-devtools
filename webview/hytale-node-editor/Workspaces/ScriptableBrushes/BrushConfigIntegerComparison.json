@@ -1,12 +1,14 @@
 {
   "Id": "BrushConfigIntegerComparison",
   "Title": "Integer Comparison",
+  "Description": "Compares a data source from a brush against an integer (number).\n\nUse this node with a flow control node that connnects to a condition.",
   "Color": "purple",
   "Content": [
     {
       "Id": "DataGettingFlag",
       "Type": "Enum",
       "Options": {
+        "Description": "The data source from the brush to compare against.",
         "Label": "Data Source",
         "Width": 120,
         "Values": ["OffsetX", "OffsetY", "OffsetZ", "Height", "Width", "Density"]
@@ -16,6 +18,7 @@
       "Id": "IntegerComparisonOperator",
       "Type": "Enum",
       "Options": {
+        "Description": "The comparison operator to use.",
         "Label": "Operator",
         "Width": 180,
         "Values": ["GreaterThan", "GreaterThanEqualTo", "LessThan", "LessThanEqualTo", "ModEqualZero", "ModNotEqualZero", "EqualTo", "NotEqualTo"]
@@ -25,6 +28,7 @@
       "Id": "ValueToCompareTo",
       "Type": "Int",
       "Options": {
+        "Description": "The integer (number) to compare against the data source.\n\nExample: To do something if the Density is less than 50, do:\n\nData Source = Density\nOperator = LessThan\nCompare Value = 50\nThen connect this node to a flow control node.",
         "Label": "Compare Value",
         "Default": 0
       }

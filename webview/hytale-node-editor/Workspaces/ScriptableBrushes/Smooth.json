@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Smooth",
+  "Description": "Smooths the blocks within the brush area to make the area more natural looking.",
   "Title": "Smooth Blocks",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "SmoothStrength",
       "Type": "Int",
       "Options": {
+        "Description": "The strength of the smoothing [1-2], where 2 is the strongest.",
         "Label": "Smooth Strength"
       }
     }
@@ -24,4 +26,3 @@
     "SmoothStrength": "SmoothStrength"
   }
 }
-

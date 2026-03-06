@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Lift",
+  "Description": "Lift all blocks up by one (duplicating the block) that are touching air, preserving the material.",
   "Title": "Lift Blocks",
   "Color": "blue",
   "Inputs": [
@@ -14,4 +15,3 @@
     "Id": "lift"
   }
 }
-

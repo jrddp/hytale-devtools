@@ -1,5 +1,6 @@
 ﻿{
   "Id": "JumpIfBlockType",
+  "Description": "Jump to a node based on a block type comparison",
   "Title": "Jump If Block Type Comparison",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Mask",
       "Type": "SmallString",
       "Options": {
+        "Description": "Block mask to check in order to jump to an index.\n\nMask Symbols:\n\nDefault = TARGET_BLOCK\n! = NOT\n^ = NEIGHBORING\n< = BELOW\n> = ABOVE\n~ = NEXT TO\n\nExample:\nTo jump to an index when the current block is below Rock_Stone, do:<Rock_Stone",
         "Label": "Mask",
         "Width": 200
       }
@@ -15,6 +17,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to.",
         "Label": "Stored Index Name",
         "Width": 150
       }

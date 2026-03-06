@@ -1,5 +1,6 @@
 ﻿{
   "Id": "RandomizeDimensions",
+  "Description": "Randomize the dimensions of the brush",
   "Title": "Randomize Dimensions",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "WidthRange",
       "Type": "Object",
       "Options": {
+        "Description": "The range of values for the width. Optionally relative, and can add/subtract from the existing width value.",
         "Label": "Width Range",
         "Fields": [
           {
@@ -38,6 +40,7 @@
       "Id": "HeightRange",
       "Type": "Object",
       "Options": {
+        "Description": "The range of values for the height. Optionally relative, and can add/subtract from the existing height value.",
         "Label": "Height Range",
         "Fields": [
           {

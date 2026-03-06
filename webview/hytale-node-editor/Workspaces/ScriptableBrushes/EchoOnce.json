@@ -1,5 +1,6 @@
 {
   "Id": "EchoOnce",
+  "Description": "Print text to chat only the first time the brush is used.",
   "Title": "Echo Once to Chat",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Message",
       "Type": "String",
       "Options": {
+        "Description": "A message to print to chat when this brush is first run",
         "Label": "Message",
         "Width": 350,
         "Height": 100

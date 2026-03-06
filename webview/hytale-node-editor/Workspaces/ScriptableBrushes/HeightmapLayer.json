@@ -1,11 +1,13 @@
 ﻿{
   "Id": "HeightmapLayer",
+  "Description": "Replaces blocks according to the specified layers in terms of their depth from the tallest block in its column",
   "Title": "Heightmap Layer",
   "Color": "blue",
   "Content": [],
   "Outputs": [
     {
       "Id": "LayersPin",
+      "Description": "The layers to set. Connects to LayerEntry nodes.",
       "Type": "LayerEntry",
       "Multiple": true,
       "Label": "Layers",

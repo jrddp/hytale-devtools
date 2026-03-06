@@ -1,0 +1,38 @@
+{
+  "Id": "DecimalBounds3d",
+  "Title": "DecimalBounds3d",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id": "PointA",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "PointA"
+    },
+    {
+      "Id": "PointB",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "PointB"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "DecimalBounds3d.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "PointA" : {
+      "Node" : "Point3D",
+      "Pin" : "PointA"
+    },
+    "PointB" : {
+      "Node" : "Point3D",
+      "Pin" : "PointB"
+    }
+  }
+}

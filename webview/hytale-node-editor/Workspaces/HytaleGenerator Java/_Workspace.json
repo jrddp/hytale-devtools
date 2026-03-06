@@ -21,7 +21,8 @@
   },
   "NodeCategories": {
     "Material" : [
-      "Material"
+      "Material",
+      "OrthogonalRotation"
     ],
     "Density Nodes": [
       "ConstantDensityNode",
@@ -91,7 +92,8 @@
       "Angle.Density",
       "Exported.Density",
       "Terrain.Density",
-      "DistanceToBiomeEdge.Density"
+      "DistanceToBiomeEdge.Density",
+      "YSampled.Density"
     ],
     "VectorProviders" : [
       "Constant.VectorProvider",
@@ -102,6 +104,9 @@
     ],
     "Points" : [
       "Point3D"
+    ],
+    "Bounds" : [
+      "DecimalBounds3d"
     ],
     "Range" : [
       "Decimal.Range",
@@ -129,16 +134,12 @@
       "Sum.Curve",
       "Constant.Curve"
     ],
-    "FunctionForY": [
-      "FunctionForY",
-      "FunctionForYPoint"
-    ],
     "Positions": [
       "Mesh2DPositions",
       "Mesh3DPositions",
       "ListPositions",
       "FieldFunctionPositions",
-      "Sphere.Positions",
+      "Bound.Positions",
       "OccurrencePositions",
       "OffsetPositions",
       "UnionPositions",
@@ -147,7 +148,8 @@
       "BaseHeight.Positions",
       "Anchor.Positions",
       "ImportedPositions",
-      "Delimiter"
+      "Delimiter",
+      "Framework"
     ],
     "PositionsCellNoise Nodes": [
       "PositionsCellNoiseDensityNode",
@@ -343,7 +345,8 @@
         "Angle" : "Angle.Density",
         "Exported" : "Exported.Density",
         "Terrain" : "Terrain.Density",
-        "DistanceToBiomeEdge" : "DistanceToBiomeEdge.Density"
+        "DistanceToBiomeEdge" : "DistanceToBiomeEdge.Density",
+        "YSampled" : "YSampled.Density"
       }
     },
     "VectorProvider.Variants": {
@@ -395,7 +398,8 @@
         "BaseHeight" : "BaseHeight.Positions",
         "Imported": "ImportedPositions",
         "Anchor" : "Anchor.Positions",
-        "Sphere" : "Sphere.Positions"
+        "Bound" : "Bound.Positions",
+        "Framework" : "Framework.Positions"
       }
     },
     "PointGeneratorVariants": {

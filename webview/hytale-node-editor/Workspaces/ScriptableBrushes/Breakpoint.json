@@ -1,12 +1,14 @@
 {
   "Id": "Breakpoint",
   "Title": "Breakpoint",
+  "Description": "TECHNICAL:\n\nDebug breakpoint for scripted brushes. Should be used with the Debug node with the 'Enable Breakpoints' checkbox checked.\n\nGives information about the state of the scripted brush when reached.",
   "Color": "red",
   "Content": [
     {
       "Id": "Label",
       "Type": "SmallString",
       "Options": {
+        "Description": "Name for this breakpoint",
         "Label": "Label",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "PrintMessage",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Print a message when breakpoint is reached.\n\nThis will be shown in the 'Output Target' from the Debug node.",
         "Label": "Print Message"
       }
     },
@@ -22,6 +25,7 @@
       "Id": "PrintState",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Print brush state when breakpoint is reached.\n\nThis will be shown in the 'Output Target' from the Debug node.",
         "Label": "Print State"
       }
     },
@@ -29,6 +33,7 @@
       "Id": "EnterStepMode",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Enter step-through mode (use /sb step to continue).\n\nStarting from this node, this allows you to use each node after it one at a time. To do the next node, write '/sb step' in the 'Output Target' from the Debug node.",
         "Label": "Enter Step Mode"
       }
     }
@@ -44,6 +49,7 @@
   "Outputs": [
     {
       "Id": "ComparisonPin",
+      "Description": "The comparison condition to activate this Breakpoint node.",
       "Type": "Comparison",
       "Multiple": false,
       "Color": "purple",

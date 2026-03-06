@@ -1,5 +1,6 @@
 {
   "Id": "LoadIntFromToolArg",
+  "Description": "Load an integer (number) from an integer tool arg and apply it to a brush config field",
   "Title": "Load Int From Tool Arg",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "ArgName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the integer (number) tool arg to load the value from",
         "Label": "Arg Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "TargetField",
       "Type": "Enum",
       "Options": {
+        "Description": "The brush config field to set the value for",
         "Label": "Target Field",
         "Width": 120,
         "Values": [
@@ -32,6 +35,7 @@
       "Id": "Relative",
       "Type": "Checkbox",
       "Options": {
+        "Description": "When checked, adds the loaded value to the current field value instead of replacing it",
         "Label": "Relative"
       }
     },
@@ -39,6 +43,7 @@
       "Id": "Negate",
       "Type": "Checkbox",
       "Options": {
+        "Description": "When checked, turns the sign of the value to negative",
         "Label": "Negate"
       }
     }

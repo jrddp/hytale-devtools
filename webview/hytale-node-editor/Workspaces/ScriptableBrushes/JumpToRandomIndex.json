@@ -1,5 +1,6 @@
 ﻿{
   "Id": "JumpToRandomIndex",
+  "Description": "Jump to a random node. Weighted Index Entry nodes connect to this node to add weights and nodes to randomly jump to.",
   "Title": "Jump to Random Stored Index",
   "Color": "purple",
   "Content": [],

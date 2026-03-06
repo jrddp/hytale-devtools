@@ -1,5 +1,6 @@
 ﻿{
   "Id": "UseOperationMask",
+  "Description": "Enable or disable the use of the operation mask",
   "Title": "Use Operation Mask",
   "Color": "green",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "UseOperationMask",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Enables or disables the operation mask",
         "Label": "Use Operation Mask"
       }
     }
@@ -24,4 +26,3 @@
     "UseOperationMask": "UseOperationMask"
   }
 }
-

@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Offset",
+  "Description": "Offset the brush location by a specified amount from the clicked location",
   "Title": "Modify Offset",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Offset",
       "Type": "Object",
       "Options": {
+        "Description": "Sets the offset in 3 dimensions. Each value is optionally relative, and can add/subtract from the existing offset value.",
         "Label": "Offset",
         "Fields": [
           {
@@ -49,6 +51,7 @@
       "Id": "TargetField",
       "Type": "Enum",
       "Options": {
+        "Description": "The brush config field to set the offset to. This can be useful for scaling a brush",
         "Label": "Relative To Field",
         "Width": 120,
         "Default": "None",
@@ -64,7 +67,7 @@
         ]
       }
     },
-    { "Id": "Negate", "Type": "Checkbox", "Options": { "Label": "Negate" } }
+    { "Id": "Negate", "Type": "Checkbox", "Options": { "Description": "When checked, inverts the sign of relative field.", "Label": "Negate" } }
   ],
   "Inputs": [
     {

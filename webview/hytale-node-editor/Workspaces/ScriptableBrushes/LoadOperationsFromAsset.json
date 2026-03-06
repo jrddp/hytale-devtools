@@ -1,5 +1,6 @@
 {
   "Id": "LoadOperationsFromAsset",
+  "Description": "Load nodes from another Scripted Brush",
   "Title": "Load Operations From Asset",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "AssetId",
       "Type": "SmallString",
       "Options": {
+        "Description": "The ID of the ScriptedBrushAsset to load operations from",
         "Label": "Asset Id",
         "Width": 200
       }
@@ -25,4 +27,3 @@
     "AssetId": "AssetId"
   }
 }
-

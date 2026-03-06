@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Dimensions",
+  "Description": "Set, add, or subtract from the dimensions of the brush.",
   "Title": "Modify Dimensions",
   "Color": "blue",
   "Content": [
@@ -8,6 +9,7 @@
       "Type": "Object",
       "Options": {
         "Label": "Width",
+        "Description": "Sets the width of the brush to the specified amount, optionally relative to the existing amount when the 'Relative' checkbox is checked.\n\nExample: To add 5 blocks of width to whatever the current width of the brush is, do:\n\nValue = 5\nRelative = Checked",
         "Fields": [
           { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 20 } },
           { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }
@@ -19,6 +21,7 @@
       "Type": "Object",
       "Options": {
         "Label": "Height",
+        "Description": "Sets the height of the brush to the specified amount, optionally relative to the existing amount when the 'Relative' checkbox is checked.\n\nExample: To add 5 blocks of height to whatever the current height of the brush is, do:\n\nValue = 5\nRelative = Checked",
         "Fields": [
           { "Id": "Value", "Type": "Int", "Options": { "Label": "Value", "Default": 20 } },
           { "Id": "Relative", "Type": "Checkbox", "Options": { "Label": "Relative" } }

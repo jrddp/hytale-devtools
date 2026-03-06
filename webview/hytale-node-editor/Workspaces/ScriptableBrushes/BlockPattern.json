@@ -1,5 +1,6 @@
 ﻿{
   "Id": "BlockPattern",
+  "Description": "Change the material of the brush to a pattern of blocks.",
   "Title": "Block Pattern",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "BlockPattern",
       "Type": "SmallString",
       "Options": {
+        "Description": "The block pattern to use as the material.\n\nA block pattern is formatted like:\n\n<%>Block_ID #1,<%>Block_ID #2,...<MORE BLOCKS>\n\nThe <%> is the percent of the blocks to set to a certain block type, and it is optional. The Block_ID is the ID of the block to use with the percent in front of it.\n\nExample: To make the brush have materials made of Rock_Stone and Soil_Gravel, do:\n\nRock_Stone,Soil_Gravel\n\nExample: To make the brush have materials where 75% of the materials are Rock_Stone and 25% made of Soil_Gravel, do:\n\n75%Rock_Stone,25%Soil_Gravel",
         "Label": "Block Pattern",
         "Width": 300
       }
@@ -25,4 +27,3 @@
     "BlockPattern": "BlockPattern"
   }
 }
-

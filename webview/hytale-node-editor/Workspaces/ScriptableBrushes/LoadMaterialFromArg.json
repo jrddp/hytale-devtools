@@ -1,12 +1,14 @@
 {
   "Id": "LoadMaterial",
   "Title": "Load Material from Arg",
+  "Description": "Load a block pattern from a block tool arg and set it as the brush material",
   "Color": "purple",
   "Content": [
     {
       "Id": "ArgName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the block tool arg to load the material pattern from",
         "Label": "ArgName",
         "Width": 200
       }
@@ -25,4 +27,3 @@
     "ArgName": "ArgName"
   }
 }
-

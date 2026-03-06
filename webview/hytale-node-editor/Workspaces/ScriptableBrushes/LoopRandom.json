@@ -1,5 +1,6 @@
 ﻿{
   "Id": "LoopRandom",
+  "Description": "Loop over nodes a random amount of times",
   "Title": "Loop Operations Random Amount",
   "Color": "purple",
   "Content": [
@@ -7,12 +8,14 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to repeat the loop",
         "Label": "Stored Index Name",
         "Width": 150
       }
     },
     {
       "Id": "RangeOfAdditionalRepetitions",
+      "Description": "The minimum and maximum of a range, randomly choosing the amount of additional times to repeat the loop.",
       "Type": "Object",
       "Options": {
         "Label": "Range Of Additional Repetitions",

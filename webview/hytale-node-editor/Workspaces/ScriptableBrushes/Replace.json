@@ -1,5 +1,6 @@
 ﻿{
   "Id": "Replace",
+  "Description": "Replace one kind of block with another pattern of blocks within the current brush area",
   "Title": "Replace Blocks",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "FromBlockType",
       "Type": "SmallString",
       "Options": {
+        "Description": "The block type, as a block ID, to replace",
         "Label": "From Block Type",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "ToBlockPattern",
       "Type": "SmallString",
       "Options": {
+        "Description": "The pattern of blocks to replace the block with",
         "Label": "To Block Pattern",
         "Width": 150
       }
@@ -34,4 +37,3 @@
     "ToBlockPattern": "ToBlockPattern"
   }
 }
-

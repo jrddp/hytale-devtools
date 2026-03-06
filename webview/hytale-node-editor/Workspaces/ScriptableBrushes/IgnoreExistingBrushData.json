@@ -1,6 +1,7 @@
 {
   "Id": "IgnoreExistingBrushData",
   "Title": "Ignore Existing Brush Settings",
+  "Description": "Ignores any existing brush settings specified on the tool.",
   "Color": "red",
   "Content": [],
   "Inputs": [
@@ -15,4 +16,3 @@
     "Id": "ignoreexistingbrushdata"
   }
 }
-

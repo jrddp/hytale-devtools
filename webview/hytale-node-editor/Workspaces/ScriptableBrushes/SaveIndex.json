@@ -1,5 +1,6 @@
 ﻿{
   "Id": "SaveIndex",
+  "Description": "Mark this spot in order to loop or jump to it.",
   "Title": "Store Current Operation Index",
   "Color": "purple",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name to store the current execution index at.",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -25,4 +27,3 @@
     "StoredIndexName": "StoredIndexName"
   }
 }
-

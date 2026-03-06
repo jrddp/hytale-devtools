@@ -1,6 +1,7 @@
 ﻿{
   "Id": "ClearOperationMask",
   "Title": "Clear Operation Mask",
+  "Description": "Reset the operation mask to nothing.",
   "Color": "green",
   "Inputs": [
     {
@@ -14,4 +15,3 @@
     "Id": "clearoperationmask"
   }
 }
-

@@ -1,12 +1,14 @@
 ﻿{
   "Id": "LoopCircleFromArg",
   "Title": "Loop Previous And Set Offset In Circle From Arg",
+  "Description": "Loop and sets the offset in the shape of a circle each time using integer (number) tool args",
   "Color": "purple",
   "Content": [
     {
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to repeat the loop",
         "Label": "Stored Index Name",
         "Width": 150
       }
@@ -15,6 +17,7 @@
       "Id": "NumberCirclePointsArg",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the integer (number) tool arg to load the number of points on the circle from.",
         "Label": "Number of Circle Points Arg",
         "Width": 150
       }
@@ -23,6 +26,7 @@
       "Id": "CircleRadiusArg",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name of the integer (number) tool arg to load the radius of the circle from.",
         "Label": "Circle Radius Arg",
         "Width": 150
       }
@@ -31,6 +35,7 @@
       "Id": "FlipDirection",
       "Type": "Checkbox",
       "Options": {
+        "Description": "If checked, flips the direction the points on the circle are looped over",
         "Label": "Flip Direction"
       }
     },
@@ -38,6 +43,7 @@
       "Id": "RotateDirection",
       "Type": "Checkbox",
       "Options": {
+        "Description": "If checked, rotates the points on the circle that are looped over",
         "Label": "Rotate Direction"
       }
     }

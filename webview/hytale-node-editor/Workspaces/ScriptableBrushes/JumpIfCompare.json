@@ -1,12 +1,14 @@
 ﻿{
   "Id": "JumpIfCompare",
   "Title": "Jump If Int Comparison",
+  "Description": "Jump to a node based on a conditional using the brush data.",
   "Color": "purple",
   "Content": [
     {
       "Id": "StoredIndexName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The index to jump to.",
         "Label": "Stored Index Name",
         "Width": 150
       }

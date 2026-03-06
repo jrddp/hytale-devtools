@@ -1,5 +1,6 @@
 ﻿{
   "Id": "RandomOffset",
+  "Description": "Randomly offset the brush location from the clicked location",
   "Title": "Randomize Offset",
   "Color": "blue",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "XOffsetRange",
       "Type": "Object",
       "Options": {
+        "Description": "The range of allowed values for the X offset to randomize.",
         "Label": "X Offset Range",
         "Fields": [
           {
@@ -38,6 +40,7 @@
       "Id": "YOffsetRange",
       "Type": "Object",
       "Options": {
+        "Description": "The range of allowed values for the Y offset to randomize.",
         "Label": "Y Offset Range",
         "Fields": [
           {
@@ -69,6 +72,7 @@
       "Id": "ZOffsetRange",
       "Type": "Object",
       "Options": {
+        "Description": "The range of allowed values for the Z offset to randomize.",
         "Label": "Z Offset Range",
         "Fields": [
           {

@@ -1,12 +1,14 @@
 ﻿{
   "Id": "AppendMask",
   "Title": "Append Mask",
+  "Description": "Append a new mask to the current operation mask.",
   "Color": "green",
   "Content": [
     {
       "Id": "AppendMask",
       "Type": "SmallString",
       "Options": {
+        "Description": "Block mask to append to the existing operation mask.\n\nMask Symbols:\n\nDefault = TARGET_BLOCK\n! = NOT\n^ = NEIGHBORING\n< = BELOW\n> = ABOVE\n~ = NEXT TO\n\nExample:\nTo effect all blocks above Rock_Stone, do:>Rock_Stone",
         "Label": "Append Mask",
         "Width": 200
       }
@@ -25,4 +27,3 @@
     "AppendMask": "AppendMask"
   }
 }
-

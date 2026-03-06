@@ -1,5 +1,6 @@
 {
   "Id": "LayerEntry",
+  "Description": "Layer entry to add to the Layer node.",
   "Title": "Layer Entry",
   "Color": "aqua",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "Left",
       "Type": "Int",
       "Options": {
+        "Description": "The depth of the layer.",
         "Label": "Depth",
         "Default": 1
       }
@@ -15,6 +17,7 @@
       "Id": "Right",
       "Type": "SmallString",
       "Options": {
+        "Description": "The material to set the layer to. Can be a Block ID or a brush tool arg name.",
         "Label": "Block Type / Arg",
         "Width": 150
       }
@@ -23,6 +26,7 @@
       "Id": "UseToolArg",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Checkbox to indicate that a brush tool arg name is being used in 'Block Type / Arg'",
         "Label": "From Tool Arg"
       }
     },
@@ -30,6 +34,7 @@
       "Id": "Skip",
       "Type": "Checkbox",
       "Options": {
+        "Description": "Skips layer entry",
         "Label": "Skip"
       }
     }

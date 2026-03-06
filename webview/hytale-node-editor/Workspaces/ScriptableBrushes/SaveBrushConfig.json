@@ -1,5 +1,6 @@
 ﻿{
   "Id": "SaveBrushConfig",
+  "Description": "Save a snapshot of the current brush config in order to restore it later.",
   "Title": "Save Brush Config Snapshot",
   "Color": "aqua",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "StoredName",
       "Type": "SmallString",
       "Options": {
+        "Description": "The name to store the snapshot of the current brush config as.",
         "Label": "Stored Name",
         "Width": 150
       }
@@ -25,4 +27,3 @@
     "StoredName": "StoredName"
   }
 }
-

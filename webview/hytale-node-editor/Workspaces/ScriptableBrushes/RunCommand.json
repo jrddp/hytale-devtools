@@ -1,5 +1,6 @@
 ﻿{
   "Id": "RunCommand",
+  "Description": "Runs a command, see help for argument replacements",
   "Title": "Run Command",
   "Color": "orange",
   "Content": [
@@ -7,6 +8,7 @@
       "Id": "CommandToRun",
       "Type": "String",
       "Options": {
+        "Description": "Runs a command, substituting the strings... \n'{x}', '{y}', and '{z}' for the origin coordinates\n'{radius}' with width/2, '{width}' with width, and '{height}' with height\n'{var:<persistent variable name>} with the value of the persistent variable'",
         "Label": "Command To Run",
         "Width": 350,
         "Height": 60
