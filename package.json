@@ -137,10 +137,19 @@
         "displayName": "Hytale Node Editor",
         "selector": [
           {
-            "filenamePattern": "**/HytaleGenerator/**/*.json"
+            "filenamePattern": "**/Server/ScriptedBrushes/**/*.json"
           },
           {
-            "filenamePattern": "**/ScriptedBrushes/**/*.json"
+            "filenamePattern": "**/Server/HytaleGenerator/Biomes/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/HytaleGenerator/Density/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/HytaleGenerator/MaterialMasks/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/HytaleGenerator/Assignments/**/*.json"
           }
         ],
         "priority": "default"

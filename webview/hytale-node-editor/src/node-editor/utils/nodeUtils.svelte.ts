@@ -301,7 +301,7 @@ export function getOrderedChildrenForHandle(parentId: string, parentHandleId: st
 }
 export function getSiblingOrderUpdates(node: FlowNode): NodeDataUpdates[] {
   const siblings = getNodeSiblingIds(node.id, "same-parent-handle");
-  if (siblings.length === 1) {
+  if (siblings.length <= 1) {
     return [[node.id, { inputConnectionIndex: undefined }]];
   } else {
     return siblings

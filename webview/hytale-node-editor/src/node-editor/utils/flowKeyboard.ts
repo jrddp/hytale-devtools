@@ -32,3 +32,26 @@ export function isShortcutBlockedByEditableTarget(
 
   return isEditableTarget(globalThis.document?.activeElement);
 }
+
+export function selectAllActiveEditableText() {
+  const activeElement = globalThis.document?.activeElement;
+  if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) {
+    activeElement.select();
+    return true;
+  }
+
+  if (activeElement instanceof HTMLElement && activeElement.isContentEditable) {
+    const selection = globalThis.getSelection?.();
+    const range = globalThis.document?.createRange();
+    if (!selection || !range) {
+      return false;
+    }
+
+    range.selectNodeContents(activeElement);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return true;
+  }
+
+  return false;
+}

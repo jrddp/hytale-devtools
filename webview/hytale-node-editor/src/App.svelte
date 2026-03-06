@@ -8,10 +8,10 @@
   import { type VSCodeApi } from "src/common";
   import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
+  import { EDITABLE_SELECTOR, selectAllActiveEditableText } from "src/node-editor/utils/flowKeyboard";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import Flow from "./Flow.svelte";
-  import { EDITABLE_SELECTOR } from "src/node-editor/utils/flowKeyboard";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
 
@@ -59,6 +59,8 @@
       case "action": {
         if (message.allowEditableTarget || !document.activeElement?.matches(EDITABLE_SELECTOR)) {
           workspace.actionRequests.push(message.request);
+        } else if (message.request.type === "select-all") {
+          selectAllActiveEditableText();
         }
         return;
       }
