@@ -55,7 +55,7 @@ export function getAutoPositionNodeUpdates(nodes: FlowNode[]): NodeUpdates[] {
         newPosition.y === currenPosition.y
       )
         return;
-      updates.push([treeNode.data.id, { position: newPosition }]);
+      updates.push([treeNode.data.id, { position: newPosition, parentId: undefined }]);
     });
   }
 
