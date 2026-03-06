@@ -3,7 +3,7 @@
   import type { Snippet } from "svelte";
 
   let {
-    inputId,
+    inputId: _inputId,
     label,
     description,
     align = "start",
@@ -30,9 +30,9 @@
 </script>
 
 <HoverTooltip text={description} placement="right" wrapperClass={labelWrapperClass}>
-  <label class="block text-right text-xs leading-4 text-vsc-muted" for={inputId}>
+  <div class="block select-none text-right text-xs leading-4 text-vsc-muted">
     {label}
-  </label>
+  </div>
 </HoverTooltip>
 
 <div class={contentClass}>

@@ -151,12 +151,13 @@
           {effectiveTitle}
         </div>
       {:else}
-        <button
-          class="font-bold text-vsc-input-fg cursor-text outline-none!"
+        <div
+          class="font-bold text-vsc-input-fg select-none"
+          role="presentation"
           ondblclick={() => (isEditingTitle = true)}
         >
           {effectiveTitle}
-        </button>
+        </div>
       {/if}
 
       <!-- Edit Comment Button -->

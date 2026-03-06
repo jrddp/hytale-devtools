@@ -103,17 +103,15 @@
           {effectiveTitle}
         </div>
       {:else}
-        <button
-          class="inline-block px-0 py-0 font-semibold leading-none text-left transition-transform duration-100 ease-out origin-bottom-left rounded cursor-text whitespace-nowrap text-vsc-editor-fg"
+        <div
+          class="inline-block select-none whitespace-nowrap rounded px-0 py-0 text-left font-semibold leading-none text-vsc-editor-fg transition-transform duration-100 ease-out origin-bottom-left"
+          role="presentation"
           style:font-size={`${GROUP_TITLE_BASE_SIZE_PX}px`}
           style:transform={`scale(${titleCompensationScale})`}
-          type="button"
-          // ondblclick={() => (isEditingTitle = true)}
-          onclick={() => (isEditingTitle = true)}
-          aria-label={`Group title: ${effectiveTitle}. Double click to rename`}
+          ondblclick={() => (isEditingTitle = true)}
         >
           {effectiveTitle}
-        </button>
+        </div>
       {/if}
     </div>
   </div>

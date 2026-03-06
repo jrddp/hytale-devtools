@@ -61,6 +61,7 @@
   const SEARCH_NODE_FOCUS_ZOOM = 0.9;
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
+  let multiselectModifierPressed = $state(false);
 
   let cursorPos = $state<XYPosition>();
   let pendingSourceConnection: { source: string; sourceHandle: string } | undefined;
@@ -228,6 +229,10 @@
 
   // ! window event
   function handleWindowKeyDown(event: KeyboardEvent) {
+    if (event.key === MULTISELECT_KEY) {
+      multiselectModifierPressed = true;
+    }
+
     if (
       !event.metaKey &&
       !event.ctrlKey &&
@@ -260,6 +265,12 @@
     if (captured) {
       event.preventDefault();
       event.stopPropagation();
+    }
+  }
+
+  function handleWindowKeyUp(event: KeyboardEvent) {
+    if (event.key === MULTISELECT_KEY) {
+      multiselectModifierPressed = false;
     }
   }
 
@@ -396,6 +407,7 @@
   // # Window Events
   const windowEvents = {
     onkeydowncapture: handleWindowKeyDown,
+    onkeyupcapture: handleWindowKeyUp,
     oncopycapture: handleWindowCopy,
     oncutcapture: handleWindowCut,
     onpastecapture: handleWindowPaste,
@@ -411,6 +423,9 @@
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]"))
         searchMenuInstance = undefined;
+    },
+    onblur: () => {
+      multiselectModifierPressed = false;
     },
   };
 
@@ -536,11 +551,13 @@
 <svelte:window
   // svelte won't let you ...spread window events :'(
   onkeydowncapture={windowEvents.onkeydowncapture}
+  onkeyupcapture={windowEvents.onkeyupcapture}
   oncopycapture={windowEvents.oncopycapture}
   oncutcapture={windowEvents.oncutcapture}
   onpastecapture={windowEvents.onpastecapture}
   onpointermovecapture={windowEvents.onpointermovecapture}
   onpointerdown={windowEvents.onpointerdown}
+  onblur={windowEvents.onblur}
 />
 
 <div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>
@@ -550,14 +567,15 @@
     {nodeTypes}
     disableKeyboardA11y={!!addMenuInstance || !!searchMenuInstance || helpMenuOpen}
     deleteKey={["Delete", "Backspace"]}
+    selectionKey={null}
     selectionMode={SelectionMode.Full}
     selectNodesOnDrag={false}
     zIndexMode={"auto"}
-    panOnDrag={workspace.controlScheme === "mouse"}
+    panOnDrag={workspace.controlScheme === "mouse" && !multiselectModifierPressed}
     panOnScroll={workspace.controlScheme === "trackpad"}
     multiSelectionKey={MULTISELECT_KEY}
-    selectionOnDrag={workspace.controlScheme === "trackpad"}
-    panActivationKey={workspace.controlScheme === "mouse" ? "Shift" : undefined}
+    selectionOnDrag={workspace.controlScheme === "trackpad" || multiselectModifierPressed}
+    panActivationKey={null}
     minZoom={MIN_FLOW_ZOOM}
     onlyRenderVisibleElements={nodes.length >= 50}
     connectionRadius={CONNECTION_RADIUS}

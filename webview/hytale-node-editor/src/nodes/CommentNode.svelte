@@ -365,16 +365,15 @@
         {...noMousePropogation}
       />
     {:else}
-      <button
+      <div
         bind:this={titleElement}
-        class="flex-1 min-w-0 font-semibold text-left truncate select-none text-vsc-input-fg cursor-grab active:cursor-grabbing"
+        class="min-w-0 flex-1 truncate select-none text-left font-semibold text-vsc-input-fg"
+        role="presentation"
         style:font-size={`${previewFontSize}px`}
-        type="button"
         ondblclick={() => (isEditingTitle = true)}
-        aria-label={`Comment title: ${title}. Double click to rename`}
       >
         {title}
-      </button>
+      </div>
     {/if}
 
     <div
