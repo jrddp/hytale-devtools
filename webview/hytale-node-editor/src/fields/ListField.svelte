@@ -1,11 +1,19 @@
 <script lang="ts">
+  import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { isObject } from "src/node-editor/utils/valueUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
 
   // TODO lists can technically be types other than string. definition requires investigation.
-  let { inputId, label, initialValue, onconfirm }: FieldProps<unknown[]> = $props();
+  let {
+    inputId,
+    label,
+    description,
+    initialValue,
+    inputWidth,
+    onconfirm,
+  }: FieldProps<unknown[]> = $props();
 
   let value = $state<unknown[]>([]);
 
@@ -78,73 +86,76 @@
   }
 </script>
 
-<div
-  id={inputId}
-  class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
->
-  <div class="flex items-center justify-between gap-2">
-    <div class="text-xs font-bold uppercase text-vsc-muted">{label}</div>
-    <button
-      class="px-2 py-1 text-xs border rounded-md border-vsc-button-border bg-vsc-button-secondary-bg text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
-      type="button"
-      onclick={addItem}
-    >
-      Add
-    </button>
-  </div>
-
-  {#if value.length === 0}
-    <div class="text-xs text-vsc-muted">No items</div>
-  {:else}
-    <div class="flex flex-col gap-1.5">
-      {#each value as item, index}
-        <div class="flex items-start gap-1.5">
-          <div class="flex-1">
-            {#if typeof item === "boolean"}
-              <input
-                class="w-4 h-4 nodrag"
-                type="checkbox"
-                checked={item}
-                onchange={event => updateBooleanItem(index, event.currentTarget.checked)}
-                {...noMousePropogation}
-              />
-            {:else if typeof item === "number"}
-              <input
-                class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                type="number"
-                value={item}
-                onchange={event => updateNumberItem(index, event.currentTarget.value)}
-                onkeydown={handleEnterNavigation}
-                {...noMousePropogation}
-              />
-            {:else if isObject(item)}
-              <textarea
-                class="nodrag min-h-10 w-full resize-y rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                rows="3"
-                value={formatObjectValue(item)}
-                onchange={event => updateObjectItem(index, event.currentTarget.value)}
-                {...noMousePropogation}
-              ></textarea>
-            {:else}
-              <input
-                class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                type="text"
-                value={typeof item === "string" ? item : String(item ?? "")}
-                onchange={event => updateTextItem(index, event.currentTarget.value)}
-                onkeydown={handleEnterNavigation}
-                {...noMousePropogation}
-              />
-            {/if}
-          </div>
-          <button
-            class="px-2 py-1 text-xs border rounded-md border-vsc-button-border bg-vsc-button-secondary-bg text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
-            type="button"
-            onclick={() => removeItem(index)}
-          >
-            Remove
-          </button>
-        </div>
-      {/each}
+<FieldLayout {inputId} {label} {description} align="start">
+  <div
+    id={inputId}
+    class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+    class:w-full={inputWidth === undefined}
+    style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
+  >
+    <div class="flex items-center justify-end gap-2">
+      <button
+        class="rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
+        type="button"
+        onclick={addItem}
+      >
+        Add
+      </button>
     </div>
-  {/if}
-</div>
+
+    {#if value.length === 0}
+      <div class="text-xs text-vsc-muted">No items</div>
+    {:else}
+      <div class="flex flex-col gap-1.5">
+        {#each value as item, index}
+          <div class="flex items-start gap-1.5">
+            <div class="flex-1">
+              {#if typeof item === "boolean"}
+                <input
+                  class="h-4 w-4 nodrag"
+                  type="checkbox"
+                  checked={item}
+                  onchange={event => updateBooleanItem(index, event.currentTarget.checked)}
+                  {...noMousePropogation}
+                />
+              {:else if typeof item === "number"}
+                <input
+                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                  type="number"
+                  value={item}
+                  onchange={event => updateNumberItem(index, event.currentTarget.value)}
+                  onkeydown={handleEnterNavigation}
+                  {...noMousePropogation}
+                />
+              {:else if isObject(item)}
+                <textarea
+                  class="nodrag min-h-10 w-full resize-y rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                  rows="3"
+                  value={formatObjectValue(item)}
+                  onchange={event => updateObjectItem(index, event.currentTarget.value)}
+                  {...noMousePropogation}
+                ></textarea>
+              {:else}
+                <input
+                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                  type="text"
+                  value={typeof item === "string" ? item : String(item ?? "")}
+                  onchange={event => updateTextItem(index, event.currentTarget.value)}
+                  onkeydown={handleEnterNavigation}
+                  {...noMousePropogation}
+                />
+              {/if}
+            </div>
+            <button
+              class="rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
+              type="button"
+              onclick={() => removeItem(index)}
+            >
+              Remove
+            </button>
+          </div>
+        {/each}
+      </div>
+    {/if}
+  </div>
+</FieldLayout>

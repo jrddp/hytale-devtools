@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { workspace } from "src/workspace.svelte";
@@ -8,7 +9,9 @@
   let {
     inputId,
     label,
+    description,
     initialValue,
+    inputWidth,
     multiline = false,
     overrideAutocompleteValues,
     symbolLookup,
@@ -129,55 +132,60 @@
   }
 </script>
 
-<div class="relative flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
-  {#if multiline}
-    <textarea
-      id={inputId}
-      class="nodrag min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg h-20"
-      rows="4"
-      bind:value
-      onblur={confirmValue}
-      {...noMousePropogation}
-    ></textarea>
-  {:else}
-    <input
-      id={inputId}
-      class="w-64 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
-      class:rounded-b-none!={shouldAutocomplete && filteredAutocompleteValues.length > 0}
-      type="text"
-      bind:value
-      onfocus={handleFocus}
-      onkeydown={handleInputKeydown}
-      onblur={confirmValue}
-      {...noMousePropogation}
-    />
-    {#if shouldAutocomplete && filteredAutocompleteValues.length > 0}
-      <div
-        role="listbox"
-        class="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
-        tabindex="-1"
-        bind:this={autocompleteListElement}
-      >
-        {#each filteredAutocompleteValues as acValue, index}
-          <button
-            class="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover data-[active=true]:bg-vsc-list-active-bg data-[active=true]:text-vsc-list-active-fg"
-            class:border-vsc-focus={index === activeAutocompleteIndex}
-            class:bg-vsc-list-active-bg={index === activeAutocompleteIndex}
-            class:text-vsc-list-active-fg={index === activeAutocompleteIndex}
-            type="button"
-            tabindex="-1"
-            role="option"
-            aria-selected={index === activeAutocompleteIndex}
-            data-active={index === activeAutocompleteIndex}
-            onpointermove={() => (activeAutocompleteIndex = index)}
-            onpointerdown={event => event.preventDefault()}
-            onclick={() => applyAutocompleteValue(acValue)}
-          >
-            {acValue}
-          </button>
-        {/each}
-      </div>
+<FieldLayout {inputId} {label} {description} align={multiline ? "start" : "center"}>
+  <div
+    class="relative min-w-0"
+    class:w-full={inputWidth === undefined}
+    style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
+  >
+    {#if multiline}
+      <textarea
+        id={inputId}
+        class="nodrag h-20 min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+        rows="4"
+        bind:value
+        onblur={confirmValue}
+        {...noMousePropogation}
+      ></textarea>
+    {:else}
+      <input
+        id={inputId}
+        class="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
+        class:rounded-b-none!={shouldAutocomplete && filteredAutocompleteValues.length > 0}
+        type="text"
+        bind:value
+        onfocus={handleFocus}
+        onkeydown={handleInputKeydown}
+        onblur={confirmValue}
+        {...noMousePropogation}
+      />
+      {#if shouldAutocomplete && filteredAutocompleteValues.length > 0}
+        <div
+          role="listbox"
+          class="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
+          tabindex="-1"
+          bind:this={autocompleteListElement}
+        >
+          {#each filteredAutocompleteValues as acValue, index}
+            <button
+              class="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover data-[active=true]:bg-vsc-list-active-bg data-[active=true]:text-vsc-list-active-fg"
+              class:border-vsc-focus={index === activeAutocompleteIndex}
+              class:bg-vsc-list-active-bg={index === activeAutocompleteIndex}
+              class:text-vsc-list-active-fg={index === activeAutocompleteIndex}
+              type="button"
+              tabindex="-1"
+              role="option"
+              aria-selected={index === activeAutocompleteIndex}
+              data-active={index === activeAutocompleteIndex}
+              onpointermove={() => (activeAutocompleteIndex = index)}
+              onpointerdown={event => event.preventDefault()}
+              onclick={() => applyAutocompleteValue(acValue)}
+            >
+              {acValue}
+            </button>
+          {/each}
+        </div>
+      {/if}
     {/if}
-  {/if}
-</div>
+  </div>
+</FieldLayout>

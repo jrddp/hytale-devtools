@@ -30,5 +30,7 @@
 </script>
 
 <BaseNode {id} {...props}>
-  <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onconfirm={updateData} />
+  <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
+    <FieldEditor nodeId={id} {...RAW_JSON_FIELD} value={dataFieldValue} onconfirm={updateData} />
+  </div>
 </BaseNode>

@@ -1,10 +1,12 @@
 <script lang="ts">
+  import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
 
   let {
     inputId,
     label,
+    description,
     initialValue,
     onconfirm,
   }: FieldProps<boolean> = $props();
@@ -29,14 +31,13 @@
   }
 </script>
 
-<div class="flex flex-row items-center justify-start gap-2">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
+<FieldLayout {inputId} {label} {description} align="center">
   <input
     id={inputId}
-    class="w-4 h-4 nodrag"
+    class="h-4 w-4 nodrag"
     type="checkbox"
     bind:checked={value}
     onchange={confirmValue}
     {...noMousePropogation}
   />
-</div>
+</FieldLayout>

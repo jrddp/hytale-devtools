@@ -1,7 +1,9 @@
 export type FieldProps<T> = {
   inputId: string;
   label: string;
+  description?: string;
   initialValue: T;
+  inputWidth?: number;
   onconfirm: (value: T) => void;
 };
 

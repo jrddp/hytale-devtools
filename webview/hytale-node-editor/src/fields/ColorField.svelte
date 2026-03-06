@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
@@ -6,7 +7,8 @@
   // TODO support rgb format
   type ColorStringFormat = "hex" | "rgb";
 
-  let { inputId, label, initialValue, onconfirm }: FieldProps<string> = $props();
+  let { inputId, label, description, initialValue, inputWidth, onconfirm }: FieldProps<string> =
+    $props();
 
   let value = $state("");
   let lastCommittedValue = $state("");
@@ -40,20 +42,21 @@
   }
 </script>
 
-<div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
-  <div class="flex items-center w-64 gap-2">
+<FieldLayout {inputId} {label} {description} align="center">
+  <div class="flex w-full min-w-0 items-center gap-2">
     <input
       id={inputId}
-      class="rounded-md nodrag size-8"
+      class="size-8 shrink-0 rounded-md nodrag"
       type="color"
       bind:value={value}
       onchange={confirmValue}
       {...noMousePropogation}
     />
     <input
-      class="nodrag flex-1 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+      class="nodrag min-w-0 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+      class:flex-1={inputWidth === undefined}
       type="text"
+      style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
       bind:value
       onkeydown={handleKeyDown}
       onblur={confirmValue}
@@ -61,4 +64,4 @@
       {...noMousePropogation}
     />
   </div>
-</div>
+</FieldLayout>

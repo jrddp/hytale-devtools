@@ -24,7 +24,7 @@
 </script>
 
 <BaseNode {id} {...props}>
-  <div class="flex flex-col gap-2">
+  <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
     {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field]}
       <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
     {/each}

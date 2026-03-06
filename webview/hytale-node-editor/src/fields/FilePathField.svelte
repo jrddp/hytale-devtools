@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
@@ -6,7 +7,9 @@
   let {
     inputId,
     label,
+    description,
     initialValue,
+    inputWidth,
     onconfirm,
   }: FieldProps<string> = $props();
 
@@ -42,12 +45,13 @@
   }
 </script>
 
-<div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{label}</label>
+<FieldLayout {inputId} {label} {description} align="center">
   <input
     id={inputId}
-    class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+    class="nodrag rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+    class:w-full={inputWidth === undefined}
     type="text"
+    style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
     bind:value
     onkeydown={handleEnterNavigation}
     onblur={confirmValue}
@@ -55,4 +59,4 @@
     spellcheck="false"
     {...noMousePropogation}
   />
-</div>
+</FieldLayout>

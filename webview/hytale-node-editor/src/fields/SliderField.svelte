@@ -1,11 +1,14 @@
 <script lang="ts">
+  import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
 
   let {
     inputId,
     label,
+    description,
     initialValue,
+    inputWidth,
     onconfirm,
   }: FieldProps<number> = $props();
 
@@ -36,12 +39,13 @@
   }
 </script>
 
-<div class="flex flex-col gap-1">
-  <label class="text-xs text-vsc-muted w-fit" for={inputId}>{fieldLabel}</label>
+<FieldLayout inputId={inputId} label={fieldLabel} description={description} align="center">
   <input
     id={inputId}
-    class="w-full nodrag"
+    class="nodrag"
+    class:w-full={inputWidth === undefined}
     type="range"
+    style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
     {min}
     {max}
     {step}
@@ -50,4 +54,4 @@
     onblur={confirmValue}
     {...noMousePropogation}
   />
-</div>
+</FieldLayout>
