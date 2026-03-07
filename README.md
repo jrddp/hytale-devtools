@@ -18,9 +18,12 @@ This extension includes a custom node editor for modifying World Generation + Sc
 
 Mac + Windows users can now participate in Worldgen development with full cross-platform support!
 
-### Autocomplete + Documentation Hints
+### Autocomplete, Documentation Tooltips, and Color Picker
 
 Autocompletion values are generated based on the Server code itself, and are updated automatically by using a light-weight companion mod built into the extension, automatically set up to be included when you run your mod's server in VSCode.
+
+![Autocomplete Demo](media/demo_images/autocomplete-demo.gif)
+![Color Picker Demo](media/demo_images/color-picker.gif)
 
 ### Optimized Control Schemes for Mouse AND Trackpad
 
