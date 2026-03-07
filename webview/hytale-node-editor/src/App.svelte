@@ -4,7 +4,7 @@
     type NodeEditorDocumentUpdateMessage,
     type WebviewToExtensionMessage,
   } from "@shared/node-editor/messageTypes";
-  import { SvelteFlowProvider } from "@xyflow/svelte";
+  import { SvelteFlowProvider, type Viewport } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
   import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
@@ -14,6 +14,9 @@
   import Flow from "./Flow.svelte";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
+  type NodeEditorWebviewState = {
+    viewport?: Viewport;
+  };
 
   $effect(() => {
     workspace.vscode = vscode;
@@ -21,10 +24,15 @@
 
   // bumped for each parsed document update so Flow can run one-time load hooks.
   let graphLoadVersion = $state(0);
-  let localWebviewState = $state<Record<string, unknown>>({});
+  let localWebviewState = $state<NodeEditorWebviewState>({});
   let extensionError = $state("");
   let isWebviewVisible =
     typeof document !== "undefined" ? document.visibilityState !== "hidden" : true;
+
+  function persistWebviewState(nextState: NodeEditorWebviewState) {
+    localWebviewState = nextState;
+    vscode.setState?.(nextState);
+  }
 
   function handleMessage(event: MessageEvent<ExtensionToWebviewMessage>) {
     const message = event.data;
@@ -37,11 +45,13 @@
         workspace.controlScheme = message.controlScheme;
         workspace.platform = message.platform;
         workspace.copiedSelection = message.clipboard;
-        workspace.actionRequests.push({
-          type: "fit-view",
-          duration: 0,
-          maxDistanceToRoot: 10_000,
-        });
+        if (!localWebviewState.viewport) {
+          workspace.actionRequests.push({
+            type: "fit-view",
+            duration: 0,
+            maxDistanceToRoot: 10_000,
+          });
+        }
         return;
       case "update":
         handleDocumentUpdateMessage(message);
@@ -99,7 +109,7 @@
 
   onMount(() => {
     if (typeof vscode.getState === "function") {
-      localWebviewState = vscode.getState();
+      localWebviewState = vscode.getState() ?? {};
     }
 
     window.addEventListener("message", handleMessage);
@@ -120,7 +130,12 @@
     <div class="mx-3 mt-3 text-sm text-vsc-error">{extensionError}</div>
   {:else if workspace.isInitialized}
     <SvelteFlowProvider>
-      <Flow bind:nodes={workspace.nodes} bind:edges={workspace.edges} />
+      <Flow
+        bind:nodes={workspace.nodes}
+        bind:edges={workspace.edges}
+        initialViewport={localWebviewState.viewport}
+        onviewportchange={viewport => persistWebviewState({ ...localWebviewState, viewport })}
+      />
     </SvelteFlowProvider>
   {/if}
 </main>

@@ -56,8 +56,17 @@
     y: (window.innerHeight / 2 - viewport.y) / viewport.zoom,
   });
 
-  let { nodes = $bindable([]), edges = $bindable([]) }: { nodes?: FlowNode[]; edges?: FlowEdge[] } =
-    $props();
+  let {
+    nodes = $bindable([]),
+    edges = $bindable([]),
+    initialViewport,
+    onviewportchange,
+  }: {
+    nodes?: FlowNode[];
+    edges?: FlowEdge[];
+    initialViewport?: Viewport;
+    onviewportchange?: (viewport: Viewport) => void;
+  } = $props();
 
   const MIN_FLOW_ZOOM = 0;
   const SEARCH_NODE_FOCUS_DURATION_MS = 100;
@@ -619,6 +628,9 @@
       searchMenuInstance = undefined;
       helpMenuOpen = false;
     },
+    onmoveend: () => {
+      onviewportchange?.($state.snapshot(flowStore.viewport));
+    },
     onselectionend: () => {
       if (!lastUserSelectionRect) {
         return;
@@ -692,6 +704,7 @@
   <SvelteFlow
     bind:nodes
     bind:edges
+    {initialViewport}
     {nodeTypes}
     disableKeyboardA11y={!!addMenuInstance || !!searchMenuInstance || helpMenuOpen}
     deleteKey={["Delete", "Backspace"]}
