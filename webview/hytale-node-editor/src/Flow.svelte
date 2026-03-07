@@ -32,6 +32,7 @@
     isValidConnection,
     pruneConflictingEdges,
     recalculateGroupParents,
+    resolveFitViewNodeIds,
   } from "src/node-editor/utils/nodeUtils.svelte";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
   import { untrack } from "svelte";
@@ -58,7 +59,6 @@
   let { nodes = $bindable([]), edges = $bindable([]) }: { nodes?: FlowNode[]; edges?: FlowEdge[] } =
     $props();
 
-  const INITIAL_FIT_ROOT_DISTANCE_LIMIT = 6500;
   const MIN_FLOW_ZOOM = 0;
   const SEARCH_NODE_FOCUS_DURATION_MS = 100;
   const SEARCH_NODE_FOCUS_ZOOM = 0.9;
@@ -237,7 +237,13 @@
             retained.push(action);
             break;
           }
+          const fitNodes = resolveFitViewNodeIds({
+            nodes: workspace.nodes,
+            rootNodeId: workspace.rootNodeId,
+            maxDistanceToRoot: action.maxDistanceToRoot,
+          });
           fitView({
+            nodes: fitNodes.length > 0 ? fitNodes : undefined,
             padding: 0.2,
             minZoom: MIN_FLOW_ZOOM,
             duration: action.duration ?? 250,

@@ -134,28 +134,35 @@ export function getAbsoluteCenterPosition(node: FlowNode): XYPosition {
 }
 
 // todo optimization: instead of using a distanceLimit, search rbush by bounding box of the max viewport size we would want.
-export function resolveInitialFitNodeIds({
+export function resolveFitViewNodeIds({
   nodes,
   rootNodeId,
-  fallbackRootNodeId,
-  distanceLimit,
+  maxDistanceToRoot,
 }: {
   nodes: readonly FlowNode[];
   rootNodeId: string | undefined;
-  fallbackRootNodeId: string;
-  distanceLimit: number;
+  maxDistanceToRoot?: number;
 }): Array<{ id: string }> {
-  const resolvedRootNodeId = rootNodeId ?? fallbackRootNodeId;
-  const rootNode = nodes.find(node => node.id === resolvedRootNodeId);
-  if (!rootNode) {
+  if (nodes.length === 0) {
     return [];
   }
 
-  const fitNodeIdSet = new Set([resolvedRootNodeId]);
+  if (maxDistanceToRoot == undefined || !rootNodeId) {
+    return Array.from(nodes, node => ({ id: node.id }));
+  }
+
+  const rootNode = nodes.find(node => node.id === rootNodeId);
+  if (!rootNode) {
+    return Array.from(nodes, node => ({ id: node.id }));
+  }
+
+  const rootCenter = getAbsoluteCenterPosition(rootNode);
+  const fitNodeIdSet = new Set([rootNodeId]);
   for (const node of nodes) {
-    const dx = node.position.x - rootNode.position.x;
-    const dy = node.position.y - rootNode.position.y;
-    if (Math.hypot(dx, dy) <= distanceLimit) {
+    const nodeCenter = getAbsoluteCenterPosition(node);
+    const dx = nodeCenter.x - rootCenter.x;
+    const dy = nodeCenter.y - rootCenter.y;
+    if (Math.hypot(dx, dy) <= maxDistanceToRoot) {
       fitNodeIdSet.add(node.id);
     }
   }

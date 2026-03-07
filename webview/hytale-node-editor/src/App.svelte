@@ -37,8 +37,11 @@
         workspace.controlScheme = message.controlScheme;
         workspace.platform = message.platform;
         workspace.copiedSelection = message.clipboard;
-        // workspace.actionRequests.push({ type: "fit-view", duration: 0 });
-        workspace.actionRequests.push({ type: "reveal-node", duration: 0 });
+        workspace.actionRequests.push({
+          type: "fit-view",
+          duration: 0,
+          maxDistanceToRoot: 10_000,
+        });
         return;
       case "update":
         handleDocumentUpdateMessage(message);
