@@ -1,25 +1,69 @@
 # Hytale Devtools
 
-This extension provides tools to make Hytale modding easier.
+## Instantly Create New Mods
 
-## Features
+Instantly create new fully-configured mods using the "Create New Hytale Mod" command.
 
-### Command: Create New Hytale Mod
-- Select a parent folder and a fully-configured basic mod template will be generated that you can immediately start working on.
-- Automatically respects the author, group, and mod title in the template.
+## Easily Copy/Create Any Asset
 
-## Command: Copy Base Game Asset
-- Select an asset type to search or search all assets, then automatically copy it to the correct destination.
+Easily create new assets in their respective folders, override existing assets, or copy existing assets as templates.
 
-### Command: Add Listener
-- Easily select from all available base game event listeners and generate a function to handle it in your code.
+![Copy Asset Demo](media/demo_images/copy-asset-demo.gif)
 
-## Planned Features
+## Built-in WorldGen V2 Node Editor
 
-- Custom language handler for asset JSON editing and completions.
-- Improve the experience of opening blockymodels/animations in blockbench from VSCode.
-- Custom node editor for world generation and behavior tree configuration.
+This extension includes a custom node editor for modifying World Generation + Scriptable Brush files, including several improvements and new features over the original.
+
+### Fully Cross-Platform
+
+Mac + Windows users can now participate in Worldgen development with full cross-platform support!
+
+### Autocomplete + Documentation Hints
+
+Autocompletion values are generated based on the Server code itself, and are updated automatically by using a light-weight companion mod built into the extension, automatically set up to be included when you run your mod's server in VSCode.
+
+### Optimized Control Schemes for Mouse AND Trackpad
+
+Clicking and dragging to move through the workspace can get tedious on a trackpad, so I added a Trackpad-specific control scheme that allows you to freely scroll through the workspace and pinch to zoom!
+
+![Mouse vs Trackpad Demo](media/demo_images/mouse-vs-trackpad-demo.gif)
+
+### Styling Updates
+
+Field alignments and node sizes are now more compact and aligned to be more readable.
+
+![Original Styling](media/demo_images/style-example-original.png)
+![Our Styling](media/demo_images/style-example-ours.png)
+
+### Works with any color theme
+
+![Color Theme Demo](media/demo_images/group-zooming.gif)
+
+### Customizable Keybinds
+
+Keybindable actions such as searching and auto-layout can be fully customized.
+
+![Keybinding Demo](media/demo_images/keyboard-customization.gif)
+
+### Improved search + Keyboard-only control
+
+- Search for a field to automatically focus it for keyboard editing - no mouse required.
+- Searched nodes are sorted by distance, so you can quickly jump to any node you see by typing.
+- Scrolling through the search selections will preview them in real-time, and cancelling the search will return you to your original position.
+
+![Search Demo](media/demo_images/search-demo.gif)
+
+
+### Always-Visible Group Titles
+
+Managing large workspaces becomes easy when organizing with groups. No matter how far you zoom out, you can tell which groups are which without them blocking your vision close-up.
+
+![Group Zooming Demo](media/demo_images/group-zooming.gif)
+
+## Future Planned Features
+
 - Custom key-value editor similar to the base game's asset editor to show and edit the full list of available properties and inherited values of an asset.
+- Custom NPC editor
 
 ## Attribution
 - The base template used for creating new mods is based on Build-9's [Hytale Example Project](https://github.com/Build-9/Hytale-Example-Project).
