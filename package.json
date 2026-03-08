@@ -116,6 +116,12 @@
           "default": "",
           "description": "Default website for new mods."
         },
+        "hytale-devtools.customHytalePath": {
+          "type": "string",
+          "scope": "machine",
+          "default": "",
+          "description": "Optional custom Hytale root path for this machine. Set this to the root Hytale folder that contains subdirectories like \"install\" and \"UserData\". Defaults to typical install paths based on your operating system."
+        },
         "hytale-devtools.nodeEditor.controlScheme": {
           "type": "string",
           "enum": [

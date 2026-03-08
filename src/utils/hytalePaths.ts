@@ -16,8 +16,11 @@ const EXPORT_MANIFEST_FILE_NAME = "export_manifest.json";
 const SCHEMA_MAPPINGS_FILE_NAME = "schema_mappings.json";
 const SCHEMAS_DIRECTORY_NAME = "schemas";
 const INDEXES_DIRECTORY_NAME = "indexes";
+const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
+const CUSTOM_HYTALE_PATH_SETTING_KEY = "customHytalePath";
 
 export const SUPPORTED_PATCHLINES: SupportedPatchline[] = ["release", "pre-release"];
+export const CUSTOM_HYTALE_PATH_SETTING_ID = `${EXTENSION_CONFIG_NAMESPACE}.${CUSTOM_HYTALE_PATH_SETTING_KEY}`;
 
 export function getAssetsZipPath(patchline: string): string {
   return path.join(
@@ -31,20 +34,60 @@ export function getAssetsZipPath(patchline: string): string {
   );
 }
 
-export function getHytaleHome(): string {
-  const home = os.homedir();
-  // windows
-  if (process.platform === "win32") {
-    return path.join(home, "AppData", "Roaming", "Hytale");
+export function getHytaleHome(
+  config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
+    EXTENSION_CONFIG_NAMESPACE,
+  ),
+  platform: NodeJS.Platform = process.platform,
+  homeDir: string = os.homedir(),
+  pathExists: (currentPath: string) => boolean = fs.existsSync,
+): string {
+  const configuredPath = getConfiguredHytaleHomePath(config);
+  if (configuredPath) {
+    return configuredPath;
   }
 
-  // macos
-  if (process.platform === "darwin") {
-    return path.join(home, "Library", "Application Support", "Hytale");
+  return getDefaultHytaleHomePath(platform, homeDir, pathExists);
+}
+
+export function getDefaultHytaleHomePath(
+  platform: NodeJS.Platform = process.platform,
+  homeDir: string = os.homedir(),
+  pathExists: (currentPath: string) => boolean = fs.existsSync,
+): string {
+  const checkedPaths = getDefaultHytaleHomeSearchPaths(platform, homeDir);
+  if (platform === "linux" && !pathExists(checkedPaths[0]) && pathExists(checkedPaths[1])) {
+    return checkedPaths[1];
   }
 
-  // linux
-  return path.join(home, ".local", "share", "Hytale");
+  return checkedPaths[0];
+}
+
+export function getDefaultHytaleHomeSearchPaths(
+  platform: NodeJS.Platform = process.platform,
+  homeDir: string = os.homedir(),
+): string[] {
+  if (platform === "win32") {
+    return [path.join(homeDir, "AppData", "Roaming", "Hytale")];
+  }
+
+  if (platform === "darwin") {
+    return [path.join(homeDir, "Library", "Application Support", "Hytale")];
+  }
+
+  return [
+    path.join(homeDir, ".local", "share", "Hytale"),
+    path.join(homeDir, ".var", "app", "com.hypixel.HytaleLauncher", "data", "Hytale"),
+  ];
+}
+
+export function getConfiguredHytaleHomePath(
+  config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(
+    EXTENSION_CONFIG_NAMESPACE,
+  ),
+): string | undefined {
+  const configuredPath = config.get<string>(CUSTOM_HYTALE_PATH_SETTING_KEY)?.trim();
+  return configuredPath ? path.normalize(configuredPath) : undefined;
 }
 
 export function resolvePatchlineFromWorkspace(

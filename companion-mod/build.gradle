@@ -5,10 +5,15 @@ plugins {
 
 ext {
     def os = System.getProperty("os.name").toLowerCase()
+    def userHome = System.getProperty("user.home")
     if (os.contains("win")) {
-        hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
+        hytaleHome = "${userHome}/AppData/Roaming/Hytale"
+    } else if (os.contains("mac")) {
+        hytaleHome = "${userHome}/Library/Application Support/Hytale"
     } else {
-        hytaleHome = "${System.getProperty("user.home")}/Library/Application Support/Hytale"
+        def localHytaleHome = "${userHome}/.local/share/Hytale"
+        def flatpakHytaleHome = "${userHome}/.var/app/com.hypixel.HytaleLauncher/data/Hytale"
+        hytaleHome = file(localHytaleHome).exists() ? localHytaleHome : flatpakHytaleHome
     }
 }
 

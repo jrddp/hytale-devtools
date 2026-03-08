@@ -8,6 +8,7 @@ import { type SchemaDocs } from "./schema/schemaPointerResolver";
 import { loadIndexesFromRoot } from "./schema/symbolResolver";
 import { type NodeEditorWorkspace } from "./shared/node-editor/workspaceTypes";
 import { type IndexKind, type SchemaMappings, type SymbolIndex } from "./shared/schema/types";
+import { ensureHytaleHomeConfiguredOnStartup } from "./utils/hytaleHomeConfiguration";
 import { resolvePatchlineForContext, resolveSchemaDataLocation } from "./utils/hytalePaths";
 
 export let LOGGER: vscode.LogOutputChannel;
@@ -77,6 +78,10 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(changeModPatchlineCommand);
 
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
+
+  if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {
+    void ensureHytaleHomeConfiguredOnStartup();
+  }
 
   // const ensureCompanionSupportForWorkspace = (workspacePath: string): void => {
   //   const {

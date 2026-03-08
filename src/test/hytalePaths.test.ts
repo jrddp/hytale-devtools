@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {
+    getConfiguredHytaleHomePath,
+    getDefaultHytaleHomePath,
+    getDefaultHytaleHomeSearchPaths,
     resolveCompanionExportRootFromPatchline,
     resolvePatchlineFromWorkspace,
     resolveSchemaDataLocationFromPatchline
@@ -40,6 +43,43 @@ suite('Hytale Paths Test Suite', () => {
         } finally {
             fs.rmSync(workspaceRoot, { recursive: true, force: true });
         }
+    });
+
+    test('getDefaultHytaleHomeSearchPaths includes flatpak fallback on linux', () => {
+        assert.deepStrictEqual(
+            getDefaultHytaleHomeSearchPaths('linux', '/home/test'),
+            [
+                '/home/test/.local/share/Hytale',
+                '/home/test/.var/app/com.hypixel.HytaleLauncher/data/Hytale'
+            ]
+        );
+    });
+
+    test('getDefaultHytaleHomePath falls back to flatpak install path on linux', () => {
+        assert.strictEqual(
+            getDefaultHytaleHomePath(
+                'linux',
+                '/home/test',
+                currentPath => currentPath === '/home/test/.var/app/com.hypixel.HytaleLauncher/data/Hytale'
+            ),
+            '/home/test/.var/app/com.hypixel.HytaleLauncher/data/Hytale'
+        );
+    });
+
+    test('getConfiguredHytaleHomePath trims and normalizes configured paths', () => {
+        const config = {
+            get<T>(key: string): T | undefined {
+                if (key !== 'customHytalePath') {
+                    return undefined;
+                }
+                return '  /tmp/test/../Hytale/  ' as T;
+            }
+        } as any;
+
+        assert.strictEqual(
+            getConfiguredHytaleHomePath(config),
+            path.normalize('/tmp/test/../Hytale/')
+        );
     });
 
     test('resolveSchemaDataLocationFromPatchline uses companion export when schema mappings exist', () => {
