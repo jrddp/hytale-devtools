@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 import { LOGGER, nodeEditorWorkspaces, schemaDocs } from "../extension";
-import { resolvePointerMetadata, resolvePointerMetadataFromRef } from "../schema/schemaPointerResolver";
+import { resolvePointerMetadataFromRef } from "../schema/schemaPointerResolver";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
@@ -116,6 +116,7 @@ interface NodePinDefinition {
   Label?: string;
   Multiple?: boolean;
   IsMap?: boolean;
+  Fields?: NodeContentDefinition[];
 }
 
 function readDescription(...candidates: unknown[]): string | undefined {
@@ -217,10 +218,18 @@ function templateFromDefinition(
       };
     }) ?? [];
 
+  const fieldsByLocalId: Record<string, NodeField> = {};
+
   const outputPinsByLocalId =
     definition.Outputs?.reduce(
       (map, output) => {
         const type = output.IsMap ? "map" : output.Multiple ? "multiple" : "single";
+        const fields = output.Fields ? fieldsFromContentDefinitions(output.Fields) : undefined;
+        if (fields) {
+          for (const field of fields) {
+            fieldsByLocalId[field.localId] = field;
+          }
+        }
         map[output.Id] = {
           schemaKey: "",
           localId: output.Id,
@@ -228,13 +237,13 @@ function templateFromDefinition(
           description: readDescription(output.Description),
           color: output.Color,
           multiplicity: type,
+          fields,
         };
         return map;
       },
       {} as Record<string, NodePin>,
     ) ?? {};
 
-  const fieldsByLocalId: Record<string, NodeField> = {};
   for (const field of fieldsFromContentDefinitions(definition.Content ?? [])) {
     fieldsByLocalId[field.localId] = field;
   }

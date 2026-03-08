@@ -44,6 +44,7 @@ export interface NodePin {
   color?: string;
   localId: string;
   multiplicity: "single" | "multiple" | "map";
+  fields?: NodeField[];
 }
 
 // processed template for optimized usage. only uses schema keys, Content/Pin local keys are abstracted.
