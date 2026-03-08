@@ -198,9 +198,8 @@ async function collectJsonFilesRecursively(directory) {
 async function generateBiomeWorkspaceContext() {
   const workspaceDirectory = path.join(
     repoRoot,
-    "webview",
-    "hytale-node-editor",
-    "Workspaces",
+    "default-data",
+    "node-editor-workspace-definitions",
     "HytaleGenerator Java",
   );
   const workspaceDefinitionPath = path.join(workspaceDirectory, "_Workspace.json");

@@ -1,14 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as path from "path";
+import path from "path";
 import * as vscode from "vscode";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
 import { getNodeEditorWorkspaces } from "./node-editor/workspaceResolver";
 import { createSchemaDataRuntime } from "./schema/schemaDataRuntime";
-import {
-  loadSchemaDefinitionsFromRoot,
-  loadSchemaMappingsFromRoot,
-} from "./schema/schemaLoader";
+import { loadSchemaDefinitionsFromRoot, loadSchemaMappingsFromRoot } from "./schema/schemaLoader";
 import { type SchemaDocs } from "./schema/schemaPointerResolver";
 import { loadIndexesFromRoot } from "./schema/symbolResolver";
 import { type NodeEditorWorkspace } from "./shared/node-editor/workspaceTypes";
@@ -48,7 +43,7 @@ export async function activate(context: vscode.ExtensionContext) {
   reloadSchemaData(context, "extension activation");
 
   nodeEditorWorkspaces = getNodeEditorWorkspaces(
-    context.asAbsolutePath(path.join("webview", "hytale-node-editor", "Workspaces")),
+    context.asAbsolutePath(path.join("default-data", "node-editor-workspace-definitions")),
   );
 
   const createModCommand = vscode.commands.registerCommand("hytale-devtools.createMod", () => {

@@ -263,7 +263,7 @@ function createWorkspaceContext(
 export async function loadNodeEditorWorkspacesForTests(
   repoRootPath: string = process.cwd(),
 ): Promise<Record<string, NodeEditorWorkspace>> {
-  const workspacesRootPath = path.join(repoRootPath, "webview", "hytale-node-editor", "Workspaces");
+  const workspacesRootPath = path.join(repoRootPath, "default-data", "node-editor-workspace-definitions");
   const workspaceDirectoryEntries = await readdir(workspacesRootPath, { withFileTypes: true });
   const workspacesByName: Record<string, NodeEditorWorkspace> = {};
 
