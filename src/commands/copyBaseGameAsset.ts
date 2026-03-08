@@ -46,9 +46,10 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
     return;
   }
   let choseEmpty = asset.assetPath === undefined;
+  let defaultName = asset.assetPath ?? path.join(selectedAssetType.assetShard!.path, "NewAsset" + asset.fileExtension);
   let nameChoice = await vscode.window.showInputBox({
     placeHolder:
-      asset.assetPath ?? selectedAssetType.assetShard!.path + "/NewAsset" + asset.fileExtension,
+      defaultName,
     prompt: choseEmpty
       ? "Enter name for your new asset"
       : `Enter name for your new ${asset.assetTypeName} (leave blank to override original)`,
@@ -59,7 +60,7 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
     throw new Error("No workspace folder found");
   }
 
-  let destinationPath = asset.assetPath ?? asset.assetTypePath + "NewAsset" + asset.fileExtension;
+  let destinationPath = defaultName;
 
   if (nameChoice) {
     if (!nameChoice.endsWith(asset.fileExtension)) {
