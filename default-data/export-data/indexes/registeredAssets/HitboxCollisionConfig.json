@@ -1,0 +1,20 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "HitboxCollisionConfig",
+  "path": "Server/Entity/HitboxCollision",
+  "extension": ".json",
+  "assetCount": 2,
+  "fileCount": 2,
+  "values": {
+    "HardCollision": {
+      "sourcedFromFile": "/Server/Entity/HitboxCollision/HardCollision.json",
+      "package": "Hytale:Hytale"
+    },
+    "SoftCollision": {
+      "sourcedFromFile": "/Server/Entity/HitboxCollision/SoftCollision.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

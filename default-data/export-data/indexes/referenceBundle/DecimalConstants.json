@@ -1,0 +1,11 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "referenceBundle",
+  "key": "DecimalConstants",
+  "values": [
+    "Base",
+    "Water",
+    "Bedrock"
+  ]
+}

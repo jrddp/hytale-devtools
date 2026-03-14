@@ -1,4 +1,4 @@
-import { type SemanticReference } from "../schema/types";
+import { type IndexReference } from "../indexTypes";
 
 export type FieldComponentType =
   | "checkbox"
@@ -34,7 +34,7 @@ export interface NodeField {
   overrideAutocompleteValues?: string[];
   subfields?: NodeField[];
   localId: string;
-  symbolLookup?: SemanticReference;
+  symbolLookup?: IndexReference;
 }
 
 export interface NodePin {

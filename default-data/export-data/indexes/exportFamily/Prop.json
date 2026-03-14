@@ -1,0 +1,32 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "exportFamily",
+  "key": "Prop",
+  "values": {
+    "BasicForestLeafPiles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/BasicForest.json",
+      "package": "Hytale:Hytale"
+    },
+    "BasicForestSticks": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/BasicForest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_ClusterProp_Flowers": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Sticks_ClusterProp_Boab": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Boab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Sticks_ClusterProp_Palm": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Palm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Sticks": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Boulders.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

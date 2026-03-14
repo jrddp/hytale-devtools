@@ -1,48 +1,198 @@
 import { readdirSync } from "fs";
-import path, { normalize } from "path";
-import type * as vscode from "vscode";
-import { schemaMappings } from "../extension";
-import { safeParseJSONFile } from "../shared/fileUtils";
-import { type SchemaMappings } from "../shared/schema/types";
-import { resolveSchemaDataLocation } from "../utils/hytalePaths";
-import { type SchemaDocs } from "./schemaPointerResolver";
+import path from "path";
+import { type BasicLogger } from "../shared/commonTypes";
+import { firstGlobMatch, safeParseJSONFile } from "../shared/fileUtils";
+import { isObject } from "../shared/typeUtils";
+import {
+  type AssetDefinition,
+  type Field,
+  type ObjectField,
+  type StringField,
+  type VariantField,
+} from "../shared/fieldTypes";
+import { type CommonSchemaFile, type StandardSchemaFile } from "./schemaDefinitionTypes";
+import { schemaDefinitionToAssetDefinition } from "./schemaToFieldResolver";
 
-export const DIALECT_URI = "http://json-schema.org/draft-07/schema";
-export const SCHEMA_REGISTRY_BASE_URI = "https://hytale.local/schemas/";
+export class SchemaRuntime {
+  /** maps exact $ref strings to their definitions */
+  readonly assetsByRef = new Map<string, AssetDefinition>();
+  /** maps server asset paths to their definitions (paths excluding Server, e.g. Server/{path}) */
+  readonly assetsByPath = new Map<string, AssetDefinition>();
+  readonly schemaDir: string;
+  private readonly logger: BasicLogger;
 
-export function loadSchemaMappings(context: vscode.ExtensionContext): SchemaMappings {
-  return loadSchemaMappingsFromRoot(resolveSchemaDataLocation(context).rootPath);
-}
-
-export function loadSchemaDefinitions(context: vscode.ExtensionContext): SchemaDocs {
-  return loadSchemaDefinitionsFromRoot(resolveSchemaDataLocation(context).rootPath);
-}
-
-export function loadSchemaMappingsFromRoot(rootPath: string): SchemaMappings {
-  return safeParseJSONFile(path.join(rootPath, "schema_mappings.json")) as SchemaMappings;
-}
-
-export function loadSchemaDefinitionsFromRoot(rootPath: string): SchemaDocs {
-  const docs: SchemaDocs = {};
-  const schemaDir = path.join(rootPath, "schemas");
-
-  for (const file of readdirSync(schemaDir)) {
-    const schemaPath = path.join(schemaDir, file);
-    const schema = safeParseJSONFile(schemaPath);
-    docs[file] = schema;
+  constructor(schemaDir: string, logger: BasicLogger = console) {
+    this.schemaDir = schemaDir;
+    this.logger = logger;
+    this.loadAssetDefinitions();
   }
 
-  return docs;
-}
+  /** @param referenceWithPointer - e.g. "common.json#/definitions/AssetName/properties/propertyKey" or "BiomeAsset.json#"
+   * this reference style omits array indexes (e.g. /Props/0/key is not supported)
+   * @param withConstant [key, value] - if the resolution requires a variant resolution, the variant will be matched according to the key and value.
+   * withConstant is used only for resolving the base reference as a variant.
+   */
+  resolveFieldByReferencePointer(
+    referenceWithPointer: string,
+    withConstant?: [string, string],
+  ): Field | undefined {
+    const hashLoc = referenceWithPointer.indexOf("#");
+    if (hashLoc <= 0) {
+      this.logger.error(`Invalid reference: ${referenceWithPointer}`);
+      return undefined;
+    }
+    let baseRef = referenceWithPointer.slice(0, hashLoc + 1);
+    let schemaPointer = referenceWithPointer.slice(hashLoc + 1);
+    if (schemaPointer.startsWith("/definitions")) {
+      // common.json#/definitions/AssetName{/properties/propertyKey}
+      // get index of 3rd slash or end of string if no 3rd slash
+      const thirdSlashIndex = schemaPointer.indexOf("/", schemaPointer.indexOf("/", 1) + 1);
+      if (thirdSlashIndex <= 0) {
+        // no 3rd slash -> ends at common.json#/definitions/AssetName
+        baseRef = referenceWithPointer;
+        schemaPointer = "";
+      } else {
+        baseRef += schemaPointer.slice(0, thirdSlashIndex);
+        schemaPointer = schemaPointer.slice(thirdSlashIndex);
+      }
+    }
+    let result = this.assetsByRef.get(baseRef)?.rootField;
+    if (!result) {
+      this.logger.error(
+        `Base reference ${baseRef} not found when resolving reference: ${referenceWithPointer}`,
+      );
+      return undefined;
+    }
+    if (result?.type === "variant") {
+      if (withConstant) {
+        const [constKey, constValue] = withConstant;
+        if (constKey !== result.identityField.schemaKey) {
+          this.logger.error(
+            `Constant key mismatch for variant field: ${constKey} !== ${result.identityField.schemaKey}`,
+          );
+        }
+        result = result.variantsByIdentity[constValue];
+        if (!result) {
+          this.logger.error(
+            `Variant match not found for constant ${withConstant} on reference: ${referenceWithPointer}`,
+          );
+        }
+      }
+    }
+    if (!schemaPointer) {
+      return result;
+    }
+    let walker: any = result;
+    for (const propertyKey of schemaPointer.split("/").slice(1)) {
+      if (!(propertyKey in walker)) {
+        this.logger.error(`Property not found for reference: ${referenceWithPointer}`, propertyKey);
+        return undefined;
+      }
+      walker = walker[propertyKey];
+      // shrink array into items. tuples not supported.
+      if ("items" in walker && isObject(walker.items)) {
+        walker = walker.items;
+      }
+      if ("$ref" in walker) {
+        walker = this.assetsByRef.get(walker.$ref)?.rootField;
+      }
+    }
+    return walker as Field;
+  }
 
-export function getSchemaForPath(assetPath: string): string | undefined {
-  const normalizedPath = normalize(assetPath);
-  for (const mapping of schemaMappings.schemaMappings["json.schemas"]) {
-    for (const pattern of mapping.fileMatch) {
-      if (path.matchesGlob(normalizedPath, `**/${pattern}`)) {
-        return `${SCHEMA_REGISTRY_BASE_URI}${mapping.url.split("/").pop()}`;
+  getAssetDefinitionForPath(assetPath: string): AssetDefinition | undefined {
+    assetPath = path.normalize(assetPath);
+    const patterns = Array.from(this.assetsByPath.keys()).map(key => `**/Server/${key}/**`);
+    const match = firstGlobMatch(assetPath, patterns);
+    if (!match) {
+      return undefined;
+    }
+    return this.assetsByPath.get(match);
+  }
+
+  private loadAssetDefinitions(): void {
+    const unhydratedVariants: VariantField[] = [];
+
+    for (const file of readdirSync(this.schemaDir)) {
+      if (!file.endsWith(".json")) {
+        this.logger.warn(`Unexpected file in schema directory: ${file}`);
+        continue;
+      }
+      if (file === "NPCRole.json" || file === "other.json" || file === "InstanceConfig.json") {
+        // TODO implement NPC editor and handle instance config special case (UUID is string | object with no extra information)
+        continue;
+      }
+
+      if (file === "common.json") {
+        const fileContent = safeParseJSONFile(path.join(this.schemaDir, file)) as CommonSchemaFile;
+        for (const [key, value] of Object.entries(fileContent.definitions)) {
+          const ref = `common.json#/definitions/${key}`;
+          const assetDefinition = schemaDefinitionToAssetDefinition(
+            value,
+            unhydratedVariants,
+            this.logger,
+          );
+          if (!assetDefinition) {
+            this.logger.error(`Failed to convert schema definition to asset definition: ${ref}`);
+            continue;
+          }
+          this.assetsByRef.set(ref, assetDefinition);
+        }
+      } else {
+        const fileContent = safeParseJSONFile(path.join(this.schemaDir, file)) as StandardSchemaFile;
+        const assetDefinition = schemaDefinitionToAssetDefinition(
+          fileContent,
+          unhydratedVariants,
+          this.logger,
+        );
+        if (!assetDefinition) {
+          this.logger.error(`Failed to convert schema definition to asset definition: ${file}`);
+          continue;
+        }
+        this.assetsByRef.set(`${fileContent.$id}#`, assetDefinition);
+        this.assetsByPath.set(fileContent.hytale.path, assetDefinition);
+      }
+    }
+
+    this.hydrateVariants(unhydratedVariants);
+  }
+
+  private hydrateVariants(unhydratedVariants: VariantField[]): void {
+    // hydrate variants (resolve the identity map and clear unmapped fields)
+    for (const variantField of unhydratedVariants) {
+      for (const field of variantField.unmappedFields ?? []) {
+        let objectField: ObjectField;
+        if (field.type === "ref") {
+          const resolvedRef = this.assetsByRef.get(field.$ref);
+          if (resolvedRef?.rootField.type !== "object") {
+            this.logger.error(`Unexpected field type for variant field: ${field.type}`);
+            continue;
+          }
+          objectField = resolvedRef.rootField;
+        } else {
+          objectField = field;
+        }
+        const objectIdentityField = objectField.properties[variantField.identityField.schemaKey] as
+          | StringField
+          | undefined;
+        if (objectIdentityField === undefined) {
+          this.logger.error(
+            `Identity field not recognized for variant field: ${variantField.identityField.schemaKey} on ${variantField.schemaKey} : ${JSON.stringify(objectField)}, ${JSON.stringify(variantField.identityField)}`,
+          );
+          continue;
+        }
+        // object identity fields are either constants or have excluded values
+        if (objectIdentityField.const !== undefined) {
+          variantField.variantsByIdentity[objectIdentityField.const] = objectField;
+        } else {
+          for (const value of variantField.identityField.enumVals ?? []) {
+            if (objectIdentityField.bannedValues?.includes(value)) {
+              continue;
+            }
+            variantField.variantsByIdentity[value] = objectField;
+          }
+        }
       }
     }
   }
-  return undefined;
 }

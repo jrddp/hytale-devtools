@@ -1,0 +1,60 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ObjectiveAsset",
+  "path": "Server/Objective/Objectives",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 12,
+  "values": {
+    "Objective_Bounty": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_Bounty.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_Craft": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_Craft.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_Gameplay_Trailer": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_Gameplay_Trailer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_Gather": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_Gather.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_Kill": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_Kill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_KillSpawnBeacon": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_KillSpawnBeacon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_KillSpawnMarker": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_KillSpawnMarker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_ReachLocation": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_ReachLocation.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_TreasureMap": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_TreasureMap.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_Tutorial": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_Tutorial.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_UseBlock": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_UseBlock.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_UseEntity": {
+      "sourcedFromFile": "/Server/Objective/Objectives/Objective_UseEntity.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

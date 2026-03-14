@@ -1,0 +1,1213 @@
+{
+  "type": "object",
+  "$id": "GameplayConfig.json",
+  "title": "GameplayConfig",
+  "hytale": {
+    "type": "object",
+    "path": "GameplayConfigs",
+    "extension": ".json",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another GameplayConfig most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **GameplayConfig** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "GameplayConfig"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "GameplayConfig"
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Gathering": {
+      "anyOf": [
+        {
+          "default": {
+            "UnbreakableBlock": {},
+            "IncorrectTool": {}
+          },
+          "$ref": "common.json#/definitions/GatheringConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "World": {
+      "anyOf": [
+        {
+          "default": {
+            "AllowBlockBreaking": true,
+            "AllowBlockGathering": true,
+            "AllowBlockPlacement": true,
+            "BlockPlacementFragilityTimer": 0.0,
+            "DaytimeDurationSeconds": 1728,
+            "NighttimeDurationSeconds": 1728,
+            "TotalMoonPhases": 5,
+            "Sleep": {
+              "WakeUpHour": 5.5,
+              "Sounds": {
+                "Success": "SFX_Sleep_Success",
+                "Fail": "SFX_Sleep_Fail",
+                "Notification": "SFX_Sleep_Notification",
+                "NotificationLoop": "SFX_Sleep_Notification_Loop",
+                "NotificationCooldownSeconds": 30,
+                "NotificationLoopEnabled": true
+              }
+            }
+          },
+          "$ref": "common.json#/definitions/WorldConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "WorldMap": {
+      "anyOf": [
+        {
+          "default": {
+            "DisplaySpawn": true,
+            "DisplayHome": true,
+            "DisplayWarps": true,
+            "DisplayDeathMarker": true,
+            "DisplayPlayers": true,
+            "PlayersMarkersConfig": {
+              "IconSwapHeightDelta": 12,
+              "BelowIcon": "PlayerBelow.png",
+              "AboveIcon": "PlayerAbove.png"
+            },
+            "CanTrackPlayersInCompass": true,
+            "CanTogglePlayersInMap": true,
+            "UserMapMarkers": {
+              "AllowCreatingMarkers": true,
+              "MaxPersonalMarkersPerPlayer": 12,
+              "MaxSharedMarkersPerPlayer": 12,
+              "AllowDeletingOtherPlayersSharedMarkers": true
+            }
+          },
+          "$ref": "common.json#/definitions/WorldMapConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Death": {
+      "anyOf": [
+        {
+          "default": {
+            "RespawnController": {
+              "Type": "HomeOrSpawnPoint"
+            },
+            "ItemsLossMode": "None",
+            "ItemsAmountLossPercentage": 10.0,
+            "ItemsDurabilityLossPercentage": 10.0
+          },
+          "$ref": "common.json#/definitions/DeathConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Respawn": {
+      "anyOf": [
+        {
+          "default": {
+            "RadiusLimitRespawnPoint": 500,
+            "MaxRespawnPointsPerPlayer": 3
+          },
+          "$ref": "common.json#/definitions/RespawnConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ShowItemPickupNotifications": {
+      "type": "boolean",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": true
+    },
+    "ItemDurability": {
+      "anyOf": [
+        {
+          "default": {
+            "BrokenPenalties": {}
+          },
+          "$ref": "common.json#/definitions/ItemDurabilityConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ItemEntity": {
+      "anyOf": [
+        {
+          "default": {
+            "Physics": {
+              "Mass": 5.0,
+              "DragCoefficient": 0.5,
+              "InvertedGravity": false
+            },
+            "PickupRadius": 1.75,
+            "ParticleSystemId": "Item",
+            "ShowItemParticles": true
+          },
+          "$ref": "common.json#/definitions/ItemEntityConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Combat": {
+      "anyOf": [
+        {
+          "default": {
+            "OutOfCombatDelaySeconds": 5.0,
+            "StaminaBrokenEffectId": "Stamina_Broken",
+            "DisplayHealthBars": true,
+            "DisplayCombatText": true,
+            "DisableNPCIncomingDamage": false,
+            "DisablePlayerIncomingDamage": false
+          },
+          "$ref": "common.json#/definitions/CombatConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Plugin": {
+      "type": "object",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "properties": {
+        "ForgottenTemple": {
+          "type": "object",
+          "title": "ForgottenTempleConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "MinYRespawn": {
+              "type": "number",
+              "description": "The Y at which players are teleported back to spawn.",
+              "markdownDescription": "The Y at which players are teleported back to spawn.",
+              "hytale": {
+                "type": "number"
+              },
+              "default": 5.0
+            },
+            "RespawnSound": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The sound ID to play when players respawn in the temple.",
+              "markdownDescription": "The sound ID to play when players respawn in the temple.",
+              "hytale": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "Memories": {
+          "type": "object",
+          "title": "MemoriesGameplayConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "MemoriesAmountPerLevel": {
+              "type": "array",
+              "hytale": {
+                "type": "array",
+                "inheritsProperty": true
+              },
+              "items": {
+                "type": "integer",
+                "hytale": {
+                  "type": "integer"
+                }
+              }
+            },
+            "MemoriesRecordParticles": {
+              "type": "string",
+              "hytale": {
+                "type": "string",
+                "inheritsProperty": true
+              }
+            },
+            "MemoriesCatchItemId": {
+              "type": "string",
+              "hytaleAssetRef": "Item",
+              "hytale": {
+                "type": "string",
+                "inheritsProperty": true
+              },
+              "hytaleDevtools": {
+                "symbolRef": {
+                  "indexKind": "registeredAssets",
+                  "key": "Item"
+                }
+              }
+            },
+            "MemoriesCatchEntityParticle": {
+              "$ref": "common.json#/definitions/ModelParticle",
+              "hytale": {
+                "inheritsProperty": true
+              }
+            },
+            "MemoriesCatchParticleViewDistance": {
+              "type": "integer",
+              "hytale": {
+                "type": "integer",
+                "inheritsProperty": true
+              },
+              "exclusiveMinimum": 16,
+              "default": 64
+            }
+          },
+          "additionalProperties": false
+        },
+        "Objective": {
+          "type": "object",
+          "title": "ObjectiveGameplayConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "StarterObjectiveLinePerWorld": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "title": "Map",
+              "hytale": {
+                "type": "object",
+                "inheritsProperty": true
+              },
+              "additionalProperties": {
+                "type": "string",
+                "hytaleAssetRef": "ObjectiveLineAsset",
+                "hytale": {
+                  "type": "string"
+                },
+                "hytaleDevtools": {
+                  "symbolRef": {
+                    "indexKind": "registeredAssets",
+                    "key": "ObjectiveLineAsset"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "Portal": {
+          "type": "object",
+          "title": "PortalGameplayConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "VoidEvent": {
+              "anyOf": [
+                {
+                  "$ref": "common.json#/definitions/VoidEventConfig"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "Reputation": {
+          "type": "object",
+          "title": "ReputationGameplayConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "ReputationStorage": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "title": "ReputationStorageType",
+              "enumDescriptions": [
+                "",
+                ""
+              ],
+              "markdownEnumDescriptions": [
+                "",
+                ""
+              ],
+              "hytale": {
+                "type": "Enum",
+                "inheritsProperty": true
+              },
+              "enum": [
+                "PerPlayer",
+                "PerWorld"
+              ],
+              "default": "PerPlayer"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Stamina": {
+          "type": "object",
+          "title": "StaminaGameplayConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "SprintRegenDelay": {
+              "description": "The stamina regeneration delay applied after sprinting",
+              "markdownDescription": "The stamina regeneration delay applied after sprinting",
+              "$ref": "common.json#/definitions/SprintRegenDelayConfig",
+              "hytale": {
+                "inheritsProperty": true
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "Stash": {
+          "type": "object",
+          "title": "StashGameplayConfig",
+          "hytale": {
+            "type": "object",
+            "mergesProperties": true
+          },
+          "properties": {
+            "$Title": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Comment": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Author": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$TODO": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Position": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$FloatingFunctionNodes": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$Groups": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$WorkspaceID": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeId": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "$NodeEditorMetadata": {
+              "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+              "doNotSuggest": true,
+              "hytale": {
+                "uiDisplayMode": "Hidden",
+                "uiPropertyTitle": "Comment"
+              }
+            },
+            "ClearContainerDropList": {
+              "type": "boolean",
+              "hytale": {
+                "type": "boolean",
+                "inheritsProperty": true
+              },
+              "default": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "Player": {
+      "anyOf": [
+        {
+          "default": {
+            "MovementConfig": "BuiltinDefault",
+            "MaxDeployableEntities": -1,
+            "ArmorVisibilityOption": "All"
+          },
+          "$ref": "common.json#/definitions/PlayerConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "CameraEffects": {
+      "default": {},
+      "$ref": "common.json#/definitions/CameraEffectsConfig",
+      "hytale": {
+        "inheritsProperty": true
+      }
+    },
+    "CreativePlaySoundSet": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to SoundSet",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "SoundSet.json#"
+            }
+          ],
+          "hytaleAssetRef": "SoundSet",
+          "hytale": {
+            "inheritsProperty": true
+          },
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "SoundSet"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Crafting": {
+      "anyOf": [
+        {
+          "default": {
+            "BenchMaterialChestHorizontalSearchRadius": 14,
+            "BenchMaterialChestVerticalSearchRadius": 6,
+            "BenchMaterialChestLimit": 100
+          },
+          "$ref": "common.json#/definitions/CraftingConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Spawn": {
+      "anyOf": [
+        {
+          "default": {},
+          "$ref": "common.json#/definitions/SpawnConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "MaxEnvironmentalNPCSpawns": {
+      "type": "integer",
+      "description": "The absolute maximum number of environmental NPC spawns. < 0 for infinite.",
+      "markdownDescription": "The absolute maximum number of environmental NPC spawns. < 0 for infinite.",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true
+      },
+      "default": 500
+    }
+  },
+  "additionalProperties": false
+}

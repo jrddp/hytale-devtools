@@ -3,120 +3,80 @@ import path from "path";
 import type * as vscode from "vscode";
 import { indexes, LOGGER } from "../extension";
 import { safeParseJSONFile } from "../shared/fileUtils";
+import { INDEXES_DIRECTORY_NAME, resolveDataRootDirFromContext } from "../utils/hytalePaths";
 import {
-  type AssetPathIndexShard,
+  type CommonAssetPathsIndexShard,
   type ExportFamilyIndexShard,
   type IndexKind,
+  type IndexReference,
+  type IndexShard,
   type ReferenceBundleIndexShard,
-  type RegisteredAssetIndexShard,
-  type SemanticReference,
+  type RegisteredAssetsIndexShard,
   type SymbolIndex,
-  type SymbolIndexShard,
   type UIDataSetIndexShard,
-} from "../shared/schema/types";
-import { resolveSchemaDataLocation } from "../utils/hytalePaths";
-
-// directory name -> indexKind
-const indexRoots: Record<string, IndexKind> = {
-  assetPaths: "commonAssetsByRoot",
-  registeredAssets: "registryDomain",
-  exportFamilies: "exportsByFamily",
-  localization: "localizationKeys",
-  referenceBundle: "referenceBundle",
-  uiDataSets: "uiDataSets",
-};
+} from "../shared/indexTypes";
 
 export function loadIndexes(context: vscode.ExtensionContext): Map<IndexKind, SymbolIndex> {
-  return loadIndexesFromRoot(resolveSchemaDataLocation(context).rootPath);
+  return loadIndexesFromRoot(resolveDataRootDirFromContext(context).rootPath);
 }
 
-export function loadIndexesFromRoot(exportRoot: string): Map<IndexKind, SymbolIndex> {
+export function loadIndexesFromRoot(dataRoot: string): Map<IndexKind, SymbolIndex> {
   const indexes = new Map<IndexKind, SymbolIndex>();
+  const indexRoot = path.join(dataRoot, INDEXES_DIRECTORY_NAME);
 
-  for (const [directoryName, indexKind] of Object.entries(indexRoots)) {
-    if (!existsSync(path.join(exportRoot, "indexes", directoryName))) {
+  for (const directoryName of readdirSync(indexRoot)) {
+    const indexKind = directoryName as IndexKind;
+    if (!existsSync(path.join(indexRoot, directoryName))) {
       continue;
     }
-    indexes.set(indexKind, {});
-    for (const file of readdirSync(path.join(exportRoot, "indexes", directoryName))) {
-      const indexShard = safeParseJSONFile(
-        path.join(exportRoot, "indexes", directoryName, file),
-      ) as SymbolIndexShard;
-      indexes.get(indexKind)![indexShard.key] = indexShard;
+    indexes.set(indexKind, new Map<string, IndexShard>());
+    for (const file of readdirSync(path.join(indexRoot, directoryName))) {
+      const indexShard = safeParseJSONFile(path.join(indexRoot, directoryName, file)) as IndexShard;
+      indexes.get(indexKind)!.set(indexShard.key, indexShard);
     }
   }
-
-  LOGGER.info(Array.from(indexes.keys()).toString());
   return indexes;
 }
 
-export function getValuesBySemanticReference(reference: SemanticReference): string[] {
-  switch (reference.semanticKind) {
-    case "symbolReference":
-      return getValuesBySymbolReference(reference.source.type, reference.source.key);
-    case "literalChoice":
-      return reference.values;
-    case "inlineOrReference":
-      return getValuesBySymbolReference("registryDomain", reference.source.key);
-    case "assetPath":
-      return getValuesByAssetPath(
-        reference.requiredRoots,
-        reference.requiredExtension,
-        reference.isUIAsset,
-      );
+export function getValuesByIndexReference(reference: IndexReference): string[] {
+  const index = indexes.get(reference.indexKind);
+  if (!index) {
+    LOGGER.error(`Index for ${reference.indexKind} not found`);
+    return [];
+  }
+  let shard = index.get(reference.key);
+  if (!shard) {
+    LOGGER.error(`Index shard for ${reference.indexKind} ${reference.key} not found`);
+    return [];
+  }
+
+  switch (reference.indexKind) {
+    case "exportFamily":
+      shard = shard as ExportFamilyIndexShard;
+      return Object.keys(shard.values);
+    case "referenceBundle":
+      shard = shard as ReferenceBundleIndexShard;
+      return shard.values;
+    case "uiDataSet":
+      shard = shard as UIDataSetIndexShard;
+      // TODO special cases
+      return [];
+    case "registeredAssets":
+      shard = shard as RegisteredAssetsIndexShard;
+      return Object.keys(shard.values);
+    case "commonAssetPaths":
+      shard = shard as CommonAssetPathsIndexShard;
+      const values = [];
+      for (const [directParentFolder, filesByFileType] of Object.entries(shard.values)) {
+        if (reference.folders.some(folder => directParentFolder.startsWith(folder))) {
+          if (reference.extension) {
+            values.push(...filesByFileType[reference.extension]);
+          } else {
+            values.push(...Object.values(filesByFileType).flat());
+          }
+        }
+      }
+      return values;
   }
   return [];
-}
-
-function getValuesBySymbolReference(type: IndexKind, key: string): string[] {
-  const index = indexes.get(type);
-  if (!index) {
-    return [];
-  }
-  if (!index[key]) {
-    return [];
-  }
-  switch (type) {
-    case "registryDomain":
-      const assetShard = index[key] as RegisteredAssetIndexShard;
-      return Object.keys(assetShard.values);
-    case "exportsByFamily":
-      const exportShard = index[key] as ExportFamilyIndexShard;
-      return Object.keys(exportShard.values);
-    case "referenceBundle":
-      const referenceShard = index[key] as ReferenceBundleIndexShard;
-      return referenceShard.values;
-    case "uiDataSets":
-      const uiDataSetShard = index[key] as UIDataSetIndexShard;
-      return uiDataSetShard.values;
-    default:
-      return [];
-  }
-}
-
-function getValuesByAssetPath(
-  requiredRoots: string[] = [],
-  requiredExtension: string = "",
-  isUIAsset?: boolean,
-): string[] {
-  const index = indexes.get("commonAssetsByRoot");
-  if (!index) {
-    return [];
-  }
-  if (!index["all"]) {
-    return [];
-  }
-  const shard = index["all"] as AssetPathIndexShard;
-  if (!shard) {
-    return [];
-  }
-  return Object.entries(shard.values).reduce<string[]>((acc, [dirPath, groupByFileType]) => {
-    if (requiredRoots.length > 0 && !requiredRoots.some(root => dirPath.startsWith(root))) {
-      return acc;
-    }
-    if (requiredExtension) {
-      return [...acc, ...groupByFileType[requiredExtension]];
-    }
-    return [...acc, ...Object.values(groupByFileType).flat()];
-  }, []);
 }

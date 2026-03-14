@@ -1,0 +1,12 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "exportFamily",
+  "key": "TintProvider",
+  "values": {
+    "#e3be62": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Dunes.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

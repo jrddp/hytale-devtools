@@ -1,6 +1,6 @@
-import { type NodeEditorClipboardSelection } from "./clipboardTypes";
 import { type Selection } from "vscode";
-import { type SemanticReference } from "../schema/types";
+import { type IndexReference } from "../indexTypes";
+import { type NodeEditorClipboardSelection } from "./clipboardTypes";
 import { type NodeEditorWorkspaceContext } from "./workspaceTypes";
 
 export type NodeEditorControlScheme = "mouse" | "trackpad";
@@ -49,5 +49,5 @@ export type WebviewToExtensionMessage =
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }
-  | { type: "autocompleteRequest"; symbolLookup: SemanticReference; fieldId: string }
+  | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme };

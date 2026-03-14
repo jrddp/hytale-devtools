@@ -1,0 +1,2924 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemDropList",
+  "path": "Server/Drops",
+  "extension": ".json",
+  "assetCount": 728,
+  "fileCount": 672,
+  "values": {
+    "**Deco_Scarak_Eggsacks_State_Definitions_Off_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "**Furniture_Ancient_Coffin_State_Definitions_Open_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "**Furniture_Human_Ruins_Coffin_State_Definitions_Open_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "**Furniture_Temple_Dark_Coffin_State_Definitions_Open_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "**Furniture_Village_Coffin_State_Definitions_Open_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Ancient_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Crude_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Desert_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Feran_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Frozen_Castle_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Human_Ruins_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Jungle_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Kweebec_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Lumberjack_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Royal_Magic_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Scarak_Hive_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Tavern_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Temple_Dark_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Temple_Emerald_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Temple_Light_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Temple_Scarak_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Temple_Wind_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Furniture_Village_Chest_Large_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Adamantite_Magma_Cracked_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Adamantite_Magma_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Cobalt_Shale_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Cobalt_Slate_Cracked_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Cobalt_Slate_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Copper_Sandstone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Copper_Shale_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Copper_Stone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Gold_Basalt_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Gold_Calcite_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Gold_Sandstone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Gold_Shale_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Gold_Stone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Gold_Volcanic_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Basalt_Cracked_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Basalt_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Sandstone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Shale_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Slate_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Stone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Iron_Volcanic_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Mithril_Stone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Silver_Basalt_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Silver_Sandstone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Silver_Shale_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Silver_Slate_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Silver_Stone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Silver_Volcanic_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Thorium_Mud_Cracked_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Thorium_Mud_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Ore_Thorium_Sandstone_Gathering_Breaking_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Plant_Crop_Apple_Block_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Plant_Crop_Apple_Block_Wall_Gathering_Soft_DropList": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Bark": {
+      "sourcedFromFile": "/Server/Drops/Wood/Bark.json",
+      "package": "Hytale:Hytale"
+    },
+    "Barrels": {
+      "sourcedFromFile": "/Server/Drops/Items/Barrels.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Coffins": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Coffins.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Coffins_Rubble": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Coffins_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Human_Ruins_Coffin": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Human_Ruins_Coffin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Human_Ruins_Wardrobe": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Human_Ruins_Wardrobe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Pot_Ancient": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Pot_Ancient.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Pot_Clay": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Pot_Clay.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Pot_Clay_Tall": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Pot_Clay_Tall.json",
+      "package": "Hytale:Hytale"
+    },
+    "Container_Pot_Jar_Blue": {
+      "sourcedFromFile": "/Server/Drops/Items/Container_Pot_Jar_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Antelope": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Antelope.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Archaeopteryx": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Beast/Drop_Archaeopteryx.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Armadillo": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Armadillo.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Arrows": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Inventory/Drop_Arrows.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bat": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Bat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bat_Ice": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Bat_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bear_Grizzly": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Bear_Grizzly.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bear_Polar": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Bear_Polar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bison": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Bison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bison_Calf": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Bison_Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bluebird": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Bluebird.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bluegill": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Bluegill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Boar": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Boar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Boar_Piglet": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Boar_Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bramblekin": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Drop_Bramblekin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Bunny": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Bunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Cactee": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Cactee.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Calf": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Camel": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Camel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Camel_Calf": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Camel_Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Catfish": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Catfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chick": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chick_Desert": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Chick_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chicken": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Chicken.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chicken_Desert": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Chicken_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chicken_Harvest": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Chicken_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chicken_Produce": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Produce/Drop_Chicken_Produce.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Chicken_Undead": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Chicken_Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Clownfish": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Clownfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Cow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Cow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Cow_Harvest": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Cow_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Cow_Undead": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Cow_Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Crab": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Crab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Crawler_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Void/Drop_Crawler_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Crocodile": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Crocodile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Crow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Crow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Deer_Doe": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Deer_Doe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Deer_Stag": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Deer_Stag.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Dragon_Fire": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Dragon_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Dragon_Frost": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Dragon_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Dragon_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Dragon_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Duck": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Wildlife/Drop_Duck.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Eel_Moray": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Eel_Moray.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Emberwulf": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Emberwulf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Eye_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Void/Drop_Eye_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Fen_Stalker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Fen_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Feran_Burrower": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Feran/Drop_Feran_Burrower.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Feran_Civilian": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Feran/Drop_Feran_Civilian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Feran_Cub": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Feran/Drop_Feran_Cub.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Feran_Longtooth": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Feran/Drop_Feran_Longtooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Feran_Sharptooth": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Feran/Drop_Feran_Sharptooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Feran_Windwalker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Feran/Drop_Feran_Windwalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Finch_Green": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Finch_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Flamingo": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Wildlife/Drop_Flamingo.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Fox": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Fox.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Frog_Blue": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Frog_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Frog_Green": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Frog_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Frog_Orange": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Frog_Orange.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Frostgill": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Frostgill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Gecko": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Gecko.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Ghoul": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Ghoul.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goat": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Goat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goat_Kid": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Goat_Kid.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goblin_Duke": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Goblin/Drop_Goblin_Duke.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goblin_Hermit": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Goblin/Drop_Goblin_Hermit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goblin_Lobber": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Goblin/Drop_Goblin_Lobber.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goblin_Scrapper": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Goblin/Drop_Goblin_Scrapper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Goblin_Thief": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Goblin/Drop_Goblin_Thief.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Crystal_Earth": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Golem_Crystal_Earth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Crystal_Flame": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Golem_Crystal_Flame.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Crystal_Frost": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Golem_Crystal_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Crystal_Sand": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Golem_Crystal_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Crystal_Thunder": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Golem_Crystal_Thunder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Firesteel": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Golem_Firesteel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Golem_Guardian_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Boss/Drop_Golem_Guardian_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Grooble": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Grooble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Hatworm": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Hatworm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Hawk": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Wildlife/Drop_Hawk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Hedera": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Drop_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Horse": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Horse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Horse_Foal": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Horse_Foal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Horse_Skeleton": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Horse_Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Horse_Skeleton_Armored": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Horse_Skeleton_Armored.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Hound_Bleached": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Hound_Bleached.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Hyena": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Hyena.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Jellyfish": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Jellyfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Jellyfish_Man_Of_War": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Jellyfish_Man_Of_War.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Klops_Gentleman": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Klops/Drop_Klops_Gentleman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Klops_Merchant": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Klops/Drop_Klops_Merchant.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Klops_Miner": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Klops/Drop_Klops_Miner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Kweebec": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Kweebec/Drop_Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Kweebec_Sapling": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Kweebec/Drop_Kweebec_Sapling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Kweebec_Sapling_Razorleaf": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Kweebec/Drop_Kweebec_Sapling_Razorleaf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Kweebec_Sapling_Treesinger": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Kweebec/Drop_Kweebec_Sapling_Treesinger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Kweebec_Seedling": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Kweebec/Drop_Kweebec_Seedling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Kweebec_Sproutling": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Kweebec/Drop_Kweebec_Sproutling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Lamb": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Larva_Silk": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Larva_Silk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Larva_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Void/Drop_Larva_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Leopard_Snow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Leopard_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Lizard_Sand": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Lizard_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Lobster": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Lobster.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Meerkat": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Meerkat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Minnow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Minnow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Molerat": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Molerat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Moose_Bull": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Moose_Bull.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Moose_Cow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Moose_Cow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Mosshorn": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Mosshorn.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Mosshorn_Poop": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Mosshorn_Poop.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Mouflon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Mouflon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Mouflon_Lamb": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Mouflon_Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Mouse": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Mouse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Mushee": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Mushee.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Berserker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Berserker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Brute": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Brute.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Cultist": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Cultist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Hunter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Marauder": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Marauder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Peon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Peon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Priest": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Priest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Sorcerer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Sorcerer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Outlander_Stalker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Outlander/Drop_Outlander_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Owl_Brown": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Owl_Brown.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Owl_Snow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Owl_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Parrot": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Parrot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Penguin": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Penguin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Pig": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Pig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Pig_Undead": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Pig_Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Pigeon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Pigeon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Piglet": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Pike": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Pike.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Piranha": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Piranha.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Piranha_Black": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Piranha_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Pterodactyl": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Beast/Drop_Pterodactyl.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Pufferfish": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Pufferfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Rabbit": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Rabbit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Ram": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Ram.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Ram_Lamb": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Ram_Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Raptor_Cave": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Raptor_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Rat": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Rat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Raven": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Wildlife/Drop_Raven.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Rex_Cave": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Rex_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Salmon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Salmon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scarak_Broodmother": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Scarak_Broodmother.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scarak_Defender": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Scarak_Defender.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scarak_Fighter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Scarak_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scarak_Fighter_Royal_Guard": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Scarak_Fighter_Royal_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scarak_Louse": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Scarak_Louse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scarak_Seeker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Beast/Drop_Scarak_Seeker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Scorpion": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Scorpion.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Shadow_Knight": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Shadow_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Shark_Hammerhead": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Shark_Hammerhead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Sheep": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Sheep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Sheep_Harvest": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Sheep_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Shellfish_Lava": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Shellfish_Lava.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Archer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Archmage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Alchemist": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Alchemist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Archer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Gunner": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Gunner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Knight": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Lancer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Lancer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Praetorian": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Praetorian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Soldier": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Burnt_Wizard": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Burnt_Wizard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Fighter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Archer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Archmage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Fighter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Knight": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Mage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Ranger": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Scout": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Frost_Soldier": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Frost_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Incandescent_Fighter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Incandescent_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Incandescent_Footman": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Incandescent_Footman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Incandescent_Head": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Incandescent_Head.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Incandescent_Mage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Incandescent_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Knight": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Mage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Pirate_Captain": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Pirate_Captain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Pirate_Gunner": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Pirate_Gunner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Pirate_Striker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Pirate_Striker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Ranger": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Archer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Archmage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Assassin": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Assassin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Guard": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Mage": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Ranger": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Scout": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Sand_Soldier": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Sand_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Scout": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skeleton_Soldier": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Skeleton_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skrill": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Skrill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skrill_Chick": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Skrill_Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Skrill_Harvest": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Skrill_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Slothian": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Drop_Slothian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Slug_Magma": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Slug_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snail_Frost": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Snail_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snail_Magma": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Snail_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snake_Cobra": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Snake_Cobra.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snake_Marsh": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Snake_Marsh.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snake_Rattle": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Snake_Rattle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snapdragon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Snapdragon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Snapjaw": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Beast/Drop_Snapjaw.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spark_Living": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Spark_Living.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Sparrow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Sparrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spawn_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Void/Drop_Spawn_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spectre_Void": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Void/Drop_Spectre_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spider": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Spider.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spider_Cave": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Spider_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spider_Cave_TEMP_T3": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Spider_Cave_TEMP_T3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spirit_Ember": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Spirit_Ember.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spirit_Frost": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Spirit_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spirit_Root": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Spirit_Root.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Spirit_Thunder": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Elemental/Drop_Spirit_Thunder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Squirrel": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Critter/Drop_Squirrel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tang_Blue": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Tang_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tang_Chevron": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Tang_Chevron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tang_Lemon_Peel": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Tang_Lemon_Peel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tang_Sailfin": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Critter/Drop_Tang_Sailfin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tetrabird": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Tetrabird.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tiger_Sabertooth": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Tiger_Sabertooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Toad_Rhino": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Toad_Rhino.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Toad_Rhino_Magma": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Toad_Rhino_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tortoise": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Tortoise.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trillodon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Wildlife/Drop_Trillodon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trilobite": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Trilobite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trilobite_Black": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Trilobite_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Brawler": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Brawler.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Chieftain": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Chieftain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Doctor_Witch": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Doctor_Witch.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Guard": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Hunter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Mauler": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Mauler.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Sentry": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Sentry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Shaman": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Shaman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trork_Warrior": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Trork/Drop_Trork_Warrior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Trout_Rainbow": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Trout_Rainbow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Tuluk_Fisherman": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Intelligent/Tuluk/Drop_Tuluk_Fisherman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Turkey": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Turkey.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Turkey_Chick": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Turkey_Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Vulture": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Beast/Drop_Vulture.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Warthog": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Warthog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Warthog_Piglet": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Livestock/Drop_Warthog_Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Werewolf": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Werewolf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Whale_Humpback": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Swimming_Wildlife/Drop_Whale_Humpback.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wildlife": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Drop_Wildlife.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wolf_Black": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wolf_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wolf_Outlander_Priest": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wolf_Outlander_Priest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wolf_Outlander_Sorcerer": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wolf_Outlander_Sorcerer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wolf_Trork_Hunter": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wolf_Trork_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wolf_Trork_Shaman": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wolf_Trork_Shaman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wolf_White": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wolf_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Woodpecker": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Flying_Critter/Drop_Woodpecker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wraith": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Wraith.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wraith_Lantern": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Wraith_Lantern.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Wurmling_Frost": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Wurmling_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Yeti": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Beast/Drop_Yeti.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie_Aberrant": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie_Aberrant.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie_Aberrant_Big": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie_Aberrant_Big.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie_Aberrant_Small": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie_Aberrant_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie_Burnt": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie_Burnt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie_Frost": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Zombie_Sand": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Undead/Drop_Zombie_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Fishing_Trap_Crude": {
+      "sourcedFromFile": "/Server/Drops/Traps/Drops_Fishing_Trap_Crude.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Fishing_Trap_Crude_Baited_Wild": {
+      "sourcedFromFile": "/Server/Drops/Traps/Drops_Fishing_Trap_Crude_Baited_Wild.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Apple_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Apple/Drops_Plant_Crop_Apple_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Apple_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Apple/Drops_Plant_Crop_Apple_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Aubergine_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Aubergine/Drops_Plant_Crop_Aubergine_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Wet_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Wet_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Wet_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Wet_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Wet_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Wet_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Wet_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Wet_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Wet_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Wet_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Wet_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Wet_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Winter_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Winter_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Winter_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Winter_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Winter_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Winter_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Winter_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Winter_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Winter_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Winter_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Berry_Winter_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Berry/Drops_Plant_Crop_Berry_Winter_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Carrot_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Carrot/Drops_Plant_Crop_Carrot_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cauliflower_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cauliflower/Drops_Plant_Crop_Cauliflower_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_Stage4": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_Stage4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_Stage4": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_Stage4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Chilli_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Chilli/Drops_Plant_Crop_Chilli_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Corn_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Corn/Drops_Plant_Crop_Corn_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Cotton_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Cotton/Drops_Plant_Crop_Cotton_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Lettuce_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Lettuce/Drops_Plant_Crop_Lettuce_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Onion_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Onion/Drops_Plant_Crop_Onion_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Potato_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Potato/Drops_Plant_Crop_Potato_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Pumpkin_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Pumpkin/Drops_Plant_Crop_Pumpkin_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Rice_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Rice/Drops_Plant_Crop_Rice_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_Stage4": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_Stage4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_Stage5": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_Stage5.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Stage4": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Stage4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_Stage5": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_Stage5.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Tomato_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Tomato/Drops_Plant_Crop_Tomato_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Turnip_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Turnip/Drops_Plant_Crop_Turnip_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Burnt": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Burnt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Burnt_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Burnt_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Eternal_Block": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Eternal_Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Eternal_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Eternal_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Eternal_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Eternal_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Eternal_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Eternal_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Eternal_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Eternal_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Eternal_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Eternal_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Stage1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Stage1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Stage2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Stage2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_Stage3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_Stage3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_StageFinal": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_StageFinal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drops_Plant_Crop_Wheat_StageFinal_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Wheat/Drops_Plant_Crop_Wheat_StageFinal_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/Drops/Items/Empty.json",
+      "package": "Hytale:Hytale"
+    },
+    "Iron_Stack": {
+      "sourcedFromFile": "/Server/Drops/Items/Iron_Stack.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Bush": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Bush.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Bush_Berry_Red": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Bush_Berry_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health1/Plant_Crop_Health1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health1_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health1/Plant_Crop_Health1_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health1_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health1/Plant_Crop_Health1_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health1_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health1/Plant_Crop_Health1_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health1_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health1/Plant_Crop_Health1_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health2/Plant_Crop_Health2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health2_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health2/Plant_Crop_Health2_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health2_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health2/Plant_Crop_Health2_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health2_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health2/Plant_Crop_Health2_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health2_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health2/Plant_Crop_Health2_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health3/Plant_Crop_Health3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health3_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health3/Plant_Crop_Health3_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health3_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health3/Plant_Crop_Health3_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health3_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health3/Plant_Crop_Health3_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Health3_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Health3/Plant_Crop_Health3_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana1/Plant_Crop_Mana1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana1_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana1/Plant_Crop_Mana1_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana1_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana1/Plant_Crop_Mana1_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana1_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana1/Plant_Crop_Mana1_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana1_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana1/Plant_Crop_Mana1_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana2/Plant_Crop_Mana2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana2_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana2/Plant_Crop_Mana2_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana2_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana2/Plant_Crop_Mana2_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana2_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana2/Plant_Crop_Mana2_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana2_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana2/Plant_Crop_Mana2_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana3/Plant_Crop_Mana3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana3_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana3/Plant_Crop_Mana3_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana3_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana3/Plant_Crop_Mana3_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana3_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana3/Plant_Crop_Mana3_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Mana3_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Mana3/Plant_Crop_Mana3_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina1/Plant_Crop_Stamina1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina1_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina1/Plant_Crop_Stamina1_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina1_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina1/Plant_Crop_Stamina1_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina1_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina1/Plant_Crop_Stamina1_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina1_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina1/Plant_Crop_Stamina1_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina2/Plant_Crop_Stamina2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina2_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina2/Plant_Crop_Stamina2_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina2_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina2/Plant_Crop_Stamina2_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina2_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina2/Plant_Crop_Stamina2_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina2_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina2/Plant_Crop_Stamina2_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina3": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina3/Plant_Crop_Stamina3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina3_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina3/Plant_Crop_Stamina3_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina3_Stage_0": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina3/Plant_Crop_Stamina3_Stage_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina3_Stage_1": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina3/Plant_Crop_Stamina3_Stage_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Crop_Stamina3_Stage_2": {
+      "sourcedFromFile": "/Server/Drops/Crop/Stamina3/Plant_Crop_Stamina3_Stage_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Fiber": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Fiber.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Fiber_Tall": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Fiber_Tall.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Black_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Black_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Blue_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Blue_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Cyan_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Cyan_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Green_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Green_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Orange_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Orange_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Pink_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Pink_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Purple_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Purple_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Red_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Red_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_White_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_White_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Flower_Yellow_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Flower_Yellow_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Lavender": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Lavender.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Leaves": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Leaves.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Moss_Block_Blue": {
+      "sourcedFromFile": "/Server/Drops/Plant/Moss/Plant_Moss_Block_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Moss_Block_Green": {
+      "sourcedFromFile": "/Server/Drops/Plant/Moss/Plant_Moss_Block_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Moss_Block_Green_Dark": {
+      "sourcedFromFile": "/Server/Drops/Plant/Moss/Plant_Moss_Block_Green_Dark.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Moss_Block_Red": {
+      "sourcedFromFile": "/Server/Drops/Plant/Moss/Plant_Moss_Block_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Moss_Block_Yellow": {
+      "sourcedFromFile": "/Server/Drops/Plant/Moss/Plant_Moss_Block_Yellow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Mushroom_Boomshroom": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Mushroom_Boomshroom.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Mushroom_Boomshroom_Large": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Mushroom_Boomshroom_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Sunflower": {
+      "sourcedFromFile": "/Server/Drops/Plant/Plant_Sunflower.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Oasis": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Portals_Oasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Blue": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Blue_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Blue_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Blue_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Blue_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Blue_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Blue_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Green": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Green_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Green_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Green_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Green_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Green_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Green_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Pink": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Pink.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Pink_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Pink_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Pink_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Pink_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Pink_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Pink_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Purple": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Purple.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Purple_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Purple_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Purple_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Purple_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Purple_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Purple_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Red": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Red_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Red_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Red_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Red_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Red_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Red_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Water": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Water.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Water_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Water_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Water_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Water_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Water_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Water_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_White": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_White_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_White_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_White_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_White_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_White_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_White_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Yellow": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Yellow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Yellow_Large": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Yellow_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Yellow_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Yellow_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Crystal_Yellow_Small": {
+      "sourcedFromFile": "/Server/Drops/Rock/Crystal/Rock_Crystal_Yellow_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Ice": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rock_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Ice_Blue": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rock_Ice_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Aqua": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Aqua.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Aqua_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Aqua_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Basalt": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Basalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Basalt_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Basalt_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Calcite": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Calcite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Calcite_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Calcite_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Flint": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Flint.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Ice": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Ice_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Ice_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Marble": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Marble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Marble_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Marble_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Quartzite": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Quartzite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Quartzite_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Quartzite_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Sandstone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Sandstone_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_Red": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Sandstone_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_Red_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Sandstone_Red_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_White": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Sandstone_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_White_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Sandstone_White_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Shale": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Shale.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Shale_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Shale_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Slate": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Slate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Slate_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Slate_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Stone_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone_Mossy": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Stone_Mossy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone_Mossy_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Stone_Mossy_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Volcanic": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Volcanic_Medium": {
+      "sourcedFromFile": "/Server/Drops/Rock/Rubble/Rubble_Volcanic_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Fighter_Random_Weapon": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Loadouts/Skeleton_Fighter_Random_Weapon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Gravel": {
+      "sourcedFromFile": "/Server/Drops/Soil_Gravel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Gravel_Pickaxe": {
+      "sourcedFromFile": "/Server/Drops/Soil_Gravel_Pickaxe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spider_Cocoon": {
+      "sourcedFromFile": "/Server/Drops/Items/Spider_Cocoon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Random_Hotbar": {
+      "sourcedFromFile": "/Server/Drops/NPCs/Loadouts/Test_Random_Hotbar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Treasure": {
+      "sourcedFromFile": "/Server/Drops/Objectives/Treasure.json",
+      "package": "Hytale:Hytale"
+    },
+    "Treasure_Map": {
+      "sourcedFromFile": "/Server/Drops/Objectives/Treasure_Map.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tree_Leaves": {
+      "sourcedFromFile": "/Server/Drops/Wood/Tree_Leaves.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tree_Leaves_Physics": {
+      "sourcedFromFile": "/Server/Drops/Wood/Tree_Leaves_Physics.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tree_Sap_Glob_0": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Tree_Sap_Glob_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tree_Sap_Glob_1": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Tree_Sap_Glob_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tree_Sap_Glob_2": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Tree_Sap_Glob_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Camp_Chest": {
+      "sourcedFromFile": "/Server/Drops/Objectives/Trork_Camp_Chest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Camp_Inventory": {
+      "sourcedFromFile": "/Server/Drops/Objectives/Trork_Camp_Inventory.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wild_Grass_0": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Wild_Grass_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wild_Grass_1": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Wild_Grass_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wild_Grass_2": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Wild_Grass_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wild_Grass_2_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Wild_Grass_2_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wild_Grass_3": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Wild_Grass_3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wild_Grass_3_Harvest": {
+      "sourcedFromFile": "/Server/Drops/Ingredients/Wild_Grass_3_Harvest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Branch": {
+      "sourcedFromFile": "/Server/Drops/Wood/Wood_Branch.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Sticks": {
+      "sourcedFromFile": "/Server/Drops/Wood/Wood_Sticks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Stripped_Deco": {
+      "sourcedFromFile": "/Server/Drops/Wood/Wood_Stripped_Deco.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Encounters_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Encounters_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Encounters_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Encounters_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Encounters_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Encounters_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Encounters_Tier4": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Encounters_Tier4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Goblin_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Goblin_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Goblin_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Goblin_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Goblin_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Goblin_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Kweebec_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Kweebec_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Kweebec_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Kweebec_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Kweebec_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Kweebec_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Trork_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Trork_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Trork_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Trork_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Trork_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Trork_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Undead_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Undead_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Undead_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Undead_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Undead_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone1_Undead_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Encounters_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Encounters_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Encounters_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Encounters_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Encounters_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Encounters_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Encounters_Tier4": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Encounters_Tier4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Feran_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Feran_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Feran_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Feran_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Undead_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Undead_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Undead_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Undead_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Undead_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone2_Undead_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Encounters_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Encounters_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Encounters_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Encounters_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Encounters_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Encounters_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Encounters_Tier4": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Encounters_Tier4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Kweebec_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Kweebec_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Kweebec_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Kweebec_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Kweebec_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Kweebec_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Outlander_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Outlander_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Outlander_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Outlander_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Outlander_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Outlander_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Trork_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Trork_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Trork_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Trork_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Trork_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Trork_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Undead_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Undead_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Undead_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Undead_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Undead_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone3_Undead_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Encounters_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Encounters_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Encounters_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Encounters_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Encounters_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Encounters_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Encounters_Tier4": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Encounters_Tier4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Undead_Tier1": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Undead_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Undead_Tier2": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Undead_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Undead_Tier3": {
+      "sourcedFromFile": "/Server/Drops/Prefabs/Zone4_Undead_Tier3.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

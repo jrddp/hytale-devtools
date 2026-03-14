@@ -1,0 +1,508 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ResourceType",
+  "path": "Server/Item/ResourceTypes",
+  "extension": ".json",
+  "assetCount": 124,
+  "fileCount": 124,
+  "values": {
+    "Bone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Bone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Books": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Books.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bricks": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Bricks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Charcoal": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Charcoal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Clays": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Clays.json",
+      "package": "Hytale:Hytale"
+    },
+    "Copper_Iron_Bar": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Copper_Iron_Bar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fish": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fish_Common": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Common.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fish_Epic": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Epic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fish_Legendary": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Legendary.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fish_Rare": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Rare.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fish_Uncommon": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fish_Uncommon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Flowers": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Flowers.json",
+      "package": "Hytale:Hytale"
+    },
+    "Foods": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Foods.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fruits": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fruits.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fuel": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Fuel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Meats": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Meats.json",
+      "package": "Hytale:Hytale"
+    },
+    "Metal_Bars": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Metal_Bars.json",
+      "package": "Hytale:Hytale"
+    },
+    "Milk_Bucket": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Milk_Bucket.json",
+      "package": "Hytale:Hytale"
+    },
+    "Milk_Mosshorn_Bucket": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Milk_Mosshorn_Bucket.json",
+      "package": "Hytale:Hytale"
+    },
+    "Moss": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Moss.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mushrooms": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Mushrooms.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Red": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Plant_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Prototype_Rock_Concrete": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Prototype_Rock_Concrete.json",
+      "package": "Hytale:Hytale"
+    },
+    "Prototype_Rock_Concrete_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Prototype_Rock_Concrete_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Aqua": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Aqua.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Aqua_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Aqua_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Basalt": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Basalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Basalt_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Basalt_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Calcite": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Calcite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Calcite_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Calcite_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Chalk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Chalk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Chalk_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Chalk_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Gold_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Gold_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Ledge": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Ledge.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Ledge_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Ledge_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Lime": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Lime.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Lime_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Lime_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Marble": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Marble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Marble_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Marble_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Peach": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Peach.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Peach_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Peach_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Quartzite": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Quartzite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Quartzite_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Quartzite_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Runic_Blue_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Blue_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Runic_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Runic_Dark_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Dark_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Runic_Teal_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Runic_Teal_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Sandstone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Sandstone_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Sandstone_Red": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Sandstone_Red_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_Red_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Sandstone_White": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Sandstone_White_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Sandstone_White_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Shale": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Shale.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Shale_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Shale_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Slate": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Slate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Slate_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Slate_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Stone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Stone_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Stone_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Stone_Mossy": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Stone_Mossy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Volcanic": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Volcanic_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rock_Volcanic_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Adamantite": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Adamantite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Bronze": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Bronze.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Cobalt": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Cobalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Copper": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Copper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Gold": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Gold.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Iron": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Mithril": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Mithril.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Onyxium": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Onyxium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Prisma": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Prisma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Silver": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Silver.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Stone": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Thorium": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Thorium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salvage_Wood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Salvage_Wood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sands": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Sands.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Clay_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Clay_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Clay_Ocean_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Clay_Ocean_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Hive_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Hive_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Hive_Corrupted": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Hive_Corrupted.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Hive_Corrupted_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Hive_Corrupted_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Snow_Brick": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soil_Snow_Brick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soils": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Soils.json",
+      "package": "Hytale:Hytale"
+    },
+    "Vegetables": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Vegetables.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_All": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_All.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_All_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_All_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Blackwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Blackwood_Deadwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood_Deadwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Blackwood_Deadwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood_Deadwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Blackwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Blackwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Darkwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Darkwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Darkwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Darkwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Deadwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Deadwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Deadwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Deadwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Drywood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Drywood_Goldenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood_Goldenwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Drywood_Goldenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood_Goldenwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Drywood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Drywood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Goldenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Goldenwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Goldenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Goldenwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Greenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Greenwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Greenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Greenwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Hardwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Hardwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Hardwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Hardwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Ice": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Ice_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Ice_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Lightwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Lightwood_Softwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood_Softwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Lightwood_Softwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood_Softwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Lightwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Lightwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Planks": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Planks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Redwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Redwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Redwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Redwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Softwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Softwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Softwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Softwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Tropicalwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Tropicalwood_Greenwood": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood_Greenwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Tropicalwood_Greenwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood_Greenwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Tropicalwood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Tropicalwood_Trunk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Trunk": {
+      "sourcedFromFile": "/Server/Item/ResourceTypes/Wood_Trunk.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,2220 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ParticleSystem",
+  "path": "Server/Particles",
+  "extension": ".particlesystem",
+  "assetCount": 552,
+  "fileCount": 552,
+  "values": {
+    "1H_Stick_Charging": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/1H_Stick_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "1H_Stick_Parry_Active": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/1H_Stick_Parry_Active.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "2H_Stick_Charging": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/2H_Stick_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "2H_Stick_Parry_Active": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/2H_Stick_Parry_Active.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Alerted": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Alerted.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Angry": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Angry.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Ash": {
+      "sourcedFromFile": "/Server/Particles/Weather/Ash/Ash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Ash_Storm": {
+      "sourcedFromFile": "/Server/Particles/Weather/Ash/Ash_Storm.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Aura_Heal": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Heal/Aura_Heal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Aura_Sphere": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Heal/Aura_Sphere.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Azure_Spiral": {
+      "sourcedFromFile": "/Server/Particles/Spell/Azure_Spiral/Azure_Spiral.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Azurewood_Weather": {
+      "sourcedFromFile": "/Server/Particles/Weather/Azure/Azurewood_Weather.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bat_Ice": {
+      "sourcedFromFile": "/Server/Particles/NPC/Bat_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Battleaxe/Bash/Battleaxe_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Signature_Whirlwind": {
+      "sourcedFromFile": "/Server/Particles/Combat/Battleaxe/Signature/Battleaxe_Signature_Whirlwind.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "BeamEmiter_Heal_Green": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/BeamEmiter_Heal_Green.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "BeamEmiter_Heal_Red": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/BeamEmiter_Heal_Red.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Heal_Green": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/Beam_Heal_Green.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Heal_Green2": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/Beam_Heal_Green2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Heal_Green_Old": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/Beam_Heal_Green_Old.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Heal_Red": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/Beam_Heal_Red.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Heal_Red3": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/Beam_Heal_Red3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Heal_Red_Old": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealBeams/Beam_Heal_Red_Old.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Beam_Lightning2": {
+      "sourcedFromFile": "/Server/Particles/Spell/Beam/Beam_Lightning2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bee_Swarm_Friendly": {
+      "sourcedFromFile": "/Server/Particles/NPC/Bee_Swarm/Bee_Swarm_Friendly.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bee_Swarm_Hostile": {
+      "sourcedFromFile": "/Server/Particles/NPC/Bee_Swarm/Bee_Swarm_Hostile.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Branches": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Branches.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Branches_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Branches_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Clay": {
+      "sourcedFromFile": "/Server/Particles/Block/Clay/Block_Break_Clay.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Crystal": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Break_Crystal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Dirt": {
+      "sourcedFromFile": "/Server/Particles/Block/Dirt/Block_Break_Dirt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Dust": {
+      "sourcedFromFile": "/Server/Particles/Block/Dust/Block_Break_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Grass": {
+      "sourcedFromFile": "/Server/Particles/Block/Grass/Block_Break_Grass.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Grass_Earth": {
+      "sourcedFromFile": "/Server/Particles/Block/Grass/Block_Break_Grass_Earth.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Ice": {
+      "sourcedFromFile": "/Server/Particles/Block/Ice/Block_Break_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Fir": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Fir.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Fir_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Fir_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Round": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Round.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Round_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Round_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Sharp": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Sharp.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Sharp_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Sharp_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Leaves_Snow_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Break_Leaves_Snow_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Metal": {
+      "sourcedFromFile": "/Server/Particles/Block/Metal/Block_Break_Metal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Mud": {
+      "sourcedFromFile": "/Server/Particles/Block/Mud/Block_Break_Mud.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Ore": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Block_Break_Ore.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Sand": {
+      "sourcedFromFile": "/Server/Particles/Block/Sand/Block_Break_Sand.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Snow/Block_Break_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Soft_Flower": {
+      "sourcedFromFile": "/Server/Particles/Block/Flowers/Block_Break_Soft_Flower.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Stone": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Block_Break_Stone.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Wood": {
+      "sourcedFromFile": "/Server/Particles/Block/Wood/Block_Break_Wood.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Break_Wood_Light": {
+      "sourcedFromFile": "/Server/Particles/Block/Wood/Block_Break_Wood_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Build_Generic_Dust": {
+      "sourcedFromFile": "/Server/Particles/Block/Dust/Block_Build_Generic_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Gem_Sparks": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Gem_Sparks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Clay": {
+      "sourcedFromFile": "/Server/Particles/Block/Clay/Block_Hit_Clay.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Crystal": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Hit_Crystal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Dirt": {
+      "sourcedFromFile": "/Server/Particles/Block/Dirt/Block_Hit_Dirt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Dust": {
+      "sourcedFromFile": "/Server/Particles/Block/Dust/Block_Hit_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Fail": {
+      "sourcedFromFile": "/Server/Particles/Block/Misc/Block_Hit_Fail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Ice": {
+      "sourcedFromFile": "/Server/Particles/Block/Ice/Block_Hit_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Metal": {
+      "sourcedFromFile": "/Server/Particles/Block/Metal/Block_Hit_Metal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Mud": {
+      "sourcedFromFile": "/Server/Particles/Block/Mud/Block_Hit_Mud.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Sand": {
+      "sourcedFromFile": "/Server/Particles/Block/Sand/Block_Hit_Sand.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Snow/Block_Hit_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Stone": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Block_Hit_Stone.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Hit_Wood": {
+      "sourcedFromFile": "/Server/Particles/Block/Wood/Block_Hit_Wood.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Branches": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Hard_Branches.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Crystal": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Land_Hard_Crystal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Dirt": {
+      "sourcedFromFile": "/Server/Particles/Block/Dirt/Block_Land_Hard_Dirt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Dust": {
+      "sourcedFromFile": "/Server/Particles/Block/Dust/Block_Land_Hard_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Grass": {
+      "sourcedFromFile": "/Server/Particles/Block/Grass/Block_Land_Hard_Grass.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Ice": {
+      "sourcedFromFile": "/Server/Particles/Block/Ice/Block_Land_Hard_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Leaves": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Hard_Leaves.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Leaves_Fir": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Hard_Leaves_Fir.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Leaves_Round": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Hard_Leaves_Round.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Leaves_Sharp": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Hard_Leaves_Sharp.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Leaves_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Hard_Leaves_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Metal": {
+      "sourcedFromFile": "/Server/Particles/Block/Metal/Block_Land_Hard_Metal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Stone": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Block_Land_Hard_Stone.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Hard_Wood": {
+      "sourcedFromFile": "/Server/Particles/Block/Wood/Block_Land_Hard_Wood.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Lava_Hard": {
+      "sourcedFromFile": "/Server/Particles/Block/Lava/Block_Land_Lava_Hard.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Lava_Soft": {
+      "sourcedFromFile": "/Server/Particles/Block/Lava/Block_Land_Lava_Soft.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Mud_Hard": {
+      "sourcedFromFile": "/Server/Particles/Block/Mud/Block_Land_Mud_Hard.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Mud_Soft": {
+      "sourcedFromFile": "/Server/Particles/Block/Mud/Block_Land_Mud_Soft.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Sand_Hard": {
+      "sourcedFromFile": "/Server/Particles/Block/Sand/Block_Land_Sand_Hard.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Sand_Soft": {
+      "sourcedFromFile": "/Server/Particles/Block/Sand/Block_Land_Sand_Soft.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Snow_Hard": {
+      "sourcedFromFile": "/Server/Particles/Block/Snow/Block_Land_Snow_Hard.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Snow_Soft": {
+      "sourcedFromFile": "/Server/Particles/Block/Snow/Block_Land_Snow_Soft.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Crystal": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Land_Soft_Crystal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Dirt": {
+      "sourcedFromFile": "/Server/Particles/Block/Dirt/Block_Land_Soft_Dirt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Dust": {
+      "sourcedFromFile": "/Server/Particles/Block/Dust/Block_Land_Soft_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Ice": {
+      "sourcedFromFile": "/Server/Particles/Block/Ice/Block_Land_Soft_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Leaves": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Soft_Leaves.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Leaves_Fir": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Soft_Leaves_Fir.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Leaves_Round": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Soft_Leaves_Round.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Leaves_Sharp": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Soft_Leaves_Sharp.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Leaves_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Land_Soft_Leaves_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Stone": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Block_Land_Soft_Stone.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Soft_Wood": {
+      "sourcedFromFile": "/Server/Particles/Block/Wood/Block_Land_Soft_Wood.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Land_Tar_Soft": {
+      "sourcedFromFile": "/Server/Particles/Block/Tar/Block_Land_Tar_Soft.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Lava_Bubbles": {
+      "sourcedFromFile": "/Server/Particles/Block/Lava/Block_Lava_Bubbles.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Crystal": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Run_Crystal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Dirt": {
+      "sourcedFromFile": "/Server/Particles/Block/Dirt/Block_Run_Dirt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Ice": {
+      "sourcedFromFile": "/Server/Particles/Block/Ice/Block_Run_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Lava": {
+      "sourcedFromFile": "/Server/Particles/Block/Lava/Block_Run_Lava.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Mud": {
+      "sourcedFromFile": "/Server/Particles/Block/Mud/Block_Run_Mud.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Sand": {
+      "sourcedFromFile": "/Server/Particles/Block/Sand/Block_Run_Sand.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Snow/Block_Run_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Run_Tar": {
+      "sourcedFromFile": "/Server/Particles/Block/Tar/Block_Run_Tar.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Crystal": {
+      "sourcedFromFile": "/Server/Particles/Block/Crystal/Block_Sprint_Crystal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Dirt": {
+      "sourcedFromFile": "/Server/Particles/Block/Dirt/Block_Sprint_Dirt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Dust": {
+      "sourcedFromFile": "/Server/Particles/Block/Dust/Block_Sprint_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Grass": {
+      "sourcedFromFile": "/Server/Particles/Block/Grass/Block_Sprint_Grass.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Ice": {
+      "sourcedFromFile": "/Server/Particles/Block/Ice/Block_Sprint_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Leaves": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Sprint_Leaves.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Leaves_Fir": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Sprint_Leaves_Fir.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Leaves_Round": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Sprint_Leaves_Round.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Leaves_Sharp": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Sprint_Leaves_Sharp.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Leaves_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Leaves/Block_Sprint_Leaves_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Mud": {
+      "sourcedFromFile": "/Server/Particles/Block/Mud/Block_Sprint_Mud.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Sand": {
+      "sourcedFromFile": "/Server/Particles/Block/Sand/Block_Sprint_Sand.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Snow": {
+      "sourcedFromFile": "/Server/Particles/Block/Snow/Block_Sprint_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Stone": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Block_Sprint_Stone.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Sprint_Wood": {
+      "sourcedFromFile": "/Server/Particles/Block/Wood/Block_Sprint_Wood.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Top_Glow": {
+      "sourcedFromFile": "/Server/Particles/Block/Block_Top_Glow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Blue_Beam": {
+      "sourcedFromFile": "/Server/Particles/Spell/BlueBeam/Blue_Beam.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bow_Charging": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Bow/Bow_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bow_Signature_Charge": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Bow/Bow_Signature_Charge.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bow_Signature_Launch": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Bow/Bow_Signature_Launch.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bow_Signature_Projectile_Sparks": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Bow/Bow_Signature_Projectile_Sparks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bow_Signature_Status": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Bow_Signature_Status.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Bow_Signature_Status_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Bow_Signature_Status_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Burning_Wasteland": {
+      "sourcedFromFile": "/Server/Particles/Weather/Firelands/Burning_Wasteland.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Butterflies_GS": {
+      "sourcedFromFile": "/Server/Particles/Weather/Butterfly/Butterflies_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Camfire_New1": {
+      "sourcedFromFile": "/Server/Particles/Item/Fireplace/Camfire_New1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Campfire_New2": {
+      "sourcedFromFile": "/Server/Particles/Item/Fireplace/Campfire_New2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Campfire_New_Cartoon": {
+      "sourcedFromFile": "/Server/Particles/Item/Fireplace/Campfire_New_Cartoon.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Campfire_New_GS": {
+      "sourcedFromFile": "/Server/Particles/Item/Fireplace/Campfire_New_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Candle_Fire": {
+      "sourcedFromFile": "/Server/Particles/Item/Candle/Candle_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "CinematicCollar": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/CinematicCollar.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Cinematic_Fire_Firework": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/Cinematic_Fire_Firework.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Cinematic_Fireworks_Red_XL": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/Cinematic_Fireworks_Red_XL.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Cinematic_Pink_Smoke": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/Cinematic_Pink_Smoke.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Cinematic_Portal_Appear": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/Cinematic_Portal_Appear.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Cinematic_Portal_Appear_L": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/Cinematic_Portal_Appear_L.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Cinematic_Portal_Appear_XXL": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Cinematic/Cinematic_Portal_Appear_XXL.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Corrupted_Bubbles": {
+      "sourcedFromFile": "/Server/Particles/Item/Cauldron/Corrupted_Bubbles.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Creative_Switch": {
+      "sourcedFromFile": "/Server/Particles/_Test/Editor/Creative_Switch.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Crossbow/Bash/Crossbow_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Signature_Status": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Crossbow_Signature_Status.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Signature_Status_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Crossbow_Signature_Status_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Charging": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Dagger_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Charging_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Dagger_Charging_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Dash_Backward_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Special/Dagger_Dash_Backward_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Dash_Forward_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Special/Dagger_Dash_Forward_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Dash_Left_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Special/Dagger_Dash_Left_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Dash_Straight_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Special/Dagger_Dash_Straight_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Signature_Cast": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Dagger_Signature_Cast.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Signature_Cast2": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Dagger_Signature_Cast2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Signature_Status": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Dagger_Signature_Status.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Bash/Daggers_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Charged_Trail": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Daggers_Charged_Trail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash_Status": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Special/Daggers_Dash_Status.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash_Straight": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Special/Daggers_Dash_Straight.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Lunge_Trail": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Daggers_Lunge_Trail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Pounce_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Daggers_Pounce_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Pounce_Flash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Daggers_Pounce_Flash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Pounce_Flash_FP": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Daggers_Pounce_Flash_FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Signature_Dash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Daggers_Signature_Dash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Signature_Ready": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Daggers_Signature_Ready.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Signature_Slash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Daggers_Signature_Slash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Signature_Sweep": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Daggers_Signature_Sweep.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Stab_Trail": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Basic/Daggers_Stab_Trail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dance_Light_NoControl": {
+      "sourcedFromFile": "/Server/Particles/_Test/Dance/Dance_Light_NoControl.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dance_Light_Player": {
+      "sourcedFromFile": "/Server/Particles/_Test/Dance/Dance_Light_Player.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dance_Lights": {
+      "sourcedFromFile": "/Server/Particles/_Test/Dance/Dance_Lights.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dance_Lights2": {
+      "sourcedFromFile": "/Server/Particles/_Test/Dance/Dance_Lights2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dance_Lights3": {
+      "sourcedFromFile": "/Server/Particles/_Test/Dance/Dance_Lights3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Debug": {
+      "sourcedFromFile": "/Server/Particles/_Test/Debug/Debug.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Debug_Fire_Ring": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Debug_Fire_Ring.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Common": {
+      "sourcedFromFile": "/Server/Particles/Drop/Common/Drop_Common.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Epic": {
+      "sourcedFromFile": "/Server/Particles/Drop/Epic/Drop_Epic.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Legendary": {
+      "sourcedFromFile": "/Server/Particles/Drop/Legendary/Drop_Legendary.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Rare": {
+      "sourcedFromFile": "/Server/Particles/Drop/Rare/Drop_Rare.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Uncommon": {
+      "sourcedFromFile": "/Server/Particles/Drop/Uncommon/Drop_Uncommon.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dust_Cave_Flies": {
+      "sourcedFromFile": "/Server/Particles/Weather/Dust_Sparkles/Dust_Cave_Flies.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dust_Sparkles": {
+      "sourcedFromFile": "/Server/Particles/Weather/Dust_Sparkles/Dust_Sparkles.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dust_Sparkles_Fine": {
+      "sourcedFromFile": "/Server/Particles/Dust_Sparkles_Fine.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Dust_Sparkles_Light": {
+      "sourcedFromFile": "/Server/Particles/Weather/Dust_Sparkles/Dust_Sparkles_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "E_Sphere": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Shield/E_Sphere.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "E_Sphere_Old": {
+      "sourcedFromFile": "/Server/Particles/Spell/E_Sphere_Old/E_Sphere_Old.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Earth_Brazier_Glow": {
+      "sourcedFromFile": "/Server/Particles/Item/Lantern/Earth_Brazier_Glow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "EditorTool_Paint": {
+      "sourcedFromFile": "/Server/Particles/_Test/Editor/EditorTool_Paint.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "EditorTool_Place_Ground": {
+      "sourcedFromFile": "/Server/Particles/_Test/Editor/EditorTool_Place_Ground.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "EditorTool_Place_Ground2": {
+      "sourcedFromFile": "/Server/Particles/_Test/Editor/EditorTool_Place_Ground2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Crown_Gold": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Crown_Gold/Effect_Crown_Gold.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Death": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Death/Effect_Death.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Fire": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Fire/Effect_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Heal": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Heal/Effect_Heal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Poison": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Poison/Effect_Poison.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Snow": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Snow/Effect_Snow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Effect_Snow_Impact": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Snow/Effect_Snow_Impact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Embers": {
+      "sourcedFromFile": "/Server/Particles/Weather/Firelands/Embers.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Emitter_Orientation_Debug": {
+      "sourcedFromFile": "/Server/Particles/_Example/Emitter_Orientation_Debug.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Emitter_Orientation_Debug2": {
+      "sourcedFromFile": "/Server/Particles/_Example/Emitter_Orientation_Debug2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Emitter_Orientation_Debug_Gravity": {
+      "sourcedFromFile": "/Server/Particles/_Example/Emitter_Orientation_Debug_Gravity.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Emitter_Orientation_None_Debug": {
+      "sourcedFromFile": "/Server/Particles/_Example/Emitter_Orientation_None_Debug.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/Particles/Combat/Empty.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Erosion_Status_Effect": {
+      "sourcedFromFile": "/Server/Particles/_Example/Erosion_Status_Effect.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Fireflies": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Fireflies.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Firework_ColorBase": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Firework_ColorBase.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Firework_Mix": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Firework_Mix.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Fireworks": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Fireworks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Glow_Front": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Glow_Front.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Glow_Square": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Glow_Square.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Growing_Disk": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Growing_Disk.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Growing_Sphere": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Growing_Sphere.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Hit": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Hit.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Projectile_Impact": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Projectile_Impact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Projectile_Trail": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Projectile_Trail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Shield": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Shield.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Sparkfall": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Sparkfall.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Sparks_Directional": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Sparks_Directional.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Spiral": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Spiral.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Spiral_Horizontal": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Spiral_Horizontal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Tornado": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Tornado.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_UVMotion": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_UVMotion.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Vertical_Buff": {
+      "sourcedFromFile": "/Server/Particles/_Example/Example_Vertical_Buff.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Explosion_Big": {
+      "sourcedFromFile": "/Server/Particles/Explosion/Explosion_Big/Explosion_Big.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Explosion_Fail": {
+      "sourcedFromFile": "/Server/Particles/Explosion/Explosion_Fail/Explosion_Fail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Explosion_Medium": {
+      "sourcedFromFile": "/Server/Particles/Explosion/Explosion_Medium/Explosion_Medium.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Explosion_Small": {
+      "sourcedFromFile": "/Server/Particles/Explosion/Explosion_Small/Explosion_Small.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void_Eye": {
+      "sourcedFromFile": "/Server/Particles/NPC/Eye_Void/Eye_Void_Eye.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void_Eye_Big": {
+      "sourcedFromFile": "/Server/Particles/NPC/Eye_Void/Eye_Void_Eye_Big.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void_Smoke_Green": {
+      "sourcedFromFile": "/Server/Particles/NPC/Eye_Void/Eye_Void_Smoke_Green.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void_Smoke_Teal": {
+      "sourcedFromFile": "/Server/Particles/NPC/Eye_Void/Eye_Void_Smoke_Teal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "FireSword": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Sword/FireSword.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_AoE": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_AoE.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_AoE2": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Trap/Fire_AoE2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_AoE_Grow": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_AoE_Grow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_AoE_Grow2": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Trap/Fire_AoE_Grow2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_AoE_Spawn": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_AoE_Spawn.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Blue": {
+      "sourcedFromFile": "/Server/Particles/Item/Fireplace_Blue/Fire_Blue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge1": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Charge1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_ChargeOrange": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_ChargeOrange.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_ChargeRed": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_ChargeRed.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_ChargeWhite": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_ChargeWhite.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_ChargeYellow": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_ChargeYellow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge_Charging1": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Charge_Charging1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge_Charging_Constant": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Charge_Charging_Constant.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge_Soak1": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Charge_Soak1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge_Soak2": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Charge_Soak2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge_Soak3": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Charge_Soak3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charge_Soak4": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Charge_Soak4.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charged1": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Charged1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charged2": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Charged2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charged3": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Charged3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Charged4": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Charged4.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Crest": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emberwulf/Fire_Crest.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Furnace_On": {
+      "sourcedFromFile": "/Server/Particles/Item/Furnace/Fire_Furnace_On.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Green": {
+      "sourcedFromFile": "/Server/Particles/Item/Fire_Green/Fire_Green.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Pit": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Pit.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Projectile": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Fire_Projectile.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Staff_Activation": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Fire_Staff/Fire_Staff_Activation.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Stick_Charge_Charging": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Stick_Charge_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Teal": {
+      "sourcedFromFile": "/Server/Particles/Item/Fire_Teal/Fire_Teal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Trap_Preview": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Trap/Fire_Trap_Preview.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Trap_Preview_GS": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fire_Trap/Fire_Trap_Preview_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fireball_Charge_To_4": {
+      "sourcedFromFile": "/Server/Particles/Combat/Fire_Stick/Fireball_Charge_To_4.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fireflies_GS": {
+      "sourcedFromFile": "/Server/Particles/Weather/Firefly/Fireflies_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Firework_GS": {
+      "sourcedFromFile": "/Server/Particles/Spell/Fireworks/Firework_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Firework_Mix2": {
+      "sourcedFromFile": "/Server/Particles/Spell/Fireworks/Firework_Mix2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Firework_Mix3": {
+      "sourcedFromFile": "/Server/Particles/Spell/Fireworks/Firework_Mix3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Firework_Mix4": {
+      "sourcedFromFile": "/Server/Particles/Spell/Fireworks/Firework_Mix4.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Flamethrower": {
+      "sourcedFromFile": "/Server/Particles/Combat/Flamethrower/Flamethrower.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Flies_Poop": {
+      "sourcedFromFile": "/Server/Particles/NPC/Flies/Flies_Poop.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Flies_Scattered": {
+      "sourcedFromFile": "/Server/Particles/NPC/Flies/Flies_Scattered.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fluid_Fire": {
+      "sourcedFromFile": "/Server/Particles/Item/Fireplace/Fluid_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Flying_Orb": {
+      "sourcedFromFile": "/Server/Particles/Spell/Flying_Orb.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fog": {
+      "sourcedFromFile": "/Server/Particles/Weather/Fog/Fog.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Food_Eat": {
+      "sourcedFromFile": "/Server/Particles/Item/Food/Food_Eat.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_Beam": {
+      "sourcedFromFile": "/Server/Particles/_Test/MagicRnD/Beam/ForgottenTemple_Beam.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_CenterWind": {
+      "sourcedFromFile": "/Server/Particles/Weather/ForgottenTemple_CenterWind.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_Circle": {
+      "sourcedFromFile": "/Server/Particles/Weather/ForgottenTemple_Circle.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_Island_Spark": {
+      "sourcedFromFile": "/Server/Particles/Weather/ForgottenTemple_Island_Spark.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_Leaves": {
+      "sourcedFromFile": "/Server/Particles/Memories/ForgottenTemple_Leaves.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_Leaves_Small": {
+      "sourcedFromFile": "/Server/Particles/Memories/ForgottenTemple_Leaves_Small.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_RoofSparks": {
+      "sourcedFromFile": "/Server/Particles/Weather/ForgottenTemple_RoofSparks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple_Spark_Spiral": {
+      "sourcedFromFile": "/Server/Particles/Weather/ForgottenTemple_Spark_Spiral.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Fuse_Bomb": {
+      "sourcedFromFile": "/Server/Particles/Item/Fuse_Bomb/Fuse_Bomb.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Geyzer": {
+      "sourcedFromFile": "/Server/Particles/Weather/Geyzer/Geyzer.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Geyzer_Timed": {
+      "sourcedFromFile": "/Server/Particles/Weather/Geyzer/Geyzer_Timed.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Torch_Fire": {
+      "sourcedFromFile": "/Server/Particles/NPC/Goblin/Goblin_Torch_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Fire_Glow": {
+      "sourcedFromFile": "/Server/Particles/NPC/Golem/Golem_Fire_Glow.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Fire_Glow_Arm": {
+      "sourcedFromFile": "/Server/Particles/NPC/Golem/Golem_Fire_Glow_Arm.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Lava_Jaw": {
+      "sourcedFromFile": "/Server/Particles/NPC/Golem/Golem_Lava_Jaw.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "GreenOrb": {
+      "sourcedFromFile": "/Server/Particles/Spell/GreenOrb/GreenOrb.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "GreenOrbImpact": {
+      "sourcedFromFile": "/Server/Particles/Spell/GreenOrb/GreenOrbImpact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "GreenOrbTrail": {
+      "sourcedFromFile": "/Server/Particles/Spell/GreenOrb/GreenOrbTrail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Gun_Impact": {
+      "sourcedFromFile": "/Server/Particles/Explosion/Explosion_Fail/Gun_Impact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Heal_Stick_ThornsUp": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Heal_Stick_ThornsUp.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "HealingStick_Spin2FP": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/HealingStick_Spin2FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "HealthStick_Spin": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/HealthStick_Spin.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Hearts": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Hearts.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Hearts_Subtle": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Hearts_Subtle.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Hedera_Item_Activate": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Hedera/Hedera_Item_Activate.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Hedera_Scream": {
+      "sourcedFromFile": "/Server/Particles/NPC/Hedera/Hedera_Scream.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Hedera_Tree_Fireflies": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Hedera/Hedera_Tree_Fireflies.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Hungry": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Hungry.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "IceBall": {
+      "sourcedFromFile": "/Server/Particles/Projectile/Iceball/IceBall.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "IceBall_Explosion": {
+      "sourcedFromFile": "/Server/Particles/Projectile/Iceball/IceBall_Explosion.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "IceBoulderTrail": {
+      "sourcedFromFile": "/Server/Particles/Projectile/Ice_Boulder/IceBoulderTrail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Blast": {
+      "sourcedFromFile": "/Server/Particles/Spell/Ice_Blast/Ice_Blast.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Staff": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Staff/Ice_Staff.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Staff_Charging": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Staff/Ice_Staff_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Battleaxe_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Battleaxe/Bash/Impact_Battleaxe_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Blade_01": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Basic/Impact_Blade_01.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Critical": {
+      "sourcedFromFile": "/Server/Particles/Combat/Impact/Critical/Impact_Critical.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Crossbow_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Crossbow/Bash/Impact_Crossbow_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Dagger_Slash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Basic/Impact_Dagger_Slash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Dagger_Stab": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Basic/Impact_Dagger_Stab.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Dagger_Stab_Charged": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Charged/Impact_Dagger_Stab_Charged.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Daggers_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Bash/Impact_Daggers_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Daggers_Signature": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Impact_Daggers_Signature.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Daggers_Signature_Slash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Daggers/Signature/Impact_Daggers_Signature_Slash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Explosion": {
+      "sourcedFromFile": "/Server/Particles/Explosion/Explosion_Small/Impact_Explosion.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Feathers_Black": {
+      "sourcedFromFile": "/Server/Particles/Combat/Impact/Misc/Feathers_Black/Impact_Feathers_Black.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Fire": {
+      "sourcedFromFile": "/Server/Particles/Combat/Impact/Misc/Fire/Impact_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Ice": {
+      "sourcedFromFile": "/Server/Particles/Combat/Impact/Misc/Ice/Impact_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Mace_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Bash/Impact_Mace_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Mace_Basic": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Basic/Impact_Mace_Basic.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Mace_Charged": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Charged/Impact_Mace_Charged.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Mace_Signature": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Signature/Impact_Mace_Signature.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Poison": {
+      "sourcedFromFile": "/Server/Particles/Combat/Impact/Misc/Impact_Poison.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Shield_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Shield/Bash/Impact_Shield_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Shortbow_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Shortbow/Bash/Impact_Shortbow_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Sword_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Bash/Impact_Sword_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Sword_Basic": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Basic/Impact_Sword_Basic.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Sword_Basic_Stronk": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Basic/Impact_Sword_Basic_Stronk.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Sword_Charged": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Impact_Sword_Charged.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Sword_Signature": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Impact_Sword_Signature.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Sword_Signature_Spin": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Impact_Sword_Signature_Spin.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item": {
+      "sourcedFromFile": "/Server/Particles/Drop/Item/Item.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item_Break_Glass": {
+      "sourcedFromFile": "/Server/Particles/Item/Potion/Item_Break_Glass.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item_Break_GlassMagic": {
+      "sourcedFromFile": "/Server/Particles/Item/Potion/Item_Break_GlassMagic.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item_Break_GlassPoison": {
+      "sourcedFromFile": "/Server/Particles/Item/Potion/Item_Break_GlassPoison.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item_Break_GlassPotion": {
+      "sourcedFromFile": "/Server/Particles/Item/Potion/Item_Break_GlassPotion.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item_Break_GlassPotionSmall": {
+      "sourcedFromFile": "/Server/Particles/Item/Potion/Item_Break_GlassPotionSmall.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Item_Break_Glass_Small": {
+      "sourcedFromFile": "/Server/Particles/Item/Potion/Item_Break_Glass_Small.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Jungle_Flower_Sparks": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Jungle_Flower_Sparks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Lantern": {
+      "sourcedFromFile": "/Server/Particles/Item/Lantern/Kweebec_Lantern.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Laser_Impact": {
+      "sourcedFromFile": "/Server/Particles/Weapon/LaserRifle/Laser_Impact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Autumn_Forest_Wind": {
+      "sourcedFromFile": "/Server/Particles/Weather/Leaves/Leaves_Autumn_Forest_Wind.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Oak_Wind": {
+      "sourcedFromFile": "/Server/Particles/Weather/Leaves/Leaves_Oak_Wind.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Lightning": {
+      "sourcedFromFile": "/Server/Particles/Spell/Lightning/Lightning.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Lightning_Sword": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Lightning_Sword/Lightning_Sword.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Longsword": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Longsword/Longsword.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Bash/Mace_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Charging": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Charged/Mace_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature_Cast": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Signature/Mace_Signature_Cast.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature_Cast_End": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Signature/Mace_Signature_Cast_End.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature_Ground_Hit": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Signature/Mace_Signature_Ground_Hit.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature_Slash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Mace/Signature/Mace_Signature_Slash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_Default": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_Default.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_Fire": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_Flat": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_Flat.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_ForgottenTemple": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_ForgottenTemple.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_GS": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_Stones": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_Stones.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_Taiga": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_Taiga.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MagicPortal_VoidKeyArt": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/MagicPortal_VoidKeyArt.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Magic_Hit": {
+      "sourcedFromFile": "/Server/Particles/Spell/MagicBlast/Magic_Hit.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Magic_Sparks_GS": {
+      "sourcedFromFile": "/Server/Particles/Weather/Magic_Sparks/Magic_Sparks_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Magic_Sparks_Heavy_GS": {
+      "sourcedFromFile": "/Server/Particles/Weather/Magic_Sparks/Magic_Sparks_Heavy_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Magic_Sparks_Temple_GS": {
+      "sourcedFromFile": "/Server/Particles/Weather/Instances/Forgotten_Temple/Magic_Sparks_Temple_GS.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MemoryRecordedStatue": {
+      "sourcedFromFile": "/Server/Particles/Memories/MemoryRecordedStatue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "MemoryUnlock": {
+      "sourcedFromFile": "/Server/Particles/Memories/MemoryUnlock.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Memory_Catch_Rune": {
+      "sourcedFromFile": "/Server/Particles/Memories/Memory_Catch_Rune.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Memory_Projectile_Sparks": {
+      "sourcedFromFile": "/Server/Particles/Memories/Memory_Projectile_Sparks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Musket": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Musket/Musket.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "NatureBeam": {
+      "sourcedFromFile": "/Server/Particles/_Test/NatureRnD/NatureBeam.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Nature_Buff": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Nature_Buff.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Nature_Buff_Projectile": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Spawners/Nature_Buff_Projectile.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Nature_Buff_Spawn": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Nature_Buff_Spawn.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Nature_Buff_SpawnInstant": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Nature_Buff_SpawnInstant.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "OneH_Stick_HeabyStab_ActivatedFP": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/OneH_Stick_HeabyStab_ActivatedFP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "OneH_Stick_HeavyStab_Activated": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/OneH_Stick_HeavyStab_Activated.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "OneH_Stick_Parry_Active2": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/OneH_Stick_Parry_Active2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "OneH_Stick_Parry_Active2FP": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/OneH_Stick_Parry_Active2FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Pipe_Bubbles": {
+      "sourcedFromFile": "/Server/Particles/NPC/Klops/Pipe_Bubbles.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Placeholder_Poison_Melee_Slash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Poison/Placeholder_Poison_Melee_Slash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Eternal": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Eternal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Health_Tier1": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Health_Tier1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Health_Tier2": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Health_Tier2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Health_Tier3": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Health_Tier3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Mana_Tier1": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Mana_Tier1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Mana_Tier2": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Mana_Tier2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Mana_Tier3": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Mana_Tier3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Stamina_Tier1": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Stamina_Tier1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Stamina_Tier2": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Stamina_Tier2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Stamina_Tier3": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Plant_Stamina_Tier3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "PlayerSpawn_Portal": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/PlayerSpawn_Portal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "PlayerSpawn_Spawn": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/PlayerSpawn_Spawn.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Going_Through_Blue": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Going_Through_Blue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Ground_Hedera": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Hedera/Portal_Ground_Hedera.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Hedera_Spawn2": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Hedera/Portal_Hedera_Spawn2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Hedera_Spawn3": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Hedera/Portal_Hedera_Spawn3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Purple": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Purple.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Round_Blue": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Round_Blue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Round_Blue2": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Round_Blue2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Round_Zone2Dungeon": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Round_Zone2Dungeon.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Square_Blue": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Square_Blue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Square_Blue_Fit": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Square_Blue_Fit.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Zone2Dungeon_Billboard": {
+      "sourcedFromFile": "/Server/Particles/Spell/Portal/Portal_Zone2Dungeon_Billboard.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Potion_Health_Heal": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Potion_Health/Potion_Health_Heal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Potion_Health_Implosion": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Potion_Health/Potion_Health_Implosion.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Potion_Morph_Burst": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Potion_Morph/Potion_Morph_Burst.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Potion_Signature_Burst": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Potion_Signature/Potion_Signature_Burst.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Potion_Stamina_Burst": {
+      "sourcedFromFile": "/Server/Particles/Status_Effect/Potion_Stamina/Potion_Stamina_Burst.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Praetorian_Summon_Energy": {
+      "sourcedFromFile": "/Server/Particles/NPC/Skeleton_Burnt_Praetorian/Praetorian_Summon_Energy.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Praetorian_Summon_Ground": {
+      "sourcedFromFile": "/Server/Particles/NPC/Skeleton_Burnt_Praetorian/Praetorian_Summon_Ground.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Praetorian_Summon_Spawn": {
+      "sourcedFromFile": "/Server/Particles/NPC/Skeleton_Burnt_Praetorian/Praetorian_Summon_Spawn.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Fire_Static": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Projectile_Fire_Static.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Fire_Static_Dark": {
+      "sourcedFromFile": "/Server/Particles/_Test/Fire/Projectile_Fire_Static_Dark.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Question": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Question.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Question_Subtle": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Question_Subtle.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Rain": {
+      "sourcedFromFile": "/Server/Particles/Weather/Rain/Rain.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Rain_Heavy": {
+      "sourcedFromFile": "/Server/Particles/Weather/Rain/Rain_Heavy.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Rain_Horizontal": {
+      "sourcedFromFile": "/Server/Particles/Weather/Rain/Rain_Horizontal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Rain_Light": {
+      "sourcedFromFile": "/Server/Particles/Weather/Rain/Rain_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "RifleShooting": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Rifle/RifleShooting.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "RifleShooting_Impact": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Rifle/RifleShooting_Impact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Rings_Rings": {
+      "sourcedFromFile": "/Server/Particles/Spell/Rings/Rings_Rings.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Rings_Rings_Ice": {
+      "sourcedFromFile": "/Server/Particles/Spell/Rings/Rings_Rings_Ice.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sand_Storm": {
+      "sourcedFromFile": "/Server/Particles/Weather/Sand/Sand_Storm.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sauce_Splash": {
+      "sourcedFromFile": "/Server/Particles/_Test/Cinematic/Pizza/Sauce_Splash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Seed_Place_Dust": {
+      "sourcedFromFile": "/Server/Particles/Item/Seeds/Seed_Place_Dust.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Seeds_Eternal": {
+      "sourcedFromFile": "/Server/Particles/Item/Plants/Seeds_Eternal.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sheep_Wool_Shear": {
+      "sourcedFromFile": "/Server/Particles/NPC/Sheep/Sheep_Wool_Shear.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Shield_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Shield/Bash/Shield_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Shield_Block": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Special/Shield_Block.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Shield_Shatter": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Special/Shield_Shatter.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Shortbow_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Shortbow/Bash/Shortbow_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Shot": {
+      "sourcedFromFile": "/Server/Particles/Projectile/Shot/Shot.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Shotgun": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Musket/Shotgun.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sleepy": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Sleepy.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Black": {
+      "sourcedFromFile": "/Server/Particles/Item/Smoke/Smoke_Black.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Floor": {
+      "sourcedFromFile": "/Server/Particles/_Test/SmokesRnD/Smoke_Floor.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Fluffy_Floor": {
+      "sourcedFromFile": "/Server/Particles/_Test/SmokesRnD/Smoke_Fluffy_Floor.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Gold_Brazier": {
+      "sourcedFromFile": "/Server/Particles/_Test/SmokesRnD/Smoke_Gold_Brazier.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Gold_Brazier_Small": {
+      "sourcedFromFile": "/Server/Particles/_Test/SmokesRnD/Smoke_Gold_Brazier_Small.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Green_Brazier": {
+      "sourcedFromFile": "/Server/Particles/_Test/SmokesRnD/Smoke_Green_Brazier.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Smoke_Tall_Round": {
+      "sourcedFromFile": "/Server/Particles/_Test/SmokesRnD/Smoke_Tall_Round.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Snow_Heavy": {
+      "sourcedFromFile": "/Server/Particles/Weather/Snow/Snow_Heavy.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Snow_Light": {
+      "sourcedFromFile": "/Server/Particles/Weather/Snow/Snow_Light.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Snow_Storm": {
+      "sourcedFromFile": "/Server/Particles/Weather/Snow/Snow_Storm.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spear": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Spear/Spear.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spectre_Void_Arms": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spectre_Void/Spectre_Void_Arms.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spectre_Void_Body": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spectre_Void/Spectre_Void_Body.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spectre_Void_Hands": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spectre_Void/Spectre_Void_Hands.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spectre_Void_Head": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spectre_Void/Spectre_Void_Head.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spectre_Void_Tail": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spectre_Void/Spectre_Void_Tail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Fire_Jaw": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spirit_Fire/Spirit_Fire_Jaw.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Splash": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Splash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Staff_Bronze": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Staff/Staff_Bronze.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Staff_Wood_Skeleton": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Staff/Staff_Wood_Skeleton.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Status_Poisoned": {
+      "sourcedFromFile": "/Server/Particles/Projectile/Acid/Status_Poisoned.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stick_Slam_Ground": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Stick_Slam_Ground.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stick_Slam_Ground_Large": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Stick_Slam_Ground_Large.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stick_Slam_Ground_Medium": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Stick_Slam_Ground_Medium.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stick_Slam_Ground_Small": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/Stick_Slam_Ground_Small.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stone_Bounce": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Stone_Bounce.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stone_Death": {
+      "sourcedFromFile": "/Server/Particles/Block/Stone/Stone_Death.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Stunned": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Stunned.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Bash": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Bash/Sword_Bash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charge": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Sword/Sword_Charge.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charge2": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Sword/Sword_Charge2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charge3": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Sword/Sword_Charge3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charged_Trail": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Sword_Charged_Trail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charged_Trail_Blade": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Sword_Charged_Trail_Blade.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charged_Trail_Blade_Praetorian": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Sword_Charged_Trail_Blade_Praetorian.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charged_Trail_Praetorian": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Sword_Charged_Trail_Praetorian.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charging": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Sword_Charging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charging_Praetorian": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Charged/Sword_Charging_Praetorian.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_AoE": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_AoE.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_AoE2": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_AoE2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_Dash_Effect": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_Dash_Effect.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_Dash_Trail": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_Dash_Trail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_Ready": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_Ready.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_Status": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_Status.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_Status_Spawn": {
+      "sourcedFromFile": "/Server/Particles/Combat/Sword/Signature/Sword_Signature_Status_Spawn.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Teleport": {
+      "sourcedFromFile": "/Server/Particles/Spell/Teleport/Teleport.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Teleport_Infinite": {
+      "sourcedFromFile": "/Server/Particles/Spell/Teleport/Teleport_Infinite.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Light_Lantern": {
+      "sourcedFromFile": "/Server/Particles/Item/Lantern/Temple_Light_Lantern.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Test": {
+      "sourcedFromFile": "/Server/Particles/_Example/Test.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Beam": {
+      "sourcedFromFile": "/Server/Particles/_Test/MagicRnD/Beam/Test_Beam.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Cast_Buff": {
+      "sourcedFromFile": "/Server/Particles/_Test/MagicRnD/Buff/Test_Cast_Buff.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Mage_Orb": {
+      "sourcedFromFile": "/Server/Particles/_Test/MagicRnD/Orb/Test_Mage_Orb.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Test_System_Sparks": {
+      "sourcedFromFile": "/Server/Particles/_Example/Test_System_Sparks.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Torch_Fire": {
+      "sourcedFromFile": "/Server/Particles/Item/Torch/Torch_Fire.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Torch_Fire_Green": {
+      "sourcedFromFile": "/Server/Particles/Item/Torch/Torch_Fire_Green.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Heal_AoE": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Healing_Totem/Totem_Heal_AoE.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Heal_AttachOnStatue": {
+      "sourcedFromFile": "/Server/Particles/_Test/HealTotem/Totem_Heal_AttachOnStatue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Heal_Extra": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Healing_Totem/Totem_Heal_Extra.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Heal_Simple_Test": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Healing_Totem/Totem_Heal_Simple_Test.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Heal_TopIcon": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Healing_Totem/Totem_Heal_TopIcon.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Slow_AoE": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Slowness_Totem/Totem_Slow_AoE.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Slow_AttachOnStatue": {
+      "sourcedFromFile": "/Server/Particles/_Test/SlowTotem/Totem_Slow_AttachOnStatue.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Slow_Extra": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Slowness_Totem/Totem_Slow_Extra.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Totem_Slow_Simple_Test": {
+      "sourcedFromFile": "/Server/Particles/Deployables/Slowness_Totem/Totem_Slow_Simple_Test.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "TwoH_Stick_Parry_Active2": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/TwoH_Stick_Parry_Active2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "TwoH_Stick_Parry_Active2FP": {
+      "sourcedFromFile": "/Server/Particles/_Test/Sticks/TwoH_Stick_Parry_Active2FP.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Undead_Digging": {
+      "sourcedFromFile": "/Server/Particles/NPC/Undead_Digging/Undead_Digging.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Underwater_Effects": {
+      "sourcedFromFile": "/Server/Particles/Block/Water/Underwater_Effects.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "VoidImpact": {
+      "sourcedFromFile": "/Server/Particles/Combat/Impact/Misc/Void/VoidImpact.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Void_Dragon_Effects": {
+      "sourcedFromFile": "/Server/Particles/NPC/Void_Dragon/Void_Dragon_Effects.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Apple": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Apple.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Aubergine": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Aubergine.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Carrot": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Carrot.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Cauliflower": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Cauliflower.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Chilli": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Chilli.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Corn": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Corn.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Cotton": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Cotton.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Lettuce": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Lettuce.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Onion": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Onion.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Potato": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Potato.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Pumpkin": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Pumpkin.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Tomato": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Tomato.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Want_Food_Turnip": {
+      "sourcedFromFile": "/Server/Particles/NPC/Emotions/Want_Food_Turnip.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Bubble_Stream": {
+      "sourcedFromFile": "/Server/Particles/Block/Water/Water_Bubble_Stream.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Can_Splash": {
+      "sourcedFromFile": "/Server/Particles/Item/WateringCan/Water_Can_Splash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Dripping": {
+      "sourcedFromFile": "/Server/Particles/Weather/Rain/Water_Dripping.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Run": {
+      "sourcedFromFile": "/Server/Particles/Block/Water/Water_Run.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Splash": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Water_Splash.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Splash_Sofr_Ver4": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Water_Splash_Sofr_Ver4.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Splash_Soft": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Water_Splash_Soft.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Splash_Soft_Ver1": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Water_Splash_Soft_Ver1.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Splash_Soft_Ver2": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Water_Splash_Soft_Ver2.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Splash_Soft_Ver3": {
+      "sourcedFromFile": "/Server/Particles/_Test/WaterRnD/Water_Splash_Soft_Ver3.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Sprint": {
+      "sourcedFromFile": "/Server/Particles/Block/Water/Water_Sprint.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Watering_Can": {
+      "sourcedFromFile": "/Server/Particles/Item/WateringCan/Watering_Can.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Weapon_Frost_Mist": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Sword/Weapon_Frost_Mist.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Weather_Posion_Smoke": {
+      "sourcedFromFile": "/Server/Particles/Weather/Poison/Weather_Posion_Smoke.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Willow_Fruit": {
+      "sourcedFromFile": "/Server/Particles/Item/Willow_Fruit/Willow_Fruit.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Wind": {
+      "sourcedFromFile": "/Server/Particles/Weather/Wind.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Wind_Spirit_Hand": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spirit_Wind/Wind_Spirit_Hand.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Wind_Spirit_Tail": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spirit_Wind/Wind_Spirit_Tail.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Wind_Spirit_Tentacle": {
+      "sourcedFromFile": "/Server/Particles/NPC/Spirit_Wind/Wind_Spirit_Tentacle.particlesystem",
+      "package": "Hytale:Hytale"
+    },
+    "Wood_Wand": {
+      "sourcedFromFile": "/Server/Particles/Weapon/Wand/Wood_Wand.particlesystem",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

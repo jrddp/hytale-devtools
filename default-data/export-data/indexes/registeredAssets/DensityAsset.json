@@ -1,0 +1,48 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "DensityAsset",
+  "path": "Server/HytaleGenerator/Density",
+  "extension": ".json",
+  "assetCount": 9,
+  "fileCount": 9,
+  "values": {
+    "Map_Default": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Map_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Map_Portals": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Map_Portals.json",
+      "package": "Hytale:Hytale"
+    },
+    "Map_Portals_Oasis": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Map_Portals_Oasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Map_Tiles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Map_Tiles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Map_Tiles_Rivers": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Map_Tiles_Rivers.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Caves_Deeproot_Terrain": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Plains1_Caves_Deeproot_Terrain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Caves_Mountains": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Plains1_Caves_Mountains.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Caves_Terrain": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Plains1_Caves_Terrain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Caves_Terrain": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Density/Volcanic1_Caves_Terrain.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "type": "object",
+  "$id": "FluidFX.json",
+  "title": "FluidFX",
+  "hytale": {
+    "type": "object",
+    "internalKeys": [
+      "Empty"
+    ],
+    "path": "Item/Block/FluidFX",
+    "extension": ".json",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another FluidFX most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **FluidFX** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "FluidFX"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "FluidFX"
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Fog": {
+      "type": "string",
+      "title": "FluidFog",
+      "enumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Color",
+        "ColorLight",
+        "EnvironmentTint"
+      ],
+      "default": "Color"
+    },
+    "FogColor": {
+      "anyOf": [
+        {
+          "title": "Color RGB",
+          "anyOf": [
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+            },
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+            }
+          ],
+          "hytale": {
+            "type": "Color",
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "FogDistance": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "type": "number",
+        "hytale": {
+          "type": "number"
+        }
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "FogDepthStart": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 40.0
+    },
+    "FogDepthFalloff": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 10.0
+    },
+    "ColorsSaturation": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 1.0
+    },
+    "ColorsFilter": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "type": "number",
+        "hytale": {
+          "type": "number"
+        }
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "DistortionAmplitude": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 8.0
+    },
+    "DistortionFrequency": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 4.0
+    },
+    "Particle": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/FluidParticle",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "MovementSettings": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/FluidFXMovementSettings",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

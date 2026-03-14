@@ -1,0 +1,22 @@
+{
+  "exportFormatVersion": -1,
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "loadedPackages": [
+    {
+      "name": "Hytale:Hytale",
+      "version": "",
+      "packLocation": "/Users/jard/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip"
+    },
+    {
+      "name": "kokeria:HytaleDevtoolsCompanion",
+      "version": "0.0.2",
+      "packLocation": "/Users/jard/Code/vscode-extensions/hytale-devtools/companion-mod/build/libs/HytaleDevtoolsCompanion-0.0.2.jar"
+    },
+    {
+      "name": "kokeria:WorldgenTest",
+      "version": "0.0.2",
+      "packLocation": "/Users/jard/Downloads/WorldgenTest/src/main/resources"
+    }
+  ],
+  "exportedAt": "2026-03-13T17:47:05.606489Z"
+}

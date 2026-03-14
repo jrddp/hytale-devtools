@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync } from "fs";
-import { join } from "path";
-import { LOGGER, nodeEditorWorkspaces, schemaDocs } from "../extension";
-import { resolvePointerMetadataFromRef } from "../schema/schemaPointerResolver";
+import path, { join } from "path";
+import { type SchemaRuntime } from "../schema/schemaLoader";
+import { type BasicLogger } from "../shared/commonTypes";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
@@ -13,8 +13,14 @@ import {
   type NodeField,
   type NodePin,
   type NodeTemplate,
-  type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
+import {
+  type NodeContentDefinition,
+  type NodeContentDefinitionType,
+  type NodeEditorWorkspaceDefinition,
+  type NodeTemplateDefinition,
+  type WorkspacePathRule,
+} from "./workspaceDefinitionTypes";
 
 const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   "/Server/ScriptedBrushes/": {
@@ -39,411 +45,336 @@ const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   },
 };
 
-interface WorkspacePathRule {
-  workspaceName: string;
-  rootId: string;
-}
+export class WorkspaceRuntime {
+  readonly nodeEditorWorkspaces: Record<string, NodeEditorWorkspace>;
+  readonly workspacesRootPath: string;
+  private readonly schemaRuntime: SchemaRuntime;
+  private readonly logger: BasicLogger;
 
-type NodeContentDefinitionType =
-  | "SmallString"
-  | "String"
-  | "Float"
-  | "Int"
-  | "Integer"
-  | "IntSlider"
-  | "Checkbox"
-  | "Bool"
-  | "Enum"
-  | "FilePath"
-  | "List"
-  | "Object"
-  | string;
+  constructor(workspacesRootPath: string, schemaRuntime: SchemaRuntime, logger: BasicLogger = console) {
+    this.workspacesRootPath = workspacesRootPath;
+    this.schemaRuntime = schemaRuntime;
+    this.logger = logger;
+    this.nodeEditorWorkspaces = this.loadNodeEditorWorkspaces();
+  }
 
-interface NodeContentDefinition {
-  Id: string;
-  Type: NodeContentDefinitionType;
-  Description?: string;
-  Options?: {
-    Description?: string;
-    Label?: string;
-    Default?: unknown;
-    Width?: number;
-    Values?: string[];
-    Fields?: NodeContentDefinition[];
-    [key: string]: unknown;
-  };
-}
-
-interface NodeSchemaDefinition {
-  // keys are the strings to be saved in the schema itself
-  // ! keys may be postfixed with ${identifier}, presumably indicating a shared schemaKey that can be set by either a field OR a pin.
-  // ! this is only seen in the demo workspace so far - which also notably includes unique ContentDefinition for Reference.json that may be related
-  // ! See Demo Workspace DemoNode.json and Reference.json for reference.
-  // TODO research and handle that properly ^. since its unused, for now we'll just strip any $postfixes from the schema keys during processing.
-  [key: string]:
-    | {
-        Node?: string;
-        Pin?: string;
-        // they mix casings in workspaces sometimes.. e.g. ScriptableBrushes Root.json
-        node?: string;
-        pin?: string;
-      }
-    | string;
-}
-
-// definition as its stored in workspace node jsons
-type NodeTemplateDefinition = {
-  Id: string;
-  Title: string;
-  Description?: string;
-  Color?: string;
-  Content?: NodeContentDefinition[];
-  Outputs?: NodePinDefinition[];
-  Inputs?: NodePinDefinition[];
-  Schema?: NodeSchemaDefinition;
-  IsReference?: true;
-  FileRefKey?: string;
-  FileRefValue?: string;
-  ModifyKey?: string;
-  [key: string]: unknown;
-};
-
-interface NodePinDefinition {
-  Id: string;
-  Description?: string;
-  Type?: string;
-  Color?: string;
-  Label?: string;
-  Multiple?: boolean;
-  IsMap?: boolean;
-  Fields?: NodeContentDefinition[];
-}
-
-function readDescription(...candidates: unknown[]): string | undefined {
-  for (const candidate of candidates) {
-    if (typeof candidate === "string" && candidate.length > 0) {
-      return candidate;
+  resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceContext | null {
+    assetPath = path.normalize(assetPath);
+    const subpathMatch = Object.keys(WORKSPACE_PATH_RULES).find(subpath =>
+      assetPath.includes(subpath),
+    );
+    if (!subpathMatch) {
+      return null;
     }
-  }
 
-  return undefined;
-}
-
-// structure of _Workspace.json
-interface NodeEditorWorkspaceDefinition {
-  // unique identifier
-  WorkspaceName: string;
-  // unsure what this does
-  ExportDefaults?: boolean;
-  // roots depend on the asset type, resolved by resource path
-  Roots?: Record<string, NodeEditorWorkspaceRootDefinition>;
-  // categories for add menu, category -> TemplateIds
-  NodeCategories?: Record<string, string[]>;
-  // groups of node template IDs that define what nodes can be connected to each other
-  // VariantFieldName determines which field in a node (e.g. "Type" or "Id") identifies its variant
-  Variants?: Record<string, VariantKindDefinition>;
-}
-
-function contentTypeToFieldComponentType(type: NodeContentDefinitionType): FieldComponentType {
-  switch (type) {
-    case "SmallString":
-      return "string";
-    case "String":
-      return "text";
-    case "Float":
-      return "float";
-    case "Int":
-    case "Integer":
-      return "int";
-    case "IntSlider":
-      return "intslider";
-    case "Checkbox":
-    case "Bool":
-      return "checkbox";
-    case "Enum":
-      return "enum";
-    case "FilePath":
-      return "filepath";
-    case "List":
-      return "list";
-    case "Object":
-      return "object";
-    default:
-      return "string";
-  }
-}
-
-function fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeField[] {
-  return content.map(content => {
-    const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
-      ? content.Options.Values.filter((value): value is string => typeof value === "string")
-      : undefined;
-
-    return {
-      schemaKey: content.Id,
-      localId: content.Id,
-      type: contentTypeToFieldComponentType(content.Type),
-      label: content.Options?.Label,
-      description: readDescription(content.Description, content.Options?.Description),
-      value: content.Options?.Default,
-      inputWidth: content.Options?.Width,
-      overrideAutocompleteValues,
-      subfields: content.Options?.Fields
-        ? fieldsFromContentDefinitions(content.Options.Fields)
-        : undefined,
-    };
-  });
-}
-
-// from exact json definition to optimized usage structure
-function templateFromDefinition(
-  definition: NodeTemplateDefinition,
-  schemaRef?: string,
-): NodeTemplate {
-  const schemaInfo = schemaRef
-    ? resolvePointerMetadataFromRef(schemaDocs, schemaRef, ["hytaleDevtools", "description"], {
-        ignoreMetadataProperties: true,
-      })
-    : undefined;
-
-  const inputPins: NodePin[] =
-    definition.Inputs?.map((input, idx) => {
-      return {
-        schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
-        localId: input.Id,
-        label: input.Label,
-        description: readDescription(input.Description),
-        color: input.Color,
-        multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
-      };
-    }) ?? [];
-
-  const fieldsByLocalId: Record<string, NodeField> = {};
-
-  const outputPinsByLocalId =
-    definition.Outputs?.reduce(
-      (map, output) => {
-        const type = output.IsMap ? "map" : output.Multiple ? "multiple" : "single";
-        const fields = output.Fields ? fieldsFromContentDefinitions(output.Fields) : undefined;
-        if (fields) {
-          for (const field of fields) {
-            fieldsByLocalId[field.localId] = field;
+    const fileParse = safeParseJSONFile(assetPath) as AssetDocumentShape | undefined;
+    // ! $WorkspaceID actually saves the root menuname. e.g. "HytaleGenerator - Biome". This is the base-game node editor behavior.
+    const parsedMenuName: string | undefined = fileParse?.$NodeEditorMetadata?.$WorkspaceID;
+    let workspace: NodeEditorWorkspace | undefined;
+    let rootDefinition: NodeEditorWorkspaceRootDefinition | undefined;
+    // match root/workspace by menu name. could be optimized but real world size would never be very large
+    if (parsedMenuName) {
+      let found = false;
+      for (const currentWorkspace of Object.values(this.nodeEditorWorkspaces)) {
+        if (found) {
+          break;
+        }
+        for (const root of Object.values(currentWorkspace.roots)) {
+          if (root.MenuName === parsedMenuName) {
+            workspace = currentWorkspace;
+            rootDefinition = root;
+            found = true;
+            break;
           }
         }
-        map[output.Id] = {
-          schemaKey: "",
-          localId: output.Id,
-          label: output.Label,
-          description: readDescription(output.Description),
-          color: output.Color,
-          multiplicity: type,
-          fields,
-        };
-        return map;
-      },
-      {} as Record<string, NodePin>,
-    ) ?? {};
+      }
+    }
 
-  for (const field of fieldsFromContentDefinitions(definition.Content ?? [])) {
-    fieldsByLocalId[field.localId] = field;
-  }
-
-  const fieldsBySchemaKey: Record<string, NodeField> = {};
-  const childTypes: Record<string, string> = {};
-  const schemaConstants: Record<string, string> = {};
-
-  for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
-    // strip postfix e.g. "$Pin" from schema key (see Root.json in ScriptableBrushes workspace)
-    const postFixLoc = schemaKey.lastIndexOf("$");
-    schemaKey = schemaKey.substring(0, postFixLoc > 0 ? postFixLoc : schemaKey.length);
-    if (typeof entry === "string") {
-      if (fieldsByLocalId?.[entry]) {
-        // entry is local contentId
-        fieldsByLocalId[entry].schemaKey = schemaKey;
-        fieldsBySchemaKey[schemaKey] = fieldsByLocalId[entry];
-        const schemaMetadata = schemaInfo?.properties[schemaKey]?.metadata;
-        fieldsBySchemaKey[schemaKey].symbolLookup = schemaMetadata?.["hytaleDevtools"];
-        if (schemaMetadata?.["hytaleDevtools"]?.semanticKind === "color") {
-          fieldsBySchemaKey[schemaKey].type = "color";
-        }
-        fieldsBySchemaKey[schemaKey].description = readDescription(
-          fieldsBySchemaKey[schemaKey].description,
-          schemaMetadata?.["description"],
+    if (!workspace || !rootDefinition) {
+      const matchedRule = WORKSPACE_PATH_RULES[subpathMatch];
+      workspace = this.nodeEditorWorkspaces[matchedRule.workspaceName];
+      if (!workspace) {
+        return null;
+      }
+      rootDefinition = workspace.roots[matchedRule.rootId];
+      if (!rootDefinition) {
+        this.logger.warn(
+          `Root definition "${matchedRule.rootId}" not found in workspace "${workspace.workspaceName} when resolving ${assetPath}".`,
         );
-      } else {
-        // entry is a constant
-        schemaConstants[schemaKey] = entry;
+        return null;
       }
-    } else {
-      // entry defines pin information
-      const pin = entry.Pin ?? entry.pin;
-      const node = entry.Node ?? entry.node;
-      if (!pin || !node) {
-        LOGGER.error(
-          `Pin and node expected but not parsed for schema key ${schemaKey} of template ${definition.Id}`,
-        );
-        continue;
-      }
-      if (!outputPinsByLocalId?.[pin]) {
-        LOGGER.error(
-          `Pin ${pin} not resolved to local id for schema key ${schemaKey} of template ${definition.Id}`,
-        );
-        continue;
-      }
-
-      outputPinsByLocalId[pin].schemaKey = schemaKey;
-      outputPinsByLocalId[pin].description = readDescription(
-        outputPinsByLocalId[pin].description,
-        schemaInfo?.properties[schemaKey]?.metadata?.["description"],
-      );
-      childTypes[schemaKey] = node;
-    }
-  }
-
-  return {
-    templateId: definition.Id,
-    defaultTitle: definition.Title,
-    description: readDescription(definition.Description, schemaInfo?.hits?.[0]?.description),
-    childTypes: childTypes,
-    fieldsBySchemaKey: fieldsBySchemaKey,
-    inputPins: inputPins,
-    outputPins: Object.values(outputPinsByLocalId),
-    schemaConstants: schemaConstants,
-    nodeColor: definition.Color,
-  };
-}
-
-export function getNodeEditorWorkspaces(fromPath: string): Record<string, NodeEditorWorkspace> {
-  const workspaces: Record<string, NodeEditorWorkspace> = {};
-
-  for (const directory of readdirSync(fromPath)) {
-    const directoryPath = join(fromPath, directory);
-    if (!statSync(directoryPath).isDirectory()) {
-      continue;
     }
 
-    const _workspace = join(directoryPath, "_Workspace.json");
-    if (!existsSync(_workspace)) {
-      LOGGER.warn(
-        `Workspace template directory "${directoryPath}" is missing _Workspace.json file. Skipping.`,
-      );
-      continue;
-    }
-    // todo hydrate based on schema mappings
-    const workspaceDefinition = safeParseJSONFile(_workspace) as NodeEditorWorkspaceDefinition;
-
-    const __schemaMappings = join(directoryPath, "__SchemaMappings.json");
-    let templateToSchemaRefs: Record<string, string> = {};
-    if (existsSync(__schemaMappings)) {
-      templateToSchemaRefs = safeParseJSONFile(__schemaMappings);
-    }
-
-    const templatesById: Record<string, NodeTemplate> = {};
-
-    // recurse on each subdirectory
-    const loadTemplates = (dir: string) => {
-      for (const file of readdirSync(dir)) {
-        if (file === "_Workspace.json" || file === "__SchemaMappings.json") {
-          continue;
-        }
-
-        const filePath = join(dir, file);
-
-        if (statSync(filePath).isDirectory()) {
-          loadTemplates(filePath);
-        } else {
-          const templateDefinition = safeParseJSONFile(filePath) as NodeTemplateDefinition;
-          const schemaMapping = templateToSchemaRefs[templateDefinition.Id];
-          const template = templateFromDefinition(templateDefinition, schemaMapping);
-          templatesById[template.templateId] = template;
-        }
-      }
+    return {
+      nodeTemplatesById: workspace.nodeTemplatesById,
+      variantKindsById: workspace.variantKindsById,
+      templateCategories: workspace.templateCategories,
+      rootTemplateOrVariantId: rootDefinition.RootNodeType,
+      rootMenuName: rootDefinition.MenuName,
     };
+  }
 
-    loadTemplates(directoryPath);
+  private loadNodeEditorWorkspaces(): Record<string, NodeEditorWorkspace> {
+    const workspaces: Record<string, NodeEditorWorkspace> = {};
 
-    for (const [category, templateList] of Object.entries(
-      workspaceDefinition.NodeCategories ?? {},
-    )) {
-      for (const templateId of templateList) {
-        if (!templatesById[templateId]) {
-          LOGGER.warn(
-            `Template "${templateId}" of category ${category} is missing from workspace "${workspaceDefinition.WorkspaceName}".`,
+    for (const directory of readdirSync(this.workspacesRootPath)) {
+      const directoryPath = join(this.workspacesRootPath, directory);
+      if (!statSync(directoryPath).isDirectory()) {
+        continue;
+      }
+
+      const _workspace = join(directoryPath, "_Workspace.json");
+      if (!existsSync(_workspace)) {
+        this.logger.warn(
+          `Workspace template directory "${directoryPath}" is missing _Workspace.json file. Skipping.`,
+        );
+        continue;
+      }
+      // todo hydrate based on schema mappings
+      const workspaceDefinition = safeParseJSONFile(_workspace) as NodeEditorWorkspaceDefinition;
+
+      const __schemaMappings = join(directoryPath, "__SchemaMappings.json");
+      let templateToSchemaRefs: Record<string, string> = {};
+      if (existsSync(__schemaMappings)) {
+        templateToSchemaRefs = safeParseJSONFile(__schemaMappings);
+      }
+
+      const templatesById: Record<string, NodeTemplate> = {};
+      this.loadTemplatesFromDirectory(directoryPath, templateToSchemaRefs, templatesById);
+
+      for (const [category, templateList] of Object.entries(
+        workspaceDefinition.NodeCategories ?? {},
+      )) {
+        for (const templateId of templateList) {
+          if (!templatesById[templateId]) {
+            this.logger.warn(
+              `Template "${templateId}" of category ${category} is missing from workspace "${workspaceDefinition.WorkspaceName}".`,
+            );
+            continue;
+          }
+          templatesById[templateId].category = category;
+        }
+      }
+
+      workspaces[workspaceDefinition.WorkspaceName] = {
+        workspaceName: workspaceDefinition.WorkspaceName,
+        templateCategories: workspaceDefinition.NodeCategories ?? {},
+        roots: workspaceDefinition.Roots ?? {},
+        nodeTemplatesById: templatesById,
+        variantKindsById: workspaceDefinition.Variants ?? {},
+      };
+    }
+
+    return workspaces;
+  }
+
+  private loadTemplatesFromDirectory(
+    directoryPath: string,
+    templateToSchemaRefs: Record<string, string>,
+    templatesById: Record<string, NodeTemplate>,
+  ): void {
+    for (const file of readdirSync(directoryPath)) {
+      if (file === "_Workspace.json" || file === "__SchemaMappings.json") {
+        continue;
+      }
+
+      const filePath = join(directoryPath, file);
+
+      if (statSync(filePath).isDirectory()) {
+        this.loadTemplatesFromDirectory(filePath, templateToSchemaRefs, templatesById);
+      } else {
+        const templateDefinition = safeParseJSONFile(filePath) as NodeTemplateDefinition;
+        const schemaMapping = templateToSchemaRefs[templateDefinition.Id];
+        const template = this.templateFromDefinition(templateDefinition, schemaMapping);
+        templatesById[template.templateId] = template;
+      }
+    }
+  }
+
+  // from exact json definition to optimized usage structure
+  private templateFromDefinition(
+    definition: NodeTemplateDefinition,
+    schemaRef?: string,
+  ): NodeTemplate {
+    const assetFieldDefinition = schemaRef
+      ? this.schemaRuntime.resolveFieldByReferencePointer(schemaRef)
+      : undefined;
+    const assetObjectFieldDefinition =
+      assetFieldDefinition?.type === "object" ? assetFieldDefinition : undefined;
+    if (
+      schemaRef &&
+      assetFieldDefinition &&
+      assetFieldDefinition.type !== "object" &&
+      assetFieldDefinition.type !== "variant"
+    ) {
+      this.logger.warn(
+        `Schema reference ${schemaRef} not resolved to an object field or variant field in template ${definition.Id}.`,
+      );
+    }
+    if (schemaRef && !assetFieldDefinition) {
+      this.logger.warn(`Schema reference ${schemaRef} not resolved in template ${definition.Id}.`);
+    }
+
+    const inputPins: NodePin[] =
+      definition.Inputs?.map((input, idx) => {
+        return {
+          schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
+          localId: input.Id,
+          label: input.Label,
+          description: input.Description,
+          color: input.Color,
+          multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
+        };
+      }) ?? [];
+
+    const fieldsByLocalId: Record<string, NodeField> = {};
+
+    const outputPinsByLocalId =
+      definition.Outputs?.reduce(
+        (map, output) => {
+          const type = output.IsMap ? "map" : output.Multiple ? "multiple" : "single";
+          const fields = output.Fields
+            ? this.fieldsFromContentDefinitions(output.Fields)
+            : undefined;
+          if (fields) {
+            for (const field of fields) {
+              fieldsByLocalId[field.localId] = field;
+            }
+          }
+          map[output.Id] = {
+            schemaKey: "",
+            localId: output.Id,
+            label: output.Label,
+            description: output.Description,
+            color: output.Color,
+            multiplicity: type,
+            fields,
+          };
+          return map;
+        },
+        {} as Record<string, NodePin>,
+      ) ?? {};
+
+    for (const field of this.fieldsFromContentDefinitions(definition.Content ?? [])) {
+      fieldsByLocalId[field.localId] = field;
+    }
+
+    const fieldsBySchemaKey: Record<string, NodeField> = {};
+    const childTypes: Record<string, string> = {};
+    const schemaConstants: Record<string, string> = {};
+
+    for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
+      // strip postfix e.g. "$Pin" from schema key (see Root.json in ScriptableBrushes workspace)
+      const postFixLoc = schemaKey.lastIndexOf("$");
+      schemaKey = schemaKey.substring(0, postFixLoc > 0 ? postFixLoc : schemaKey.length);
+      if (typeof entry === "string") {
+        if (fieldsByLocalId?.[entry]) {
+          // entry is local contentId
+          fieldsByLocalId[entry].schemaKey = schemaKey;
+          fieldsBySchemaKey[schemaKey] = fieldsByLocalId[entry];
+          const nodeField = fieldsBySchemaKey[schemaKey];
+
+          // hydrate with schema-sourced data
+          const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
+          if (schemaField?.type === "string") {
+            nodeField.symbolLookup = schemaField.symbolRef;
+          }
+          if (schemaField?.type === "color") {
+            nodeField.type = "color";
+          }
+          nodeField.description = nodeField.description ?? schemaField?.markdownDescription;
+        } else {
+          // entry is a constant
+          schemaConstants[schemaKey] = entry;
+        }
+      } else {
+        // entry defines pin information
+        const pinId = entry.Pin ?? entry.pin;
+        const variantOrTemplateId = entry.Node ?? entry.node;
+        if (!pinId || !variantOrTemplateId) {
+          this.logger.error(
+            `Pin and node expected but not parsed for schema key ${schemaKey} of template ${definition.Id}`,
           );
           continue;
         }
-        templatesById[templateId].category = category;
+        const outputPin = outputPinsByLocalId[pinId];
+        if (!outputPin) {
+          this.logger.error(
+            `Pin ${pinId} not resolved to local id for schema key ${schemaKey} of template ${definition.Id}`,
+          );
+          continue;
+        }
+
+        outputPin.schemaKey = schemaKey;
+
+        const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
+        outputPin.description = outputPin.description ?? schemaField?.markdownDescription;
+        childTypes[schemaKey] = variantOrTemplateId;
       }
     }
 
-    workspaces[workspaceDefinition.WorkspaceName] = {
-      workspaceName: workspaceDefinition.WorkspaceName,
-      templateCategories: workspaceDefinition.NodeCategories ?? {},
-      roots: workspaceDefinition.Roots ?? {},
-      nodeTemplatesById: templatesById,
-      variantKindsById: workspaceDefinition.Variants ?? {},
+    return {
+      templateId: definition.Id,
+      defaultTitle: definition.Title,
+      description: definition.Description ?? assetFieldDefinition?.markdownDescription,
+      childTypes: childTypes,
+      fieldsBySchemaKey: fieldsBySchemaKey,
+      inputPins: inputPins,
+      outputPins: Object.values(outputPinsByLocalId),
+      schemaConstants: schemaConstants,
+      nodeColor: definition.Color,
     };
   }
 
-  return workspaces;
-}
+  private fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeField[] {
+    return content.map(content => {
+      const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
+        ? content.Options.Values.filter((value): value is string => typeof value === "string")
+        : undefined;
 
-export function resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceContext | null {
-  const normalizedAssetPath = normalizeFileSystemPath(assetPath);
-  const subpathMatch = Object.keys(WORKSPACE_PATH_RULES).find(subpath =>
-    normalizedAssetPath.includes(subpath),
-  );
-  if (!subpathMatch) {
-    return null;
+      return {
+        schemaKey: content.Id,
+        localId: content.Id,
+        type: this.contentTypeToFieldComponentType(content.Type),
+        label: content.Options?.Label,
+        description: content.Description ?? content.Options.Description,
+        value: content.Options?.Default ?? content.Options?.DefaultValue,
+        inputWidth: content.Options?.Width,
+        overrideAutocompleteValues,
+        subfields: content.Options?.Fields
+          ? this.fieldsFromContentDefinitions(content.Options.Fields)
+          : undefined,
+      };
+    });
   }
 
-  const fileParse = safeParseJSONFile(assetPath) as AssetDocumentShape | undefined;
-  // ! $WorkspaceID actually saves the root menuname. e.g. "HytaleGenerator - Biome"
-  const parsedMenuName: string | undefined = fileParse?.$NodeEditorMetadata?.$WorkspaceID;
-  let workspace: NodeEditorWorkspace | undefined;
-  let rootDefinition: NodeEditorWorkspaceRootDefinition | undefined;
-  // match root/workspace by menu name. could be optimized but real world size would never be very large
-  if (parsedMenuName) {
-    let found = false;
-    for (const currentWorkspace of Object.values(nodeEditorWorkspaces)) {
-      if (found) {
-        break;
-      }
-      for (const root of Object.values(currentWorkspace.roots)) {
-        if (root.MenuName === parsedMenuName) {
-          workspace = currentWorkspace;
-          rootDefinition = root;
-          found = true;
-          break;
-        }
-      }
+  private contentTypeToFieldComponentType(type: NodeContentDefinitionType): FieldComponentType {
+    switch (type) {
+      case "SmallString":
+        return "string";
+      case "String":
+        return "text";
+      case "Float":
+        return "float";
+      case "Int":
+      case "Integer":
+        return "int";
+      case "IntSlider":
+        return "intslider";
+      case "Checkbox":
+      case "Bool":
+        return "checkbox";
+      case "Enum":
+        return "enum";
+      case "FilePath":
+        return "filepath";
+      case "List":
+        return "list";
+      case "Object":
+        return "object";
+      default:
+        this.logger.warn(`Unknown node template content type: ${type}. Defaulting to string.`);
+        return "string";
     }
   }
-
-  if (!workspace || !rootDefinition) {
-    const matchedRule = WORKSPACE_PATH_RULES[subpathMatch];
-    workspace = nodeEditorWorkspaces[matchedRule.workspaceName];
-    if (!workspace) {
-      return null;
-    }
-    rootDefinition = workspace.roots[matchedRule.rootId];
-    if (!rootDefinition) {
-      LOGGER.warn(
-        `Root definition "${matchedRule.rootId}" not found in workspace "${workspace.workspaceName} when resolving ${assetPath}".`,
-      );
-      return null;
-    }
-  }
-
-  return {
-    nodeTemplatesById: workspace.nodeTemplatesById,
-    variantKindsById: workspace.variantKindsById,
-    templateCategories: workspace.templateCategories,
-    rootTemplateOrVariantId: rootDefinition.RootNodeType,
-    rootMenuName: rootDefinition.MenuName,
-  };
-}
-
-function normalizeFileSystemPath(filePath: string): string {
-  return filePath.replace(/\\/g, "/");
 }

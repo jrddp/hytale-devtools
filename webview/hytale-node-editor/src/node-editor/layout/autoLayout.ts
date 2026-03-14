@@ -1,14 +1,13 @@
-import { XYPosition } from "@xyflow/svelte";
+import type { XYPosition } from "@xyflow/svelte";
 import { flextree } from "d3-flextree";
-import { FlowNode } from "src/common";
+import type { FlowNode } from "src/common";
 import {
   getAbsolutePosition,
   getOrderedChildren,
   getRootIds,
-  NodeDataUpdates,
-  NodeUpdates,
   recalculateGroupParents,
 } from "src/node-editor/utils/nodeUtils.svelte";
+import type { NodeDataUpdates, NodeUpdates } from "src/node-editor/utils/nodeUtils.svelte";
 import { applyDocumentState, workspace } from "src/workspace.svelte";
 
 const SPACING_X = 150;

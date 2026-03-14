@@ -1,0 +1,24 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "UnarmedInteractions",
+  "path": "Server/Item/Unarmed/Interactions",
+  "extension": ".json",
+  "assetCount": 3,
+  "fileCount": 3,
+  "values": {
+    "Block": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Interactions/Block.json",
+      "package": "Hytale:Hytale"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Interactions/Empty.json",
+      "package": "Hytale:Hytale"
+    },
+    "Item": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Interactions/Item.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

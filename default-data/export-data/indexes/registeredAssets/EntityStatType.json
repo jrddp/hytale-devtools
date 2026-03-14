@@ -1,0 +1,64 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "EntityStatType",
+  "path": "Server/Entity/Stats",
+  "extension": ".json",
+  "assetCount": 13,
+  "fileCount": 12,
+  "values": {
+    "Ammo": {
+      "sourcedFromFile": "/Server/Entity/Stats/Ammo.json",
+      "package": "Hytale:Hytale"
+    },
+    "DeployablePreview": {
+      "sourcedFromFile": "/Server/Entity/Stats/DeployablePreview.json",
+      "package": "Hytale:Hytale"
+    },
+    "GlidingActive": {
+      "sourcedFromFile": "/Server/Entity/Stats/GlidingActive.json",
+      "package": "Hytale:Hytale"
+    },
+    "Health": {
+      "sourcedFromFile": "/Server/Entity/Stats/Health.json",
+      "package": "Hytale:Hytale"
+    },
+    "Immunity": {
+      "sourcedFromFile": "/Server/Entity/Stats/Immunity.json",
+      "package": "Hytale:Hytale"
+    },
+    "MagicCharges": {
+      "sourcedFromFile": "/Server/Entity/Stats/MagicCharges.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mana": {
+      "sourcedFromFile": "/Server/Entity/Stats/Mana.json",
+      "package": "Hytale:Hytale"
+    },
+    "Oxygen": {
+      "sourcedFromFile": "/Server/Entity/Stats/Oxygen.json",
+      "package": "Hytale:Hytale"
+    },
+    "SignatureCharges": {
+      "sourcedFromFile": "/Server/Entity/Stats/SignatureCharges.json",
+      "package": "Hytale:Hytale"
+    },
+    "SignatureEnergy": {
+      "sourcedFromFile": "/Server/Entity/Stats/SignatureEnergy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Stamina": {
+      "sourcedFromFile": "/Server/Entity/Stats/Stamina.json",
+      "package": "Hytale:Hytale"
+    },
+    "StaminaRegenDelay": {
+      "sourcedFromFile": "/Server/Entity/Stats/StaminaRegenDelay.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unknown": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    }
+  }
+}

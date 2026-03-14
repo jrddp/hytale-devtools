@@ -1,0 +1,56 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockMigration",
+  "path": "Server/Item/Block/Migrations",
+  "extension": ".json",
+  "assetCount": 11,
+  "fileCount": 11,
+  "values": {
+    "0": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/0.json",
+      "package": "Hytale:Hytale"
+    },
+    "1": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/1.json",
+      "package": "Hytale:Hytale"
+    },
+    "10": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/10.json",
+      "package": "Hytale:Hytale"
+    },
+    "2": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/2.json",
+      "package": "Hytale:Hytale"
+    },
+    "3": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/3.json",
+      "package": "Hytale:Hytale"
+    },
+    "4": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/4.json",
+      "package": "Hytale:Hytale"
+    },
+    "5": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/5.json",
+      "package": "Hytale:Hytale"
+    },
+    "6": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/6.json",
+      "package": "Hytale:Hytale"
+    },
+    "7": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/7.json",
+      "package": "Hytale:Hytale"
+    },
+    "8": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/8.json",
+      "package": "Hytale:Hytale"
+    },
+    "9": {
+      "sourcedFromFile": "/Server/Item/Block/Migrations/9.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

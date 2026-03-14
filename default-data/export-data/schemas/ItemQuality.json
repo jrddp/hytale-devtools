@@ -1,0 +1,361 @@
+{
+  "type": "object",
+  "$id": "ItemQuality.json",
+  "title": "ItemQuality",
+  "hytale": {
+    "type": "object",
+    "internalKeys": [
+      "Default"
+    ],
+    "path": "Item/Qualities",
+    "extension": ".json",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another ItemQuality most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **ItemQuality** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "ItemQuality"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "ItemQuality"
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "QualityValue": {
+      "type": "integer",
+      "description": "Define the value of the quality to order them, 0 being the lowest quality.",
+      "markdownDescription": "Define the value of the quality to order them, 0 being the lowest quality.",
+      "hytale": {
+        "type": "integer"
+      },
+      "default": 0
+    },
+    "ItemTooltipTexture": {
+      "type": "string",
+      "description": "The path to the texture of the item tooltip. It has to be located in Common/Items/Qualities.",
+      "markdownDescription": "The path to the texture of the item tooltip. It has to be located in Common/Items/Qualities.",
+      "hytale": {
+        "type": "string"
+      },
+      "pattern": "[^\\s]",
+      "minLength": 1,
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "UI/ItemQualities/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "UI/ItemQualities/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "ItemTooltipArrowTexture": {
+      "type": "string",
+      "description": "The path to the texture of the item tooltip arrow. It has to be located in Common/Items/Qualities.",
+      "markdownDescription": "The path to the texture of the item tooltip arrow. It has to be located in Common/Items/Qualities.",
+      "hytale": {
+        "type": "string"
+      },
+      "pattern": "[^\\s]",
+      "minLength": 1,
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "UI/ItemQualities/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "UI/ItemQualities/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "SlotTexture": {
+      "type": "string",
+      "description": "The path to the texture of the item slot. It has to be located in Common/Items/Qualities.",
+      "markdownDescription": "The path to the texture of the item slot. It has to be located in Common/Items/Qualities.",
+      "hytale": {
+        "type": "string"
+      },
+      "pattern": "[^\\s]",
+      "minLength": 1,
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "UI/ItemQualities/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "UI/ItemQualities/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "BlockSlotTexture": {
+      "type": "string",
+      "description": "The path to the texture of the item slot, if it has an associated block type. It has to be located in Common/Items/Qualities.",
+      "markdownDescription": "The path to the texture of the item slot, if it has an associated block type. It has to be located in Common/Items/Qualities.",
+      "hytale": {
+        "type": "string"
+      },
+      "pattern": "[^\\s]",
+      "minLength": 1,
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "UI/ItemQualities/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "UI/ItemQualities/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "SpecialSlotTexture": {
+      "type": "string",
+      "description": "The path to the texture of the item slot used when RenderSpecialSlot is true and the item is consumable or usable. It has to be located in Common/Items/Qualities.",
+      "markdownDescription": "The path to the texture of the item slot used when RenderSpecialSlot is true and the item is consumable or usable. It has to be located in Common/Items/Qualities.",
+      "hytale": {
+        "type": "string"
+      },
+      "pattern": "[^\\s]",
+      "minLength": 1,
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "UI/ItemQualities/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "UI/ItemQualities/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "TextColor": {
+      "title": "Color RGB",
+      "description": "The color that'll be used to display the text of the item in the inventory.",
+      "markdownDescription": "The color that'll be used to display the text of the item in the inventory.",
+      "anyOf": [
+        {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          },
+          "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+        },
+        {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          },
+          "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+        }
+      ],
+      "hytale": {
+        "type": "Color"
+      }
+    },
+    "LocalizationKey": {
+      "type": "string",
+      "description": "The localization key for the item quality name.",
+      "markdownDescription": "The localization key for the item quality name.",
+      "hytale": {
+        "type": "string",
+        "uiEditorComponent": {
+          "component": "LocalizationKey",
+          "keyTemplate": "qualities.{assetId}",
+          "generateDefaultKey": true
+        }
+      },
+      "pattern": "[^\\s]",
+      "minLength": 1
+    },
+    "VisibleQualityLabel": {
+      "type": "boolean",
+      "description": "To specify the quality label should be displayed in the tooltip.",
+      "markdownDescription": "To specify the quality label should be displayed in the tooltip.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "RenderSpecialSlot": {
+      "type": "boolean",
+      "description": "To specify if we display a special slot texture if the item is a consumable or usable.",
+      "markdownDescription": "To specify if we display a special slot texture if the item is a consumable or usable.",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    },
+    "ItemEntityConfig": {
+      "description": "Provides an ItemEntityConfig used for all items with their item quality set to this asset unless overridden by an ItemEntityConfig defined on the item itself.",
+      "markdownDescription": "Provides an ItemEntityConfig used for all items with their item quality set to this asset unless overridden by an ItemEntityConfig defined on the item itself.",
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/ItemEntityConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "HideFromSearch": {
+      "type": "boolean",
+      "description": "Whether this item is hidden from typical public search, like the creative library",
+      "markdownDescription": "Whether this item is hidden from typical public search, like the creative library",
+      "hytale": {
+        "type": "boolean"
+      },
+      "default": false
+    }
+  },
+  "additionalProperties": false
+}

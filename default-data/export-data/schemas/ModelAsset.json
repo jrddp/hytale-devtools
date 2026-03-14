@@ -1,0 +1,563 @@
+{
+  "type": "object",
+  "$id": "ModelAsset.json",
+  "title": "ModelAsset",
+  "hytale": {
+    "type": "object",
+    "internalKeys": [
+      "Debug"
+    ],
+    "path": "Models",
+    "extension": ".json",
+    "mergesProperties": true,
+    "uiEditorPreview": "Model",
+    "uiSidebarButtons": [
+      {
+        "textId": "server.assetEditor.buttons.resetModel",
+        "buttonId": "ResetModel"
+      },
+      {
+        "textId": "server.assetEditor.buttons.useModel",
+        "buttonId": "UseModel"
+      }
+    ],
+    "uiCreateButtons": [
+      {
+        "textId": "server.assetEditor.buttons.createAndUseModel",
+        "buttonId": "UseModel"
+      }
+    ]
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another ModelAsset most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **ModelAsset** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "ModelAsset"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "ModelAsset"
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Model": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Characters/",
+          "NPC/",
+          "Items/",
+          "VFX/"
+        ],
+        "requiredExtension": "blockymodel",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Characters/",
+            "NPC/",
+            "Items/",
+            "VFX/"
+          ],
+          "extension": "blockymodel"
+        }
+      }
+    },
+    "Texture": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Characters/",
+          "NPC/",
+          "Items/",
+          "VFX/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Characters/",
+            "NPC/",
+            "Items/",
+            "VFX/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "GradientSet": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiEditorComponent": {
+          "component": "Dropdown",
+          "dataSet": "GradientSets"
+        }
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "uiDataSet",
+          "key": "GradientSets"
+        }
+      }
+    },
+    "GradientId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiEditorComponent": {
+          "component": "Dropdown",
+          "dataSet": "GradientIds"
+        }
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "uiDataSet",
+          "key": "GradientIds"
+        }
+      }
+    },
+    "Icon": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiEditorComponent": {
+          "component": "Icon",
+          "defaultPathTemplate": "Icons/ModelsGenerated/{assetId}.png",
+          "width": 128,
+          "height": 128
+        },
+        "uiRebuildCaches": [
+          "ItemIcons"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Icons/ModelsGenerated/",
+          "Icons/Models/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Icons/ModelsGenerated/",
+            "Icons/Models/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "IconProperties": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/AssetIconProperties",
+          "hytale": {
+            "inheritsProperty": true,
+            "uiDisplayMode": "Hidden"
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Light": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/ColorLight",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "PhysicsValues": {
+      "anyOf": [
+        {
+          "default": {
+            "Mass": 68.0,
+            "DragCoefficient": 0.5,
+            "InvertedGravity": false
+          },
+          "$ref": "common.json#/definitions/PhysicsValues",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "MinScale": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true,
+        "uiSectionStart": "Hitbox"
+      },
+      "default": 0.949999988079071
+    },
+    "MaxScale": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 1.0499999523162842
+    },
+    "EyeHeight": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 0.0
+    },
+    "HitBox": {
+      "$ref": "common.json#/definitions/Box",
+      "hytale": {
+        "inheritsProperty": true
+      }
+    },
+    "DetailBoxes": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "$ref": "common.json#/definitions/DetailBox"
+        }
+      }
+    },
+    "CrouchOffset": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 0.0
+    },
+    "SittingOffset": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true
+      },
+      "default": 0.0
+    },
+    "SleepingOffset": {
+      "type": "number",
+      "hytale": {
+        "type": "number",
+        "inheritsProperty": true,
+        "uiSectionStart": "Camera"
+      },
+      "default": 0.0
+    },
+    "Camera": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/CameraSettings",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "DefaultAttachments": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiSectionStart": "Attachments",
+        "uiCollapsedByDefault": false
+      },
+      "items": {
+        "$ref": "common.json#/definitions/ModelAttachment"
+      }
+    },
+    "RandomAttachmentSets": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true,
+        "uiCollapsedByDefault": false
+      },
+      "additionalProperties": {
+        "type": "object",
+        "title": "Map",
+        "hytale": {
+          "type": "object"
+        },
+        "additionalProperties": {
+          "$ref": "common.json#/definitions/ModelAttachment"
+        }
+      }
+    },
+    "AnimationSets": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true,
+        "uiSectionStart": "Animations",
+        "uiCollapsedByDefault": false
+      },
+      "additionalProperties": {
+        "$ref": "common.json#/definitions/AnimationSet"
+      }
+    },
+    "Particles": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiSectionStart": "Physics",
+        "uiCollapsedByDefault": false
+      },
+      "items": {
+        "$ref": "common.json#/definitions/ModelParticle"
+      }
+    },
+    "Trails": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiSectionStart": "Trails",
+        "uiCollapsedByDefault": false
+      },
+      "items": {
+        "$ref": "common.json#/definitions/ModelTrail"
+      }
+    },
+    "Phobia": {
+      "type": "string",
+      "title": "Phobia",
+      "description": "Enum used to specify if the NPC is part of a phobia (e.g. spider for arachnophobia).",
+      "markdownDescription": "Enum used to specify if the NPC is part of a phobia (e.g. spider for arachnophobia).",
+      "enumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "None",
+        "Arachnophobia",
+        "Ophidiophobia"
+      ],
+      "default": "None"
+    },
+    "PhobiaModelAssetId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The model to use if the player has the setting with the matching phobia toggled on.",
+      "markdownDescription": "The model to use if the player has the setting with the matching phobia toggled on.",
+      "hytaleAssetRef": "ModelAsset",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "ModelAsset"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

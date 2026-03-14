@@ -1,0 +1,60 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockTypeListAsset",
+  "path": "Server/BlockTypeList",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 12,
+  "values": {
+    "AllScatter": {
+      "sourcedFromFile": "/Server/BlockTypeList/AllScatter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/BlockTypeList/Empty.json",
+      "package": "Hytale:Hytale"
+    },
+    "Gravel": {
+      "sourcedFromFile": "/Server/BlockTypeList/Gravel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ores": {
+      "sourcedFromFile": "/Server/BlockTypeList/Ores.json",
+      "package": "Hytale:Hytale"
+    },
+    "PlantScatter": {
+      "sourcedFromFile": "/Server/BlockTypeList/PlantScatter.json",
+      "package": "Hytale:Hytale"
+    },
+    "PlantsAndTrees": {
+      "sourcedFromFile": "/Server/BlockTypeList/PlantsAndTrees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock": {
+      "sourcedFromFile": "/Server/BlockTypeList/Rock.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snow": {
+      "sourcedFromFile": "/Server/BlockTypeList/Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soils": {
+      "sourcedFromFile": "/Server/BlockTypeList/Soils.json",
+      "package": "Hytale:Hytale"
+    },
+    "TreeLeaves": {
+      "sourcedFromFile": "/Server/BlockTypeList/TreeLeaves.json",
+      "package": "Hytale:Hytale"
+    },
+    "TreeWood": {
+      "sourcedFromFile": "/Server/BlockTypeList/TreeWood.json",
+      "package": "Hytale:Hytale"
+    },
+    "TreeWoodAndLeaves": {
+      "sourcedFromFile": "/Server/BlockTypeList/TreeWoodAndLeaves.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ReachLocationMarkerAsset",
+  "path": "Server/Objective/ReachLocationMarkers",
+  "extension": ".json",
+  "assetCount": 1,
+  "fileCount": 1,
+  "values": {
+    "ObjectiveReachMarker_Example": {
+      "sourcedFromFile": "/Server/Objective/ReachLocationMarkers/ObjectiveReachMarker_Example.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

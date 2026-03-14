@@ -1,0 +1,240 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockSet",
+  "path": "Server/Item/Block/Sets",
+  "extension": ".json",
+  "assetCount": 57,
+  "fileCount": 57,
+  "values": {
+    "Beech": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Beech.json",
+      "package": "Hytale:Hytale"
+    },
+    "Birds": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Birds.json",
+      "package": "Hytale:Hytale"
+    },
+    "Breakables": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Breakables.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bushes": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chest": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Chest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Empty.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fence": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Fence.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Bed": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Feran_Bed.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Campfire": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Feran_Campfire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Gaia": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Gaia.json",
+      "package": "Hytale:Hytale"
+    },
+    "Gems": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Gems.json",
+      "package": "Hytale:Hytale"
+    },
+    "Grass": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Grass.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hay": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Hay.json",
+      "package": "Hytale:Hytale"
+    },
+    "IceAndSnow": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/IceAndSnow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Leaves.json",
+      "package": "Hytale:Hytale"
+    },
+    "Livestock_Feeding": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Livestock_Feeding.json",
+      "package": "Hytale:Hytale"
+    },
+    "Moss": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Moss.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mud": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Mud.json",
+      "package": "Hytale:Hytale"
+    },
+    "Necromancy_Bones": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Necromancy_Bones.json",
+      "package": "Hytale:Hytale"
+    },
+    "Opaque": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Opaque.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ore_Gold": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Ore_Gold.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ores": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Ores.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Cactus": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Plant_Cactus.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Cactus_Flat": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Plant_Cactus_Flat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plant_Vines": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Plant_Vines.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Oasis_Orange": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Portals_Oasis_Orange.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Oasis_Soil": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Portals_Oasis_Soil.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Rock.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Ice": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Rock_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rock_Quartzite": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Rock_Quartzite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sand": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Eggs": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Scarak_Eggs.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_CorruptedOasis": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil_CorruptedOasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Mud": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil_Mud.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_NoSnow": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil_NoSnow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Sand": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Sandstone_Gravel": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil_Sandstone_Gravel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Snow": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Soil_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Stone": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "StoneAndGrass": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/StoneAndGrass.json",
+      "package": "Hytale:Hytale"
+    },
+    "StoneAndSoil": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/StoneAndSoil.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trash": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Trash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Treasure": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Treasure.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tree": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Tree.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Bedroll": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Trork_Bedroll.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Campfire": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Trork_Campfire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Chest": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Trork_Chest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tutorial_Rock": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Tutorial_Rock.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tutorial_Wood": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Tutorial_Wood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Web": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Web.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood": {
+      "sourcedFromFile": "/Server/Item/Block/Sets/Wood.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

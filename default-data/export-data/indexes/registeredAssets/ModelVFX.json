@@ -1,0 +1,144 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ModelVFX",
+  "path": "Server/Entity/ModelVFX",
+  "extension": ".json",
+  "assetCount": 33,
+  "fileCount": 33,
+  "values": {
+    "Bow_Signature_Status": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Bow_Signature_Status.json",
+      "package": "Hytale:Hytale"
+    },
+    "Burn": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Burn.json",
+      "package": "Hytale:Hytale"
+    },
+    "Creative": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Creative.json",
+      "package": "Hytale:Hytale"
+    },
+    "Creative_Tool": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Creative_Tool.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Signature_Status": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Crossbow_Signature_Status.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crown_Gold": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Crown_Gold.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Dash": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Dagger_Dash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Signature": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Dagger_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Death": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Death.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Epic": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Epic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Legendary": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Legendary.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Rare": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Rare.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drop_Uncommon": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Drop_Uncommon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Erosion_Test": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Erosion_Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Freeze": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Freeze.json",
+      "package": "Hytale:Hytale"
+    },
+    "Intangible": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Intangible.json",
+      "package": "Hytale:Hytale"
+    },
+    "Intangible_Dark": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Intangible_Dark.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Mace_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poison": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Poison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portal_Teleport": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Portal_Teleport.json",
+      "package": "Hytale:Hytale"
+    },
+    "PrototypeBlockPlaceFail": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/PrototypeBlockPlaceFail.json",
+      "package": "Hytale:Hytale"
+    },
+    "PrototypeBlockPlaceSuccess": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/PrototypeBlockPlaceSuccess.json",
+      "package": "Hytale:Hytale"
+    },
+    "PrototypePastePreview": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/PrototypePastePreview.json",
+      "package": "Hytale:Hytale"
+    },
+    "Prototype_CreativeTool_ModelVFX": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Prototype_CreativeTool_ModelVFX.json",
+      "package": "Hytale:Hytale"
+    },
+    "Prototype_CreativeTool_Sel_ModelVFX": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Prototype_CreativeTool_Sel_ModelVFX.json",
+      "package": "Hytale:Hytale"
+    },
+    "Stoneskin": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Stoneskin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Signature_Status": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Sword_Signature_Status.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Test": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Sword_Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test2": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Test2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trinket": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Trinket.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trinket_Empowered": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Trinket_Empowered.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trinket_Last_Stand_Skull": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/Trinket_Last_Stand_Skull.json",
+      "package": "Hytale:Hytale"
+    },
+    "test": {
+      "sourcedFromFile": "/Server/Entity/ModelVFX/test.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

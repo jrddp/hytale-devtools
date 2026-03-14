@@ -1,0 +1,385 @@
+{
+  "type": "object",
+  "$id": "WorldNPCSpawn.json",
+  "title": "WorldNPCSpawn",
+  "description": "A spawning configuration used to spawn NPCs around the world.",
+  "markdownDescription": "A spawning configuration used to spawn NPCs around the world.",
+  "hytale": {
+    "type": "object",
+    "path": "NPC/Spawn/World",
+    "extension": ".json",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another WorldNPCSpawn most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **WorldNPCSpawn** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "NPCSpawn"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "NPCSpawn"
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "NPCs": {
+      "type": "array",
+      "description": "A required list of Role Spawn Parameters defining each NPC that can be spawned and their relative weights.",
+      "markdownDescription": "A required list of **Role Spawn Parameters** defining each NPC that can be spawned and their relative weights.",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "NPCs"
+      },
+      "items": {
+        "$ref": "common.json#/definitions/RoleSpawnParameters"
+      },
+      "minItems": 1
+    },
+    "Despawn": {
+      "description": "Optional Despawn Parameters to control NPC despawning.",
+      "markdownDescription": "Optional **Despawn Parameters** to control NPC despawning.",
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/DespawnParameters",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "DayTimeRange": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "An optional hour range within which the NPCs/beacon will spawn (between 0 and 24).",
+      "markdownDescription": "An optional hour range within which the NPCs/beacon will spawn (between 0 and 24).",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "type": "number",
+        "hytale": {
+          "type": "number"
+        }
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "MoonPhaseRange": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "An optional moon phase range during which the NPCs/beacon will spawn (must be greater than or equal to 0).",
+      "markdownDescription": "An optional moon phase range during which the NPCs/beacon will spawn (must be greater than or equal to 0).",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "type": "integer",
+        "hytale": {
+          "type": "integer"
+        }
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "LightRanges": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map of LightType",
+      "description": "Optional light ranges to spawn the NPCs/beacon in, defined between 0 and 100.",
+      "markdownDescription": "Optional light ranges to spawn the NPCs/beacon in, defined between 0 and 100.",
+      "hytale": {
+        "type": "EnumMap",
+        "inheritsProperty": true
+      },
+      "properties": {
+        "Light": {
+          "type": "array",
+          "description": "Total light level.",
+          "markdownDescription": "Total light level.",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "type": "number",
+            "hytale": {
+              "type": "number"
+            }
+          }
+        },
+        "SkyLight": {
+          "type": "array",
+          "description": "Light level based on how deep under cover the position is relative to the open sky (e.g. inside a cave will be low SkyLight).",
+          "markdownDescription": "Light level based on how deep under cover the position is relative to the open sky (e.g. inside a cave will be low SkyLight).",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "type": "number",
+            "hytale": {
+              "type": "number"
+            }
+          }
+        },
+        "Sunlight": {
+          "type": "array",
+          "description": "Light level based on time of day (peaks at around noon and is 0 during most of the night).",
+          "markdownDescription": "Light level based on time of day (peaks at around noon and is 0 during most of the night).",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "type": "number",
+            "hytale": {
+              "type": "number"
+            }
+          }
+        },
+        "RedLight": {
+          "type": "array",
+          "description": "Red light level.",
+          "markdownDescription": "Red light level.",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "type": "number",
+            "hytale": {
+              "type": "number"
+            }
+          }
+        },
+        "GreenLight": {
+          "type": "array",
+          "description": "Green light level.",
+          "markdownDescription": "Green light level.",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "type": "number",
+            "hytale": {
+              "type": "number"
+            }
+          }
+        },
+        "BlueLight": {
+          "type": "array",
+          "description": "Blue light level.",
+          "markdownDescription": "Blue light level.",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "type": "number",
+            "hytale": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "number",
+          "hytale": {
+            "type": "number"
+          }
+        }
+      },
+      "propertyNames": {
+        "hytale": {
+          "type": "string"
+        },
+        "enum": [
+          "Light",
+          "SkyLight",
+          "Sunlight",
+          "RedLight",
+          "GreenLight",
+          "BlueLight"
+        ]
+      }
+    },
+    "ScaleDayTimeRange": {
+      "type": "boolean",
+      "description": "If set to true, instead of using absolute hour values for DayTimeRange, it will be scaled based on the world's DaytimePortion.\n\n * 0 and 24 will represent the middle of the night portion.\n * 6 will represent the moment of sunrise.\n * 12 will represent the middle of the day portion.\n * 18 will represent the moment of sunset.",
+      "markdownDescription": "If set to true, instead of using absolute hour values for DayTimeRange, it will be scaled based on the world's DaytimePortion.\n\n * 0 and 24 will represent the middle of the night portion.\n * 6 will represent the moment of sunrise.\n * 12 will represent the middle of the day portion.\n * 18 will represent the moment of sunset.",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": true
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Environments": {
+      "type": "array",
+      "description": "A required list of environments that this configuration covers. Each combination of environment and NPC in this configuration should be unique.",
+      "markdownDescription": "A required list of environments that this configuration covers. Each combination of environment and NPC in this configuration should be unique.",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "type": "string",
+        "hytaleAssetRef": "Environment",
+        "hytale": {
+          "type": "string"
+        },
+        "hytaleDevtools": {
+          "symbolRef": {
+            "indexKind": "registeredAssets",
+            "key": "Environment"
+          }
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "MoonPhaseWeightModifiers": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "An array of modifiers which will be multiplied into the weights for each NPC in this config dependent on the current moon phase.\n\nAt present, Hytale has 5 moon phases, with day 0 being a full moon which gradually wanes up to day 4 which is a new moon. These are represented in the array indices.\n\nEach modifier can only be between 0 and 2, where 0 means the NPC will not spawn at all, 1 will use the standard weight, and 2 will result in twice the spawns\n\ne.g. `[ 0, 0, 0.5, 1, 2 ]` would result in NPCs that do not spawn during day 0 and day 1 (full moon and three quarters), would spawn half as much on day 2, the defined amount on day 3, and twice as many on day 4 (new moon).",
+      "markdownDescription": "An array of modifiers which will be multiplied into the weights for each NPC in this config dependent on the current moon phase.\n\nAt present, Hytale has **5** moon phases, with day 0 being a full moon which gradually wanes up to day 4 which is a new moon. These are represented in the array indices.\n\nEach modifier can only be between 0 and 2, where 0 means the NPC will not spawn at all, 1 will use the standard weight, and 2 will result in twice the spawns\n\ne.g. `[ 0, 0, 0.5, 1, 2 ]` would result in NPCs that do not spawn during day 0 and day 1 (full moon and three quarters), would spawn half as much on day 2, the defined amount on day 3, and twice as many on day 4 (new moon).",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "type": "number",
+        "hytale": {
+          "type": "number"
+        },
+        "minimum": 0.0,
+        "maximum": 2.0
+      }
+    }
+  },
+  "additionalProperties": false
+}

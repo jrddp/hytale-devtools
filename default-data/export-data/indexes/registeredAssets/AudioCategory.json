@@ -1,0 +1,396 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "AudioCategory",
+  "path": "Server/Audio/AudioCategories",
+  "extension": ".json",
+  "assetCount": 96,
+  "fileCount": 95,
+  "values": {
+    "AudioCat_Battleaxe": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Battleaxe.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Daggers": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Daggers.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Discovery": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_Discovery.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Footsteps": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_Footsteps.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Hand_Crossbow": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Hand_Crossbow.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Inventory": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_Inventory.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Mace": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Mace.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Magic_Staff": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Magic_Staff.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Music": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_Music.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_NPC.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Antelope": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Antelope.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Bat": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Bat.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Bear_Grizzly": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Bear_Grizzly.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Bison": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Bison.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Boar": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Boar.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Bunny": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Bunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Calf": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Camel": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Camel.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Chick": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Chicken": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Chicken.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Cow": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Cow.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Crawler_Void": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Crawler_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Crocodile": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Crocodile.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Crow": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Crow.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Deer": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Deer.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Dragon": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Dragon.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Duck": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Duck.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Emberwulf": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Emberwulf.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Eye_Void": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Eye_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Fen_Stalker": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Fen_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Feran": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Feran.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Fish": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Fish.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Flamingo": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Flamingo.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Fox": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Fox.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Frog": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Frog.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Gecko": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Gecko.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Goat": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Goat.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Goblin": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Golem_Earth": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Golem_Earth.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Golem_Firesteel": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Golem_Firesteel.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Golem_Frost": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Golem_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Golem_Sand": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Golem_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Hedera": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Horse": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Horse.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Hyena": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Hyena.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Klops": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Klops.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Kweebec": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Lamb": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Larva": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Larva.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Leopard_Snow": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Leopard_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Meerkat": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Meerkat.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Moose_Bull": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Moose_Bull.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Mouse": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Mouse.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Outlander": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Owl": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Owl.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Pig": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Pig.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Pigeon": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Pigeon.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Piglet": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Rabbit": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Rabbit.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Ram": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Ram.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Raptor_Cave": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Raptor_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Rat": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Rat.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Raven": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Raven.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Rex": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Rex.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Scarak": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Scarak.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Scorpion": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Scorpion.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Shark": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Shark.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Sheep": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Sheep.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Skeleton": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Skeleton_Praetorian": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Skeleton_Praetorian.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Snake": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Snake.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Spark_Living": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Spark_Living.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Sparrow": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Sparrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Spawn_Void": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Spawn_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Spider": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Spider.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Spirit_Root": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Spirit_Root.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Squirrel": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Squirrel.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Tetrabird": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Tetrabird.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Tiger_Sabertooth": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Tiger_Sabertooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Toad_Rhino": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Toad_Rhino.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Toad_Rhino_Magma": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Toad_Rhino_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Trork": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Trork_Chieftain": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Trork_Chieftain.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Vulture": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Vulture.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Warthog": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Warthog.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Wolf": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Wolf.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Woodpecker": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Woodpecker.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Yeti": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Yeti.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_NPC_Zombie": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/NPC/AudioCat_NPC_Zombie.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Shield": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Shield.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Shortbow": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Shortbow.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Sword": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/Weapons/AudioCat_Sword.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_UI": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_UI.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_UI_Sleep": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/UI/AudioCat_UI_Sleep.json",
+      "package": "Hytale:Hytale"
+    },
+    "AudioCat_Weapons": {
+      "sourcedFromFile": "/Server/Audio/AudioCategories/AudioCat_Weapons.json",
+      "package": "Hytale:Hytale"
+    },
+    "EMPTY": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    }
+  }
+}

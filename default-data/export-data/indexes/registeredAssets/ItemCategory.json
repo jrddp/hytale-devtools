@@ -1,0 +1,28 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemCategory",
+  "path": "Server/Item/Category/CreativeLibrary",
+  "extension": ".json",
+  "assetCount": 4,
+  "fileCount": 4,
+  "values": {
+    "Blocks": {
+      "sourcedFromFile": "/Server/Item/Category/CreativeLibrary/Blocks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Furniture": {
+      "sourcedFromFile": "/Server/Item/Category/CreativeLibrary/Furniture.json",
+      "package": "Hytale:Hytale"
+    },
+    "Items": {
+      "sourcedFromFile": "/Server/Item/Category/CreativeLibrary/Items.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tool": {
+      "sourcedFromFile": "/Server/Item/Category/CreativeLibrary/Tool.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

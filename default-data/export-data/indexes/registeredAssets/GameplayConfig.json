@@ -1,0 +1,32 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "GameplayConfig",
+  "path": "Server/GameplayConfigs",
+  "extension": ".json",
+  "assetCount": 5,
+  "fileCount": 5,
+  "values": {
+    "CreativeHub": {
+      "sourcedFromFile": "/Server/GameplayConfigs/CreativeHub.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default": {
+      "sourcedFromFile": "/Server/GameplayConfigs/Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Instance": {
+      "sourcedFromFile": "/Server/GameplayConfigs/Default_Instance.json",
+      "package": "Hytale:Hytale"
+    },
+    "ForgottenTemple": {
+      "sourcedFromFile": "/Server/GameplayConfigs/ForgottenTemple.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portal": {
+      "sourcedFromFile": "/Server/GameplayConfigs/Portal.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

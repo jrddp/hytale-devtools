@@ -1,0 +1,56 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "CustomConnectedBlockTemplateAsset",
+  "path": "Server/Item/CustomConnectedBlockTemplates",
+  "extension": ".json",
+  "assetCount": 11,
+  "fileCount": 11,
+  "values": {
+    "BookshelfConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/BookshelfConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "BranchConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/BranchConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "ChestConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/ChestConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "CobbleCornerConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/CobbleCornerConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "DoorConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/DoorConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "DoorLargeConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/DoorLargeConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "PillarConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/PillarConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "RailsConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/RailsConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "RoofConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/RoofConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "VillageConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/VillageConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    },
+    "WallConnectedBlockTemplate": {
+      "sourcedFromFile": "/Server/Item/CustomConnectedBlockTemplates/WallConnectedBlockTemplate.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

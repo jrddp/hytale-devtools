@@ -1,0 +1,460 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "AssignmentsAsset",
+  "path": "Server/HytaleGenerator/Assignments",
+  "extension": ".json",
+  "assetCount": 112,
+  "fileCount": 112,
+  "values": {
+    "Boreal1_Hedera_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Crystals": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Crystals.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Lilypad": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Lilypad.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Mosses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Mosses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Mushrooms": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Mushrooms.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Mushrooms_Glowing": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Mushrooms_Glowing.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Reeds": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Reeds.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Rubble": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Ruins": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Ruins.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera_Trees_Dead": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Hedera_Trees_Dead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Henges_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Henges_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Henges_Crystal": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Henges_Crystal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Henges_Dolmen": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Henges_Dolmen.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Henges_Ice": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Henges_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Henges_Ruins": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Boreal1/Boreal1_Henges_Ruins.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Iron": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Boulders_2": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Bushes_Cliffs": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Bushes_Cliffs.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Bushes_High": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Bushes_High.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Bushes_Low": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Bushes_Low.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Feran_Huts": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Feran_Huts.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Flowers": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Flowers.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Flowers_2": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Flowers_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Reeds": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Reeds.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Reeds_Water": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Reeds_Water.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Rubble": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Trees_Boab": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Boab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Trees_Dry": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Dry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Trees_Palm": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Palm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_River_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_River_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_River_Rubbles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_River_Rubbles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_River_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_River_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Stacks_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Stacks_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Stacks_Rubble": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Stacks_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Stacks_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Stacks_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Thorium": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Thorium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Forest1_River_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Forest1/Forest1_River_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Forest1_River_Trees_Birch": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Forest1/Forest1_River_Trees_Birch.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Mosses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Mosses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Mushrooms": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Mushrooms.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Stalactites": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Stalactites.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Deeproot_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Forest_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Forest_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Forest_Clusters": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Forest_Clusters.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Iron": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Mountains_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Mountains_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Mountains_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Mountains_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Boulder_Patches": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Boulder_Patches.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Cave_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Cave_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Cave_Encounters": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Cave_Encounters.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Cave_Moss": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Cave_Moss.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Encounters": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Encounters.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Flower_Pink_Cyan": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Flower_Pink_Cyan.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Flower_Red_Yellow": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Flower_Red_Yellow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Hedges": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Hedges.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Pillars": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Pillars.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Stalactites": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Stalactites.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Tree_Rings": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Tree_Rings.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak_Vines": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Oak_Vines.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_River_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_River_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_River_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_River_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_River_Marshes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_River_Marshes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Exit": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Portals_Exit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Mithril": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Portals_Mithril.json",
+      "package": "Hytale:Hytale"
+    },
+    "Runtime_Defect_0": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Dev/Runtime_Defect_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Runtime_Defect_1": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Dev/Runtime_Defect_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Cobalt": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Cobalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Gold": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Gold.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Iron": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Cave_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Cave_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Cliffs": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Cliffs.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Dragon_Frost": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Dragon_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Rubble": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Rubbles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Rubbles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Stalactites": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Stalactites.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Mountains_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Redwood_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood_Bushes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Redwood_Bushes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Redwood_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood_Trees_Large": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Redwood_Trees_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood_Trees_Small": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Redwood_Trees_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Ash": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Ash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Boulders": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Boulders_Rivers": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Boulders_Rivers.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Bridges": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Bridges.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Cedar": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Cedar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Cedar_Gravel": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Cedar_Gravel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Rubbles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Rubbles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Rivers_Ruins": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Rivers_Ruins.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Shore_Barnacles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Shore_Barnacles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Shore_Tideline": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Taiga1/Taiga1_Shore_Tideline.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Jungle_Bushes_Jungles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Bushes_Jungles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Jungle_Grasses": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Jungle_Seaweed": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Seaweed.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Jungle_Trees": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Trees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Jungle_Trees_Jungles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Volcanic1/Volcanic1_Jungle_Trees_Jungles.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

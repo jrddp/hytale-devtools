@@ -1,0 +1,288 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "BiomeAsset",
+  "path": "Server/HytaleGenerator/Biomes",
+  "extension": ".json",
+  "assetCount": 69,
+  "fileCount": 69,
+  "values": {
+    "Arches": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Arches.json",
+      "package": "Hytale:Hytale"
+    },
+    "Basic": {
+      "sourcedFromFile": "/Users/jard/Downloads/WorldgenTest/src/main/resources/Server/HytaleGenerator/Biomes/Basic.json",
+      "package": "kokeria:WorldgenTest"
+    },
+    "BasicForest": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/BasicForest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Hedera": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Boreal1/Boreal1_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boreal1_Henges": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Boreal1/Boreal1_Henges.json",
+      "package": "Hytale:Hytale"
+    },
+    "CursebreakerKeyartBiome": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/CursebreakerKeyartBiome.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Flat": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Default_Flat/Default_Flat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Void": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Default_Void/Default_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Oasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_River": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_River.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Rocky": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Rocky.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Shore": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Stacks": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Stacks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dunes": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Dunes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_CellNoise2D": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_CellNoise2D.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Curve_Mapper": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Curve_Mapper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Curve_Remapping": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Curve_Remapping.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Fluid": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Fluid.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Mixer": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Mixer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Mixer_Gradient": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Mixer_Gradient.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Multi_Mixer_Curve": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Multi_Mixer_Curve.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Multi_Mixer_Horizontal": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Multi_Mixer_Horizontal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Prop": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Prop.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Runtime": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Runtime.json",
+      "package": "Hytale:Hytale"
+    },
+    "Example_Twist_Crater": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Example_Twist_Crater.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fake3dNoise": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Fake3dNoise.json",
+      "package": "Hytale:Hytale"
+    },
+    "ForestRivers": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/ForestRivers.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generaitve_Boulders_Sandstone": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generaitve_Boulders_Sandstone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Arches": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Arches.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Boulders_Chalk": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Boulders_Chalk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Buildings": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Buildings.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Pillars_Marble_Large": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Pillars_Marble_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Pillars_Marble_Small": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Pillars_Marble_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Ruins": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Ruins.json",
+      "package": "Hytale:Hytale"
+    },
+    "Generative_Veins": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Generative/Generative_Veins.json",
+      "package": "Hytale:Hytale"
+    },
+    "Glacial1_Mountains": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Glacial1_Mountains.json",
+      "package": "Hytale:Hytale"
+    },
+    "Glacial1_River": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Glacial1_River.json",
+      "package": "Hytale:Hytale"
+    },
+    "Interpolation_A": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Interpolation_A.json",
+      "package": "Hytale:Hytale"
+    },
+    "Interpolation_B": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Interpolation_B.json",
+      "package": "Hytale:Hytale"
+    },
+    "Islands_Roots": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Islands_Roots.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mountains": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Mountains.json",
+      "package": "Hytale:Hytale"
+    },
+    "Oceans": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Ocean1/Oceans.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Deeproot": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Plains1/Plains1_Deeproot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Plains1/Plains1_Gorges.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Mountains": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Plains1/Plains1_Mountains.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Oak": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Plains1/Plains1_Oak.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_River": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Plains1/Plains1_River.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Shore": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Plains1/Plains1_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plateaus": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Plateaus.json",
+      "package": "Hytale:Hytale"
+    },
+    "Reefs": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Reefs.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rotten_Pumpkin": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Rotten_Pumpkin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Runtime_Defect": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/Runtime_Defect.json",
+      "package": "Hytale:Hytale"
+    },
+    "ScifiBlockLandscape": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/ScifiBlockLandscape.json",
+      "package": "Hytale:Hytale"
+    },
+    "SingleInstance_Test": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/SingleInstance_Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Something": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Something.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Mountains": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Taiga1/Taiga1_Mountains.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Taiga1/Taiga1_Redwood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Redwood_2dCliffs": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Taiga1_Redwood_2dCliffs.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_River": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Taiga1/Taiga1_River.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga1_Shore": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Taiga1/Taiga1_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "VectorProvider": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Examples/VectorProvider.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void_Buffer": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Void_Buffer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void_Buffer_Oasis": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Void_Buffer_Oasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Caldera": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Volcanic1/Volcanic1_Caldera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Jungle": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Volcanic1/Volcanic1_Jungle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_River": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Volcanic1/Volcanic1_River.json",
+      "package": "Hytale:Hytale"
+    },
+    "Volcanic1_Shore": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Volcanic1/Volcanic1_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Zone4.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemQuality",
+  "path": "Server/Item/Qualities",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 11,
+  "values": {
+    "Common": {
+      "sourcedFromFile": "/Server/Item/Qualities/Common.json",
+      "package": "Hytale:Hytale"
+    },
+    "Debug": {
+      "sourcedFromFile": "/Server/Item/Qualities/Debug.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Developer": {
+      "sourcedFromFile": "/Server/Item/Qualities/Developer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Epic": {
+      "sourcedFromFile": "/Server/Item/Qualities/Epic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Junk": {
+      "sourcedFromFile": "/Server/Item/Qualities/Junk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Legendary": {
+      "sourcedFromFile": "/Server/Item/Qualities/Legendary.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rare": {
+      "sourcedFromFile": "/Server/Item/Qualities/Rare.json",
+      "package": "Hytale:Hytale"
+    },
+    "Technical": {
+      "sourcedFromFile": "/Server/Item/Qualities/Technical.json",
+      "package": "Hytale:Hytale"
+    },
+    "Template": {
+      "sourcedFromFile": "/Server/Item/Qualities/Template.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tool": {
+      "sourcedFromFile": "/Server/Item/Qualities/Tool.json",
+      "package": "Hytale:Hytale"
+    },
+    "Uncommon": {
+      "sourcedFromFile": "/Server/Item/Qualities/Uncommon.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

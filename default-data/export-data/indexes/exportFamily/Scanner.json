@@ -1,0 +1,52 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "exportFamily",
+  "key": "Scanner",
+  "values": {
+    "BasicForestTreeScanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/BasicForest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Boab_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Boab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Boulders_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Dry_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Dry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Grasses_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Grasses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Oasis_Plants_2_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Flowers_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Palm_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Desert1/Desert1_Oasis_Trees_Palm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Rocky_Trees_Dry_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Rocky.json",
+      "package": "Hytale:Hytale"
+    },
+    "Desert1_Rocky_Trees_Palm_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Desert1/Desert1_Rocky.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Boulder_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Boulders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Plains1_Gorges_Tree_Scanner": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Assignments/Plains1/Plains1_Gorges_Forest_Clusters.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

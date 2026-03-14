@@ -1,0 +1,24 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "MovementConfig",
+  "path": "Server/Entity/MovementConfig",
+  "extension": ".json",
+  "assetCount": 3,
+  "fileCount": 2,
+  "values": {
+    "BuiltinDefault": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Default": {
+      "sourcedFromFile": "/Server/Entity/MovementConfig/Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mount": {
+      "sourcedFromFile": "/Server/Entity/MovementConfig/Mount.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

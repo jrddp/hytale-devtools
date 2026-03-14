@@ -1,0 +1,356 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "Projectile",
+  "path": "Server/Projectiles",
+  "extension": ".json",
+  "assetCount": 86,
+  "fileCount": 86,
+  "values": {
+    "Arrow_Fire": {
+      "sourcedFromFile": "/Server/Projectiles/Test/Arrow_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Frost": {
+      "sourcedFromFile": "/Server/Projectiles/Test/Arrow_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_FullCharge": {
+      "sourcedFromFile": "/Server/Projectiles/Arrow_FullCharge.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_HalfCharge": {
+      "sourcedFromFile": "/Server/Projectiles/Arrow_HalfCharge.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_NoCharge": {
+      "sourcedFromFile": "/Server/Projectiles/Arrow_NoCharge.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb_Potion_Poison": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Bomb/Bomb_Potion_Poison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bouncy": {
+      "sourcedFromFile": "/Server/Projectiles/Test/Bouncy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cactee_Spike": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Beast/Cactee/Cactee_Spike.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Iron": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Dagger/Dagger_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Egg": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Egg/Egg.json",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void_Blast": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Void/Eye_Void/Eye_Void_Blast.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Longtooth_Spear": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Feran_Longtooth/Feran_Longtooth_Spear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Sharptooth_Axe": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Feran_Sharptooth/Feran_Sharptooth_Axe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Windwalker_Wind_Burst": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Feran_Windwalker/Feran_Windwalker_Wind_Burst.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Windwalker_Wind_Vortex": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Feran_Windwalker/Feran_Windwalker_Wind_Vortex.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fireball": {
+      "sourcedFromFile": "/Server/Projectiles/Spells/Fireball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Duke_Fire": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Goblin_Duke/Goblin_Duke_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Duke_Ice": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Goblin_Duke/Goblin_Duke_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Hermit_Spear": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Goblin_Hermit/Goblin_Hermit_Spear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scrapper_Rubble": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Goblin_Scrapper/Goblin_Scrapper_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Trash": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Goblin_Scavenger/Goblin_Trash.json",
+      "package": "Hytale:Hytale"
+    },
+    "GunPvP_Assault_Rifle_Bullet": {
+      "sourcedFromFile": "/Server/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Assault_Rifle_Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "GunPvP_Handgun_Bullet": {
+      "sourcedFromFile": "/Server/Projectiles/Hypixel/Minigames/GunPvP/GunPvP_Handgun_Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Gun_Blunderbuss_Bullet": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Gun/Gun_Blunderbuss_Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Ball": {
+      "sourcedFromFile": "/Server/Projectiles/Ice_Ball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Bolt": {
+      "sourcedFromFile": "/Server/Projectiles/Ice_Bolt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ingredient_Poop": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Ingredient/Ingredient_Poop.json",
+      "package": "Hytale:Hytale"
+    },
+    "NPC_Rubble_Stone": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/NPC_Rubble_Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Cultist_Dagger": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Outlander_Cultist/Outlander_Cultist_Dagger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Hunter_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Outlander_Hunter/Outlander_Hunter_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Stalker_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Outlander_Stalker/Outlander_Stalker_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile": {
+      "sourcedFromFile": "/Server/Projectiles/Test/Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Roots": {
+      "sourcedFromFile": "/Server/Projectiles/Roots.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Aqua": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Aqua.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Basalt": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Basalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Calcite": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Calcite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Ice": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Marble": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Marble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Quartzite": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Quartzite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Sandstone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_Red": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Sandstone_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_White": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Sandstone_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Shale": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Shale.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Slate": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Slate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone_Mossy": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Stone_Mossy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Volcanic": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Items/Rubble/Rubble_Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Seeker_Spitball": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Beast/Scarak_Seeker/Scarak_Seeker_Spitball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archer_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Archer/Skeleton_Archer_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archmage_Corruption_Orb": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Archmage/Skeleton_Archmage_Corruption_Orb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Alchemist_Bomb": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Burnt_Alchemist/Skeleton_Burnt_Alchemist_Bomb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Archer_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Burnt_Archer/Skeleton_Burnt_Archer_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Gunner_Bullet": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Burnt_Gunner/Skeleton_Burnt_Gunner_Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archer_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Frost_Archer/Skeleton_Frost_Archer_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Ranger_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Frost_Ranger/Skeleton_Frost_Ranger_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Scout_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Frost_Scout/Skeleton_Frost_Scout_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Mage_Corruption_Orb": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Mage/Skeleton_Mage_Corruption_Orb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Captain_Bullet": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Pirate_Captain/Skeleton_Pirate_Captain_Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Gunner_Bullet": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Pirate_Gunner/Skeleton_Pirate_Gunner_Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Ranger_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Ranger/Skeleton_Ranger_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archer_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Sand_Archer/Skeleton_Sand_Archer_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Ranger_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Sand_Ranger/Skeleton_Sand_Ranger_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Scout_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Sand_Scout/Skeleton_Sand_Scout_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Scout_Arrow": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Undead/Skeleton_Scout/Skeleton_Scout_Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Adamantite": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Adamantite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Adamantite_Saurian": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Adamantite_Saurian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Bone": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Bone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Bronze": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Bronze.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Cobalt": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Cobalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Copper": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Copper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Crude": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Crude.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Double_Incandescent": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Double_Incandescent.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Iron": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Leaf": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Leaf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Mithril": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Mithril.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Onyxium": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Onyxium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Scrap": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Scrap.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Stone_Trork": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Stone_Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Thorium": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Thorium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Tribal": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Spear/Spear_Tribal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Staff_Wood_Rotten_Corruption_Orb": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Staff/Staff_Wood_Rotten_Corruption_Orb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test": {
+      "sourcedFromFile": "/Server/Projectiles/Test/Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tornado": {
+      "sourcedFromFile": "/Server/Projectiles/Test/Tornado.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Hunter_Axe": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Trork_Hunter/Trork_Hunter_Axe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Sentry_Spear": {
+      "sourcedFromFile": "/Server/Projectiles/NPCs/Intelligent/Trork_Sentry/Trork_Sentry_Spear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wand_Wood_Rotten_Corruption_Orb": {
+      "sourcedFromFile": "/Server/Projectiles/Player/Wand/Wand_Wood_Rotten_Corruption_Orb.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

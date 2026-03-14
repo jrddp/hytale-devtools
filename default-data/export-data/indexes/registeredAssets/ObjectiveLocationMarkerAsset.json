@@ -1,0 +1,28 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ObjectiveLocationMarkerAsset",
+  "path": "Server/Objective/ObjectiveLocationMarkers",
+  "extension": ".json",
+  "assetCount": 4,
+  "fileCount": 4,
+  "values": {
+    "ObjectiveLocationMarker_Gameplay_Trailer": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_Gameplay_Trailer.json",
+      "package": "Hytale:Hytale"
+    },
+    "ObjectiveLocationMarker_KillSpawnBeacon": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_KillSpawnBeacon.json",
+      "package": "Hytale:Hytale"
+    },
+    "ObjectiveLocationMarker_Test": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "ObjectiveLocationMarker_Trigger": {
+      "sourcedFromFile": "/Server/Objective/ObjectiveLocationMarkers/ObjectiveLocationMarker_Trigger.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

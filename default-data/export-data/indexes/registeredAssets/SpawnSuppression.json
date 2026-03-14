@@ -1,0 +1,24 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "SpawnSuppression",
+  "path": "Server/NPC/Spawn/Suppression",
+  "extension": ".json",
+  "assetCount": 3,
+  "fileCount": 3,
+  "values": {
+    "Spawn_Camp": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Suppression/Spawn_Camp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Suppression/Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Tier_3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Suppression/Trork_Tier_3.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

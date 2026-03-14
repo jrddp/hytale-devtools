@@ -1,0 +1,20 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "EntityUIComponent",
+  "path": "Server/Entity/UI",
+  "extension": ".json",
+  "assetCount": 2,
+  "fileCount": 2,
+  "values": {
+    "CombatText": {
+      "sourcedFromFile": "/Server/Entity/UI/CombatText.json",
+      "package": "Hytale:Hytale"
+    },
+    "Healthbar": {
+      "sourcedFromFile": "/Server/Entity/UI/Healthbar.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

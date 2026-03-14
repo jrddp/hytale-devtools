@@ -1,0 +1,456 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ProjectileConfig",
+  "path": "Server/ProjectileConfigs",
+  "extension": ".json",
+  "assetCount": 111,
+  "fileCount": 111,
+  "values": {
+    "Projectile_Config_Arrow_Base": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Arrows/Projectile_Config_Arrow_Base.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Crossbow": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Arrows/Projectile_Config_Arrow_Crossbow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Crossbow_Signature": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Crossbow/Projectile_Config_Arrow_Crossbow_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Ricochet": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Arrow_Ricochet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Ricochet_Base": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Arrow_Ricochet_Base.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Arrows/Projectile_Config_Arrow_Shortbow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Crude_Strength_0": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Crude_Strength_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Crude_Strength_1": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Crude_Strength_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Crude_Strength_2": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Crude_Strength_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Strength_0": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Strength_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Strength_1": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Strength_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Strength_2": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Strength_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Strength_3": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Strength_3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Shortbow_Strength_4": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Arrow_Shortbow_Strength_4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Two_Handed_Bow": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Arrow_Two_Handed_Bow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Two_Handed_Bow_Ability1": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Arrows/Projectile_Config_Arrow_Two_Handed_Bow_Ability1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Arrow_Two_Handed_Bow_Ability2": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Arrows/Projectile_Config_Arrow_Two_Handed_Bow_Ability2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bomb_Base": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bombs/Projectile_Config_Bomb_Base.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bomb_Popberry": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bombs/Projectile_Config_Bomb_Popberry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bomb_Stun": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bombs/Projectile_Config_Bomb_Stun.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Bomb_Boomshot": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Bomb_Boomshot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_01": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_01.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_02": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_02.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_03": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_03.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_04": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_04.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_05": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_05.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_06": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_06.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_07": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_07.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_08": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_08.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_09": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_09.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Charge_10": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Charge_10.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Combat_Trishot": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Combat_Trishot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Pull_Pullshot": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Pull_Pullshot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_01": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_01.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_02": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_02.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_03": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_03.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_04": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_04.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_05": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_05.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_06": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_06.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_07": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_07.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_08": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_08.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_09": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_09.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Ricochet_Charge_10": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Ricochet_Charge_10.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_01": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_01.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_02": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_02.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_03": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_03.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_04": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_04.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_05": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_05.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_06": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_06.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_07": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_07.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_08": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_08.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_09": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_09.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Two_Handed_Charge_10": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Two_Handed/Projectile_Config_Bow_Two_Handed_Charge_10.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_01": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_01.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_02": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_02.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_03": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_03.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_04": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_04.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_05": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_05.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_06": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_06.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_07": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_07.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_08": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_08.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_09": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_09.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Charge_10": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Charge_10.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Bow_Vamp_Supershot": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Bows/Prototype/Projectile_Config_Bow_Vamp_Supershot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Debug": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/_Debug/Projectile_Config_Debug.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Shoot_Charge_0": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Shoot_Charge_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Shoot_Charge_04": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Shoot_Charge_04.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Shoot_Charge_15": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Shoot_Charge_15.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_0_Center": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_0_Center.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_0_Left": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_0_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_0_Right": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_0_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_1_Center": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_1_Center.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_1_Left": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_1_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_1_Right": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_1_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_2_Center": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_2_Center.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_2_Left": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_2_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Deprecated_Volley_Charge_2_Right": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Deprecated/Projectile_Config_Deprecated_Volley_Charge_2_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Fireball": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Stick/Projectile_Config_Fireball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Fireball_Charged_0": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Stick/Projectile_Config_Fireball_Charged_0.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Fireball_Charged_1": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Stick/Projectile_Config_Fireball_Charged_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Fireball_Charged_2": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Stick/Projectile_Config_Fireball_Charged_2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Fireball_Charged_3": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Stick/Projectile_Config_Fireball_Charged_3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Duke_Ice": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Duke/Projectile_Config_Goblin_Duke_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Lobber_Bomb": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Lobber/Projectile_Config_Goblin_Lobber_Bomb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Lobber_Bomb_Dud": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Lobber/Projectile_Config_Goblin_Lobber_Bomb_Dud.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Lobber_Bomb_Juggle_Fail": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Lobber/Projectile_Config_Goblin_Lobber_Bomb_Juggle_Fail.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Lobber_Bomb_Large": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Lobber/Projectile_Config_Goblin_Lobber_Bomb_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Scavenger_Trash": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Scavenger/Projectile_Config_Goblin_Scavenger_Trash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Goblin_Scrapper_Rubble": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Intelligent/Goblin_Scrapper/Projectile_Config_Goblin_Scrapper_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Healing_Totem_Deploy": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Deployables/Projectile_Config_Healing_Totem_Deploy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Ice_Ball": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Staff/Ice/Projectile_Config_Ice_Ball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Ice_Bolt": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Staff/Ice/Projectile_Config_Ice_Bolt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Kunai": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Throwables/Projectile_Config_Kunai.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Rubble": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Throwables/Projectile_Config_Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Scarak_Seeker_Spitball": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/NPCs/Beast/Scarak_Seeker/Projectile_Config_Scarak_Seeker_Spitball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Shortbow_Deprecated": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Shortbow_Deprecated.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Shortbow_Signature_Volley": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Shortbow_Signature_Volley.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Shortbow_Volley": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Projectile_Config_Shortbow_Volley.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Slowness_Totem_Deploy": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Deployables/Projectile_Config_Slowness_Totem_Deploy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Turret_Deploy": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Deployables/Projectile_Config_Turret_Deploy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_0_Center": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_0_Center.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_0_Left": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_0_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_0_Right": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_0_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_1_Center": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_1_Center.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_1_Left": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_1_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_1_Right": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_1_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_2_Center": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_2_Center.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_2_Left": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_2_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile_Config_Volley_Strength_2_Right": {
+      "sourcedFromFile": "/Server/ProjectileConfigs/Weapons/Shortbow/Signature/Projectile_Config_Volley_Strength_2_Right.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

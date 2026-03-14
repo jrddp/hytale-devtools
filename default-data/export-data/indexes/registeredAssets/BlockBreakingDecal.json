@@ -1,0 +1,28 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockBreakingDecal",
+  "path": "Server/Item/Block/BreakingDecals",
+  "extension": ".json",
+  "assetCount": 4,
+  "fileCount": 4,
+  "values": {
+    "Breaking_Decals_Rock": {
+      "sourcedFromFile": "/Server/Item/Block/BreakingDecals/Breaking_Decals_Rock.json",
+      "package": "Hytale:Hytale"
+    },
+    "Breaking_Decals_Soil": {
+      "sourcedFromFile": "/Server/Item/Block/BreakingDecals/Breaking_Decals_Soil.json",
+      "package": "Hytale:Hytale"
+    },
+    "Breaking_Decals_Wood": {
+      "sourcedFromFile": "/Server/Item/Block/BreakingDecals/Breaking_Decals_Wood.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unknown": {
+      "sourcedFromFile": "/Server/Item/Block/BreakingDecals/Unknown.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

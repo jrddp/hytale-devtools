@@ -1,13 +1,6 @@
-import { WebviewToExtensionMessage } from "@shared/node-editor/messageTypes";
-import { NodeTemplate } from "@shared/node-editor/workspaceTypes";
+import type { WebviewToExtensionMessage } from "@shared/node-editor/messageTypes";
+import type { NodeTemplate } from "@shared/node-editor/workspaceTypes";
 import type { Edge, Node } from "@xyflow/svelte";
-import {
-  COMMENT_NODE_TYPE,
-  DATA_NODE_TYPE,
-  GROUP_NODE_TYPE,
-  LINK_NODE_TYPE,
-  RAW_JSON_NODE_TYPE,
-} from "src/constants";
 
 export type VSCodeApi = {
   postMessage: (message: WebviewToExtensionMessage) => void;
@@ -41,29 +34,29 @@ export type CommentNodeData = NodeBaseData & {
   fontSize?: number;
 };
 
-export type DataNodeType = Node<DataNodeData, typeof DATA_NODE_TYPE> & {
-  type: typeof DATA_NODE_TYPE;
+export type DataNodeType = Node<DataNodeData, "datanode"> & {
+  type: "datanode";
 };
 export type RawJsonNodeType = Node<
   RawJsonNodeData,
-  typeof RAW_JSON_NODE_TYPE
+  "rawjson"
 > & {
-  type: typeof RAW_JSON_NODE_TYPE;
+  type: "rawjson";
 };
-export type LinkNodeType = Node<LinkNodeData, typeof LINK_NODE_TYPE> & {
-  type: typeof LINK_NODE_TYPE;
+export type LinkNodeType = Node<LinkNodeData, "link"> & {
+  type: "link";
 };
-export type GroupNodeType = Node<GroupNodeData, typeof GROUP_NODE_TYPE> & {
-  type: typeof GROUP_NODE_TYPE;
+export type GroupNodeType = Node<GroupNodeData, "groupnode"> & {
+  type: "groupnode";
   // require size to create
   width: number;
   height: number;
 };
 export type CommentNodeType = Node<
   CommentNodeData,
-  typeof COMMENT_NODE_TYPE
+  "comment"
 > & {
-  type: typeof COMMENT_NODE_TYPE;
+  type: "comment";
 };
 
 export type FlowNodeData =

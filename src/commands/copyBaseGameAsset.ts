@@ -3,11 +3,11 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as yauzl from "yauzl";
 import { indexes, LOGGER } from "../extension";
-import { type RegisteredAssetIndexShard } from "../shared/schema/types";
+import { type RegisteredAssetsIndexShard } from "../shared/indexTypes";
 import { getAssetsZipPath, resolvePatchlineForContext } from "../utils/hytalePaths";
 
 interface AssetTypeQuickPickItem extends vscode.QuickPickItem {
-  assetShard?: RegisteredAssetIndexShard;
+  assetShard?: RegisteredAssetsIndexShard;
 }
 
 interface AssetQuickPickItem extends vscode.QuickPickItem {
@@ -17,19 +17,18 @@ interface AssetQuickPickItem extends vscode.QuickPickItem {
   fileExtension: string;
 }
 
-// FIXME asset registries populate local assets and show them as an option - but we are unable to actually copy them because they aren't in Assets.zip
 export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promise<void> {
-  const items: AssetTypeQuickPickItem[] = Object.entries(indexes.get("registryDomain")!)
+  const items: AssetTypeQuickPickItem[] = Array.from(indexes.get("registeredAssets")!.entries())
     .map(([storeName, shard]) => {
-      const assetShard = shard as RegisteredAssetIndexShard;
+      const assetShard = shard as RegisteredAssetsIndexShard;
       return {
         label: storeName,
         detail: `${assetShard.path}/*${assetShard.extension} | ${assetShard.fileCount} assets`,
         assetShard,
       };
     })
-    .sort((a, b) => b.assetShard.fileCount - a.assetShard.fileCount);
-  const fullAssetCount = items.reduce((acc, item) => acc + item.assetShard!.fileCount, 0);
+    .sort((a, b) => b.assetShard.baseGameFileCount - a.assetShard.baseGameFileCount);
+  const fullAssetCount = items.reduce((acc, item) => acc + item.assetShard!.baseGameFileCount, 0);
   const searchAllItem: AssetTypeQuickPickItem = {
     label: "Search all assets",
     detail: `${fullAssetCount} assets`,
@@ -46,10 +45,11 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
     return;
   }
   let choseEmpty = asset.assetPath === undefined;
-  let defaultName = asset.assetPath ?? path.join(selectedAssetType.assetShard!.path, "NewAsset" + asset.fileExtension);
+  let defaultName =
+    asset.assetPath ??
+    path.join(selectedAssetType.assetShard!.path, "NewAsset" + asset.fileExtension);
   let nameChoice = await vscode.window.showInputBox({
-    placeHolder:
-      defaultName,
+    placeHolder: defaultName,
     prompt: choseEmpty
       ? "Enter name for your new asset"
       : `Enter name for your new ${asset.assetTypeName} (leave blank to override original)`,
@@ -96,17 +96,20 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
 }
 
 async function showAssetQuickPick(
-  assetShard?: RegisteredAssetIndexShard,
+  assetShard?: RegisteredAssetsIndexShard,
 ): Promise<AssetQuickPickItem | undefined> {
   let items: AssetQuickPickItem[] = [];
   // all assets
   if (!assetShard) {
     items = items.concat(
-      Object.entries(indexes.get("registryDomain")!)
+      Array.from(indexes.get("registeredAssets")!.entries())
         .map(([storeName, shard]) => {
-          const assetShard = shard as RegisteredAssetIndexShard;
+          const assetShard = shard as RegisteredAssetsIndexShard;
           return Object.entries(assetShard.values)
-            .filter(([value, metadata]) => Boolean(metadata.sourcedFromFile))
+            .filter(
+              ([value, metadata]) =>
+                Boolean(metadata.sourcedFromFile) && metadata.package === "Hytale:Hytale",
+            )
             .map(([value, metadata]) => ({
               label: value,
               detail: metadata.sourcedFromFile,
@@ -119,16 +122,20 @@ async function showAssetQuickPick(
         .flat(),
     );
   } else {
-    if (assetShard.extension === ".json")
-      {items.push({
+    if (assetShard.extension === ".json") {
+      items.push({
         label: "Create empty asset",
         assetTypePath: assetShard.path,
         assetTypeName: assetShard.key,
         fileExtension: assetShard.extension,
-      });}
+      });
+    }
     items = items.concat(
       Object.entries(assetShard.values)
-        .filter(([value, metadata]) => Boolean(metadata.sourcedFromFile))
+        .filter(
+          ([value, metadata]) =>
+            Boolean(metadata.sourcedFromFile) && metadata.package === "Hytale:Hytale",
+        )
         .map(([value, metadata]) => ({
           label: value,
           detail: metadata.sourcedFromFile,

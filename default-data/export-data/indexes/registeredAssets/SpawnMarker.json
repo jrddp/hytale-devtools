@@ -1,0 +1,984 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "SpawnMarker",
+  "path": "Server/NPC/Spawn/Markers",
+  "extension": ".json",
+  "assetCount": 243,
+  "fileCount": 243,
+  "values": {
+    "Bat": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Bat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bear": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Bear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Birds_Cave": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Birds_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crawler_Void": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Void/Crawler_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crocodile": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Crocodile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dragon_Fire": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dragon_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dragon_Frost": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dragon_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Broodmother": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Broodmother.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Broodmother_Young": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Broodmother_Young.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Defender": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Defender.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Defender_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Defender_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Fighter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Fighter_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Fighter_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Louse": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Louse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Seeker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Seeker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Scarak_Seeker_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Scarak_Seeker_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Skeleton_Sand_Archer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Skeleton_Sand_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Skeleton_Sand_Assassin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Skeleton_Sand_Assassin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Skeleton_Sand_Mage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Skeleton_Sand_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Skeleton_Sand_Soldier": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Dungeon_Skeleton_Sand_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Eel_Moray": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Eel_Moray.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Feran.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Burrower": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_Burrower.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Civilian": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_Civilian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Longtooth": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_Longtooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Sharptooth": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_Sharptooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_T1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_T1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_T2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_T2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_T3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_T3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Windwalker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Feran/Feran_Windwalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fox": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Fox.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Duke": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Duke.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Duke_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Duke_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Lobber": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Lobber.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Lobber_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Lobber_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Miner": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Miner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Miner_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Miner_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Ogre": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Ogre.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Ogre_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Ogre_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scavenger": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Scavenger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scavenger_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Scavenger_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scrapper": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Scrapper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scrapper_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Scrapper_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Thief": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Thief.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Thief_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Goblin/Goblin_Thief_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Earth": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Elemental/Golem_Crystal_Earth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Flame": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Elemental/Golem_Crystal_Flame.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Frost": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Elemental/Golem_Crystal_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Sand": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Elemental/Golem_Crystal_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Firesteel": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Elemental/Golem_Firesteel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hyena": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Hyena.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops_Gentleman": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Klops_Gentleman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops_Miner": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Klops_Miner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops_Miner_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Klops_Miner_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Merchant": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Kweebec_Merchant.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Rabbit": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Kweebec_Rabbit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Razorleaf_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Kweebec_Razorleaf_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sproutling_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Kweebec_Sproutling_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lizard_Sand": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Lizard_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Marker_Hedera": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Marker_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Minnow": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Aquatic/Freshwater/Minnow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ocean_Fish": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Ocean_Fish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Berserker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Berserker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Brute": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Brute.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Cultist": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Cultist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Hunter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Marauder": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Marauder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Marauder_Backup": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Marauder_Backup.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Peon": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Peon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Priest": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Priest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Sorcerer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Sorcerer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Stalker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Outlander/Outlander_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Piranha_Black": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Piranha_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pterodactyl": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Pterodactyl.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rat": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Rat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rex_Cave": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Rex_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Boss": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak_Boss.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Defender": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak_Defender.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Defender_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak_Defender_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Seeker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak_Seeker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Seeker_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scarak_Seeker_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scorpion": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Scorpion.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shark": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Shark.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archer_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Archer_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archmage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archmage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Archmage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Alchemist": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Alchemist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Alchemist_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Alchemist_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Archer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Archer_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Archer_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Gunner": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Gunner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Gunner_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Gunner_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Knight": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Knight_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Knight_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Lancer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Lancer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Lancer_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Lancer_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Praetorian": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Praetorian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Praetorian_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Praetorian_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Soldier": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Soldier_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Soldier_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Wizard": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Wizard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Wizard_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Burnt/Skeleton_Burnt_Wizard_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Fighter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Fighter_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Fighter_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archer_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Archer_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archmage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archmage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Archmage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Fighter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Fighter_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Fighter_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Knight": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Knight_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Knight_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Mage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Mage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Mage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Ranger": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Ranger_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Ranger_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Scout": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Scout_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Scout_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Soldier": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Soldier_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Frost/Skeleton_Frost_Soldier_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Fighter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Fighter_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Fighter_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Footman": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Footman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Footman_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Footman_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Head": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Head.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Mage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Mage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Incandescent/Skeleton_Incandescent_Mage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Knight": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Knight_Manual": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Knight_Manual.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Knight_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Knight_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Mage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Mage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Mage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Captain": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate/Skeleton_Pirate_Captain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Captain_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate/Skeleton_Pirate_Captain_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Gunner": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate/Skeleton_Pirate_Gunner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Gunner_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate/Skeleton_Pirate_Gunner_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Striker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate/Skeleton_Pirate_Striker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Striker_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Pirate/Skeleton_Pirate_Striker_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Ranger": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Ranger_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Ranger_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archer": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archer_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Archer_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archmage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archmage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Archmage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Assassin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Assassin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Assassin_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Assassin_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Guard": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Guard_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Guard_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Mage": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Mage_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Mage_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Ranger": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Ranger_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Ranger_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Scout": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Scout_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Scout_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Soldier": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Soldier_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton_Sand/Skeleton_Sand_Soldier_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Scout": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Scout_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Scout_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Soldier": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Soldier_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Skeleton/Skeleton_Soldier_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slug_Magma": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Slug_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snake_Rattle": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Snake_Rattle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snakes": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Snakes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawn_Void": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Void/Spawn_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spider_Cave": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Spider_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spider_Cave_Respawn": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Dungeon_Goblin/Spider_Cave_Respawn.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Root": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Spirit_Root.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Root_Manual": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Spirit_Root_Manual.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Bluebird": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Bluebird.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Bunny": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Bunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Deer_Doe": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Deer_Doe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Deer_Stag": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Deer_Stag.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Duck": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Duck.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Feran": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Feran.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Feran_Longtooth": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Feran_Longtooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Finch_Green": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Finch_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Frog_Blue": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Frog_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Frog_Green": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Frog_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Frog_Orange": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Frog_Orange.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Klops": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Klops.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Eldar": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Eldar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Merchant_Static": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Merchant_Static.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Rootling_Static": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Rootling_Static.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf_Patrol1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf_Patrol1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf_Patrol2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf_Patrol2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf_Patrol3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf_Patrol3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf_Patrol4": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf_Patrol4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Sapling_Razorleaf_Patrol5": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Sapling_Razorleaf_Patrol5.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Seedling_Static": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Seedling_Static.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Kweebec_Static": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Kweebec_Static.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Mithril_Guard": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Mithril_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Owl_Brown": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Owl_Brown.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Squirrel": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Instance/Forgotten_Temple/Temple_Squirrel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Combat_Elite_Goblin": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Combat_Elite_Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Combat_Knight": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Combat_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Fish_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Fish_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Flock_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Flock_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_GameTime_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_GameTime_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_GameTime_Marker_Long": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_GameTime_Marker_Long.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Goblin_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Goblin_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Manual_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Manual_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Objective_Spawn_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Objective_Spawn_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Raven_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Raven_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Skeleton_Stones": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Skeleton_Stones.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Trork_Marker": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Tests/Test_Trork_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Toad_Rhino": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Toad_Rhino.json",
+      "package": "Hytale:Hytale"
+    },
+    "Toad_Rhino_Magma": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Toad_Rhino_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Brawler": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Brawler.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Chieftain": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Chieftain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Chieftain_Backup": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Chieftain_Backup.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Doctor_Witch": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Doctor_Witch.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Guard": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Hunter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Mauler": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Mauler.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Sentry": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Sentry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Shaman": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Shaman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Warrior": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Warrior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Warrior_Patrol": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Intelligent/Trork/Trork_Warrior_Patrol.json",
+      "package": "Hytale:Hytale"
+    },
+    "Welcome_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Welcome_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_Black": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Wolf_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_White": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Wolf_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wraith": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Wraith.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wraith_Lantern": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Wraith_Lantern.json",
+      "package": "Hytale:Hytale"
+    },
+    "Yeti": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Yeti.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Zombie.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Frost": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Zombie_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Sand": {
+      "sourcedFromFile": "/Server/NPC/Spawn/Markers/Undead/Zombie_Sand.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

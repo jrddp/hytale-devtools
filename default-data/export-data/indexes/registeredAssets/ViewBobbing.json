@@ -1,0 +1,60 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ViewBobbing",
+  "path": "Server/Camera/ViewBobbing",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 12,
+  "values": {
+    "Climbing": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Climbing.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crouching": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Crouching.json",
+      "package": "Hytale:Hytale"
+    },
+    "Flying": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Flying.json",
+      "package": "Hytale:Hytale"
+    },
+    "Idle": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Idle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mounting": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Mounting.json",
+      "package": "Hytale:Hytale"
+    },
+    "None": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/None.json",
+      "package": "Hytale:Hytale"
+    },
+    "Running": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Running.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sliding": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Sliding.json",
+      "package": "Hytale:Hytale"
+    },
+    "SprintMounting": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/SprintMounting.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sprinting": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Sprinting.json",
+      "package": "Hytale:Hytale"
+    },
+    "Swimming": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Swimming.json",
+      "package": "Hytale:Hytale"
+    },
+    "Walking": {
+      "sourcedFromFile": "/Server/Camera/ViewBobbing/Walking.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

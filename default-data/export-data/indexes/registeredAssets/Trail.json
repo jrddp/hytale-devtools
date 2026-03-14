@@ -1,0 +1,248 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "Trail",
+  "path": "Server/Entity/Trails",
+  "extension": ".json",
+  "assetCount": 59,
+  "fileCount": 59,
+  "values": {
+    "Acid": {
+      "sourcedFromFile": "/Server/Entity/Trails/Acid.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Arrow/Arrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Ricochet": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Arrow/Arrow_Ricochet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Ricochet_Signature": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Arrow/Arrow_Ricochet_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Vamp": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Arrow/Arrow_Vamp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Vamp_Signature": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Arrow/Arrow_Vamp_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bear_Claw": {
+      "sourcedFromFile": "/Server/Entity/Trails/NPCs/Bear/Bear_Claw.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Bomb/Bomb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bullet": {
+      "sourcedFromFile": "/Server/Entity/Trails/Tests/Bullet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Charged_Basic": {
+      "sourcedFromFile": "/Server/Entity/Trails/Charged_Basic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crawler_Void_Claw": {
+      "sourcedFromFile": "/Server/Entity/Trails/NPCs/Crawler_Void/Crawler_Void_Claw.json",
+      "package": "Hytale:Hytale"
+    },
+    "Critical": {
+      "sourcedFromFile": "/Server/Entity/Trails/Critical.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Basic": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Dagger_Basic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Claw": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Dagger_Claw/Dagger_Claw.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash": {
+      "sourcedFromFile": "/Server/Entity/Trails/Daggers_Dash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash2": {
+      "sourcedFromFile": "/Server/Entity/Trails/Daggers_Dash2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash_Dark": {
+      "sourcedFromFile": "/Server/Entity/Trails/Daggers_Dash_Dark.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash_Distortion": {
+      "sourcedFromFile": "/Server/Entity/Trails/Daggers_Dash_Distortion.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash_Straight": {
+      "sourcedFromFile": "/Server/Entity/Trails/Daggers_Dash_Straight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Signature": {
+      "sourcedFromFile": "/Server/Entity/Trails/Daggers_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fen_Stalker_Claw": {
+      "sourcedFromFile": "/Server/Entity/Trails/NPCs/Fen_Stalker/Fen_Stalker_Claw.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Trap_Fire": {
+      "sourcedFromFile": "/Server/Entity/Trails/Fire_Trap/Fire_Trap_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fire_Trap_Trail2": {
+      "sourcedFromFile": "/Server/Entity/Trails/Fire_Trap/Fire_Trap_Trail2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Huge_Default": {
+      "sourcedFromFile": "/Server/Entity/Trails/Huge_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kunai": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Kunai/Kunai.json",
+      "package": "Hytale:Hytale"
+    },
+    "Large_Charged": {
+      "sourcedFromFile": "/Server/Entity/Trails/Large_Charged.json",
+      "package": "Hytale:Hytale"
+    },
+    "Large_Charged_Black": {
+      "sourcedFromFile": "/Server/Entity/Trails/Large_Charged_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Large_Charged_Red": {
+      "sourcedFromFile": "/Server/Entity/Trails/Large_Charged_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Large_Default": {
+      "sourcedFromFile": "/Server/Entity/Trails/Large_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Large_Flame": {
+      "sourcedFromFile": "/Server/Entity/Trails/Large_Flame.json",
+      "package": "Hytale:Hytale"
+    },
+    "Large_Projectile": {
+      "sourcedFromFile": "/Server/Entity/Trails/Large_Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature": {
+      "sourcedFromFile": "/Server/Entity/Trails/Mace_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Signature2": {
+      "sourcedFromFile": "/Server/Entity/Trails/Mace_Signature2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Charged": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Charged.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Default": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Flame": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Flame.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Mace_Charged": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Mace_Charged.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Mace_Normal": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Mace_Normal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Projectile": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Signature": {
+      "sourcedFromFile": "/Server/Entity/Trails/Medium_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Sword_Basic": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Sword/Medium_Sword_Basic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Medium_Sword_Strong": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Sword/Medium_Sword_Strong.json",
+      "package": "Hytale:Hytale"
+    },
+    "Memory_Trail": {
+      "sourcedFromFile": "/Server/Entity/Trails/Memory_Trail.json",
+      "package": "Hytale:Hytale"
+    },
+    "Orb_Trail_Green": {
+      "sourcedFromFile": "/Server/Entity/Trails/Orb_Trail_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Orb_Trail_White": {
+      "sourcedFromFile": "/Server/Entity/Trails/Orb_Trail_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Rubble/Rubble.json",
+      "package": "Hytale:Hytale"
+    },
+    "SkeletonMage": {
+      "sourcedFromFile": "/Server/Entity/Trails/SkeletonMage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Small_Charged": {
+      "sourcedFromFile": "/Server/Entity/Trails/Small_Charged.json",
+      "package": "Hytale:Hytale"
+    },
+    "Small_Default": {
+      "sourcedFromFile": "/Server/Entity/Trails/Small_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Small_Flame": {
+      "sourcedFromFile": "/Server/Entity/Trails/Small_Flame.json",
+      "package": "Hytale:Hytale"
+    },
+    "Small_Projectile": {
+      "sourcedFromFile": "/Server/Entity/Trails/Small_Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Small_Sword_Strong": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Sword/Small_Sword_Strong.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Distortion": {
+      "sourcedFromFile": "/Server/Entity/Trails/Sword_Distortion.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unarmed": {
+      "sourcedFromFile": "/Server/Entity/Trails/Unarmed.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void": {
+      "sourcedFromFile": "/Server/Entity/Trails/Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void_Green": {
+      "sourcedFromFile": "/Server/Entity/Trails/Void_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Weapon_Mace_Prisma": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapons/Mace/Weapon_Mace_Prisma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Weapon_Sword_Frost": {
+      "sourcedFromFile": "/Server/Entity/Trails/Weapon_Sword_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wind": {
+      "sourcedFromFile": "/Server/Entity/Trails/Tests/Wind.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

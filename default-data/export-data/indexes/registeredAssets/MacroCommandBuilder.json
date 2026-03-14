@@ -1,0 +1,44 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "MacroCommandBuilder",
+  "path": "Server/MacroCommands",
+  "extension": ".json",
+  "assetCount": 8,
+  "fileCount": 8,
+  "values": {
+    "DeleteCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/DeleteCommand.json",
+      "package": "Hytale:Hytale"
+    },
+    "FillSignatureCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/FillSignatureCommand.json",
+      "package": "Hytale:Hytale"
+    },
+    "HealCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/HealCommand.json",
+      "package": "Hytale:Hytale"
+    },
+    "NearDeathCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/NearDeathCommand.json",
+      "package": "Hytale:Hytale"
+    },
+    "NoonCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/NoonCommand.json",
+      "package": "Hytale:Hytale"
+    },
+    "ResetRotationCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/ResetRotationCommand.json",
+      "package": "Hytale:Hytale"
+    },
+    "SetTimeAndGoHome": {
+      "sourcedFromFile": "/Server/MacroCommands/_Examples/SetTimeAndGoHome.json",
+      "package": "Hytale:Hytale"
+    },
+    "UnstuckCommand": {
+      "sourcedFromFile": "/Server/MacroCommands/UnstuckCommand.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

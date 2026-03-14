@@ -1,0 +1,16 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "PrefabEditorCreationSettings",
+  "path": "Server/PrefabEditorCreationSettings",
+  "extension": ".json",
+  "assetCount": 1,
+  "fileCount": 1,
+  "values": {
+    "Prefab Editor Demo": {
+      "sourcedFromFile": "/Server/PrefabEditorCreationSettings/Prefab Editor Demo.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,1756 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ModelAsset",
+  "path": "Server/Models",
+  "extension": ".json",
+  "assetCount": 436,
+  "fileCount": 435,
+  "values": {
+    "Antelope": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Antelope.json",
+      "package": "Hytale:Hytale"
+    },
+    "Archaeopteryx": {
+      "sourcedFromFile": "/Server/Models/Flying_Beast/Archaeopteryx.json",
+      "package": "Hytale:Hytale"
+    },
+    "Armadillo": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Armadillo.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Crossbow_Signature": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Crossbow_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Crude": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Crude.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Fire": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Frost": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Iron": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Ricochet": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Ricochet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Ricochet_Signature": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Ricochet_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Shortbow_Signature": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Shortbow_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Vamp": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Vamp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Arrow_Vamp_Signature": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Arrow/Arrow_Vamp_Signature.json",
+      "package": "Hytale:Hytale"
+    },
+    "Axe_Bone": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Axe/Axe_Bone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Axe_Stone_Trork": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Axe/Axe_Stone_Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bat": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Bat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bat_Ice": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Bat_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bear_Grizzly": {
+      "sourcedFromFile": "/Server/Models/Beast/Bear_Grizzly.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bear_Polar": {
+      "sourcedFromFile": "/Server/Models/Beast/Bear_Polar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bison": {
+      "sourcedFromFile": "/Server/Models/Livestock/Bison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bison_Calf": {
+      "sourcedFromFile": "/Server/Models/Livestock/Bison_Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bluebird": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Bluebird.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bluegill": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Bluegill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boar": {
+      "sourcedFromFile": "/Server/Models/Livestock/Boar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boar_Piglet": {
+      "sourcedFromFile": "/Server/Models/Livestock/Boar_Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boat": {
+      "sourcedFromFile": "/Server/Models/Vehicles/Boat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bomb/Bomb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb_Fire_Goblin": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bomb/Bomb_Fire_Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb_Fire_Goblin_Dud": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bomb/Bomb_Fire_Goblin_Dud.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb_Large_Fire_Goblin": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bomb/Bomb_Large_Fire_Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb_Popberry": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bomb/Bomb_Popberry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bomb_Potion_Poison": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bomb/Bomb_Potion_Poison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boy_Trail": {
+      "sourcedFromFile": "/Server/Models/Test/Boy_Trail.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bramblekin": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Bramblekin/Bramblekin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bramblekin_Shaman": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Bramblekin/Bramblekin_Shaman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bullet_Blunderbuss": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Bullet/Bullet_Blunderbuss.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bunny": {
+      "sourcedFromFile": "/Server/Models/Livestock/Bunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cactee": {
+      "sourcedFromFile": "/Server/Models/Beast/Cactee.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cactee_Spike": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Beast/Cactee/Cactee_Spike.json",
+      "package": "Hytale:Hytale"
+    },
+    "Calf": {
+      "sourcedFromFile": "/Server/Models/Livestock/Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Camel": {
+      "sourcedFromFile": "/Server/Models/Livestock/Camel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Camel_Calf": {
+      "sourcedFromFile": "/Server/Models/Livestock/Camel_Calf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cat": {
+      "sourcedFromFile": "/Server/Models/Pets/Cat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Catfish": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Catfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chick": {
+      "sourcedFromFile": "/Server/Models/Livestock/Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chick_Desert": {
+      "sourcedFromFile": "/Server/Models/Livestock/Chick_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chicken": {
+      "sourcedFromFile": "/Server/Models/Livestock/Chicken.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chicken_Desert": {
+      "sourcedFromFile": "/Server/Models/Livestock/Chicken_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chicken_Undead": {
+      "sourcedFromFile": "/Server/Models/Undead/Chicken_Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Clownfish": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Clownfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Corgi": {
+      "sourcedFromFile": "/Server/Models/Pets/Corgi.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cow": {
+      "sourcedFromFile": "/Server/Models/Livestock/Cow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cow_Undead": {
+      "sourcedFromFile": "/Server/Models/Undead/Cow_Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crab": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Crab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crawler_Void": {
+      "sourcedFromFile": "/Server/Models/Void/Crawler_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crocodile": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Crocodile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Turret": {
+      "sourcedFromFile": "/Server/Models/Deployables/Crossbow_Turret.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Turret_Item_Projectile": {
+      "sourcedFromFile": "/Server/Models/Deployables/Projectiles/Crossbow_Turret_Item_Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crow": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Crow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Adamantite": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Adamantite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Bone": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Bone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Bronze": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Bronze.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Bronze_Ancient": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Bronze_Ancient.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Cobalt": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Cobalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Copper": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Copper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Crude": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Crude.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Doomed": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Doomed.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Fang_Doomed": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Fang_Doomed.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Iron": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Mithril": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Mithril.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Onyxium": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Onyxium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Stone_Trork": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Stone_Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dagger_Thorium": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Dagger/Dagger_Thorium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Debug": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Deer_Doe": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Deer_Doe.json",
+      "package": "Hytale:Hytale"
+    },
+    "Deployable_Fire_Trap": {
+      "sourcedFromFile": "/Server/Models/Deployables/Deployable_Fire_Trap.json",
+      "package": "Hytale:Hytale"
+    },
+    "Deployable_Fire_Trap_Preview": {
+      "sourcedFromFile": "/Server/Models/Deployables/Deployable_Fire_Trap_Preview.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dog": {
+      "sourcedFromFile": "/Server/Models/Pets/Dog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dragon_Fire": {
+      "sourcedFromFile": "/Server/Models/Elemental/Dragon_Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dragon_Frost": {
+      "sourcedFromFile": "/Server/Models/Elemental/Dragon_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dragon_Void": {
+      "sourcedFromFile": "/Server/Models/Elemental/Dragon_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Duck": {
+      "sourcedFromFile": "/Server/Models/Flying_Wildlife/Duck.json",
+      "package": "Hytale:Hytale"
+    },
+    "Eel_Moray": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Eel_Moray.json",
+      "package": "Hytale:Hytale"
+    },
+    "Egg": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Egg/Egg.json",
+      "package": "Hytale:Hytale"
+    },
+    "Emberwulf": {
+      "sourcedFromFile": "/Server/Models/Beast/Emberwulf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void": {
+      "sourcedFromFile": "/Server/Models/Void/Eye_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Eye_Void_Blast": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Void/Eye_Void/Eye_Void_Blast.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fen_Stalker": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Fen_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Burrower": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran_Burrower.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Civilian": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran_Civilian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Cub": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran_Cub.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Longtooth": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran_Longtooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Sharptooth": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran_Sharptooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Windwalker": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Feran/Feran_Windwalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Windwalker_Wind_Burst": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Intelligent/Feran_Windwalker/Feran_Windwalker_Wind_Burst.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Windwalker_Wind_Vortex": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Intelligent/Feran_Windwalker/Feran_Windwalker_Wind_Vortex.json",
+      "package": "Hytale:Hytale"
+    },
+    "Finch_Green": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Finch_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fireball": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Spells/Fireball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Flamingo": {
+      "sourcedFromFile": "/Server/Models/Flying_Wildlife/Flamingo.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fox": {
+      "sourcedFromFile": "/Server/Models/Beast/Fox.json",
+      "package": "Hytale:Hytale"
+    },
+    "Frog_Blue": {
+      "sourcedFromFile": "/Server/Models/Critter/Frog_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Frog_Green": {
+      "sourcedFromFile": "/Server/Models/Critter/Frog_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Frog_Orange": {
+      "sourcedFromFile": "/Server/Models/Critter/Frog_Orange.json",
+      "package": "Hytale:Hytale"
+    },
+    "Frostgill": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Frostgill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Gecko": {
+      "sourcedFromFile": "/Server/Models/Critter/Gecko.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ghoul": {
+      "sourcedFromFile": "/Server/Models/Undead/Ghoul.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goat": {
+      "sourcedFromFile": "/Server/Models/Livestock/Goat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goat_Kid": {
+      "sourcedFromFile": "/Server/Models/Livestock/Goat_Kid.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Boss": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Boss.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Duke": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Duke.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Duke_Large": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Duke_Large.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Hermit": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Hermit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Lobber": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Lobber.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Miner": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Miner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Ogre": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Ogre.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scrapper": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Scrapper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Thief": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Goblin/Goblin_Thief.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Earth": {
+      "sourcedFromFile": "/Server/Models/Elemental/Golem_Crystal_Earth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Flame": {
+      "sourcedFromFile": "/Server/Models/Elemental/Golem_Crystal_Flame.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Frost": {
+      "sourcedFromFile": "/Server/Models/Elemental/Golem_Crystal_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Sand": {
+      "sourcedFromFile": "/Server/Models/Elemental/Golem_Crystal_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Crystal_Thunder": {
+      "sourcedFromFile": "/Server/Models/Elemental/Golem_Crystal_Thunder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Firesteel": {
+      "sourcedFromFile": "/Server/Models/Elemental/Golem_Firesteel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem_Guardian_Void": {
+      "sourcedFromFile": "/Server/Models/Boss/Golem_Guardian_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Grooble": {
+      "sourcedFromFile": "/Server/Models/Beast/Grooble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hatworm": {
+      "sourcedFromFile": "/Server/Models/Beast/Hatworm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hawk": {
+      "sourcedFromFile": "/Server/Models/Flying_Wildlife/Hawk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Healing_Totem": {
+      "sourcedFromFile": "/Server/Models/Deployables/Healing_Totem.json",
+      "package": "Hytale:Hytale"
+    },
+    "Healing_Totem_Projectile": {
+      "sourcedFromFile": "/Server/Models/Deployables/Projectiles/Healing_Totem_Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hedera": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Hedera/Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Horse": {
+      "sourcedFromFile": "/Server/Models/Livestock/Horse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Horse_Foal": {
+      "sourcedFromFile": "/Server/Models/Livestock/Horse_Foal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Horse_Skeleton": {
+      "sourcedFromFile": "/Server/Models/Undead/Horse_Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "Horse_Skeleton_Armored": {
+      "sourcedFromFile": "/Server/Models/Undead/Horse_Skeleton_Armored.json",
+      "package": "Hytale:Hytale"
+    },
+    "Horse_Tamed": {
+      "sourcedFromFile": "/Server/Models/Livestock/Horse_Tamed.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hound_Bleached": {
+      "sourcedFromFile": "/Server/Models/Undead/Hound_Bleached.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hyena": {
+      "sourcedFromFile": "/Server/Models/Beast/Hyena.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Ball": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Spells/Ice_Ball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice_Bolt": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Spells/Ice_Bolt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ingredient_Poop": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Ingredients/Ingredient_Poop.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jellyfish_Blue": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Jellyfish_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jellyfish_Cyan": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Jellyfish_Cyan.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jellyfish_Green": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Jellyfish_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jellyfish_Man_Of_War": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Jellyfish_Man_Of_War.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jellyfish_Red": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Jellyfish_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jellyfish_Yellow": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Jellyfish_Yellow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kitten": {
+      "sourcedFromFile": "/Server/Models/Pets/Kitten.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Klops/Klops.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops_Gentleman": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Klops/Klops_Gentleman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops_Merchant": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Klops/Klops_Merchant.json",
+      "package": "Hytale:Hytale"
+    },
+    "Klops_Miner": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Klops/Klops_Miner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kunai": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Kunai/Kunai.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Rootling": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Rootling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Brown": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Brown.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Christmas_Blue": {
+      "sourcedFromFile": "/Server/Models/Christmas/Kweebec_Sapling_Christmas_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Christmas_Green": {
+      "sourcedFromFile": "/Server/Models/Christmas/Kweebec_Sapling_Christmas_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Christmas_Pink": {
+      "sourcedFromFile": "/Server/Models/Christmas/Kweebec_Sapling_Christmas_Pink.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Green": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_HardHat": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_HardHat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Orange": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Orange.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Pink": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Pink.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Razorleaf": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Razorleaf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Red": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Treesinger": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Treesinger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sapling_Yellow": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sapling_Yellow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Seedling": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Seedling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sproutling": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sproutling.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sproutling_Blue": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sproutling_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Sproutling_Lime": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Kweebec/Kweebec_Sproutling_Lime.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lamb": {
+      "sourcedFromFile": "/Server/Models/Livestock/Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Larva_Silk": {
+      "sourcedFromFile": "/Server/Models/Beast/Larva_Silk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Larva_Void": {
+      "sourcedFromFile": "/Server/Models/Void/Larva_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leopard_Snow": {
+      "sourcedFromFile": "/Server/Models/Beast/Leopard_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lizard_Sand": {
+      "sourcedFromFile": "/Server/Models/Beast/Lizard_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lobster": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Lobster.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mannequin": {
+      "sourcedFromFile": "/Server/Models/Human/Mannequin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Meerkat": {
+      "sourcedFromFile": "/Server/Models/Critter/Meerkat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Minecart": {
+      "sourcedFromFile": "/Server/Models/Vehicles/Minecart.json",
+      "package": "Hytale:Hytale"
+    },
+    "Minnow": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Minnow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Model_Bee_Swarm": {
+      "sourcedFromFile": "/Server/Models/Critter/Model_Bee_Swarm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Model_Deer_Stag": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Model_Deer_Stag.json",
+      "package": "Hytale:Hytale"
+    },
+    "Molerat": {
+      "sourcedFromFile": "/Server/Models/Beast/Molerat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Moose_Bull": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Moose_Bull.json",
+      "package": "Hytale:Hytale"
+    },
+    "Moose_Cow": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Moose_Cow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mosshorn": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Mosshorn.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mosshorn_Plain": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Mosshorn_Plain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mouflon": {
+      "sourcedFromFile": "/Server/Models/Livestock/Mouflon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mouflon_Lamb": {
+      "sourcedFromFile": "/Server/Models/Livestock/Mouflon_Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mouse": {
+      "sourcedFromFile": "/Server/Models/Critter/Mouse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mushee": {
+      "sourcedFromFile": "/Server/Models/Beast/Mushee.json",
+      "package": "Hytale:Hytale"
+    },
+    "NPC_Elf": {
+      "sourcedFromFile": "/Server/Models/NPC_Elf.json",
+      "package": "Hytale:Hytale"
+    },
+    "NPC_Path_Marker": {
+      "sourcedFromFile": "/Server/Models/NPC_Path_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "NPC_Santa": {
+      "sourcedFromFile": "/Server/Models/NPC_Santa.json",
+      "package": "Hytale:Hytale"
+    },
+    "NPC_Sound_Shoe": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/NPC_Sound_Shoe.json",
+      "package": "Hytale:Hytale"
+    },
+    "NPC_Spawn_Marker": {
+      "sourcedFromFile": "/Server/Models/NPC_Spawn_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Necromancer_Void": {
+      "sourcedFromFile": "/Server/Models/Void/Necromancer_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Objective_Location_Marker": {
+      "sourcedFromFile": "/Server/Models/Objective_Location_Marker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Berserker": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Berserker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Brute": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Brute.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Cultist": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Cultist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Hunter": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Marauder": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Marauder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Peon": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Peon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Priest": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Priest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Sorcerer": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Sorcerer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Stalker": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Outlander/Outlander_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Owl_Brown": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Owl_Brown.json",
+      "package": "Hytale:Hytale"
+    },
+    "Owl_Snow": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Owl_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Parrot": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Parrot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Penguin": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Penguin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pig": {
+      "sourcedFromFile": "/Server/Models/Livestock/Pig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pig_Undead": {
+      "sourcedFromFile": "/Server/Models/Undead/Pig_Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pig_Wild": {
+      "sourcedFromFile": "/Server/Models/Livestock/Pig_Wild.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pigeon": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Pigeon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Piglet": {
+      "sourcedFromFile": "/Server/Models/Livestock/Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Piglet_Wild": {
+      "sourcedFromFile": "/Server/Models/Livestock/Piglet_Wild.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pike": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Pike.json",
+      "package": "Hytale:Hytale"
+    },
+    "Piranha": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Piranha.json",
+      "package": "Hytale:Hytale"
+    },
+    "Piranha_Black": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Piranha_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Player": {
+      "sourcedFromFile": "/Server/Models/Human/Player.json",
+      "package": "Hytale:Hytale"
+    },
+    "PlayerTestModel_G": {
+      "sourcedFromFile": "/Server/Models/Human/PlayerTestModel_G.json",
+      "package": "Hytale:Hytale"
+    },
+    "PlayerTestModel_V": {
+      "sourcedFromFile": "/Server/Models/Human/PlayerTestModel_V.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pterodactyl": {
+      "sourcedFromFile": "/Server/Models/Flying_Beast/Pterodactyl.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pufferfish": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Pufferfish.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rabbit": {
+      "sourcedFromFile": "/Server/Models/Livestock/Rabbit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ram": {
+      "sourcedFromFile": "/Server/Models/Livestock/Ram.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ram_Lamb": {
+      "sourcedFromFile": "/Server/Models/Livestock/Ram_Lamb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Raptor_Cave": {
+      "sourcedFromFile": "/Server/Models/Beast/Raptor_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rat": {
+      "sourcedFromFile": "/Server/Models/Beast/Rat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Raven": {
+      "sourcedFromFile": "/Server/Models/Flying_Wildlife/Raven.json",
+      "package": "Hytale:Hytale"
+    },
+    "Reindeer_Christmas": {
+      "sourcedFromFile": "/Server/Models/Christmas/Reindeer_Christmas.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rex_Cave": {
+      "sourcedFromFile": "/Server/Models/Beast/Rex_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Aqua": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Aqua.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Basalt": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Basalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Calcite": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Calcite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Default": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Rubble/Rubble_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Ice": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Marble": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Marble.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Quartzite": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Quartzite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Sandstone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_Red": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Sandstone_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Sandstone_White": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Sandstone_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Shale": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Shale.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Slate": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Slate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Stone_Mossy": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Stone_Mossy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rubble_Volcanic": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Items/Rubble/Rubble_Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Salmon": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Salmon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Saurian": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Saurian/Saurian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Saurian_Hunter": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Saurian/Saurian_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Saurian_Rogue": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Saurian/Saurian_Rogue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Saurian_Warrior": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Saurian/Saurian_Warrior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Broodmother": {
+      "sourcedFromFile": "/Server/Models/Beast/Scarak_Broodmother.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Broodmother_Young": {
+      "sourcedFromFile": "/Server/Models/Beast/Scarak_Broodmother_Young.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Defender": {
+      "sourcedFromFile": "/Server/Models/Beast/Scarak_Defender.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Fighter": {
+      "sourcedFromFile": "/Server/Models/Beast/Scarak_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Fighter_Royal_Guard": {
+      "sourcedFromFile": "/Server/Models/Beast/Scarak_Fighter_Royal_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Louse": {
+      "sourcedFromFile": "/Server/Models/Beast/Scarak_Louse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Seeker": {
+      "sourcedFromFile": "/Server/Models/Flying_Beast/Scarak_Seeker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak_Seeker_Spitball": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Beasts/Scarak_Seeker/Scarak_Seeker_Spitball.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scorpion": {
+      "sourcedFromFile": "/Server/Models/Beast/Scorpion.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shadow_Knight": {
+      "sourcedFromFile": "/Server/Models/Undead/Shadow_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shark_Hammerhead": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Shark_Hammerhead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sheep": {
+      "sourcedFromFile": "/Server/Models/Livestock/Sheep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shellfish_Lava": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Shellfish_Lava.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Cobalt_Gear": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Cobalt_Gear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Copper_Gear": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Copper_Gear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Iron_Gear": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Iron_Gear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Iron_TargetDummy_1": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Iron_TargetDummy_1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Mannequin_Heal": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Mannequin_Heal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Mannequin_Inv_Portal": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Mannequin_Inv_Portal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Mannequin_Inv_Sphere": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Mannequin_Inv_Sphere.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Mannequin_Lightning": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Mannequin_Lightning.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Mannequin_Sitting": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Mannequin_Sitting.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Onyxium_Gear": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Onyxium_Gear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Prisma_Gear": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Prisma_Gear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Skeleton_Assasin": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Skeleton_Assasin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Skeleton_Dead": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Skeleton_Dead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Skeleton_Guard": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Skeleton_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Skeleton_Tank": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Skeleton_Tank.json",
+      "package": "Hytale:Hytale"
+    },
+    "Showcase_Wooden_Gear": {
+      "sourcedFromFile": "/Server/Models/Showcase/Showcase_Wooden_Gear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archer": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Archmage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Alchemist": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Alchemist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Archer": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Gunner": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Gunner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Knight": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Lancer": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Lancer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Praetorian": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Praetorian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Soldier": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Burnt_Wizard": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Burnt_Wizard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Fighter": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archer": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Archmage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Fighter": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Knight": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Mage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Ranger": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Scout": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Frost_Soldier": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Frost_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Fighter": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Incandescent_Fighter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Footman": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Incandescent_Footman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Head": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Incandescent_Head.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Incandescent_Mage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Incandescent_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Knight": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Knight.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Mage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Mage_Corruption_Orb": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Undead/Skeleton_Mage/Skeleton_Mage_Corruption_Orb.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Captain": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Pirate_Captain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Gunner": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Pirate_Gunner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Pirate_Striker": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Pirate_Striker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Ranger": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archer": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Archer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Archmage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Archmage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Assassin": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Assassin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Guard": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Mage": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Mage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Ranger": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Ranger.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Scout": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Sand_Soldier": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Sand_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Scout": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton_Soldier": {
+      "sourcedFromFile": "/Server/Models/Undead/Skeleton_Soldier.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skrill": {
+      "sourcedFromFile": "/Server/Models/Livestock/Skrill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skrill_Chick": {
+      "sourcedFromFile": "/Server/Models/Livestock/Skrill_Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian_Elder": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian_Elder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian_Kid": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian_Kid.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian_Monk": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian_Monk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian_Scout": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian_Scout.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian_Villager": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian_Villager.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slothian_Warrior": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Slothian/Slothian_Warrior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slowness_Totem": {
+      "sourcedFromFile": "/Server/Models/Deployables/Slowness_Totem.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slowness_Totem_Projectile": {
+      "sourcedFromFile": "/Server/Models/Deployables/Projectiles/Slowness_Totem_Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slug_Magma": {
+      "sourcedFromFile": "/Server/Models/Beast/Slug_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snail_Frost": {
+      "sourcedFromFile": "/Server/Models/Beast/Snail_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snail_Magma": {
+      "sourcedFromFile": "/Server/Models/Beast/Snail_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snake_Cobra": {
+      "sourcedFromFile": "/Server/Models/Beast/Snake_Cobra.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snake_Marsh": {
+      "sourcedFromFile": "/Server/Models/Beast/Snake_Marsh.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snake_Rattle": {
+      "sourcedFromFile": "/Server/Models/Beast/Snake_Rattle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snapdragon": {
+      "sourcedFromFile": "/Server/Models/Beast/Snapdragon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snapjaw": {
+      "sourcedFromFile": "/Server/Models/Swimming_Beast/Snapjaw.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spark_Living": {
+      "sourcedFromFile": "/Server/Models/Beast/Spark_Living.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sparrow": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Sparrow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawn_Void": {
+      "sourcedFromFile": "/Server/Models/Void/Spawn_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Adamantite": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Adamantite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Adamantite_Saurian": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Adamantite_Saurian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Bone": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Bone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Bronze": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Bronze.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Cobalt": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Cobalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Copper": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Copper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Crude": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Crude.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Double_Incandescent": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Double_Incandescent.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Iron": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Iron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Leaf": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Leaf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Mithril": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Mithril.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Onyxium": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Onyxium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Scrap": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Scrap.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Stone_Trork": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Stone_Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Thorium": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Thorium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spear_Tribal": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Weapons/Spear/Spear_Tribal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spectre_Void": {
+      "sourcedFromFile": "/Server/Models/Void/Spectre_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spider": {
+      "sourcedFromFile": "/Server/Models/Beast/Spider.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spider_Cave": {
+      "sourcedFromFile": "/Server/Models/Beast/Spider_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Ember": {
+      "sourcedFromFile": "/Server/Models/Elemental/Spirit_Ember.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Frost": {
+      "sourcedFromFile": "/Server/Models/Elemental/Spirit_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Root": {
+      "sourcedFromFile": "/Server/Models/Elemental/Spirit_Root.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spirit_Thunder": {
+      "sourcedFromFile": "/Server/Models/Elemental/Spirit_Thunder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Squirrel": {
+      "sourcedFromFile": "/Server/Models/Critter/Squirrel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Swarm_Bees": {
+      "sourcedFromFile": "/Server/Models/Flying_Wildlife/Swarm_Bees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Charged_Test": {
+      "sourcedFromFile": "/Server/Models/Test/Sword_Charged_Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tadpole_Rhino": {
+      "sourcedFromFile": "/Server/Models/Critter/Tadpole_Rhino.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tang_Blue": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Tang_Blue.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tang_Chevron": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Tang_Chevron.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tang_Lemon_Peel": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Tang_Lemon_Peel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tang_Sailfin": {
+      "sourcedFromFile": "/Server/Models/Swimming_Critter/Tang_Sailfin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tank": {
+      "sourcedFromFile": "/Server/Models/Scifi/Tanks/Tank.json",
+      "package": "Hytale:Hytale"
+    },
+    "Temple_Mithril_Guard": {
+      "sourcedFromFile": "/Server/Models/Instances/Forgotten_Temple/Temple_Mithril_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Platform": {
+      "sourcedFromFile": "/Server/Models/Test/Test_Platform.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tetrabird": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Tetrabird.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tiger_Sabertooth": {
+      "sourcedFromFile": "/Server/Models/Beast/Tiger_Sabertooth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Toad_Rhino": {
+      "sourcedFromFile": "/Server/Models/Beast/Toad_Rhino.json",
+      "package": "Hytale:Hytale"
+    },
+    "Toad_Rhino_Green": {
+      "sourcedFromFile": "/Server/Models/Beast/Toad_Rhino_Green.json",
+      "package": "Hytale:Hytale"
+    },
+    "Toad_Rhino_Magma": {
+      "sourcedFromFile": "/Server/Models/Beast/Toad_Rhino_Magma.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tornado": {
+      "sourcedFromFile": "/Server/Models/Projectiles/Spells/Tornado.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tortoise": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Tortoise.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trash": {
+      "sourcedFromFile": "/Server/Models/Projectiles/NPCs/Intelligent/Goblin_Scavenger/Trash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trillodon": {
+      "sourcedFromFile": "/Server/Models/Wildlife/Trillodon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trilobite": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Trilobite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trilobite_Black": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Trilobite_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Brawler": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Brawler.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Chieftain": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Chieftain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Christmas": {
+      "sourcedFromFile": "/Server/Models/Christmas/Trork_Christmas.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Doctor_Witch": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Doctor_Witch.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Guard": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Guard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Hunter": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Mauler": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Mauler.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Sentry": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Sentry.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Shaman": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Shaman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Warrior": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Trork/Trork_Warrior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trout_Rainbow": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Trout_Rainbow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tuluk": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Tuluk/Tuluk.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tuluk_Fisherman": {
+      "sourcedFromFile": "/Server/Models/Intelligent/Tuluk/Tuluk_Fisherman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Turkey": {
+      "sourcedFromFile": "/Server/Models/Livestock/Turkey.json",
+      "package": "Hytale:Hytale"
+    },
+    "Turkey_Chick": {
+      "sourcedFromFile": "/Server/Models/Livestock/Turkey_Chick.json",
+      "package": "Hytale:Hytale"
+    },
+    "Vulture": {
+      "sourcedFromFile": "/Server/Models/Flying_Beast/Vulture.json",
+      "package": "Hytale:Hytale"
+    },
+    "Warp": {
+      "sourcedFromFile": "/Server/Models/Warp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Warrior_Quest": {
+      "sourcedFromFile": "/Server/Models/Warrior_Quest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Warthog": {
+      "sourcedFromFile": "/Server/Models/Livestock/Warthog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Warthog_Piglet": {
+      "sourcedFromFile": "/Server/Models/Livestock/Warthog_Piglet.json",
+      "package": "Hytale:Hytale"
+    },
+    "Werewolf": {
+      "sourcedFromFile": "/Server/Models/Undead/Werewolf.json",
+      "package": "Hytale:Hytale"
+    },
+    "Whale_Humpback": {
+      "sourcedFromFile": "/Server/Models/Swimming_Wildlife/Whale_Humpback.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_Black": {
+      "sourcedFromFile": "/Server/Models/Beast/Wolf_Black.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_Outlander_Priest": {
+      "sourcedFromFile": "/Server/Models/Beast/Wolf_Outlander_Priest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_Outlander_Sorcerer": {
+      "sourcedFromFile": "/Server/Models/Beast/Wolf_Outlander_Sorcerer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_Trork_Hunter": {
+      "sourcedFromFile": "/Server/Models/Beast/Wolf_Trork_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_Trork_Shaman": {
+      "sourcedFromFile": "/Server/Models/Beast/Wolf_Trork_Shaman.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wolf_White": {
+      "sourcedFromFile": "/Server/Models/Beast/Wolf_White.json",
+      "package": "Hytale:Hytale"
+    },
+    "Woodpecker": {
+      "sourcedFromFile": "/Server/Models/Flying_Critter/Woodpecker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wraith": {
+      "sourcedFromFile": "/Server/Models/Undead/Wraith.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wraith_Lantern": {
+      "sourcedFromFile": "/Server/Models/Undead/Wraith_Lantern.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wurmling_Frost": {
+      "sourcedFromFile": "/Server/Models/Beast/Wurmling_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Yeti": {
+      "sourcedFromFile": "/Server/Models/Beast/Yeti.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Aberrant": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Aberrant.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Aberrant_Big": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Aberrant_Big.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Aberrant_Small": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Aberrant_Small.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Burnt": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Burnt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Frost": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Frost.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Sand": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie_Werewolf": {
+      "sourcedFromFile": "/Server/Models/Undead/Zombie_Werewolf.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,276 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "Language",
+  "path": "Common",
+  "extension": ".lang",
+  "assetCount": 66,
+  "fileCount": 66,
+  "values": {
+    "Languages/en-US/avatarCustomization/bodyCharacteristics": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/bodyCharacteristics.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/capes": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/capes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/earaccessory": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/earaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/ears": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/ears.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/emotes": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/emotes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/eyebrows": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/eyebrows.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/eyes": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/eyes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/faceaccessory": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/faceaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/faces": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/faces.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/facialhair": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/facialhair.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/gloves": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/gloves.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/haircuts": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/haircuts.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/headaccessory": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/headaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/mouths": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/mouths.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/overpants": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/overpants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/overtops": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/overtops.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/pants": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/pants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/shoes": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/shoes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/tags": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/tags.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/undertops": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/undertops.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/underwear": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/underwear.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/en-US/avatarCustomization/variants": {
+      "sourcedFromFile": "Common/Languages/en-US/avatarCustomization/variants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/bodyCharacteristics": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/bodyCharacteristics.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/capes": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/capes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/earaccessory": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/earaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/ears": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/ears.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/emotes": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/emotes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/eyebrows": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/eyebrows.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/eyes": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/eyes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/faceaccessory": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/faceaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/faces": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/faces.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/facialhair": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/facialhair.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/gloves": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/gloves.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/haircuts": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/haircuts.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/headaccessory": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/headaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/mouths": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/mouths.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/overpants": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/overpants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/overtops": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/overtops.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/pants": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/pants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/shoes": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/shoes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/tags": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/tags.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/undertops": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/undertops.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/underwear": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/underwear.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/pt-BR/avatarCustomization/variants": {
+      "sourcedFromFile": "Common/Languages/pt-BR/avatarCustomization/variants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/bodyCharacteristics": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/bodyCharacteristics.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/capes": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/capes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/earaccessory": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/earaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/ears": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/ears.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/emotes": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/emotes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/eyebrows": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/eyebrows.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/eyes": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/eyes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/faceaccessory": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/faceaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/faces": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/faces.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/facialhair": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/facialhair.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/gloves": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/gloves.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/haircuts": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/haircuts.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/headaccessory": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/headaccessory.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/mouths": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/mouths.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/overpants": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/overpants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/overtops": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/overtops.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/pants": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/pants.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/shoes": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/shoes.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/tags": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/tags.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/undertops": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/undertops.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/underwear": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/underwear.lang",
+      "package": "Hytale:Hytale"
+    },
+    "Languages/ru-RU/avatarCustomization/variants": {
+      "sourcedFromFile": "Common/Languages/ru-RU/avatarCustomization/variants.lang",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

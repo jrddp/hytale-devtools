@@ -8,7 +8,7 @@ import {
     getDefaultHytaleHomeSearchPaths,
     resolveCompanionExportRootFromPatchline,
     resolvePatchlineFromWorkspace,
-    resolveSchemaDataLocationFromPatchline
+    resolveDataRootDir
 } from '../utils/hytalePaths';
 
 suite('Hytale Paths Test Suite', () => {
@@ -94,7 +94,7 @@ suite('Hytale Paths Test Suite', () => {
             fs.mkdirSync(path.join(exportRoot, 'schemas'), { recursive: true });
             fs.mkdirSync(path.join(exportRoot, 'indexes'), { recursive: true });
 
-            const location = resolveSchemaDataLocationFromPatchline(
+            const location = resolveDataRootDir(
                 globalStorageRoot,
                 extensionRoot,
                 'pre-release'
@@ -115,7 +115,7 @@ suite('Hytale Paths Test Suite', () => {
         const extensionRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hytale-extension-'));
 
         try {
-            const location = resolveSchemaDataLocationFromPatchline(
+            const location = resolveDataRootDir(
                 globalStorageRoot,
                 extensionRoot,
                 'release'
@@ -142,7 +142,7 @@ suite('Hytale Paths Test Suite', () => {
             fs.mkdirSync(path.join(exportRoot, 'schemas'), { recursive: true });
             fs.mkdirSync(path.join(exportRoot, 'indexes'), { recursive: true });
 
-            const location = resolveSchemaDataLocationFromPatchline(
+            const location = resolveDataRootDir(
                 globalStorageRoot,
                 extensionRoot,
                 'release'

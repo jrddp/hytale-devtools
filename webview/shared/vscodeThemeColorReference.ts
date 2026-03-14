@@ -1,0 +1,925 @@
+export type VscodeThemeColorEntry = {
+  section: string;
+  id: string;
+};
+
+const rawVscodeThemeColorReference = String.raw`
+Contrast colors	contrastActiveBorder
+Contrast colors	contrastBorder
+Base colors	focusBorder
+Base colors	foreground
+Base colors	disabledForeground
+Base colors	widget.border
+Base colors	widget.shadow
+Base colors	selection.background
+Base colors	descriptionForeground
+Base colors	errorForeground
+Base colors	icon.foreground
+Base colors	sash.hoverBorder
+Window border	window.activeBorder
+Window border	window.inactiveBorder
+Text colors	textBlockQuote.background
+Text colors	textBlockQuote.border
+Text colors	textCodeBlock.background
+Text colors	textLink.activeForeground
+Text colors	textLink.foreground
+Text colors	textPreformat.foreground
+Text colors	textPreformat.background
+Text colors	textPreformat.border
+Text colors	textSeparator.foreground
+Action colors	toolbar.hoverBackground
+Action colors	toolbar.hoverOutline
+Action colors	toolbar.activeBackground
+Action colors	editorActionList.background
+Action colors	editorActionList.foreground
+Action colors	editorActionList.focusForeground
+Action colors	editorActionList.focusBackground
+Button control	button.background
+Button control	button.foreground
+Button control	button.border
+Button control	button.separator
+Button control	button.hoverBackground
+Button control	button.secondaryForeground
+Button control	button.secondaryBackground
+Button control	button.secondaryHoverBackground
+Button control	button.secondaryBorder
+Button control	checkbox.background
+Button control	checkbox.foreground
+Button control	checkbox.disabled.background
+Button control	checkbox.disabled.foreground
+Button control	checkbox.border
+Button control	checkbox.selectBackground
+Button control	checkbox.selectBorder
+Button control	radio.activeForeground
+Button control	radio.activeBackground
+Button control	radio.activeBorder
+Button control	radio.inactiveForeground
+Button control	radio.inactiveBackground
+Button control	radio.inactiveBorder
+Button control	radio.inactiveHoverBackground
+Dropdown control	dropdown.background
+Dropdown control	dropdown.listBackground
+Dropdown control	dropdown.border
+Dropdown control	dropdown.foreground
+Input control	input.background
+Input control	input.border
+Input control	input.foreground
+Input control	input.placeholderForeground
+Input control	inputOption.activeBackground
+Input control	inputOption.activeBorder
+Input control	inputOption.activeForeground
+Input control	inputOption.hoverBackground
+Input control	inputValidation.errorBackground
+Input control	inputValidation.errorForeground
+Input control	inputValidation.errorBorder
+Input control	inputValidation.infoBackground
+Input control	inputValidation.infoForeground
+Input control	inputValidation.infoBorder
+Input control	inputValidation.warningBackground
+Input control	inputValidation.warningForeground
+Input control	inputValidation.warningBorder
+Scrollbar control	scrollbar.background
+Scrollbar control	scrollbar.shadow
+Scrollbar control	scrollbarSlider.activeBackground
+Scrollbar control	scrollbarSlider.background
+Scrollbar control	scrollbarSlider.hoverBackground
+Badge	badge.foreground
+Badge	badge.background
+Progress bar	progressBar.background
+Lists and trees	list.activeSelectionBackground
+Lists and trees	list.activeSelectionForeground
+Lists and trees	list.activeSelectionIconForeground
+Lists and trees	list.dropBackground
+Lists and trees	list.focusBackground
+Lists and trees	list.focusForeground
+Lists and trees	list.focusHighlightForeground
+Lists and trees	list.focusOutline
+Lists and trees	list.focusAndSelectionOutline
+Lists and trees	list.highlightForeground
+Lists and trees	list.hoverBackground
+Lists and trees	list.hoverForeground
+Lists and trees	list.inactiveSelectionBackground
+Lists and trees	list.inactiveSelectionForeground
+Lists and trees	list.inactiveSelectionIconForeground
+Lists and trees	list.inactiveFocusBackground
+Lists and trees	list.inactiveFocusOutline
+Lists and trees	list.invalidItemForeground
+Lists and trees	list.errorForeground
+Lists and trees	list.warningForeground
+Lists and trees	listFilterWidget.background
+Lists and trees	listFilterWidget.outline
+Lists and trees	listFilterWidget.noMatchesOutline
+Lists and trees	listFilterWidget.shadow
+Lists and trees	list.filterMatchBackground
+Lists and trees	list.filterMatchBorder
+Lists and trees	list.deemphasizedForeground
+Lists and trees	list.dropBetweenBackground
+Lists and trees	tree.indentGuidesStroke
+Lists and trees	tree.inactiveIndentGuidesStroke
+Lists and trees	tree.tableColumnsBorder
+Lists and trees	tree.tableOddRowsBackground
+Activity Bar	activityBar.background
+Activity Bar	activityBar.dropBorder
+Activity Bar	activityBar.foreground
+Activity Bar	activityBar.inactiveForeground
+Activity Bar	activityBar.border
+Activity Bar	activityBarBadge.background
+Activity Bar	activityBarBadge.foreground
+Activity Bar	activityBar.activeBorder
+Activity Bar	activityBar.activeBackground
+Activity Bar	activityBar.activeFocusBorder
+Activity Bar	activityBarTop.foreground
+Activity Bar	activityBarTop.activeBorder
+Activity Bar	activityBarTop.inactiveForeground
+Activity Bar	activityBarTop.dropBorder
+Activity Bar	activityBarTop.background
+Activity Bar	activityBarTop.activeBackground
+Activity Bar	activityWarningBadge.foreground
+Activity Bar	activityWarningBadge.background
+Activity Bar	activityErrorBadge.foreground
+Activity Bar	activityErrorBadge.background
+Profiles	profileBadge.background
+Profiles	profileBadge.foreground
+Profiles	profiles.sashBorder
+Side Bar	sideBar.background
+Side Bar	sideBar.foreground
+Side Bar	sideBar.border
+Side Bar	sideBar.dropBackground
+Side Bar	sideBarTitle.foreground
+Side Bar	sideBarSectionHeader.background
+Side Bar	sideBarSectionHeader.foreground
+Side Bar	sideBarSectionHeader.border
+Side Bar	sideBarActivityBarTop.border
+Side Bar	sideBarTitle.background
+Side Bar	sideBarTitle.border
+Side Bar	sideBarStickyScroll.background
+Side Bar	sideBarStickyScroll.border
+Side Bar	sideBarStickyScroll.shadow
+Minimap	minimap.findMatchHighlight
+Minimap	minimap.selectionHighlight
+Minimap	minimap.errorHighlight
+Minimap	minimap.warningHighlight
+Minimap	minimap.background
+Minimap	minimap.selectionOccurrenceHighlight
+Minimap	minimap.foregroundOpacity
+Minimap	minimap.infoHighlight
+Minimap	minimap.chatEditHighlight
+Minimap	minimapSlider.background
+Minimap	minimapSlider.hoverBackground
+Minimap	minimapSlider.activeBackground
+Minimap	minimapGutter.addedBackground
+Minimap	minimapGutter.modifiedBackground
+Minimap	minimapGutter.deletedBackground
+Minimap	editorMinimap.inlineChatInserted
+Editor Groups &amp; Tabs	editorGroup.border
+Editor Groups &amp; Tabs	editorGroup.dropBackground
+Editor Groups &amp; Tabs	editorGroupHeader.noTabsBackground
+Editor Groups &amp; Tabs	editorGroupHeader.tabsBackground
+Editor Groups &amp; Tabs	editorGroupHeader.tabsBorder
+Editor Groups &amp; Tabs	editorGroupHeader.border
+Editor Groups &amp; Tabs	editorGroup.emptyBackground
+Editor Groups &amp; Tabs	editorGroup.focusedEmptyBorder
+Editor Groups &amp; Tabs	editorGroup.dropIntoPromptForeground
+Editor Groups &amp; Tabs	editorGroup.dropIntoPromptBackground
+Editor Groups &amp; Tabs	editorGroup.dropIntoPromptBorder
+Editor Groups &amp; Tabs	tab.activeBackground
+Editor Groups &amp; Tabs	tab.unfocusedActiveBackground
+Editor Groups &amp; Tabs	tab.activeForeground
+Editor Groups &amp; Tabs	tab.border
+Editor Groups &amp; Tabs	tab.activeBorder
+Editor Groups &amp; Tabs	tab.selectedBorderTop
+Editor Groups &amp; Tabs	tab.selectedBackground
+Editor Groups &amp; Tabs	tab.selectedForeground
+Editor Groups &amp; Tabs	tab.dragAndDropBorder
+Editor Groups &amp; Tabs	tab.unfocusedActiveBorder
+Editor Groups &amp; Tabs	tab.activeBorderTop
+Editor Groups &amp; Tabs	tab.unfocusedActiveBorderTop
+Editor Groups &amp; Tabs	tab.lastPinnedBorder
+Editor Groups &amp; Tabs	tab.inactiveBackground
+Editor Groups &amp; Tabs	tab.unfocusedInactiveBackground
+Editor Groups &amp; Tabs	tab.inactiveForeground
+Editor Groups &amp; Tabs	tab.unfocusedActiveForeground
+Editor Groups &amp; Tabs	tab.unfocusedInactiveForeground
+Editor Groups &amp; Tabs	tab.hoverBackground
+Editor Groups &amp; Tabs	tab.unfocusedHoverBackground
+Editor Groups &amp; Tabs	tab.hoverForeground
+Editor Groups &amp; Tabs	tab.unfocusedHoverForeground
+Editor Groups &amp; Tabs	tab.hoverBorder
+Editor Groups &amp; Tabs	tab.unfocusedHoverBorder
+Editor Groups &amp; Tabs	tab.activeModifiedBorder
+Editor Groups &amp; Tabs	tab.inactiveModifiedBorder
+Editor Groups &amp; Tabs	tab.unfocusedActiveModifiedBorder
+Editor Groups &amp; Tabs	tab.unfocusedInactiveModifiedBorder
+Editor Groups &amp; Tabs	editorPane.background
+Editor Groups &amp; Tabs	sideBySideEditor.horizontalBorder
+Editor Groups &amp; Tabs	sideBySideEditor.verticalBorder
+Editor colors	editor.background
+Editor colors	editor.foreground
+Editor colors	editorLineNumber.foreground
+Editor colors	editorLineNumber.activeForeground
+Editor colors	editorLineNumber.dimmedForeground
+Editor colors	editorCursor.background
+Editor colors	editorCursor.foreground
+Editor colors	editorMultiCursor.primary.foreground
+Editor colors	editorMultiCursor.primary.background
+Editor colors	editorMultiCursor.secondary.foreground
+Editor colors	editorMultiCursor.secondary.background
+Editor colors	editor.placeholder.foreground
+Editor colors	editor.compositionBorder
+Editor colors	editor.selectionBackground
+Editor colors	editor.selectionForeground
+Editor colors	editor.inactiveSelectionBackground
+Editor colors	editor.selectionHighlightBackground
+Editor colors	editor.selectionHighlightBorder
+Editor colors	editor.wordHighlightBackground
+Editor colors	editor.wordHighlightBorder
+Editor colors	editor.wordHighlightStrongBackground
+Editor colors	editor.wordHighlightStrongBorder
+Editor colors	editor.wordHighlightTextBackground
+Editor colors	editor.wordHighlightTextBorder
+Editor colors	editor.findMatchBackground
+Editor colors	editor.findMatchForeground
+Editor colors	editor.findMatchHighlightForeground
+Editor colors	editor.findMatchHighlightBackground
+Editor colors	editor.findRangeHighlightBackground
+Editor colors	editor.findMatchBorder
+Editor colors	editor.findMatchHighlightBorder
+Editor colors	editor.findRangeHighlightBorder
+Editor colors	search.resultsInfoForeground
+Editor colors	searchEditor.findMatchBackground
+Editor colors	searchEditor.findMatchBorder
+Editor colors	searchEditor.textInputBorder
+Editor colors	editor.hoverHighlightBackground
+Editor colors	editor.lineHighlightBackground
+Editor colors	editor.inactiveLineHighlightBackground
+Editor colors	editor.lineHighlightBorder
+Editor colors	editorUnicodeHighlight.border
+Editor colors	editorUnicodeHighlight.background
+Editor colors	editorLink.activeForeground
+Editor colors	editor.rangeHighlightBackground
+Editor colors	editor.rangeHighlightBorder
+Editor colors	editor.symbolHighlightBackground
+Editor colors	editor.symbolHighlightBorder
+Editor colors	editorWhitespace.foreground
+Editor colors	editorIndentGuide.background
+Editor colors	editorIndentGuide.background1
+Editor colors	editorIndentGuide.background2
+Editor colors	editorIndentGuide.background3
+Editor colors	editorIndentGuide.background4
+Editor colors	editorIndentGuide.background5
+Editor colors	editorIndentGuide.background6
+Editor colors	editorIndentGuide.activeBackground
+Editor colors	editorIndentGuide.activeBackground1
+Editor colors	editorIndentGuide.activeBackground2
+Editor colors	editorIndentGuide.activeBackground3
+Editor colors	editorIndentGuide.activeBackground4
+Editor colors	editorIndentGuide.activeBackground5
+Editor colors	editorIndentGuide.activeBackground6
+Editor colors	editorInlayHint.background
+Editor colors	editorInlayHint.foreground
+Editor colors	editorInlayHint.typeForeground
+Editor colors	editorInlayHint.typeBackground
+Editor colors	editorInlayHint.parameterForeground
+Editor colors	editorInlayHint.parameterBackground
+Editor colors	editorRuler.foreground
+Editor colors	editor.linkedEditingBackground
+Editor colors	editorCodeLens.foreground
+Editor colors	editorLightBulb.foreground
+Editor colors	editorLightBulbAutoFix.foreground
+Editor colors	editorLightBulbAi.foreground
+Editor colors	editorBracketMatch.background
+Editor colors	editorBracketMatch.border
+Editor colors	editorBracketMatch.foreground
+Editor colors	editorBracketHighlight.foreground1
+Editor colors	editorBracketHighlight.foreground2
+Editor colors	editorBracketHighlight.foreground3
+Editor colors	editorBracketHighlight.foreground4
+Editor colors	editorBracketHighlight.foreground5
+Editor colors	editorBracketHighlight.foreground6
+Editor colors	editorBracketHighlight.unexpectedBracket.foreground
+Editor colors	editorBracketPairGuide.activeBackground1
+Editor colors	editorBracketPairGuide.activeBackground2
+Editor colors	editorBracketPairGuide.activeBackground3
+Editor colors	editorBracketPairGuide.activeBackground4
+Editor colors	editorBracketPairGuide.activeBackground5
+Editor colors	editorBracketPairGuide.activeBackground6
+Editor colors	editorBracketPairGuide.background1
+Editor colors	editorBracketPairGuide.background2
+Editor colors	editorBracketPairGuide.background3
+Editor colors	editorBracketPairGuide.background4
+Editor colors	editorBracketPairGuide.background5
+Editor colors	editorBracketPairGuide.background6
+Editor colors	editor.foldBackground
+Editor colors	editor.foldPlaceholderForeground
+Editor colors	editorOverviewRuler.background
+Editor colors	editorOverviewRuler.border
+Editor colors	editorOverviewRuler.findMatchForeground
+Editor colors	editorOverviewRuler.rangeHighlightForeground
+Editor colors	editorOverviewRuler.selectionHighlightForeground
+Editor colors	editorOverviewRuler.wordHighlightForeground
+Editor colors	editorOverviewRuler.wordHighlightStrongForeground
+Editor colors	editorOverviewRuler.wordHighlightTextForeground
+Editor colors	editorOverviewRuler.modifiedForeground
+Editor colors	editorOverviewRuler.addedForeground
+Editor colors	editorOverviewRuler.deletedForeground
+Editor colors	editorOverviewRuler.errorForeground
+Editor colors	editorOverviewRuler.warningForeground
+Editor colors	editorOverviewRuler.infoForeground
+Editor colors	editorOverviewRuler.bracketMatchForeground
+Editor colors	editorOverviewRuler.inlineChatInserted
+Editor colors	editorOverviewRuler.inlineChatRemoved
+Editor colors	editorOverviewRuler.commentDraftForeground
+Editor colors	editorError.foreground
+Editor colors	editorError.border
+Editor colors	editorError.background
+Editor colors	editorWarning.foreground
+Editor colors	editorWarning.border
+Editor colors	editorWarning.background
+Editor colors	editorInfo.foreground
+Editor colors	editorInfo.border
+Editor colors	editorInfo.background
+Editor colors	editorHint.foreground
+Editor colors	editorHint.border
+Editor colors	problemsErrorIcon.foreground
+Editor colors	problemsWarningIcon.foreground
+Editor colors	problemsInfoIcon.foreground
+Editor colors	editorUnnecessaryCode.border
+Editor colors	editorUnnecessaryCode.opacity
+Editor colors	editorGutter.background
+Editor colors	editorGutter.modifiedBackground
+Editor colors	editorGutter.modifiedSecondaryBackground
+Editor colors	editorGutter.addedBackground
+Editor colors	editorGutter.addedSecondaryBackground
+Editor colors	editorGutter.deletedBackground
+Editor colors	editorGutter.deletedSecondaryBackground
+Editor colors	editorGutter.commentRangeForeground
+Editor colors	editorGutter.commentGlyphForeground
+Editor colors	editorGutter.commentUnresolvedGlyphForeground
+Editor colors	editorGutter.foldingControlForeground
+Editor colors	editorGutter.itemGlyphForeground
+Editor colors	editorGutter.itemBackground
+Editor colors	editorGutter.commentDraftGlyphForeground
+Editor colors	editorCommentsWidget.resolvedBorder
+Editor colors	editorCommentsWidget.unresolvedBorder
+Editor colors	editorCommentsWidget.rangeBackground
+Editor colors	editorCommentsWidget.rangeActiveBackground
+Editor colors	editorCommentsWidget.replyInputBackground
+Editor colors	inlineEdit.gutterIndicator.primaryBorder
+Editor colors	inlineEdit.gutterIndicator.primaryForeground
+Editor colors	inlineEdit.gutterIndicator.primaryBackground
+Editor colors	inlineEdit.gutterIndicator.secondaryBorder
+Editor colors	inlineEdit.gutterIndicator.secondaryForeground
+Editor colors	inlineEdit.gutterIndicator.secondaryBackground
+Editor colors	inlineEdit.gutterIndicator.successfulBorder
+Editor colors	inlineEdit.gutterIndicator.successfulForeground
+Editor colors	inlineEdit.gutterIndicator.successfulBackground
+Editor colors	inlineEdit.gutterIndicator.background
+Editor colors	inlineEdit.originalBackground
+Editor colors	inlineEdit.modifiedBackground
+Editor colors	inlineEdit.originalChangedLineBackground
+Editor colors	inlineEdit.originalChangedTextBackground
+Editor colors	inlineEdit.modifiedChangedLineBackground
+Editor colors	inlineEdit.modifiedChangedTextBackground
+Editor colors	inlineEdit.originalBorder
+Editor colors	inlineEdit.modifiedBorder
+Editor colors	inlineEdit.tabWillAcceptModifiedBorder
+Editor colors	inlineEdit.tabWillAcceptOriginalBorder
+Diff editor colors	diffEditor.insertedTextBackground
+Diff editor colors	diffEditor.insertedTextBorder
+Diff editor colors	diffEditor.removedTextBackground
+Diff editor colors	diffEditor.removedTextBorder
+Diff editor colors	diffEditor.border
+Diff editor colors	diffEditor.diagonalFill
+Diff editor colors	diffEditor.insertedLineBackground
+Diff editor colors	diffEditor.removedLineBackground
+Diff editor colors	diffEditorGutter.insertedLineBackground
+Diff editor colors	diffEditorGutter.removedLineBackground
+Diff editor colors	diffEditorOverview.insertedForeground
+Diff editor colors	diffEditorOverview.removedForeground
+Diff editor colors	diffEditor.unchangedRegionBackground
+Diff editor colors	diffEditor.unchangedRegionForeground
+Diff editor colors	diffEditor.unchangedRegionShadow
+Diff editor colors	diffEditor.unchangedCodeBackground
+Diff editor colors	diffEditor.move.border
+Diff editor colors	diffEditor.moveActive.border
+Diff editor colors	multiDiffEditor.headerBackground
+Diff editor colors	multiDiffEditor.background
+Diff editor colors	multiDiffEditor.border
+Chat colors	chat.requestBorder
+Chat colors	chat.requestBackground
+Chat colors	chat.slashCommandBackground
+Chat colors	chat.slashCommandForeground
+Chat colors	chat.avatarBackground
+Chat colors	chat.avatarForeground
+Chat colors	chat.editedFileForeground
+Chat colors	chat.linesAddedForeground
+Chat colors	chat.linesRemovedForeground
+Chat colors	chat.requestCodeBorder
+Chat colors	chat.requestBubbleBackground
+Chat colors	chat.requestBubbleHoverBackground
+Chat colors	chat.checkpointSeparator
+Chat colors	chat.thinkingShimmer
+Chat colors	chatManagement.sashBorder
+Inline Chat colors	inlineChat.background
+Inline Chat colors	inlineChat.foreground
+Inline Chat colors	inlineChat.border
+Inline Chat colors	inlineChat.shadow
+Inline Chat colors	inlineChatInput.border
+Inline Chat colors	inlineChatInput.focusBorder
+Inline Chat colors	inlineChatInput.placeholderForeground
+Inline Chat colors	inlineChatInput.background
+Inline Chat colors	inlineChatDiff.inserted
+Inline Chat colors	inlineChatDiff.removed
+Panel Chat colors	interactive.activeCodeBorder
+Panel Chat colors	interactive.inactiveCodeBorder
+Editor widget colors	editorWidget.foreground
+Editor widget colors	editorWidget.background
+Editor widget colors	editorWidget.border
+Editor widget colors	editorWidget.resizeBorder
+Editor widget colors	editorSuggestWidget.background
+Editor widget colors	editorSuggestWidget.border
+Editor widget colors	editorSuggestWidget.foreground
+Editor widget colors	editorSuggestWidget.focusHighlightForeground
+Editor widget colors	editorSuggestWidget.highlightForeground
+Editor widget colors	editorSuggestWidget.selectedBackground
+Editor widget colors	editorSuggestWidget.selectedForeground
+Editor widget colors	editorSuggestWidget.selectedIconForeground
+Editor widget colors	editorSuggestWidgetStatus.foreground
+Editor widget colors	editorHoverWidget.foreground
+Editor widget colors	editorHoverWidget.background
+Editor widget colors	editorHoverWidget.border
+Editor widget colors	editorHoverWidget.highlightForeground
+Editor widget colors	editorHoverWidget.statusBarBackground
+Editor widget colors	editorGhostText.border
+Editor widget colors	editorGhostText.background
+Editor widget colors	editorGhostText.foreground
+Editor widget colors	editorStickyScroll.background
+Editor widget colors	editorStickyScroll.border
+Editor widget colors	editorStickyScroll.shadow
+Editor widget colors	editorStickyScrollGutter.background
+Editor widget colors	editorStickyScrollHover.background
+Editor widget colors	debugExceptionWidget.background
+Editor widget colors	debugExceptionWidget.border
+Editor widget colors	editorMarkerNavigation.background
+Editor widget colors	editorMarkerNavigationError.background
+Editor widget colors	editorMarkerNavigationWarning.background
+Editor widget colors	editorMarkerNavigationInfo.background
+Editor widget colors	editorMarkerNavigationError.headerBackground
+Editor widget colors	editorMarkerNavigationWarning.headerBackground
+Editor widget colors	editorMarkerNavigationInfo.headerBackground
+Peek view colors	peekView.border
+Peek view colors	peekViewEditor.background
+Peek view colors	peekViewEditorGutter.background
+Peek view colors	peekViewEditor.matchHighlightBackground
+Peek view colors	peekViewEditor.matchHighlightBorder
+Peek view colors	peekViewResult.background
+Peek view colors	peekViewResult.fileForeground
+Peek view colors	peekViewResult.lineForeground
+Peek view colors	peekViewResult.matchHighlightBackground
+Peek view colors	peekViewResult.selectionBackground
+Peek view colors	peekViewResult.selectionForeground
+Peek view colors	peekViewTitle.background
+Peek view colors	peekViewTitleDescription.foreground
+Peek view colors	peekViewTitleLabel.foreground
+Peek view colors	peekViewEditorStickyScroll.background
+Peek view colors	peekViewEditorStickyScrollGutter.background
+Merge conflicts colors	merge.currentHeaderBackground
+Merge conflicts colors	merge.currentContentBackground
+Merge conflicts colors	merge.incomingHeaderBackground
+Merge conflicts colors	merge.incomingContentBackground
+Merge conflicts colors	merge.border
+Merge conflicts colors	merge.commonContentBackground
+Merge conflicts colors	merge.commonHeaderBackground
+Merge conflicts colors	editorOverviewRuler.currentContentForeground
+Merge conflicts colors	editorOverviewRuler.incomingContentForeground
+Merge conflicts colors	editorOverviewRuler.commonContentForeground
+Merge conflicts colors	editorOverviewRuler.commentForeground
+Merge conflicts colors	editorOverviewRuler.commentUnresolvedForeground
+Merge conflicts colors	mergeEditor.change.background
+Merge conflicts colors	mergeEditor.change.word.background
+Merge conflicts colors	mergeEditor.conflict.unhandledUnfocused.border
+Merge conflicts colors	mergeEditor.conflict.unhandledFocused.border
+Merge conflicts colors	mergeEditor.conflict.handledUnfocused.border
+Merge conflicts colors	mergeEditor.conflict.handledFocused.border
+Merge conflicts colors	mergeEditor.conflict.handled.minimapOverViewRuler
+Merge conflicts colors	mergeEditor.conflict.unhandled.minimapOverViewRuler
+Merge conflicts colors	mergeEditor.conflictingLines.background
+Merge conflicts colors	mergeEditor.changeBase.background
+Merge conflicts colors	mergeEditor.changeBase.word.background
+Merge conflicts colors	mergeEditor.conflict.input1.background
+Merge conflicts colors	mergeEditor.conflict.input2.background
+Panel colors	panel.background
+Panel colors	panel.border
+Panel colors	panel.dropBorder
+Panel colors	panelTitle.activeBorder
+Panel colors	panelTitle.activeForeground
+Panel colors	panelTitle.inactiveForeground
+Panel colors	panelTitle.border
+Panel colors	panelTitleBadge.background
+Panel colors	panelTitleBadge.foreground
+Panel colors	panelInput.border
+Panel colors	panelSection.border
+Panel colors	panelSection.dropBackground
+Panel colors	panelSectionHeader.background
+Panel colors	panelSectionHeader.foreground
+Panel colors	panelStickyScroll.background
+Panel colors	panelStickyScroll.border
+Panel colors	panelStickyScroll.shadow
+Panel colors	panelSectionHeader.border
+Panel colors	outputView.background
+Panel colors	outputViewStickyScroll.background
+Status Bar colors	statusBar.background
+Status Bar colors	statusBar.foreground
+Status Bar colors	statusBar.border
+Status Bar colors	statusBar.debuggingBackground
+Status Bar colors	statusBar.debuggingForeground
+Status Bar colors	statusBar.debuggingBorder
+Status Bar colors	statusBar.noFolderForeground
+Status Bar colors	statusBar.noFolderBackground
+Status Bar colors	statusBar.noFolderBorder
+Status Bar colors	statusBarItem.activeBackground
+Status Bar colors	statusBarItem.hoverForeground
+Status Bar colors	statusBarItem.hoverBackground
+Status Bar colors	statusBarItem.prominentForeground
+Status Bar colors	statusBarItem.prominentBackground
+Status Bar colors	statusBarItem.prominentHoverForeground
+Status Bar colors	statusBarItem.prominentHoverBackground
+Status Bar colors	statusBarItem.remoteBackground
+Status Bar colors	statusBarItem.remoteForeground
+Status Bar colors	statusBarItem.remoteHoverBackground
+Status Bar colors	statusBarItem.remoteHoverForeground
+Status Bar colors	statusBarItem.errorBackground
+Status Bar colors	statusBarItem.errorForeground
+Status Bar colors	statusBarItem.errorHoverBackground
+Status Bar colors	statusBarItem.errorHoverForeground
+Status Bar colors	statusBarItem.warningBackground
+Status Bar colors	statusBarItem.warningForeground
+Status Bar colors	statusBarItem.warningHoverBackground
+Status Bar colors	statusBarItem.warningHoverForeground
+Status Bar colors	statusBarItem.compactHoverBackground
+Status Bar colors	statusBarItem.focusBorder
+Status Bar colors	statusBar.focusBorder
+Status Bar colors	statusBarItem.offlineBackground
+Status Bar colors	statusBarItem.offlineForeground
+Status Bar colors	statusBarItem.offlineHoverForeground
+Status Bar colors	statusBarItem.offlineHoverBackground
+Title Bar colors	titleBar.activeBackground
+Title Bar colors	titleBar.activeForeground
+Title Bar colors	titleBar.inactiveBackground
+Title Bar colors	titleBar.inactiveForeground
+Title Bar colors	titleBar.border
+Menu Bar colors	menubar.selectionForeground
+Menu Bar colors	menubar.selectionBackground
+Menu Bar colors	menubar.selectionBorder
+Menu Bar colors	menu.foreground
+Menu Bar colors	menu.background
+Menu Bar colors	menu.selectionForeground
+Menu Bar colors	menu.selectionBackground
+Menu Bar colors	menu.selectionBorder
+Menu Bar colors	menu.separatorBackground
+Menu Bar colors	menu.border
+Command Center colors	commandCenter.foreground
+Command Center colors	commandCenter.activeForeground
+Command Center colors	commandCenter.background
+Command Center colors	commandCenter.activeBackground
+Command Center colors	commandCenter.border
+Command Center colors	commandCenter.inactiveForeground
+Command Center colors	commandCenter.inactiveBorder
+Command Center colors	commandCenter.activeBorder
+Command Center colors	commandCenter.debuggingBackground
+Notification colors	notificationCenter.border
+Notification colors	notificationCenterHeader.foreground
+Notification colors	notificationCenterHeader.background
+Notification colors	notificationToast.border
+Notification colors	notifications.foreground
+Notification colors	notifications.background
+Notification colors	notifications.border
+Notification colors	notificationLink.foreground
+Notification colors	notificationsErrorIcon.foreground
+Notification colors	notificationsWarningIcon.foreground
+Notification colors	notificationsInfoIcon.foreground
+Banner colors	banner.background
+Banner colors	banner.foreground
+Banner colors	banner.iconForeground
+Extensions colors	extensionButton.prominentForeground
+Extensions colors	extensionButton.prominentBackground
+Extensions colors	extensionButton.prominentHoverBackground
+Extensions colors	extensionButton.background
+Extensions colors	extensionButton.foreground
+Extensions colors	extensionButton.hoverBackground
+Extensions colors	extensionButton.separator
+Extensions colors	extensionButton.border
+Extensions colors	extensionBadge.remoteBackground
+Extensions colors	extensionBadge.remoteForeground
+Extensions colors	extensionIcon.starForeground
+Extensions colors	extensionIcon.verifiedForeground
+Extensions colors	extensionIcon.preReleaseForeground
+Extensions colors	extensionIcon.sponsorForeground
+Extensions colors	extensionIcon.privateForeground
+Extensions colors	mcpIcon.starForeground
+Quick picker colors	pickerGroup.border
+Quick picker colors	pickerGroup.foreground
+Quick picker colors	quickInput.background
+Quick picker colors	quickInput.foreground
+Quick picker colors	quickInputList.focusBackground
+Quick picker colors	quickInputList.focusForeground
+Quick picker colors	quickInputList.focusIconForeground
+Quick picker colors	quickInputTitle.background
+Keybinding label colors	keybindingLabel.background
+Keybinding label colors	keybindingLabel.foreground
+Keybinding label colors	keybindingLabel.border
+Keybinding label colors	keybindingLabel.bottomBorder
+Keyboard shortcut table colors	keybindingTable.headerBackground
+Keyboard shortcut table colors	keybindingTable.rowsBackground
+Integrated Terminal colors	terminal.background
+Integrated Terminal colors	terminal.border
+Integrated Terminal colors	terminal.foreground
+Integrated Terminal colors	terminal.ansiBlack
+Integrated Terminal colors	terminal.ansiBlue
+Integrated Terminal colors	terminal.ansiBrightBlack
+Integrated Terminal colors	terminal.ansiBrightBlue
+Integrated Terminal colors	terminal.ansiBrightCyan
+Integrated Terminal colors	terminal.ansiBrightGreen
+Integrated Terminal colors	terminal.ansiBrightMagenta
+Integrated Terminal colors	terminal.ansiBrightRed
+Integrated Terminal colors	terminal.ansiBrightWhite
+Integrated Terminal colors	terminal.ansiBrightYellow
+Integrated Terminal colors	terminal.ansiCyan
+Integrated Terminal colors	terminal.ansiGreen
+Integrated Terminal colors	terminal.ansiMagenta
+Integrated Terminal colors	terminal.ansiRed
+Integrated Terminal colors	terminal.ansiWhite
+Integrated Terminal colors	terminal.ansiYellow
+Integrated Terminal colors	terminal.selectionBackground
+Integrated Terminal colors	terminal.selectionForeground
+Integrated Terminal colors	terminal.inactiveSelectionBackground
+Integrated Terminal colors	terminal.findMatchBackground
+Integrated Terminal colors	terminal.findMatchBorder
+Integrated Terminal colors	terminal.findMatchHighlightBackground
+Integrated Terminal colors	terminal.findMatchHighlightBorder
+Integrated Terminal colors	terminal.hoverHighlightBackground
+Integrated Terminal colors	terminalCursor.background
+Integrated Terminal colors	terminalCursor.foreground
+Integrated Terminal colors	terminal.dropBackground
+Integrated Terminal colors	terminal.tab.activeBorder
+Integrated Terminal colors	terminalCommandDecoration.defaultBackground
+Integrated Terminal colors	terminalCommandDecoration.successBackground
+Integrated Terminal colors	terminalCommandDecoration.errorBackground
+Integrated Terminal colors	terminalOverviewRuler.cursorForeground
+Integrated Terminal colors	terminalOverviewRuler.findMatchForeground
+Integrated Terminal colors	terminalStickyScroll.background
+Integrated Terminal colors	terminalStickyScroll.border
+Integrated Terminal colors	terminalStickyScrollHover.background
+Integrated Terminal colors	terminal.initialHintForeground
+Integrated Terminal colors	terminalOverviewRuler.border
+Integrated Terminal colors	terminalCommandGuide.foreground
+Integrated Terminal colors	terminalSymbolIcon.aliasForeground
+Integrated Terminal colors	terminalSymbolIcon.branchForeground
+Integrated Terminal colors	terminalSymbolIcon.commitForeground
+Integrated Terminal colors	terminalSymbolIcon.flagForeground
+Integrated Terminal colors	terminalSymbolIcon.optionForeground
+Integrated Terminal colors	terminalSymbolIcon.optionValueForeground
+Integrated Terminal colors	terminalSymbolIcon.methodForeground
+Integrated Terminal colors	terminalSymbolIcon.argumentForeground
+Integrated Terminal colors	terminalSymbolIcon.inlineSuggestionForeground
+Integrated Terminal colors	terminalSymbolIcon.fileForeground
+Integrated Terminal colors	terminalSymbolIcon.folderForeground
+Integrated Terminal colors	terminalSymbolIcon.pullRequestDoneForeground
+Integrated Terminal colors	terminalSymbolIcon.pullRequestForeground
+Integrated Terminal colors	terminalSymbolIcon.remoteForeground
+Integrated Terminal colors	terminalSymbolIcon.stashForeground
+Integrated Terminal colors	terminalSymbolIcon.symbolText
+Integrated Terminal colors	terminalSymbolIcon.symbolicLinkFileForeground
+Integrated Terminal colors	terminalSymbolIcon.symbolicLinkFolderForeground
+Integrated Terminal colors	terminalSymbolIcon.tagForeground
+Debug colors	debugToolBar.background
+Debug colors	debugToolBar.border
+Debug colors	editor.stackFrameHighlightBackground
+Debug colors	editor.focusedStackFrameHighlightBackground
+Debug colors	editor.inlineValuesForeground
+Debug colors	editor.inlineValuesBackground
+Debug colors	debugView.exceptionLabelForeground
+Debug colors	debugView.exceptionLabelBackground
+Debug colors	debugView.stateLabelForeground
+Debug colors	debugView.stateLabelBackground
+Debug colors	debugView.valueChangedHighlight
+Debug colors	debugTokenExpression.name
+Debug colors	debugTokenExpression.value
+Debug colors	debugTokenExpression.string
+Debug colors	debugTokenExpression.boolean
+Debug colors	debugTokenExpression.number
+Debug colors	debugTokenExpression.error
+Debug colors	debugTokenExpression.type
+Testing colors	testing.runAction
+Testing colors	testing.iconErrored
+Testing colors	testing.iconFailed
+Testing colors	testing.iconPassed
+Testing colors	testing.iconQueued
+Testing colors	testing.iconUnset
+Testing colors	testing.iconSkipped
+Testing colors	testing.iconErrored.retired
+Testing colors	testing.iconFailed.retired
+Testing colors	testing.iconPassed.retired
+Testing colors	testing.iconQueued.retired
+Testing colors	testing.iconUnset.retired
+Testing colors	testing.iconSkipped.retired
+Testing colors	testing.peekBorder
+Testing colors	testing.peekHeaderBackground
+Testing colors	testing.message.error.lineBackground
+Testing colors	testing.message.info.decorationForeground
+Testing colors	testing.message.info.lineBackground
+Testing colors	testing.messagePeekBorder
+Testing colors	testing.messagePeekHeaderBackground
+Testing colors	testing.coveredBackground
+Testing colors	testing.coveredBorder
+Testing colors	testing.coveredGutterBackground
+Testing colors	testing.uncoveredBranchBackground
+Testing colors	testing.uncoveredBackground
+Testing colors	testing.uncoveredBorder
+Testing colors	testing.uncoveredGutterBackground
+Testing colors	testing.coverCountBadgeBackground
+Testing colors	testing.coverCountBadgeForeground
+Testing colors	testing.message.error.badgeBackground
+Testing colors	testing.message.error.badgeBorder
+Testing colors	testing.message.error.badgeForeground
+Welcome page colors	welcomePage.background
+Welcome page colors	welcomePage.progress.background
+Welcome page colors	welcomePage.progress.foreground
+Welcome page colors	welcomePage.tileBackground
+Welcome page colors	welcomePage.tileHoverBackground
+Welcome page colors	welcomePage.tileBorder
+Welcome page colors	walkThrough.embeddedEditorBackground
+Welcome page colors	walkthrough.stepTitle.foreground
+Git colors	gitDecoration.addedResourceForeground
+Git colors	gitDecoration.modifiedResourceForeground
+Git colors	gitDecoration.deletedResourceForeground
+Git colors	gitDecoration.renamedResourceForeground
+Git colors	gitDecoration.stageModifiedResourceForeground
+Git colors	gitDecoration.stageDeletedResourceForeground
+Git colors	gitDecoration.untrackedResourceForeground
+Git colors	gitDecoration.ignoredResourceForeground
+Git colors	gitDecoration.conflictingResourceForeground
+Git colors	gitDecoration.submoduleResourceForeground
+Git colors	git.blame.editorDecorationForeground
+Source Control Graph colors	scmGraph.historyItemHoverLabelForeground
+Source Control Graph colors	scmGraph.foreground1
+Source Control Graph colors	scmGraph.foreground2
+Source Control Graph colors	scmGraph.foreground3
+Source Control Graph colors	scmGraph.foreground4
+Source Control Graph colors	scmGraph.foreground5
+Source Control Graph colors	scmGraph.historyItemHoverAdditionsForeground
+Source Control Graph colors	scmGraph.historyItemHoverDeletionsForeground
+Source Control Graph colors	scmGraph.historyItemRefColor
+Source Control Graph colors	scmGraph.historyItemRemoteRefColor
+Source Control Graph colors	scmGraph.historyItemBaseRefColor
+Source Control Graph colors	scmGraph.historyItemHoverDefaultLabelForeground
+Source Control Graph colors	scmGraph.historyItemHoverDefaultLabelBackground
+Settings Editor colors	settings.headerForeground
+Settings Editor colors	settings.modifiedItemIndicator
+Settings Editor colors	settings.dropdownBackground
+Settings Editor colors	settings.dropdownForeground
+Settings Editor colors	settings.dropdownBorder
+Settings Editor colors	settings.dropdownListBorder
+Settings Editor colors	settings.checkboxBackground
+Settings Editor colors	settings.checkboxForeground
+Settings Editor colors	settings.checkboxBorder
+Settings Editor colors	settings.rowHoverBackground
+Settings Editor colors	settings.textInputBackground
+Settings Editor colors	settings.textInputForeground
+Settings Editor colors	settings.textInputBorder
+Settings Editor colors	settings.numberInputBackground
+Settings Editor colors	settings.numberInputForeground
+Settings Editor colors	settings.numberInputBorder
+Settings Editor colors	settings.focusedRowBackground
+Settings Editor colors	settings.focusedRowBorder
+Settings Editor colors	settings.headerBorder
+Settings Editor colors	settings.sashBorder
+Settings Editor colors	settings.settingsHeaderHoverForeground
+Breadcrumbs colors	breadcrumb.foreground
+Breadcrumbs colors	breadcrumb.background
+Breadcrumbs colors	breadcrumb.focusForeground
+Breadcrumbs colors	breadcrumb.activeSelectionForeground
+Breadcrumbs colors	breadcrumbPicker.background
+Snippets colors	editor.snippetTabstopHighlightBackground
+Snippets colors	editor.snippetTabstopHighlightBorder
+Snippets colors	editor.snippetFinalTabstopHighlightBackground
+Snippets colors	editor.snippetFinalTabstopHighlightBorder
+Symbol Icons colors	symbolIcon.arrayForeground
+Symbol Icons colors	symbolIcon.booleanForeground
+Symbol Icons colors	symbolIcon.classForeground
+Symbol Icons colors	symbolIcon.colorForeground
+Symbol Icons colors	symbolIcon.constantForeground
+Symbol Icons colors	symbolIcon.constructorForeground
+Symbol Icons colors	symbolIcon.enumeratorForeground
+Symbol Icons colors	symbolIcon.enumeratorMemberForeground
+Symbol Icons colors	symbolIcon.eventForeground
+Symbol Icons colors	symbolIcon.fieldForeground
+Symbol Icons colors	symbolIcon.fileForeground
+Symbol Icons colors	symbolIcon.folderForeground
+Symbol Icons colors	symbolIcon.functionForeground
+Symbol Icons colors	symbolIcon.interfaceForeground
+Symbol Icons colors	symbolIcon.keyForeground
+Symbol Icons colors	symbolIcon.keywordForeground
+Symbol Icons colors	symbolIcon.methodForeground
+Symbol Icons colors	symbolIcon.moduleForeground
+Symbol Icons colors	symbolIcon.namespaceForeground
+Symbol Icons colors	symbolIcon.nullForeground
+Symbol Icons colors	symbolIcon.numberForeground
+Symbol Icons colors	symbolIcon.objectForeground
+Symbol Icons colors	symbolIcon.operatorForeground
+Symbol Icons colors	symbolIcon.packageForeground
+Symbol Icons colors	symbolIcon.propertyForeground
+Symbol Icons colors	symbolIcon.referenceForeground
+Symbol Icons colors	symbolIcon.snippetForeground
+Symbol Icons colors	symbolIcon.stringForeground
+Symbol Icons colors	symbolIcon.structForeground
+Symbol Icons colors	symbolIcon.textForeground
+Symbol Icons colors	symbolIcon.typeParameterForeground
+Symbol Icons colors	symbolIcon.unitForeground
+Symbol Icons colors	symbolIcon.variableForeground
+Debug Icons colors	debugIcon.breakpointForeground
+Debug Icons colors	debugIcon.breakpointDisabledForeground
+Debug Icons colors	debugIcon.breakpointUnverifiedForeground
+Debug Icons colors	debugIcon.breakpointCurrentStackframeForeground
+Debug Icons colors	debugIcon.breakpointStackframeForeground
+Debug Icons colors	debugIcon.startForeground
+Debug Icons colors	debugIcon.pauseForeground
+Debug Icons colors	debugIcon.stopForeground
+Debug Icons colors	debugIcon.disconnectForeground
+Debug Icons colors	debugIcon.restartForeground
+Debug Icons colors	debugIcon.stepOverForeground
+Debug Icons colors	debugIcon.stepIntoForeground
+Debug Icons colors	debugIcon.stepOutForeground
+Debug Icons colors	debugIcon.continueForeground
+Debug Icons colors	debugIcon.stepBackForeground
+Debug Icons colors	debugConsole.infoForeground
+Debug Icons colors	debugConsole.warningForeground
+Debug Icons colors	debugConsole.errorForeground
+Debug Icons colors	debugConsole.sourceForeground
+Debug Icons colors	debugConsoleInputIcon.foreground
+Notebook colors	notebook.editorBackground
+Notebook colors	notebook.cellBorderColor
+Notebook colors	notebook.cellHoverBackground
+Notebook colors	notebook.cellInsertionIndicator
+Notebook colors	notebook.cellStatusBarItemHoverBackground
+Notebook colors	notebook.cellToolbarSeparator
+Notebook colors	notebook.cellEditorBackground
+Notebook colors	notebook.focusedCellBackground
+Notebook colors	notebook.focusedCellBorder
+Notebook colors	notebook.focusedEditorBorder
+Notebook colors	notebook.inactiveFocusedCellBorder
+Notebook colors	notebook.inactiveSelectedCellBorder
+Notebook colors	notebook.outputContainerBackgroundColor
+Notebook colors	notebook.outputContainerBorderColor
+Notebook colors	notebook.selectedCellBackground
+Notebook colors	notebook.selectedCellBorder
+Notebook colors	notebook.symbolHighlightBackground
+Notebook colors	notebookScrollbarSlider.activeBackground
+Notebook colors	notebookScrollbarSlider.background
+Notebook colors	notebookScrollbarSlider.hoverBackground
+Notebook colors	notebookStatusErrorIcon.foreground
+Notebook colors	notebookStatusRunningIcon.foreground
+Notebook colors	notebookStatusSuccessIcon.foreground
+Notebook colors	notebookEditorOverviewRuler.runningCellForeground
+Chart colors	charts.foreground
+Chart colors	charts.lines
+Chart colors	charts.red
+Chart colors	charts.blue
+Chart colors	charts.yellow
+Chart colors	charts.orange
+Chart colors	charts.green
+Chart colors	charts.purple
+Chart colors	chart.line
+Chart colors	chart.axis
+Chart colors	chart.guide
+Ports colors	ports.iconRunningProcessForeground
+Comments View colors	commentsView.resolvedIcon
+Comments View colors	commentsView.unresolvedIcon
+Action Bar colors	actionBar.toggledBackground
+Simple Find Widget colors	simpleFindWidget.sashBorder
+Gauge colors	gauge.background
+Gauge colors	gauge.foreground
+Gauge colors	gauge.border
+Gauge colors	gauge.warningBackground
+Gauge colors	gauge.warningForeground
+Gauge colors	gauge.errorBackground
+Gauge colors	gauge.errorForeground
+Markdown	markdownAlert.note.foreground
+Markdown	markdownAlert.tip.foreground
+Markdown	markdownAlert.important.foreground
+Markdown	markdownAlert.warning.foreground
+Markdown	markdownAlert.caution.foreground
+Agent Session colors	agentSessionReadIndicator.foreground
+Agent Session colors	agentSessionSelectedBadge.border
+Agent Session colors	agentSessionSelectedUnfocusedBadge.border
+Agent Session colors	agentStatusIndicator.background
+Agent Session colors	aiCustomizationManagement.sashBorder
+`;
+
+export const vscodeThemeColorReference: VscodeThemeColorEntry[] = rawVscodeThemeColorReference
+  .trim()
+  .split(/\n+/)
+  .map(line => {
+    const [section, id] = line.split(/\t+/);
+    return { section, id };
+  });

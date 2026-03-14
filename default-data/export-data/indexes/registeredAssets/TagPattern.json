@@ -1,0 +1,544 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "TagPattern",
+  "path": "Server/TagPatterns",
+  "extension": ".json",
+  "assetCount": 133,
+  "fileCount": 4,
+  "values": {
+    "*AmbFX_Caves_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Caves_Spiders_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Caves_Volcanic_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Dungeons_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Energy_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Exterior_Birds_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Exterior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Exterior_Wind_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Global_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Grand_Interior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Heart_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Tent_Interior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Forgotten_Temple_Tree_Interior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Mage_Tower_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Mineshaft_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Rain_Exterior_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Rain_Interior_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Rain_Light_Exterior_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Rainstorm_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Sandstorm_Close_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Sandstorm_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Sandstorm_Low_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Snow_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Weather_Snowstorm_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Forest_Autumn_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Forest_Azure_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Forest_Gen_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Forest_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Forest_Night_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Plains_Gen_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Plains_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Plains_Night_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Sunrise_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Sunrise_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Sunset_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Sunset_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Wind_Base_Low_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Wind_Base_Medium_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone1_Wind_Base_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone2_Savanna_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone2_Wind_Base_Low_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone2_Wind_Base_Medium_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Cave_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Sunrise_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Sunrise_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Sunset_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Sunset_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Wind_Base_Low_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Wind_Base_Medium_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone3_Wind_Base_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone4_Forest_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone4_Jungle_Base_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone4_Jungle_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone4_Wastes_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone4_Wind_Base_Low_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*AmbFX_Zone4_Wind_Base_Medium_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Autumn_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Autumn_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Azure_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Azure_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Gen_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Gen_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Forest_Night_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Mountain_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Plains_Gen_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Plains_Gen_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Plains_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Plains_Night_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Swamp_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone1_Trork_Camp_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone3_Cave_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone3_Forest_Active_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone3_Forest_Night_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone3_Mountain_Day_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Emit_Zone3_Wind_Emitters_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_0_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_1_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_2_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_3_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_4_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_5_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Fire_Ticker_Flammability_6_TagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Creative_Hub_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Forgotten_Temple_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone0_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Cave_Deep_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Cave_Shallow_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Cave_Volcanic_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Day_Rain_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Day_Rain_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Dungeon_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Kweebec_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Kweebec_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_MageTower_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Night_Rain_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Night_Rain_Conditions_WeatherTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Sunrise_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Trork_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone1_Trork_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Cave_Deep_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Cave_Shallow_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Cave_Volcanic_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Dungeon_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Feran_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Feran_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Sand_Storm_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Sand_Storm_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone2_Scarak_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Cave_Deep_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Cave_Shallow_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Cave_Volcanic_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Dungeon_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Hedera_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Outlander_Day_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone3_Outlander_Night_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone4_Dark_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*Mus_Zone4_Jungle_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*RevZ_Forgotten_Temple_Exterior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*RevZ_Forgotten_Temple_Generic_Interior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*RevZ_Forgotten_Temple_Grand_Interior_Conditions_EnvironmentTagPattern": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Bush_Or_Seed": {
+      "sourcedFromFile": "/Server/TagPatterns/Bush_Or_Seed.json",
+      "package": "Hytale:Hytale"
+    },
+    "CactusGrowth": {
+      "sourcedFromFile": "/Server/TagPatterns/CactusGrowth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soil_Or_Grass": {
+      "sourcedFromFile": "/Server/TagPatterns/Soil_Or_Grass.json",
+      "package": "Hytale:Hytale"
+    },
+    "Vine": {
+      "sourcedFromFile": "/Server/TagPatterns/Vine.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

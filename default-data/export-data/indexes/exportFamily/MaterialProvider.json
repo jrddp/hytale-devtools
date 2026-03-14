@@ -1,0 +1,12 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "exportFamily",
+  "key": "MaterialProvider",
+  "values": {
+    "Plains1_Oak_Sunny_Patches": {
+      "sourcedFromFile": "/Server/HytaleGenerator/Biomes/Experimental/Mountains.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

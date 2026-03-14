@@ -1,0 +1,116 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "AttitudeGroup",
+  "path": "Server/NPC/Attitude/Roles",
+  "extension": ".json",
+  "assetCount": 26,
+  "fileCount": 26,
+  "values": {
+    "Aggressive": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/LivingWorld/Aggressive.json",
+      "package": "Hytale:Hytale"
+    },
+    "Attack_Dummy": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Tests/Attack_Dummy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Attack_Tests": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Tests/Attack_Tests.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cactee": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Creature/Mythic/Cactee.json",
+      "package": "Hytale:Hytale"
+    },
+    "Critters": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Critters.json",
+      "package": "Hytale:Hytale"
+    },
+    "Empty": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Empty.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Neutral/Feran.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Goblin/Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Miner": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Goblin/Goblin_Miner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Golem": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Elemental/Golem.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Neutral/Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "Neutral": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/LivingWorld/Neutral.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Outlander/Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Cultist": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Outlander/Outlander_Cultist.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Ranged": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Outlander/Outlander_Ranged.json",
+      "package": "Hytale:Hytale"
+    },
+    "Passive": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/LivingWorld/Passive.json",
+      "package": "Hytale:Hytale"
+    },
+    "Predators": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Predators.json",
+      "package": "Hytale:Hytale"
+    },
+    "PredatorsBig": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/PredatorsBig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Prey": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Prey.json",
+      "package": "Hytale:Hytale"
+    },
+    "PreyBig": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/PreyBig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Scarak.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Trork/Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Hunter": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Trork/Trork_Hunter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Ranged": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Intelligent/Aggressive/Trork/Trork_Ranged.json",
+      "package": "Hytale:Hytale"
+    },
+    "Vermin": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Vermin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void": {
+      "sourcedFromFile": "/Server/NPC/Attitude/Roles/Void.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

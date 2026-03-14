@@ -1,0 +1,208 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "CameraShake",
+  "path": "Server/Camera/CameraShake",
+  "extension": ".json",
+  "assetCount": 49,
+  "fileCount": 49,
+  "values": {
+    "Battleaxe_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Downstrike": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Downstrike.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Downstrike_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Downstrike_Jump.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Frontflip_Chop": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Frontflip_Chop.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Jump.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Sweep": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Sweep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Swing_Diagonal_Left": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Diagonal_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Diagonal_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Horizontal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Swing_Vertical": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Swing_Vertical.json",
+      "package": "Hytale:Hytale"
+    },
+    "Battleaxe_Whirlwind": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Battleaxe/Battleaxe_Whirlwind.json",
+      "package": "Hytale:Hytale"
+    },
+    "Block_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Block/Block_Swing_Diagonal_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crossbow_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Crossbow/Crossbow_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Dash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Dash_Side": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Dash_Side.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Jump.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Land": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Land.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Slash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Slash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Stab": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Stab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Sweep": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Sweep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Swing_Diagonal_Left": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Swing_Diagonal_Left.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Swing_Diagonal_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Daggers_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Daggers/Daggers_Swing_Horizontal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Damage": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Damage/Damage.json",
+      "package": "Hytale:Hytale"
+    },
+    "Damage_Fall": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Damage/Damage_Fall.json",
+      "package": "Hytale:Hytale"
+    },
+    "Handgun_Shoot": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Handgun/Handgun_Shoot.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hatchet_Chop": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Hatchet/Hatchet_Chop.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hedera_Scream": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/NPC/Hedera_Scream.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hoe_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Hoe/Hoe_Swing_Horizontal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Impact": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Impact/Impact.json",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Light": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Impact/Impact_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Impact_Strong": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Impact/Impact_Strong.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Explode": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Explode.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Jump": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Jump.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mace_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Mace/Mace_Swing_Horizontal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pickaxe_Mine": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Pickaxe/Pickaxe_Mine.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pickaxe_Mine_Impact": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Pickaxe/Pickaxe_Mine_Impact.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shield_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Shield/Shield_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shortbow_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Shortbow/Shortbow_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Shovel_Dig": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Shovel/Shovel_Dig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Bash": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Bash.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Spin": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Spin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Stab": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Stab.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Swing_Diagonal_Right": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Swing_Diagonal_Right.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sword_Swing_Vertical": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Sword/Sword_Swing_Vertical.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unarmed_Block_Impact": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Unarmed/Unarmed_Block_Impact.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unarmed_Swing_Horizontal": {
+      "sourcedFromFile": "/Server/Camera/CameraShake/Unarmed/Unarmed_Swing_Horizontal.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

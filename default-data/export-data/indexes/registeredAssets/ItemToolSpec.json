@@ -1,0 +1,80 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemToolSpec",
+  "path": "Server/Item/Unarmed/Gathering",
+  "extension": ".json",
+  "assetCount": 17,
+  "fileCount": 17,
+  "values": {
+    "Benches": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Benches.json",
+      "package": "Hytale:Hytale"
+    },
+    "Branches": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Branches.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cloths": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Cloths.json",
+      "package": "Hytale:Hytale"
+    },
+    "DungeonBlocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/DungeonBlocks.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreAdamantite": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreAdamantite.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreCobalt": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreCobalt.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreCopper": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreCopper.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreGold": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreGold.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreIron": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreIron.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreMithril": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreMithril.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreSilver": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreSilver.json",
+      "package": "Hytale:Hytale"
+    },
+    "OreThorium": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/OreThorium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Rocks.json",
+      "package": "Hytale:Hytale"
+    },
+    "SoftBlocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/SoftBlocks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Soils": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Soils.json",
+      "package": "Hytale:Hytale"
+    },
+    "VolcanicRocks": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/VolcanicRocks.json",
+      "package": "Hytale:Hytale"
+    },
+    "Woods": {
+      "sourcedFromFile": "/Server/Item/Unarmed/Gathering/Woods.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

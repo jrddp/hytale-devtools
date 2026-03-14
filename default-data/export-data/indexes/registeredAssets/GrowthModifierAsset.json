@@ -1,0 +1,28 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "GrowthModifierAsset",
+  "path": "Server/Farming/Modifiers",
+  "extension": ".json",
+  "assetCount": 4,
+  "fileCount": 4,
+  "values": {
+    "Darkness": {
+      "sourcedFromFile": "/Server/Farming/Modifiers/Darkness.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fertilizer": {
+      "sourcedFromFile": "/Server/Farming/Modifiers/Fertilizer.json",
+      "package": "Hytale:Hytale"
+    },
+    "LightLevel": {
+      "sourcedFromFile": "/Server/Farming/Modifiers/LightLevel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Water": {
+      "sourcedFromFile": "/Server/Farming/Modifiers/Water.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

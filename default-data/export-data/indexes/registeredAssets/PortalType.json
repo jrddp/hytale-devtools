@@ -1,0 +1,32 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "PortalType",
+  "path": "Server/PortalTypes",
+  "extension": ".json",
+  "assetCount": 5,
+  "fileCount": 5,
+  "values": {
+    "Hederas_Lair": {
+      "sourcedFromFile": "/Server/PortalTypes/Hederas_Lair.json",
+      "package": "Hytale:Hytale"
+    },
+    "Henges": {
+      "sourcedFromFile": "/Server/PortalTypes/Henges.json",
+      "package": "Hytale:Hytale"
+    },
+    "Jungles": {
+      "sourcedFromFile": "/Server/PortalTypes/Jungles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Taiga": {
+      "sourcedFromFile": "/Server/PortalTypes/Taiga.json",
+      "package": "Hytale:Hytale"
+    },
+    "Windsurf_Valley": {
+      "sourcedFromFile": "/Server/PortalTypes/Windsurf_Valley.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

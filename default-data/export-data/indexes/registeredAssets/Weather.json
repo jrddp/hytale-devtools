@@ -1,0 +1,364 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "Weather",
+  "path": "Server/Weathers",
+  "extension": ".json",
+  "assetCount": 88,
+  "fileCount": 87,
+  "values": {
+    "Blood_Moon": {
+      "sourcedFromFile": "/Server/Weathers/Blood_Moon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cave_Deep": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Cave_Deep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cave_Fog": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Cave_Fog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cave_Goblin": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Cave_Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cave_Shallow": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Cave_Shallow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cave_Volcanic": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Cave_Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Creative_Hub": {
+      "sourcedFromFile": "/Server/Weathers/Creative_Hub.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Flat": {
+      "sourcedFromFile": "/Server/Weathers/Unique/Default_Flat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Void": {
+      "sourcedFromFile": "/Server/Weathers/Unique/Default_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Cursed_Crypt": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Dungeon_Cursed_Crypt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dungeon_Cursed_Crypt_Graveyard": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Dungeon_Cursed_Crypt_Graveyard.json",
+      "package": "Hytale:Hytale"
+    },
+    "Forgotten_Temple": {
+      "sourcedFromFile": "/Server/Weathers/Forgotten_Temple.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hedera_Forest": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Hedera_Forest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poison_Test": {
+      "sourcedFromFile": "/Server/Weathers/Poisonlands/Poison_Test.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poisonlands_Heavy": {
+      "sourcedFromFile": "/Server/Weathers/Poisonlands/Poisonlands_Heavy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poisonlands_PurpleTwirl": {
+      "sourcedFromFile": "/Server/Weathers/Poisonlands/Poisonlands_PurpleTwirl.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poisonlands_Red": {
+      "sourcedFromFile": "/Server/Weathers/Poisonlands/Poisonlands_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Void_Event_Intense": {
+      "sourcedFromFile": "/Server/Weathers/Portals_Void_Event_Intense.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Void_Event_Light": {
+      "sourcedFromFile": "/Server/Weathers/Portals_Void_Event_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Light": {
+      "sourcedFromFile": "/Server/Weathers/Skylands/Skylands_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Mushroom_Forest_Cloudy": {
+      "sourcedFromFile": "/Server/Weathers/Skylands/Skylands_Mushroom_Forest_Cloudy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Mystic_Forest_Cloudy": {
+      "sourcedFromFile": "/Server/Weathers/Skylands/Skylands_Mystic_Forest_Cloudy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Rapid_Marsh_Cloudy_Medium": {
+      "sourcedFromFile": "/Server/Weathers/Skylands/Skylands_Rapid_Marsh_Cloudy_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Rapid_Marsh_Stormy": {
+      "sourcedFromFile": "/Server/Weathers/Skylands/Skylands_Rapid_Marsh_Stormy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Rapids_Marsh_Cloudy_Medium": {
+      "sourcedFromFile": "/Server/Weathers/Skylands_Rapids_Marsh_Cloudy_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skylands_Sunny": {
+      "sourcedFromFile": "/Server/Weathers/Skylands/Skylands_Sunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Terror_Weather": {
+      "sourcedFromFile": "/Server/Weathers/Minigames/Frail_Test/Terror_Weather.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unknown": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Void": {
+      "sourcedFromFile": "/Server/Weathers/Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Autumn_Forest_Windy": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Autumn_Forest_Windy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Azurewood_Fireflies": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Azurewood_Fireflies.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Cloudy_Medium": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Cloudy_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Foggy_Light": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Foggy_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Gully": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Gully.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Oak_Forest_Windy": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Oak_Forest_Windy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Rain": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Rain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Rain_Light": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Rain_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Sunny": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Sunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Sunny_Fireflies": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Sunny_Fireflies.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Swamp": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Swamp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Swamp_Foggy": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Swamp_Foggy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Swamp_Rain": {
+      "sourcedFromFile": "/Server/Weathers/Zone1/Zone1_Swamp_Rain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Blazing_Light": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Blazing_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Cloudy_Heavy": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Cloudy_Heavy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Cloudy_Light": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Cloudy_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Corrupted_Oasis": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Corrupted_Oasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Corrupted_Oasis_Night": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Corrupted_Oasis_Night.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Desert_Haze": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Desert_Haze.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Sand_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Sand_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Story_Dungeon_Exterior": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Story_Dungeon_Exterior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Story_Dungeon_Interior1": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Story_Dungeon_Interior1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Story_Dungeon_Interior_Corrupted": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Story_Dungeon_Interior_Corrupted.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Sunny": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Sunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Thunder_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone2/Zone2_Thunder_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Cave_Deep": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Cave_Deep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Cave_Shallow": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Cave_Shallow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Cave_Volcanic": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Cave_Volcanic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Cloudy_Boreal": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Cloudy_Boreal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Cloudy_Light": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Cloudy_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Cloudy_Medium": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Cloudy_Medium.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Hedera": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Northern_Lights": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Northern_Lights.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Rain": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Rain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Snow": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Snow_Heavy": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Snow_Heavy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Snow_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone3/Zone3_Snow_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_AshWastes": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_AshWastes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_AshWastes_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_AshWastes_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Caves_Jungles": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Caves_Jungles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Forest_Burnt": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Forest_Burnt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Forest_Root": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Forest_Root.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Geyser": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Geyser.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_GhostForest": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_GhostForest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_GhostForest_Rain": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_GhostForest_Rain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Lava_Fields": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Lava_Fields.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Light": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Light.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Ruined_City": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Ruined_City.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Spooky": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Spooky.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Swamp_Gloomy": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Swamp_Gloomy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Swamp_Storm": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Swamp_Storm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Underground_Jungle": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Underground_Jungle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Underground_Jungle_Pink": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Underground_Jungle_Pink.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Underground_Jungle_Red": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Underground_Jungle_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Wastes": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Wastes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Wastes_Rain": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Wastes_Rain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Wastes_Rain_Heavy": {
+      "sourcedFromFile": "/Server/Weathers/Zone4/Zone4_Wastes_Rain_Heavy.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

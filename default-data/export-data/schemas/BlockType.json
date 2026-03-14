@@ -1,0 +1,3062 @@
+{
+  "type": "object",
+  "$id": "BlockType.json",
+  "title": "BlockType",
+  "description": "The counter-party to \"Support\". This block offers supporting faces which can match the face requirements of adjacent/nearby blocks.",
+  "markdownDescription": "The counter-party to \"Support\". This block offers supporting faces which can match the face requirements of adjacent/nearby blocks.",
+  "hytale": {
+    "type": "object",
+    "internalKeys": [
+      "Empty",
+      "Unknown",
+      "Debug_Cube",
+      "Debug_Model"
+    ],
+    "path": "Item/Block/Blocks",
+    "extension": ".json",
+    "idProvider": "Item",
+    "mergesProperties": true
+  },
+  "properties": {
+    "Parent": {
+      "type": "string",
+      "description": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another BlockType most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "markdownDescription": "When set this asset will inherit properties from the named asset.\n\nWhen inheriting from another **BlockType** most properties will simply be copied from the parent asset to this asset. In the case where both child and parent provide a field the child field will simply replace the value provided by the parent, in the case of nested structures this will apply to the fields within the structure. In some cases the field may decide to act differently, for example: by merging the parent and child fields together.",
+      "hytaleParent": {
+        "type": "BlockType"
+      },
+      "hytale": {
+        "type": "string"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockType"
+        }
+      }
+    },
+    "$Title": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Comment": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Author": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$TODO": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Position": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$FloatingFunctionNodes": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$Groups": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$WorkspaceID": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeId": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "$NodeEditorMetadata": {
+      "description": "Comments don't have any function other than allowing users to add certain internal comments or notes to an asset",
+      "doNotSuggest": true,
+      "hytale": {
+        "uiDisplayMode": "Hidden",
+        "uiPropertyTitle": "Comment"
+      }
+    },
+    "Tags": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map",
+      "description": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a Material tag with the values Solid and Stone, And another single tag Ore.\n\nTags will be expanded into a single list of tags automatically. Using the above example with Material and Ore the end result would be the following list of tags: Ore, Material, Solid, Stone, Material=Solid and Material=Stone.",
+      "markdownDescription": "Tags are a general way to describe an asset that can be interpreted by other systems in a way they see fit.\n\nFor example you could tag something with a **Material** tag with the values **Solid** and **Stone**, And another single tag **Ore**.\n\nTags will be expanded into a single list of tags automatically. Using the above example with **Material** and **Ore** the end result would be the following list of tags: **Ore**, **Material**, **Solid**, **Stone**, **Material=Solid** and **Material=Stone**.",
+      "hytale": {
+        "type": "object",
+        "inheritsProperty": true
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "type": "string",
+          "hytale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Group": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Sets the group for this block. Used by BlockSets.\n\nA group of \"@Tech\" will prevent physics from being automatically applied to the block.",
+      "markdownDescription": "Sets the group for this block. Used by **BlockSets**.\n\nA group of _\"@Tech\"_ will prevent physics from being automatically applied to the block.",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiEditorComponent": {
+          "component": "Text",
+          "dataSet": "BlockGroups"
+        }
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "uiDataSet",
+          "key": "BlockGroups"
+        }
+      }
+    },
+    "BlockListAssetId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of a BlockList asset, for use  in builder tool brushes",
+      "markdownDescription": "The name of a BlockList asset, for use  in builder tool brushes",
+      "hytaleAssetRef": "BlockTypeListAsset",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockTypeListAsset"
+        }
+      }
+    },
+    "PrefabListAssetId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of a PrefabList asset, for use  in builder tool brushes",
+      "markdownDescription": "The name of a PrefabList asset, for use  in builder tool brushes",
+      "hytaleAssetRef": "PrefabListAsset",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "PrefabListAsset"
+        }
+      }
+    },
+    "DrawType": {
+      "type": "string",
+      "title": "DrawType",
+      "enumDescriptions": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true,
+        "uiSectionStart": "Rendering",
+        "uiRebuildCaches": [
+          "Models",
+          "BlockTextures",
+          "ModelTextures"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "enum": [
+        "Empty",
+        "GizmoCube",
+        "Cube",
+        "Model",
+        "CubeWithModel"
+      ],
+      "default": "Cube"
+    },
+    "Textures": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "Block Textures",
+        "uiRebuildCaches": [
+          "Models",
+          "BlockTextures"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "$ref": "common.json#/definitions/BlockTypeTextures"
+      }
+    },
+    "TextureSideMask": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "Block Texture Side Mask",
+        "uiRebuildCaches": [
+          "Models",
+          "BlockTextures"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Blocks/",
+          "BlockTextures/",
+          "Items/",
+          "NPC/",
+          "Resources/",
+          "VFX/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Blocks/",
+            "BlockTextures/",
+            "Items/",
+            "NPC/",
+            "Resources/",
+            "VFX/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "CubeShadingMode": {
+      "type": "string",
+      "title": "ShadingMode",
+      "enumDescriptions": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "enum": [
+        "Standard",
+        "Flat",
+        "Fullbright",
+        "Reflective"
+      ],
+      "default": "Standard"
+    },
+    "CustomModelTexture": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "Block Model Textures",
+        "uiRebuildCaches": [
+          "Models",
+          "BlockTextures"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "$ref": "common.json#/definitions/CustomModelTexture"
+      }
+    },
+    "CustomModel": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "Block Model",
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Blocks/",
+          "Items/",
+          "Resources/",
+          "NPC/",
+          "VFX/",
+          "Consumable/"
+        ],
+        "requiredExtension": "blockymodel",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Blocks/",
+            "Items/",
+            "Resources/",
+            "NPC/",
+            "VFX/",
+            "Consumable/"
+          ],
+          "extension": "blockymodel"
+        }
+      }
+    },
+    "BlockBreakingDecalId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The block breaking decal defined here defines the decal asset that should be overlaid when this block is damaged",
+      "markdownDescription": "The block breaking decal defined here defines the decal asset that should be overlaid when this block is damaged",
+      "hytaleAssetRef": "BlockBreakingDecal",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockBreakingDecal"
+        }
+      }
+    },
+    "Material": {
+      "type": "string",
+      "title": "BlockMaterial",
+      "enumDescriptions": [
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Empty",
+        "Solid"
+      ],
+      "default": "Empty"
+    },
+    "Opacity": {
+      "type": "string",
+      "title": "Opacity",
+      "enumDescriptions": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Solid",
+        "Semitransparent",
+        "Cutout",
+        "Transparent"
+      ],
+      "default": "Solid"
+    },
+    "RequiresAlphaBlending": {
+      "type": "boolean",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": false
+    },
+    "CustomModelScale": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "number",
+              "hytale": {
+                "type": "number"
+              },
+              "default": 1.0
+            },
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^(-?Infinity|NaN)$"
+            }
+          ],
+          "hytale": {
+            "type": "Number",
+            "inheritsProperty": true,
+            "uiRebuildCaches": [
+              "Models"
+            ],
+            "uiRebuildCachesForChildProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "CustomModelAnimation": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "Block Model Animation",
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Blocks/",
+          "Items/",
+          "Resources/",
+          "NPC/",
+          "VFX/",
+          "Consumable/"
+        ],
+        "requiredExtension": "blockyanim",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Blocks/",
+            "Items/",
+            "Resources/",
+            "NPC/",
+            "VFX/",
+            "Consumable/"
+          ],
+          "extension": "blockyanim"
+        }
+      }
+    },
+    "Light": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/ColorLight",
+          "hytale": {
+            "inheritsProperty": true,
+            "uiPropertyTitle": "Block Light",
+            "uiRebuildCaches": [
+              "Models"
+            ],
+            "uiRebuildCachesForChildProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "TickProcedure": {
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/BasicChanceBlockGrowthProcedure"
+            },
+            {
+              "$ref": "common.json#/definitions/SplitChanceBlockGrowthProcedure"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "values": [
+              "BasicChance",
+              "SplitChance"
+            ]
+          },
+          "hytale": {
+            "inheritsProperty": true,
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "RandomTickProcedure": {
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/ChangeIntoBlockProcedure"
+            },
+            {
+              "$ref": "common.json#/definitions/SpreadToProcedure"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "values": [
+              "ChangeIntoBlock",
+              "SpreadTo"
+            ]
+          },
+          "hytale": {
+            "inheritsProperty": true,
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ConnectedBlockRuleSet": {
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/CustomTemplateConnectedBlockRuleSet"
+            },
+            {
+              "$ref": "common.json#/definitions/RoofConnectedBlockRuleSet"
+            },
+            {
+              "$ref": "common.json#/definitions/StairConnectedBlockRuleSet"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "values": [
+              "CustomTemplate",
+              "Roof",
+              "Stair"
+            ]
+          },
+          "hytale": {
+            "inheritsProperty": true,
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Effect": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "type": "string",
+        "title": "ShaderType",
+        "enumDescriptions": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "markdownEnumDescriptions": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "hytale": {
+          "type": "Enum"
+        },
+        "enum": [
+          "None",
+          "Wind",
+          "WindAttached",
+          "WindRandom",
+          "WindFractal",
+          "Ice",
+          "Water",
+          "Lava",
+          "Slime",
+          "Ripple"
+        ]
+      }
+    },
+    "TransitionTexture": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models",
+          "BlockTextures"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "hytaleCommonAsset": {
+        "requiredRoots": [
+          "Blocks/",
+          "BlockTextures/",
+          "Items/",
+          "NPC/",
+          "Resources/",
+          "VFX/"
+        ],
+        "requiredExtension": "png",
+        "isUIAsset": false
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "commonAssetPaths",
+          "key": "all",
+          "folders": [
+            "Blocks/",
+            "BlockTextures/",
+            "Items/",
+            "NPC/",
+            "Resources/",
+            "VFX/"
+          ],
+          "extension": "png"
+        }
+      }
+    },
+    "TransitionToGroups": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "type": "string",
+        "hytale": {
+          "type": "string",
+          "uiEditorComponent": {
+            "component": "Text",
+            "dataSet": "BlockGroups"
+          }
+        },
+        "hytaleDevtools": {
+          "symbolRef": {
+            "indexKind": "uiDataSet",
+            "key": "BlockGroups"
+          }
+        }
+      }
+    },
+    "TransitionToTag": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      }
+    },
+    "BlockParticleSetId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The block particle set defined here defines which particles should be spawned when an entity interacts with this block (like when stepping on it for example",
+      "markdownDescription": "The block particle set defined here defines which particles should be spawned when an entity interacts with this block (like when stepping on it for example",
+      "hytaleAssetRef": "BlockParticleSet",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiSectionStart": "Particles"
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockParticleSet"
+        }
+      }
+    },
+    "ParticleColor": {
+      "anyOf": [
+        {
+          "title": "Color RGB",
+          "anyOf": [
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+            },
+            {
+              "type": "string",
+              "hytale": {
+                "type": "string"
+              },
+              "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+            }
+          ],
+          "hytale": {
+            "type": "Color",
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Particles": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "The particles defined here will be spawned on top of blocks of this type placed in the world.",
+      "markdownDescription": "The particles defined here will be spawned on top of blocks of this type placed in the world.",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiPropertyTitle": "Block Particles",
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true,
+        "uiCollapsedByDefault": false
+      },
+      "items": {
+        "$ref": "common.json#/definitions/ModelParticle"
+      }
+    },
+    "RandomRotation": {
+      "type": "string",
+      "title": "RandomRotation",
+      "enumDescriptions": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true,
+        "uiSectionStart": "Rotation"
+      },
+      "enum": [
+        "None",
+        "YawPitchRollStep1",
+        "YawStep1",
+        "YawStep1XZ",
+        "YawStep90"
+      ],
+      "default": "None"
+    },
+    "VariantRotation": {
+      "type": "string",
+      "title": "VariantRotation",
+      "enumDescriptions": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "None",
+        "Wall",
+        "UpDown",
+        "Pipe",
+        "DoublePipe",
+        "NESW",
+        "UpDownNESW",
+        "Debug",
+        "All"
+      ],
+      "default": "None"
+    },
+    "FlipType": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "BlockFlipType",
+      "enumDescriptions": [
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Orthogonal",
+        "Symmetric"
+      ],
+      "default": "Symmetric"
+    },
+    "RotationYawPlacementOffset": {
+      "type": "string",
+      "title": "Rotation",
+      "enumDescriptions": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "None",
+        "Ninety",
+        "OneEighty",
+        "TwoSeventy"
+      ],
+      "default": "None"
+    },
+    "Seats": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "The details of the seats on this block.",
+      "markdownDescription": "The details of the seats on this block.",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiSectionStart": "Behaviour"
+      },
+      "items": {
+        "$ref": "common.json#/definitions/BlockMountPoint"
+      }
+    },
+    "Beds": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "The details of the beds for this block.",
+      "markdownDescription": "The details of the beds for this block.",
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true
+      },
+      "items": {
+        "$ref": "common.json#/definitions/BlockMountPoint"
+      }
+    },
+    "MovementSettings": {
+      "anyOf": [
+        {
+          "default": {
+            "IsClimbable": false,
+            "IsBouncy": false,
+            "BounceVelocity": 0.0,
+            "ClimbUpSpeedMultiplier": 1.0,
+            "ClimbDownSpeedMultiplier": 1.0,
+            "ClimbLateralSpeedMultiplier": 1.0,
+            "Drag": 0.8199999928474426,
+            "Friction": 0.18000000715255737,
+            "TerminalVelocityModifier": 1.0,
+            "HorizontalSpeedMultiplier": 1.0,
+            "JumpForceMultiplier": 1.0
+          },
+          "$ref": "common.json#/definitions/BlockMovementSettings",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Flags": {
+      "anyOf": [
+        {
+          "default": {
+            "IsUsable": false,
+            "IsStackable": true
+          },
+          "$ref": "common.json#/definitions/BlockFlags",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Bench": {
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/CraftingBench"
+            },
+            {
+              "$ref": "common.json#/definitions/ProcessingBench"
+            },
+            {
+              "$ref": "common.json#/definitions/DiagramCraftingBench"
+            },
+            {
+              "$ref": "common.json#/definitions/StructuralCraftingBench"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Type",
+            "values": [
+              "Crafting",
+              "Processing",
+              "DiagramCrafting",
+              "StructuralCrafting"
+            ]
+          },
+          "hytale": {
+            "inheritsProperty": true,
+            "mergesProperties": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Gathering": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/BlockGathering",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "PlacementSettings": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/BlockPlacementSettings",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Farming": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/FarmingData",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "IsDoor": {
+      "type": "boolean",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": false
+    },
+    "AllowsMultipleUsers": {
+      "type": "boolean",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": true
+    },
+    "HitboxType": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytaleAssetRef": "BlockBoundingBoxes",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "default": "Full",
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockBoundingBoxes"
+        }
+      }
+    },
+    "InteractionHitboxType": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "hytaleAssetRef": "BlockBoundingBoxes",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockBoundingBoxes"
+        }
+      }
+    },
+    "InteractionHint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "This property allows to specify custom text that will be displayed underneath the crosshair when the player aims at this block. The value of this property should be a reference to a translation. {key} will be replaced with the interaction input binding.",
+      "markdownDescription": "This property allows to specify custom text that will be displayed underneath the crosshair when the player aims at this block. The value of this property should be a reference to a translation. *{key}* will be replaced with the interaction input binding.",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      }
+    },
+    "DamageToEntities": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true
+      },
+      "default": 0
+    },
+    "Interactions": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Map of InteractionType",
+      "hytale": {
+        "type": "EnumMap",
+        "inheritsProperty": true,
+        "uiSectionStart": "Interactions"
+      },
+      "properties": {
+        "Primary": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Secondary": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Ability1": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Ability2": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Ability3": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Use": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Pick": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Pickup": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "CollisionEnter": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "CollisionLeave": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Collision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "EntityStatEffect": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "SwapTo": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "SwapFrom": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Death": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Wielding": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "ProjectileSpawn": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "ProjectileHit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "ProjectileMiss": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "ProjectileBounce": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Held": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "HeldOffhand": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Equipped": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "Dodge": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        },
+        "GameModeSwap": {
+          "anyOf": [
+            {
+              "type": "string",
+              "title": "Reference to RootInteraction",
+              "hytale": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "RootInteraction.json#"
+            }
+          ],
+          "hytaleAssetRef": "RootInteraction",
+          "hytaleDevtools": {
+            "symbolRef": {
+              "indexKind": "registeredAssets",
+              "key": "RootInteraction"
+            }
+          }
+        }
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string",
+            "title": "Reference to RootInteraction",
+            "hytale": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "RootInteraction.json#"
+          }
+        ],
+        "hytaleAssetRef": "RootInteraction",
+        "hytaleDevtools": {
+          "symbolRef": {
+            "indexKind": "registeredAssets",
+            "key": "RootInteraction"
+          }
+        }
+      },
+      "propertyNames": {
+        "hytale": {
+          "type": "string"
+        },
+        "enum": [
+          "Primary",
+          "Secondary",
+          "Ability1",
+          "Ability2",
+          "Ability3",
+          "Use",
+          "Pick",
+          "Pickup",
+          "CollisionEnter",
+          "CollisionLeave",
+          "Collision",
+          "EntityStatEffect",
+          "SwapTo",
+          "SwapFrom",
+          "Death",
+          "Wielding",
+          "ProjectileSpawn",
+          "ProjectileHit",
+          "ProjectileMiss",
+          "ProjectileBounce",
+          "Held",
+          "HeldOffhand",
+          "Equipped",
+          "Dodge",
+          "GameModeSwap"
+        ]
+      }
+    },
+    "BlockSoundSetId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Sets the BlockSoundSet that will be used for this block for various events e.g. placement, breaking",
+      "markdownDescription": "Sets the **BlockSoundSet** that will be used for this block for various events e.g. placement, breaking",
+      "hytaleAssetRef": "BlockSoundSet",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true,
+        "uiSectionStart": "Sounds"
+      },
+      "default": "EMPTY",
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSoundSet"
+        }
+      }
+    },
+    "AmbientSoundEventId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "A looping ambient sound event that emits from this block when placed in the world or held in-hand.",
+      "markdownDescription": "A looping ambient sound event that emits from this block when placed in the world or held in-hand.",
+      "hytaleAssetRef": "SoundEvent",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "SoundEvent"
+        }
+      }
+    },
+    "InteractionSoundEventId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "A oneshot sound event that plays upon interaction with this block.",
+      "markdownDescription": "A oneshot sound event that plays upon interaction with this block.",
+      "hytaleAssetRef": "SoundEvent",
+      "hytale": {
+        "type": "string",
+        "inheritsProperty": true
+      },
+      "hytaleDevtools": {
+        "symbolRef": {
+          "indexKind": "registeredAssets",
+          "key": "SoundEvent"
+        }
+      }
+    },
+    "Looping": {
+      "type": "boolean",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "Models"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": false
+    },
+    "SupportDropType": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "SupportDropType",
+      "enumDescriptions": [
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true,
+        "uiSectionStart": "Support"
+      },
+      "enum": [
+        "Break",
+        "Destroy"
+      ],
+      "default": "Break"
+    },
+    "MaxSupportDistance": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true
+      },
+      "minimum": 0,
+      "maximum": 14,
+      "default": 0
+    },
+    "SupportsRequiredFor": {
+      "type": "string",
+      "title": "BlockSupportsRequiredForType",
+      "enumDescriptions": [
+        "",
+        ""
+      ],
+      "markdownEnumDescriptions": [
+        "",
+        ""
+      ],
+      "hytale": {
+        "type": "Enum",
+        "inheritsProperty": true
+      },
+      "enum": [
+        "Any",
+        "All"
+      ],
+      "default": "All"
+    },
+    "Support": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Merged map of BlockFace and MergedBlockFaces",
+      "description": "A set of \"Required Support\" conditions. If met, the block won't fall off from block physics checks.\nIf this field is empty the block is automatically considered supported.\n",
+      "markdownDescription": "A set of \"Required Support\" conditions. If met, the block won't fall off from block physics checks.\n*If this field is empty the block is automatically considered supported.*\n",
+      "hytale": {
+        "type": "EnumMap",
+        "inheritsProperty": true
+      },
+      "properties": {
+        "Up": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "Down": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "North": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "East": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "South": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "West": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpNorth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpSouth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownNorth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownSouth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "NorthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "SouthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "SouthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "NorthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpNorthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpSouthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpSouthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpNorthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownNorthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownSouthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownSouthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownNorthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "All": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "BlockSides": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "CardinalDirections": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "Horizontal": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "UpCardinalDirections": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        },
+        "DownCardinalDirections": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+          }
+        }
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "$ref": "common.json#/definitions/RequiredBlockFaceSupport"
+        }
+      },
+      "propertyNames": {
+        "hytale": {
+          "type": "string"
+        },
+        "enum": [
+          "Up",
+          "Down",
+          "North",
+          "East",
+          "South",
+          "West",
+          "UpNorth",
+          "UpSouth",
+          "UpEast",
+          "UpWest",
+          "DownNorth",
+          "DownSouth",
+          "DownEast",
+          "DownWest",
+          "NorthEast",
+          "SouthEast",
+          "SouthWest",
+          "NorthWest",
+          "UpNorthEast",
+          "UpSouthEast",
+          "UpSouthWest",
+          "UpNorthWest",
+          "DownNorthEast",
+          "DownSouthEast",
+          "DownSouthWest",
+          "DownNorthWest",
+          "All",
+          "BlockSides",
+          "CardinalDirections",
+          "Horizontal",
+          "UpCardinalDirections",
+          "DownCardinalDirections"
+        ]
+      }
+    },
+    "Supporting": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Merged map of BlockFace and MergedBlockFaces",
+      "hytale": {
+        "type": "EnumMap",
+        "inheritsProperty": true
+      },
+      "properties": {
+        "Up": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "Down": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "North": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "East": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "South": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "West": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpNorth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpSouth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownNorth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownSouth": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "NorthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "SouthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "SouthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "NorthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpNorthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpSouthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpSouthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpNorthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownNorthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownSouthEast": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownSouthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownNorthWest": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "All": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "BlockSides": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "CardinalDirections": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "Horizontal": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "UpCardinalDirections": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        },
+        "DownCardinalDirections": {
+          "type": "array",
+          "hytale": {
+            "type": "array"
+          },
+          "items": {
+            "$ref": "common.json#/definitions/BlockFaceSupport"
+          }
+        }
+      },
+      "additionalProperties": {
+        "type": "array",
+        "hytale": {
+          "type": "array"
+        },
+        "items": {
+          "$ref": "common.json#/definitions/BlockFaceSupport"
+        }
+      },
+      "propertyNames": {
+        "hytale": {
+          "type": "string"
+        },
+        "enum": [
+          "Up",
+          "Down",
+          "North",
+          "East",
+          "South",
+          "West",
+          "UpNorth",
+          "UpSouth",
+          "UpEast",
+          "UpWest",
+          "DownNorth",
+          "DownSouth",
+          "DownEast",
+          "DownWest",
+          "NorthEast",
+          "SouthEast",
+          "SouthWest",
+          "NorthWest",
+          "UpNorthEast",
+          "UpSouthEast",
+          "UpSouthWest",
+          "UpNorthWest",
+          "DownNorthEast",
+          "DownSouthEast",
+          "DownSouthWest",
+          "DownNorthWest",
+          "All",
+          "BlockSides",
+          "CardinalDirections",
+          "Horizontal",
+          "UpCardinalDirections",
+          "DownCardinalDirections"
+        ]
+      }
+    },
+    "IgnoreSupportWhenPlaced": {
+      "type": "boolean",
+      "description": "Whether when this block is placed by a player that the support requirements should be ignored.",
+      "markdownDescription": "Whether when this block is placed by a player that the support requirements should be ignored.",
+      "hytale": {
+        "type": "boolean",
+        "inheritsProperty": true
+      },
+      "default": false
+    },
+    "Aliases": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Specifies the alternatives names (aliases) for a block type for use in command matching",
+      "markdownDescription": "Specifies the alternatives names (aliases) for a block type for use in command matching",
+      "hytale": {
+        "type": "array"
+      },
+      "items": {
+        "type": "string",
+        "hytale": {
+          "type": "string"
+        }
+      }
+    },
+    "Tint": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "uiSectionStart": "Tint",
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "TintUp": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "TintDown": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "TintNorth": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "TintSouth": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "TintWest": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "TintEast": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "hytale": {
+        "type": "array",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "items": {
+        "title": "Color RGB",
+        "anyOf": [
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*#([0-9a-fA-F]{3}){1,2}\\s*$"
+          },
+          {
+            "type": "string",
+            "hytale": {
+              "type": "string"
+            },
+            "pattern": "^\\s*rgb\\((\\s*[0-9]{1,3}\\s*,){2}\\s*[0-9]{1,3}\\s*\\)\\s*$"
+          }
+        ],
+        "hytale": {
+          "type": "Color"
+        }
+      }
+    },
+    "BiomeTint": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      }
+    },
+    "BiomeTintUp": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": 0
+    },
+    "BiomeTintDown": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": 0
+    },
+    "BiomeTintNorth": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": 0
+    },
+    "BiomeTintSouth": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": 0
+    },
+    "BiomeTintWest": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": 0
+    },
+    "BiomeTintEast": {
+      "type": "integer",
+      "hytale": {
+        "type": "integer",
+        "inheritsProperty": true,
+        "uiRebuildCaches": [
+          "MapGeometry"
+        ],
+        "uiRebuildCachesForChildProperties": true
+      },
+      "default": 0
+    },
+    "State": {
+      "anyOf": [
+        {
+          "title": "Type Selector",
+          "anyOf": [
+            {
+              "$ref": "common.json#/definitions/Data"
+            },
+            {
+              "$ref": "common.json#/definitions/StateData"
+            },
+            {
+              "$ref": "common.json#/definitions/ItemContainerStateData"
+            }
+          ],
+          "hytaleSchemaTypeField": {
+            "property": "Id",
+            "defaultValue": "StateData",
+            "values": [
+              "SpawnMarkerBlock",
+              "StateData",
+              "container"
+            ]
+          },
+          "hytale": {
+            "inheritsProperty": true,
+            "mergesProperties": true,
+            "uiSectionStart": "State",
+            "uiCollapsedByDefault": false
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "BlockEntity": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/Holder",
+          "hytale": {
+            "inheritsProperty": true,
+            "uiSectionStart": "Components",
+            "uiCollapsedByDefault": false
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Rail": {
+      "anyOf": [
+        {
+          "$ref": "common.json#/definitions/RailConfig",
+          "hytale": {
+            "inheritsProperty": true
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

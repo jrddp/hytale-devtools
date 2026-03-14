@@ -1,0 +1,72 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "DamageCause",
+  "path": "Server/Entity/Damage",
+  "extension": ".json",
+  "assetCount": 15,
+  "fileCount": 15,
+  "values": {
+    "Bludgeoning": {
+      "sourcedFromFile": "/Server/Entity/Damage/Bludgeoning.json",
+      "package": "Hytale:Hytale"
+    },
+    "Command": {
+      "sourcedFromFile": "/Server/Entity/Damage/Command.json",
+      "package": "Hytale:Hytale"
+    },
+    "Drowning": {
+      "sourcedFromFile": "/Server/Entity/Damage/Drowning.json",
+      "package": "Hytale:Hytale"
+    },
+    "Elemental": {
+      "sourcedFromFile": "/Server/Entity/Damage/Elemental.json",
+      "package": "Hytale:Hytale"
+    },
+    "Environment": {
+      "sourcedFromFile": "/Server/Entity/Damage/Environment.json",
+      "package": "Hytale:Hytale"
+    },
+    "Environmental": {
+      "sourcedFromFile": "/Server/Entity/Damage/Environmental.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fall": {
+      "sourcedFromFile": "/Server/Entity/Damage/Fall.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fire": {
+      "sourcedFromFile": "/Server/Entity/Damage/Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice": {
+      "sourcedFromFile": "/Server/Entity/Damage/Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "OutOfWorld": {
+      "sourcedFromFile": "/Server/Entity/Damage/OutOfWorld.json",
+      "package": "Hytale:Hytale"
+    },
+    "Physical": {
+      "sourcedFromFile": "/Server/Entity/Damage/Physical.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poison": {
+      "sourcedFromFile": "/Server/Entity/Damage/Poison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Projectile": {
+      "sourcedFromFile": "/Server/Entity/Damage/Projectile.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slashing": {
+      "sourcedFromFile": "/Server/Entity/Damage/Slashing.json",
+      "package": "Hytale:Hytale"
+    },
+    "Suffocation": {
+      "sourcedFromFile": "/Server/Entity/Damage/Suffocation.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

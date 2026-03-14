@@ -1,0 +1,396 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "WorldNPCSpawn",
+  "path": "Server/NPC/Spawn/World",
+  "extension": ".json",
+  "assetCount": 96,
+  "fileCount": 96,
+  "values": {
+    "Spawns_Portals_Hedera": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Unique/Spawns_Portals_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Portals_Oasis_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Unique/Spawns_Portals_Oasis_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Portals_Oasis_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Unique/Spawns_Portals_Oasis_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Portals_Oasis_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Unique/Spawns_Portals_Oasis_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone0_Oceans_Cold": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone0/Spawns_Zone0_Oceans_Cold.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone0_Oceans_Temperate": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone0/Spawns_Zone0_Oceans_Temperate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone0_Oceans_Warm": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone0/Spawns_Zone0_Oceans_Warm.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Fish_Shores": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Fish_Shores.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Fish_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Fish_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Fish_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Fish_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Fish_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Fish_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Forests_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Forests_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Forests_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Forests_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Forests_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Forests_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Mountains_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Mountains_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Mountains_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Mountains_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Mountains_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Mountains_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Plains_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Plains_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Plains_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Plains_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Plains_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Plains_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Shore": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Swamps_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Swamps_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Swamps_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Swamps_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone1_Swamps_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Spawns_Zone1_Swamps_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Desert_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Desert_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Desert_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Desert_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Desert_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Desert_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Dungeon_Scarak": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Dungeon_Scarak.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Fish_Shores": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Fish_Shores.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Fish_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Fish_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Fish_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Fish_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Oasis_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Oasis_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Oasis_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Oasis_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Oasis_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Oasis_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Plateau_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Plateau_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Plateau_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Plateau_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Plateau_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Plateau_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Savanna_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Savanna_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Savanna_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Savanna_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Savanna_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Savanna_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Scrub_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Scrub_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Scrub_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Scrub_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Scrub_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Scrub_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone2_Shore": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Spawns_Zone2_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Caves": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Caves.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Fish_Shores": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Fish_Shores.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Fish_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Fish_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Fish_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Fish_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Fish_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Fish_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Forests_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Forests_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Forests_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Forests_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Forests_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Forests_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Glacial_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Glacial_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Glacial_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Glacial_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Glacial_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Glacial_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Hedera": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Mountains_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Mountains_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Mountains_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Mountains_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Mountains_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Mountains_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Outlander": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Shore": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Shore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Tundra_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Tundra_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Tundra_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Tundra_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone3_Tundra_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Spawns_Zone3_Tundra_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Forests_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Forests_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Forests_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Forests_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Jungles_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Jungles_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Jungles_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Jungles_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Volcanoes_Critter": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Volcanoes_Critter.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Volcanoes_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Volcanoes_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Wastes_Animal": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Wastes_Animal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spawns_Zone4_Wastes_Predator": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Spawns_Zone4_Wastes_Predator.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier1_Night_NPC1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier1_Night_NPC1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier1_Night_NPC2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier1_Night_NPC2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier1_Night_NPC3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier1_Night_NPC3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier1_Night_NPC4": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier1_Night_NPC4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier2_Night_NPC1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier2_Night_NPC1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier2_Night_NPC2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier2_Night_NPC2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier2_Night_NPC3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier2_Night_NPC3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier2_Night_NPC4": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier2_Night_NPC4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier3_Night_NPC1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier3_Night_NPC1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier3_Night_NPC2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier3_Night_NPC2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier3_Night_NPC3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier3_Night_NPC3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier3_Night_NPC4": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier3_Night_NPC4.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tier3_Night_NPC5": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Void/Tier3_Night_NPC5.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone1_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Wander_Zone1_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone1_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Wander_Zone1_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone1_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone1/Wander_Zone1_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone2_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Wander_Zone2_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone2_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Wander_Zone2_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone2_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone2/Wander_Zone2_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone3_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Wander_Zone3_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone3_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Wander_Zone3_Tier2.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone3_Tier3": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone3/Wander_Zone3_Tier3.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone4_Tier1": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Wander_Zone4_Tier1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wander_Zone4_Tier2": {
+      "sourcedFromFile": "/Server/NPC/Spawn/World/Zone4/Wander_Zone4_Tier2.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

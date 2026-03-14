@@ -1,0 +1,360 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "CombatActionOption",
+  "path": "Server/NPC/DecisionMaking/CombatActions",
+  "extension": ".json",
+  "assetCount": 87,
+  "fileCount": 0,
+  "values": {
+    "*CAE_Goblin_Duke_Phase_1_CombatActionEvaluator_AvailableActions_SelectTarget": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Fire": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Ice": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Lightning": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_2_CombatActionEvaluator_AvailableActions_Spawn": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Fire": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Ice": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Lightning": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Fast_CombatActionEvaluator_AvailableActions_Spawn": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Fire": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Ice": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Lightning": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Duke_Phase_3_Slow_CombatActionEvaluator_AvailableActions_Spawn": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_FleeBomb": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_LargeBomb": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Lobber_CombatActionEvaluator_AvailableActions_Ranged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_Flee": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_Melee": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Miner_CombatActionEvaluator_AvailableActions_SwingDown": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Charged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Heal": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Ogre_CombatActionEvaluator_AvailableActions_Ranged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_MeleeState": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_SelectTarget": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Battleaxe_CombatActionEvaluator_AvailableActions_SelectTargetRanged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_MeleeState": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_SelectTarget": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_CombatActionEvaluator_AvailableActions_SelectTargetRanged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_MeleeState": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_SelectTarget": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_SelectTargetRanged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scavenger_Sword_CombatActionEvaluator_AvailableActions_SwordBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_Melee": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_Ranged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Goblin_Scrapper_CombatActionEvaluator_AvailableActions_SwingDown": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Hedera_CombatActionEvaluator_AvailableActions_BackOff": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Hedera_CombatActionEvaluator_AvailableActions_Default": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Hedera_CombatActionEvaluator_AvailableActions_Scream": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Hedera_CombatActionEvaluator_AvailableActions_Summon": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Hedera_CombatActionEvaluator_AvailableActions_VineBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Rat_CombatActionEvaluator_AvailableActions_SelectTarget": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_BackOff": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Charge": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Default": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_ShieldBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Skeleton_Praetorian_CombatActionEvaluator_AvailableActions_Summon": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_AvailableActions_MeleeAttack": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Absolute_Stat_CombatActionEvaluator_AvailableActions_SelfHeal": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Charge_CombatActionEvaluator_AvailableActions_Charge": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_HealFriendly": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_MeleeAttack": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_MeleeAttack2": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_RangedAttack": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_SelfHeal": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_CombatActionEvaluator_AvailableActions_ThrowItem": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Damage_CombatActionEvaluator_AvailableActions_HasDamage": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Damage_CombatActionEvaluator_AvailableActions_TooMuchDamage": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Movement_State_CombatActionEvaluator_AvailableActions_Crouching": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_Movement_State_CombatActionEvaluator_AvailableActions_Standing": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_HealFriendly": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_MeleeAttack": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Action_Evaluator_No_Ranged_CombatActionEvaluator_AvailableActions_SelfHeal": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Charged_Attack_CombatActionEvaluator_AvailableActions_SwordCharged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Default": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_Strafe": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordCharged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordSignature": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeCharged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Elite_Goblin_CombatActionEvaluator_AvailableActions_SwordStrafeSignature": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Default": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_Strafe": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordCharged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordSignature": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeBlock": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeCharged": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Knight_CombatActionEvaluator_AvailableActions_SwordStrafeSignature": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Long_Basic_Attack_Cooldown_CombatActionEvaluator_AvailableActions_RangedAttack": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Target_Count_CombatActionEvaluator_AvailableActions_MeleeAttack": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Target_Count_CombatActionEvaluator_AvailableActions_MeleeAttack2": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Combat_Target_Count_CombatActionEvaluator_AvailableActions_SelfHeal": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Only_Basic_Attacks_CombatActionEvaluator_AvailableActions_SelectTarget": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Behind": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Flanks": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "*CAE_Test_Simple_Positioning_CombatActionEvaluator_AvailableActions_Front": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ItemReticleConfig",
+  "path": "Server/Item/Reticles",
+  "extension": ".json",
+  "assetCount": 3,
+  "fileCount": 2,
+  "values": {
+    "Default": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "DefaultMelee": {
+      "sourcedFromFile": "/Server/Item/Reticles/DefaultMelee.json",
+      "package": "Hytale:Hytale"
+    },
+    "MaceMelee": {
+      "sourcedFromFile": "/Server/Item/Reticles/MaceMelee.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

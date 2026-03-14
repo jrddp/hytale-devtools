@@ -1,33 +1,36 @@
 import path from "path";
 import * as vscode from "vscode";
+import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
-import { getNodeEditorWorkspaces } from "./node-editor/workspaceResolver";
-import { createSchemaDataRuntime } from "./schema/schemaDataRuntime";
-import { loadSchemaDefinitionsFromRoot, loadSchemaMappingsFromRoot } from "./schema/schemaLoader";
-import { type SchemaDocs } from "./schema/schemaPointerResolver";
+import { WorkspaceRuntime } from "./node-editor/workspaceResolver";
+import { SchemaRuntime } from "./schema/schemaLoader";
+import { createSchemaWatcherRuntime } from "./schema/schemaWatcher";
 import { loadIndexesFromRoot } from "./schema/symbolResolver";
-import { type NodeEditorWorkspace } from "./shared/node-editor/workspaceTypes";
-import { type IndexKind, type SchemaMappings, type SymbolIndex } from "./shared/schema/types";
+import { type IndexKind, type SymbolIndex } from "./shared/indexTypes";
 import { ensureHytaleHomeConfiguredOnStartup } from "./utils/hytaleHomeConfiguration";
-import { resolvePatchlineForContext, resolveSchemaDataLocation } from "./utils/hytalePaths";
+import { resolveDataRootDirFromContext, SCHEMAS_DIRECTORY_NAME } from "./utils/hytalePaths";
 
 export let LOGGER: vscode.LogOutputChannel;
-export let nodeEditorWorkspaces: Record<string, NodeEditorWorkspace>;
-export let schemaMappings: SchemaMappings;
-export let schemaDocs: SchemaDocs;
+export let schemaRuntime: SchemaRuntime;
+export let workspaceRuntime: WorkspaceRuntime;
 export let indexes: Map<IndexKind, SymbolIndex>;
 
 function reloadSchemaData(context: vscode.ExtensionContext, reason: string): void {
-  const patchline = resolvePatchlineForContext(context);
-  const schemaDataLocation = resolveSchemaDataLocation(context, patchline);
+  const dataRoot = resolveDataRootDirFromContext(context);
 
-  schemaMappings = loadSchemaMappingsFromRoot(schemaDataLocation.rootPath);
-  schemaDocs = loadSchemaDefinitionsFromRoot(schemaDataLocation.rootPath);
-  indexes = loadIndexesFromRoot(schemaDataLocation.rootPath);
-
-  LOGGER.info(
-    `Loaded schema data from ${schemaDataLocation.source} (${schemaDataLocation.rootPath}) for ${patchline} patchline (${reason})`,
+  schemaRuntime = new SchemaRuntime(
+    path.join(dataRoot.rootPath, SCHEMAS_DIRECTORY_NAME),
+    LOGGER,
   );
+  workspaceRuntime = new WorkspaceRuntime(
+    context.asAbsolutePath(path.join("default-data", "node-editor-workspace-definitions")),
+    schemaRuntime,
+    LOGGER,
+  );
+
+  indexes = loadIndexesFromRoot(dataRoot.rootPath);
+
+  LOGGER.info(`Loaded schema data from ${dataRoot.source} (${dataRoot.rootPath}) - (${reason})`);
 }
 
 // This method is called when your extension is activated
@@ -35,17 +38,14 @@ function reloadSchemaData(context: vscode.ExtensionContext, reason: string): voi
 export async function activate(context: vscode.ExtensionContext) {
   LOGGER = vscode.window.createOutputChannel("Hytale Devtools", { log: true });
   context.subscriptions.push(LOGGER);
+  LOGGER.info(`Activating Hytale Devtools extension`);
 
-  const schemaDataRuntime = createSchemaDataRuntime(context, reason => {
+  const schemaWatcherRuntime = createSchemaWatcherRuntime(context, reason => {
     reloadSchemaData(context, reason);
   });
-  context.subscriptions.push(schemaDataRuntime);
+  context.subscriptions.push(schemaWatcherRuntime);
 
   reloadSchemaData(context, "extension activation");
-
-  nodeEditorWorkspaces = getNodeEditorWorkspaces(
-    context.asAbsolutePath(path.join("default-data", "node-editor-workspace-definitions")),
-  );
 
   const createModCommand = vscode.commands.registerCommand("hytale-devtools.createMod", () => {
     const { createMod } = require("./commands/createMod");
@@ -77,6 +77,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(changeModPatchlineCommand);
 
+  context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
 
   if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {

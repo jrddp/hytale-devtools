@@ -1,0 +1,24 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "EqualizerEffect",
+  "path": "Server/Audio/EQ",
+  "extension": ".json",
+  "assetCount": 3,
+  "fileCount": 2,
+  "values": {
+    "EMPTY": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "EQ_Default": {
+      "sourcedFromFile": "/Server/Audio/EQ/EQ_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "EQ_Underwater": {
+      "sourcedFromFile": "/Server/Audio/EQ/EQ_Underwater.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

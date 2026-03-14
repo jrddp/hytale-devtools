@@ -11,11 +11,11 @@ export type SchemaDataLocation = {
 };
 
 const DEFAULT_PATCHLINE: SupportedPatchline = "release";
-const DEFAULT_SCHEMA_DATA_RELATIVE_PATH = path.join("default-data", "schema-data");
+const DEFAULT_SCHEMA_DATA_RELATIVE_PATH = path.join("default-data", "export-data");
 const EXPORT_MANIFEST_FILE_NAME = "export_manifest.json";
 const SCHEMA_MAPPINGS_FILE_NAME = "schema_mappings.json";
-const SCHEMAS_DIRECTORY_NAME = "schemas";
-const INDEXES_DIRECTORY_NAME = "indexes";
+export const SCHEMAS_DIRECTORY_NAME = "schemas";
+export const INDEXES_DIRECTORY_NAME = "indexes";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const CUSTOM_HYTALE_PATH_SETTING_KEY = "customHytalePath";
 
@@ -134,14 +134,17 @@ export function resolveExportManifestPathFromPatchline(
   globalStoragePath: string,
   patchline: SupportedPatchline,
 ): string {
-  return path.join(resolveCompanionExportRootFromPatchline(globalStoragePath, patchline), EXPORT_MANIFEST_FILE_NAME);
+  return path.join(
+    resolveCompanionExportRootFromPatchline(globalStoragePath, patchline),
+    EXPORT_MANIFEST_FILE_NAME,
+  );
 }
 
 export function resolveDefaultSchemaDataRoot(extensionPath: string): string {
   return path.join(extensionPath, DEFAULT_SCHEMA_DATA_RELATIVE_PATH);
 }
 
-export function resolveSchemaDataLocationFromPatchline(
+export function resolveDataRootDir(
   globalStoragePath: string,
   extensionPath: string,
   patchline: SupportedPatchline,
@@ -169,13 +172,13 @@ export function resolveSchemaDataLocationFromPatchline(
   };
 }
 
-export function resolveSchemaDataLocation(
+/** root containing schemas/, indexes/, export_manifest.json, etc. */
+export function resolveDataRootDirFromContext(
   context: vscode.ExtensionContext,
-  patchline: SupportedPatchline = resolvePatchlineForContext(context),
 ): SchemaDataLocation {
-  return resolveSchemaDataLocationFromPatchline(
+  return resolveDataRootDir(
     context.globalStorageUri.fsPath,
     context.extensionPath,
-    patchline,
+    resolvePatchlineForContext(context),
   );
 }

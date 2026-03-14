@@ -1,0 +1,68 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "WorldStructureAsset",
+  "path": "Server/HytaleGenerator/WorldStructures",
+  "extension": ".json",
+  "assetCount": 14,
+  "fileCount": 14,
+  "values": {
+    "Basic": {
+      "sourcedFromFile": "/Users/jard/Downloads/WorldgenTest/src/main/resources/Server/HytaleGenerator/WorldStructures/Basic.json",
+      "package": "kokeria:WorldgenTest"
+    },
+    "Default": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Flat": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Default_Flat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Default_Void": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Default_Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Interpolation": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Dev/Interpolation.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Hedera": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Portals_Hedera.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Henges": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Portals_Henges.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Jungles": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Portals_Jungles.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Oasis": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Portals_Oasis.json",
+      "package": "Hytale:Hytale"
+    },
+    "Portals_Taiga": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Portals_Taiga.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone1_Plains1": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Zone1_Plains1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone2_Desert1": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Zone2_Desert1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone3_Taiga1": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Zone3_Taiga1.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zone4_Volcanic1": {
+      "sourcedFromFile": "/Server/HytaleGenerator/WorldStructures/Zone4_Volcanic1.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

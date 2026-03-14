@@ -3,7 +3,7 @@ import DataNode from "src/nodes/DataNode.svelte";
 import GroupNode from "src/nodes/GroupNode.svelte";
 import LinkNode from "src/nodes/LinkNode.svelte";
 import RawJsonNode from "src/nodes/RawJsonNode.svelte";
-import { Component } from "svelte";
+import type { Component } from "svelte";
 
 export const DEFAULT_COMMENT_WIDTH = 200;
 export const DEFAULT_COMMENT_HEIGHT = 100;

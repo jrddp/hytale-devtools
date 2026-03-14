@@ -1,0 +1,100 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ReverbEffect",
+  "path": "Server/Audio/Reverb",
+  "extension": ".json",
+  "assetCount": 22,
+  "fileCount": 21,
+  "values": {
+    "EMPTY": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Cave": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Cave.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Default": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Default.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Forest": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Forest.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Forest_Desert": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Forest_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Forest_Fog": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Forest_Fog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Forest_Snow": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Forest_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Mage_Tower": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Mage_Tower.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Mineshaft": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Mineshaft.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Mountain": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Mountain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Mountain_Fog": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Mountain_Fog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Mountain_Snow": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Mountain_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Plains": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Plains.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Plains_Desert": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Plains_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Plains_Fog": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Plains_Fog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Plains_Snow": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Plains_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Reflective_Slap": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Reflective_Slap.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Swamp": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Swamp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Swamp_Foggy": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Swamp_Foggy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Temple": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Temple.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Temple_Grand": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Temple_Grand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rev_Village": {
+      "sourcedFromFile": "/Server/Audio/Reverb/Rev_Village.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

@@ -1,0 +1,292 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "NPCGroup",
+  "path": "Server/NPC/Groups",
+  "extension": ".json",
+  "assetCount": 70,
+  "fileCount": 70,
+  "values": {
+    "Aggressive": {
+      "sourcedFromFile": "/Server/NPC/Groups/LivingWorld/Aggressive.json",
+      "package": "Hytale:Hytale"
+    },
+    "Aquatic": {
+      "sourcedFromFile": "/Server/NPC/Groups/Aquatic.json",
+      "package": "Hytale:Hytale"
+    },
+    "Birds": {
+      "sourcedFromFile": "/Server/NPC/Groups/Birds.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bison": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Bison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Boar": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Boar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bunny": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Bunny.json",
+      "package": "Hytale:Hytale"
+    },
+    "Camel": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Camel.json",
+      "package": "Hytale:Hytale"
+    },
+    "Capture_Crate": {
+      "sourcedFromFile": "/Server/NPC/Groups/Capture_Crate.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chicken": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Chicken.json",
+      "package": "Hytale:Hytale"
+    },
+    "Chicken_Desert": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Chicken_Desert.json",
+      "package": "Hytale:Hytale"
+    },
+    "Cow": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Cow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Critters": {
+      "sourcedFromFile": "/Server/NPC/Groups/Critters.json",
+      "package": "Hytale:Hytale"
+    },
+    "Deer": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Mammal/Deer.json",
+      "package": "Hytale:Hytale"
+    },
+    "Eats_Cactees": {
+      "sourcedFromFile": "/Server/NPC/Groups/Other/Eats_Cactees.json",
+      "package": "Hytale:Hytale"
+    },
+    "Edible_Goblin_Scrapper": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Goblin/Edible_Goblin_Scrapper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Edible_Rat": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Vermin/Edible_Rat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Fen_Stalker": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Mythic/Fen_Stalker.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Neutral/Feran/Feran.json",
+      "package": "Hytale:Hytale"
+    },
+    "Feran_Civilian": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Neutral/Feran/Feran_Civilian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Flock": {
+      "sourcedFromFile": "/Server/NPC/Groups/Tests/Flock.json",
+      "package": "Hytale:Hytale"
+    },
+    "FlockPrey": {
+      "sourcedFromFile": "/Server/NPC/Groups/Tests/FlockPrey.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goat": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Goat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Goblin/Goblin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Lobber": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Goblin/Goblin_Lobber.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_No_Bosses": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Goblin/Goblin_No_Bosses.json",
+      "package": "Hytale:Hytale"
+    },
+    "Goblin_Scrapper": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Goblin/Goblin_Scrapper.json",
+      "package": "Hytale:Hytale"
+    },
+    "Horse": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Horse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Neutral/Kweebec/Kweebec.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Civilian": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Neutral/Kweebec/Kweebec_Civilian.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Pets": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Neutral/Kweebec/Kweebec_Pets.json",
+      "package": "Hytale:Hytale"
+    },
+    "Kweebec_Prisoner": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Neutral/Kweebec/Kweebec_Prisoner.json",
+      "package": "Hytale:Hytale"
+    },
+    "Moose": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Mammal/Moose.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mouflon": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Mouflon.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mouse": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Mouse.json",
+      "package": "Hytale:Hytale"
+    },
+    "Neutral": {
+      "sourcedFromFile": "/Server/NPC/Groups/LivingWorld/Neutral.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Outlander/Outlander.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Marauder": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Outlander/Outlander_Marauder.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Spar": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Outlander/Outlander_Spar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Outlander_Underlings": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Outlander/Outlander_Underlings.json",
+      "package": "Hytale:Hytale"
+    },
+    "Passive": {
+      "sourcedFromFile": "/Server/NPC/Groups/LivingWorld/Passive.json",
+      "package": "Hytale:Hytale"
+    },
+    "Pig": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Pig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Player": {
+      "sourcedFromFile": "/Server/NPC/Groups/Player.json",
+      "package": "Hytale:Hytale"
+    },
+    "Predators": {
+      "sourcedFromFile": "/Server/NPC/Groups/Predators.json",
+      "package": "Hytale:Hytale"
+    },
+    "PredatorsBig": {
+      "sourcedFromFile": "/Server/NPC/Groups/PredatorsBig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Prey": {
+      "sourcedFromFile": "/Server/NPC/Groups/Prey.json",
+      "package": "Hytale:Hytale"
+    },
+    "PreyBig": {
+      "sourcedFromFile": "/Server/NPC/Groups/PreyBig.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rabbit": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Rabbit.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ram": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Ram.json",
+      "package": "Hytale:Hytale"
+    },
+    "Rat": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Vermin/Rat.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scarak": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Scarak.json",
+      "package": "Hytale:Hytale"
+    },
+    "Scorpions": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Vermin/Scorpions.json",
+      "package": "Hytale:Hytale"
+    },
+    "Self": {
+      "sourcedFromFile": "/Server/NPC/Groups/Self.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sheep": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Sheep.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skeleton": {
+      "sourcedFromFile": "/Server/NPC/Groups/Undead/Skeleton.json",
+      "package": "Hytale:Hytale"
+    },
+    "Skrill": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Skrill.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snakes": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Vermin/Snakes.json",
+      "package": "Hytale:Hytale"
+    },
+    "Spiders": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Vermin/Spiders.json",
+      "package": "Hytale:Hytale"
+    },
+    "Test_Dummy": {
+      "sourcedFromFile": "/Server/NPC/Groups/Tests/Test_Dummy.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tests": {
+      "sourcedFromFile": "/Server/NPC/Groups/Tests/Tests.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Trork/Trork.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Chieftain": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Trork/Trork_Chieftain.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Spar": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Trork/Trork_Spar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Underlings": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Trork/Trork_Underlings.json",
+      "package": "Hytale:Hytale"
+    },
+    "Trork_Warrior": {
+      "sourcedFromFile": "/Server/NPC/Groups/Intelligent/Aggressive/Trork/Trork_Warrior.json",
+      "package": "Hytale:Hytale"
+    },
+    "Turkey": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Turkey.json",
+      "package": "Hytale:Hytale"
+    },
+    "Undead": {
+      "sourcedFromFile": "/Server/NPC/Groups/Undead.json",
+      "package": "Hytale:Hytale"
+    },
+    "Vermin": {
+      "sourcedFromFile": "/Server/NPC/Groups/Vermin.json",
+      "package": "Hytale:Hytale"
+    },
+    "Void": {
+      "sourcedFromFile": "/Server/NPC/Groups/Void.json",
+      "package": "Hytale:Hytale"
+    },
+    "Warthog": {
+      "sourcedFromFile": "/Server/NPC/Groups/Creature/Livestock/Warthog.json",
+      "package": "Hytale:Hytale"
+    },
+    "Zombie": {
+      "sourcedFromFile": "/Server/NPC/Groups/Undead/Zombie.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

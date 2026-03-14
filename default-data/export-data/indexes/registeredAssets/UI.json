@@ -1,0 +1,320 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "UI",
+  "path": "Common",
+  "extension": ".ui",
+  "assetCount": 77,
+  "fileCount": 77,
+  "values": {
+    "UI/Custom/Common": {
+      "sourcedFromFile": "Common/UI/Custom/Common.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Common/ActionButton": {
+      "sourcedFromFile": "Common/UI/Custom/Common/ActionButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Common/TextButton": {
+      "sourcedFromFile": "Common/UI/Custom/Common/TextButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Hud/ReturnToHubButton": {
+      "sourcedFromFile": "Common/UI/Custom/Hud/ReturnToHubButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Hud/TimeLeft": {
+      "sourcedFromFile": "Common/UI/Custom/Hud/TimeLeft.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ArgumentTypeItem": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ArgumentTypeItem.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/BarterGridSpacer": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/BarterGridSpacer.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/BarterPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/BarterPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/BarterTradeRow": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/BarterTradeRow.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/BasicTextButton": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/BasicTextButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ChangeModelPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ChangeModelPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/CommandListPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/CommandListPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ConfigureInstanceBlockPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ConfigureInstanceBlockPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/DroppedItemSlot": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/DroppedItemSlot.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/EntitySpawnPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/EntitySpawnPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ImageImportPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ImageImportPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/InstanceListPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/InstanceListPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ItemRepairElement": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ItemRepairElement.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ItemRepairPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ItemRepairPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/LaunchPadSettingsPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/LaunchPadSettingsPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Memories/ChestMarker": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Memories/ChestMarker.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Memories/MemoriesCategory": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Memories/MemoriesCategory.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Memories/MemoriesCategoryPanel": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Memories/MemoriesCategoryPanel.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Memories/MemoriesPanel": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Memories/MemoriesPanel.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Memories/MemoriesUnlocked": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Memories/MemoriesUnlocked.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Memories/Memory": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Memories/Memory.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/NameRespawnPointPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/NameRespawnPointPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ObjImportPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ObjImportPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ObjectiveAdminPanelDataSlot": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ObjectiveAdminPanelDataSlot.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ObjectiveAdminPanelPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ObjectiveAdminPanelPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/OverrideNearbyRespawnPointPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/OverrideNearbyRespawnPointPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/OverrideRespawnPointButton": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/OverrideRespawnPointButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ParameterItem": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ParameterItem.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ParticleSpawnPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ParticleSpawnPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PlaySoundPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PlaySoundPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PluginListButton": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PluginListButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PluginListPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PluginListPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PortalDeviceActive": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PortalDeviceActive.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PortalDeviceError": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PortalDeviceError.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PortalDeviceSummon": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PortalDeviceSummon.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Portals/BulletPoint": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Portals/BulletPoint.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Portals/Pill": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Portals/Pill.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Portals/Portals": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Portals/Portals.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabBrowser": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabBrowser.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabEditorExitConfirm": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabEditorExitConfirm.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabEditorSaveSettings": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabEditorSaveSettings.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabEditorSettings": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabEditorSettings.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabListPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabListPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabSavePage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabSavePage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabSpawnerSettingsPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabSpawnerSettingsPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/PrefabTeleportPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/PrefabTeleportPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/RespawnPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/RespawnPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ScriptedBrushListPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ScriptedBrushListPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/SelectOverrideRespawnPointPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/SelectOverrideRespawnPointPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ShopElementButton": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ShopElementButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/ShopPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/ShopPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/SubcommandCard": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/SubcommandCard.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/Teleporter": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/Teleporter.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/TintChunkPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/TintChunkPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/ButtonsContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/ButtonsContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/ContainersContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/ContainersContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/InputsContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/InputsContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/NavigationContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/NavigationContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/ProgressContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/ProgressContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/ScrollbarsContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/ScrollbarsContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/SelectionContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/SelectionContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/SlidersContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/SlidersContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/TextContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/TextContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/Categories/TooltipsContent": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/Categories/TooltipsContent.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/CategoryButton": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/CategoryButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/CodeViewer": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/CodeViewer.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/ElementRow": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/ElementRow.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/UIGallery/UIGalleryPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/UIGallery/UIGalleryPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/VariantCard": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/VariantCard.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/WarpEntryButton": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/WarpEntryButton.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Pages/WarpListPage": {
+      "sourcedFromFile": "Common/UI/Custom/Pages/WarpListPage.ui",
+      "package": "Hytale:Hytale"
+    },
+    "UI/Custom/Sounds": {
+      "sourcedFromFile": "Common/UI/Custom/Sounds.ui",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

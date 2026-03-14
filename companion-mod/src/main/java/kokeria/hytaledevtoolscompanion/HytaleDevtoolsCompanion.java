@@ -10,10 +10,12 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.util.Config;
 
-import kokeria.hytaledevtoolscompanion.assets.AssetRegistryExportService;
+import kokeria.hytaledevtoolscompanion.assets.CompanionDataExportService;
 import kokeria.hytaledevtoolscompanion.config.HytaleDevtoolsCompanionConfig;
 
 public class HytaleDevtoolsCompanion extends JavaPlugin {
+    public static final int EXPORT_FORMAT_VERSION = 1;
+
     private final Config<HytaleDevtoolsCompanionConfig> config;
 
     public HytaleDevtoolsCompanion(@Nonnull JavaPluginInit init) {
@@ -29,7 +31,7 @@ public class HytaleDevtoolsCompanion extends JavaPlugin {
     protected void setup() {
         this.getEventRegistry().registerGlobal(BootEvent.class, event -> {
             Path exportPath = resolveExportPath(this.getConfigData().getExportPath());
-            AssetRegistryExportService.exportSnapshot(this, exportPath);
+            CompanionDataExportService.exportSnapshot(this, exportPath);
         });
     }
 

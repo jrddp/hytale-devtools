@@ -1,0 +1,32 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "FluidFX",
+  "path": "Server/Item/Block/FluidFX",
+  "extension": ".json",
+  "assetCount": 5,
+  "fileCount": 4,
+  "values": {
+    "Empty": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Lava": {
+      "sourcedFromFile": "/Server/Item/Block/FluidFX/Lava.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mud": {
+      "sourcedFromFile": "/Server/Item/Block/FluidFX/Mud.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slime": {
+      "sourcedFromFile": "/Server/Item/Block/FluidFX/Slime.json",
+      "package": "Hytale:Hytale"
+    },
+    "Water": {
+      "sourcedFromFile": "/Server/Item/Block/FluidFX/Water.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

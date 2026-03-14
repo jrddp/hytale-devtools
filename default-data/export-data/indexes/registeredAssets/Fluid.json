@@ -1,0 +1,76 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "Fluid",
+  "path": "Server/Item/Block/Fluids",
+  "extension": ".json",
+  "assetCount": 16,
+  "fileCount": 14,
+  "values": {
+    "Empty": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Fire": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Fire.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lava": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Lava.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lava_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Lava_Source.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poison": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Poison.json",
+      "package": "Hytale:Hytale"
+    },
+    "Poison_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Poison_Source.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slime": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slime_Red": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime_Red.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slime_Red_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime_Red_Source.json",
+      "package": "Hytale:Hytale"
+    },
+    "Slime_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Slime_Source.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tar": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Tar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tar_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Tar_Source.json",
+      "package": "Hytale:Hytale"
+    },
+    "Unknown": {
+      "sourcedFromFile": null,
+      "package": "Hytale:Hytale"
+    },
+    "Water": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Water.json",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Finite": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Water_Finite.json",
+      "package": "Hytale:Hytale"
+    },
+    "Water_Source": {
+      "sourcedFromFile": "/Server/Item/Block/Fluids/Water_Source.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

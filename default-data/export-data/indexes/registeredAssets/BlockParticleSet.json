@@ -1,0 +1,132 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "BlockParticleSet",
+  "path": "Server/Item/Block/Particles",
+  "extension": ".json",
+  "assetCount": 30,
+  "fileCount": 30,
+  "values": {
+    "Clay": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Clay.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crystal": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Crystal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dirt": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Dirt.json",
+      "package": "Hytale:Hytale"
+    },
+    "Dust": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Dust.json",
+      "package": "Hytale:Hytale"
+    },
+    "Flower": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Flower.json",
+      "package": "Hytale:Hytale"
+    },
+    "Glass": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Glass.json",
+      "package": "Hytale:Hytale"
+    },
+    "GlassEmpty": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/GlassEmpty.json",
+      "package": "Hytale:Hytale"
+    },
+    "GlassEmptySmall": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/GlassEmptySmall.json",
+      "package": "Hytale:Hytale"
+    },
+    "GlassMagic": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/GlassMagic.json",
+      "package": "Hytale:Hytale"
+    },
+    "GlassPoison": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/GlassPoison.json",
+      "package": "Hytale:Hytale"
+    },
+    "GlassSmall": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/GlassSmall.json",
+      "package": "Hytale:Hytale"
+    },
+    "Grass": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Grass.json",
+      "package": "Hytale:Hytale"
+    },
+    "Grass_Earth": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Grass_Earth.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ice": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Ice.json",
+      "package": "Hytale:Hytale"
+    },
+    "Lava": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Lava.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Leaves.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Branches": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Leaves_Branches.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Fir": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Leaves_Fir.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Fir_Snow": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Leaves_Fir_Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Round": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Leaves_Round.json",
+      "package": "Hytale:Hytale"
+    },
+    "Leaves_Sharp": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Leaves_Sharp.json",
+      "package": "Hytale:Hytale"
+    },
+    "Metal": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Metal.json",
+      "package": "Hytale:Hytale"
+    },
+    "Mud": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Mud.json",
+      "package": "Hytale:Hytale"
+    },
+    "Ore": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Ore.json",
+      "package": "Hytale:Hytale"
+    },
+    "Sand": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Sand.json",
+      "package": "Hytale:Hytale"
+    },
+    "Snow": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Snow.json",
+      "package": "Hytale:Hytale"
+    },
+    "Stone": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Stone.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tar": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Tar.json",
+      "package": "Hytale:Hytale"
+    },
+    "Water": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Water.json",
+      "package": "Hytale:Hytale"
+    },
+    "Wood": {
+      "sourcedFromFile": "/Server/Item/Block/Particles/Wood.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

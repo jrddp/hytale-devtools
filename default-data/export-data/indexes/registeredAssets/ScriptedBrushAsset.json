@@ -1,0 +1,164 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ScriptedBrushAsset",
+  "path": "Server/ScriptedBrushes",
+  "extension": ".json",
+  "assetCount": 38,
+  "fileCount": 38,
+  "values": {
+    "BoulderBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/BoulderBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "BoulderBrush_old": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/BoulderBrush_old.json",
+      "package": "Hytale:Hytale"
+    },
+    "Bridge": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/Bridge.json",
+      "package": "Hytale:Hytale"
+    },
+    "BridgePillars": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/BridgePillars.json",
+      "package": "Hytale:Hytale"
+    },
+    "BuildingBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/BuildingBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "CastleBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/CastleBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "CaveBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/CaveBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "CliffBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/CliffBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "CrackBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/CrackBrush/CrackBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "Crackloop": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/CrackBrush/Crackloop.json",
+      "package": "Hytale:Hytale"
+    },
+    "DecorationBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/DecorationBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "ExampleToolArgBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/ExampleToolArgBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "FloorPlan": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/FloorPlan.json",
+      "package": "Hytale:Hytale"
+    },
+    "FluidMaskExample": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Examples/FluidMaskExample.json",
+      "package": "Hytale:Hytale"
+    },
+    "ForestBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/ForestBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "GrassBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/GrassBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "GrassPathBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/GrassPathBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "Hotsprings": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Hotsprings.json",
+      "package": "Hytale:Hytale"
+    },
+    "MountainBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/MountainBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "MountainBrushAdvanced": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/MountainBrushAdvanced.json",
+      "package": "Hytale:Hytale"
+    },
+    "MountainBrush_old": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/MountainBrush_old.json",
+      "package": "Hytale:Hytale"
+    },
+    "PathBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/PathBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "PlateauBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/PlateauBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "ReplaceWaterExample": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Examples/ReplaceWaterExample.json",
+      "package": "Hytale:Hytale"
+    },
+    "RiverBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/RiverBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "RuinBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/RuinBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "RuinRoofsBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/RuinRoofsBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "SpiralBrush": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/SpiralBrush.json",
+      "package": "Hytale:Hytale"
+    },
+    "Tentacle": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Tentacle.json",
+      "package": "Hytale:Hytale"
+    },
+    "Walls": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/Walls.json",
+      "package": "Hytale:Hytale"
+    },
+    "Walls-Floors": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/Walls-Floors.json",
+      "package": "Hytale:Hytale"
+    },
+    "keepDestruction": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/keepDestruction.json",
+      "package": "Hytale:Hytale"
+    },
+    "moltenBall": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/moltenBall.json",
+      "package": "Hytale:Hytale"
+    },
+    "templeDestruction": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/templeDestruction.json",
+      "package": "Hytale:Hytale"
+    },
+    "templeFloor": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/templeFloor.json",
+      "package": "Hytale:Hytale"
+    },
+    "templePillars": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/templePillars.json",
+      "package": "Hytale:Hytale"
+    },
+    "templeRandom": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/templeRandom.json",
+      "package": "Hytale:Hytale"
+    },
+    "templeWalls": {
+      "sourcedFromFile": "/Server/ScriptedBrushes/Archive/templeWalls.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}

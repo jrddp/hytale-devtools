@@ -1,0 +1,60 @@
+{
+  "hytaleVersion": "2026.02.19-1a311a592",
+  "generatedAt": "2026-03-13T17:47:05.606489Z",
+  "indexKind": "registeredAssets",
+  "key": "ResponseCurve",
+  "path": "Server/ResponseCurves",
+  "extension": ".json",
+  "assetCount": 12,
+  "fileCount": 12,
+  "values": {
+    "ConstantMidpoint": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/ConstantMidpoint.json",
+      "package": "Hytale:Hytale"
+    },
+    "InverseExponential": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/InverseExponential.json",
+      "package": "Hytale:Hytale"
+    },
+    "LateFalloff": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/LateFalloff.json",
+      "package": "Hytale:Hytale"
+    },
+    "LateRise": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/LateRise.json",
+      "package": "Hytale:Hytale"
+    },
+    "Linear": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/Linear.json",
+      "package": "Hytale:Hytale"
+    },
+    "Quadratic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/Quadratic.json",
+      "package": "Hytale:Hytale"
+    },
+    "ReverseLinear": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/ReverseLinear.json",
+      "package": "Hytale:Hytale"
+    },
+    "SimpleDescendingLogistic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/SimpleDescendingLogistic.json",
+      "package": "Hytale:Hytale"
+    },
+    "SimpleLogistic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/SimpleLogistic.json",
+      "package": "Hytale:Hytale"
+    },
+    "SimpleParabola": {
+      "sourcedFromFile": "/Server/ResponseCurves/SineWave/SimpleParabola.json",
+      "package": "Hytale:Hytale"
+    },
+    "TestExponential": {
+      "sourcedFromFile": "/Server/ResponseCurves/Exponential/TestExponential.json",
+      "package": "Hytale:Hytale"
+    },
+    "TestLogistic": {
+      "sourcedFromFile": "/Server/ResponseCurves/Logistic/TestLogistic.json",
+      "package": "Hytale:Hytale"
+    }
+  }
+}
