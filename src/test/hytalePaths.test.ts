@@ -3,9 +3,11 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {
+    EXPECTED_COMPANION_EXPORT_FORMAT_VERSION,
     getConfiguredHytaleHomePath,
     getDefaultHytaleHomePath,
     getDefaultHytaleHomeSearchPaths,
+    readExportFormatVersion,
     resolveCompanionExportRootFromPatchline,
     resolvePatchlineFromWorkspace,
     resolveDataRootDir
@@ -82,14 +84,31 @@ suite('Hytale Paths Test Suite', () => {
         );
     });
 
-    test('resolveSchemaDataLocationFromPatchline uses companion export when schema mappings exist', () => {
+    test('readExportFormatVersion reads manifest version', () => {
+        const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hytale-paths-'));
+
+        try {
+            const manifestPath = path.join(workspaceRoot, 'export_manifest.json');
+            fs.writeFileSync(manifestPath, JSON.stringify({ exportFormatVersion: 7 }), 'utf8');
+
+            assert.strictEqual(readExportFormatVersion(manifestPath), 7);
+        } finally {
+            fs.rmSync(workspaceRoot, { recursive: true, force: true });
+        }
+    });
+
+    test('resolveSchemaDataLocationFromPatchline uses companion export when manifest format version matches', () => {
         const globalStorageRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hytale-storage-'));
         const extensionRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hytale-extension-'));
 
         try {
             const exportRoot = resolveCompanionExportRootFromPatchline(globalStorageRoot, 'pre-release');
             fs.mkdirSync(exportRoot, { recursive: true });
-            fs.writeFileSync(path.join(exportRoot, 'export_manifest.json'), '{}', 'utf8');
+            fs.writeFileSync(
+                path.join(exportRoot, 'export_manifest.json'),
+                JSON.stringify({ exportFormatVersion: EXPECTED_COMPANION_EXPORT_FORMAT_VERSION }),
+                'utf8'
+            );
             fs.writeFileSync(path.join(exportRoot, 'schema_mappings.json'), '{}', 'utf8');
             fs.mkdirSync(path.join(exportRoot, 'schemas'), { recursive: true });
             fs.mkdirSync(path.join(exportRoot, 'indexes'), { recursive: true });
@@ -122,7 +141,7 @@ suite('Hytale Paths Test Suite', () => {
             );
 
             assert.deepStrictEqual(location, {
-                rootPath: path.join(extensionRoot, 'default-data', 'schema-data'),
+                rootPath: path.join(extensionRoot, 'default-data', 'export-data'),
                 source: 'default-data'
             });
         } finally {
@@ -149,7 +168,39 @@ suite('Hytale Paths Test Suite', () => {
             );
 
             assert.deepStrictEqual(location, {
-                rootPath: path.join(extensionRoot, 'default-data', 'schema-data'),
+                rootPath: path.join(extensionRoot, 'default-data', 'export-data'),
+                source: 'default-data'
+            });
+        } finally {
+            fs.rmSync(globalStorageRoot, { recursive: true, force: true });
+            fs.rmSync(extensionRoot, { recursive: true, force: true });
+        }
+    });
+
+    test('resolveSchemaDataLocationFromPatchline falls back when export manifest version is outdated', () => {
+        const globalStorageRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hytale-storage-'));
+        const extensionRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hytale-extension-'));
+
+        try {
+            const exportRoot = resolveCompanionExportRootFromPatchline(globalStorageRoot, 'release');
+            fs.mkdirSync(exportRoot, { recursive: true });
+            fs.writeFileSync(
+                path.join(exportRoot, 'export_manifest.json'),
+                JSON.stringify({ exportFormatVersion: EXPECTED_COMPANION_EXPORT_FORMAT_VERSION - 1 }),
+                'utf8'
+            );
+            fs.writeFileSync(path.join(exportRoot, 'schema_mappings.json'), '{}', 'utf8');
+            fs.mkdirSync(path.join(exportRoot, 'schemas'), { recursive: true });
+            fs.mkdirSync(path.join(exportRoot, 'indexes'), { recursive: true });
+
+            const location = resolveDataRootDir(
+                globalStorageRoot,
+                extensionRoot,
+                'release'
+            );
+
+            assert.deepStrictEqual(location, {
+                rootPath: path.join(extensionRoot, 'default-data', 'export-data'),
                 source: 'default-data'
             });
         } finally {

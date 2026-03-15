@@ -16,6 +16,8 @@ const EXPORT_MANIFEST_FILE_NAME = "export_manifest.json";
 const SCHEMA_MAPPINGS_FILE_NAME = "schema_mappings.json";
 export const SCHEMAS_DIRECTORY_NAME = "schemas";
 export const INDEXES_DIRECTORY_NAME = "indexes";
+// todo: find a better solution to keep this in sync with companion mod - for now, ensure they are in sync manually.
+export const EXPECTED_COMPANION_EXPORT_FORMAT_VERSION = 2;
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const CUSTOM_HYTALE_PATH_SETTING_KEY = "customHytalePath";
 
@@ -140,6 +142,20 @@ export function resolveExportManifestPathFromPatchline(
   );
 }
 
+export function readExportFormatVersion(exportManifestPath: string): number | undefined {
+  if (!fs.existsSync(exportManifestPath)) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(exportManifestPath, "utf8"));
+    const exportFormatVersion = parsed?.exportFormatVersion;
+    return Number.isInteger(exportFormatVersion) ? exportFormatVersion : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function resolveDefaultSchemaDataRoot(extensionPath: string): string {
   return path.join(extensionPath, DEFAULT_SCHEMA_DATA_RELATIVE_PATH);
 }
@@ -154,8 +170,9 @@ export function resolveDataRootDir(
   const schemaMappingsPath = path.join(companionExportRoot, SCHEMA_MAPPINGS_FILE_NAME);
   const schemasDirectoryPath = path.join(companionExportRoot, SCHEMAS_DIRECTORY_NAME);
   const indexesDirectoryPath = path.join(companionExportRoot, INDEXES_DIRECTORY_NAME);
+  const exportFormatVersion = readExportFormatVersion(exportManifestPath);
   if (
-    fs.existsSync(exportManifestPath) &&
+    exportFormatVersion === EXPECTED_COMPANION_EXPORT_FORMAT_VERSION &&
     fs.existsSync(schemaMappingsPath) &&
     fs.existsSync(schemasDirectoryPath) &&
     fs.existsSync(indexesDirectoryPath)
