@@ -421,6 +421,7 @@
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
     return nodes.map(node => {
+      // @ts-ignore - the clone will not have infinite depth.
       const copiedNode = structuredClone($state.snapshot(node)) as FlowNode;
       const absolutePosition = getAbsolutePosition(node);
       return {
@@ -440,6 +441,7 @@
     const copiedEdges = workspace.edges
       .filter(edge => selectedNodeIds.has(edge.source) && selectedNodeIds.has(edge.target))
       .map(edge => {
+        // @ts-ignore - the clone will not have infinite depth.
         const copiedEdge = structuredClone($state.snapshot(edge)) as FlowEdge;
         copiedEdge.selected = false;
         return copiedEdge;
@@ -493,6 +495,7 @@
 
     const pastedNodeIds = new Map<string, string>();
     const pastedNodes = copiedNodes.map(node => {
+      // @ts-ignore - the clone will not have infinite depth.
       const pastedNode = structuredClone($state.snapshot(node)) as FlowNode;
       const newNodeId = node.id.split("-")[0] + "-" + createUuidV4();
       pastedNodeIds.set(node.id, newNodeId);
@@ -623,10 +626,7 @@
       }
     },
     // ## On Pane Click (left click)
-    onpaneclick: () => {
-      addMenuInstance = undefined;
-      searchMenuInstance = undefined;
-      helpMenuOpen = false;
+    onpaneclick: ({ event }) => {
     },
     onmoveend: () => {
       onviewportchange?.($state.snapshot(flowStore.viewport));
