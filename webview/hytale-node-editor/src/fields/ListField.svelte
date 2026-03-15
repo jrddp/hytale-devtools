@@ -15,6 +15,8 @@
     onconfirm,
   }: FieldProps<unknown[]> = $props();
 
+  const DEFAULT_ITEM_WIDTH = 160;
+
   let value = $state<unknown[]>([]);
 
   $effect(() => {
@@ -89,9 +91,8 @@
 <FieldLayout {inputId} {label} {description} align="start">
   <div
     id={inputId}
-    class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+    class="flex min-w-0 flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
     class:w-full={inputWidth === undefined}
-    style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
   >
     <div class="flex items-center justify-end gap-2">
       <button
@@ -108,8 +109,11 @@
     {:else}
       <div class="flex flex-col gap-1.5">
         {#each value as item, index}
-          <div class="flex items-start gap-1.5">
-            <div class="flex-1">
+          <div class="flex flex-wrap items-start gap-1.5">
+            <div
+              class="min-w-0 shrink-0"
+              style:width={typeof item === "boolean" ? undefined : `${inputWidth ?? DEFAULT_ITEM_WIDTH}px`}
+            >
               {#if typeof item === "boolean"}
                 <input
                   class="h-4 w-4 nodrag"
