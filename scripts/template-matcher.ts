@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
-const { existsSync, readdirSync, readFileSync, statSync, writeFileSync } = require("node:fs");
+const {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} = require("node:fs");
 const path = require("node:path");
 const ts = require("typescript");
 
@@ -17,7 +24,11 @@ require.extensions[".ts"] = (module, filename) => {
   module._compile(outputText, filename);
 };
 
-const { WorkspaceRuntime } = require("../src/node-editor/workspaceResolver.ts");
+const {
+  WorkspaceRuntime,
+  getNodeEditorWorkspaceSupplementPath,
+  getNodeEditorWorkspaceSupplementsRootPath,
+} = require("../src/node-editor/workspaceResolver.ts");
 const { SchemaRuntime } = require("../src/schema/schemaLoader.ts");
 const { safeParseJSONFile } = require("../src/shared/fileUtils.ts");
 
@@ -26,6 +37,7 @@ const WORKSPACES_DIR = path.resolve(
   __dirname,
   "../default-data/node-editor-workspace-definitions",
 );
+const WORKSPACE_SUPPLEMENTS_DIR = getNodeEditorWorkspaceSupplementsRootPath(WORKSPACES_DIR);
 
 const ROOT_SCHEMA_BY_WORKSPACE_AND_ROOT = {
   "HytaleGenerator (Java)::Biome": "BiomeAsset.json",
@@ -76,15 +88,25 @@ function main() {
 
     assertMappingsShape(workspaceName, outcome.mappings);
 
-    const mappingsPath = path.join(workspaceDirectory.directoryPath, "__SchemaMappings.json");
-    writeFileSync(mappingsPath, JSON.stringify(outcome.mappings, null, 2));
+    const supplementPath = getNodeEditorWorkspaceSupplementPath(
+      WORKSPACE_SUPPLEMENTS_DIR,
+      workspaceDirectory.directoryName,
+    );
+    const nextSupplements = existsSync(supplementPath)
+      ? updateWorkspaceTemplateSupplementRefs(
+          loadWorkspaceTemplateSupplements(supplementPath),
+          outcome.mappings,
+        )
+      : createWorkspaceTemplateSupplements(outcome.mappings);
+    mkdirSync(path.dirname(supplementPath), { recursive: true });
+    writeFileSync(supplementPath, JSON.stringify(nextSupplements, null, 2));
 
     const unresolvedCount = Object.values(outcome.mappings).filter(ref => ref === null).length;
     totalConflicts += outcome.conflicts;
     totalPinnedVariantFallbacks += outcome.pinnedVariantFallbacks;
 
     console.log(
-      `[template-matcher] ${workspaceName}: wrote ${path.basename(mappingsPath)} (${Object.keys(outcome.mappings).length} templates, unresolved=${unresolvedCount}, conflicts=${outcome.conflicts}, pinned-variant-fallbacks=${outcome.pinnedVariantFallbacks})`,
+      `[template-matcher] ${workspaceName}: wrote ${path.basename(supplementPath)} (${Object.keys(outcome.mappings).length} templates, unresolved=${unresolvedCount}, conflicts=${outcome.conflicts}, pinned-variant-fallbacks=${outcome.pinnedVariantFallbacks})`,
     );
   }
 
@@ -145,6 +167,50 @@ function loadWorkspaceDirectoriesByName(workspacesRootPath) {
   }
 
   return workspacesByName;
+}
+
+function loadWorkspaceTemplateSupplements(supplementPath) {
+  if (!existsSync(supplementPath)) {
+    return {};
+  }
+
+  const parsed = safeParseJSONFile(supplementPath);
+  return isRecord(parsed) ? parsed : {};
+}
+
+function createWorkspaceTemplateSupplements(mappings) {
+  const supplements = {};
+
+  for (const templateId of Object.keys(mappings).sort((a, b) => a.localeCompare(b))) {
+    const mappingRef = mappings[templateId];
+    if (typeof mappingRef !== "string") {
+      continue;
+    }
+    supplements[templateId] = { $ref: mappingRef };
+  }
+
+  return supplements;
+}
+
+function updateWorkspaceTemplateSupplementRefs(existingSupplements, mappings) {
+  const nextSupplements = structuredClone(existingSupplements);
+
+  for (const [templateId, mappingRef] of Object.entries(mappings)) {
+    const supplement = isRecord(nextSupplements[templateId]) ? nextSupplements[templateId] : {};
+    if (typeof mappingRef === "string") {
+      supplement.$ref = mappingRef;
+    } else {
+      delete supplement.$ref;
+    }
+
+    if (Object.keys(supplement).length > 0) {
+      nextSupplements[templateId] = supplement;
+    } else {
+      delete nextSupplements[templateId];
+    }
+  }
+
+  return nextSupplements;
 }
 
 function buildObjectRefsByField(schemaRuntime) {

@@ -159,32 +159,55 @@
           }
         ],
         "priority": "default"
+      },
+      {
+        "viewType": "hytale-devtools.hytaleAssetEditor",
+        "displayName": "Hytale Asset Editor",
+        "selector": [
+          {
+            "filenamePattern": "**/Server/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/**/*.particlespawner"
+          },
+          {
+            "filenamePattern": "**/Server/**/*.particlesystem"
+          }
+        ],
+        "priority": "option"
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
     "compile": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js",
-    "watch": "npm-run-all -p watch:*",
+    "watch": "npm-run-all -p watch:esbuild watch:webview watch:tsc",
     "watch:esbuild": "node esbuild.js --watch",
-    "watch:webview": "vite build --watch --config webview/hytale-node-editor/vite.config.mjs",
+    "watch:webview": "npm-run-all -p watch:webview:*",
+    "watch:webview:node-editor": "vite build --watch --config webview/hytale-node-editor/vite.config.mjs",
+    "watch:webview:asset-editor": "vite build --watch --config webview/hytale-asset-editor/vite.config.mjs",
     "dev:webview": "vite --config webview/hytale-node-editor/vite.config.mjs",
+    "dev:webview:node-editor": "vite --config webview/hytale-node-editor/vite.config.mjs",
+    "dev:webview:asset-editor": "vite --config webview/hytale-asset-editor/vite.config.mjs",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "build:companion": "cd companion-mod && ./gradlew build",
     "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production && pnpm run build:companion",
     "vsce:package": "vsce package --no-dependencies",
     "vsce:publish": "vsce publish --no-dependencies",
-    "build:webview": "vite build --config webview/hytale-node-editor/vite.config.mjs",
+    "build:webview": "npm-run-all build:webview:*",
+    "build:webview:node-editor": "vite build --config webview/hytale-node-editor/vite.config.mjs",
+    "build:webview:asset-editor": "vite build --config webview/hytale-asset-editor/vite.config.mjs",
     "compile-tests": "tsc -p . --outDir out",
     "compile-tests:node-editor-parser": "tsc -p tsconfig.node-editor-parser-tests.json",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "test:basic-schema-doc": "pnpm run compile-tests && node ./node_modules/mocha/bin/mocha.js \"out/test/basicSchemaDoc.test.js\"",
     "test:node-editor-parser": "pnpm run compile-tests:node-editor-parser && printf '{\"type\":\"module\"}\\n' > out-node-editor-parser-tests/package.json && node ./node_modules/mocha/bin/mocha.js \"out-node-editor-parser-tests/test/node-editor-parser/**/*.test.js\"",
     "test:node-editor-parser:vitest": "vitest --config vitest.config.mts run test/node-editor-parser",
     "test:node-editor-parser:vitest:watch": "vitest --config vitest.config.mts test/node-editor-parser",
     "test:node-editor-parse-basic": "node test/node-editor-parser/parse-basic.mjs",
     "check-types": "tsc --noEmit",
-    "lint": "eslint \"src/**/*.ts\" \"webview/hytale-node-editor/src/**/*.svelte\"",
+    "lint": "eslint \"src/**/*.ts\" \"webview/**/*.svelte\" \"webview/**/*.ts\"",
     "test": "vscode-test"
   },
   "devDependencies": {
@@ -213,9 +236,11 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
+    "@xyflow/system": "^0.0.75",
     "@xyflow/svelte": "^1.5.1",
     "d3-flextree": "^2.1.2",
     "lucide-svelte": "^0.564.0",
+    "marked": "^16.3.0",
     "rbush": "^4.0.1",
     "yauzl": "^3.2.0"
   }

@@ -1,0 +1,1892 @@
+{
+  "AbsDensityNode": {
+    "$ref": "common.json#/definitions/AbsDensityAsset",
+    "Description": "Outputs the absolute value of the input density.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#abs)*"
+  },
+  "AlwaysTrueConditionSADMP": {
+    "$ref": "common.json#/definitions/AlwaysTrueConditionAsset",
+    "Description": "A SpaceAndDepth condition that always validates.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*"
+  },
+  "AmplitudeConstantDensityNode": {
+    "$ref": "common.json#/definitions/AmplitudeConstantAsset"
+  },
+  "AmplitudeDensityNode": {
+    "$ref": "common.json#/definitions/AmplitudeDensityAsset"
+  },
+  "Anchor.Density": {
+    "$ref": "common.json#/definitions/AnchorDensityAsset",
+    "Description": "Anchors the child density field to the contextual anchor when one exists.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#anchor)*"
+  },
+  "Anchor.Positions": {
+    "$ref": "common.json#/definitions/AnchorPositionProviderAsset",
+    "Description": "Anchors the child positions field to the contextual anchor when one exists.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#anchor)*"
+  },
+  "And.Pattern": {
+    "$ref": "common.json#/definitions/AndPatternAsset",
+    "Description": "Validates only when all child patterns validate.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#and)*"
+  },
+  "AndConditionSADMP": {
+    "$ref": "common.json#/definitions/AndConditionAsset",
+    "Description": "Combines child conditions with logical AND.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*",
+    "Outputs": [
+      {
+        "Id": "ConditionsPin",
+        "Description": "Condition passes only if all child Conditions pass."
+      }
+    ]
+  },
+  "Angle.Density": {
+    "$ref": "common.json#/definitions/AngleDensityAsset",
+    "Description": "Outputs the angle in degrees between a fixed vector and a procedural vector.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#angle)*",
+    "Outputs": [
+      {
+        "Id": "Vector",
+        "Description": "3D vector."
+      },
+      {
+        "Id": "VectorProvider",
+        "Description": "Procedural vector."
+      }
+    ]
+  },
+  "Area.Scanner": {
+    "$ref": "common.json#/definitions/AreaScannerAsset",
+    "Description": "Scans outward from the anchor from nearest to farthest positions within its bounds.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/scanners#radial)*"
+  },
+  "Axis.Density": {
+    "$ref": "common.json#/definitions/AxisDensityAsset",
+    "Description": "Outputs density based on distance from an axis.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#axis)*",
+    "Content": [
+      {
+        "Id": "IsAnchored",
+        "Description": "Boolean. If true, the Axis node will anchor itself to the closest anchor. Although you could use an Anchor node to anchor an Axis Density node, this internal method doesn't produce some artifacts."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Axis",
+        "Description": "3D vector asset slot determining the axis from which the distance is used."
+      },
+      {
+        "Id": "Curve",
+        "Description": "Curve asset slot. Determines the Density value at any distance from the axis."
+      }
+    ]
+  },
+  "BaseHeight.Density": {
+    "$ref": "common.json#/definitions/BaseHeightDensityAsset",
+    "Description": "References a world-structure BaseHeight as either a raw Y value or a distance field.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#baseheight)*",
+    "Content": [
+      {
+        "Id": "BaseHeightName",
+        "Description": "String, name of the BaseHeight to reference."
+      },
+      {
+        "Id": "Distance",
+        "Description": "Boolean value, toggles whether to output the raw Y coordinate of the BaseHeight or the distance from the BaseHeight from the query position."
+      }
+    ]
+  },
+  "BaseHeight.Positions": {
+    "$ref": "common.json#/definitions/BaseHeightPositionProviderAsset",
+    "Description": "Offsets positions vertically using a referenced world base-height constant.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#baseheight)*"
+  },
+  "Biome": {
+    "$ref": "BiomeAsset.json#"
+  },
+  "Block.Column.Prop": {
+    "$ref": "common.json#/definitions/ColumnBlock"
+  },
+  "BlockMask": {
+    "$ref": "BlockMaskAsset.json#",
+    "Description": "Controls which source materials are allowed to replace which destination materials when placing content.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/block-mask)*",
+    "Outputs": [
+      {
+        "Id": "Advanced",
+        "Description": "Per-BlockSet overrides. Each rule contains a Source BlockSet and a CanReplace BlockSet."
+      },
+      {
+        "Id": "DontPlace",
+        "Description": "Source Materials in this set will not be placed."
+      },
+      {
+        "Id": "DontReplace",
+        "Description": "By default, Source Materials cannot replace Destination Materials in this set."
+      }
+    ]
+  },
+  "BlockSet.BlockMask": {
+    "$ref": "common.json#/definitions/MaterialSetAsset",
+    "Description": "Defines a material set that can be reused by the BlockMask rules for source or destination materials.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/block-mask#advanced)*"
+  },
+  "BlockSet.Pattern": {
+    "$ref": "common.json#/definitions/BlockSetPatternAsset",
+    "Description": "Checks whether the block at the current position belongs to a BlockSet.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#blockset)*"
+  },
+  "BlockType.Pattern": {
+    "$ref": "common.json#/definitions/MaterialPatternAsset",
+    "Description": "Checks whether the block at the current position matches a specific material.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#blocktype)*"
+  },
+  "Bound.Positions": {
+    "$ref": "common.json#/definitions/BoundPositionProviderAsset",
+    "Description": "Limits positions to a bounded region.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#bound)*"
+  },
+  "BoxProp": {
+    "$ref": "common.json#/definitions/BoxPropAsset",
+    "Description": "Places a cuboid made from the provided materials.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#cuboid)*",
+    "Outputs": [
+      {
+        "Id": "Material",
+        "Description": "The materials the cuboid is made of."
+      }
+    ]
+  },
+  "Cache.Density": {
+    "$ref": "common.json#/definitions/CacheDensityAsset",
+    "Description": "Caches input density values for the current coordinates up to a configured capacity.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#cache)*",
+    "Content": [
+      {
+        "Id": "Capacity",
+        "Description": "Positive Integer. Determines how many coordinates this cache can hold at once. A safe value is 3."
+      }
+    ]
+  },
+  "Cache.VectorProvider": {
+    "$ref": "common.json#/definitions/CacheVectorProviderAsset",
+    "Description": "Caches the input vector for each position to improve performance in repeated queries.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/vector-provider#cache)*"
+  },
+  "Cache2D.Density": {
+    "$ref": "common.json#/definitions/Cache2dDensityAsset_Deprecated"
+  },
+  "CachePositions": {
+    "$ref": "common.json#/definitions/CachedPositionProviderAsset",
+    "Description": "Caches generated positions to improve performance in repeated queries.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#cache)*",
+    "Content": [
+      {
+        "Id": "CacheSize",
+        "Description": "Determines how many sections can be saved in memory. A safe starting value is 50. If set to 0, the cache is ignored and positions are sourced directly from the child slot."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "PositionsConnection",
+        "Description": "The output of this Positions asset is cached."
+      }
+    ]
+  },
+  "Case.Switch.Density": {
+    "$ref": "common.json#/definitions/SwitchCaseAsset",
+    "Description": "Defines a named density branch that a Switch node can select by switch state.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#switch)*",
+    "Content": [
+      {
+        "Id": "CaseState",
+        "Description": "String. The name of the contextual SwitchCase required for this branch."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Density",
+        "Description": "Density asset slot."
+      }
+    ]
+  },
+  "Ceiling.Curve": {
+    "$ref": "common.json#/definitions/CeilingCurveAsset",
+    "Description": "Caps the child curve at a maximum value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#ceiling)*",
+    "Content": [
+      {
+        "Id": "Ceiling_",
+        "Description": "The maximum value this curve will output."
+      }
+    ]
+  },
+  "Ceiling.Pattern": {
+    "$ref": "common.json#/definitions/CeilingPatternAsset",
+    "Description": "Checks for a matching ceiling above the origin position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#ceiling)*",
+    "Outputs": [
+      {
+        "Id": "Ceiling",
+        "Description": "Validates the coordinate above the Origin position."
+      },
+      {
+        "Id": "Origin",
+        "Description": "Validates the coordinate at the Origin position."
+      }
+    ]
+  },
+  "CeilingDensityNode": {
+    "$ref": "common.json#/definitions/CeilingDensityAsset"
+  },
+  "CellNoise2DDensityNode": {
+    "$ref": "common.json#/definitions/CellNoise2DDensityAsset"
+  },
+  "CellNoise3DDensityNode": {
+    "$ref": "common.json#/definitions/CellNoise3DDensityAsset"
+  },
+  "CellValuePCNReturnType": {
+    "$ref": "common.json#/definitions/CellValueReturnTypeAsset",
+    "Description": "Uses a sampled density value at each cell core as the constant value inside that cell.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "CellWallDistance.Density": {
+    "$ref": "common.json#/definitions/CellWallDistanceDensityAsset"
+  },
+  "Clamp.Curve": {
+    "$ref": "common.json#/definitions/ClampCurveAsset",
+    "Description": "Clamps the child curve between two wall values.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#clamp)*"
+  },
+  "ClampDensityNode": {
+    "$ref": "common.json#/definitions/ClampDensityAsset",
+    "Description": "Clamps the input density between two wall values.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#clamp)*",
+    "Content": [
+      {
+        "Id": "WallA",
+        "Description": "Any floating point number."
+      },
+      {
+        "Id": "WallB",
+        "Description": "Any floating point number."
+      }
+    ]
+  },
+  "Cluster.Prop": {
+    "$ref": "common.json#/definitions/ClusterPropAsset"
+  },
+  "Column.Prop": {
+    "$ref": "common.json#/definitions/ColumnPropAsset"
+  },
+  "ColumnLinear.Scanner": {
+    "$ref": "common.json#/definitions/ColumnLinearScannerAsset",
+    "Description": "Scans blocks linearly along one axis and can run a child scanner at each step.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/scanners#linear)*"
+  },
+  "ColumnRandom.Scanner": {
+    "$ref": "common.json#/definitions/ColumnRandomScannerAsset",
+    "Description": "Scans blocks along one axis in a pseudo-random order.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/scanners#random)*",
+    "Content": [
+      {
+        "Id": "Seed",
+        "Description": "Determines the pseudo-random order."
+      }
+    ]
+  },
+  "Constant.Assignments": {
+    "$ref": "common.json#/definitions/ConstantAssignmentsAsset",
+    "Description": "Assigns the same Prop to every position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#constant)*"
+  },
+  "Constant.Curve": {
+    "$ref": "common.json#/definitions/ConstantCurveAsset"
+  },
+  "Constant.EnvironmentProvider": {
+    "$ref": "common.json#/definitions/ConstantEnvironmentProviderAsset"
+  },
+  "Constant.TintProvider": {
+    "$ref": "common.json#/definitions/ConstantTintProviderAsset"
+  },
+  "Constant.VectorProvider": {
+    "$ref": "common.json#/definitions/ConstantVectorProviderAsset",
+    "Description": "Outputs the provided vector.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/vector-provider#constant)*"
+  },
+  "ConstantDensityNode": {
+    "$ref": "common.json#/definitions/ConstantDensityAsset",
+    "Description": "Outputs a constant density value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#constant)*",
+    "Content": [
+      {
+        "Id": "Value",
+        "Description": "Decimal number."
+      }
+    ]
+  },
+  "ConstantMaterialProvider": {
+    "$ref": "common.json#/definitions/ConstantMaterialProviderAsset",
+    "Description": "Provides a constant material.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#constant)*"
+  },
+  "ConstantThicknessLayerSADMP": {
+    "$ref": "common.json#/definitions/ConstantThicknessLayerAsset",
+    "Description": "A SpaceAndDepth layer with the same thickness everywhere.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#layer)*",
+    "Content": [
+      {
+        "Id": "Thickness",
+        "Description": "Thickness in blocks."
+      }
+    ]
+  },
+  "Cube.Density": {
+    "$ref": "common.json#/definitions/CubeDensityAsset",
+    "Description": "Creates a cube-shaped density field from axis distance and a curve.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#cube)*",
+    "Outputs": [
+      {
+        "Id": "Curve",
+        "Description": "A Curve asset slot, maps the Distance from the origin to a Density value."
+      }
+    ]
+  },
+  "Cuboid.Density": {
+    "$ref": "common.json#/definitions/CuboidDensityAsset",
+    "Description": "Creates a cuboid-shaped density field that can be scaled, reoriented, and spun.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#cuboid)*",
+    "Content": [
+      {
+        "Id": "Spin",
+        "Description": "A floating point number. Determines the angle in degrees by which to spin the Ellipsoid around its Y axis."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Curve",
+        "Description": "A Curve asset slot, maps the Distance from the origin to a Density value."
+      },
+      {
+        "Id": "NewYAxis",
+        "Description": "Point3D asset slot. Let's you rotate the field around its origin."
+      },
+      {
+        "Id": "Scale",
+        "Description": "A 3D vector asset slot. Determines how much to stretch the Cube in each direction."
+      }
+    ]
+  },
+  "Cuboid.Pattern": {
+    "$ref": "common.json#/definitions/CuboidPatternAsset",
+    "Description": "Validates a cuboid region whose inside is checked by a child pattern.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#cuboid)*",
+    "Outputs": [
+      {
+        "Id": "Max",
+        "Description": "Inclusive maximum point of the cuboid relative to the Pattern’s origin."
+      },
+      {
+        "Id": "Min",
+        "Description": "Inclusive minimum point of the cuboid relative to the Pattern’s origin."
+      },
+      {
+        "Id": "SubPattern",
+        "Description": "The Cuboid uses this Pattern to validate the positions inside itself."
+      }
+    ]
+  },
+  "CurveMapper.Density": {
+    "$ref": "common.json#/definitions/CurveMapperDensityAsset",
+    "Description": "Remaps the child density through a curve.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#curvemapper)*",
+    "Outputs": [
+      {
+        "Id": "Curve",
+        "Description": "The curve."
+      }
+    ]
+  },
+  "CurvePCNReturnType": {
+    "$ref": "common.json#/definitions/CurveReturnTypeAsset",
+    "Description": "Uses a curve to define density as a function of distance from the nearest Position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "CurvePoint": {
+    "$ref": "common.json#/definitions/PointInOutAsset",
+    "Description": "A single point on a manual curve; points are connected with straight lines.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#manual)*"
+  },
+  "Cylinder.Density": {
+    "$ref": "common.json#/definitions/CylinderDensityAsset",
+    "Description": "Creates a cylinder-shaped density field from radial distance and a curve.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#cylinder)*",
+    "Content": [
+      {
+        "Id": "Spin",
+        "Description": "A floating point number. Determines the angle in degrees by which to spin the Ellipsoid around its original Y axis."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "AxialCurve",
+        "Description": "A Curve asset slot, maps the Distance from the Cylinder's XZ-plane to a Density value."
+      },
+      {
+        "Id": "NewYAxis",
+        "Description": "Point3D asset slot. In combination with the spin, this lets you rotate the Cylinder around its origin by aligning its original Y-axis with the provided one."
+      },
+      {
+        "Id": "RadialCurve",
+        "Description": "A Curve asset slot, maps the Distance from the Cylinder's Y axis to a Density value."
+      }
+    ]
+  },
+  "Decimal.Range": {
+    "$ref": "common.json#/definitions/RangeDoubleAsset"
+  },
+  "DecimalBounds3d": {
+    "$ref": "common.json#/definitions/DecimalBounds3dAsset"
+  },
+  "Delimiter": {
+    "$ref": "common.json#/definitions/DelimiterAsset@5",
+    "Description": "Defines an inclusive density range used by the FieldFunction positions provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#fieldfunction)*",
+    "Content": [
+      {
+        "Id": "Max",
+        "Description": "Higher bound of the delimiter."
+      },
+      {
+        "Id": "Min",
+        "Description": "Lower bound of the delimiter."
+      }
+    ]
+  },
+  "Delimiter.DensityDelimited.EnvironmentProvider": {
+    "$ref": "common.json#/definitions/DelimiterAsset@6"
+  },
+  "Delimiter.DensityDelimited.TintProvider": {
+    "$ref": "common.json#/definitions/DelimiterAsset@7"
+  },
+  "Delimiter.DensityPCNReturnType": {
+    "$ref": "common.json#/definitions/DelimiterAsset@8",
+    "Description": "Maps a choice-density range to the density field used by the Density Positions Cell Noise return type.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "Delimiter.FieldFunction.Assignments": {
+    "$ref": "common.json#/definitions/DelimiterAsset@3",
+    "Description": "Maps a density range to the Assignments used by a FieldFunction Assignments node.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#fieldfunction)*",
+    "Content": [
+      {
+        "Id": "Max",
+        "Description": "Higher exclusive bound of the delimiter."
+      },
+      {
+        "Id": "Min",
+        "Description": "Lower inclusive bound of the delimiter."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Assignments",
+        "Description": "The Assignments providing the Props to use."
+      }
+    ]
+  },
+  "Delimiter.FieldFunction.Pattern": {
+    "$ref": "common.json#/definitions/DelimiterAsset",
+    "Description": "Defines an inclusive density range used by the FieldFunction pattern.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#fieldfunction)*",
+    "Content": [
+      {
+        "Id": "Max",
+        "Description": "Higher exclusive bound of the delimiter."
+      },
+      {
+        "Id": "Min",
+        "Description": "Lower inclusive bound of the delimiter."
+      }
+    ]
+  },
+  "Delimiter.Sandwich.Assignments": {
+    "$ref": "common.json#/definitions/DelimiterAsset@4",
+    "Description": "Maps a world-height range to the Assignments used by a Sandwich Assignments node.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#sandwich)*",
+    "Content": [
+      {
+        "Id": "MaxY",
+        "Description": "Higher exclusive bound of the delimiter."
+      },
+      {
+        "Id": "MinY",
+        "Description": "Lower inclusive bound of the delimiter."
+      }
+    ]
+  },
+  "DelimiterFieldFunctionMP": {
+    "$ref": "common.json#/definitions/DelimiterAsset@1",
+    "Description": "Maps a value range to the material provider used by a FieldFunction material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#fieldfunction)*",
+    "Content": [
+      {
+        "Id": "From",
+        "Description": "Minimum limit of the delimiter’s range."
+      },
+      {
+        "Id": "To",
+        "Description": "Maximum limit of the delimiter’s range."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "MaterialPin",
+        "Description": "Slot linked to this delimiter."
+      }
+    ]
+  },
+  "Density.Prop": {
+    "$ref": "common.json#/definitions/DensityPropAsset",
+    "Description": "Generates a prop from a density field and a material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#density)*",
+    "Outputs": [
+      {
+        "Id": "Density",
+        "Description": "Gives shape to the Prop."
+      },
+      {
+        "Id": "Material",
+        "Description": "Determines the block types to use."
+      }
+    ]
+  },
+  "DensityDelimited.EnvironmentProvider": {
+    "$ref": "common.json#/definitions/DensityDelimitedEnvironmentProviderAsset"
+  },
+  "DensityDelimited.TintProvider": {
+    "$ref": "common.json#/definitions/DensityDelimitedTintProviderAsset"
+  },
+  "DensityGradient.VectorProvider": {
+    "$ref": "common.json#/definitions/DensityGradientVectorProviderAsset",
+    "Description": "Outputs the gradient vector of a density field.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/vector-provider#densitygradient)*",
+    "Content": [
+      {
+        "Id": "SampleDistance",
+        "Description": "How far apart the Density field value samples are taken. The optimal value for performance is 1.0. Greater values could be useful for smoothing out results for specific applications."
+      }
+    ]
+  },
+  "DensityPCNReturnType": {
+    "$ref": "common.json#/definitions/DensityReturnTypeAsset",
+    "Description": "Fills each cell with a density field chosen from delimiters using a sampled choice density.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "Distance.Density": {
+    "$ref": "common.json#/definitions/DistanceDensityAsset",
+    "Description": "Maps distance from the field origin through a curve to produce density.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#distance)*",
+    "Outputs": [
+      {
+        "Id": "Curve",
+        "Description": "A Curve asset slot, maps the Distance from the origin to a Density value."
+      }
+    ]
+  },
+  "Distance2AddPCNReturnType": {
+    "$ref": "common.json#/definitions/Distance2AddReturnTypeAsset",
+    "Description": "Uses the traditional CellNoise Distance2Add return behavior.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "Distance2DivPCNReturnType": {
+    "$ref": "common.json#/definitions/Distance2DivReturnTypeAsset",
+    "Description": "Uses the traditional CellNoise Distance2Div return behavior.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "Distance2MulPCNReturnType": {
+    "$ref": "common.json#/definitions/Distance2MulReturnTypeAsset",
+    "Description": "Uses the traditional CellNoise Distance2Mul return behavior.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "Distance2PCNReturnType": {
+    "$ref": "common.json#/definitions/Distance2ReturnTypeAsset",
+    "Description": "Uses the traditional CellNoise Distance2 return behavior.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "Distance2SubPCNReturnType": {
+    "$ref": "common.json#/definitions/Distance2SubReturnTypeAsset",
+    "Description": "Uses the traditional CellNoise Distance2Sub return behavior.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "DistanceExponentialCurve": {
+    "$ref": "common.json#/definitions/DistanceExponentialCurveAsset",
+    "Description": "Creates a distance-based falloff that starts at 1 and approaches 0 as input nears its range.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#distanceexponential)*",
+    "Content": [
+      {
+        "Id": "Exponent",
+        "Description": "Affects the curve’s shape like in the diagram above."
+      },
+      {
+        "Id": "Range",
+        "Description": "The value after which the curve outputs a constant 0.0."
+      }
+    ]
+  },
+  "DistancePCNReturnType": {
+    "$ref": "common.json#/definitions/DistanceReturnTypeAsset",
+    "Description": "Uses the traditional CellNoise Distance return behavior.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#returntype)*"
+  },
+  "DistanceSCurve": {
+    "$ref": "common.json#/definitions/DistanceSCurveAsset",
+    "Description": "Combines two distance-exponential shapes into an S-shaped distance falloff.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#distances)*",
+    "Content": [
+      {
+        "Id": "ExponentA",
+        "Description": "Affects the curve’s shape in the first half of the range."
+      },
+      {
+        "Id": "ExponentB",
+        "Description": "Affects the curve’s shape in the second half of the range."
+      },
+      {
+        "Id": "Range",
+        "Description": "The value after which the curve outputs a constant 0.0."
+      },
+      {
+        "Id": "Transition",
+        "Description": "Values close to 0.0 create a curve with a faster, more sudden transition between ExponentA and ExponentB. Values of 1.0 transition from ExponentA to ExponentB over the entire curve."
+      },
+      {
+        "Id": "TransitionSmooth",
+        "Description": "Affects the shape of the transition. Lower values can result in a sharper curve in some situations. Try different values while you design to get a feel for it."
+      }
+    ]
+  },
+  "DistanceToBiomeEdge.Density": {
+    "$ref": "common.json#/definitions/DistanceToBiomeEdgeDensityAsset",
+    "Description": "Outputs the distance to the nearest biome edge in blocks.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#distancetobiomeedge)*"
+  },
+  "Ellipsoid.Density": {
+    "$ref": "common.json#/definitions/EllipsoidDensityAsset",
+    "Description": "Creates an ellipsoid-shaped density field that can be scaled, reoriented, and spun.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#ellipsoid)*",
+    "Content": [
+      {
+        "Id": "Spin",
+        "Description": "A floating point number. Determines the angle in degrees by which to spin the Ellipsoid around its Y axis."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Curve",
+        "Description": "A Curve asset slot, maps the Distance from the origin to a Density value."
+      },
+      {
+        "Id": "Scale",
+        "Description": "A 3D vector asset slot. Determines how much to stretch the Sphere in each direction."
+      }
+    ]
+  },
+  "EqualsConditionSADMP": {
+    "$ref": "common.json#/definitions/EqualsConditionAsset",
+    "Description": "Validates only when the selected context value exactly matches the configured value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*",
+    "Content": [
+      {
+        "Id": "ContextToCheck",
+        "Description": "Which context value the Condition queries."
+      },
+      {
+        "Id": "Value",
+        "Description": "Condition passes only if the context value equals this."
+      }
+    ]
+  },
+  "Exported.Density": {
+    "$ref": "common.json#/definitions/ExportedDensityAsset",
+    "Description": "Exports a density asset for reuse elsewhere.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#exported)*",
+    "Content": [
+      {
+        "Id": "SingleInstance",
+        "Description": "Boolean. Enable to share the exported for all Imported nodes referencing this key."
+      }
+    ]
+  },
+  "Exported.VectorProvider": {
+    "$ref": "common.json#/definitions/ExportedVectorProviderAsset",
+    "Description": "Exports a vector provider, optionally as a shared single instance for all importers.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/vector-provider#exported)*",
+    "Content": [
+      {
+        "Id": "SingleInstance",
+        "Description": "Enable this to share the export across all Imported nodes that reference this key."
+      }
+    ]
+  },
+  "FastGradientWarp.Density": {
+    "$ref": "common.json#/definitions/FastGradientWarpDensityAsset",
+    "Description": "Warps density using an internal simplex-based gradient warp implementation.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#fastgradientwarp)*",
+    "Content": [
+      {
+        "Id": "WarpFactor",
+        "Description": "Decimal number greater than 0. Themaximum distance coordinates can be warped."
+      },
+      {
+        "Id": "WarpLacunarity",
+        "Description": "Decimal number greater than 0. The lacunarity of the internal simplex field."
+      },
+      {
+        "Id": "WarpOctaves",
+        "Description": "Integer greater than 0. The internal field’s octaves."
+      },
+      {
+        "Id": "WarpPersistence",
+        "Description": "Decimal number greater than 0. The persistence of the internal simplex field."
+      },
+      {
+        "Id": "WarpScale",
+        "Description": "Floating point number greater than 0. This determines the scale of the internal warper noise field."
+      }
+    ]
+  },
+  "FieldFunction.Assignments": {
+    "$ref": "common.json#/definitions/FieldFunctionAssignmentsAsset",
+    "Description": "Chooses Assignments from delimiter ranges based on a density field sampled at each position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#fieldfunction)*",
+    "Outputs": [
+      {
+        "Id": "Delimiters.Pin",
+        "Description": "Attaches Props to value ranges of the Density field."
+      }
+    ]
+  },
+  "FieldFunction.Pattern": {
+    "$ref": "common.json#/definitions/DensityPatternAsset",
+    "Description": "Validates only where a density field falls inside configured delimiter ranges.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#fieldfunction)*"
+  },
+  "FieldFunctionMaterialProvider": {
+    "$ref": "common.json#/definitions/FieldFunctionMaterialProviderAsset",
+    "Description": "Selects materials from delimiter ranges based on a field function value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#fieldfunction)*",
+    "Outputs": [
+      {
+        "Id": "DelimitersPin",
+        "Description": "Higher entries have higher priority."
+      },
+      {
+        "Id": "FieldFunctionPin",
+        "Description": "Defines the field value for each block. Same asset type used by DAOTerrain density."
+      }
+    ]
+  },
+  "FieldFunctionPositions": {
+    "$ref": "common.json#/definitions/FieldFunctionPositionProviderAsset",
+    "Description": "Masks positions using a density field and delimiter ranges.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#fieldfunction)*",
+    "Outputs": [
+      {
+        "Id": "DelimiterConnections",
+        "Description": "List of Density value delimiters."
+      },
+      {
+        "Id": "DensityConnection",
+        "Description": "Slot for a Density input."
+      },
+      {
+        "Id": "PositionsConnection",
+        "Description": "The positions on which the mask is applied."
+      }
+    ]
+  },
+  "Floor.Curve": {
+    "$ref": "common.json#/definitions/FloorCurveAsset",
+    "Description": "Caps the child curve at a minimum value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#floor)*",
+    "Content": [
+      {
+        "Id": "Floor_",
+        "Description": "The minimum value this curve will output."
+      }
+    ]
+  },
+  "Floor.Pattern": {
+    "$ref": "common.json#/definitions/FloorPatternAsset",
+    "Description": "Checks for a matching floor below the origin position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#floor)*",
+    "Outputs": [
+      {
+        "Id": "Floor",
+        "Description": "Validates the block under the Origin position."
+      },
+      {
+        "Id": "Origin",
+        "Description": "Validates the block at the Origin position."
+      }
+    ]
+  },
+  "FloorDensityNode": {
+    "$ref": "common.json#/definitions/FloorDensityAsset"
+  },
+  "Framework.Positions": {
+    "$ref": "common.json#/definitions/FrameworkPositionProviderAsset",
+    "Description": "Defines a named positions field in the world framework for reuse across biomes.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/world-structure#positions)*"
+  },
+  "FunctionForY": {
+    "$ref": "common.json#/definitions/NodeFunctionYOutAsset"
+  },
+  "FunctionForYPoint": {
+    "$ref": "common.json#/definitions/PointYOutAsset"
+  },
+  "Gap.Pattern": {
+    "$ref": "common.json#/definitions/GapPatternAsset",
+    "Description": "Validates a gap between two pattern-defined regions.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#gap)*",
+    "Content": [
+      {
+        "Id": "AnchorRoughness",
+        "Description": "Determines how strict the anchor checking is. Higher values mean less strict. A good starting point is 1."
+      },
+      {
+        "Id": "AnchorSize",
+        "Description": "Determines the size in blocks of the anchor. See the diagrams above for a visual representation."
+      },
+      {
+        "Id": "Angles",
+        "Description": "Angles in degrees. An angle of 0 is the Z-axis, and an angle of 90 is the X-axis."
+      },
+      {
+        "Id": "DepthDown",
+        "Description": "Determines the depth of the gap downward in blocks starting at the origin."
+      },
+      {
+        "Id": "DepthUp",
+        "Description": "Determines the depth of the gap upward in blocks starting at the origin."
+      },
+      {
+        "Id": "GapSize",
+        "Description": "Determines the distance in blocks between the two anchors forming the gap."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "AnchorPattern",
+        "Description": "Used to validate every block of the anchors."
+      },
+      {
+        "Id": "GapPattern",
+        "Description": "Used to validate every block of the gap and depths."
+      }
+    ]
+  },
+  "Gradient.Density": {
+    "$ref": "common.json#/definitions/GradientDensityAsset"
+  },
+  "GradientWarp.Density": {
+    "$ref": "common.json#/definitions/GradientWarpDensityAsset",
+    "Description": "Warps one density field using the gradient of another density field.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#gradientwarp)*",
+    "Content": [
+      {
+        "Id": "2D",
+        "Description": "Boolean, if true the output of this node is 2D. An internal Cache2D is used."
+      },
+      {
+        "Id": "SampleRange",
+        "Description": "Floating point number greater than 0. I recommend keeping this value at 1."
+      },
+      {
+        "Id": "WarpFactor",
+        "Description": "A floating point number greater than 0. With greater values you get more warping."
+      },
+      {
+        "Id": "YFor2D",
+        "Description": "Floating point coordinate, default is 0. the Y coordinate used from the input to calculate the gradient from."
+      }
+    ]
+  },
+  "GreaterThanConditionSADMP": {
+    "$ref": "common.json#/definitions/GreaterThanConditionAsset",
+    "Description": "Validates only when the selected context value is greater than the configured threshold.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*",
+    "Content": [
+      {
+        "Id": "ContextToCheck",
+        "Description": "Which context value the Condition queries."
+      },
+      {
+        "Id": "Threshold",
+        "Description": "Condition passes only if the context value is greater than this."
+      }
+    ]
+  },
+  "Imported.Assignments": {
+    "$ref": "common.json#/definitions/ImportedAssignmentsAsset",
+    "Description": "Imports an exported Assignments asset.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#imported)*",
+    "Content": [
+      {
+        "Id": "Name",
+        "Description": "The exported Assignments name."
+      }
+    ]
+  },
+  "Imported.Directionality": {
+    "$ref": "common.json#/definitions/ImportedDirectionalityAsset"
+  },
+  "Imported.Pattern": {
+    "$ref": "common.json#/definitions/ImportedPatternAsset",
+    "Description": "Imports an exported pattern.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#imported)*"
+  },
+  "Imported.Prop": {
+    "$ref": "common.json#/definitions/ImportedPropAsset",
+    "Description": "Imports an exported prop.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#imported)*",
+    "Content": [
+      {
+        "Id": "Name",
+        "Description": "The exported Prop name."
+      }
+    ]
+  },
+  "Imported.Scanner": {
+    "$ref": "common.json#/definitions/ImportedScannerAsset",
+    "Description": "Imports an exported scanner.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/scanners#imported)*",
+    "Content": [
+      {
+        "Id": "Name",
+        "Description": "The exported Scanner."
+      }
+    ]
+  },
+  "Imported.VectorProvider": {
+    "$ref": "common.json#/definitions/ImportedVectorProviderAsset",
+    "Description": "Imports an exported vector provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/vector-provider#imported)*",
+    "Content": [
+      {
+        "Id": "Name",
+        "Description": "The exported VectorProvider."
+      }
+    ]
+  },
+  "ImportedCurve": {
+    "$ref": "common.json#/definitions/ImportedCurveAsset",
+    "Description": "Imports an exported curve asset.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#imported)*",
+    "Content": [
+      {
+        "Id": "Name",
+        "Description": "The exported Curve asset."
+      }
+    ]
+  },
+  "ImportedDensityNode": {
+    "$ref": "common.json#/definitions/ImportedDensityAsset",
+    "Description": "Imports an exported density asset.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#imported)*",
+    "Content": [
+      {
+        "Id": "Name",
+        "Description": "String. The exported Density."
+      }
+    ]
+  },
+  "ImportedMaterialProvider": {
+    "$ref": "common.json#/definitions/ImportedMaterialProviderAsset",
+    "Description": "Imports an exported material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#imported)*"
+  },
+  "ImportedPositions": {
+    "$ref": "common.json#/definitions/ImportedPositionProviderAsset",
+    "Description": "Imports an exported positions provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#imported)*"
+  },
+  "Inverter.Curve": {
+    "$ref": "common.json#/definitions/InverterCurveAsset",
+    "Description": "Inverts the sign of the child curve.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#inverter)*"
+  },
+  "InverterDensityNode": {
+    "$ref": "common.json#/definitions/InverterDensityAsset",
+    "Description": "Outputs the input density multiplied by -1.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#inverter)*"
+  },
+  "Key.MultiMix.Density": {
+    "$ref": "common.json#/definitions/KeyAsset",
+    "Description": "Pins one MultiMix input to a gauge value so it becomes stronger as the gauge approaches that key.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#multimix)*"
+  },
+  "ListPositions": {
+    "$ref": "common.json#/definitions/ListPositionProviderAsset",
+    "Description": "Defines a static list of world positions manually.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#list)*",
+    "Outputs": [
+      {
+        "Id": "PointConnections",
+        "Description": "Each entry contains X, Y, and Z."
+      }
+    ]
+  },
+  "ManualCurve": {
+    "$ref": "common.json#/definitions/ManualCurveAsset",
+    "Description": "Builds a curve from manually placed points connected by straight lines.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#manual)*"
+  },
+  "Material": {
+    "$ref": "common.json#/definitions/MaterialAsset",
+    "Description": "Defines the solid and fluid material content used by blocks, with optional rotation controls.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material)*"
+  },
+  "Max.Curve": {
+    "$ref": "common.json#/definitions/Positions3DDensityAsset/properties/DistanceCurve",
+    "Description": "Returns the greatest value among its child curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#max)*"
+  },
+  "MaxDensityNode": {
+    "$ref": "common.json#/definitions/MaxDensityAsset",
+    "Description": "Outputs the greatest value among the child densities.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#max)*"
+  },
+  "Mesh2DPositions": {
+    "$ref": "common.json#/definitions/Mesh2DPositionProviderAsset"
+  },
+  "Mesh3DPositions": {
+    "$ref": "common.json#/definitions/Mesh3DPositionProviderAsset"
+  },
+  "MeshPointGenerator": {
+    "$ref": "common.json#/definitions/MeshPointGeneratorAsset"
+  },
+  "Min.Curve": {
+    "$ref": "common.json#/definitions/MinCurveAsset",
+    "Description": "Returns the smallest value among its child curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#min)*"
+  },
+  "MinDensityNode": {
+    "$ref": "common.json#/definitions/MinDensityAsset",
+    "Description": "Outputs the smallest value among the child densities.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#min)*"
+  },
+  "Mix.Density": {
+    "$ref": "common.json#/definitions/MixDensityAsset",
+    "Description": "Blends two input densities using a mix amount from the remaining input.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#mix)*"
+  },
+  "MultiMix.Density": {
+    "$ref": "common.json#/definitions/MultiMixDensityAsset",
+    "Description": "Blends multiple inputs, using the last input as a gauge and keys to pin inputs to gauge values.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#multimix)*"
+  },
+  "Multiplier.Curve": {
+    "$ref": "common.json#/definitions/MultiplierCurveAsset",
+    "Description": "Multiplies the outputs of its child curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#multiplier)*"
+  },
+  "MultiplierDensityNode": {
+    "$ref": "common.json#/definitions/MultiplierDensityAsset",
+    "Description": "Outputs the multiplication of all child densities and can short-circuit when an input reaches zero.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#multiplier)*"
+  },
+  "NoiseThicknessLayerSADMP": {
+    "$ref": "common.json#/definitions/NoiseThicknessAsset",
+    "Description": "A SpaceAndDepth layer whose thickness is sampled from a noise function on the XZ plane.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#layer)*",
+    "Outputs": [
+      {
+        "Id": "DensityPin",
+        "Description": "Sampled as a 2D function on the XZ plane (Y is always 0)."
+      }
+    ]
+  },
+  "NormalizerDensityNode": {
+    "$ref": "common.json#/definitions/NormalizerDensityAsset",
+    "Description": "Remaps the input density from one numeric range into another.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#normalizer)*",
+    "Content": [
+      {
+        "Id": "FromMax",
+        "Description": "Any floating point number."
+      },
+      {
+        "Id": "FromMin",
+        "Description": "Any floating point number."
+      },
+      {
+        "Id": "ToMax",
+        "Description": "Any floating point number."
+      },
+      {
+        "Id": "ToMin",
+        "Description": "Any floating point number."
+      }
+    ]
+  },
+  "Not.Curve": {
+    "$ref": "common.json#/definitions/NotCurveAsset",
+    "Description": "Applies a logical-not style inversion to the child curve.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#not)*"
+  },
+  "Not.Pattern": {
+    "$ref": "common.json#/definitions/NotPatternAsset",
+    "Description": "Validates only where the child pattern does not validate.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#not)*"
+  },
+  "NotConditionSADMP": {
+    "$ref": "common.json#/definitions/NotConditionAsset",
+    "Description": "Inverts a child condition so it passes only when that child fails.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*",
+    "Outputs": [
+      {
+        "Id": "ConditionsPin",
+        "Description": "Condition passes only if all child Conditions pass."
+      }
+    ]
+  },
+  "OccurrencePositions": {
+    "$ref": "common.json#/definitions/FieldFunctionOccurrencePositionProviderAsset",
+    "Description": "Keeps input positions probabilistically based on a sampled density value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#occurrence)*",
+    "Content": [
+      {
+        "Id": "Seed",
+        "Description": "Determines the outcome."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "DensityConnection",
+        "Description": "Determines the chance of keeping the positions."
+      }
+    ]
+  },
+  "Offset.Pattern": {
+    "$ref": "common.json#/definitions/OffsetPatternAsset",
+    "Description": "Offsets the child pattern by a configured vector.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#offset)*",
+    "Outputs": [
+      {
+        "Id": "Offset.Pin",
+        "Description": "The direction to offset the child Pattern in."
+      }
+    ]
+  },
+  "Offset.Prop": {
+    "$ref": "common.json#/definitions/OffsetPropAsset",
+    "Description": "Offsets the child prop's position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#offset)*",
+    "Outputs": [
+      {
+        "Id": "Offset",
+        "Description": "The direction in which to offset the child Prop’s position."
+      }
+    ]
+  },
+  "OffsetConstantDensityNode": {
+    "$ref": "common.json#/definitions/OffsetConstantAsset"
+  },
+  "OffsetDensityNode": {
+    "$ref": "common.json#/definitions/OffsetDensityAsset"
+  },
+  "OffsetPositions": {
+    "$ref": "common.json#/definitions/OffsetPositionProviderAsset",
+    "Description": "Offsets positions by a provided vector.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#offset)*",
+    "Outputs": [
+      {
+        "Id": "PositionsConnection",
+        "Description": "Positions to offset."
+      }
+    ]
+  },
+  "Or.Pattern": {
+    "$ref": "common.json#/definitions/OrPatternAsset",
+    "Description": "Validates when at least one child pattern validates.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#or)*"
+  },
+  "OrConditionSADMP": {
+    "$ref": "common.json#/definitions/OrConditionAsset",
+    "Description": "Combines child conditions with logical OR.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*",
+    "Outputs": [
+      {
+        "Id": "ConditionsPin",
+        "Description": "Condition passes only if all child Conditions pass."
+      }
+    ]
+  },
+  "Origin.Scanner": {
+    "$ref": "common.json#/definitions/OriginScannerAsset",
+    "Description": "Scans only the origin position.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/scanners#origin)*"
+  },
+  "OrthogonalRotation": {
+    "$ref": "common.json#/definitions/OrthogonalRotationAsset"
+  },
+  "Pattern.Directionality": {
+    "$ref": "common.json#/definitions/PatternDirectionalityAsset"
+  },
+  "PCNDistanceFunction": {
+    "$ref": "common.json#/definitions/PositionsCellNoiseDensityAsset/properties/DistanceFunction",
+    "Description": "Chooses how distance to the nearest Position is measured, currently Euclidean or Manhattan.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#distancefunction)*"
+  },
+  "Plane.Density": {
+    "$ref": "common.json#/definitions/PlaneDensityAsset",
+    "Description": "Outputs density based on distance from a plane.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#plane)*",
+    "Outputs": [
+      {
+        "Id": "Curve",
+        "Description": "Curve asset slot. Determines the Density value at any distance from the plane."
+      },
+      {
+        "Id": "PlaneNormal",
+        "Description": "3D vector asset slot determining the direction the plane is facing."
+      }
+    ]
+  },
+  "Point3D": {
+    "$ref": "common.json#/definitions/Vector3d",
+    "Description": "A single 3D point entry used when manually defining a static list of positions.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#list)*"
+  },
+  "PondFiller.Prop": {
+    "$ref": "common.json#/definitions/PondFillerPropAsset",
+    "Description": "Fills terrain depressions inside a bounding box using a material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#pondfiller)*",
+    "Outputs": [
+      {
+        "Id": "BarrierBlockSet",
+        "Description": "Defines the types of blocks that can make up the solid terrain, through which the pond material cannot seep."
+      },
+      {
+        "Id": "FillMaterial",
+        "Description": "Determines the types of blocks used when filling up the ponds (for example, water)."
+      }
+    ]
+  },
+  "Positions3DDensityNode": {
+    "$ref": "common.json#/definitions/Positions3DDensityAsset"
+  },
+  "PositionsCellNoiseDensityNode": {
+    "$ref": "common.json#/definitions/PositionsCellNoiseDensityAsset",
+    "Description": "Builds a cell-style density field from Positions, configurable return types, and distance functions.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#positionscellnoise)*",
+    "Content": [
+      {
+        "Id": "MaxDistance",
+        "Description": "Floating point value. The maximum distance around each Position that it has an effect on the Density field. A good starting value is putting it a bit over half the distance between two of your Position points. Greater values have a greater impact on performance."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "DistanceFunction",
+        "Description": "DistanceFunction slot. This determines how the distance is calculated."
+      },
+      {
+        "Id": "Positions",
+        "Description": "Positions slot. This provides the Positions of each cell's core."
+      },
+      {
+        "Id": "ReturnType",
+        "Description": "ReturnType slot. This determines how the distance from each Position point is interpreted to produce the density field."
+      }
+    ]
+  },
+  "PositionsPinch.Density": {
+    "$ref": "common.json#/definitions/PositionsPinchDensityAsset",
+    "Description": "Pinches or expands density around Positions using a curve and a maximum effect distance.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#positionspinch)*",
+    "Content": [
+      {
+        "Id": "HorizontalPinch",
+        "Description": "Boolean value, default is false. If true, the input is pinched horizontally only."
+      },
+      {
+        "Id": "MaxDistance",
+        "Description": "Positive floating point number. The value represents how big the area of effect is in block units."
+      },
+      {
+        "Id": "NormalizeDistance",
+        "Description": "Boolean value, default is true. If true then the Curve’s input and output unit is normalized to the MaxDistance value, otherwise if false the Curve’s input and output unit is in blocks."
+      },
+      {
+        "Id": "PositionsMaxY",
+        "Description": "Floating point number. Determines the upper Y level bound of the region queried from the Positions field. Any Positions that are at or above this value are ignored."
+      },
+      {
+        "Id": "PositionsMinY",
+        "Description": "Floating point number. Determines the lower Y level bound of the region queried from the Positions field. Any Positions that are below this value are ignored."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "PinchCurve",
+        "Description": "Curve asset slot. The curve determines how the Density field is pinched or expanded depending on how close it is to a position."
+      },
+      {
+        "Id": "Positions",
+        "Description": "Positions asset slot. The Positions are the anchors that pinch and expand the Density field around them."
+      }
+    ]
+  },
+  "PositionsTwist.Density": {
+    "$ref": "common.json#/definitions/PositionsTwistDensityAsset",
+    "Description": "Twists density around Positions using a twist curve, axis, and maximum effect distance.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#positionstwist)*",
+    "Content": [
+      {
+        "Id": "MaxDistance",
+        "Description": "Positive floating point number. The value represents how big the area of effect is in block units."
+      },
+      {
+        "Id": "NormalizeDistance",
+        "Description": "Boolean value, default is true. If true then the Curve’s input unit is normalized to the MaxDistance value, otherwise if false the Curve’s input unit is in blocks."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Positions",
+        "Description": "Positions asset slot. The Positions are the anchors that pinch and expand the Density field around them."
+      },
+      {
+        "Id": "TwistAxis",
+        "Description": "Vector asset slot. the axis around which the twisting happens."
+      },
+      {
+        "Id": "TwistCurve",
+        "Description": "Curve asset slot. The curve determines how the Density field is twisted depending on how close it is to a position."
+      }
+    ]
+  },
+  "PowDensityNode": {
+    "$ref": "common.json#/definitions/PowDensityAsset",
+    "Description": "Raises the input density to a configured exponent.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#pow)*",
+    "Content": [
+      {
+        "Id": "Exponent",
+        "Description": "Any value, A good starting value would be 2."
+      }
+    ]
+  },
+  "Prefab.Prop": {
+    "$ref": "common.json#/definitions/PrefabPropAsset",
+    "Description": "Places a prefab chosen from weighted file or folder paths.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#prefab)*",
+    "Outputs": [
+      {
+        "Id": "WeightedPrefabPaths",
+        "Description": "Each path entry contains the keys below."
+      }
+    ]
+  },
+  "Queue.Prop": {
+    "$ref": "common.json#/definitions/QueuePropAsset",
+    "Description": "Places the first child prop that successfully generates and skips the rest.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#queue)*"
+  },
+  "QueueMaterialProvider": {
+    "$ref": "common.json#/definitions/QueueMaterialProviderAsset",
+    "Description": "Queries material providers from highest to lowest priority until one returns a block.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#queue)*",
+    "Outputs": [
+      {
+        "Id": "QueuePin",
+        "Description": "Slots are queried from top to bottom."
+      }
+    ]
+  },
+  "Random.Directionality": {
+    "$ref": "common.json#/definitions/RandomDirectionalityAsset"
+  },
+  "RangeThicknessLayerSADMP": {
+    "$ref": "common.json#/definitions/RangeThicknessAsset",
+    "Description": "A SpaceAndDepth layer whose thickness varies within a configured range.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#layer)*",
+    "Content": [
+      {
+        "Id": "RangeMax",
+        "Description": "Maximum thickness in blocks (inclusive)."
+      },
+      {
+        "Id": "RangeMin",
+        "Description": "Minimum thickness in blocks."
+      },
+      {
+        "Id": "Seed",
+        "Description": "Seed used when picking the thickness."
+      }
+    ]
+  },
+  "Rotator.Density": {
+    "$ref": "common.json#/definitions/RotatorDensityAsset",
+    "Description": "Reorients the input density field to a new Y axis and optionally spins it around that axis.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#rotator)*",
+    "Content": [
+      {
+        "Id": "SpinAngle",
+        "Description": "Floating point number. The angle in degrees to spin the field around the new axis."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "NewYAxis",
+        "Description": "3D vector asset."
+      }
+    ]
+  },
+  "Rule.BlockMask": {
+    "$ref": "common.json#/definitions/BlockMaskEntryAsset",
+    "Description": "Defines an advanced BlockMask override for a source BlockSet and the materials it can replace.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/block-mask#advanced)*"
+  },
+  "Runtime": {
+    "$ref": "common.json#/definitions/PropRuntimeAsset"
+  },
+  "Sandwich.Assignments": {
+    "$ref": "common.json#/definitions/SandwichAssignmentsAsset",
+    "Description": "Chooses Assignments from height-based delimiters using each position's world Y value.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#sandwich)*",
+    "Outputs": [
+      {
+        "Id": "Delimiters.Pin",
+        "Description": "Each delimiter defines a world height range and its Assignments."
+      }
+    ]
+  },
+  "Scale.Density": {
+    "$ref": "common.json#/definitions/ScaleDensityAsset",
+    "Description": "Stretches, contracts, or flips the input density field per axis.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#scale)*"
+  },
+  "Shell.Density": {
+    "$ref": "common.json#/definitions/ShellDensityAsset",
+    "Description": "Creates a shell around an input shape using inner and outer curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#shell)*",
+    "Content": [
+      {
+        "Id": "Mirror",
+        "Description": "Boolean value. If true then the angle is mirrored in both directions of the axis."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "AngleCurve",
+        "Description": "Curve asset slot. Determines the Density value at any given angle from the axis."
+      },
+      {
+        "Id": "Axis",
+        "Description": "3D vector asset slot determining the axis against which the angle is calculated."
+      },
+      {
+        "Id": "DistanceCurve",
+        "Description": "Curve asset slot. Determines the Density value at any distance from the origin."
+      }
+    ]
+  },
+  "SimpleHorizontal.Positions": {
+    "$ref": "common.json#/definitions/SimpleHorizontalPositionProviderAsset",
+    "Description": "Keeps only positions inside a configured Y range.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#simplehorizontal)*",
+    "Outputs": [
+      {
+        "Id": "RangeY",
+        "Description": "The Y range to keep the positions in."
+      }
+    ]
+  },
+  "SimpleHorizontalMaterialProvider": {
+    "$ref": "common.json#/definitions/SimpleHorizontalMaterialProviderAsset",
+    "Description": "Applies a child material provider only within a vertical range.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#simplehorizontal)*",
+    "Content": [
+      {
+        "Id": "BottomBaseHeight",
+        "Description": "DecimalConstant name."
+      },
+      {
+        "Id": "BottomY",
+        "Description": "Y coordinate. Defines the vertical bottom inclusive{\" \"} limit of the region."
+      },
+      {
+        "Id": "TopBaseHeight",
+        "Description": "DecimalConstant name."
+      },
+      {
+        "Id": "TopY",
+        "Description": "Y coordinate. Defines the vertical top exclusive limit of the region."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "MaterialPin",
+        "Description": "Slot to query for the selected region."
+      }
+    ]
+  },
+  "SimplexNoise2DDensityNode": {
+    "$ref": "common.json#/definitions/SimplexNoise2dDensityAsset",
+    "Description": "Outputs 2D simplex noise on the XZ plane in the range [-1, 1].\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#simplexnoise2d)*",
+    "Content": [
+      {
+        "Id": "Lacunarity",
+        "Description": "Positive floating point number. Impacts the scale of each consecutive octave. A good starting value would be 2.0, which results in each consecutive octave having details that are 2x smaller than the previous. Higher values result in grainier noise."
+      },
+      {
+        "Id": "Octaves",
+        "Description": "Integer greater than 0. Greater values result in more detail. A good starting value would be 4. Requiring values over 10 are uncommon."
+      },
+      {
+        "Id": "Persistence",
+        "Description": "Positive floating point number. Multiplies the intensity of each consecutive octave. A good starting value would be 0.5, which results in each consecutive octave being half as strong as the previous."
+      },
+      {
+        "Id": "Scale",
+        "Description": "Positive floating point number. Represents the field's period distance in blocks. Greater values stretch the noise field outward. A good starting value would be 50."
+      },
+      {
+        "Id": "Seed",
+        "Description": "A string."
+      }
+    ]
+  },
+  "SimplexNoise3DDensityNode": {
+    "$ref": "common.json#/definitions/SimplexNoise3DDensityAsset",
+    "Description": "Outputs 3D simplex noise in the range [-1, 1].\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#simplexnoise3d)*",
+    "Content": [
+      {
+        "Id": "Lacunarity",
+        "Description": "Positive floating point number. Impacts the scale of each consecutive octave. A good starting value would be 2.0, which results in each consecutive octave having details that are 2x smaller than the previous. Higher values result in grainier noise."
+      },
+      {
+        "Id": "Octaves",
+        "Description": "Integer greater than 0. Greater values result in more detail. A good starting value would be 4. Requiring values over 10 are uncommon."
+      },
+      {
+        "Id": "Persistence",
+        "Description": "Positive floating point number. Multiplies the intensity of each consecutive octave. A good starting value would be 0.5, which results in each consecutive octave being half as strong as the previous."
+      },
+      {
+        "Id": "ScaleXZ",
+        "Description": "Positive floating point number. Represents the field’s period distance in blocks on the horizontal XZ plane. Greater values stretch the noise field outward. A good starting value would be 50."
+      },
+      {
+        "Id": "ScaleY",
+        "Description": "Positive floating point number. Represents the field’s period distance in blocks on the vertical Y axis. Greater values stretch the noise field outward. A good starting value would be 50."
+      },
+      {
+        "Id": "Seed",
+        "Description": "A string."
+      }
+    ]
+  },
+  "Slider.Density": {
+    "$ref": "common.json#/definitions/SliderDensityAsset",
+    "Description": "Slides the input density field in the direction of a provided vector.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#slider)*",
+    "Content": [
+      {
+        "Id": "SlideX",
+        "Description": "A floating point number."
+      },
+      {
+        "Id": "SlideY",
+        "Description": "A floating point number."
+      },
+      {
+        "Id": "SlideZ",
+        "Description": "A floating point number."
+      }
+    ]
+  },
+  "SmallerThanConditionSADMP": {
+    "$ref": "common.json#/definitions/SmallerThanConditionAsset",
+    "Description": "Validates only when the selected context value is smaller than the configured threshold.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#condition)*",
+    "Content": [
+      {
+        "Id": "ContextToCheck",
+        "Description": "Which context value the Condition queries."
+      },
+      {
+        "Id": "Threshold",
+        "Description": "Condition passes only if the context value is greater than this."
+      }
+    ]
+  },
+  "SmoothCeiling.Curve": {
+    "$ref": "common.json#/definitions/SmoothCeilingCurveAsset",
+    "Description": "Smoothly approaches a ceiling value over a configurable range.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#smoothceiling)*",
+    "Content": [
+      {
+        "Id": "Ceiling_",
+        "Description": "The maximum value this curve will output."
+      },
+      {
+        "Id": "Range",
+        "Description": "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curve."
+      }
+    ]
+  },
+  "SmoothCeilingDensityNode": {
+    "$ref": "common.json#/definitions/SmoothCeilingDensityAsset"
+  },
+  "SmoothClamp.Curve": {
+    "$ref": "common.json#/definitions/SmoothClampCurveAsset",
+    "Description": "Clamps the child curve between two walls with smoothed transitions near the limits.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#smoothclamp)*",
+    "Content": [
+      {
+        "Id": "Range",
+        "Description": "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curve."
+      }
+    ]
+  },
+  "SmoothClampDensityNode": {
+    "$ref": "common.json#/definitions/SmoothClampDensityAsset",
+    "Description": "Clamps the input density between two wall values with smoothed transitions near the limits.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#smoothclamp)*",
+    "Content": [
+      {
+        "Id": "Range",
+        "Description": "Floating point values above 0, larger values result in smoother transition when the input approaches or exceeds the walls."
+      },
+      {
+        "Id": "WallA",
+        "Description": "Any floating point number."
+      },
+      {
+        "Id": "WallB",
+        "Description": "Any floating point number."
+      }
+    ]
+  },
+  "SmoothFloor.Curve": {
+    "$ref": "common.json#/definitions/SmoothFloorCurveAsset",
+    "Description": "Smoothly approaches a floor value over a configurable range.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#smoothfloor)*",
+    "Content": [
+      {
+        "Id": "Floor_",
+        "Description": "The minimum value this curve will output."
+      },
+      {
+        "Id": "Range",
+        "Description": "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curve."
+      }
+    ]
+  },
+  "SmoothFloorDensityNode": {
+    "$ref": "common.json#/definitions/SmoothFloorDensityAsset"
+  },
+  "SmoothMax.Curve": {
+    "$ref": "common.json#/definitions/SmoothMaxCurveAsset",
+    "Description": "Returns a smoothed maximum of two curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#smoothmax)*",
+    "Content": [
+      {
+        "Id": "Range",
+        "Description": "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curves."
+      }
+    ]
+  },
+  "SmoothMaxDensityNode": {
+    "$ref": "common.json#/definitions/SmoothMaxDensityAsset",
+    "Description": "Outputs a smoothed maximum between two densities.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#smoothmax)*",
+    "Content": [
+      {
+        "Id": "Range",
+        "Description": "Positive floating point number. Greater values result in more smoothing. A good starter value could be 0.2."
+      }
+    ]
+  },
+  "SmoothMin.Curve": {
+    "$ref": "common.json#/definitions/SmoothMinCurveAsset",
+    "Description": "Returns a smoothed minimum of two curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#smoothmin)*",
+    "Content": [
+      {
+        "Id": "Range",
+        "Description": "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curves."
+      }
+    ]
+  },
+  "SmoothMinDensityNode": {
+    "$ref": "common.json#/definitions/SmoothMinDensityAsset",
+    "Description": "Outputs a smoothed minimum between two densities.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#smoothmin)*",
+    "Content": [
+      {
+        "Id": "Range",
+        "Description": "Positive floating point number. Greater values result in more smoothing. A good starter value could be 0.2."
+      }
+    ]
+  },
+  "SolidityMaterialProvider": {
+    "$ref": "common.json#/definitions/SolidityMaterialProviderAsset",
+    "Description": "Splits terrain into solid and empty regions and routes each to its own material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#solidity)*"
+  },
+  "SpaceAndDepthMaterialProvider": {
+    "$ref": "common.json#/definitions/SpaceAndDepthMaterialProviderAsset",
+    "Description": "Stacks material layers into floor or ceiling depth, with optional conditions controlling where it runs.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#spaceanddepth)*",
+    "Content": [
+      {
+        "Id": "LayerContext",
+        "Description": "Context the layers are applied on. Values: DEPTH_INTO_FLOOR , DEPTH_INTO_CEILING."
+      },
+      {
+        "Id": "MaxExpectedDepth",
+        "Description": "Optimization hint. Set to max expected combined layer depth. Too small can cut off layers. Too large can hurt performance."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "ConditionPin",
+        "Description": "Provider returns no block if the Condition fails."
+      },
+      {
+        "Id": "LayersPin",
+        "Description": "Stacked top-to-bottom as depth increases into the context."
+      }
+    ]
+  },
+  "SqrtDensityNode": {
+    "$ref": "common.json#/definitions/SqrtDensityAsset",
+    "Description": "Outputs the square root of the input density, including useful behavior for negative inputs.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#sqrt)*"
+  },
+  "Static.Directionality": {
+    "$ref": "common.json#/definitions/StaticDirectionalityAsset"
+  },
+  "StripedMaterialProvider": {
+    "$ref": "common.json#/definitions/StripedMaterialProviderAsset",
+    "Description": "Applies materials across horizontal stripes with configurable thickness and height.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#striped)*",
+    "Outputs": [
+      {
+        "Id": "MaterialPin",
+        "Description": "Slot to query for the selected region."
+      },
+      {
+        "Id": "StripesPin",
+        "Description": "Each stripe contains TopY and BottomY."
+      }
+    ]
+  },
+  "StripeStripedMP": {
+    "$ref": "common.json#/definitions/StripeAsset",
+    "Description": "A single striped-material entry defining a vertical stripe span and its material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#striped)*",
+    "Content": [
+      {
+        "Id": "BottomY",
+        "Description": "World Y value. Inclusive."
+      },
+      {
+        "Id": "TopY",
+        "Description": "World Y value. Inclusive."
+      }
+    ]
+  },
+  "Sum.Curve": {
+    "$ref": "common.json#/definitions/SumCurveAsset",
+    "Description": "Adds the values of its child curves.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/curves#sum)*"
+  },
+  "SumDensityNode": {
+    "$ref": "common.json#/definitions/SumDensityAsset",
+    "Description": "Outputs the sum of all child densities.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#sum)*"
+  },
+  "Surface.Pattern": {
+    "$ref": "common.json#/definitions/SurfacePatternAsset",
+    "Description": "Validates a transition surface between a configured surface material and medium, with controllable facing and area.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#surface)*",
+    "Content": [
+      {
+        "Id": "Facings",
+        "Description": "“N”, “S”, “E”, “W”, “U”, “D”."
+      },
+      {
+        "Id": "MediumRadius",
+        "Description": "Determines the size of the medium area."
+      },
+      {
+        "Id": "RequireAllFacings",
+        "Description": "If true then the Pattern will only validate if all Facings validate."
+      },
+      {
+        "Id": "SurfaceRadius",
+        "Description": "Determines the size of the surface area."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Medium",
+        "Description": "Validates every block of the medium."
+      },
+      {
+        "Id": "Surface",
+        "Description": "Validates every block of the surface."
+      }
+    ]
+  },
+  "Switch.Density": {
+    "$ref": "common.json#/definitions/SwitchDensityAsset",
+    "Description": "Switches between density branches based on the contextual switch state.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#switch)*",
+    "Outputs": [
+      {
+        "Id": "SwitchCases",
+        "Description": "Switch Case asset slots."
+      }
+    ]
+  },
+  "SwitchState.Density": {
+    "$ref": "common.json#/definitions/SwitchStateDensityAsset",
+    "Description": "Sets the contextual switch state for the downstream density branch.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#switchstate)*",
+    "Content": [
+      {
+        "Id": "SwitchState_",
+        "Description": "String, name of the SwitchState to set for the children of this node."
+      }
+    ]
+  },
+  "Terrain": {
+    "$ref": "common.json#/definitions/DensityTerrainAsset"
+  },
+  "Terrain.Density": {
+    "$ref": "common.json#/definitions/TerrainDensityAsset",
+    "Description": "Outputs the world's interpolated terrain density for biome material logic.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#terrain)*"
+  },
+  "Union.Prop": {
+    "$ref": "common.json#/definitions/UnionPropAsset",
+    "Description": "Places all child props at the same position, one after another.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#union)*",
+    "Outputs": [
+      {
+        "Id": "Props",
+        "Description": "Props to place together."
+      }
+    ]
+  },
+  "UnionPositions": {
+    "$ref": "common.json#/definitions/UnionPositionProviderAsset",
+    "Description": "Combines multiple positions fields into a single output.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/positions-provider#union)*"
+  },
+  "VectorWarp.Density": {
+    "$ref": "common.json#/definitions/VectorWarpDensityAsset",
+    "Description": "Warps density along a vector, scaled by a warp field and warp factor.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#vectorwarp)*",
+    "Content": [
+      {
+        "Id": "WarpFactor",
+        "Description": "A floating point number greater than 0. With greater values you get more warping."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "WarpVector",
+        "Description": "Vector asset slot. Can be any vector. This determines the direction in which the warping happens. Negative values of the factor or the warping density field will result in flipped warping direction."
+      }
+    ]
+  },
+  "Wall.Pattern": {
+    "$ref": "common.json#/definitions/WallPatternAsset",
+    "Description": "Checks for a matching wall next to the origin position in one or more directions.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/patterns#wall)*",
+    "Content": [
+      {
+        "Id": "Directions",
+        "Description": "“N”, “S”, “E” or “W”."
+      },
+      {
+        "Id": "RequireAllDirections",
+        "Description": "If true then all the directions you put in the list need to validate for the Pattern to validate a position. Otherwise only one of the list directions needs to validate."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Origin",
+        "Description": "Validates the coordinate at the Origin position."
+      },
+      {
+        "Id": "Wall",
+        "Description": "Validates the coordinate next to the Origin position."
+      }
+    ]
+  },
+  "Weight.Weighted.Assignments": {
+    "$ref": "common.json#/definitions/WeightedAssets",
+    "Description": "A weighted Assignments entry used by Weighted Assignments.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#weighted)*"
+  },
+  "Weighted.Assignments": {
+    "$ref": "common.json#/definitions/WeightedAssignmentsAsset",
+    "Description": "Randomly picks Assignments using weights, a seed, and an optional skip chance.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/assignments#weighted)*",
+    "Content": [
+      {
+        "Id": "SkipChance",
+        "Description": "Chance to skip a position without assigning a Prop."
+      }
+    ]
+  },
+  "Weighted.Cluster.Prop": {
+    "$ref": "common.json#/definitions/WeightedPropAsset"
+  },
+  "Weighted.Prop": {
+    "$ref": "common.json#/definitions/WeightedPropAsset@1",
+    "Description": "Picks a prop to place using weights and a seed.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#weighted)*",
+    "Content": [
+      {
+        "Id": "Seed",
+        "Description": "The seed determining which Prop is picked. This seed also mutates the seed passed to the children."
+      }
+    ],
+    "Outputs": [
+      {
+        "Id": "Entries",
+        "Description": "Each entry contains Weight and Prop."
+      }
+    ]
+  },
+  "WeightedMaterial": {
+    "$ref": "common.json#/definitions/WeightedMaterialAsset",
+    "Description": "A weighted material-provider entry used by the Weighted material provider.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#weighted)*",
+    "Content": [
+      {
+        "Id": "Weight",
+        "Description": "Higher value increases likelihood of being picked."
+      }
+    ]
+  },
+  "WeightedMaterialProvider": {
+    "$ref": "common.json#/definitions/WeightedMaterialProviderAsset",
+    "Description": "Randomly picks a material provider from weighted entries, with an optional skip chance.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#weighted)*",
+    "Content": [
+      {
+        "Id": "SkipChance",
+        "Description": "Percentage of blocks to skip. When skipped, this provider returns no block and does not pick a slot."
+      }
+    ]
+  },
+  "WeightedPath.Prefab.Prop": {
+    "$ref": "common.json#/definitions/WeightedPathAsset",
+    "Description": "A weighted prefab-path entry used by Prefab Prop.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#prefab)*",
+    "Content": [
+      {
+        "Id": "Path",
+        "Description": "Path to the folder or file to load from."
+      },
+      {
+        "Id": "Weight",
+        "Description": "Weight for placing a prefab from this path. If the path points to a folder, the weight applies to the folder pick. Once picked, all prefabs inside have an equal chance."
+      }
+    ]
+  },
+  "WeightedThicknessLayerSADMP": {
+    "$ref": "common.json#/definitions/SpaceAndDepthMaterialProviderAsset/properties/Layers",
+    "Description": "A SpaceAndDepth layer that chooses thickness from weighted values per XZ coordinate.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/material-providers#layer)*",
+    "Content": [
+      {
+        "Id": "Thickness",
+        "Description": "Thickness in blocks."
+      }
+    ]
+  },
+  "XOverride.Density": {
+    "$ref": "common.json#/definitions/XOverrideDensityAsset",
+    "Description": "Overrides the X coordinate seen by the input density.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#xoverride)*"
+  },
+  "XValue.Density": {
+    "$ref": "common.json#/definitions/XValueDensityAsset",
+    "Description": "Outputs the local X coordinate.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#xvalue)*"
+  },
+  "YOverride.Density": {
+    "$ref": "common.json#/definitions/YOverrideDensityAsset",
+    "Description": "Overrides the Y coordinate seen by the input density.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#yoverride)*"
+  },
+  "YSampled.Density": {
+    "$ref": "common.json#/definitions/YSampledDensityAsset"
+  },
+  "YValue.Density": {
+    "$ref": "common.json#/definitions/YValueDensityAsset",
+    "Description": "Outputs the local Y coordinate.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#yvalue)*"
+  },
+  "ZOverride.Density": {
+    "$ref": "common.json#/definitions/ZOverrideDensityAsset",
+    "Description": "Overrides the Z coordinate seen by the input density.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#zoverride)*"
+  },
+  "ZValue.Density": {
+    "$ref": "common.json#/definitions/ZValueDensityAsset",
+    "Description": "Outputs the local Z coordinate.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/density#zvalue)*"
+  },
+  "Entry.Weighted.Prop": {
+    "Description": "A weighted prop entry used by Weighted Prop.\n\n*[Official Documentation](https://hytalemodding.dev/en/docs/official-documentation/worldgen/technical-hytale-generator/props#weighted)*"
+  }
+}

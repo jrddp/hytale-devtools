@@ -1,6 +1,7 @@
 <script lang="ts">
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import { type XYPosition } from "@xyflow/svelte";
+  import { marked } from "marked";
   import { readColorForCss } from "src/node-editor/utils/colors";
   import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
   import { workspace } from "src/workspace.svelte";
@@ -78,6 +79,15 @@
 
   let activeTemplate = $derived(searchedTemplates.at(activeIndex));
   let activeTemplateDescription = $derived(activeTemplate?.description);
+  let activeTemplateDescriptionHtml: string | undefined = $derived(
+    activeTemplateDescription
+      ? (marked.parse(activeTemplateDescription, {
+          breaks: true,
+          gfm: true,
+        }) as string)
+      : undefined,
+  );
+
   let showDescriptionOnLeft = $derived(
     (containerElement?.getBoundingClientRect().right ?? screenPosition.x + 256) +
       DESCRIPTION_PANEL_WIDTH_PX +
@@ -129,7 +139,7 @@
 
 <div
   data-add-menu
-  class="absolute z-3001 translate-x-2 translate-y-2 overflow-visible"
+  class="absolute overflow-visible translate-x-2 translate-y-2 z-3001"
   style:left={`${Math.min(screenPosition.x, window.innerWidth - 264)}px`}
   style:top={`${Math.min(screenPosition.y, window.innerHeight - minContainerHeight - 8)}px`}
 >
@@ -200,18 +210,59 @@
     </div>
   </div>
 
-  {#if activeTemplateDescription}
+  {#if activeTemplateDescriptionHtml}
     <div
-      class="pointer-events-none absolute top-0 w-62 rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-3 py-2.5 text-vsc-editor-fg shadow-2xl"
+      class="pointer-events-auto absolute top-0 w-62 rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-3 py-2.5 text-vsc-editor-fg shadow-2xl"
       class:left-[calc(100%+0.5rem)]={!showDescriptionOnLeft}
       class:right-[calc(100%+0.5rem)]={showDescriptionOnLeft}
     >
       <div class="text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted">
         {activeTemplate.defaultTitle}
       </div>
-      <div class="mt-1.5 text-xs leading-4 text-vsc-input-fg whitespace-pre-line">
-        {activeTemplateDescription}
+      <div class="description-markdown mt-1.5 text-xs leading-4 text-vsc-input-fg">
+        {@html activeTemplateDescriptionHtml}
       </div>
     </div>
   {/if}
 </div>
+
+<!-- style injection for the markdown preview -->
+<style>
+  .description-markdown :global(p + p) {
+    margin-top: 0.5rem;
+  }
+
+  .description-markdown :global(ul) {
+    margin-top: 0.375rem;
+    list-style-type: disc;
+    padding-left: 1rem;
+  }
+
+  .description-markdown :global(ol) {
+    margin-top: 0.375rem;
+    list-style-type: decimal;
+    padding-left: 1rem;
+  }
+
+  .description-markdown :global(li + li) {
+    margin-top: 0.125rem;
+  }
+
+  .description-markdown :global(code) {
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 0.25rem;
+    background: var(--vscode-input-background);
+    padding: 0 0.25rem;
+    font-size: 0.7rem;
+  }
+
+  .description-markdown :global(a) {
+    color: var(--vscode-textLink-foreground);
+    text-decoration: underline;
+    text-decoration-thickness: from-font;
+  }
+
+  .description-markdown :global(a:hover) {
+    color: var(--vscode-textLink-activeForeground);
+  }
+</style>

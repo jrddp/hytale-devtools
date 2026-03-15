@@ -1,4 +1,4 @@
-import { type BasicLogger } from "../../shared/commonTypes";
+import { type BasicLogger } from "../shared/commonTypes";
 import {
   type AssetDefinition,
   type Field,
@@ -7,7 +7,7 @@ import {
   type RefField,
   type StringField,
   type VariantField,
-} from "../../shared/fieldTypes";
+} from "../shared/fieldTypes";
 import {
   type AnyOfPropertyDefinition,
   type ArrayPropertyDefinition,
@@ -268,6 +268,7 @@ function propertyDefinitionToField(
         definesSymbol: definition.hytaleDevtools?.definesSymbol,
         isLocalizationKey: definition.hytale?.uiEditorComponent?.component === "LocalizationKey",
         localizationKeyTemplate: definition.hytale?.uiEditorComponent?.keyTemplate,
+        const: definition.const,
       };
 
     // # Number

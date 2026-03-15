@@ -3,6 +3,7 @@ import path, { join } from "path";
 import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
 import { safeParseJSONFile } from "../shared/fileUtils";
+import { isObject } from "../shared/typeUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 import {
@@ -19,6 +20,7 @@ import {
   type NodeContentDefinitionType,
   type NodeEditorWorkspaceDefinition,
   type NodeTemplateDefinition,
+  type NodeTemplateSupplementDefinition,
   type WorkspacePathRule,
 } from "./workspaceDefinitionTypes";
 
@@ -45,14 +47,32 @@ const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   },
 };
 
+export function getNodeEditorWorkspaceSupplementsRootPath(workspacesRootPath: string): string {
+  return join(path.dirname(workspacesRootPath), "data-supplements", "node-editor-workspaces");
+}
+
+export function getNodeEditorWorkspaceSupplementPath(
+  supplementsRootPath: string,
+  workspaceDirectoryName: string,
+): string {
+  return join(supplementsRootPath, `${workspaceDirectoryName}.json`);
+}
+
 export class WorkspaceRuntime {
   readonly nodeEditorWorkspaces: Record<string, NodeEditorWorkspace>;
   readonly workspacesRootPath: string;
+  readonly supplementsRootPath: string;
   private readonly schemaRuntime: SchemaRuntime;
   private readonly logger: BasicLogger;
 
-  constructor(workspacesRootPath: string, schemaRuntime: SchemaRuntime, logger: BasicLogger = console) {
+  constructor(
+    workspacesRootPath: string,
+    schemaRuntime: SchemaRuntime,
+    logger: BasicLogger = console,
+    supplementsRootPath: string = getNodeEditorWorkspaceSupplementsRootPath(workspacesRootPath),
+  ) {
     this.workspacesRootPath = workspacesRootPath;
+    this.supplementsRootPath = supplementsRootPath;
     this.schemaRuntime = schemaRuntime;
     this.logger = logger;
     this.nodeEditorWorkspaces = this.loadNodeEditorWorkspaces();
@@ -130,17 +150,11 @@ export class WorkspaceRuntime {
         );
         continue;
       }
-      // todo hydrate based on schema mappings
       const workspaceDefinition = safeParseJSONFile(_workspace) as NodeEditorWorkspaceDefinition;
-
-      const __schemaMappings = join(directoryPath, "__SchemaMappings.json");
-      let templateToSchemaRefs: Record<string, string> = {};
-      if (existsSync(__schemaMappings)) {
-        templateToSchemaRefs = safeParseJSONFile(__schemaMappings);
-      }
+      const templateSupplements = this.loadTemplateSupplements(directory);
 
       const templatesById: Record<string, NodeTemplate> = {};
-      this.loadTemplatesFromDirectory(directoryPath, templateToSchemaRefs, templatesById);
+      this.loadTemplatesFromDirectory(directoryPath, templateSupplements, templatesById);
 
       for (const [category, templateList] of Object.entries(
         workspaceDefinition.NodeCategories ?? {},
@@ -170,7 +184,7 @@ export class WorkspaceRuntime {
 
   private loadTemplatesFromDirectory(
     directoryPath: string,
-    templateToSchemaRefs: Record<string, string>,
+    templateSupplements: Record<string, NodeTemplateSupplementDefinition>,
     templatesById: Record<string, NodeTemplate>,
   ): void {
     for (const file of readdirSync(directoryPath)) {
@@ -181,20 +195,65 @@ export class WorkspaceRuntime {
       const filePath = join(directoryPath, file);
 
       if (statSync(filePath).isDirectory()) {
-        this.loadTemplatesFromDirectory(filePath, templateToSchemaRefs, templatesById);
+        this.loadTemplatesFromDirectory(filePath, templateSupplements, templatesById);
       } else {
         const templateDefinition = safeParseJSONFile(filePath) as NodeTemplateDefinition;
-        const schemaMapping = templateToSchemaRefs[templateDefinition.Id];
-        const template = this.templateFromDefinition(templateDefinition, schemaMapping);
+        const templateSupplement = templateSupplements[templateDefinition.Id];
+        const schemaMapping =
+          typeof templateSupplement?.$ref === "string" ? templateSupplement.$ref : undefined;
+        const template = this.templateFromDefinition(
+          templateDefinition,
+          schemaMapping,
+          templateSupplement,
+        );
         templatesById[template.templateId] = template;
       }
     }
+  }
+
+  private loadTemplateSupplements(
+    workspaceDirectoryName: string,
+  ): Record<string, NodeTemplateSupplementDefinition> {
+    const supplementsPath = getNodeEditorWorkspaceSupplementPath(
+      this.supplementsRootPath,
+      workspaceDirectoryName,
+    );
+    if (!existsSync(supplementsPath)) {
+      return {};
+    }
+
+    const parsed = safeParseJSONFile(supplementsPath);
+    if (!isObject(parsed)) {
+      this.logger.warn(`Template supplements at "${supplementsPath}" are not an object. Ignoring.`);
+      return {};
+    }
+
+    return parsed as Record<string, NodeTemplateSupplementDefinition>;
+  }
+
+  private findSchemaKeyForLocalId(
+    schema: NodeTemplateDefinition["Schema"],
+    localId: string,
+  ): string | undefined {
+    for (let [schemaKey, entry] of Object.entries(schema ?? {})) {
+      const postFixLoc = schemaKey.lastIndexOf("$");
+      schemaKey = schemaKey.substring(0, postFixLoc > 0 ? postFixLoc : schemaKey.length);
+      if (entry === localId) {
+        return schemaKey;
+      }
+      if (isObject(entry) && entry.Pin === localId) {
+        return schemaKey;
+      }
+    }
+
+    return undefined;
   }
 
   // from exact json definition to optimized usage structure
   private templateFromDefinition(
     definition: NodeTemplateDefinition,
     schemaRef?: string,
+    supplement?: NodeTemplateSupplementDefinition,
   ): NodeTemplate {
     const assetFieldDefinition = schemaRef
       ? this.schemaRuntime.resolveFieldByReferencePointer(schemaRef)
@@ -215,13 +274,20 @@ export class WorkspaceRuntime {
       this.logger.warn(`Schema reference ${schemaRef} not resolved in template ${definition.Id}.`);
     }
 
+    const supplementedContentDescriptions = this.descriptionByLocalId(supplement?.Content);
+    const supplementedOutputDescriptions = this.descriptionByLocalId(supplement?.Outputs);
+
     const inputPins: NodePin[] =
       definition.Inputs?.map((input, idx) => {
         return {
           schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
           localId: input.Id,
           label: input.Label,
-          description: input.Description,
+          description:
+            input.Description ??
+            assetObjectFieldDefinition?.properties[
+              this.findSchemaKeyForLocalId(definition.Schema, input.Id) ?? ""
+            ]?.markdownDescription,
           color: input.Color,
           multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
         };
@@ -245,7 +311,7 @@ export class WorkspaceRuntime {
             schemaKey: "",
             localId: output.Id,
             label: output.Label,
-            description: output.Description,
+            description: supplementedOutputDescriptions[output.Id] ?? output.Description,
             color: output.Color,
             multiplicity: type,
             fields,
@@ -255,7 +321,10 @@ export class WorkspaceRuntime {
         {} as Record<string, NodePin>,
       ) ?? {};
 
-    for (const field of this.fieldsFromContentDefinitions(definition.Content ?? [])) {
+    for (const field of this.fieldsFromContentDefinitions(
+      definition.Content ?? [],
+      supplementedContentDescriptions,
+    )) {
       fieldsByLocalId[field.localId] = field;
     }
 
@@ -316,7 +385,8 @@ export class WorkspaceRuntime {
     return {
       templateId: definition.Id,
       defaultTitle: definition.Title,
-      description: definition.Description ?? assetFieldDefinition?.markdownDescription,
+      description:
+        supplement?.Description ?? definition.Description ?? assetFieldDefinition?.markdownDescription,
       childTypes: childTypes,
       fieldsBySchemaKey: fieldsBySchemaKey,
       inputPins: inputPins,
@@ -326,7 +396,26 @@ export class WorkspaceRuntime {
     };
   }
 
-  private fieldsFromContentDefinitions(content: NodeContentDefinition[]): NodeField[] {
+  private descriptionByLocalId(
+    definitions: { Id: string; Description?: string }[] | undefined,
+  ): Record<string, string> {
+    return (
+      definitions?.reduce(
+        (map, definition) => {
+          if (definition.Description) {
+            map[definition.Id] = definition.Description;
+          }
+          return map;
+        },
+        {} as Record<string, string>,
+      ) ?? {}
+    );
+  }
+
+  private fieldsFromContentDefinitions(
+    content: NodeContentDefinition[],
+    supplementedDescriptionsByLocalId: Record<string, string> = {},
+  ): NodeField[] {
     return content.map(content => {
       const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
         ? content.Options.Values.filter((value): value is string => typeof value === "string")
@@ -337,7 +426,10 @@ export class WorkspaceRuntime {
         localId: content.Id,
         type: this.contentTypeToFieldComponentType(content.Type),
         label: content.Options?.Label,
-        description: content.Description ?? content.Options.Description,
+        description:
+          supplementedDescriptionsByLocalId[content.Id] ??
+          content.Description ??
+          content.Options.Description,
         value: content.Options?.Default ?? content.Options?.DefaultValue,
         inputWidth: content.Options?.Width,
         overrideAutocompleteValues,

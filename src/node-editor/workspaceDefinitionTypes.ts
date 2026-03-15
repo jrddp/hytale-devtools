@@ -20,6 +20,18 @@ export type NodeTemplateDefinition = {
   [key: string]: unknown;
 };
 
+export type NodeTemplateDescriptionSupplementDefinition = {
+  Id: string;
+  Description?: string;
+};
+
+export type NodeTemplateSupplementDefinition = {
+  $ref?: string;
+  Description?: string;
+  Content?: NodeTemplateDescriptionSupplementDefinition[];
+  Outputs?: NodeTemplateDescriptionSupplementDefinition[];
+};
+
 export interface NodePinDefinition {
   Id: string;
   Type: string;
