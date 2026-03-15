@@ -58,6 +58,12 @@
         "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
       },
       {
+        "command": "hytale-devtools.nodeEditor.quickAction.select-all",
+        "title": "Select All Nodes",
+        "category": "Hytale Node Editor",
+        "enablement": "activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor'"
+      },
+      {
         "command": "hytale-devtools.nodeEditor.quickAction.auto-position-nodes",
         "title": "Auto Position Nodes",
         "category": "Hytale Node Editor",
@@ -79,7 +85,14 @@
     "keybindings": [
       {
         "command": "hytale-devtools.nodeEditor.quickAction.search-nodes",
-        "key": "f",
+        "key": "ctrl+f",
+        "mac": "cmd+f",
+        "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.quickAction.select-all",
+        "key": "ctrl+a",
+        "mac": "cmd+a",
         "when": "(activeCustomEditorId == 'hytale-devtools.hytaleNodeEditor' || activeWebviewPanelId == 'hytale-devtools.hytaleNodeEditor') && !inputFocus"
       },
       {
