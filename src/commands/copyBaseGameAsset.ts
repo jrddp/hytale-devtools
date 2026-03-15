@@ -23,7 +23,7 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
       const assetShard = shard as RegisteredAssetsIndexShard;
       return {
         label: storeName,
-        detail: `${assetShard.path}/*${assetShard.extension} | ${assetShard.fileCount} assets`,
+        detail: `${assetShard.path}/*${assetShard.extension} | ${assetShard.baseGameFileCount} assets`,
         assetShard,
       };
     })

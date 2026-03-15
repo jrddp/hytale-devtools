@@ -3,7 +3,6 @@ import path from "path";
 import type * as vscode from "vscode";
 import { indexes, LOGGER } from "../extension";
 import { safeParseJSONFile } from "../shared/fileUtils";
-import { INDEXES_DIRECTORY_NAME, resolveDataRootDirFromContext } from "../utils/hytalePaths";
 import {
   type CommonAssetPathsIndexShard,
   type ExportFamilyIndexShard,
@@ -15,6 +14,7 @@ import {
   type SymbolIndex,
   type UIDataSetIndexShard,
 } from "../shared/indexTypes";
+import { INDEXES_DIRECTORY_NAME, resolveDataRootDirFromContext } from "../utils/hytalePaths";
 
 export function loadIndexes(context: vscode.ExtensionContext): Map<IndexKind, SymbolIndex> {
   return loadIndexesFromRoot(resolveDataRootDirFromContext(context).rootPath);
@@ -32,6 +32,12 @@ export function loadIndexesFromRoot(dataRoot: string): Map<IndexKind, SymbolInde
     indexes.set(indexKind, new Map<string, IndexShard>());
     for (const file of readdirSync(path.join(indexRoot, directoryName))) {
       const indexShard = safeParseJSONFile(path.join(indexRoot, directoryName, file)) as IndexShard;
+      if (indexShard.indexKind === "registeredAssets") {
+        const registeredAssetsShard = indexShard as RegisteredAssetsIndexShard;
+        registeredAssetsShard.baseGameFileCount = Object.values(
+          registeredAssetsShard.values,
+        ).filter(value => value.sourcedFromFile && value.package === "Hytale:Hytale").length;
+      }
       indexes.get(indexKind)!.set(indexShard.key, indexShard);
     }
   }
