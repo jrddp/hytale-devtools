@@ -17,7 +17,6 @@
     "types": ["svelte", "node"]
   },
   "include": [
-    "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.svelte",
     "../../src/shared/**/*.ts"

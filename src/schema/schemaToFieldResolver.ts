@@ -383,7 +383,7 @@ function propertyDefinitionToField(
       if (definition.properties) {
         const fieldProperties = Object.entries(definition.properties).reduce(
           (acc, [key, value]) => {
-            const field = propertyDefinitionToField(schemaKey, value, state);
+            const field = propertyDefinitionToField(key, value, state);
             if (!field) {
               return acc;
             }

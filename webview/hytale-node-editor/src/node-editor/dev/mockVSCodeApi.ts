@@ -2,6 +2,7 @@ import {
   type ExtensionToWebviewMessage,
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
+import { createEmptyNodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
 import { type VSCodeApi } from "src/common";
 import { mockedThemeVars } from "src/node-editor/dev/mockVSCodeTheme";
@@ -25,12 +26,13 @@ export class MockVSCodeApi implements VSCodeApi {
     console.log("Node Editor called postMessage to MockVSCodeApi", message);
     switch (message.type) {
       case "ready":
-        const workspaceContext = mockedWorkspaceContext as NodeEditorWorkspaceContext;
+        const workspaceContext = mockedWorkspaceContext as unknown as NodeEditorWorkspaceContext;
         this.sendMockedVSCodeMessage({
           type: "bootstrap",
           workspaceContext,
           controlScheme: "trackpad",
           platform: "mac",
+          clipboard: createEmptyNodeEditorClipboardSelection(),
         });
         this.sendMockedVSCodeMessage({
           type: "update",

@@ -8,7 +8,7 @@ export type FieldType =
   | "array"
   | "object"
   | "map"
-  | "inlineOrRef"
+  | "inlineOrReference"
   | "variant"
   | "timeline"
   | "weightedTimeline"
@@ -23,6 +23,7 @@ export type Field =
   | ArrayField
   | ObjectField
   | MapField
+  | InlineOrReferenceField
   | VariantField
   | TimelineField
   | WeightedTimelineField

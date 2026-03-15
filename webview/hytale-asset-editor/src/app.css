@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@import "../../shared/theme.css";
+
+@theme inline {
+  --color-vsc-bg: var(--vscode-editor-background);
+  --color-vsc-border: var(
+    --vscode-panel-border,
+    var(--color-vsc-editor-widget-border)
+  );
+  --color-vsc-panel: var(
+    --color-vsc-editor-widget-bg,
+    var(--vscode-sideBar-background)
+  );
+  --color-vsc-panel-alt: var(--vscode-sideBar-background);
+  --color-vsc-panel-hover: var(--color-vsc-list-hover);
+  --color-vsc-selected-bg: var(--color-vsc-list-active-bg);
+  --color-vsc-selected-fg: var(--color-vsc-list-active-fg);
+  --color-vsc-chip-bg: var(--vscode-badge-background);
+  --color-vsc-chip-fg: var(--vscode-badge-foreground);
+  --color-vsc-button-bg: var(--color-vsc-button-secondary-bg);
+  --color-vsc-button-fg: var(--color-vsc-button-secondary-fg);
+  --color-vsc-button-hover: var(--color-vsc-button-secondary-hover);
+  --color-vsc-tooltip-bg: var(--vscode-editorHoverWidget-background, var(--color-vsc-editor-widget-bg));
+  --color-vsc-tooltip-fg: var(--vscode-editorHoverWidget-foreground, var(--color-vsc-input-fg));
+  --color-vsc-tooltip-border: var(
+    --vscode-editorHoverWidget-border,
+    var(--color-vsc-editor-widget-border)
+  );
+  --color-vsc-error-bg: var(--vscode-inputValidation-errorBackground);
+}
+
+@layer base {
+  html,
+  body,
+  #app {
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: var(--vscode-font-family, sans-serif);
+    color: var(--vscode-editor-foreground);
+    background: var(--color-vsc-activity-bar-bg);
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}

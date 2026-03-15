@@ -102,12 +102,13 @@ export class SchemaRuntime {
 
   getAssetDefinitionForPath(assetPath: string): AssetDefinition | undefined {
     assetPath = path.normalize(assetPath);
-    const patterns = Array.from(this.assetsByPath.keys()).map(key => `**/Server/${key}/**`);
-    const match = firstGlobMatch(assetPath, patterns);
-    if (!match) {
-      return undefined;
+    for (const [schemaPath, assetDefinition] of this.assetsByPath) {
+      if (firstGlobMatch(assetPath, [`**/Server/${schemaPath}/**`])) {
+        return assetDefinition;
+      }
     }
-    return this.assetsByPath.get(match);
+
+    return undefined;
   }
 
   private loadAssetDefinitions(): void {

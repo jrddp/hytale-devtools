@@ -32,7 +32,7 @@ export function buildViteWebviewHtml({
   title,
 }: BuildViteWebviewHtmlOptions): string {
   const assets = getViteWebviewAssets(webview, extensionUri, mediaDirectoryName);
-  if (!assets.ok) {
+  if (assets.ok === false) {
     return getMissingAssetsHtml(title, assets.reason);
   }
 

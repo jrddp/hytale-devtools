@@ -178,22 +178,272 @@
         "displayName": "Hytale Asset Editor",
         "selector": [
           {
-            "filenamePattern": "**/Server/**/*.json"
+            "filenamePattern": "**/Server/Audio/AmbienceFX/**/*.json"
           },
           {
-            "filenamePattern": "**/Server/**/*.particlespawner"
+            "filenamePattern": "**/Server/NPC/Attitude/Roles/**/*.json"
           },
           {
-            "filenamePattern": "**/Server/**/*.particlesystem"
+            "filenamePattern": "**/Server/Audio/AudioCategories/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Balancing/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/BarterShops/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Spawn/Beacons/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Hitboxes/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/BreakingDecals/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Groups/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Migrations/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Particles/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Sets/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Sounds/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Spawners/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Blocks/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/BlockTypeList/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/PlayerToolsMenuConfig/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Camera/CameraEffect/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Camera/CameraShake/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/DecisionMaking/CombatActions/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/DecisionMaking/Conditions/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Recipes/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/CustomConnectedBlockTemplates/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/Damage/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/DeployableSpawners/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/Effects/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/Stats/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/UI/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Environments/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Audio/EQ/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Farming/Coops/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Category/Fieldcraft/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Flocks/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/Fluids/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Block/FluidFX/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/GameMode/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/GameplayConfigs/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Farming/Modifiers/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/HitboxCollision/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Interactions/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Items/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Attitude/Items/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Category/CreativeLibrary/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Drops/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Animations/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Qualities/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Reticles/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Audio/ItemSounds/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Unarmed/Gathering/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/MacroCommands/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Models/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/ModelVFX/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/MovementConfig/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Groups/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Objective/Objectives/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Objective/ObjectiveLines/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Objective/ObjectiveLocationMarkers/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Particles/**/*.particlespawner"
+          },
+          {
+            "filenamePattern": "**/Server/Particles/**/*.particlesystem"
+          },
+          {
+            "filenamePattern": "**/Server/PortalTypes/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/PrefabEditorCreationSettings/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/PrefabList/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Projectiles/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/ProjectileConfigs/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Objective/ReachLocationMarkers/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/Repulsion/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Reputation/Groups/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Reputation/Ranks/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/ResourceTypes/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/ResponseCurves/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Audio/Reverb/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/RootInteractions/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/HytaleGenerator/Settings/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Shops/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Audio/SoundEvents/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Audio/SoundSets/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Spawn/Markers/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Spawn/Suppression/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/TagPatterns/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Entity/Trails/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Item/Unarmed/Interactions/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Camera/ViewBobbing/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/Weathers/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/WordLists/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/NPC/Spawn/World/**/*.json"
+          },
+          {
+            "filenamePattern": "**/Server/HytaleGenerator/WorldStructures/**/*.json"
           }
         ],
-        "priority": "option"
+        "priority": "default"
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
     "compile": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js",
+    "watch": "npm-run-all -p watch:esbuild watch:webview watch:tsc",
     "watch": "npm-run-all -p watch:esbuild watch:webview watch:tsc",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:webview": "npm-run-all -p watch:webview:*",
@@ -215,12 +465,17 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "test:basic-schema-doc": "pnpm run compile-tests && node ./node_modules/mocha/bin/mocha.js \"out/test/basicSchemaDoc.test.js\"",
+    "test:basic-schema-doc": "pnpm run compile-tests && node ./node_modules/mocha/bin/mocha.js \"out/test/basicSchemaDoc.test.js\"",
     "test:node-editor-parser": "pnpm run compile-tests:node-editor-parser && printf '{\"type\":\"module\"}\\n' > out-node-editor-parser-tests/package.json && node ./node_modules/mocha/bin/mocha.js \"out-node-editor-parser-tests/test/node-editor-parser/**/*.test.js\"",
     "test:node-editor-parser:vitest": "vitest --config vitest.config.mts run test/node-editor-parser",
     "test:node-editor-parser:vitest:watch": "vitest --config vitest.config.mts test/node-editor-parser",
     "test:node-editor-parse-basic": "node test/node-editor-parser/parse-basic.mjs",
-    "check-types": "tsc --noEmit",
+    "check-types": "npm-run-all check-types:*",
+    "check-types:extension": "tsc --noEmit",
+    "check-types:webview:asset-editor": "tsc -p webview/hytale-asset-editor/tsconfig.json --noEmit",
+    "check-types:webview:node-editor": "tsc -p webview/hytale-node-editor/tsconfig.json --noEmit",
     "lint": "eslint \"src/**/*.ts\" \"webview/**/*.svelte\" \"webview/**/*.ts\"",
+    "update:asset-editor-selectors": "node scripts/updateAssetEditorSelectors.js",
     "test": "vscode-test"
   },
   "devDependencies": {
