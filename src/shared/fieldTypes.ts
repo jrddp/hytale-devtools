@@ -30,17 +30,18 @@ export type Field =
   | RefField
   | RawJsonField;
 
-type FieldBase = {
+export type FieldBase = {
   schemaKey: string | null;
   type: FieldType;
   section: "General" | string | null;
   markdownDescription?: string;
   title?: string;
-  default?: unknown;
+  default?: any;
   width?: number;
   height?: number;
   suffix?: string;
   nullable?: boolean;
+  collapsedByDefault?: boolean;
 };
 
 export type StringField = FieldBase & {

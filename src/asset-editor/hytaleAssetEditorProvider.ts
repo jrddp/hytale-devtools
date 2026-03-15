@@ -93,6 +93,9 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             sendBootstrap();
             updateWebview();
             return;
+          case "resolveRef":
+            void this.resolveRef(message, webviewPanel.webview);
+            return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
             return;
@@ -129,6 +132,19 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       preserveFocus: false,
       preview: true,
     });
+  }
+
+  private async resolveRef(
+    message: Extract<AssetEditorWebviewToExtensionMessage, { type: "resolveRef" }>,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    const field = schemaRuntime.assetsByRef.get(message.$ref)?.rootField ?? null;
+    const payload: AssetEditorExtensionToWebviewMessage = {
+      type: "resolvedRef",
+      $ref: message.$ref,
+      field,
+    };
+    await webview.postMessage(payload);
   }
 
   private async applyWebviewEdits(

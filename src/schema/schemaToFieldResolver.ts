@@ -2,6 +2,7 @@ import { type BasicLogger } from "../shared/commonTypes";
 import {
   type AssetDefinition,
   type Field,
+  type FieldBase,
   type InlineOrReferenceField,
   type ObjectField,
   type RefField,
@@ -11,6 +12,7 @@ import {
 import {
   type AnyOfPropertyDefinition,
   type ArrayPropertyDefinition,
+  type BooleanPropertyDefinition,
   type ExclusionEnumDefinition,
   type NumberPropertyDefinition,
   type ObjectPropertyDefinition,
@@ -31,7 +33,22 @@ function propertyDefinitionToField(
   definition: PropertyDefinition,
   state: ParsingState,
 ): Field | null {
-  // TODO include full metadata
+  const fieldBase: Omit<FieldBase, "type"> = {
+    schemaKey,
+    section: state.currentSection,
+    markdownDescription: definition.markdownDescription,
+    title: definition.title,
+    default: definition.default,
+    width: definition.hytale?.uiEditorComponent?.width,
+    height: definition.hytale?.uiEditorComponent?.height,
+    suffix: definition.hytale?.uiEditorComponent?.suffix,
+    collapsedByDefault: true,
+  };
+
+  // fields are collapsed by default unless explicitly set
+  if (definition.hytale?.uiCollapsedByDefault === false) {
+    fieldBase.collapsedByDefault = false;
+  }
 
   // hidden property
   if (definition.doNotSuggest) {
@@ -46,9 +63,8 @@ function propertyDefinitionToField(
   if ("$ref" in definition) {
     definition = definition as RefPropertyDefinition;
     return {
-      schemaKey,
+      ...fieldBase,
       type: "ref",
-      section: state.currentSection,
       $ref: definition.$ref,
     };
   }
@@ -57,9 +73,8 @@ function propertyDefinitionToField(
   if (!("type" in definition) && "allOf" in definition) {
     let allOfDefinition: ExclusionEnumDefinition = definition as ExclusionEnumDefinition;
     return {
-      schemaKey,
+      ...fieldBase,
       type: "string",
-      section: state.currentSection,
       bannedValues: allOfDefinition.allOf[1].not.enum,
     };
   }
@@ -113,9 +128,9 @@ function propertyDefinitionToField(
         }
       }
       return {
-        schemaKey,
+        ...fieldBase,
         type: "number",
-        section: state.currentSection,
+        default: definition.default as number | undefined,
         minimum,
         maximum,
         exclusiveMinimum,
@@ -135,9 +150,8 @@ function propertyDefinitionToField(
       definition.hytale?.type === "ColorShort"
     ) {
       return {
-        schemaKey,
+        ...fieldBase,
         type: "color",
-        section: state.currentSection,
         colorType: definition.hytale?.type,
       };
     }
@@ -151,11 +165,11 @@ function propertyDefinitionToField(
         section: null,
         default: schemaTypeField.defaultValue,
         enumVals: schemaTypeField.values,
+        collapsedByDefault: false,
       };
       const field: VariantField = {
-        schemaKey,
+        ...fieldBase,
         type: "variant",
-        section: state.currentSection,
         identityField: identityField,
         variantsByIdentity: {},
         unmappedFields: definition.anyOf
@@ -181,9 +195,8 @@ function propertyDefinitionToField(
         RefPropertyDefinition,
       ];
       const stringField: StringField = {
-        schemaKey,
+        ...fieldBase,
         type: "string",
-        section: state.currentSection,
         pattern: stringDefinition.pattern,
         minLength: stringDefinition.minLength,
         maxLength: stringDefinition.maxLength,
@@ -197,15 +210,13 @@ function propertyDefinitionToField(
         const: stringDefinition.const,
       };
       const refField: RefField = {
-        schemaKey,
+        ...fieldBase,
         type: "ref",
-        section: state.currentSection,
         $ref: refDefinition.$ref,
       };
       return {
-        schemaKey,
+        ...fieldBase,
         type: "inlineOrReference",
-        section: state.currentSection,
         stringField,
         inlineField: refField,
       } as InlineOrReferenceField;
@@ -229,6 +240,7 @@ function propertyDefinitionToField(
         return null;
       }
       return {
+        ...fieldBase,
         ...baseField,
         nullable: true,
       };
@@ -244,9 +256,8 @@ function propertyDefinitionToField(
     case "ColorAlpha":
     case "ColorShort":
       return {
-        schemaKey,
+        ...fieldBase,
         type: "color",
-        section: state.currentSection,
         colorType: trueType,
       };
 
@@ -255,9 +266,8 @@ function propertyDefinitionToField(
     case "Enum":
       definition = definition as StringPropertyDefinition;
       return {
-        schemaKey,
+        ...fieldBase,
         type: "string",
-        section: state.currentSection,
         pattern: definition.pattern,
         minLength: definition.minLength,
         maxLength: definition.maxLength,
@@ -287,9 +297,9 @@ function propertyDefinitionToField(
         }
       }
       return {
-        schemaKey,
+        ...fieldBase,
         type: "number",
-        section: state.currentSection,
+        default: definition.default,
         minimum: definition.minimum,
         maximum: definition.maximum,
         exclusiveMinimum: definition.exclusiveMinimum,
@@ -304,9 +314,9 @@ function propertyDefinitionToField(
     // # Boolean
     case "boolean":
       return {
-        schemaKey,
+        ...fieldBase,
         type: "boolean",
-        section: state.currentSection,
+        default: (definition as BooleanPropertyDefinition).default,
       };
 
     // # Array
@@ -315,9 +325,8 @@ function propertyDefinitionToField(
 
       if (definition.hytale?.uiEditorComponent?.component === "Timeline") {
         return {
-          schemaKey,
+          ...fieldBase,
           type: "timeline",
-          section: state.currentSection,
         };
       }
 
@@ -334,9 +343,8 @@ function propertyDefinitionToField(
         return null;
       }
       return {
-        schemaKey,
+        ...fieldBase,
         type: "array",
-        section: state.currentSection,
         items: items as Field | Field[],
         minItems: definition.minItems,
         maxItems: definition.maxItems,
@@ -359,9 +367,8 @@ function propertyDefinitionToField(
         return null;
       }
       return {
-        schemaKey,
+        ...fieldBase,
         type: "map",
-        section: state.currentSection,
         keyField,
         valueField,
       };
@@ -373,9 +380,8 @@ function propertyDefinitionToField(
       // ## WeightedTimeline
       if (definition.hytale?.uiEditorComponent?.component === "WeightedTimeline") {
         return {
-          schemaKey,
+          ...fieldBase,
           type: "weightedTimeline",
-          section: state.currentSection,
         };
       }
 
@@ -393,9 +399,8 @@ function propertyDefinitionToField(
           {} as Record<string, Field>,
         );
         return {
-          schemaKey,
+          ...fieldBase,
           type: "object",
-          section: state.currentSection,
           properties: fieldProperties,
         };
       }
@@ -417,18 +422,16 @@ function propertyDefinitionToField(
           return null;
         }
         return {
-          schemaKey,
+          ...fieldBase,
           type: "map",
-          section: state.currentSection,
           keyField: mapKeyField,
           valueField: mapValueField,
         };
       }
 
       return {
-        schemaKey,
+        ...fieldBase,
         type: "rawJson",
-        section: state.currentSection,
       };
   }
 

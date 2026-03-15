@@ -1,4 +1,4 @@
-import { type AssetDefinition } from "../fieldTypes";
+import { type AssetDefinition, type Field } from "../fieldTypes";
 
 export type AssetEditorBootstrapMessage = {
   type: "bootstrap";
@@ -17,14 +17,22 @@ export type AssetEditorErrorMessage = {
   message: string;
 };
 
+export type AssetEditorResolvedRefMessage = {
+  type: "resolvedRef";
+  $ref: string;
+  field: Field | null;
+};
+
 export type AssetEditorExtensionToWebviewMessage =
   | AssetEditorBootstrapMessage
   | AssetEditorDocumentUpdateMessage
-  | AssetEditorErrorMessage;
+  | AssetEditorErrorMessage
+  | AssetEditorResolvedRefMessage;
 
 export type AssetEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
+  | { type: "resolveRef"; $ref: string }
   | {
       type: "apply";
       text: string;

@@ -1,0 +1,113 @@
+<script lang="ts">
+  import type { Field, VariantField as VariantFieldType } from "@shared/fieldTypes";
+  import type { Snippet } from "svelte";
+  import FieldPanel from "../FieldPanel.svelte";
+  import { groupFieldsBySection } from "../fieldHelpers";
+
+  interface Props {
+    field: VariantFieldType;
+    renderField?: Snippet<[Field]>;
+    root?: boolean;
+  }
+
+  let { field, renderField, root = false }: Props = $props();
+
+  let selectedIdentity = $state("");
+  let userCollapsed = $state<boolean | null>(null);
+
+  const variantNames = $derived(Object.keys(field.variantsByIdentity));
+  const activeVariant = $derived(
+    selectedIdentity ? field.variantsByIdentity[selectedIdentity] ?? null : null,
+  );
+  const collapsed = $derived(
+    userCollapsed ?? (selectedIdentity ? Boolean(field.collapsedByDefault) : false),
+  );
+  const activeSections = $derived(
+    activeVariant
+      ? groupFieldsBySection(
+          Object.fromEntries(
+            Object.entries(activeVariant.properties).filter(
+              ([schemaKey]) => schemaKey !== field.identityField.schemaKey,
+            ),
+          ),
+        )
+      : [],
+  );
+
+  function handleIdentityChange(event: Event) {
+    selectedIdentity = (event.currentTarget as HTMLSelectElement).value;
+    userCollapsed = null;
+  }
+
+  function toggleCollapsed() {
+    userCollapsed = !collapsed;
+  }
+</script>
+
+{#snippet variantBody()}
+  <div class="space-y-3">
+    <label class="block space-y-1">
+      <span class="text-xs font-medium opacity-70">{field.identityField.schemaKey}</span>
+      <select
+        class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
+        value={selectedIdentity}
+        onchange={handleIdentityChange}
+      >
+        <option value="">Select a type</option>
+        {#each variantNames as variantName (variantName)}
+          <option value={variantName}>{variantName}</option>
+        {/each}
+      </select>
+    </label>
+
+    {#if !selectedIdentity}
+      <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 opacity-65">
+        {variantNames.length} available variants
+      </div>
+    {:else if !collapsed}
+      {#if activeSections.length === 0}
+        <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 opacity-65">
+          No fields in this variant
+        </div>
+      {:else}
+        <div class="space-y-4">
+          {#each activeSections as section (section.name)}
+            <div class="space-y-2">
+              {#if activeSections.length > 1 || section.name !== "General"}
+                <div class="text-xs font-semibold uppercase tracking-wide opacity-65">
+                  {section.name}
+                </div>
+              {/if}
+
+              <div class="space-y-3">
+                {#each section.fields as childField, index (`${childField.schemaKey ?? childField.type}-${index}`)}
+                  {@render renderField?.(childField)}
+                {/each}
+              </div>
+            </div>
+          {/each}
+        </div>
+      {/if}
+    {/if}
+  </div>
+{/snippet}
+
+{#if root}
+  {@render variantBody()}
+{:else}
+  <FieldPanel field={field} summary={`${variantNames.length} variants`}>
+    {#snippet actions()}
+      {#if selectedIdentity}
+        <button
+          type="button"
+          class="rounded-md border border-vsc-border px-2 py-1 text-xs hover:bg-vsc-panel-hover"
+          onclick={toggleCollapsed}
+        >
+          {collapsed ? "Expand" : "Collapse"}
+        </button>
+      {/if}
+    {/snippet}
+
+    {@render variantBody()}
+  </FieldPanel>
+{/if}

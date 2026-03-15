@@ -42,12 +42,13 @@
     padding: 0 !important;
     font-family: var(--vscode-font-family, sans-serif);
     color: var(--vscode-editor-foreground);
-    background: var(--color-vsc-activity-bar-bg);
+    background: var(--color-vsc-bg);
   }
 
   button,
   input,
-  select {
+  select,
+  textarea {
     font: inherit;
   }
 }
