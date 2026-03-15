@@ -13,7 +13,7 @@
   const QUICK_ACTION_ROWS: KeybindingRow[] = [
     {
       label: "Search nodes",
-      defaultKeybindings: ["F"],
+      defaultKeybindings: [{ win: "Ctrl+F", linux: "Ctrl+F", mac: "Cmd+F" }],
     },
     {
       label: "Fit full view",
