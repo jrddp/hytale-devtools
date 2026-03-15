@@ -6,6 +6,7 @@
   import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
+  import { innerHeight, innerWidth } from "svelte/reactivity/window";
 
   export type AddMenuProps = {
     screenPosition: XYPosition;
@@ -19,22 +20,35 @@
 
   let containerElement = $state<HTMLDivElement>();
   const DESCRIPTION_PANEL_WIDTH_PX = 248;
+  const VIEWPORT_PADDING_PX = 0;
+  const MENU_CURSOR_OFFSET_PX = 8;
+  const MIN_CONTAINER_HEIGHT_PX = 280;
 
   let searchQuery = $state("");
   let activeIndex = $state(0);
   let searchInput: HTMLInputElement | undefined = $state();
   let resultListElement: HTMLElement | undefined = $state();
-  let minContainerHeight = $derived(
-    Math.min(containerElement?.getBoundingClientRect().height ?? 326, 326),
+  let containerHeight = $derived.by(() => {
+    const spaceBelowCursor = innerHeight.current - screenPosition.y - VIEWPORT_PADDING_PX;
+    return Math.min(Math.max(MIN_CONTAINER_HEIGHT_PX, spaceBelowCursor));
+  });
+  let containerWidth = $derived(containerElement?.getBoundingClientRect().width ?? 0);
+  let top = $derived(
+    Math.max(
+      VIEWPORT_PADDING_PX,
+      Math.min(
+        screenPosition.y + MENU_CURSOR_OFFSET_PX,
+        innerHeight.current - containerHeight - VIEWPORT_PADDING_PX,
+      ),
+    ),
   );
-  let maxContainerHeight = $derived(
-    Math.max(window.outerHeight - screenPosition.y - 8, minContainerHeight),
-  );
-  let top = $derived(Math.min(screenPosition.y, window.outerHeight - minContainerHeight - 8));
   let left = $derived(
-    Math.min(
-      screenPosition.x,
-      window.outerWidth - (containerElement?.getBoundingClientRect().width ?? 0),
+    Math.max(
+      VIEWPORT_PADDING_PX,
+      Math.min(
+        screenPosition.x + MENU_CURSOR_OFFSET_PX,
+        innerWidth.current - containerWidth - VIEWPORT_PADDING_PX,
+      ),
     ),
   );
   let isRootNodeMissing = $derived(workspace.getRootNode() === undefined);
@@ -89,10 +103,7 @@
   );
 
   let showDescriptionOnLeft = $derived(
-    (containerElement?.getBoundingClientRect().right ?? screenPosition.x + 256) +
-      DESCRIPTION_PANEL_WIDTH_PX +
-      8 >
-      window.innerWidth,
+    left + containerWidth + DESCRIPTION_PANEL_WIDTH_PX + VIEWPORT_PADDING_PX > innerWidth.current,
   );
 
   // reset index any time searchQuery changes
@@ -139,17 +150,17 @@
 
 <div
   data-add-menu
-  class="absolute overflow-visible translate-x-2 translate-y-2 z-3001"
-  style:left={`${Math.min(screenPosition.x, window.innerWidth - 264)}px`}
-  style:top={`${Math.min(screenPosition.y, window.innerHeight - minContainerHeight - 8)}px`}
+  class="absolute overflow-visible z-3001"
+  style:left={`${left}px`}
+  style:top={`${top}px`}
 >
   <div
     bind:this={containerElement}
     role="dialog"
     aria-label="Add node menu"
     tabindex="-1"
-    class="w-64 max-h-[70vh] overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
-    style:max-height={`${maxContainerHeight}px`}
+    class="flex w-64 flex-col overflow-hidden rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-2.5 text-vsc-editor-fg shadow-2xl"
+    style:height={`${containerHeight}px`}
     onkeydown={handleKeyDown}
   >
     <input
@@ -163,7 +174,7 @@
 
     <div
       bind:this={resultListElement}
-      class="relative mt-2 flex max-h-[calc(70vh-3.5rem)] flex-col gap-2 overflow-y-scroll pr-0.5"
+      class="relative mt-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-scroll pr-0.5"
       role="listbox"
     >
       {#if searchedTemplatesByCategory.size === 0}

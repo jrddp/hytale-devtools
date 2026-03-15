@@ -16,6 +16,7 @@
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+  import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
@@ -52,8 +53,8 @@
 
   const viewport = useViewport();
   const getViewportCenter = (viewport: Viewport) => ({
-    x: (window.innerWidth / 2 - viewport.x) / viewport.zoom,
-    y: (window.innerHeight / 2 - viewport.y) / viewport.zoom,
+    x: ((innerWidth.current ?? 0) / 2 - viewport.x) / viewport.zoom,
+    y: ((innerHeight.current ?? 0) / 2 - viewport.y) / viewport.zoom,
   });
 
   let {
@@ -232,8 +233,8 @@
           const width = node.measured!.width!;
           const height = node.measured!.height!;
           const maxZoom = Math.min(
-            (window.innerWidth / width) * 0.8,
-            (window.innerHeight / height) * 0.8,
+            ((innerWidth.current ?? width) / width) * 0.8,
+            ((innerHeight.current ?? height) / height) * 0.8,
           );
           setViewportCenter(absolutePosition.x + width / 2, absolutePosition.y + height / 2, {
             zoom: Math.min(1.2, maxZoom),
