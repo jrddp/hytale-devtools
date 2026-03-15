@@ -1,6 +1,5 @@
 import path from "path";
 import * as vscode from "vscode";
-import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
 import { WorkspaceRuntime } from "./node-editor/workspaceResolver";
 import { SchemaRuntime } from "./schema/schemaLoader";
@@ -77,7 +76,6 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(changeModPatchlineCommand);
 
-  context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
 
   if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {
