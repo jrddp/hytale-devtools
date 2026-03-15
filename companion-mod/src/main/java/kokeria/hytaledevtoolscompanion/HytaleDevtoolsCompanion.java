@@ -14,7 +14,8 @@ import kokeria.hytaledevtoolscompanion.assets.CompanionDataExportService;
 import kokeria.hytaledevtoolscompanion.config.HytaleDevtoolsCompanionConfig;
 
 public class HytaleDevtoolsCompanion extends JavaPlugin {
-    public static final int EXPORT_FORMAT_VERSION = 1;
+    // todo: find a better solution to keep this in sync with expected export format version - for now, ensure they are in sync manually.
+    public static final int EXPORT_FORMAT_VERSION = 2;
 
     private final Config<HytaleDevtoolsCompanionConfig> config;
 
