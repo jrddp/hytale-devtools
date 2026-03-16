@@ -93,8 +93,7 @@
       class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
     >
       <div class="space-y-1">
-        <div class="font-semibold">{humanize(field.type)}</div>
-        <div class="text-xs text-vsc-muted">Depth: {depth}</div>
+        <div class="font-semibold">{field.schemaKey} ({humanize(field.type)})</div>
         {@html descriptionHtml}
       </div>
     </TooltipContent>

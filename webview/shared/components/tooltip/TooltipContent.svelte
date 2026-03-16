@@ -59,6 +59,7 @@
       top: "0px",
       left: "0px",
       width: "max-content",
+      zIndex: "3002",
       pointerEvents: tooltip.interactive ? "auto" : "none",
     });
 

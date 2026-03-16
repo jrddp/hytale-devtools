@@ -2,16 +2,17 @@
   import type { Field, VariantField as VariantFieldType } from "@shared/fieldTypes";
   import type { Snippet } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
-  import { groupFieldsBySection } from "../fieldHelpers";
+  import { buildOutlineSections, type OutlineSection, groupFieldsBySection } from "../fieldHelpers";
 
   interface Props {
     field: VariantFieldType;
     renderField?: Snippet<[Field, number]>;
     depth?: number;
     root?: boolean;
+    onSectionsChange?: (sections: OutlineSection[]) => void;
   }
 
-  let { field, renderField, depth = 0, root = false }: Props = $props();
+  let { field, renderField, depth = 0, root = false, onSectionsChange }: Props = $props();
 
   let selectedIdentity = $state("");
   let userCollapsed = $state<boolean | null>(null);
@@ -34,6 +35,7 @@
         )
       : [],
   );
+  const outlineSections = $derived(buildOutlineSections(activeSections));
 
   function handleIdentityChange(event: Event) {
     selectedIdentity = (event.currentTarget as HTMLSelectElement).value;
@@ -43,6 +45,12 @@
   function handleCollapsedChange(nextCollapsed: boolean) {
     userCollapsed = nextCollapsed;
   }
+
+  $effect(() => {
+    if (!root) return;
+
+    onSectionsChange?.(outlineSections);
+  });
 </script>
 
 {#snippet variantBody()}
@@ -72,8 +80,12 @@
         </div>
       {:else}
         <div class="space-y-4">
-          {#each activeSections as section (section.name)}
-            <div class="space-y-2">
+          {#each activeSections as section, index (section.name)}
+            <section
+              class="space-y-2 scroll-m-4"
+              id={root ? outlineSections[index]?.id : undefined}
+              data-outline-section-id={root ? outlineSections[index]?.id : undefined}
+            >
               {#if activeSections.length > 1 || section.name !== "General"}
                 <div class="text-xs font-semibold uppercase tracking-wide opacity-65">
                   {section.name}
@@ -85,7 +97,7 @@
                   {@render renderField?.(childField, root ? depth : depth + 1)}
                 {/each}
               </div>
-            </div>
+            </section>
           {/each}
         </div>
       {/if}

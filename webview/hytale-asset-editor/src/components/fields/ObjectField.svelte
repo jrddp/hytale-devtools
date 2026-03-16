@@ -2,26 +2,38 @@
   import type { Field, ObjectField as ObjectFieldType } from "@shared/fieldTypes";
   import type { Snippet } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
-  import { groupFieldsBySection } from "../fieldHelpers";
+  import { buildOutlineSections, type OutlineSection, groupFieldsBySection } from "../fieldHelpers";
 
   interface Props {
     field: ObjectFieldType;
     renderField?: Snippet<[Field, number]>;
     depth?: number;
     root?: boolean;
+    onSectionsChange?: (sections: OutlineSection[]) => void;
   }
 
-  let { field, renderField, depth = 0, root = false }: Props = $props();
+  let { field, renderField, depth = 0, root = false, onSectionsChange }: Props = $props();
 
   const sections = $derived(groupFieldsBySection(field.properties));
+  const outlineSections = $derived(buildOutlineSections(sections));
+
+  $effect(() => {
+    if (!root) return;
+
+    onSectionsChange?.(outlineSections);
+  });
 </script>
 
 {#snippet sectionList()}
   <div class="space-y-4">
-    {#each sections as section (section.name)}
-      <div class="space-y-2">
+    {#each sections as section, index (section.name)}
+      <section
+        class="space-y-2 scroll-m-4"
+        id={root ? outlineSections[index]?.id : undefined}
+        data-outline-section-id={root ? outlineSections[index]?.id : undefined}
+      >
         {#if sections.length > 1 || section.name !== "General"}
-          <div class="text-xs font-semibold tracking-wide uppercase opacity-65">{section.name}</div>
+          <div class="text-lg font-semibold tracking-wide">{section.name}</div>
         {/if}
 
         <div class="space-y-3">
@@ -29,7 +41,7 @@
             {@render renderField?.(childField, root ? depth : depth + 1)}
           {/each}
         </div>
-      </div>
+      </section>
     {/each}
   </div>
 {/snippet}

@@ -43,7 +43,7 @@
   {/each}
   <button
     type="button"
-    class="flex items-center w-full h-8 px-2 py-1 text-xs text-left border rounded-md border-vsc-border bg-vsc-button-secondary-bg text-vsc-button-fg hover:bg-vsc-button-hover"
+    class="flex items-center w-full h-8 px-2 py-1 text-xs text-left border rounded-md border-vsc-border bg-vsc-button-bg text-vsc-button-fg hover:bg-vsc-button-hover"
     onclick={addItem}
   >
     <Plus size={16} />

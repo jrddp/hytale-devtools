@@ -5,8 +5,11 @@
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import FieldRenderer from "./components/FieldRenderer.svelte";
+  import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
+
+  const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
   const { vscode }: { vscode: VSCodeApi } = $props();
 
@@ -15,9 +18,63 @@
   let documentText = $state("");
   let version = $state(0);
   let extensionError = $state("");
+  let scrollRootElement = $state<HTMLDivElement>();
+  let scrollRootHeight = $state(0);
+  let lastOutlineSectionHeight = $state(0);
+  let outlineSections = $state<OutlineSection[]>([]);
+  let activeOutlineSectionId = $state<string | null>(null);
+  let pendingOutlineSectionId = $state<string | null>(null);
 
   $effect(() => {
     workspace.vscode = vscode;
+  });
+
+  $effect(() => {
+    if (!scrollRootElement) {
+      scrollRootHeight = 0;
+      lastOutlineSectionHeight = 0;
+      activeOutlineSectionId = outlineSections[0]?.id ?? null;
+      return;
+    }
+
+    const updateLayoutMetrics = () => {
+      scrollRootHeight = scrollRootElement.clientHeight;
+      lastOutlineSectionHeight =
+        getOutlineSectionElement(outlineSections.at(-1)?.id ?? "")?.getBoundingClientRect().height ??
+        0;
+    };
+
+    const handleScroll = () => {
+      updateLayoutMetrics();
+      updateActiveOutlineSection();
+    };
+    const handleScrollEnd = () => {
+      pendingOutlineSectionId = null;
+      updateActiveOutlineSection();
+    };
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(() => {
+            updateLayoutMetrics();
+          });
+
+    resizeObserver?.observe(scrollRootElement);
+    getOutlineSectionElement(outlineSections.at(-1)?.id ?? "") &&
+      resizeObserver?.observe(getOutlineSectionElement(outlineSections.at(-1)?.id ?? "")!);
+
+    queueMicrotask(handleScroll);
+    scrollRootElement.addEventListener("scroll", handleScroll, { passive: true });
+    scrollRootElement.addEventListener("scrollend", handleScrollEnd);
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      resizeObserver?.disconnect();
+      scrollRootElement?.removeEventListener("scroll", handleScroll);
+      scrollRootElement?.removeEventListener("scrollend", handleScrollEnd);
+      window.removeEventListener("resize", handleScroll);
+    };
   });
 
   function handleMessage(event: MessageEvent<AssetEditorExtensionToWebviewMessage>) {
@@ -45,6 +102,74 @@
       default:
         return;
     }
+  }
+
+  function handleSectionsChange(nextSections: OutlineSection[]) {
+    outlineSections = nextSections;
+
+    if (pendingOutlineSectionId && !nextSections.some(section => section.id === pendingOutlineSectionId)) {
+      pendingOutlineSectionId = null;
+    }
+
+    if (!nextSections.some(section => section.id === activeOutlineSectionId)) {
+      activeOutlineSectionId = nextSections[0]?.id ?? null;
+    }
+
+    queueMicrotask(() => {
+      scrollRootHeight = scrollRootElement?.clientHeight ?? scrollRootHeight;
+      lastOutlineSectionHeight =
+        getOutlineSectionElement(nextSections.at(-1)?.id ?? "")?.getBoundingClientRect().height ??
+        lastOutlineSectionHeight;
+      updateActiveOutlineSection();
+    });
+  }
+
+  function getOutlineSectionElement(sectionId: string) {
+    return scrollRootElement?.querySelector<HTMLElement>(`[data-outline-section-id="${sectionId}"]`);
+  }
+
+  function scrollToOutlineSection(sectionId: string) {
+    const sectionElement = getOutlineSectionElement(sectionId);
+    if (!sectionElement || !scrollRootElement) return;
+
+    pendingOutlineSectionId = sectionId;
+    activeOutlineSectionId = sectionId;
+
+    const rootTop = scrollRootElement.getBoundingClientRect().top;
+    const sectionTop = sectionElement.getBoundingClientRect().top;
+
+    scrollRootElement.scrollTo({
+      behavior: "smooth",
+      top: scrollRootElement.scrollTop + sectionTop - rootTop - OUTLINE_ACTIVE_OFFSET_PX,
+    });
+  }
+
+  function updateActiveOutlineSection() {
+    if (!scrollRootElement || outlineSections.length === 0) {
+      activeOutlineSectionId = outlineSections[0]?.id ?? null;
+      return;
+    }
+
+    if (pendingOutlineSectionId) {
+      return;
+    }
+
+    const thresholdTop = scrollRootElement.getBoundingClientRect().top + OUTLINE_ACTIVE_OFFSET_PX;
+    let nextActiveSectionId = outlineSections[0]?.id ?? null;
+
+    for (const section of outlineSections) {
+      const sectionElement = getOutlineSectionElement(section.id);
+      if (!sectionElement) continue;
+
+      if (sectionElement.getBoundingClientRect().top <= thresholdTop) {
+        nextActiveSectionId = section.id;
+        continue;
+      }
+
+      break;
+    }
+
+    activeOutlineSectionId = nextActiveSectionId;
   }
 
   onMount(() => {
@@ -101,7 +226,7 @@
     </div>
   </header>
 
-  <div class="flex-1 min-h-0 overflow-auto" data-sticky-scroll-root>
+  <div bind:this={scrollRootElement} class="flex-1 min-h-0 overflow-auto" data-sticky-scroll-root>
     <div class="p-4">
       {#if extensionError}
         <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
@@ -116,11 +241,65 @@
           <FieldRenderer {field} {depth} />
         {/snippet}
 
-        {#if assetDefinition.rootField.type === "object"}
-          <ObjectField field={assetDefinition.rootField} {renderField} depth={0} root />
-        {:else}
-          <VariantField field={assetDefinition.rootField} {renderField} depth={0} root />
-        {/if}
+        <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
+          <aside class="lg:sticky lg:top-4">
+            <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+              {#if outlineSections.length === 0}
+                <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
+              {:else}
+                <div class="space-y-2">
+                  {#each outlineSections as section (section.id)}
+                    <button
+                      type="button"
+                      class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
+                      class:border-vsc-focus={section.id === activeOutlineSectionId}
+                      class:bg-vsc-list-active-bg={section.id === activeOutlineSectionId}
+                      class:text-vsc-list-active-fg={section.id === activeOutlineSectionId}
+                      class:border-vsc-border={section.id !== activeOutlineSectionId}
+                      class:bg-vsc-button-secondary-bg={section.id !== activeOutlineSectionId}
+                      class:text-vsc-button-secondary-fg={section.id !== activeOutlineSectionId}
+                      onclick={() => scrollToOutlineSection(section.id)}
+                    >
+                      <div class="truncate text-sm font-semibold">{section.name}</div>
+                      <div class="text-xs opacity-70">
+                        {section.fieldCount} {section.fieldCount === 1 ? "property" : "properties"}
+                      </div>
+                    </button>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          </aside>
+
+          <div class="min-w-0">
+            {#if assetDefinition.rootField.type === "object"}
+              <ObjectField
+                field={assetDefinition.rootField}
+                {renderField}
+                depth={0}
+                root
+                onSectionsChange={handleSectionsChange}
+              />
+            {:else}
+              <VariantField
+                field={assetDefinition.rootField}
+                {renderField}
+                depth={0}
+                root
+                onSectionsChange={handleSectionsChange}
+              />
+            {/if}
+
+            <div
+              aria-hidden="true"
+              style:height={
+                outlineSections.length > 0
+                  ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, 0)}px`
+                  : undefined
+              }
+            ></div>
+          </div>
+        </div>
       {/if}
     </div>
   </div>
