@@ -51,7 +51,7 @@ function propertyDefinitionToField(
   }
 
   // hidden property
-  if (definition.doNotSuggest) {
+  if (definition.doNotSuggest || definition.hytale?.uiDisplayMode === "Hidden") {
     return null;
   }
 

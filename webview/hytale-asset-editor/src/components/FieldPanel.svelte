@@ -1,48 +1,117 @@
 <script lang="ts">
   import type { Field } from "@shared/fieldTypes";
+  import { ChevronDown, ChevronRight, Info } from "lucide-svelte";
+  import { marked } from "marked";
   import type { Snippet } from "svelte";
-  import { getFieldLabel } from "./fieldHelpers";
+  import { createTooltip } from "../../../shared/components/tooltip/createTooltip.svelte";
+  import TooltipContent from "../../../shared/components/tooltip/TooltipContent.svelte";
+  import { getFieldLabel, humanize } from "./fieldHelpers";
 
   interface Props {
     field: Field;
     summary?: string;
+    inline?: boolean;
+    collapsedByDefault?: boolean;
+    collapsed?: boolean;
     actions?: Snippet;
     children?: Snippet;
   }
 
-  let { field, summary = "", actions, children }: Props = $props();
+  let {
+    field,
+    inline = false,
+    summary,
+    collapsedByDefault = true,
+    actions,
+    children,
+    collapsed = $bindable(collapsedByDefault),
+  }: Props = $props();
 
-  const detail = $derived([summary, field.title ? field.schemaKey : ""].filter(Boolean).join(" · "));
+  const infoTooltip = createTooltip();
+
+  const label = $derived(getFieldLabel(field));
+  const descriptionHtml = $derived(
+    field.markdownDescription ? marked(field.markdownDescription) : undefined,
+  );
 </script>
 
-<section class="rounded-md border border-vsc-border bg-vsc-panel">
-  <div class="flex items-start gap-3 border-b border-vsc-border px-3 py-2.5">
-    <div class="min-w-0 flex-1">
-      <div class="flex flex-wrap items-center gap-2">
-        <h2 class="truncate text-sm font-semibold">{field.schemaKey ?? "NO SCHEMA KEY"}</h2>
-        <span class="rounded bg-vsc-chip-bg px-2 py-0.5 text-[11px] font-medium text-vsc-chip-fg">
-          {field.type}
-        </span>
-        {#if field.nullable}
-          <span class="rounded border border-vsc-border px-2 py-0.5 text-[11px] opacity-75">
-            nullable
-          </span>
-        {/if}
+<!-- # Title -->
+{#snippet title()}
+  <h2 class="relative text-sm font-semibold truncate pointer-events-none">
+    {label}
+  </h2>
+  <button
+    {@attach infoTooltip.trigger}
+    type="button"
+    class="relative inline-flex items-center justify-center w-4 h-4 rounded-sm group/info opacity-70"
+    aria-label={`Info about ${label}`}
+  >
+    <Info size={12} />
+    <TooltipContent
+      tooltip={infoTooltip}
+      placement="right"
+      class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
+    >
+      <div class="space-y-1">
+        <div class="font-semibold">{humanize(field.type)}</div>
+        {@html descriptionHtml}
+      </div>
+    </TooltipContent>
+  </button>
+  {#if summary}
+    <div class="text-xs text-vsc-muted">{summary}</div>
+  {/if}
+{/snippet}
+
+<section class="border rounded-md border-vsc-border bg-vsc-panel">
+  {#if inline}
+    <div class="flex items-center gap-4 px-4 py-2 min-h-12">
+      <div class="relative flex items-center w-56 min-w-0 gap-1 shrink-0">
+        {@render title()}
       </div>
 
-      {#if detail}
-        <div class="mt-1 truncate text-xs opacity-65">{detail}</div>
+      {#if children}
+        <div class="flex-1 min-w-0">
+          {@render children()}
+        </div>
+      {/if}
+
+      {#if actions}
+        <div class="relative flex items-center gap-2">
+          {@render actions()}
+        </div>
       {/if}
     </div>
+  {:else}
+    <!-- ## Collapsable Title Bar -->
+    <button
+      class="relative flex items-center gap-3 border-vsc-border px-3 py-2.5 w-full"
+      class:border-b={!collapsed}
+      onclick={() => (collapsed = !collapsed)}
+    >
+      <div class="relative flex items-center flex-1 min-w-0 gap-1">
+        <span class="inline-flex items-center w-4 h-4 opacity-75 pointer-events-none">
+          {#if collapsed}
+            <ChevronRight size={16} />
+          {:else}
+            <ChevronDown size={16} />
+          {/if}
+        </span>
 
-    {#if actions}
-      <div class="flex items-center gap-2">{@render actions()}</div>
+        {@render title()}
+      </div>
+
+      {#if actions}
+        <div class="relative z-10 flex items-center justify-center gap-2">
+          {@render actions()}
+        </div>
+      {/if}
+    </button>
+
+    {#if !collapsed && children}
+      <div class="p-3 space-y-3">
+        {@render children()}
+      </div>
     {/if}
-  </div>
-
-  {#if children}
-    <div class="space-y-3 p-3">
-      {@render children()}
-    </div>
   {/if}
 </section>

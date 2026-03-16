@@ -34,7 +34,7 @@
 {#if mergedField}
   {@render renderField?.(mergedField)}
 {:else}
-  <FieldPanel {field} summary={field.$ref}>
+  <FieldPanel {field} summary={field.$ref} inline>
     <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
       {#if hasResolved}
         Field reference {field.$ref} could not be resolved.

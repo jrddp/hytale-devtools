@@ -95,19 +95,12 @@
 {#if root}
   {@render variantBody()}
 {:else}
-  <FieldPanel field={field} summary={`${variantNames.length} variants`}>
-    {#snippet actions()}
-      {#if selectedIdentity}
-        <button
-          type="button"
-          class="rounded-md border border-vsc-border px-2 py-1 text-xs hover:bg-vsc-panel-hover"
-          onclick={toggleCollapsed}
-        >
-          {collapsed ? "Expand" : "Collapse"}
-        </button>
-      {/if}
-    {/snippet}
-
+  <FieldPanel
+    field={field}
+    summary={`${variantNames.length} variants`}
+    {collapsed}
+    onToggleCollapse={selectedIdentity ? toggleCollapsed : undefined}
+  >
     {@render variantBody()}
   </FieldPanel>
 {/if}

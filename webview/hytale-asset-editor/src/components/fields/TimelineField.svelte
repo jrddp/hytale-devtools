@@ -5,7 +5,7 @@
   let { field }: { field: TimelineFieldType } = $props();
 </script>
 
-<FieldPanel field={field} summary="Timeline shell">
+<FieldPanel field={field} summary="Timeline field - not yet implemented" inline>
   <div class="rounded-md border border-dashed border-vsc-border px-3 py-3 opacity-70">
     Timeline entries will render here.
   </div>

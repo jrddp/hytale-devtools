@@ -150,6 +150,7 @@ export class SchemaRuntime {
           this.logger.error(`Failed to convert schema definition to asset definition: ${file}`);
           continue;
         }
+        assetDefinition.path = fileContent.hytale.path;
         this.assetsByRef.set(`${fileContent.$id}#`, assetDefinition);
         this.assetsByPath.set(fileContent.hytale.path, assetDefinition);
       }

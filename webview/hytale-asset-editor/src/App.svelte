@@ -1,11 +1,9 @@
 <script lang="ts">
-  import type {
-    AssetEditorExtensionToWebviewMessage,
-  } from "@shared/asset-editor/messageTypes";
+  import type { AssetEditorExtensionToWebviewMessage } from "@shared/asset-editor/messageTypes";
   import type { AssetDefinition, Field } from "@shared/fieldTypes";
-  import { onMount } from "svelte";
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
+  import { onMount } from "svelte";
   import FieldRenderer from "./components/FieldRenderer.svelte";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
@@ -59,34 +57,41 @@
   });
 </script>
 
-<main class="flex h-screen min-h-0 flex-col bg-vsc-bg text-sm text-vsc-editor-fg">
-  <header class="border-b border-vsc-border bg-vsc-panel px-4 py-3">
-    <div class="flex items-start justify-between gap-3">
-      <div class="min-w-0">
-        <div class="truncate text-base font-semibold">
-          {assetDefinition?.title ?? "Asset Editor"}
-        </div>
-        <div class="mt-1 truncate text-xs opacity-70">{documentPath || "Waiting for document..."}</div>
-        <div class="mt-1 text-xs opacity-60">Version {version} · {documentText.length} chars</div>
+<main class="flex flex-col h-screen min-h-0 text-sm bg-vsc-bg text-vsc-editor-fg">
+  <header
+    class="flex items-start justify-between gap-3 px-4 py-3 border-b border-vsc-border bg-vsc-panel"
+  >
+    <div class="min-w-0">
+      <div class="space-x-1">
+        <span class="text-lg font-semibold truncate"
+          >{documentPath.split("/").pop().split(".")[0]}</span
+        >
+        <span class="text-xs italic font-normal text-vsc-muted"
+          >{assetDefinition?.title ?? "Asset Editor"}</span
+        >
       </div>
-
-      <button
-        type="button"
-        class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
-        onclick={() => vscode.postMessage({ type: "openRawJson" })}
-      >
-        Open JSON
-      </button>
+      <div class="mt-1 text-xs truncate text-vsc-muted">
+        {documentPath.substring(documentPath.indexOf(assetDefinition?.path ?? "")) ||
+          "Waiting for document..."}
+      </div>
     </div>
+
+    <button
+      type="button"
+      class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
+      onclick={() => vscode.postMessage({ type: "openRawJson" })}
+    >
+      Open JSON
+    </button>
   </header>
 
-  <div class="min-h-0 flex-1 overflow-auto p-4">
+  <div class="flex-1 min-h-0 p-4 overflow-auto">
     {#if extensionError}
-      <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
+      <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
         {extensionError}
       </div>
     {:else if !assetDefinition}
-      <div class="rounded-md border border-vsc-border bg-vsc-panel px-3 py-2 opacity-70">
+      <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
         Loading asset definition...
       </div>
     {:else}

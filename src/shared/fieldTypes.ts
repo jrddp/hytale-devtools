@@ -144,4 +144,5 @@ export type AssetDefinition = {
   title: string;
   rootField: ObjectField | VariantField;
   buttons: ButtonTypes[];
+  path?: string;
 };

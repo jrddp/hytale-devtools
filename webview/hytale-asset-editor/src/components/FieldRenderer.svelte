@@ -1,20 +1,5 @@
 <script lang="ts">
-  import type {
-    ArrayField,
-    BooleanField,
-    ColorField,
-    Field,
-    InlineOrReferenceField,
-    MapField,
-    NumberField,
-    ObjectField,
-    RawJsonField,
-    RefField,
-    StringField,
-    TimelineField,
-    VariantField,
-    WeightedTimelineField,
-  } from "@shared/fieldTypes";
+  import type { Field } from "@shared/fieldTypes";
   import FieldRenderer from "./FieldRenderer.svelte";
   import ArrayFieldView from "./fields/ArrayField.svelte";
   import BooleanFieldView from "./fields/BooleanField.svelte";
@@ -42,29 +27,29 @@
 {/snippet}
 
 {#if field.type === "string"}
-  <StringFieldView field={field as StringField} />
+  <StringFieldView {field} />
 {:else if field.type === "number"}
-  <NumberFieldView field={field as NumberField} />
+  <NumberFieldView {field} />
 {:else if field.type === "boolean"}
-  <BooleanFieldView field={field as BooleanField} />
+  <BooleanFieldView {field} />
 {:else if field.type === "color"}
-  <ColorFieldView field={field as ColorField} />
+  <ColorFieldView {field} />
 {:else if field.type === "array"}
-  <ArrayFieldView field={field as ArrayField} {renderField} />
+  <ArrayFieldView {field} {renderField} />
 {:else if field.type === "object"}
-  <ObjectFieldView field={field as ObjectField} {renderField} />
+  <ObjectFieldView {field} {renderField} />
 {:else if field.type === "map"}
-  <MapFieldView field={field as MapField} {renderField} />
+  <MapFieldView {field} {renderField} />
 {:else if field.type === "inlineOrReference"}
-  <InlineOrReferenceFieldView field={field as InlineOrReferenceField} />
+  <InlineOrReferenceFieldView {field} />
 {:else if field.type === "variant"}
-  <VariantFieldView field={field as VariantField} {renderField} />
+  <VariantFieldView {field} {renderField} />
 {:else if field.type === "timeline"}
-  <TimelineFieldView field={field as TimelineField} />
+  <TimelineFieldView {field} />
 {:else if field.type === "weightedTimeline"}
-  <WeightedTimelineFieldView field={field as WeightedTimelineField} />
+  <WeightedTimelineFieldView {field} />
 {:else if field.type === "ref"}
-  <RefFieldView field={field as RefField} {renderField} />
+  <RefFieldView {field} {renderField} />
 {:else}
-  <RawJsonFieldView field={field as RawJsonField} />
+  <RawJsonFieldView {field} />
 {/if}

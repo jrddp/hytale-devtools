@@ -1,7 +1,7 @@
 import type { Field } from "@shared/fieldTypes";
 
 export function getFieldLabel(field: Pick<Field, "schemaKey" | "title" | "type">): string {
-  return field.title ?? humanize(field.schemaKey) ?? humanize(field.type) ?? "Field";
+  return humanize(field.schemaKey);
 }
 
 export function groupFieldsBySection(properties: Record<string, Field>) {
@@ -17,7 +17,7 @@ export function groupFieldsBySection(properties: Record<string, Field>) {
   return Array.from(groups, ([name, fields]) => ({ name, fields }));
 }
 
-function humanize(value: string | null | undefined): string | null {
+export function humanize(value: string | null | undefined): string | null {
   if (!value) {
     return null;
   }

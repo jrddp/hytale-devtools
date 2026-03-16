@@ -483,8 +483,8 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "~20.19.35",
     "@types/rbush": "^4.0.0",
-    "@types/yauzl": "^2.10.3",
     "@types/vscode": "^1.104.0",
+    "@types/yauzl": "^2.10.3",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
     "@vscode/test-cli": "^0.0.9",
@@ -502,8 +502,9 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@xyflow/system": "^0.0.75",
+    "@floating-ui/dom": "^1.7.6",
     "@xyflow/svelte": "^1.5.1",
+    "@xyflow/system": "^0.0.75",
     "d3-flextree": "^2.1.2",
     "lucide-svelte": "^0.564.0",
     "marked": "^16.3.0",

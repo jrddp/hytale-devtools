@@ -10,6 +10,7 @@
 
   let { field, renderField }: Props = $props();
 
+  let collapsed = $state(false);
   let entries = $state<{ id: number; key: string }[]>([]);
 
   function addEntry() {
@@ -17,33 +18,37 @@
       id: entries.length + 1,
       key: "",
     });
+    collapsed = false;
   }
 </script>
 
-<FieldPanel field={field} summary={`${entries.length} entries`}>
+<FieldPanel
+  {field}
+  summary={`${entries.length} map entries`}
+  collapsedByDefault={false}
+  bind:collapsed
+>
   {#snippet actions()}
     <button
       type="button"
-      class="rounded-md border border-vsc-border bg-vsc-button-bg px-2 py-1 text-xs text-vsc-button-fg hover:bg-vsc-button-hover"
+      class="px-2 py-1 text-xs border rounded-md border-vsc-border bg-vsc-button-bg text-vsc-button-fg hover:bg-vsc-button-hover"
       onclick={addEntry}
     >
       Add Entry
     </button>
   {/snippet}
 
-  <div class="text-xs opacity-65">Key type: {field.keyField.type}</div>
-
   {#if entries.length === 0}
-    <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 opacity-65">
+    <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
       No entries
     </div>
   {/if}
 
   {#each entries as entry (entry.id)}
-    <div class="space-y-3 rounded-md border border-dashed border-vsc-border p-3">
+    <div class="p-3 space-y-3 border border-dashed rounded-md border-vsc-border">
       <input
         type="text"
-        class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
+        class="w-full px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg"
         bind:value={entry.key}
         placeholder="Key"
       />

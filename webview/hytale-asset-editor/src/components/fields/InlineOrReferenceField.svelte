@@ -11,7 +11,7 @@
   );
 </script>
 
-<FieldPanel field={field} summary="String mode">
+<FieldPanel field={field} inline>
   <input
     type="text"
     class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
