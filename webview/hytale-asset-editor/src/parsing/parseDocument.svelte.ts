@@ -198,6 +198,8 @@ function populateFieldInstance<TField extends FieldInstance>(
   rawValue: unknown,
   context: ParseContext,
 ): TField {
+  field.isPresent = rawValue !== undefined;
+
   switch (field.type) {
     case "string":
       return populateStringField(field, rawValue) as TField;
@@ -418,7 +420,7 @@ function populateInlineOrReferenceField(
   }
 
   field.mode = "empty";
-  field.unparsedData = rawValue !== undefined && rawValue !== null ? rawValue : undefined;
+  field.unparsedData = rawValue !== undefined ? rawValue : undefined;
   return field;
 }
 

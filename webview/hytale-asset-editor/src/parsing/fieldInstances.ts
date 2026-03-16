@@ -1,6 +1,7 @@
 import type { Field } from "@shared/fieldTypes";
 
 type RuntimeState = {
+  isPresent?: boolean;
   value?: unknown;
   unparsedData?: unknown;
   parsedItems?: (FieldInstance | FieldInstance[])[];

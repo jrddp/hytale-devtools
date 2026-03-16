@@ -5,6 +5,7 @@ node_modules
 *.vsix
 .DS_Store
 test-results/
+.env
 
 media/hytaleAssetEditor/
 media/hytaleNodeEditor/

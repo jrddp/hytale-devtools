@@ -1,8 +1,10 @@
 import type { AssetDefinition, Field } from "@shared/fieldTypes";
+import type { AssetEditorWebviewToExtensionMessage } from "@shared/asset-editor/messageTypes";
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import type { VSCodeApi } from "./common";
 import { parseDocumentText } from "./parsing/parseDocument.svelte";
 import type { RootFieldInstance } from "./parsing/fieldInstances";
+import { serializeDocument, serializeDocumentText } from "./parsing/serializeDocument";
 
 export type DocumentParseStatus = "idle" | "waiting-for-refs" | "ready" | "error";
 
@@ -81,6 +83,36 @@ export class Workspace {
 
   collapseAllPanels() {
     this.setAllPanelsCollapsed(true);
+  }
+
+  serializeDocument() {
+    if (!this.documentRootField) {
+      return null;
+    }
+
+    return serializeDocument(this.documentRootField);
+  }
+
+  serializeDocumentText() {
+    if (!this.documentRootField) {
+      return null;
+    }
+
+    return serializeDocumentText(this.documentRootField);
+  }
+
+  applyDocumentState() {
+    const text = this.serializeDocumentText();
+    if (!text) {
+      return;
+    }
+
+    const payload: Extract<AssetEditorWebviewToExtensionMessage, { type: "apply" }> = {
+      type: "apply",
+      text,
+      sourceVersion: this.documentVersion,
+    };
+    this.vscode.postMessage(payload);
   }
 
   private reparseDocument() {
