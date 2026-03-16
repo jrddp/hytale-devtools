@@ -18,9 +18,7 @@
   let inputId = $derived(getFieldEditorId(field));
 
   const value = $derived(typeof field.value === "string" ? field.value : "");
-  const isSet = $derived(
-    field.value !== undefined || field.unparsedData !== undefined || Boolean(field.isPresent),
-  );
+  const isSet = $derived(field.value !== undefined);
   const autocompleteOptions = $derived(
     (field.enumVals?.length
       ? field.enumVals
@@ -49,14 +47,12 @@
   function commitValue(nextValue: string) {
     field.value = nextValue;
     field.unparsedData = undefined;
-    field.isPresent = true;
     workspace.applyDocumentState();
   }
 
   function unsetValue() {
     field.value = undefined;
     field.unparsedData = undefined;
-    field.isPresent = false;
     workspace.applyDocumentState();
   }
 </script>

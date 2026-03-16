@@ -154,6 +154,27 @@ function parseJsonText(text: string): unknown {
   return JSON.parse(text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
 }
 
+function normalizeRoundTripJson(value: unknown, isRoot = true): unknown {
+  if (Array.isArray(value)) {
+    const normalized = value
+      .map(item => normalizeRoundTripJson(item, false))
+      .filter(item => item !== undefined);
+    return normalized.length > 0 || isRoot ? normalized : undefined;
+  }
+
+  if (value && typeof value === "object") {
+    const normalized = Object.fromEntries(
+      Object.entries(value).flatMap(([key, childValue]) => {
+        const normalizedChild = normalizeRoundTripJson(childValue, false);
+        return normalizedChild === undefined ? [] : [[key, normalizedChild]];
+      }),
+    );
+    return Object.keys(normalized).length > 0 || isRoot ? normalized : undefined;
+  }
+
+  return typeof value === "number" && Object.is(value, -0) ? 0 : value;
+}
+
 function loadDotEnv(envPath: string): void {
   if (!existsSync(envPath)) {
     return;
@@ -264,10 +285,10 @@ describe("asset editor serializeDocument", () => {
         })[refId] ?? null,
     });
 
-    expect(serializeDocument(root)).toEqual(documentJson);
+    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson(documentJson));
   });
 
-  test("preserves empty composites and explicit null values", () => {
+  test("treats empty composites the same as missing while preserving explicit null values", () => {
     const rootField = objectField(null, {
       meta: objectField("meta", {}),
       tags: arrayField("tags", stringField("tag")),
@@ -289,7 +310,7 @@ describe("asset editor serializeDocument", () => {
       rootField,
     });
 
-    expect(serializeDocument(root)).toEqual(documentJson);
+    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson(documentJson));
   });
 
   if (process.env[BASE_GAME_ASSETS_DIR_ENV]) {

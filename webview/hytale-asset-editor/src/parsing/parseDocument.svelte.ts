@@ -207,17 +207,15 @@ function populateFieldInstance<TField extends FieldInstance>(
   rawValue: unknown,
   context: ParseContext,
 ): TField {
-  field.isPresent = rawValue !== undefined;
-
   switch (field.type) {
     case "string":
-      return populateStringField(field, rawValue) as TField;
+      return populateStringField(field as StringFieldInstance, rawValue) as TField;
     case "number":
-      return populateNumberField(field, rawValue) as TField;
+      return populateNumberField(field as NumberFieldInstance, rawValue) as TField;
     case "boolean":
-      return populateBooleanField(field, rawValue) as TField;
+      return populateBooleanField(field as BooleanFieldInstance, rawValue) as TField;
     case "color":
-      return populateColorField(field, rawValue) as TField;
+      return populateColorField(field as ColorFieldInstance, rawValue) as TField;
     case "object":
       return populateObjectField(field as ObjectFieldInstance, rawValue, context) as TField;
     case "array":

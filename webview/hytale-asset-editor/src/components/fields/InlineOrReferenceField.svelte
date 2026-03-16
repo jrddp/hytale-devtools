@@ -27,7 +27,7 @@
   const summary = $derived(
     field.mode === "inline" ? "Inline object" : field.mode === "string" ? "Reference path" : "",
   );
-  const isSet = $derived(field.mode !== "empty" || field.unparsedData !== undefined || Boolean(field.isPresent));
+  const isSet = $derived(field.mode !== "empty");
   const stringValue = $derived(
     field.stringValue ?? (typeof field.stringField.value === "string" ? field.stringField.value : ""),
   );
@@ -59,11 +59,9 @@
     field.mode = "string";
     field.stringField.value = nextValue;
     field.stringField.unparsedData = undefined;
-    field.stringField.isPresent = true;
     field.stringValue = nextValue;
     field.inlineValueField = null;
     field.unparsedData = undefined;
-    field.isPresent = true;
     workspace.applyDocumentState();
   }
 
@@ -73,7 +71,6 @@
     field.inlineValueField = null;
     field.mode = "empty";
     field.unparsedData = undefined;
-    field.isPresent = false;
     workspace.applyDocumentState();
   }
 
@@ -93,7 +90,6 @@
       field.inlineValueField = null;
       field.mode = "string";
       field.unparsedData = undefined;
-      field.isPresent = true;
       workspace.applyDocumentState();
       return;
     }
@@ -102,7 +98,6 @@
     field.stringValue = undefined;
     field.mode = "inline";
     field.unparsedData = undefined;
-    field.isPresent = true;
     workspace.applyDocumentState();
   }
 </script>

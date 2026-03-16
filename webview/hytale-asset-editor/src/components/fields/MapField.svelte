@@ -23,13 +23,11 @@
       },
     ];
     field.unparsedData = undefined;
-    field.isPresent = true;
   }
 
   function removeEntry(index: number) {
     field.entries.splice(index, 1);
     field.unparsedData = undefined;
-    field.isPresent = true;
     workspace.applyDocumentState();
   }
 

@@ -48,7 +48,6 @@
     }
 
     field.value = undefined;
-    field.isPresent = false;
     workspace.applyDocumentState();
   }
 </script>

@@ -11,6 +11,9 @@ import type {
 
 export function serializeDocument(rootField: RootFieldInstance): Record<string, unknown> {
   const serialized = serializeField(rootField);
+  if (serialized === undefined) {
+    return {};
+  }
   if (!isPlainObject(serialized)) {
     throw new Error("Asset editor root field did not serialize to a JSON object.");
   }
@@ -80,7 +83,7 @@ function serializeObjectField(field: ObjectFieldInstance): unknown {
     }
   }
 
-  return field.isPresent || Object.keys(serialized).length > 0 ? serialized : undefined;
+  return Object.keys(serialized).length > 0 ? serialized : undefined;
 }
 
 function serializeArrayField(field: ArrayFieldInstance): unknown {
@@ -98,7 +101,7 @@ function serializeArrayField(field: ArrayFieldInstance): unknown {
     serialized.push(...field.unparsedData);
   }
 
-  return field.isPresent || serialized.length > 0 ? serialized : undefined;
+  return serialized.length > 0 ? serialized : undefined;
 }
 
 function serializeTupleArrayField(field: ArrayFieldInstance): unknown[] {
@@ -128,7 +131,7 @@ function serializeMapField(field: MapFieldInstance): unknown {
     }
   }
 
-  return field.isPresent || Object.keys(serialized).length > 0 ? serialized : undefined;
+  return Object.keys(serialized).length > 0 ? serialized : undefined;
 }
 
 function serializeVariantField(field: VariantFieldInstance): unknown {
@@ -144,7 +147,7 @@ function serializeVariantField(field: VariantFieldInstance): unknown {
     serializedObject[field.identityField.schemaKey] = identityValue;
   }
 
-  return field.isPresent || Object.keys(serializedObject).length > 0 ? serializedObject : undefined;
+  return Object.keys(serializedObject).length > 0 ? serializedObject : undefined;
 }
 
 function serializeRefField(field: RefFieldInstance): unknown {

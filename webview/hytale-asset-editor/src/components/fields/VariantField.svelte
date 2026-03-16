@@ -43,22 +43,18 @@
     if (!nextIdentity) {
       field.identityField.value = undefined;
       field.identityField.unparsedData = undefined;
-      field.identityField.isPresent = false;
       field.selectedIdentity = undefined;
       field.activeVariantField = null;
       field.unparsedData = undefined;
-      field.isPresent = false;
       workspace.applyDocumentState();
       return;
     }
 
     field.identityField.value = nextIdentity;
     field.identityField.unparsedData = undefined;
-    field.identityField.isPresent = true;
     field.selectedIdentity = nextIdentity;
     field.activeVariantField = workspace.createEmptyFieldInstance(field.variantsByIdentity[nextIdentity]);
     field.unparsedData = undefined;
-    field.isPresent = true;
     collapsed = Boolean(field.collapsedByDefault);
     workspace.applyDocumentState();
   }

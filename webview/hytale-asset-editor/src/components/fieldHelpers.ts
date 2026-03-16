@@ -51,52 +51,27 @@ export function isFieldVisible(field: FieldInstance | null | undefined, hideUnse
     case "number":
     case "boolean":
     case "color":
+      return field.value !== undefined;
     case "rawJson":
     case "timeline":
     case "weightedTimeline":
-      return field.value !== undefined || field.unparsedData !== undefined || Boolean(field.isPresent);
+      return field.unparsedData !== undefined;
     case "object":
-      return (
-        Boolean(field.isPresent) ||
-        hasObjectValues(field.unparsedData) ||
-        Object.values(field.properties).some(childField => isFieldVisible(childField, true))
-      );
+      return Object.values(field.properties).some(childField => isFieldVisible(childField, true));
     case "array":
-      return (
-        Boolean(field.isPresent) ||
-        hasArrayValues(field.unparsedData) ||
-        field.parsedItems.some(item =>
-          Array.isArray(item)
-            ? item.some(childField => isFieldVisible(childField, true))
-            : isFieldVisible(item, true),
-        )
-      );
+      return Array.isArray(field.items)
+        ? (Array.isArray(field.parsedItems[0]) ? field.parsedItems[0] : []).some(childField =>
+            isFieldVisible(childField, true),
+          )
+        : field.parsedItems.length > 0;
     case "map":
-      return (
-        Boolean(field.isPresent) ||
-        hasObjectValues(field.unparsedData) ||
-        field.entries.some(entry => isFieldVisible(entry.valueField, true))
-      );
+      return field.entries.length > 0;
     case "variant":
-      return (
-        Boolean(field.isPresent) ||
-        field.unparsedData !== undefined ||
-        Boolean(field.selectedIdentity) ||
-        isFieldVisible(field.activeVariantField, true)
-      );
+      return Boolean(field.selectedIdentity) || isFieldVisible(field.activeVariantField, true);
     case "ref":
-      return (
-        Boolean(field.isPresent) ||
-        field.unparsedData !== undefined ||
-        isFieldVisible(field.resolvedField, true)
-      );
+      return isFieldVisible(field.resolvedField, true);
     case "inlineOrReference":
-      return (
-        Boolean(field.isPresent) ||
-        field.unparsedData !== undefined ||
-        field.mode !== "empty" ||
-        isFieldVisible(field.inlineValueField, true)
-      );
+      return field.mode !== "empty";
     default:
       return true;
   }
@@ -124,16 +99,4 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-}
-
-function hasObjectValues(value: unknown): boolean {
-  return isPlainObject(value) ? Object.keys(value).length > 0 : value !== undefined;
-}
-
-function hasArrayValues(value: unknown): boolean {
-  return Array.isArray(value) ? value.length > 0 : value !== undefined;
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
 }

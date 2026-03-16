@@ -23,13 +23,11 @@
 
     field.parsedItems = [...field.parsedItems, workspace.createEmptyFieldInstance(field.items)];
     field.unparsedData = undefined;
-    field.isPresent = true;
   }
 
   function removeItem(index: number) {
     field.parsedItems.splice(index, 1);
     field.unparsedData = undefined;
-    field.isPresent = true;
     workspace.applyDocumentState();
   }
 

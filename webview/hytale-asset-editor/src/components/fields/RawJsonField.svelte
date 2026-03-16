@@ -27,7 +27,6 @@
       }
 
       field.unparsedData = undefined;
-      field.isPresent = false;
       draftValue = "";
       lastCommittedValue = "";
       workspace.applyDocumentState();
@@ -40,7 +39,6 @@
 
     try {
       field.unparsedData = JSON.parse(trimmedValue);
-      field.isPresent = true;
       draftValue = JSON.stringify(field.unparsedData, null, 2);
       lastCommittedValue = draftValue;
       workspace.applyDocumentState();

@@ -10,26 +10,40 @@
   );
 
   let draftValue = $state("");
+  let lastCommittedValue = $state("");
 
   $effect(() => {
-    draftValue = value;
+    if (value !== lastCommittedValue) {
+      draftValue = value;
+      lastCommittedValue = value;
+    }
   });
 
   function commitValue() {
     const trimmedValue = draftValue.trim();
     if (!trimmedValue) {
+      if (lastCommittedValue === "") {
+        return;
+      }
+
       field.unparsedData = undefined;
-      field.isPresent = false;
+      draftValue = "";
+      lastCommittedValue = "";
       workspace.applyDocumentState();
+      return;
+    }
+
+    if (draftValue === lastCommittedValue) {
       return;
     }
 
     try {
       field.unparsedData = JSON.parse(trimmedValue);
-      field.isPresent = true;
+      draftValue = JSON.stringify(field.unparsedData, null, 2);
+      lastCommittedValue = draftValue;
       workspace.applyDocumentState();
     } catch {
-      draftValue = value;
+      draftValue = lastCommittedValue;
     }
   }
 </script>

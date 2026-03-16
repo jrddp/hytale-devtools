@@ -88,6 +88,27 @@ function canonicalizeJson(value) {
   return typeof value === "number" && Object.is(value, -0) ? 0 : value;
 }
 
+function normalizeRoundTripJson(value, isRoot = true) {
+  if (Array.isArray(value)) {
+    const normalized = value
+      .map(item => normalizeRoundTripJson(item, false))
+      .filter(item => item !== undefined);
+    return normalized.length > 0 || isRoot ? normalized : undefined;
+  }
+
+  if (value && typeof value === "object") {
+    const normalized = Object.fromEntries(
+      Object.entries(value).flatMap(([key, childValue]) => {
+        const normalizedChild = normalizeRoundTripJson(childValue, false);
+        return normalizedChild === undefined ? [] : [[key, normalizedChild]];
+      }),
+    );
+    return Object.keys(normalized).length > 0 || isRoot ? normalized : undefined;
+  }
+
+  return typeof value === "number" && Object.is(value, -0) ? 0 : value;
+}
+
 function parseUntilReady({ text, rootField, resolveRef = () => null }) {
   const resolvedRefsByRef = new Map();
 
@@ -197,8 +218,8 @@ for (const [index, assetPath] of supportedAssetPaths.entries()) {
     });
 
     assert.deepStrictEqual(
-      canonicalizeJson(serializeDocument(rootField)),
-      canonicalizeJson(originalJson),
+      canonicalizeJson(normalizeRoundTripJson(serializeDocument(rootField))),
+      canonicalizeJson(normalizeRoundTripJson(originalJson)),
     );
   } catch (error) {
     failures.push(`${assetPath}: ${error instanceof Error ? error.message : String(error)}`);
