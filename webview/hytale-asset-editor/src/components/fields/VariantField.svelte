@@ -39,8 +39,8 @@
     userCollapsed = null;
   }
 
-  function toggleCollapsed() {
-    userCollapsed = !collapsed;
+  function handleCollapsedChange(nextCollapsed: boolean) {
+    userCollapsed = nextCollapsed;
   }
 </script>
 
@@ -98,8 +98,9 @@
   <FieldPanel
     field={field}
     summary={`${variantNames.length} variants`}
+    collapseEnabled={Boolean(selectedIdentity)}
     {collapsed}
-    onToggleCollapse={selectedIdentity ? toggleCollapsed : undefined}
+    onCollapsedChange={handleCollapsedChange}
   >
     {@render variantBody()}
   </FieldPanel>

@@ -6,6 +6,8 @@ export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
   resolvedRefsByRef = new SvelteMap<string, Field | null>();
   pendingRefs = new SvelteSet<string>();
+  collapseAllVersion = $state(0);
+  collapseAllTarget = $state<boolean | null>(null);
 
   requestRef($ref: string) {
     if (!$ref || this.resolvedRefsByRef.has($ref) || this.pendingRefs.has($ref)) {
@@ -22,6 +24,19 @@ export class Workspace {
   resetResolvedRefs() {
     this.resolvedRefsByRef.clear();
     this.pendingRefs.clear();
+  }
+
+  setAllPanelsCollapsed(collapsed: boolean) {
+    this.collapseAllTarget = collapsed;
+    this.collapseAllVersion += 1;
+  }
+
+  expandAllPanels() {
+    this.setAllPanelsCollapsed(false);
+  }
+
+  collapseAllPanels() {
+    this.setAllPanelsCollapsed(true);
   }
 }
 

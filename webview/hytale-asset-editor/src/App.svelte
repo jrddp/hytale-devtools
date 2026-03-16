@@ -59,7 +59,7 @@
 
 <main class="flex flex-col h-screen min-h-0 text-sm bg-vsc-bg text-vsc-editor-fg">
   <header
-    class="flex items-start justify-between gap-3 px-4 py-3 border-b border-vsc-border bg-vsc-panel"
+    class="flex items-center justify-between gap-3 px-4 py-3 border-b border-vsc-border bg-vsc-panel"
   >
     <div class="min-w-0">
       <div class="space-x-1">
@@ -76,13 +76,29 @@
       </div>
     </div>
 
-    <button
-      type="button"
-      class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
-      onclick={() => vscode.postMessage({ type: "openRawJson" })}
-    >
-      Open JSON
-    </button>
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
+        onclick={() => workspace.expandAllPanels()}
+      >
+        Expand All
+      </button>
+      <button
+        type="button"
+        class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
+        onclick={() => workspace.collapseAllPanels()}
+      >
+        Collapse All
+      </button>
+      <button
+        type="button"
+        class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
+        onclick={() => vscode.postMessage({ type: "openRawJson" })}
+      >
+        Open JSON
+      </button>
+    </div>
   </header>
 
   <div class="flex-1 min-h-0 p-4 overflow-auto">
