@@ -2,7 +2,7 @@
   import type { StringField as StringFieldType } from "@shared/fieldTypes";
   import FieldPanel from "../FieldPanel.svelte";
 
-  let { field }: { field: StringFieldType } = $props();
+  let { field, depth = 0 }: { field: StringFieldType; depth?: number } = $props();
 
   const summary = $derived(
     field.enumVals?.length
@@ -18,7 +18,7 @@
   );
 </script>
 
-<FieldPanel {field} {summary} inline>
+<FieldPanel {field} {depth} {summary} inline>
   <input
     type="text"
     class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"

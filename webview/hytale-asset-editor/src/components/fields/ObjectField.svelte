@@ -6,11 +6,12 @@
 
   interface Props {
     field: ObjectFieldType;
-    renderField?: Snippet<[Field]>;
+    renderField?: Snippet<[Field, number]>;
+    depth?: number;
     root?: boolean;
   }
 
-  let { field, renderField, root = false }: Props = $props();
+  let { field, renderField, depth = 0, root = false }: Props = $props();
 
   const sections = $derived(groupFieldsBySection(field.properties));
 </script>
@@ -25,7 +26,7 @@
 
         <div class="space-y-3">
           {#each section.fields as childField, index (`${childField.schemaKey ?? childField.type}-${index}`)}
-            {@render renderField?.(childField)}
+            {@render renderField?.(childField, root ? depth : depth + 1)}
           {/each}
         </div>
       </div>
@@ -38,6 +39,7 @@
 {:else}
   <FieldPanel
     {field}
+    {depth}
     summary={`${Object.keys(field.properties).length} subfields`}
     collapsedByDefault={field.collapsedByDefault ?? true}
     children={sectionList}

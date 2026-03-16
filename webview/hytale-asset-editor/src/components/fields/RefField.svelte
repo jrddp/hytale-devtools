@@ -7,10 +7,11 @@
 
   interface Props {
     field: RefFieldType;
-    renderField?: Snippet<[Field]>;
+    renderField?: Snippet<[Field, number]>;
+    depth?: number;
   }
 
-  let { field, renderField }: Props = $props();
+  let { field, renderField, depth = 0 }: Props = $props();
 
   onMount(() => {
     workspace.requestRef(field.$ref);
@@ -32,9 +33,9 @@
 </script>
 
 {#if mergedField}
-  {@render renderField?.(mergedField)}
+  {@render renderField?.(mergedField, depth)}
 {:else}
-  <FieldPanel {field} summary={field.$ref} inline>
+  <FieldPanel {field} {depth} summary={field.$ref} inline>
     <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
       {#if hasResolved}
         Field reference {field.$ref} could not be resolved.

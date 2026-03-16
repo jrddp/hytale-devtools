@@ -5,10 +5,11 @@
 
   interface Props {
     field: MapFieldType;
-    renderField?: Snippet<[Field]>;
+    renderField?: Snippet<[Field, number]>;
+    depth?: number;
   }
 
-  let { field, renderField }: Props = $props();
+  let { field, renderField, depth = 0 }: Props = $props();
 
   let collapsed = $state(false);
   let entries = $state<{ id: number; key: string }[]>([]);
@@ -24,6 +25,7 @@
 
 <FieldPanel
   {field}
+  {depth}
   summary={`${entries.length} map entries`}
   collapsedByDefault={false}
   bind:collapsed
@@ -53,7 +55,7 @@
         placeholder="Key"
       />
 
-      {@render renderField?.(field.valueField)}
+      {@render renderField?.(field.valueField, depth + 1)}
     </div>
   {/each}
 </FieldPanel>

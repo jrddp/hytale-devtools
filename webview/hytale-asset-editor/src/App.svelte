@@ -101,25 +101,27 @@
     </div>
   </header>
 
-  <div class="flex-1 min-h-0 p-4 overflow-auto">
-    {#if extensionError}
-      <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
-        {extensionError}
-      </div>
-    {:else if !assetDefinition}
-      <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
-        Loading asset definition...
-      </div>
-    {:else}
-      {#snippet renderField(field: Field)}
-        <FieldRenderer {field} />
-      {/snippet}
-
-      {#if assetDefinition.rootField.type === "object"}
-        <ObjectField field={assetDefinition.rootField} {renderField} root />
+  <div class="flex-1 min-h-0 overflow-auto" data-sticky-scroll-root>
+    <div class="p-4">
+      {#if extensionError}
+        <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
+          {extensionError}
+        </div>
+      {:else if !assetDefinition}
+        <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
+          Loading asset definition...
+        </div>
       {:else}
-        <VariantField field={assetDefinition.rootField} {renderField} root />
+        {#snippet renderField(field: Field, depth: number)}
+          <FieldRenderer {field} {depth} />
+        {/snippet}
+
+        {#if assetDefinition.rootField.type === "object"}
+          <ObjectField field={assetDefinition.rootField} {renderField} depth={0} root />
+        {:else}
+          <VariantField field={assetDefinition.rootField} {renderField} depth={0} root />
+        {/if}
       {/if}
-    {/if}
+    </div>
   </div>
 </main>

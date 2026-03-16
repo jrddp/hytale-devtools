@@ -6,10 +6,11 @@
 
   interface Props {
     field: ArrayFieldType;
-    renderField?: Snippet<[Field]>;
+    renderField?: Snippet<[Field, number]>;
+    depth?: number;
   }
 
-  let { field, renderField }: Props = $props();
+  let { field, renderField, depth = 0 }: Props = $props();
 
   let itemIds = $state<number[]>([]);
 
@@ -20,6 +21,7 @@
 
 <FieldPanel
   {field}
+  {depth}
   summary={`${itemIds.length} list items`}
   collapsedByDefault={field.collapsedByDefault ?? true}
 >
@@ -32,10 +34,10 @@
 
       {#if Array.isArray(field.items)}
         {#each field.items as itemField, index (`${itemField.schemaKey ?? itemField.type}-${index}`)}
-          {@render renderField?.(itemField)}
+          {@render renderField?.(itemField, depth + 1)}
         {/each}
       {:else}
-        {@render renderField?.(field.items)}
+        {@render renderField?.(field.items, depth + 1)}
       {/if}
     </div>
   {/each}

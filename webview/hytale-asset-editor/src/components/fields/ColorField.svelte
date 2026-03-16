@@ -2,12 +2,12 @@
   import type { ColorField as ColorFieldType } from "@shared/fieldTypes";
   import FieldPanel from "../FieldPanel.svelte";
 
-  let { field }: { field: ColorFieldType } = $props();
+  let { field, depth = 0 }: { field: ColorFieldType; depth?: number } = $props();
 
   const swatch = $derived(typeof field.default === "string" ? field.default : "#888888");
 </script>
 
-<FieldPanel field={field} summary={field.colorType} inline>
+<FieldPanel field={field} {depth} summary={field.colorType} inline>
   <div class="flex items-center gap-3">
     <div class="h-8 w-8 rounded-md border border-vsc-border" style:background={swatch}></div>
     <input

@@ -6,11 +6,12 @@
 
   interface Props {
     field: VariantFieldType;
-    renderField?: Snippet<[Field]>;
+    renderField?: Snippet<[Field, number]>;
+    depth?: number;
     root?: boolean;
   }
 
-  let { field, renderField, root = false }: Props = $props();
+  let { field, renderField, depth = 0, root = false }: Props = $props();
 
   let selectedIdentity = $state("");
   let userCollapsed = $state<boolean | null>(null);
@@ -81,7 +82,7 @@
 
               <div class="space-y-3">
                 {#each section.fields as childField, index (`${childField.schemaKey ?? childField.type}-${index}`)}
-                  {@render renderField?.(childField)}
+                  {@render renderField?.(childField, root ? depth : depth + 1)}
                 {/each}
               </div>
             </div>
@@ -97,6 +98,7 @@
 {:else}
   <FieldPanel
     field={field}
+    {depth}
     summary={`${variantNames.length} variants`}
     collapseEnabled={Boolean(selectedIdentity)}
     {collapsed}

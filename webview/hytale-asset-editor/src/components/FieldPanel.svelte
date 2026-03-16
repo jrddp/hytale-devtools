@@ -2,14 +2,18 @@
   import type { Field } from "@shared/fieldTypes";
   import { ChevronDown, ChevronRight, Info } from "lucide-svelte";
   import { marked } from "marked";
-  import type { Snippet } from "svelte";
   import { workspace } from "src/workspace.svelte";
+  import type { Snippet } from "svelte";
   import { createTooltip } from "../../../shared/components/tooltip/createTooltip.svelte";
   import TooltipContent from "../../../shared/components/tooltip/TooltipContent.svelte";
+  import { createStickyHeader } from "./createStickyHeader.svelte";
   import { getFieldLabel, humanize } from "./fieldHelpers";
+
+  const STICKY_HEADER_HEIGHT_PX = 44;
 
   interface Props {
     field: Field;
+    depth?: number;
     summary?: string;
     inline?: boolean;
     collapsedByDefault?: boolean;
@@ -22,6 +26,7 @@
 
   let {
     field,
+    depth = 0,
     inline = false,
     summary,
     collapsedByDefault = true,
@@ -33,11 +38,17 @@
   }: Props = $props();
 
   const infoTooltip = createTooltip();
+  const stickyHeader = createStickyHeader({
+    enabled: () => !inline && !collapsed,
+    top: () => depth * STICKY_HEADER_HEIGHT_PX,
+  });
 
   const label = $derived(getFieldLabel(field));
   const descriptionHtml = $derived(
     field.markdownDescription ? marked(field.markdownDescription) : undefined,
   );
+  const stickyTop = $derived(depth * STICKY_HEADER_HEIGHT_PX);
+  const isStickyEnabled = $derived(!inline && !collapsed);
 
   function setPanelCollapsed(nextCollapsed: boolean) {
     if (onCollapsedChange) {
@@ -83,16 +94,21 @@
     >
       <div class="space-y-1">
         <div class="font-semibold">{humanize(field.type)}</div>
+        <div class="text-xs text-vsc-muted">Depth: {depth}</div>
         {@html descriptionHtml}
       </div>
     </TooltipContent>
   </button>
   {#if summary}
-    <div class="text-xs text-vsc-muted">{summary}</div>
+    <div class="text-xs truncate text-vsc-muted">{summary}</div>
   {/if}
 {/snippet}
 
-<section class="border rounded-md border-vsc-border bg-vsc-panel">
+<section
+  class="border rounded-md border-vsc-border bg-vsc-panel overflow-clip"
+  data-depth={depth}
+  data-field-panel
+>
   {#if inline}
     <div class="flex items-center gap-4 px-4 py-2 min-h-12">
       <div class="relative flex items-center w-56 min-w-0 gap-1 shrink-0">
@@ -114,9 +130,17 @@
   {:else}
     <!-- ## Collapsable Title Bar -->
     <button
-      class="relative flex items-center gap-3 border-vsc-border px-3 py-2.5 w-full"
+      {@attach stickyHeader.header}
+      class="relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow]"
       class:border-b={!collapsed}
+      class:sticky={isStickyEnabled}
+      class:bg-vsc-panel={!stickyHeader.isStuck()}
+      class:bg-vsc-editor-widget-bg={stickyHeader.isStuck()}
+      class:shadow-sm={stickyHeader.isStuck()}
       aria-expanded={!collapsed}
+      data-stuck={stickyHeader.isStuck()}
+      style:top={isStickyEnabled ? `${stickyTop}px` : undefined}
+      style:z-index={isStickyEnabled ? `${120 - depth}` : undefined}
       onclick={toggleCollapsed}
     >
       <div class="relative flex items-center flex-1 min-w-0 gap-1">

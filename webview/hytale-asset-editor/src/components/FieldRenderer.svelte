@@ -17,39 +17,40 @@
 
   interface Props {
     field: Field;
+    depth?: number;
   }
 
-  let { field }: Props = $props();
+  let { field, depth = 0 }: Props = $props();
 </script>
 
-{#snippet renderField(nextField: Field)}
-  <FieldRenderer field={nextField} />
+{#snippet renderField(nextField: Field, nextDepth: number)}
+  <FieldRenderer field={nextField} depth={nextDepth} />
 {/snippet}
 
 {#if field.type === "string"}
-  <StringFieldView {field} />
+  <StringFieldView {field} {depth} />
 {:else if field.type === "number"}
-  <NumberFieldView {field} />
+  <NumberFieldView {field} {depth} />
 {:else if field.type === "boolean"}
-  <BooleanFieldView {field} />
+  <BooleanFieldView {field} {depth} />
 {:else if field.type === "color"}
-  <ColorFieldView {field} />
+  <ColorFieldView {field} {depth} />
 {:else if field.type === "array"}
-  <ArrayFieldView {field} {renderField} />
+  <ArrayFieldView {field} {renderField} {depth} />
 {:else if field.type === "object"}
-  <ObjectFieldView {field} {renderField} />
+  <ObjectFieldView {field} {renderField} {depth} />
 {:else if field.type === "map"}
-  <MapFieldView {field} {renderField} />
+  <MapFieldView {field} {renderField} {depth} />
 {:else if field.type === "inlineOrReference"}
-  <InlineOrReferenceFieldView {field} />
+  <InlineOrReferenceFieldView {field} {depth} />
 {:else if field.type === "variant"}
-  <VariantFieldView {field} {renderField} />
+  <VariantFieldView {field} {renderField} {depth} />
 {:else if field.type === "timeline"}
-  <TimelineFieldView {field} />
+  <TimelineFieldView {field} {depth} />
 {:else if field.type === "weightedTimeline"}
-  <WeightedTimelineFieldView {field} />
+  <WeightedTimelineFieldView {field} {depth} />
 {:else if field.type === "ref"}
-  <RefFieldView {field} {renderField} />
+  <RefFieldView {field} {renderField} {depth} />
 {:else}
-  <RawJsonFieldView {field} />
+  <RawJsonFieldView {field} {depth} />
 {/if}

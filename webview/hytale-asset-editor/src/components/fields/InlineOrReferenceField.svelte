@@ -2,7 +2,7 @@
   import type { InlineOrReferenceField as InlineOrReferenceFieldType } from "@shared/fieldTypes";
   import FieldPanel from "../FieldPanel.svelte";
 
-  let { field }: { field: InlineOrReferenceFieldType } = $props();
+  let { field, depth = 0 }: { field: InlineOrReferenceFieldType; depth?: number } = $props();
 
   const placeholder = $derived(
     field.stringField.default?.toString() ??
@@ -11,7 +11,7 @@
   );
 </script>
 
-<FieldPanel field={field} inline>
+<FieldPanel field={field} {depth} inline>
   <input
     type="text"
     class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
