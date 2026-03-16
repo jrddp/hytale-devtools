@@ -5,6 +5,7 @@ import {
   type AssetEditorWebviewToExtensionMessage,
 } from "../shared/asset-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
+import { getValuesByIndexReference } from "../schema/symbolResolver";
 
 const VIEW_TYPE = "hytale-devtools.hytaleAssetEditor";
 
@@ -96,6 +97,9 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
           case "resolveRef":
             void this.resolveRef(message, webviewPanel.webview);
             return;
+          case "autocompleteRequest":
+            void this.autocompleteRequest(message, webviewPanel.webview);
+            return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
             return;
@@ -143,6 +147,18 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       type: "resolvedRef",
       $ref: message.$ref,
       field,
+    };
+    await webview.postMessage(payload);
+  }
+
+  private async autocompleteRequest(
+    message: Extract<AssetEditorWebviewToExtensionMessage, { type: "autocompleteRequest" }>,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    const payload: AssetEditorExtensionToWebviewMessage = {
+      type: "autocompletionValues",
+      fieldId: message.fieldId,
+      values: getValuesByIndexReference(message.symbolLookup),
     };
     await webview.postMessage(payload);
   }

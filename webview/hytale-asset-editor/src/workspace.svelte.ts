@@ -19,6 +19,8 @@ export class Workspace {
   documentParseError = $state<string | null>(null);
   resolvedRefsByRef = new SvelteMap<string, Field | null>();
   pendingRefs = new SvelteSet<string>();
+  autocompleteField = $state<string>();
+  autocompleteValues = $state<string[]>([]);
   collapseAllVersion = $state(0);
   collapseAllTarget = $state<boolean | null>(null);
 
@@ -43,6 +45,8 @@ export class Workspace {
     this.documentRootField = null;
     this.documentParseStatus = "idle";
     this.documentParseError = null;
+    this.autocompleteField = undefined;
+    this.autocompleteValues = [];
     this.reparseDocument();
   }
 
@@ -65,6 +69,11 @@ export class Workspace {
     this.pendingRefs.delete(refId);
     this.resolvedRefsByRef.set(refId, field);
     this.reparseDocument();
+  }
+
+  setAutocompleteValues(fieldId: string, values: string[]) {
+    this.autocompleteField = fieldId;
+    this.autocompleteValues = sortVariantsToBottom(values);
   }
 
   resetResolvedRefs() {
@@ -158,3 +167,16 @@ export class Workspace {
 }
 
 export const workspace = new Workspace();
+
+function sortVariantsToBottom(sourceValues: string[]): string[] {
+  return [...sourceValues].sort((left, right) => {
+    const leftStartsWithStar = left.startsWith("*");
+    const rightStartsWithStar = right.startsWith("*");
+
+    if (leftStartsWithStar !== rightStartsWithStar) {
+      return leftStartsWithStar ? 1 : -1;
+    }
+
+    return left.localeCompare(right);
+  });
+}

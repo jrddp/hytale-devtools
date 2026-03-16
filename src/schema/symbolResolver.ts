@@ -72,17 +72,30 @@ export function getValuesByIndexReference(reference: IndexReference): string[] {
       return Object.keys(shard.values);
     case "commonAssetPaths":
       shard = shard as CommonAssetPathsIndexShard;
-      const values = [];
-      for (const [directParentFolder, filesByFileType] of Object.entries(shard.values)) {
-        if (reference.folders.some(folder => directParentFolder.startsWith(folder))) {
-          if (reference.extension) {
-            values.push(...filesByFileType[reference.extension]);
-          } else {
-            values.push(...Object.values(filesByFileType).flat());
-          }
-        }
-      }
-      return values;
+      return getCommonAssetPathValues(shard, reference);
   }
   return [];
+}
+
+function getCommonAssetPathValues(
+  shard: CommonAssetPathsIndexShard,
+  reference: Extract<IndexReference, { indexKind: "commonAssetPaths" }>,
+): string[] {
+  const values: string[] = [];
+
+  for (const [directParentFolder, filesByFileType] of Object.entries(shard.values)) {
+    if (!reference.folders.some(folder => directParentFolder.startsWith(folder))) {
+      continue;
+    }
+
+    const fileNames = reference.extension
+      ? (filesByFileType[reference.extension] ?? [])
+      : Object.values(filesByFileType).flat();
+
+    values.push(
+      ...fileNames.map(fileName => path.normalize(path.join(directParentFolder, fileName))),
+    );
+  }
+
+  return values;
 }

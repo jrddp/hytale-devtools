@@ -1,4 +1,5 @@
 import { type AssetDefinition, type Field } from "../fieldTypes";
+import type { IndexReference } from "../indexTypes";
 
 export type AssetEditorBootstrapMessage = {
   type: "bootstrap";
@@ -23,16 +24,24 @@ export type AssetEditorResolvedRefMessage = {
   field: Field | null;
 };
 
+export type AssetEditorAutocompletionValuesMessage = {
+  type: "autocompletionValues";
+  fieldId: string;
+  values: string[];
+};
+
 export type AssetEditorExtensionToWebviewMessage =
   | AssetEditorBootstrapMessage
   | AssetEditorDocumentUpdateMessage
   | AssetEditorErrorMessage
-  | AssetEditorResolvedRefMessage;
+  | AssetEditorResolvedRefMessage
+  | AssetEditorAutocompletionValuesMessage;
 
 export type AssetEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
   | { type: "resolveRef"; $ref: string }
+  | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | {
       type: "apply";
       text: string;

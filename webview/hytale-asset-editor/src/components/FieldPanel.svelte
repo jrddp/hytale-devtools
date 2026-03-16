@@ -104,7 +104,7 @@
 {/snippet}
 
 <section
-  class="border rounded-md border-vsc-border bg-vsc-panel overflow-clip"
+  class="border rounded-md border-vsc-border bg-vsc-panel"
   data-depth={depth}
   data-field-panel
 >
@@ -130,7 +130,7 @@
     <!-- ## Collapsable Title Bar -->
     <button
       {@attach stickyHeader.header}
-      class="relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow]"
+      class="relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow] rounded-t-md"
       class:border-b={!collapsed}
       class:sticky={isStickyEnabled}
       class:bg-vsc-panel={!stickyHeader.isStuck()}
@@ -139,7 +139,7 @@
       aria-expanded={!collapsed}
       data-stuck={stickyHeader.isStuck()}
       style:top={isStickyEnabled ? `${stickyTop}px` : undefined}
-      style:z-index={isStickyEnabled ? `${120 - depth}` : undefined}
+      style:z-index={isStickyEnabled && stickyHeader.isStuck() ? `${120 - depth}` : undefined}
       onclick={toggleCollapsed}
     >
       <div class="relative flex items-center flex-1 min-w-0 gap-1">

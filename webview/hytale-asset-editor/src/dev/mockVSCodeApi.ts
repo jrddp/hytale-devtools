@@ -120,6 +120,7 @@ export class MockVSCodeApi implements VSCodeApi {
       case "resolveRef":
         await this.sendResolvedRef(message.$ref);
         return;
+      case "autocompleteRequest":
       case "apply":
       case "openRawJson":
         return;

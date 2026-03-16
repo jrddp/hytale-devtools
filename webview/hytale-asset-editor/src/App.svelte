@@ -99,6 +99,9 @@
       case "resolvedRef":
         workspace.setResolvedRef(message.$ref, message.field);
         return;
+      case "autocompletionValues":
+        workspace.setAutocompleteValues(message.fieldId, message.values);
+        return;
       case "error":
         extensionError = message.message;
         return;
@@ -314,7 +317,7 @@
                 aria-hidden="true"
                 style:height={
                   outlineSections.length > 0
-                    ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, 0)}px`
+                    ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, scrollRootHeight / 2)}px`
                     : undefined
                 }
               ></div>

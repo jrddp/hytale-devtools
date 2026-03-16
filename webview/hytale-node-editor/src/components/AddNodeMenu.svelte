@@ -7,6 +7,7 @@
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import { innerHeight, innerWidth } from "svelte/reactivity/window";
+  import MarkdownPreviewCard from "../../../shared/components/MarkdownPreviewCard.svelte";
 
   export type AddMenuProps = {
     screenPosition: XYPosition;
@@ -222,58 +223,10 @@
   </div>
 
   {#if activeTemplateDescriptionHtml}
-    <div
-      class="pointer-events-auto absolute top-0 w-62 rounded-lg border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-3 py-2.5 text-vsc-editor-fg shadow-2xl"
-      class:left-[calc(100%+0.5rem)]={!showDescriptionOnLeft}
-      class:right-[calc(100%+0.5rem)]={showDescriptionOnLeft}
-    >
-      <div class="text-[0.65rem] font-semibold uppercase tracking-widest text-vsc-muted">
-        {activeTemplate.defaultTitle}
-      </div>
-      <div class="description-markdown mt-1.5 text-xs leading-4 text-vsc-input-fg">
-        {@html activeTemplateDescriptionHtml}
-      </div>
-    </div>
+    <MarkdownPreviewCard
+      title={activeTemplate.defaultTitle}
+      html={activeTemplateDescriptionHtml}
+      class={`absolute top-0 w-62 ${showDescriptionOnLeft ? "right-[calc(100%+0.5rem)]" : "left-[calc(100%+0.5rem)]"}`}
+    />
   {/if}
 </div>
-
-<!-- style injection for the markdown preview -->
-<style>
-  .description-markdown :global(p + p) {
-    margin-top: 0.5rem;
-  }
-
-  .description-markdown :global(ul) {
-    margin-top: 0.375rem;
-    list-style-type: disc;
-    padding-left: 1rem;
-  }
-
-  .description-markdown :global(ol) {
-    margin-top: 0.375rem;
-    list-style-type: decimal;
-    padding-left: 1rem;
-  }
-
-  .description-markdown :global(li + li) {
-    margin-top: 0.125rem;
-  }
-
-  .description-markdown :global(code) {
-    border: 1px solid var(--vscode-input-border);
-    border-radius: 0.25rem;
-    background: var(--vscode-input-background);
-    padding: 0 0.25rem;
-    font-size: 0.7rem;
-  }
-
-  .description-markdown :global(a) {
-    color: var(--vscode-textLink-foreground);
-    text-decoration: underline;
-    text-decoration-thickness: from-font;
-  }
-
-  .description-markdown :global(a:hover) {
-    color: var(--vscode-textLink-activeForeground);
-  }
-</style>
