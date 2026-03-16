@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { AssetEditorExtensionToWebviewMessage } from "@shared/asset-editor/messageTypes";
-  import type { AssetDefinition, Field } from "@shared/fieldTypes";
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
@@ -8,15 +7,12 @@
   import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
+  import type { FieldInstance } from "./parsing/fieldInstances";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
   const { vscode }: { vscode: VSCodeApi } = $props();
 
-  let assetDefinition = $state<AssetDefinition | null>(null);
-  let documentPath = $state("");
-  let documentText = $state("");
-  let version = $state(0);
   let extensionError = $state("");
   let scrollRootElement = $state<HTMLDivElement>();
   let scrollRootHeight = $state(0);
@@ -77,24 +73,31 @@
     };
   });
 
+  $effect(() => {
+    if (workspace.documentRootField) {
+      return;
+    }
+
+    outlineSections = [];
+    activeOutlineSectionId = null;
+    pendingOutlineSectionId = null;
+    lastOutlineSectionHeight = 0;
+  });
+
   function handleMessage(event: MessageEvent<AssetEditorExtensionToWebviewMessage>) {
     const message = event.data;
     console.log("message received", message);
 
     switch (message.type) {
       case "bootstrap":
-        assetDefinition = message.assetDefinition;
-        workspace.resetResolvedRefs();
+        workspace.setAssetDefinition(message.assetDefinition);
         extensionError = "";
         return;
       case "update":
-        documentPath = message.documentPath;
-        documentText = message.text;
-        version = message.version;
+        workspace.setDocument(message);
         return;
       case "resolvedRef":
-        workspace.pendingRefs.delete(message.$ref);
-        workspace.resolvedRefsByRef.set(message.$ref, message.field);
+        workspace.setResolvedRef(message.$ref, message.field);
         return;
       case "error":
         extensionError = message.message;
@@ -189,14 +192,16 @@
     <div class="min-w-0">
       <div class="space-x-1">
         <span class="text-lg font-semibold truncate"
-          >{documentPath.split("/").pop().split(".")[0]}</span
+          >{workspace.documentPath.split("/").pop().split(".")[0]}</span
         >
         <span class="text-xs italic font-normal text-vsc-muted"
-          >{assetDefinition?.title ?? "Asset Editor"}</span
+          >{workspace.assetDefinition?.title ?? "Asset Editor"}</span
         >
       </div>
       <div class="mt-1 text-xs truncate text-vsc-muted">
-        {documentPath.substring(documentPath.indexOf(assetDefinition?.path ?? "")) ||
+        {workspace.documentPath.substring(
+          workspace.documentPath.indexOf(workspace.assetDefinition?.path ?? ""),
+        ) ||
           "Waiting for document..."}
       </div>
     </div>
@@ -232,74 +237,90 @@
         <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
           {extensionError}
         </div>
-      {:else if !assetDefinition}
+      {:else if !workspace.assetDefinition}
         <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
           Loading asset definition...
         </div>
       {:else}
-        {#snippet renderField(field: Field, depth: number)}
+        {#snippet renderField(field: FieldInstance, depth: number)}
           <FieldRenderer {field} {depth} />
         {/snippet}
 
-        <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
-          <aside class="lg:sticky lg:top-4">
-            <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
-              {#if outlineSections.length === 0}
-                <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
-              {:else}
-                <div class="space-y-2">
-                  {#each outlineSections as section (section.id)}
-                    <button
-                      type="button"
-                      class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
-                      class:border-vsc-focus={section.id === activeOutlineSectionId}
-                      class:bg-vsc-list-active-bg={section.id === activeOutlineSectionId}
-                      class:text-vsc-list-active-fg={section.id === activeOutlineSectionId}
-                      class:border-vsc-border={section.id !== activeOutlineSectionId}
-                      class:bg-vsc-button-secondary-bg={section.id !== activeOutlineSectionId}
-                      class:text-vsc-button-secondary-fg={section.id !== activeOutlineSectionId}
-                      onclick={() => scrollToOutlineSection(section.id)}
-                    >
-                      <div class="truncate text-sm font-semibold">{section.name}</div>
-                      <div class="text-xs opacity-70">
-                        {section.fieldCount} {section.fieldCount === 1 ? "property" : "properties"}
-                      </div>
-                    </button>
-                  {/each}
-                </div>
-              {/if}
-            </div>
-          </aside>
-
-          <div class="min-w-0">
-            {#if assetDefinition.rootField.type === "object"}
-              <ObjectField
-                field={assetDefinition.rootField}
-                {renderField}
-                depth={0}
-                root
-                onSectionsChange={handleSectionsChange}
-              />
-            {:else}
-              <VariantField
-                field={assetDefinition.rootField}
-                {renderField}
-                depth={0}
-                root
-                onSectionsChange={handleSectionsChange}
-              />
-            {/if}
-
-            <div
-              aria-hidden="true"
-              style:height={
-                outlineSections.length > 0
-                  ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, 0)}px`
-                  : undefined
-              }
-            ></div>
+        {#if workspace.documentParseError}
+          <div class="mb-4 px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
+            {workspace.documentParseError}
           </div>
-        </div>
+        {/if}
+
+        {#if workspace.documentParseStatus === "waiting-for-refs" && !workspace.documentRootField}
+          <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
+            Resolving schema references...
+          </div>
+        {:else if workspace.documentParseStatus === "error" && !workspace.documentRootField}
+          <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
+            Unable to parse document.
+          </div>
+        {:else if workspace.documentRootField}
+          <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
+            <aside class="lg:sticky lg:top-4">
+              <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+                {#if outlineSections.length === 0}
+                  <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
+                {:else}
+                  <div class="space-y-2">
+                    {#each outlineSections as section (section.id)}
+                      <button
+                        type="button"
+                        class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
+                        class:border-vsc-focus={section.id === activeOutlineSectionId}
+                        class:bg-vsc-list-active-bg={section.id === activeOutlineSectionId}
+                        class:text-vsc-list-active-fg={section.id === activeOutlineSectionId}
+                        class:border-vsc-border={section.id !== activeOutlineSectionId}
+                        class:bg-vsc-button-secondary-bg={section.id !== activeOutlineSectionId}
+                        class:text-vsc-button-secondary-fg={section.id !== activeOutlineSectionId}
+                        onclick={() => scrollToOutlineSection(section.id)}
+                      >
+                        <div class="truncate text-sm font-semibold">{section.name}</div>
+                        <div class="text-xs opacity-70">
+                          {section.fieldCount} {section.fieldCount === 1 ? "property" : "properties"}
+                        </div>
+                      </button>
+                    {/each}
+                  </div>
+                {/if}
+              </div>
+            </aside>
+
+            <div class="min-w-0">
+              {#if workspace.documentRootField.type === "object"}
+                <ObjectField
+                  field={workspace.documentRootField}
+                  {renderField}
+                  depth={0}
+                  root
+                  onSectionsChange={handleSectionsChange}
+                />
+              {:else}
+                <VariantField
+                  field={workspace.documentRootField}
+                  {renderField}
+                  depth={0}
+                  root
+                  onSectionsChange={handleSectionsChange}
+                />
+              {/if}
+
+              <div
+                aria-hidden="true"
+                style:height={
+                  outlineSections.length > 0
+                    ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, 0)}px`
+                    : undefined
+                }
+              ></div>
+            </div>
+          </div>
+        {/if}
       {/if}
     </div>
   </div>

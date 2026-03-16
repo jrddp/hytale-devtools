@@ -467,6 +467,8 @@
     "test:node-editor-parser": "pnpm run compile-tests:node-editor-parser && printf '{\"type\":\"module\"}\\n' > out-node-editor-parser-tests/package.json && node ./node_modules/mocha/bin/mocha.js \"out-node-editor-parser-tests/test/node-editor-parser/**/*.test.js\"",
     "test:node-editor-parser:vitest": "vitest --config vitest.config.mts run test/node-editor-parser",
     "test:node-editor-parser:vitest:watch": "vitest --config vitest.config.mts test/node-editor-parser",
+    "test:asset-editor-parser:vitest": "vitest --config vitest.config.mts run test/asset-editor-parser",
+    "test:asset-editor-parser:vitest:watch": "vitest --config vitest.config.mts test/asset-editor-parser",
     "test:node-editor-parse-basic": "node test/node-editor-parser/parse-basic.mjs",
     "check-types": "npm-run-all check-types:*",
     "check-types:extension": "tsc --noEmit",

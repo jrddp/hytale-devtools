@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [svelte(), tailwindcss()],
   test: {
     environment: "node",
-    include: ["test/node-editor-parser/**/*.test.ts"],
+    include: ["test/node-editor-parser/**/*.test.ts", "test/asset-editor-parser/**/*.test.ts"],
     exclude: ["**/node_modules/**", "**/dist/**", "**/out/**"],
     server: {
       deps: {

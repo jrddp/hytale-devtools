@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { Field, VariantField as VariantFieldType } from "@shared/fieldTypes";
   import type { Snippet } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
   import { buildOutlineSections, type OutlineSection, groupFieldsBySection } from "../fieldHelpers";
+  import type { FieldInstance, VariantFieldInstance } from "../../parsing/fieldInstances";
 
   interface Props {
-    field: VariantFieldType;
-    renderField?: Snippet<[Field, number]>;
+    field: VariantFieldInstance;
+    renderField?: Snippet<[FieldInstance, number]>;
     depth?: number;
     root?: boolean;
     onSectionsChange?: (sections: OutlineSection[]) => void;
@@ -14,16 +14,11 @@
 
   let { field, renderField, depth = 0, root = false, onSectionsChange }: Props = $props();
 
-  let selectedIdentity = $state("");
-  let userCollapsed = $state<boolean | null>(null);
+  let collapsed = $state(false);
 
   const variantNames = $derived(Object.keys(field.variantsByIdentity));
-  const activeVariant = $derived(
-    selectedIdentity ? field.variantsByIdentity[selectedIdentity] ?? null : null,
-  );
-  const collapsed = $derived(
-    userCollapsed ?? (selectedIdentity ? Boolean(field.collapsedByDefault) : false),
-  );
+  const selectedIdentity = $derived(field.selectedIdentity ?? "");
+  const activeVariant = $derived(field.activeVariantField ?? null);
   const activeSections = $derived(
     activeVariant
       ? groupFieldsBySection(
@@ -37,14 +32,13 @@
   );
   const outlineSections = $derived(buildOutlineSections(activeSections));
 
-  function handleIdentityChange(event: Event) {
-    selectedIdentity = (event.currentTarget as HTMLSelectElement).value;
-    userCollapsed = null;
+  function handleCollapsedChange(nextCollapsed: boolean) {
+    collapsed = nextCollapsed;
   }
 
-  function handleCollapsedChange(nextCollapsed: boolean) {
-    userCollapsed = nextCollapsed;
-  }
+  $effect(() => {
+    collapsed = Boolean(field.selectedIdentity) && Boolean(field.collapsedByDefault);
+  });
 
   $effect(() => {
     if (!root) return;
@@ -60,7 +54,7 @@
       <select
         class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
         value={selectedIdentity}
-        onchange={handleIdentityChange}
+        disabled
       >
         <option value="">Select a type</option>
         {#each variantNames as variantName (variantName)}

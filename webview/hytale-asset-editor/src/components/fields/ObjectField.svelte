@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { Field, ObjectField as ObjectFieldType } from "@shared/fieldTypes";
   import type { Snippet } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
   import { buildOutlineSections, type OutlineSection, groupFieldsBySection } from "../fieldHelpers";
+  import type { FieldInstance, ObjectFieldInstance } from "../../parsing/fieldInstances";
 
   interface Props {
-    field: ObjectFieldType;
-    renderField?: Snippet<[Field, number]>;
+    field: ObjectFieldInstance;
+    renderField?: Snippet<[FieldInstance, number]>;
     depth?: number;
     root?: boolean;
     onSectionsChange?: (sections: OutlineSection[]) => void;

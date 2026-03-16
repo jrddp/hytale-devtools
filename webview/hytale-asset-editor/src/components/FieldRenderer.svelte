@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Field } from "@shared/fieldTypes";
   import FieldRenderer from "./FieldRenderer.svelte";
   import ArrayFieldView from "./fields/ArrayField.svelte";
   import BooleanFieldView from "./fields/BooleanField.svelte";
@@ -14,16 +13,17 @@
   import TimelineFieldView from "./fields/TimelineField.svelte";
   import VariantFieldView from "./fields/VariantField.svelte";
   import WeightedTimelineFieldView from "./fields/WeightedTimelineField.svelte";
+  import type { FieldInstance } from "../parsing/fieldInstances";
 
   interface Props {
-    field: Field;
+    field: FieldInstance;
     depth?: number;
   }
 
   let { field, depth = 0 }: Props = $props();
 </script>
 
-{#snippet renderField(nextField: Field, nextDepth: number)}
+{#snippet renderField(nextField: FieldInstance, nextDepth: number)}
   <FieldRenderer field={nextField} depth={nextDepth} />
 {/snippet}
 
@@ -42,7 +42,7 @@
 {:else if field.type === "map"}
   <MapFieldView {field} {renderField} {depth} />
 {:else if field.type === "inlineOrReference"}
-  <InlineOrReferenceFieldView {field} {depth} />
+  <InlineOrReferenceFieldView {field} {renderField} {depth} />
 {:else if field.type === "variant"}
   <VariantFieldView {field} {renderField} {depth} />
 {:else if field.type === "timeline"}

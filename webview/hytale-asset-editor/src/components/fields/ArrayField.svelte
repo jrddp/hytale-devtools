@@ -1,52 +1,47 @@
 <script lang="ts">
-  import type { ArrayField as ArrayFieldType, Field } from "@shared/fieldTypes";
-  import { GripVertical, Plus } from "lucide-svelte";
+  import { GripVertical } from "lucide-svelte";
   import type { Snippet } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
+  import type { ArrayFieldInstance, FieldInstance } from "../../parsing/fieldInstances";
 
   interface Props {
-    field: ArrayFieldType;
-    renderField?: Snippet<[Field, number]>;
+    field: ArrayFieldInstance;
+    renderField?: Snippet<[FieldInstance, number]>;
     depth?: number;
   }
 
   let { field, renderField, depth = 0 }: Props = $props();
-
-  let itemIds = $state<number[]>([]);
-
-  function addItem() {
-    itemIds.push(itemIds.length + 1);
-  }
+  const summary = $derived(
+    Array.isArray(field.items) ? `${field.items.length} tuple items` : `${field.parsedItems.length} list items`,
+  );
 </script>
 
 <FieldPanel
   {field}
   {depth}
-  summary={`${itemIds.length} list items`}
+  {summary}
   collapsedByDefault={field.collapsedByDefault ?? true}
 >
-  {#each itemIds as itemId (itemId)}
-    <div class="flex items-center w-full gap-2 border-dashed rounded-md border-vsc-border">
+  {#if field.parsedItems.length === 0}
+    <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
+      No items
+    </div>
+  {/if}
+
+  {#each field.parsedItems as parsedItem, index (index)}
+    <div class="flex items-start w-full gap-2 border border-dashed rounded-md border-vsc-border">
       <div class="flex items-center">
         <GripVertical class="h-full opacity-70" />
-        <div class="text-base font-medium opacity-70">{itemId}</div>
+        <div class="text-base font-medium opacity-70">{index + 1}</div>
       </div>
 
-      {#if Array.isArray(field.items)}
-        {#each field.items as itemField, index (`${itemField.schemaKey ?? itemField.type}-${index}`)}
+      {#if Array.isArray(parsedItem)}
+        {#each parsedItem as itemField, itemIndex (`${itemField.schemaKey ?? itemField.type}-${itemIndex}`)}
           {@render renderField?.(itemField, depth + 1)}
         {/each}
       {:else}
-        {@render renderField?.(field.items, depth + 1)}
+        {@render renderField?.(parsedItem, depth + 1)}
       {/if}
     </div>
   {/each}
-  <button
-    type="button"
-    class="flex items-center w-full h-8 px-2 py-1 text-xs text-left border rounded-md border-vsc-border bg-vsc-button-bg text-vsc-button-fg hover:bg-vsc-button-hover"
-    onclick={addItem}
-  >
-    <Plus size={16} />
-    Add Item
-  </button>
 </FieldPanel>
