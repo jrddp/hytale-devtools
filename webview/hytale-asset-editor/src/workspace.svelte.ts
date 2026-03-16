@@ -2,8 +2,8 @@ import type { AssetDefinition, Field } from "@shared/fieldTypes";
 import type { AssetEditorWebviewToExtensionMessage } from "@shared/asset-editor/messageTypes";
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import type { VSCodeApi } from "./common";
-import { parseDocumentText } from "./parsing/parseDocument.svelte";
-import type { RootFieldInstance } from "./parsing/fieldInstances";
+import { createEmptyFieldInstance as createEmptyFieldInstanceFromSchema, parseDocumentText } from "./parsing/parseDocument.svelte";
+import type { FieldInstance, RootFieldInstance } from "./parsing/fieldInstances";
 import { serializeDocument, serializeDocumentText } from "./parsing/serializeDocument";
 
 export type DocumentParseStatus = "idle" | "waiting-for-refs" | "ready" | "error";
@@ -23,6 +23,7 @@ export class Workspace {
   autocompleteValues = $state<string[]>([]);
   collapseAllVersion = $state(0);
   collapseAllTarget = $state<boolean | null>(null);
+  hideUnsetFields = $state(false);
 
   requestRef(refId: string) {
     if (!refId || this.resolvedRefsByRef.has(refId) || this.pendingRefs.has(refId)) {
@@ -94,6 +95,10 @@ export class Workspace {
     this.setAllPanelsCollapsed(true);
   }
 
+  toggleHideUnsetFields() {
+    this.hideUnsetFields = !this.hideUnsetFields;
+  }
+
   serializeDocument() {
     if (!this.documentRootField) {
       return null;
@@ -122,6 +127,10 @@ export class Workspace {
       sourceVersion: this.documentVersion,
     };
     this.vscode.postMessage(payload);
+  }
+
+  createEmptyFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
+    return createEmptyFieldInstanceFromSchema(field, this.resolvedRefsByRef);
   }
 
   private reparseDocument() {

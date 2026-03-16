@@ -104,6 +104,15 @@ export function parseDocumentText({
   };
 }
 
+export function createEmptyFieldInstance<TField extends Field>(
+  field: TField,
+  resolvedRefsByRef: FieldLookup = new Map<string, Field | null>(),
+): TField & FieldInstance {
+  return populateFieldInstance(cloneFieldInstance(field), undefined, {
+    resolvedRefsByRef,
+  }) as TField & FieldInstance;
+}
+
 function collectReachableRefs(field: Field, rawValue: unknown, state: ReachableRefState): void {
   switch (field.type) {
     case "object": {

@@ -36,8 +36,8 @@
     const updateLayoutMetrics = () => {
       scrollRootHeight = scrollRootElement.clientHeight;
       lastOutlineSectionHeight =
-        getOutlineSectionElement(outlineSections.at(-1)?.id ?? "")?.getBoundingClientRect().height ??
-        0;
+        getOutlineSectionElement(outlineSections.at(-1)?.id ?? "")?.getBoundingClientRect()
+          .height ?? 0;
     };
 
     const handleScroll = () => {
@@ -113,7 +113,10 @@
   function handleSectionsChange(nextSections: OutlineSection[]) {
     outlineSections = nextSections;
 
-    if (pendingOutlineSectionId && !nextSections.some(section => section.id === pendingOutlineSectionId)) {
+    if (
+      pendingOutlineSectionId &&
+      !nextSections.some(section => section.id === pendingOutlineSectionId)
+    ) {
       pendingOutlineSectionId = null;
     }
 
@@ -131,7 +134,9 @@
   }
 
   function getOutlineSectionElement(sectionId: string) {
-    return scrollRootElement?.querySelector<HTMLElement>(`[data-outline-section-id="${sectionId}"]`);
+    return scrollRootElement?.querySelector<HTMLElement>(
+      `[data-outline-section-id="${sectionId}"]`,
+    );
   }
 
   function scrollToOutlineSection(sectionId: string) {
@@ -204,8 +209,7 @@
       <div class="mt-1 text-xs truncate text-vsc-muted">
         {workspace.documentPath.substring(
           workspace.documentPath.indexOf(workspace.assetDefinition?.path ?? ""),
-        ) ||
-          "Waiting for document..."}
+        ) || "Waiting for document..."}
       </div>
     </div>
 
@@ -223,6 +227,21 @@
         onclick={() => workspace.collapseAllPanels()}
       >
         Collapse All
+      </button>
+      <button
+        type="button"
+        class="rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+        class:border-vsc-focus={workspace.hideUnsetFields}
+        class:bg-vsc-list-active-bg={workspace.hideUnsetFields}
+        class:text-vsc-list-active-fg={workspace.hideUnsetFields}
+        class:border-vsc-border={!workspace.hideUnsetFields}
+        class:bg-vsc-button-bg={!workspace.hideUnsetFields}
+        class:text-vsc-button-fg={!workspace.hideUnsetFields}
+        class:hover:bg-vsc-button-hover={!workspace.hideUnsetFields}
+        aria-pressed={workspace.hideUnsetFields}
+        onclick={() => workspace.toggleHideUnsetFields()}
+      >
+        Hide Unset
       </button>
       <button
         type="button"
@@ -245,12 +264,14 @@
           Loading asset definition...
         </div>
       {:else}
-        {#snippet renderField(field: FieldInstance, depth: number)}
-          <FieldRenderer {field} {depth} />
+        {#snippet renderField(field: FieldInstance, depth: number, onunset?: () => void)}
+          <FieldRenderer {field} {depth} {onunset} />
         {/snippet}
 
         {#if workspace.documentParseError}
-          <div class="mb-4 px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
+          <div
+            class="px-3 py-2 mb-4 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error"
+          >
             {workspace.documentParseError}
           </div>
         {/if}
@@ -266,7 +287,7 @@
         {:else if workspace.documentRootField}
           <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
             <aside class="lg:sticky lg:top-4">
-              <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+              <div class="p-2 border rounded-xl border-vsc-border bg-vsc-panel">
                 {#if outlineSections.length === 0}
                   <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
                 {:else}
@@ -283,9 +304,10 @@
                         class:text-vsc-button-secondary-fg={section.id !== activeOutlineSectionId}
                         onclick={() => scrollToOutlineSection(section.id)}
                       >
-                        <div class="truncate text-sm font-semibold">{section.name}</div>
+                        <div class="text-sm font-semibold truncate">{section.name}</div>
                         <div class="text-xs opacity-70">
-                          {section.fieldCount} {section.fieldCount === 1 ? "property" : "properties"}
+                          {section.fieldCount}
+                          {section.fieldCount === 1 ? "property" : "properties"}
                         </div>
                       </button>
                     {/each}
@@ -315,11 +337,9 @@
 
               <div
                 aria-hidden="true"
-                style:height={
-                  outlineSections.length > 0
-                    ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, scrollRootHeight / 2)}px`
-                    : undefined
-                }
+                style:height={outlineSections.length > 0
+                  ? `${Math.max(scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight, scrollRootHeight / 2)}px`
+                  : undefined}
               ></div>
             </div>
           </div>

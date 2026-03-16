@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
-  import { buildOutlineSections, type OutlineSection, groupFieldsBySection } from "../fieldHelpers";
+  import { buildOutlineSections, type OutlineSection, groupFieldsBySection, isFieldVisible } from "../fieldHelpers";
+  import { workspace } from "../../workspace.svelte";
   import type { FieldInstance, VariantFieldInstance } from "../../parsing/fieldInstances";
 
   interface Props {
     field: VariantFieldInstance;
-    renderField?: Snippet<[FieldInstance, number]>;
+    renderField?: Snippet<[FieldInstance, number, (() => void)?]>;
     depth?: number;
     root?: boolean;
     onSectionsChange?: (sections: OutlineSection[]) => void;
@@ -24,7 +25,9 @@
       ? groupFieldsBySection(
           Object.fromEntries(
             Object.entries(activeVariant.properties).filter(
-              ([schemaKey]) => schemaKey !== field.identityField.schemaKey,
+              ([schemaKey, childField]) =>
+                schemaKey !== field.identityField.schemaKey &&
+                isFieldVisible(childField, workspace.hideUnsetFields),
             ),
           ),
         )
@@ -34,6 +37,30 @@
 
   function handleCollapsedChange(nextCollapsed: boolean) {
     collapsed = nextCollapsed;
+  }
+
+  function selectVariant(nextIdentity: string) {
+    if (!nextIdentity) {
+      field.identityField.value = undefined;
+      field.identityField.unparsedData = undefined;
+      field.identityField.isPresent = false;
+      field.selectedIdentity = undefined;
+      field.activeVariantField = null;
+      field.unparsedData = undefined;
+      field.isPresent = false;
+      workspace.applyDocumentState();
+      return;
+    }
+
+    field.identityField.value = nextIdentity;
+    field.identityField.unparsedData = undefined;
+    field.identityField.isPresent = true;
+    field.selectedIdentity = nextIdentity;
+    field.activeVariantField = workspace.createEmptyFieldInstance(field.variantsByIdentity[nextIdentity]);
+    field.unparsedData = undefined;
+    field.isPresent = true;
+    collapsed = Boolean(field.collapsedByDefault);
+    workspace.applyDocumentState();
   }
 
   $effect(() => {
@@ -54,7 +81,7 @@
       <select
         class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
         value={selectedIdentity}
-        disabled
+        onchange={event => selectVariant(event.currentTarget.value)}
       >
         <option value="">Select a type</option>
         {#each variantNames as variantName (variantName)}
@@ -70,7 +97,7 @@
     {:else if !collapsed}
       {#if activeSections.length === 0}
         <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 opacity-65">
-          No fields in this variant
+          {workspace.hideUnsetFields ? "No set fields in this variant" : "No fields in this variant"}
         </div>
       {:else}
         <div class="space-y-4">
@@ -88,7 +115,7 @@
 
               <div class="space-y-3">
                 {#each section.fields as childField, index (`${childField.schemaKey ?? childField.type}-${index}`)}
-                  {@render renderField?.(childField, root ? depth : depth + 1)}
+                  {@render renderField?.(childField, root ? depth : depth + 1, undefined)}
                 {/each}
               </div>
             </section>

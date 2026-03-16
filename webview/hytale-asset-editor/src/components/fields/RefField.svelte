@@ -5,15 +5,16 @@
 
   interface Props {
     field: RefFieldInstance;
-    renderField?: Snippet<[FieldInstance, number]>;
+    renderField?: Snippet<[FieldInstance, number, (() => void)?]>;
     depth?: number;
+    onunset?: () => void;
   }
 
-  let { field, renderField, depth = 0 }: Props = $props();
+  let { field, renderField, depth = 0, onunset }: Props = $props();
 </script>
 
 {#if field.resolvedField}
-  {@render renderField?.(field.resolvedField, depth)}
+  {@render renderField?.(field.resolvedField, depth, onunset)}
 {:else}
   <FieldPanel {field} {depth} summary={field.$ref} inline>
     <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">

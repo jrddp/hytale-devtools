@@ -97,12 +97,12 @@
         listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
         optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
         stopPointerPropagation
-        onfocusrequestautocomplete={requestAutocomplete}
+        onfocus={requestAutocomplete}
         oncommit={nextValue => {
           value = nextValue;
           confirmValue();
         }}
-        onentercommit={handleEnterCommit}
+        afterEnterPressed={handleEnterCommit}
       />
     {/if}
   </div>

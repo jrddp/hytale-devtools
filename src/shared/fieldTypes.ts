@@ -83,6 +83,7 @@ export type BooleanField = FieldBase & {
 export type ColorField = FieldBase & {
   type: "color";
   colorType: "Color" | "ColorAlpha" | "ColorShort";
+  default?: string;
 };
 
 export type ArrayField = FieldBase & {

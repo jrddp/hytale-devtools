@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Field } from "@shared/fieldTypes";
-  import { ChevronDown, ChevronRight, Info } from "lucide-svelte";
+  import { ChevronDown, ChevronRight, CircleX, Info } from "lucide-svelte";
   import { marked } from "marked";
   import { workspace } from "src/workspace.svelte";
   import type { Snippet } from "svelte";
@@ -20,6 +20,7 @@
     collapsed?: boolean;
     collapseEnabled?: boolean;
     onCollapsedChange?: (collapsed: boolean) => void;
+    onunset?: () => void;
     actions?: Snippet;
     children?: Snippet;
   }
@@ -32,6 +33,7 @@
     collapsedByDefault = true,
     collapseEnabled = true,
     onCollapsedChange,
+    onunset,
     actions,
     children,
     collapsed = $bindable(collapsedByDefault),
@@ -65,6 +67,15 @@
     setPanelCollapsed(!collapsed);
   }
 
+  function handleHeaderKeydown(event: KeyboardEvent) {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    toggleCollapsed();
+  }
+
   $effect(() => {
     const commandVersion = workspace.collapseAllVersion;
     const nextCollapsed = workspace.collapseAllTarget;
@@ -85,6 +96,7 @@
     type="button"
     class="relative inline-flex items-center justify-center w-4 h-4 rounded-sm group/info opacity-70"
     aria-label={`Info about ${label}`}
+    onclick={event => event.stopPropagation()}
   >
     <Info size={12} />
     <TooltipContent
@@ -109,9 +121,21 @@
   data-field-panel
 >
   {#if inline}
-    <div class="flex items-center gap-4 px-4 py-2 min-h-12">
-      <div class="relative flex items-center w-56 min-w-0 gap-1 shrink-0">
-        {@render title()}
+    <div class="flex items-center gap-1 px-4 py-2 group/inline-field min-h-12">
+      <div class="relative flex items-center justify-between w-56 min-w-0 gap-1 shrink-0">
+        <div class="flex items-center gap-1 truncate">
+          {@render title()}
+        </div>
+        {#if onunset}
+          <button
+            type="button"
+            class="pointer-events-none inline-flex size-0 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/inline-field:size-6 group-hover/inline-field:pointer-events-auto group-hover/inline-field:opacity-100 group-focus-within/inline-field:pointer-events-auto group-focus-within/inline-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+            aria-label={`Unset ${label}`}
+            onclick={onunset}
+          >
+            <CircleX size={14} />
+          </button>
+        {/if}
       </div>
 
       {#if children}
@@ -128,7 +152,7 @@
     </div>
   {:else}
     <!-- ## Collapsable Title Bar -->
-    <button
+    <div
       {@attach stickyHeader.header}
       class="relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow] rounded-t-md"
       class:border-b={!collapsed}
@@ -136,11 +160,15 @@
       class:bg-vsc-panel={!stickyHeader.isStuck()}
       class:bg-vsc-editor-widget-bg={stickyHeader.isStuck()}
       class:shadow-sm={stickyHeader.isStuck()}
+      class:cursor-pointer={collapseEnabled}
       aria-expanded={!collapsed}
       data-stuck={stickyHeader.isStuck()}
+      role="button"
+      tabindex={collapseEnabled ? 0 : -1}
       style:top={isStickyEnabled ? `${stickyTop}px` : undefined}
       style:z-index={isStickyEnabled && stickyHeader.isStuck() ? `${120 - depth}` : undefined}
       onclick={toggleCollapsed}
+      onkeydown={handleHeaderKeydown}
     >
       <div class="relative flex items-center flex-1 min-w-0 gap-1">
         <span class="inline-flex items-center w-4 h-4 opacity-75 pointer-events-none">
@@ -159,7 +187,7 @@
           {@render actions()}
         </div>
       {/if}
-    </button>
+    </div>
 
     {#if !collapsed && children}
       <div class="p-3 space-y-3">

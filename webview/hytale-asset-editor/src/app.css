@@ -27,6 +27,7 @@
     var(--color-vsc-editor-widget-border)
   );
   --color-vsc-error-bg: var(--vscode-inputValidation-errorBackground);
+  --color-vsc-activity-bar-badge-bg: var(--vscode-activityBarBadge-background);
 }
 
 @layer base {

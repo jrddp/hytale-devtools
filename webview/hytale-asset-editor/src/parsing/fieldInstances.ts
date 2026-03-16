@@ -1,6 +1,7 @@
 import type { Field } from "@shared/fieldTypes";
 
 type RuntimeState = {
+  // used to persist empty values like [] or {} when parsed
   isPresent?: boolean;
   value?: unknown;
   unparsedData?: unknown;
@@ -24,10 +25,10 @@ type RuntimeState = {
 
 export type FieldInstance = Field & RuntimeState;
 export type RootFieldInstance = FieldInstance & { type: "object" | "variant" };
-export type StringFieldInstance = FieldInstance & { type: "string" };
-export type NumberFieldInstance = FieldInstance & { type: "number" };
-export type BooleanFieldInstance = FieldInstance & { type: "boolean" };
-export type ColorFieldInstance = FieldInstance & { type: "color" };
+export type StringFieldInstance = FieldInstance & { type: "string"; value?: string };
+export type NumberFieldInstance = FieldInstance & { type: "number"; value?: number };
+export type BooleanFieldInstance = FieldInstance & { type: "boolean"; value?: boolean };
+export type ColorFieldInstance = FieldInstance & { type: "color"; value?: string };
 export type ObjectFieldInstance = FieldInstance & { type: "object"; properties: Record<string, FieldInstance> };
 export type ArrayFieldInstance = FieldInstance & {
   type: "array";
