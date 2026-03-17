@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@shared": path.resolve(currentDir, "../../src/shared"),
+      "@webview-shared": path.resolve(currentDir, "../shared"),
       src: path.resolve(currentDir, "src"),
     },
   },

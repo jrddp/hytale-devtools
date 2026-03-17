@@ -1,20 +1,12 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ESNext", "DOM"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": false,
-    "allowArbitraryExtensions": true,
-    "allowJs": true,
-    "checkJs": false,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "baseUrl": ".",
     "paths": {
       "@shared/*": ["../../src/shared/*"],
+      "@webview-shared/*": ["../shared/*"],
       "src/*": ["./src/*"]
-    },
-    "types": ["svelte", "node"]
+    }
   },
   "include": [
     "src/**/*.ts",

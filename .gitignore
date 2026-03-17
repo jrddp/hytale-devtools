@@ -6,6 +6,7 @@ node_modules
 .DS_Store
 test-results/
 .env
+.pnpm-store/
 
 media/hytaleAssetEditor/
 media/hytaleNodeEditor/

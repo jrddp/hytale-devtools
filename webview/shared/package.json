@@ -1,0 +1,13 @@
+{
+  "name": "@hytale-devtools/webview-shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@floating-ui/dom": "^1.7.6",
+    "marked": "^16.3.0"
+  },
+  "devDependencies": {
+    "svelte": "^5.53.6"
+  }
+}

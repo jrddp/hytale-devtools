@@ -1,0 +1,28 @@
+{
+  "name": "@hytale-devtools/hytale-asset-editor-webview",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ./vite.config.mjs",
+    "dev": "vite --config ./vite.config.mjs",
+    "watch": "vite build --watch --config ./vite.config.mjs",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.7.6",
+    "lucide-svelte": "^0.564.0",
+    "marked": "^16.3.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/node": "~20.19.35",
+    "esbuild": "^0.21.5",
+    "svelte": "^5.53.6",
+    "svelte-check": "^4.0.0",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}

@@ -1,7 +1,18 @@
 {
+  "npm.packageManager": "pnpm",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "svelte.enable-ts-plugin": true,
+  "svelte.plugin.typescript.diagnostics.enable": true,
   "eslint.useFlatConfig": true,
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "svelte"],
-  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.workingDirectories": [
+    { "directory": ".", "changeProcessCWD": true },
+    { "directory": "webview/hytale-node-editor", "changeProcessCWD": true },
+    { "directory": "webview/hytale-asset-editor", "changeProcessCWD": true }
+  ],
 
   "files.exclude": {
     "out": false, // set this to true to hide the "out" folder with the compiled JS files
