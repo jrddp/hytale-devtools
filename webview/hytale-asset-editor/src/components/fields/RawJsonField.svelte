@@ -1,50 +1,26 @@
 <script lang="ts">
-  import FieldPanel from "../FieldPanel.svelte";
-  import { workspace } from "../../workspace.svelte";
+  import { onMount } from "svelte";
   import type { RawJsonFieldInstance } from "../../parsing/fieldInstances";
+  import FieldPanel from "../FieldPanel.svelte";
 
   let { field, depth = 0 }: { field: RawJsonFieldInstance; depth?: number } = $props();
 
-  const value = $derived(
-    field.unparsedData === undefined ? "" : JSON.stringify(field.unparsedData, null, 2),
-  );
-
   let draftValue = $state("");
-  let lastCommittedValue = $state("");
 
-  $effect(() => {
-    if (value !== lastCommittedValue) {
-      draftValue = value;
-      lastCommittedValue = value;
-    }
+  onMount(() => {
+    draftValue = field.value;
   });
 
   function commitValue() {
-    const trimmedValue = draftValue.trim();
-    if (!trimmedValue) {
-      if (lastCommittedValue === "") {
-        return;
-      }
-
-      field.unparsedData = undefined;
-      draftValue = "";
-      lastCommittedValue = "";
-      workspace.applyDocumentState();
-      return;
-    }
-
-    if (draftValue === lastCommittedValue) {
-      return;
-    }
-
+    let asJsonObject;
     try {
-      field.unparsedData = JSON.parse(trimmedValue);
-      draftValue = JSON.stringify(field.unparsedData, null, 2);
-      lastCommittedValue = draftValue;
-      workspace.applyDocumentState();
+      asJsonObject = JSON.parse(draftValue);
     } catch {
-      draftValue = lastCommittedValue;
+      draftValue = field.value;
+      return;
     }
+
+    field.value = asJsonObject.stringify(asJsonObject, null, 2);
   }
 </script>
 
@@ -54,5 +30,11 @@
     bind:value={draftValue}
     placeholder={"{ ... }"}
     onblur={commitValue}
+    onkeydown={event => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.currentTarget.blur();
+      }
+    }}
   ></textarea>
 </FieldPanel>

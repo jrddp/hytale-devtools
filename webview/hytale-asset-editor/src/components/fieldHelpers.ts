@@ -16,8 +16,8 @@ export function getFieldLabel(field: Pick<Field, "schemaKey" | "title" | "type">
   return humanize(field.schemaKey);
 }
 
-export function groupFieldsBySection(properties: Record<string, Field>) {
-  const groups = new Map<string, Field[]>();
+export function groupFieldsBySection(properties: Record<string, FieldInstance>) {
+  const groups = new Map<string, FieldInstance[]>();
 
   for (const field of Object.values(properties)) {
     const section = field.section ?? "General";
@@ -26,7 +26,7 @@ export function groupFieldsBySection(properties: Record<string, Field>) {
     groups.set(section, fields);
   }
 
-  return Array.from(groups, ([name, fields]) => ({ name, fields } satisfies FieldSection));
+  return Array.from(groups, ([name, fields]) => ({ name, fields }) satisfies FieldSection);
 }
 
 export function buildOutlineSections(sections: FieldSection[]): OutlineSection[] {
@@ -37,13 +37,9 @@ export function buildOutlineSections(sections: FieldSection[]): OutlineSection[]
   }));
 }
 
-export function isFieldVisible(field: FieldInstance | null | undefined, hideUnset = false): boolean {
+export function isFieldSet(field: FieldInstance | null | undefined): boolean {
   if (!field) {
     return false;
-  }
-
-  if (!hideUnset) {
-    return true;
   }
 
   switch (field.type) {
@@ -53,25 +49,22 @@ export function isFieldVisible(field: FieldInstance | null | undefined, hideUnse
     case "color":
       return field.value !== undefined;
     case "rawJson":
+      return Boolean(JSON.parse(field.value));
     case "timeline":
     case "weightedTimeline":
       return field.unparsedData !== undefined;
     case "object":
-      return Object.values(field.properties).some(childField => isFieldVisible(childField, true));
+      return Object.values(field.properties).some(childField => isFieldSet(childField));
     case "array":
-      return Array.isArray(field.items)
-        ? (Array.isArray(field.parsedItems[0]) ? field.parsedItems[0] : []).some(childField =>
-            isFieldVisible(childField, true),
-          )
-        : field.parsedItems.length > 0;
+      return field.items.some(item => isFieldSet(item));
     case "map":
       return field.entries.length > 0;
     case "variant":
-      return Boolean(field.selectedIdentity) || isFieldVisible(field.activeVariantField, true);
+      return isFieldSet(field.identityField) || isFieldSet(field.activeVariant);
     case "ref":
-      return isFieldVisible(field.resolvedField, true);
+      return isFieldSet(field.resolvedField);
     case "inlineOrReference":
-      return field.mode !== "empty";
+      return isFieldSet(field.activeField);
     default:
       return true;
   }

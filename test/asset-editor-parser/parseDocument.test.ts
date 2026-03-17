@@ -220,12 +220,12 @@ describe("asset editor parseDocumentText", () => {
     const tags = root.properties.tags as ArrayFieldInstance;
     const dimensions = root.properties.dimensions as ArrayFieldInstance;
 
-    expect(tags.parsedItems).toHaveLength(2);
-    expect((tags.parsedItems[0] as StringFieldInstance).value).toBe("armor");
-    expect(dimensions.parsedItems).toHaveLength(1);
-    expect(((dimensions.parsedItems[0] as NumberFieldInstance[])[0] as NumberFieldInstance).value).toBe(2);
-    expect(((dimensions.parsedItems[0] as NumberFieldInstance[])[1] as NumberFieldInstance).value).toBe(4);
-    expect(dimensions.unparsedData).toEqual([8]);
+    expect(tags.items).toHaveLength(2);
+    expect((tags.items[0] as StringFieldInstance).value).toBe("armor");
+    expect(dimensions.items).toHaveLength(2);
+    expect((dimensions.items[0] as NumberFieldInstance).value).toBe(2);
+    expect((dimensions.items[1] as NumberFieldInstance).value).toBe(4);
+    expect(dimensions.isTuple).toBe(true);
   });
 
   test("parses map entries", () => {
@@ -278,9 +278,9 @@ describe("asset editor parseDocumentText", () => {
     ) as ObjectFieldInstance;
 
     const item = root.properties.item as VariantFieldInstance;
-    expect(item.selectedIdentity).toBe("tool");
-    expect((item.activeVariantField?.properties.power as NumberFieldInstance).value).toBe(7);
-    expect((item.activeVariantField?.properties.kind as StringFieldInstance).value).toBe("tool");
+    expect(item.identityField.value).toBe("tool");
+    expect((item.activeVariant?.properties.power as NumberFieldInstance).value).toBe(7);
+    expect((item.activeVariant?.properties.kind as StringFieldInstance).value).toBe("tool");
   });
 
   test("waits for only reachable refs and resolves them across multiple passes", () => {
@@ -360,7 +360,7 @@ describe("asset editor parseDocumentText", () => {
       }),
     ) as ObjectFieldInstance;
 
-    const owner = (root.properties.item as VariantFieldInstance).activeVariantField?.properties
+    const owner = (root.properties.item as VariantFieldInstance).activeVariant?.properties
       .owner as RefFieldInstance;
     expect((owner.resolvedField as ObjectFieldInstance).properties.title.value).toBe("Caretaker");
   });
@@ -419,15 +419,15 @@ describe("asset editor parseDocumentText", () => {
     const referenceOnly = root.properties.referenceOnly as InlineOrReferenceFieldInstance;
     const inlineOnly = root.properties.inlineOnly as InlineOrReferenceFieldInstance;
 
-    expect(referenceOnly.mode).toBe("string");
-    expect(referenceOnly.stringValue).toBe("Items/Armor/Bronze");
-    expect(inlineOnly.mode).toBe("inline");
+    expect(referenceOnly.activeField.type).toBe("string");
+    expect((referenceOnly.activeField as StringFieldInstance).value).toBe("Items/Armor/Bronze");
+    expect(inlineOnly.activeField.type).toBe("object");
     expect(
-      ((inlineOnly.inlineValueField as ObjectFieldInstance).properties.name as StringFieldInstance).value,
+      ((inlineOnly.activeField as ObjectFieldInstance).properties.name as StringFieldInstance).value,
     ).toBe("Inline Item");
   });
 
-  test("preserves unknown keys and type mismatches in unparsedData", () => {
+  test("preserves unknown keys on object fields", () => {
     const rootField = objectField(null, {
       name: stringField("name"),
     });
@@ -442,8 +442,7 @@ describe("asset editor parseDocumentText", () => {
       }),
     ) as ObjectFieldInstance;
 
-    expect((root.properties.name as StringFieldInstance).value).toBeUndefined();
-    expect((root.properties.name as StringFieldInstance).unparsedData).toBe(42);
+    expect((root.properties.name as StringFieldInstance).value as unknown).toBe(42);
     expect(root.unparsedData).toEqual({ extra: true });
   });
 
@@ -469,7 +468,9 @@ describe("asset editor parseDocumentText", () => {
       }),
     ) as ObjectFieldInstance;
 
-    expect((root.properties.payload as RawJsonFieldInstance).unparsedData).toEqual(rawPayload);
+    expect((root.properties.payload as RawJsonFieldInstance).value).toBe(
+      JSON.stringify(rawPayload, null, 2),
+    );
     expect((root.properties.timeline as TimelineFieldInstance).unparsedData).toEqual([
       { time: 0, value: "Idle" },
     ]);

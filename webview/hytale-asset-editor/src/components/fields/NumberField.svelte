@@ -51,20 +51,16 @@
     return value;
   }
 
-  function unsetValue() {
-    field.value = undefined;
-    draftValue = undefined;
+  function commitValue() {
+    if (!draftValue) draftValue = undefined;
+    if (draftValue === field.value) return;
+    field.value = draftValue ? Number(draftValue) : undefined;
     workspace.applyDocumentState();
   }
 
-  function commitValue() {
-    if (!draftValue) {
-      unsetValue();
-      return;
-    }
-
-    field.value = Number(draftValue);
-    workspace.applyDocumentState();
+  function unsetValue() {
+    draftValue = undefined;
+    commitValue();
   }
 </script>
 

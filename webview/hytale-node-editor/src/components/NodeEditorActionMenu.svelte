@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { ActionRequest } from "@shared/node-editor/messageTypes";
   import { Panel } from "@xyflow/svelte";
   import {
     ArrowLeftToLine,
@@ -10,7 +11,6 @@
   } from "lucide-svelte";
   import { workspace } from "src/workspace.svelte";
   import { type Component } from "svelte";
-  import { type ActionRequest } from "../node-editor/actions/nodeEditorQuickActions";
   import HoverTooltip from "./HoverTooltip.svelte";
 
   type MenuItem =

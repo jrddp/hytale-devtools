@@ -19,7 +19,6 @@
     collapsedByDefault?: boolean;
     collapsed?: boolean;
     collapseEnabled?: boolean;
-    onCollapsedChange?: (collapsed: boolean) => void;
     onunset?: () => void;
     actions?: Snippet;
     children?: Snippet;
@@ -32,7 +31,6 @@
     summary,
     collapsedByDefault = true,
     collapseEnabled = true,
-    onCollapsedChange,
     onunset,
     actions,
     children,
@@ -52,37 +50,13 @@
   const stickyTop = $derived(depth * STICKY_HEADER_HEIGHT_PX);
   const isStickyEnabled = $derived(!inline && !collapsed);
 
-  function setPanelCollapsed(nextCollapsed: boolean) {
-    if (onCollapsedChange) {
-      onCollapsedChange(nextCollapsed);
-      return;
-    }
-
-    collapsed = nextCollapsed;
-  }
-
-  function toggleCollapsed() {
-    if (!collapseEnabled) return;
-
-    setPanelCollapsed(!collapsed);
-  }
-
-  function handleHeaderKeydown(event: KeyboardEvent) {
-    if (event.key !== "Enter" && event.key !== " ") {
-      return;
-    }
-
-    event.preventDefault();
-    toggleCollapsed();
-  }
-
+  // respond to workspace-level collapse all command
   $effect(() => {
     const commandVersion = workspace.collapseAllVersion;
     const nextCollapsed = workspace.collapseAllTarget;
 
     if (inline || commandVersion === 0 || nextCollapsed === null) return;
-
-    setPanelCollapsed(nextCollapsed);
+    collapsed = nextCollapsed;
   });
 </script>
 
@@ -93,10 +67,13 @@
   </h2>
   <button
     {@attach infoTooltip.trigger}
-    type="button"
     class="relative inline-flex items-center justify-center w-4 h-4 rounded-sm group/info opacity-70"
     aria-label={`Info about ${label}`}
-    onclick={event => event.stopPropagation()}
+    tabindex={-1}
+    onclick={event => {
+      console.log(field);
+      event.stopPropagation();
+    }}
   >
     <Info size={12} />
     <TooltipContent
@@ -156,6 +133,7 @@
       {@attach stickyHeader.header}
       class="relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow] rounded-t-md"
       class:border-b={!collapsed}
+      class:rounded-b-md={collapsed}
       class:sticky={isStickyEnabled}
       class:bg-vsc-panel={!stickyHeader.isStuck()}
       class:bg-vsc-editor-widget-bg={stickyHeader.isStuck()}
@@ -167,11 +145,19 @@
       tabindex={collapseEnabled ? 0 : -1}
       style:top={isStickyEnabled ? `${stickyTop}px` : undefined}
       style:z-index={isStickyEnabled && stickyHeader.isStuck() ? `${120 - depth}` : undefined}
-      onclick={toggleCollapsed}
-      onkeydown={handleHeaderKeydown}
+      onclick={event => {
+        collapsed = !collapsed;
+        event.preventDefault();
+      }}
+      onkeydown={event => {
+        if (event.key === "Enter" || event.key === " ") {
+          collapsed = !collapsed;
+          event.preventDefault();
+        }
+      }}
     >
       <div class="relative flex items-center flex-1 min-w-0 gap-1">
-        <span class="inline-flex items-center w-4 h-4 opacity-75 pointer-events-none">
+        <span class="inline-flex items-center w-4 h-4 opacity-75">
           {#if collapsed}
             <ChevronRight size={16} />
           {:else}

@@ -1,57 +1,83 @@
-import type { Field } from "@shared/fieldTypes";
+import type {
+  ArrayField,
+  BooleanField,
+  ColorField,
+  Field,
+  InlineOrReferenceField,
+  MapField,
+  NumberField,
+  ObjectField,
+  RawJsonField,
+  RefField,
+  StringField,
+  TimelineField,
+  VariantField,
+  WeightedTimelineField,
+} from "@shared/fieldTypes";
 
-type RuntimeState = {
-  value?: unknown;
-  unparsedData?: unknown;
-  parsedItems?: (FieldInstance | FieldInstance[])[];
-  entries?: { key: string; valueField: FieldInstance }[];
-  selectedIdentity?: string;
-  activeVariantField?: ObjectFieldInstance | null;
-  resolvedField?: FieldInstance | null;
-  mode?: "string" | "inline" | "empty";
-  stringValue?: string;
-  inlineValueField?: FieldInstance | null;
-  properties?: Record<string, FieldInstance>;
-  items?: FieldInstance | FieldInstance[];
-  valueField?: FieldInstance;
-  identityField?: StringFieldInstance & { schemaKey: string };
-  variantsByIdentity?: Record<string, ObjectFieldInstance>;
-  stringField?: StringFieldInstance;
-  inlineField?: FieldInstance;
-  unmappedFields?: FieldInstance[];
-};
+export type FieldInstance =
+  | StringFieldInstance
+  | NumberFieldInstance
+  | BooleanFieldInstance
+  | ColorFieldInstance
+  | ObjectFieldInstance
+  | ArrayFieldInstance
+  | MapFieldInstance
+  | VariantFieldInstance
+  | RefFieldInstance
+  | InlineOrReferenceFieldInstance
+  | RawJsonFieldInstance
+  | TimelineFieldInstance
+  | WeightedTimelineFieldInstance;
 
-export type FieldInstance = Field & RuntimeState;
-export type RootFieldInstance = FieldInstance & { type: "object" | "variant" };
-export type StringFieldInstance = FieldInstance & { type: "string"; value?: string };
-export type NumberFieldInstance = FieldInstance & { type: "number"; value?: number | string };
-export type BooleanFieldInstance = FieldInstance & { type: "boolean"; value?: boolean };
-export type ColorFieldInstance = FieldInstance & { type: "color"; value?: string };
-export type ObjectFieldInstance = FieldInstance & { type: "object"; properties: Record<string, FieldInstance> };
-export type ArrayFieldInstance = FieldInstance & {
-  type: "array";
-  items: FieldInstance | FieldInstance[];
-  parsedItems: (FieldInstance | FieldInstance[])[];
-};
-export type MapFieldInstance = FieldInstance & {
-  type: "map";
+export type ScalarFieldInstance =
+  | StringFieldInstance
+  | NumberFieldInstance
+  | BooleanFieldInstance
+  | ColorFieldInstance;
+
+export type StringFieldInstance = StringField & { value?: string };
+export type NumberFieldInstance = NumberField & { value?: number | string };
+export type BooleanFieldInstance = BooleanField & { value?: boolean };
+export type ColorFieldInstance = ColorField & { value?: string };
+
+export type MapFieldInstance = MapField & {
   valueField: FieldInstance;
   entries: { key: string; valueField: FieldInstance }[];
 };
-export type VariantFieldInstance = FieldInstance & {
+
+export type RefFieldInstance = RefField & {
+  resolvedField?: FieldInstance | null;
+};
+export type InlineOrReferenceFieldInstance = InlineOrReferenceField & {
+  activeField: StringFieldInstance | ObjectFieldInstance | RefFieldInstance;
+};
+export type RawJsonFieldInstance = RawJsonField & { value?: string };
+export type TimelineFieldInstance = TimelineField & { unparsedData?: unknown };
+export type WeightedTimelineFieldInstance = WeightedTimelineField & {
+  unparsedData?: unknown;
+};
+
+export type ObjectFieldInstance = Omit<ObjectField, "properties"> & {
+  properties: Record<string, FieldInstance>;
+  unparsedData: Record<string, unknown>;
+};
+
+export type ArrayFieldInstance = Omit<ArrayField, "items"> & { items: FieldInstance[] } & (
+    | {
+        isTuple: true;
+        itemFieldTypes: Field[];
+      }
+    | {
+        isTuple?: false;
+        itemFieldTypes: Field;
+      }
+  );
+
+export type VariantFieldInstance = Omit<VariantField, "identityField"> & {
   type: "variant";
   identityField: StringFieldInstance & { schemaKey: string };
-  variantsByIdentity: Record<string, ObjectFieldInstance>;
-  activeVariantField?: ObjectFieldInstance | null;
+  activeVariant?: ObjectFieldInstance | null;
 };
-export type RefFieldInstance = FieldInstance & { type: "ref"; resolvedField?: FieldInstance | null };
-export type InlineOrReferenceFieldInstance = FieldInstance & {
-  type: "inlineOrReference";
-  stringField: StringFieldInstance;
-  inlineField: FieldInstance;
-  mode: "string" | "inline" | "empty";
-  inlineValueField?: FieldInstance | null;
-};
-export type RawJsonFieldInstance = FieldInstance & { type: "rawJson" };
-export type TimelineFieldInstance = FieldInstance & { type: "timeline" };
-export type WeightedTimelineFieldInstance = FieldInstance & { type: "weightedTimeline" };
+
+export type RootFieldInstance = ObjectFieldInstance | VariantFieldInstance;

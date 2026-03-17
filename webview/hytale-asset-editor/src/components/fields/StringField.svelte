@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { type RenderFieldProps } from "src/common";
   import SingleLineAutocompleteInput from "../../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
@@ -8,17 +9,16 @@
   let {
     field,
     depth = 0,
+    oncommitchange,
     onunset,
-  }: {
-    field: StringFieldInstance;
-    depth?: number;
-    onunset?: () => void;
+  }: RenderFieldProps<StringFieldInstance> & {
+    oncommitchange?: (value: string) => void;
   } = $props();
 
   let inputId = $derived(getFieldEditorId(field));
 
-  const value = $derived(typeof field.value === "string" ? field.value : "");
   const isSet = $derived(field.value !== undefined);
+
   const autocompleteOptions = $derived(
     (field.enumVals?.length
       ? field.enumVals
@@ -36,31 +36,34 @@
       return;
     }
 
-    const symbolLookup = $state.snapshot(field.symbolRef);
     workspace.vscode.postMessage({
       type: "autocompleteRequest",
-      symbolLookup,
+      symbolLookup: field.symbolRef,
       fieldId: inputId,
     });
   }
 
-  function commitValue(nextValue: string) {
-    field.value = nextValue;
-    field.unparsedData = undefined;
-    workspace.applyDocumentState();
-  }
+  function commitValue(value: string) {
+    if (!value) value = undefined;
+    if (value === field.value) {
+      return;
+    }
 
-  function unsetValue() {
-    field.value = undefined;
-    field.unparsedData = undefined;
+    field.value = value;
     workspace.applyDocumentState();
+    oncommitchange?.(value);
   }
 </script>
 
-<FieldPanel {field} {depth} inline onunset={isSet ? (onunset ?? unsetValue) : undefined}>
+<FieldPanel
+  {field}
+  {depth}
+  inline
+  onunset={isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
+>
   <SingleLineAutocompleteInput
     {inputId}
-    initialValue={value}
+    initialValue={field.value}
     placeholder={field.default ?? "Unset"}
     {autocompleteOptions}
     inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg {Boolean(

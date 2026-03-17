@@ -1,26 +1,35 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
-  import FieldPanel from "../FieldPanel.svelte";
-  import { buildOutlineSections, type OutlineSection, groupFieldsBySection, isFieldVisible } from "../fieldHelpers";
+  import { type RenderFieldProps } from "src/common";
+  import FieldRenderer from "src/components/FieldRenderer.svelte";
+  import { type ObjectFieldInstance } from "src/parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
-  import type { FieldInstance, ObjectFieldInstance } from "../../parsing/fieldInstances";
+  import FieldPanel from "../FieldPanel.svelte";
+  import {
+    buildOutlineSections,
+    groupFieldsBySection,
+    isFieldSet,
+    type OutlineSection,
+  } from "../fieldHelpers";
 
-  interface Props {
-    field: ObjectFieldInstance;
-    renderField?: Snippet<[FieldInstance, number, (() => void)?]>;
-    depth?: number;
+  const {
+    field,
+    depth = 0,
+    root = false,
+    renderSections: renderSectionHeaders = false,
+    onSectionsChange,
+    ...props
+  }: RenderFieldProps<ObjectFieldInstance> & {
     root?: boolean;
+    renderSections?: boolean;
     onSectionsChange?: (sections: OutlineSection[]) => void;
-  }
+  } = $props();
 
-  let { field, renderField, depth = 0, root = false, onSectionsChange }: Props = $props();
-
-  const visibleProperties = $derived.by(() =>
-    Object.fromEntries(
-      Object.entries(field.properties).filter(([, childField]) =>
-        isFieldVisible(childField, workspace.hideUnsetFields),
-      ),
-    ),
+  const visibleProperties = $derived(
+    workspace.hideUnsetFields
+      ? Object.fromEntries(
+          Object.entries(field.properties).filter(([, childField]) => isFieldSet(childField)),
+        )
+      : field.properties,
   );
   const sections = $derived(groupFieldsBySection(visibleProperties));
   const outlineSections = $derived(buildOutlineSections(sections));
@@ -34,7 +43,7 @@
 
 {#snippet sectionList()}
   {#if sections.length === 0}
-    <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 opacity-65">
+    <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
       {workspace.hideUnsetFields ? "No set fields" : "No fields"}
     </div>
   {:else}
@@ -45,13 +54,13 @@
           id={root ? outlineSections[index]?.id : undefined}
           data-outline-section-id={root ? outlineSections[index]?.id : undefined}
         >
-          {#if sections.length > 1 || section.name !== "General"}
+          {#if renderSectionHeaders && (sections.length > 1 || section.name !== "General")}
             <div class="text-lg font-semibold tracking-wide">{section.name}</div>
           {/if}
 
           <div class="space-y-3">
             {#each section.fields as childField, index (`${childField.schemaKey ?? childField.type}-${index}`)}
-              {@render renderField?.(childField, root ? depth : depth + 1, undefined)}
+              <FieldRenderer field={childField} depth={root ? depth : depth + 1} />
             {/each}
           </div>
         </section>

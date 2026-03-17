@@ -254,7 +254,7 @@ describe("asset editor serializeDocument", () => {
         tier: "bronze",
       },
       tags: ["armor", "bronze"],
-      dimensions: [2, 4, 8],
+      dimensions: [2, 4],
       labels: {
         slot: "Hands",
         rarity: "Common",
@@ -288,7 +288,7 @@ describe("asset editor serializeDocument", () => {
     expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson(documentJson));
   });
 
-  test("treats empty composites the same as missing while preserving explicit null values", () => {
+  test("treats empty composites and null inline refs the same as missing", () => {
     const rootField = objectField(null, {
       meta: objectField("meta", {}),
       tags: arrayField("tags", stringField("tag")),
@@ -310,7 +310,7 @@ describe("asset editor serializeDocument", () => {
       rootField,
     });
 
-    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson(documentJson));
+    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson({}));
   });
 
   if (process.env[BASE_GAME_ASSETS_DIR_ENV]) {

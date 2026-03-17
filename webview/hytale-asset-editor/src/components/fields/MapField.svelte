@@ -1,9 +1,9 @@
 <script lang="ts">
+  import { isFieldSet } from "src/components/fieldHelpers";
   import type { Snippet } from "svelte";
-  import FieldPanel from "../FieldPanel.svelte";
-  import { isFieldVisible } from "../fieldHelpers";
-  import { workspace } from "../../workspace.svelte";
   import type { FieldInstance, MapFieldInstance } from "../../parsing/fieldInstances";
+  import { workspace } from "../../workspace.svelte";
+  import FieldPanel from "../FieldPanel.svelte";
 
   interface Props {
     field: MapFieldInstance;
@@ -22,12 +22,10 @@
         valueField: workspace.createEmptyFieldInstance(field.valueField),
       },
     ];
-    field.unparsedData = undefined;
   }
 
   function removeEntry(index: number) {
     field.entries.splice(index, 1);
-    field.unparsedData = undefined;
     workspace.applyDocumentState();
   }
 
@@ -38,19 +36,10 @@
 
     field.entries[index].key = nextKey;
 
-    if (isFieldVisible(field.entries[index]?.valueField, true)) {
+    // TODO FIXME we should be persisting empty map entries since we want to ensure we persist their keys
+    if (isFieldSet(field.entries[index]?.valueField)) {
       workspace.applyDocumentState();
     }
-  }
-
-  function entryHasInlineUnset(valueField: FieldInstance) {
-    return (
-      valueField.type === "string" ||
-      valueField.type === "number" ||
-      valueField.type === "boolean" ||
-      valueField.type === "color" ||
-      (valueField.type === "inlineOrReference" && valueField.mode !== "inline")
-    );
   }
 </script>
 
@@ -67,13 +56,7 @@
   </button>
 {/snippet}
 
-<FieldPanel
-  {field}
-  {depth}
-  {summary}
-  collapsedByDefault={false}
-  actions={panelActions}
->
+<FieldPanel {field} {depth} {summary} collapsedByDefault={false} actions={panelActions}>
   {#if field.entries.length === 0}
     <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
       No entries
@@ -99,16 +82,6 @@
             event.currentTarget.blur();
           }}
         />
-
-        {#if !entryHasInlineUnset(entry.valueField)}
-          <button
-            type="button"
-            class="rounded-md border border-vsc-border bg-vsc-button-bg px-2 py-1 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
-            onclick={() => removeEntry(index)}
-          >
-            Remove
-          </button>
-        {/if}
       </div>
 
       {@render renderField?.(entry.valueField, depth + 1, () => removeEntry(index))}

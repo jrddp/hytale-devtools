@@ -1,6 +1,6 @@
 import { type IndexReference } from "./indexTypes";
 
-export type FieldType =
+export type FieldType = 
   | "string"
   | "number"
   | "boolean"

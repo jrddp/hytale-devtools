@@ -1,5 +1,5 @@
 <script lang="ts">
-  import FieldRenderer from "./FieldRenderer.svelte";
+  import { type RenderFieldProps } from "src/common";
   import ArrayFieldView from "./fields/ArrayField.svelte";
   import BooleanFieldView from "./fields/BooleanField.svelte";
   import ColorFieldView from "./fields/ColorField.svelte";
@@ -13,45 +13,34 @@
   import TimelineFieldView from "./fields/TimelineField.svelte";
   import VariantFieldView from "./fields/VariantField.svelte";
   import WeightedTimelineFieldView from "./fields/WeightedTimelineField.svelte";
-  import type { FieldInstance } from "../parsing/fieldInstances";
 
-  interface Props {
-    field: FieldInstance;
-    depth?: number;
-    onunset?: () => void;
-  }
-
-  let { field, depth = 0, onunset }: Props = $props();
+  let { field, ...props }: RenderFieldProps = $props();
 </script>
 
-{#snippet renderField(nextField: FieldInstance, nextDepth: number, nextOnUnset?: () => void)}
-  <FieldRenderer field={nextField} depth={nextDepth} onunset={nextOnUnset} />
-{/snippet}
-
 {#if field.type === "string"}
-  <StringFieldView {field} {depth} onunset={onunset} />
+  <StringFieldView {field} {...props} />
 {:else if field.type === "number"}
-  <NumberFieldView {field} {depth} onunset={onunset} />
+  <NumberFieldView {field} {...props} />
 {:else if field.type === "boolean"}
-  <BooleanFieldView {field} {depth} onunset={onunset} />
+  <BooleanFieldView {field} {...props} />
 {:else if field.type === "color"}
-  <ColorFieldView {field} {depth} onunset={onunset} />
+  <ColorFieldView {field} {...props} />
 {:else if field.type === "array"}
-  <ArrayFieldView {field} {renderField} {depth} />
+  <ArrayFieldView {field} {...props} />
 {:else if field.type === "object"}
-  <ObjectFieldView {field} {renderField} {depth} />
+  <ObjectFieldView {field} {...props} />
 {:else if field.type === "map"}
-  <MapFieldView {field} {renderField} {depth} />
+  <MapFieldView {field} {...props} />
 {:else if field.type === "inlineOrReference"}
-  <InlineOrReferenceFieldView {field} {renderField} {depth} onunset={onunset} />
+  <InlineOrReferenceFieldView {field} {...props} />
 {:else if field.type === "variant"}
-  <VariantFieldView {field} {renderField} {depth} />
+  <VariantFieldView {field} {...props} />
 {:else if field.type === "timeline"}
-  <TimelineFieldView {field} {depth} />
+  <TimelineFieldView {field} {...props} />
 {:else if field.type === "weightedTimeline"}
-  <WeightedTimelineFieldView {field} {depth} />
+  <WeightedTimelineFieldView {field} {...props} />
 {:else if field.type === "ref"}
-  <RefFieldView {field} {renderField} {depth} onunset={onunset} />
+  <RefFieldView {field} {...props} />
 {:else}
-  <RawJsonFieldView {field} {depth} />
+  <RawJsonFieldView {field} {...props} />
 {/if}

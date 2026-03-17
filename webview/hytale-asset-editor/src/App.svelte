@@ -3,11 +3,9 @@
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
-  import FieldRenderer from "./components/FieldRenderer.svelte";
   import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
-  import type { FieldInstance } from "./parsing/fieldInstances";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
@@ -264,10 +262,6 @@
           Loading asset definition...
         </div>
       {:else}
-        {#snippet renderField(field: FieldInstance, depth: number, onunset?: () => void)}
-          <FieldRenderer {field} {depth} {onunset} />
-        {/snippet}
-
         {#if workspace.documentParseError}
           <div
             class="px-3 py-2 mb-4 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error"
@@ -320,7 +314,6 @@
               {#if workspace.documentRootField.type === "object"}
                 <ObjectField
                   field={workspace.documentRootField}
-                  {renderField}
                   depth={0}
                   root
                   onSectionsChange={handleSectionsChange}
@@ -328,7 +321,6 @@
               {:else}
                 <VariantField
                   field={workspace.documentRootField}
-                  {renderField}
                   depth={0}
                   root
                   onSectionsChange={handleSectionsChange}

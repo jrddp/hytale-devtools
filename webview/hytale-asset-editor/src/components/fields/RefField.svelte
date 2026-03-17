@@ -1,20 +1,35 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import type { Field } from "@shared/fieldTypes";
+  import { type RenderFieldProps } from "src/common";
+  import FieldRenderer from "src/components/FieldRenderer.svelte";
+  import { type RefFieldInstance } from "src/parsing/fieldInstances";
+  import { workspace } from "src/workspace.svelte";
+  import { onMount } from "svelte";
   import FieldPanel from "../FieldPanel.svelte";
-  import type { FieldInstance, RefFieldInstance } from "../../parsing/fieldInstances";
 
-  interface Props {
-    field: RefFieldInstance;
-    renderField?: Snippet<[FieldInstance, number, (() => void)?]>;
-    depth?: number;
-    onunset?: () => void;
-  }
+  const { field, depth, ...props }: RenderFieldProps<RefFieldInstance> = $props();
 
-  let { field, renderField, depth = 0, onunset }: Props = $props();
+  onMount(() => {
+    workspace.requestRef(field.$ref);
+  });
+
+  const hasResolved = $derived(workspace.resolvedRefsByRef.has(field.$ref));
+
+  let resolvedField: Field = $derived(workspace.resolvedRefsByRef.get(field.$ref));
+
+  const mergedField = $derived(
+    resolvedField
+      ? ({
+          ...resolvedField,
+          schemaKey: field.schemaKey,
+          markdownDescription: field.markdownDescription ?? resolvedField.markdownDescription,
+        } as Field)
+      : null,
+  );
 </script>
 
 {#if field.resolvedField}
-  {@render renderField?.(field.resolvedField, depth, onunset)}
+  <FieldRenderer {...props} {depth} field={field.resolvedField} />
 {:else}
   <FieldPanel {field} {depth} summary={field.$ref} inline>
     <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">

@@ -6,6 +6,10 @@ import { build as buildWithEsbuild } from "esbuild";
 
 const BASE_GAME_ASSETS_DIR_ENV = "BASE_GAME_ASSETS_DIR";
 const schemaDir = path.resolve(process.cwd(), "default-data/export-data/schemas");
+const parserBundlePath = path.join(
+  "/tmp",
+  `hytale-asset-editor-parser-roundtrip-${process.pid}.mjs`,
+);
 const runtimeBundlePath = path.join(
   "/tmp",
   `hytale-asset-editor-schema-runtime-roundtrip-${process.pid}.mjs`,
@@ -15,12 +19,7 @@ globalThis.$state = {
   snapshot: value => value,
 };
 
-const { parseDocumentText } = await import(
-  pathToFileURL(path.resolve("webview/hytale-asset-editor/src/parsing/parseDocument.svelte.ts")).href
-);
-const { serializeDocument } = await import(
-  pathToFileURL(path.resolve("webview/hytale-asset-editor/src/parsing/serializeDocument.ts")).href
-);
+const { parseDocumentText, serializeDocument } = await loadParserModules();
 
 function loadDotEnv(envPath) {
   if (!existsSync(envPath)) {
@@ -163,6 +162,35 @@ async function createSchemaRuntime() {
   const runtimeModule = await import(`${pathToFileURL(runtimeBundlePath).href}?t=${Date.now()}`);
   console.log("[asset-editor round-trip] imported bundled schema runtime");
   return new runtimeModule.SchemaRuntime(schemaDir, console);
+}
+
+async function loadParserModules() {
+  await buildWithEsbuild({
+    stdin: {
+      contents: `
+        export { parseDocumentText } from ${JSON.stringify(
+          path.resolve(process.cwd(), "webview/hytale-asset-editor/src/parsing/parseDocument.svelte.ts"),
+        )};
+        export { serializeDocument } from ${JSON.stringify(
+          path.resolve(process.cwd(), "webview/hytale-asset-editor/src/parsing/serializeDocument.ts"),
+        )};
+      `,
+      resolveDir: process.cwd(),
+      sourcefile: "asset-editor-roundtrip-entry.ts",
+      loader: "ts",
+    },
+    outfile: parserBundlePath,
+    bundle: true,
+    format: "esm",
+    platform: "node",
+    sourcemap: false,
+    logLevel: "silent",
+    alias: {
+      "@shared": path.resolve(process.cwd(), "src/shared"),
+    },
+  });
+
+  return import(`${pathToFileURL(parserBundlePath).href}?t=${Date.now()}`);
 }
 
 loadDotEnv(path.resolve(process.cwd(), ".env"));

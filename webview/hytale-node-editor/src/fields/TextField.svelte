@@ -3,7 +3,7 @@
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { workspace } from "src/workspace.svelte";
-  import { type SemanticReference } from "../../../../src/shared/schema/types";
+  import type { IndexReference } from "@shared/indexTypes";
   import { focusNextEditableInNode } from "src/node-editor/utils/focusNavigation";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
 
@@ -20,7 +20,7 @@
   }: FieldProps<string> & {
     multiline?: boolean;
     overrideAutocompleteValues?: string[];
-    symbolLookup?: SemanticReference;
+    symbolLookup?: IndexReference;
   } = $props();
 
   let value = $state("");

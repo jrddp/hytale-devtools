@@ -1,3 +1,4 @@
+import { isObject } from "@shared/typeUtils";
 import type {
   ArrayFieldInstance,
   FieldInstance,
@@ -14,7 +15,7 @@ export function serializeDocument(rootField: RootFieldInstance): Record<string, 
   if (serialized === undefined) {
     return {};
   }
-  if (!isPlainObject(serialized)) {
+  if (!isObject(serialized)) {
     throw new Error("Asset editor root field did not serialize to a JSON object.");
   }
   return serialized;
@@ -24,7 +25,11 @@ export function serializeDocumentText(rootField: RootFieldInstance): string {
   return JSON.stringify(serializeDocument(rootField), null, "\t");
 }
 
-function serializeField(field: FieldInstance | null | undefined): unknown {
+/** @param fallbackToEmptyObject - causes unset objects/arrays to be saved as {} or [] instead of undefined. */
+function serializeField(
+  field: FieldInstance | null | undefined,
+  fallbackToEmptyObject = false,
+): unknown {
   if (!field) {
     return undefined;
   }
@@ -34,20 +39,24 @@ function serializeField(field: FieldInstance | null | undefined): unknown {
     case "number":
     case "boolean":
     case "color":
-      return serializeScalarField(field);
+      return field.value;
     case "object":
-      return serializeObjectField(field as ObjectFieldInstance);
+      return serializeObjectField(field as ObjectFieldInstance, fallbackToEmptyObject);
     case "array":
-      return serializeArrayField(field as ArrayFieldInstance);
+      return serializeArrayField(field as ArrayFieldInstance, fallbackToEmptyObject);
     case "map":
-      return serializeMapField(field as MapFieldInstance);
+      return serializeMapField(field as MapFieldInstance, fallbackToEmptyObject);
     case "variant":
-      return serializeVariantField(field as VariantFieldInstance);
+      return serializeVariantField(field as VariantFieldInstance, fallbackToEmptyObject);
     case "ref":
-      return serializeRefField(field as RefFieldInstance);
+      return serializeRefField(field as RefFieldInstance, fallbackToEmptyObject);
     case "inlineOrReference":
-      return serializeInlineOrReferenceField(field as InlineOrReferenceFieldInstance);
+      return serializeInlineOrReferenceField(
+        field as InlineOrReferenceFieldInstance,
+        fallbackToEmptyObject,
+      );
     case "rawJson":
+      return JSON.parse(field.value);
     case "timeline":
     case "weightedTimeline":
       return field.unparsedData;
@@ -56,119 +65,49 @@ function serializeField(field: FieldInstance | null | undefined): unknown {
   }
 }
 
-function serializeScalarField(field: FieldInstance): unknown {
-  if (field.value !== undefined) {
-    return field.value;
-  }
-  return field.unparsedData;
-}
+function serializeObjectField(field: ObjectFieldInstance, fallbackToEmptyObject = false): unknown {
+  const serialized: Record<string, unknown> = { ...field.unparsedData };
 
-function serializeObjectField(field: ObjectFieldInstance): unknown {
-  if (field.unparsedData !== undefined && !isPlainObject(field.unparsedData)) {
-    return field.unparsedData;
-  }
-
-  const serialized: Record<string, unknown> = isPlainObject(field.unparsedData)
-    ? { ...field.unparsedData }
-    : {};
-
-  for (const childField of Object.values(field.properties)) {
-    if (!childField.schemaKey) {
-      continue;
-    }
-
+  for (const [key, childField] of Object.entries(field.properties)) {
     const childValue = serializeField(childField);
-    if (childValue !== undefined) {
-      serialized[childField.schemaKey] = childValue;
-    }
+    serialized[key] = childValue;
   }
 
-  return Object.keys(serialized).length > 0 ? serialized : undefined;
+  return Object.keys(serialized).length > 0 ? serialized : fallbackToEmptyObject ? {} : undefined;
 }
 
-function serializeArrayField(field: ArrayFieldInstance): unknown {
-  if (field.unparsedData !== undefined && !Array.isArray(field.unparsedData)) {
-    return field.unparsedData;
-  }
-
-  const serialized = Array.isArray(field.items)
-    ? serializeTupleArrayField(field)
-    : field.parsedItems
-        .map(item => serializeField(item as FieldInstance))
-        .filter(item => item !== undefined);
-
-  if (Array.isArray(field.unparsedData)) {
-    serialized.push(...field.unparsedData);
-  }
-
-  return serialized.length > 0 ? serialized : undefined;
+function serializeArrayField(field: ArrayFieldInstance, fallbackToEmptyObject = false): unknown {
+  const serialized = field.items.map(item => serializeField(item, true));
+  return serialized.length > 0 ? serialized : fallbackToEmptyObject ? [] : undefined;
 }
 
-function serializeTupleArrayField(field: ArrayFieldInstance): unknown[] {
-  const tupleRow = Array.isArray(field.parsedItems[0]) ? field.parsedItems[0] : [];
-  const serialized = tupleRow.map(item => serializeField(item));
+function serializeMapField(field: MapFieldInstance, fallbackToEmptyObject = false): unknown {
+  const serialized: Record<string, unknown> = {};
 
-  while (serialized.length > 0 && serialized.at(-1) === undefined) {
-    serialized.pop();
+  for (const { key, valueField } of field.entries) {
+    const value = serializeField(valueField, true);
+    serialized[key] = value;
   }
 
-  return serialized;
+  return Object.keys(serialized).length > 0 ? serialized : fallbackToEmptyObject ? {} : undefined;
 }
 
-function serializeMapField(field: MapFieldInstance): unknown {
-  if (field.unparsedData !== undefined && !isPlainObject(field.unparsedData)) {
-    return field.unparsedData;
-  }
-
-  const serialized: Record<string, unknown> = isPlainObject(field.unparsedData)
-    ? { ...field.unparsedData }
-    : {};
-
-  for (const entry of field.entries) {
-    const entryValue = serializeField(entry.valueField);
-    if (entryValue !== undefined) {
-      serialized[entry.key] = entryValue;
-    }
-  }
-
-  return Object.keys(serialized).length > 0 ? serialized : undefined;
+function serializeVariantField(
+  field: VariantFieldInstance,
+  fallbackToEmptyObject = false,
+): unknown {
+  return serializeField(field.activeVariant, fallbackToEmptyObject);
 }
 
-function serializeVariantField(field: VariantFieldInstance): unknown {
-  if (field.unparsedData !== undefined && !field.activeVariantField) {
-    return field.unparsedData;
-  }
-
-  const serialized = serializeField(field.activeVariantField);
-  const serializedObject = isPlainObject(serialized) ? { ...serialized } : {};
-  const identityValue = field.selectedIdentity ?? serializeField(field.identityField);
-
-  if (identityValue !== undefined) {
-    serializedObject[field.identityField.schemaKey] = identityValue;
-  }
-
-  return Object.keys(serializedObject).length > 0 ? serializedObject : undefined;
+function serializeRefField(field: RefFieldInstance, fallbackToEmptyObject = false): unknown {
+  return serializeField(field.resolvedField, fallbackToEmptyObject);
 }
 
-function serializeRefField(field: RefFieldInstance): unknown {
-  return serializeField(field.resolvedField);
-}
-
-function serializeInlineOrReferenceField(field: InlineOrReferenceFieldInstance): unknown {
-  switch (field.mode) {
-    case "string":
-      return field.stringValue ?? serializeField(field.stringField);
-    case "inline":
-      return serializeField(field.inlineValueField);
-    case "empty":
-      return field.unparsedData;
-    default:
-      return undefined;
-  }
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
+function serializeInlineOrReferenceField(
+  field: InlineOrReferenceFieldInstance,
+  fallbackToEmptyObject = false,
+): unknown {
+  return serializeField(field.activeField, fallbackToEmptyObject);
 }
 
 function exhaustiveField(field: never): never {

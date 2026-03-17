@@ -9,6 +9,7 @@
 
   const RAW_JSON_FIELD: NodeField = {
     schemaKey: "Data",
+    localId: "Data",
     label: "Data",
     type: "text",
   };
