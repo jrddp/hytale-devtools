@@ -8,24 +8,23 @@ import {
   type StringField,
   type VariantField,
 } from "../shared/fieldTypes";
-import { firstGlobMatch, safeParseJSONFile } from "../shared/fileUtils";
+import { safeParseJSONFile } from "../shared/fileUtils";
 import { isObject } from "../shared/typeUtils";
-import { schemaPathToGlobPattern } from "../utils/hytalePaths";
+import { AssetPathMatcher } from "./assetPathMatcher";
 import { type CommonSchemaFile, type StandardSchemaFile } from "./schemaDefinitionTypes";
 import { schemaDefinitionToAssetDefinition } from "./schemaToFieldResolver";
 
 export class SchemaRuntime {
   /** maps exact $ref strings to their definitions */
   readonly assetsByRef = new Map<string, AssetDefinition>();
-  /** maps path matching glob patterns to their definitions */
-  readonly assetsByGlobPattern = new Map<string, AssetDefinition>();
+  readonly assetPathMatcher: AssetPathMatcher;
   readonly schemaDir: string;
   private readonly logger: BasicLogger;
 
   constructor(schemaDir: string, logger: BasicLogger = console) {
     this.schemaDir = schemaDir;
     this.logger = logger;
-    this.loadAssetDefinitions();
+    this.assetPathMatcher = this.loadAssetDefinitions();
   }
 
   /** @param referenceWithPointer - e.g. "common.json#/definitions/AssetName/properties/propertyKey" or "BiomeAsset.json#"
@@ -107,12 +106,12 @@ export class SchemaRuntime {
   }
 
   getAssetDefinitionForPath(assetPath: string): AssetDefinition | undefined {
-    const match = firstGlobMatch(assetPath, Array.from(this.assetsByGlobPattern.keys()));
-    return match ? this.assetsByGlobPattern.get(match) : undefined;
+    return this.assetPathMatcher.getAssetDefinition(assetPath);
   }
 
-  private loadAssetDefinitions(): void {
+  private loadAssetDefinitions(): AssetPathMatcher {
     const unhydratedVariants: VariantField[] = [];
+    const assetDefinitionsWithPaths: AssetDefinition[] = [];
 
     for (const file of readdirSync(this.schemaDir)) {
       if (!file.endsWith(".json")) {
@@ -155,16 +154,13 @@ export class SchemaRuntime {
         assetDefinition.path = fileContent.hytale.path;
         assetDefinition.extension = fileContent.hytale.extension;
         this.assetsByRef.set(`${fileContent.$id}#`, assetDefinition);
-        const globPattern = schemaPathToGlobPattern(
-          fileContent.hytale.path,
-          fileContent.hytale.extension,
-        );
-        this.assetsByGlobPattern.set(globPattern, assetDefinition);
+        assetDefinitionsWithPaths.push(assetDefinition);
       }
     }
 
     this.hydrateVariants(unhydratedVariants);
     this.computeNestedRefDependencies(this.assetsByRef);
+    return new AssetPathMatcher(assetDefinitionsWithPaths);
   }
 
   private hydrateVariants(unhydratedVariants: VariantField[]): void {

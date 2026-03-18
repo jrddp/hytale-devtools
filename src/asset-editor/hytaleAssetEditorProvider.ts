@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { LOGGER, schemaRuntime } from "../extension";
+import { assetCacheRuntime, LOGGER, schemaRuntime } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
 import {
   type AssetEditorExtensionToWebviewMessage,
@@ -7,6 +7,7 @@ import {
 } from "../shared/asset-editor/messageTypes";
 import { type AssetDefinition } from "../shared/fieldTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
+import { AssetInstance } from "../asset-cache/assetCacheRuntime";
 
 const VIEW_TYPE = "hytale-devtools.hytaleAssetEditor";
 
@@ -69,10 +70,31 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             {} as Record<string, AssetDefinition>,
           );
 
+          let parentInstance: AssetInstance | undefined;
+          try {
+            LOGGER.info("Attempting to parse parent instance from document");
+            const documentJson = JSON.parse(document.getText());
+            // assumption: parents are always stored at top-level "Parent" key.
+            // we could also determine from some schema metadata, but this seems to be hard-coded to always be true anyways.
+            const parentValue = documentJson["Parent"];
+            LOGGER.info("Parent value:", parentValue, "of asset type", assetDefinition.title, "is of type", typeof parentValue);
+            if (parentValue) {
+              parentInstance = assetCacheRuntime.getAsset(assetDefinition.title, parentValue);
+              LOGGER.info("Parent instance?", !!parentInstance);
+              LOGGER.info(assetCacheRuntime.getAssetsOfType(assetDefinition.title)?.size.toString() ?? "0", "assets of type", assetDefinition.title);
+              // print all asset names of type
+              for (const [name, asset] of assetCacheRuntime.getAssetsOfType(assetDefinition.title)!) {
+                LOGGER.info("Asset name:", name);
+              }
+            }
+          } catch (_) {
+          }
+
           const payload: AssetEditorExtensionToWebviewMessage = {
             type: "bootstrap",
             assetDefinition,
             assetsByRef,
+            parentInstance,
           };
           void webviewPanel.webview.postMessage(payload);
         } catch (error) {

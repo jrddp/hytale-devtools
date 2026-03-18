@@ -1,3 +1,4 @@
+import { type AssetInstance } from "../../asset-cache/assetCacheRuntime";
 import { type AssetDefinition } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
 
@@ -5,6 +6,7 @@ export type AssetEditorBootstrapMessage = {
   type: "bootstrap";
   assetDefinition: AssetDefinition;
   assetsByRef: Record<string, AssetDefinition>;
+  parentInstance?: AssetInstance;
 };
 
 export type AssetEditorDocumentUpdateMessage = {

@@ -1,14 +1,15 @@
 import { existsSync } from "fs";
 import path from "path";
 import { type Readable } from "stream";
+import { serialize as v8Serialize } from "v8";
 import * as yauzl from "yauzl";
 import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
-import { firstGlobMatch } from "../shared/fileUtils";
 import { isObject } from "../shared/typeUtils";
 
 export type AssetInstance = {
   name: string;
+  type: string;
   path: string;
   package: string;
   rawJson: Record<string, unknown>;
@@ -24,17 +25,13 @@ export class AssetCacheRuntime {
   failedAssetCount = 0;
 
   private readonly logger: BasicLogger;
+  private readonly schemaRuntime: SchemaRuntime;
 
   constructor(assetsZipPath: string, schemaRuntime: SchemaRuntime, logger: BasicLogger = console) {
     this.assetsZipPath = assetsZipPath;
     this.logger = logger;
-
-    const patternToTitle = new Map<string, string>();
-    for (const [pattern, definition] of schemaRuntime.assetsByGlobPattern.entries()) {
-      patternToTitle.set(pattern, definition.title);
-    }
-
-    this.ready = this.loadAssets(patternToTitle);
+    this.schemaRuntime = schemaRuntime;
+    this.ready = this.loadAssets();
   }
 
   getAssetsOfType(type: string): Map<string, AssetInstance> | undefined {
@@ -45,23 +42,21 @@ export class AssetCacheRuntime {
     return this.assetInstances.get(type)?.get(name);
   }
 
-  private async loadAssets(patternToTitle: Map<string, string>): Promise<void> {
+  private async loadAssets(): Promise<void> {
     if (!existsSync(this.assetsZipPath)) {
       this.logger.warn(`Assets.zip not found for asset cache runtime: ${this.assetsZipPath}`);
       return;
     }
 
-    await this.walkZipEntries(patternToTitle);
+    await this.walkZipEntries();
+    const cacheSizeBytes = v8Serialize(this.assetInstances).byteLength;
 
     this.logger.info(
-      `Loaded base-game asset cache from ${this.assetsZipPath}: ${this.loadedAssetCount} assets across ${this.assetInstances.size} asset types (${this.failedAssetCount} failed).`,
+      `Loaded base-game asset cache from ${this.assetsZipPath}: ${this.loadedAssetCount} assets across ${this.assetInstances.size} asset types (${this.failedAssetCount} failed). Cache size: ${formatMegabytes(cacheSizeBytes)}.`,
     );
   }
 
-  private async walkZipEntries(patternToTitle: Map<string, string>): Promise<void> {
-    const patterns = Array.from(patternToTitle.keys());
-    let currentPatternMatch: string | undefined;
-
+  private async walkZipEntries(): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       yauzl.open(
         this.assetsZipPath,
@@ -100,16 +95,12 @@ export class AssetCacheRuntime {
               return;
             }
 
-            if (currentPatternMatch !== entry.fileName) {
-              currentPatternMatch = firstGlobMatch(entry.fileName, patterns);
-            }
-            if (!currentPatternMatch) {
+            const assetType = this.schemaRuntime.getAssetDefinitionForPath(entry.fileName)?.title;
+            if (!assetType) {
               // skip entries that don't match any patterns for supported schema
               zipFile.readEntry();
               return;
             }
-
-            const assetType = patternToTitle.get(currentPatternMatch)!;
 
             zipFile.openReadStream(entry, (readError, readStream) => {
               if (readError) {
@@ -183,7 +174,9 @@ export class AssetCacheRuntime {
       return;
     }
 
-    const assetName = path.posix.basename(entryPath);
+    const assetFile = path.posix.basename(entryPath);
+    const assetName = assetFile.substring(0, assetFile.lastIndexOf("."));
+
     if (!this.assetInstances.has(assetType)) {
       this.assetInstances.set(assetType, new Map<string, AssetInstance>());
     }
@@ -196,6 +189,7 @@ export class AssetCacheRuntime {
 
     this.assetInstances.get(assetType)!.set(assetName, {
       name: assetName,
+      type: assetType,
       path: entryPath,
       package: "Hytale:Hytale",
       rawJson: parsed,
@@ -207,4 +201,8 @@ export class AssetCacheRuntime {
 
 function stripBom(text: string): string {
   return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+}
+
+function formatMegabytes(byteSize: number): string {
+  return `${(byteSize / (1024 * 1024)).toFixed(2)} MB`;
 }
