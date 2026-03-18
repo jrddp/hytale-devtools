@@ -8,7 +8,6 @@
   import NumberFieldView from "./fields/NumberField.svelte";
   import ObjectFieldView from "./fields/ObjectField.svelte";
   import RawJsonFieldView from "./fields/RawJsonField.svelte";
-  import RefFieldView from "./fields/RefField.svelte";
   import StringFieldView from "./fields/StringField.svelte";
   import TimelineFieldView from "./fields/TimelineField.svelte";
   import VariantFieldView from "./fields/VariantField.svelte";
@@ -39,8 +38,6 @@
   <TimelineFieldView {field} {...props} />
 {:else if field.type === "weightedTimeline"}
   <WeightedTimelineFieldView {field} {...props} />
-{:else if field.type === "ref"}
-  <RefFieldView {field} {...props} />
 {:else}
   <RawJsonFieldView {field} {...props} />
 {/if}

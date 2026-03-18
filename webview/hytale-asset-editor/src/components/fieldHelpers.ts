@@ -61,8 +61,6 @@ export function isFieldSet(field: FieldInstance | null | undefined): boolean {
       return field.entries.length > 0;
     case "variant":
       return isFieldSet(field.identityField) || isFieldSet(field.activeVariant);
-    case "ref":
-      return isFieldSet(field.resolvedField);
     case "inlineOrReference":
       return isFieldSet(field.activeField);
     default:
@@ -92,4 +90,16 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+export function transferMetadata(source: Field, target: Field): Field {
+  return {
+    ...target,
+    schemaKey: source.schemaKey ?? target.schemaKey,
+    title: source.title ?? target.title,
+    section: source.section ?? target.section,
+    markdownDescription: source.markdownDescription ?? target.markdownDescription,
+    collapsedByDefault: source.collapsedByDefault ?? target.collapsedByDefault,
+    nullable: source.nullable ?? target.nullable,
+  };
 }

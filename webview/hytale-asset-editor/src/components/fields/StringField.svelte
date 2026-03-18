@@ -38,7 +38,7 @@
 
     workspace.vscode.postMessage({
       type: "autocompleteRequest",
-      symbolLookup: field.symbolRef,
+      symbolLookup: $state.snapshot(field.symbolRef),
       fieldId: inputId,
     });
   }
@@ -63,7 +63,7 @@
 >
   <SingleLineAutocompleteInput
     {inputId}
-    initialValue={field.value}
+    initialValue={field.value ?? ""}
     placeholder={field.default ?? "Unset"}
     {autocompleteOptions}
     inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg {Boolean(

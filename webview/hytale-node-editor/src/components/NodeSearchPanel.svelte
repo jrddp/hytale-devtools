@@ -187,7 +187,7 @@
       role="dialog"
       aria-label="Search nodes"
       tabindex="-1"
-      class="mt-2 ml-2 w-[30rem] max-w-[92vw] max-h-[72vh] overflow-hidden rounded-xl border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-3 text-vsc-editor-fg shadow-2xl"
+      class="mt-2 ml-2 w-120 max-w-[92vw] max-h-[72vh] overflow-hidden rounded-xl border border-vsc-editor-widget-border bg-vsc-editor-widget-bg p-3 text-vsc-editor-fg shadow-2xl"
     >
       <div class="relative">
         <Search

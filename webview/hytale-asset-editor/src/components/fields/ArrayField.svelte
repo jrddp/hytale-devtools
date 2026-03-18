@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Plus } from "lucide-svelte";
   import { type RenderFieldProps } from "src/common";
   import FieldRenderer from "src/components/FieldRenderer.svelte";
   import type { ArrayFieldInstance } from "../../parsing/fieldInstances";
@@ -13,7 +14,9 @@
       console.error("Attempted to add item to tuple array");
       return;
     }
-    field.items.push(workspace.createEmptyFieldInstance(field.itemFieldTypes));
+    const newItem = workspace.createEmptyFieldInstance(field.itemFieldTypes);
+    newItem.schemaKey = field.items.length.toString();
+    field.items.push(newItem);
     workspace.applyDocumentState();
   }
 
@@ -27,11 +30,14 @@
   {#each field.items as item, index (index)}
     <FieldRenderer field={item} depth={depth + 1} onunset={() => removeItem(index)} />
   {/each}
-  <button
-    type="button"
-    class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-bg hover:bg-vsc-button-hover"
-    onclick={addItem}
-  >
-    Add Item
-  </button>
+  {#if !field.isTuple}
+    <button
+      type="button"
+      class="rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover w-full opacity-80 flex items-center gap-1"
+      onclick={addItem}
+    >
+      <Plus size={14} />
+      Add Item
+    </button>
+  {/if}
 </FieldPanel>

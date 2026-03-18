@@ -25,6 +25,7 @@ import {
 type ParsingState = {
   currentSection: string | null;
   unhydratedVariants: VariantField[];
+  refDependencies: Set<string>;
   logger: BasicLogger;
 };
 
@@ -62,6 +63,7 @@ function propertyDefinitionToField(
   // # Ref
   if ("$ref" in definition) {
     definition = definition as RefPropertyDefinition;
+    state.refDependencies.add(definition.$ref);
     return {
       ...fieldBase,
       type: "ref",
@@ -444,9 +446,11 @@ export function schemaDefinitionToAssetDefinition(
   unhydratedVariants: VariantField[],
   logger: BasicLogger,
 ): AssetDefinition | null {
+  const refDependencies = new Set<string>();
   const rootField = propertyDefinitionToField("", definition, {
     currentSection: "General",
     unhydratedVariants,
+    refDependencies,
     logger,
   });
   const buttons = definition.hytale.uiSidebarButtons?.map(button => button.buttonId) ?? [];
@@ -458,5 +462,6 @@ export function schemaDefinitionToAssetDefinition(
     title: definition.title,
     rootField,
     buttons,
+    refDependencies,
   };
 }

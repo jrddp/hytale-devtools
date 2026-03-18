@@ -1,11 +1,12 @@
 import * as vscode from "vscode";
 import { LOGGER, schemaRuntime } from "../extension";
+import { getValuesByIndexReference } from "../schema/symbolResolver";
 import {
   type AssetEditorExtensionToWebviewMessage,
   type AssetEditorWebviewToExtensionMessage,
 } from "../shared/asset-editor/messageTypes";
+import { type AssetDefinition } from "../shared/fieldTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
-import { getValuesByIndexReference } from "../schema/symbolResolver";
 
 const VIEW_TYPE = "hytale-devtools.hytaleAssetEditor";
 
@@ -32,7 +33,9 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       const documentPath = document.uri.fsPath;
       const assetDefinition = schemaRuntime.getAssetDefinitionForPath(documentPath);
       if (!assetDefinition) {
-        LOGGER.error(`No asset definition matched ${documentPath}. Falling back to the JSON editor.`);
+        LOGGER.error(
+          `No asset definition matched ${documentPath}. Falling back to the JSON editor.`,
+        );
         void this.openRawJsonInTextEditor(document, webviewPanel).finally(() => {
           webviewPanel.dispose();
         });
@@ -55,9 +58,21 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
 
       const sendBootstrap = () => {
         try {
+          // send minimal ref-resolutions to preserve memory
+          const assetsByRef = Array.from(schemaRuntime.assetsByRef.entries()).reduce(
+            (acc, [ref, asset]) => {
+              if (assetDefinition.refDependencies.has(ref)) {
+                acc[ref] = asset;
+              }
+              return acc;
+            },
+            {} as Record<string, AssetDefinition>,
+          );
+
           const payload: AssetEditorExtensionToWebviewMessage = {
             type: "bootstrap",
             assetDefinition,
+            assetsByRef,
           };
           void webviewPanel.webview.postMessage(payload);
         } catch (error) {
@@ -88,14 +103,11 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: AssetEditorWebviewToExtensionMessage) => {
-        LOGGER.info(`Asset editor message received: ${JSON.stringify(message, null, 2)}`);
+        LOGGER.info("Message received:", message.type);
         switch (message.type) {
           case "ready":
             sendBootstrap();
             updateWebview();
-            return;
-          case "resolveRef":
-            void this.resolveRef(message, webviewPanel.webview);
             return;
           case "autocompleteRequest":
             void this.autocompleteRequest(message, webviewPanel.webview);
@@ -136,19 +148,6 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       preserveFocus: false,
       preview: true,
     });
-  }
-
-  private async resolveRef(
-    message: Extract<AssetEditorWebviewToExtensionMessage, { type: "resolveRef" }>,
-    webview: vscode.Webview,
-  ): Promise<void> {
-    const field = schemaRuntime.assetsByRef.get(message.$ref)?.rootField ?? null;
-    const payload: AssetEditorExtensionToWebviewMessage = {
-      type: "resolvedRef",
-      $ref: message.$ref,
-      field,
-    };
-    await webview.postMessage(payload);
   }
 
   private async autocompleteRequest(

@@ -1,6 +1,5 @@
 <script lang="ts">
   import ObjectField from "src/components/fields/ObjectField.svelte";
-  import RefField from "src/components/fields/RefField.svelte";
   import StringField from "src/components/fields/StringField.svelte";
   import type { Snippet } from "svelte";
   import type { FieldInstance, InlineOrReferenceFieldInstance } from "../../parsing/fieldInstances";
@@ -20,8 +19,6 @@
 
 {#if field.activeField.type === "string"}
   <StringField field={field.activeField} {depth} />
-{:else if field.activeField.type === "object"}
+{:else}
   <ObjectField field={field.activeField} {depth} />
-{:else if field.activeField.type === "ref"}
-  <RefField field={field.activeField} {depth} />
 {/if}

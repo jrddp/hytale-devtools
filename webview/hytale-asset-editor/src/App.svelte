@@ -88,14 +88,12 @@
 
     switch (message.type) {
       case "bootstrap":
+        workspace.assetsByRef = message.assetsByRef;
         workspace.setAssetDefinition(message.assetDefinition);
         extensionError = "";
         return;
       case "update":
         workspace.setDocument(message);
-        return;
-      case "resolvedRef":
-        workspace.setResolvedRef(message.$ref, message.field);
         return;
       case "autocompletionValues":
         workspace.setAutocompleteValues(message.fieldId, message.values);
@@ -185,6 +183,10 @@
     window.addEventListener("message", handleMessage);
     vscode.postMessage({ type: "ready" });
 
+    if (vscode.isDevEnv) {
+      workspace.expandAllPanels();
+    }
+
     return () => {
       window.removeEventListener("message", handleMessage);
     };
@@ -270,11 +272,7 @@
           </div>
         {/if}
 
-        {#if workspace.documentParseStatus === "waiting-for-refs" && !workspace.documentRootField}
-          <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
-            Resolving schema references...
-          </div>
-        {:else if workspace.documentParseStatus === "error" && !workspace.documentRootField}
+        {#if workspace.documentParseError}
           <div class="px-3 py-2 border rounded-md border-vsc-border bg-vsc-panel opacity-70">
             Unable to parse document.
           </div>

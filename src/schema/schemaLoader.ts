@@ -1,8 +1,6 @@
 import { readdirSync } from "fs";
 import path from "path";
 import { type BasicLogger } from "../shared/commonTypes";
-import { firstGlobMatch, safeParseJSONFile } from "../shared/fileUtils";
-import { isObject } from "../shared/typeUtils";
 import {
   type AssetDefinition,
   type Field,
@@ -10,6 +8,8 @@ import {
   type StringField,
   type VariantField,
 } from "../shared/fieldTypes";
+import { firstGlobMatch, safeParseJSONFile } from "../shared/fileUtils";
+import { isObject } from "../shared/typeUtils";
 import { type CommonSchemaFile, type StandardSchemaFile } from "./schemaDefinitionTypes";
 import { schemaDefinitionToAssetDefinition } from "./schemaToFieldResolver";
 
@@ -71,7 +71,12 @@ export class SchemaRuntime {
             `Constant key mismatch for variant field: ${constKey} !== ${result.identityField.schemaKey}`,
           );
         }
-        result = result.variantsByIdentity[constValue];
+        const variant = result.variantsByIdentity[constValue];
+        if (variant?.type === "ref") {
+          result = this.assetsByRef.get(variant.$ref)?.rootField;
+        } else {
+          result = variant;
+        }
         if (!result) {
           this.logger.error(
             `Variant match not found for constant ${withConstant} on reference: ${referenceWithPointer}`,
@@ -140,7 +145,9 @@ export class SchemaRuntime {
           this.assetsByRef.set(ref, assetDefinition);
         }
       } else {
-        const fileContent = safeParseJSONFile(path.join(this.schemaDir, file)) as StandardSchemaFile;
+        const fileContent = safeParseJSONFile(
+          path.join(this.schemaDir, file),
+        ) as StandardSchemaFile;
         const assetDefinition = schemaDefinitionToAssetDefinition(
           fileContent,
           unhydratedVariants,
@@ -157,44 +164,90 @@ export class SchemaRuntime {
     }
 
     this.hydrateVariants(unhydratedVariants);
+    this.computeNestedRefDependencies(this.assetsByRef);
   }
 
   private hydrateVariants(unhydratedVariants: VariantField[]): void {
     // hydrate variants (resolve the identity map and clear unmapped fields)
     for (const variantField of unhydratedVariants) {
       for (const field of variantField.unmappedFields ?? []) {
-        let objectField: ObjectField;
+        let resolvedField: ObjectField;
         if (field.type === "ref") {
           const resolvedRef = this.assetsByRef.get(field.$ref);
           if (resolvedRef?.rootField.type !== "object") {
             this.logger.error(`Unexpected field type for variant field: ${field.type}`);
             continue;
           }
-          objectField = resolvedRef.rootField;
+          resolvedField = resolvedRef.rootField;
         } else {
-          objectField = field;
+          resolvedField = field;
         }
-        const objectIdentityField = objectField.properties[variantField.identityField.schemaKey] as
-          | StringField
-          | undefined;
+        const objectIdentityField = resolvedField.properties[
+          variantField.identityField.schemaKey
+        ] as StringField | undefined;
         if (objectIdentityField === undefined) {
           this.logger.error(
-            `Identity field not recognized for variant field: ${variantField.identityField.schemaKey} on ${variantField.schemaKey} : ${JSON.stringify(objectField)}, ${JSON.stringify(variantField.identityField)}`,
+            `Identity field not recognized for variant field: ${variantField.identityField.schemaKey} on ${variantField.schemaKey} : ${JSON.stringify(resolvedField)}, ${JSON.stringify(variantField.identityField)}`,
           );
           continue;
         }
         // object identity fields are either constants or have excluded values
+        // DONT SET VALUES TO THE RESOLVED FIELD, it causes circular dependencies
         if (objectIdentityField.const !== undefined) {
-          variantField.variantsByIdentity[objectIdentityField.const] = objectField;
+          variantField.variantsByIdentity[objectIdentityField.const] = field;
         } else {
           for (const value of variantField.identityField.enumVals ?? []) {
             if (objectIdentityField.bannedValues?.includes(value)) {
               continue;
             }
-            variantField.variantsByIdentity[value] = objectField;
+            variantField.variantsByIdentity[value] = field;
           }
         }
       }
+    }
+  }
+
+  /** Compute nested ref dependencies via DFS */
+  private computeNestedRefDependencies(assetsByRef: Map<string, AssetDefinition>): void {
+    const computedRefs = new Set<string>();
+    const visiting = new Set<string>();
+
+    const collect = (ref: string): Set<string> => {
+      if (computedRefs.has(ref)) {
+        return assetsByRef.get(ref)?.refDependencies ?? new Set();
+      }
+
+      if (visiting.has(ref)) {
+        return new Set();
+      }
+
+      visiting.add(ref);
+
+      const asset = assetsByRef.get(ref);
+      const result = new Set<string>();
+
+      if (asset) {
+        for (const directDep of asset.refDependencies) {
+          result.add(directDep);
+
+          const nestedDeps = collect(directDep);
+          for (const nestedDep of nestedDeps) {
+            if (nestedDep !== ref) {
+              result.add(nestedDep);
+            }
+          }
+        }
+
+        asset.refDependencies = result;
+      }
+
+      visiting.delete(ref);
+      computedRefs.add(ref);
+      return result;
+    };
+
+    for (const ref of assetsByRef.keys()) {
+      collect(ref);
     }
   }
 }

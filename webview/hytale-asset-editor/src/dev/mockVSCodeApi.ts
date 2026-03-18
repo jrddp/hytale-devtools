@@ -2,6 +2,7 @@ import type {
   AssetEditorExtensionToWebviewMessage,
   AssetEditorWebviewToExtensionMessage,
 } from "@shared/asset-editor/messageTypes";
+import type { IndexReference } from "@shared/indexTypes";
 import type { VSCodeApi } from "src/common";
 
 const mockedThemeVars: Record<string, string> = {
@@ -34,12 +35,14 @@ const mockedThemeVars: Record<string, string> = {
 
 type DevBootstrapResponse = {
   assetDefinition: unknown;
+  assetsByRef: Map<string, unknown>;
   documentPath: string;
   text: string;
   version: number;
 };
 
 export class MockVSCodeApi implements VSCodeApi {
+  isDevEnv = true;
   private state?: Record<string, unknown>;
 
   constructor() {
@@ -80,6 +83,7 @@ export class MockVSCodeApi implements VSCodeApi {
     this.send({
       type: "bootstrap",
       assetDefinition: payload.assetDefinition as never,
+      assetsByRef: payload.assetsByRef as never,
     });
     this.send({
       type: "update",
@@ -104,11 +108,37 @@ export class MockVSCodeApi implements VSCodeApi {
       });
       return;
     }
+  }
+
+  private async sendAutocompleteValues(symbolLookup: IndexReference, fieldId: string) {
+    const response = await fetch("/__asset-editor/autocomplete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        symbolLookup,
+        fieldId,
+      }),
+    });
+    const payload = (await response.json()) as {
+      fieldId: string;
+      values: string[];
+      error?: string;
+    };
+
+    if (payload.error) {
+      this.send({
+        type: "error",
+        message: payload.error,
+      });
+      return;
+    }
 
     this.send({
-      type: "resolvedRef",
-      $ref: payload.$ref,
-      field: payload.field as never,
+      type: "autocompletionValues",
+      fieldId: payload.fieldId,
+      values: payload.values,
     });
   }
 
@@ -117,10 +147,9 @@ export class MockVSCodeApi implements VSCodeApi {
       case "ready":
         await this.sendBootstrap();
         return;
-      case "resolveRef":
-        await this.sendResolvedRef(message.$ref);
-        return;
       case "autocompleteRequest":
+        await this.sendAutocompleteValues(message.symbolLookup, message.fieldId);
+        return;
       case "apply":
       case "openRawJson":
         return;

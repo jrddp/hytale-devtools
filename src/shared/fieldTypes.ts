@@ -109,7 +109,7 @@ export type MapField = FieldBase & {
 export type VariantField = FieldBase & {
   type: "variant";
   identityField: StringField & { schemaKey: string };
-  variantsByIdentity: Record<string, ObjectField>;
+  variantsByIdentity: Record<string, RefField | ObjectField>;
   unmappedFields?: (RefField | ObjectField)[];
 };
 
@@ -145,5 +145,6 @@ export type AssetDefinition = {
   title: string;
   rootField: ObjectField | VariantField;
   buttons: ButtonTypes[];
+  refDependencies: Set<string>;
   path?: string;
 };

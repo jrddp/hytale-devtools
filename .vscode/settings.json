@@ -1,9 +1,5 @@
 {
   "npm.packageManager": "pnpm",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always",
   "svelte.enable-ts-plugin": true,
   "svelte.plugin.typescript.diagnostics.enable": true,
   "eslint.useFlatConfig": true,
@@ -21,6 +17,6 @@
   "search.exclude": {
     "out": true, // set this to false to include "out" folder in search results
     "dist": true // set this to false to include "dist" folder in search results
-  },
+  }
   // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
 }

@@ -1,9 +1,10 @@
-import { type AssetDefinition, type Field } from "../fieldTypes";
+import { type AssetDefinition } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
 
 export type AssetEditorBootstrapMessage = {
   type: "bootstrap";
   assetDefinition: AssetDefinition;
+  assetsByRef: Record<string, AssetDefinition>;
 };
 
 export type AssetEditorDocumentUpdateMessage = {
@@ -18,12 +19,6 @@ export type AssetEditorErrorMessage = {
   message: string;
 };
 
-export type AssetEditorResolvedRefMessage = {
-  type: "resolvedRef";
-  $ref: string;
-  field: Field | null;
-};
-
 export type AssetEditorAutocompletionValuesMessage = {
   type: "autocompletionValues";
   fieldId: string;
@@ -34,13 +29,11 @@ export type AssetEditorExtensionToWebviewMessage =
   | AssetEditorBootstrapMessage
   | AssetEditorDocumentUpdateMessage
   | AssetEditorErrorMessage
-  | AssetEditorResolvedRefMessage
   | AssetEditorAutocompletionValuesMessage;
 
 export type AssetEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
-  | { type: "resolveRef"; $ref: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | {
       type: "apply";

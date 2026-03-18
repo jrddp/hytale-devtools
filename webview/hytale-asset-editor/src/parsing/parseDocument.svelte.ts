@@ -1,5 +1,6 @@
 import type {
   ArrayField,
+  AssetDefinition,
   BooleanField,
   Field,
   InlineOrReferenceField,
@@ -14,6 +15,7 @@ import type {
   WeightedTimelineField,
 } from "@shared/fieldTypes";
 import { isObject } from "@shared/typeUtils";
+import { transferMetadata } from "src/components/fieldHelpers";
 import type {
   ArrayFieldInstance,
   BooleanFieldInstance,
@@ -24,7 +26,6 @@ import type {
   NumberFieldInstance,
   ObjectFieldInstance,
   RawJsonFieldInstance,
-  RefFieldInstance,
   RootFieldInstance,
   StringFieldInstance,
   TimelineFieldInstance,
@@ -32,16 +33,8 @@ import type {
   WeightedTimelineFieldInstance,
 } from "./fieldInstances";
 
-type FieldLookup = Pick<ReadonlyMap<string, Field | null>, "get" | "has">;
-
 type ParseContext = {
-  resolvedRefsByRef: FieldLookup;
-};
-
-type ReachableRefState = {
-  resolvedRefsByRef: FieldLookup;
-  reachableRefs: Set<string>;
-  invalidRefs: Set<string>;
+  assetsByRef: Record<string, AssetDefinition>;
 };
 
 export type ParseDocumentResult =
@@ -50,22 +43,18 @@ export type ParseDocumentResult =
       rootField: RootFieldInstance;
     }
   | {
-      status: "waiting-for-refs";
-      missingRefs: string[];
-    }
-  | {
       status: "error";
       error: string;
     };
 
 export function parseDocumentText({
   text,
-  rootField,
-  resolvedRefsByRef = new Map<string, Field | null>(),
+  assetDefinition,
+  assetsByRef,
 }: {
   text: string;
-  rootField: ObjectField | VariantField;
-  resolvedRefsByRef?: FieldLookup;
+  assetDefinition: AssetDefinition;
+  assetsByRef: Record<string, AssetDefinition>;
 }): ParseDocumentResult {
   let documentRoot: unknown;
 
@@ -85,136 +74,21 @@ export function parseDocumentText({
     };
   }
 
-  const reachableRefState: ReachableRefState = {
-    resolvedRefsByRef,
-    reachableRefs: new Set(),
-    invalidRefs: new Set(),
-  };
-
-  collectReachableRefs(rootField, documentRoot, reachableRefState);
-
-  if (reachableRefState.invalidRefs.size > 0) {
-    return {
-      status: "error",
-      error: `Required schema reference could not be resolved: ${Array.from(reachableRefState.invalidRefs).sort()[0]}`,
-    };
-  }
-
-  const missingRefs = Array.from(reachableRefState.reachableRefs).filter(
-    refId => !resolvedRefsByRef.has(refId),
-  );
-
-  if (missingRefs.length > 0) {
-    return {
-      status: "waiting-for-refs",
-      missingRefs: missingRefs.sort(),
-    };
-  }
-
   return {
     status: "ready",
-    rootField: populateFieldInstance(cloneFieldInstance(rootField), documentRoot, {
-      resolvedRefsByRef,
-    }) as RootFieldInstance,
+    rootField: populateFieldInstance(cloneFieldInstance(assetDefinition.rootField), documentRoot, {
+      assetsByRef,
+    }),
   };
 }
 
 export function createEmptyFieldInstance<TField extends Field>(
   field: TField,
-  resolvedRefsByRef: FieldLookup = new Map<string, Field | null>(),
+  assetsByRef: Record<string, AssetDefinition>,
 ): TField & FieldInstance {
   return populateFieldInstance(cloneFieldInstance(field), undefined, {
-    resolvedRefsByRef,
+    assetsByRef,
   }) as TField & FieldInstance;
-}
-
-function collectReachableRefs(field: Field, rawValue: unknown, state: ReachableRefState): void {
-  switch (field.type) {
-    case "object": {
-      const rawObject = isObject(rawValue) ? rawValue : null;
-
-      for (const [schemaKey, childField] of Object.entries(field.properties)) {
-        collectReachableRefs(childField, rawObject?.[schemaKey], state);
-      }
-      return;
-    }
-
-    case "array": {
-      if (!Array.isArray(rawValue)) {
-        return;
-      }
-
-      if (Array.isArray(field.items)) {
-        for (const [index, itemField] of field.items.entries()) {
-          collectReachableRefs(itemField, rawValue[index], state);
-        }
-        return;
-      }
-
-      for (const item of rawValue) {
-        collectReachableRefs(field.items, item, state);
-      }
-      return;
-    }
-
-    case "map": {
-      if (!isObject(rawValue)) {
-        return;
-      }
-
-      for (const value of Object.values(rawValue)) {
-        collectReachableRefs(field.valueField, value, state);
-      }
-      return;
-    }
-
-    case "variant": {
-      if (!isObject(rawValue)) {
-        return;
-      }
-
-      const selectedIdentity = rawValue[field.identityField.schemaKey];
-      if (typeof selectedIdentity !== "string") {
-        return;
-      }
-
-      const activeVariantField = field.variantsByIdentity[selectedIdentity];
-      if (activeVariantField) {
-        collectReachableRefs(activeVariantField, rawValue, state);
-      }
-      return;
-    }
-
-    case "ref": {
-      state.reachableRefs.add(field.$ref);
-      if (!state.resolvedRefsByRef.has(field.$ref)) {
-        return;
-      }
-
-      const resolvedField = state.resolvedRefsByRef.get(field.$ref);
-      if (!resolvedField) {
-        state.invalidRefs.add(field.$ref);
-        return;
-      }
-
-      collectReachableRefs(resolvedField, rawValue, state);
-      return;
-    }
-
-    case "inlineOrReference": {
-      if (typeof rawValue === "string") {
-        return;
-      }
-
-      if (isObject(rawValue)) {
-        collectReachableRefs(field.inlineField, rawValue, state);
-      }
-      return;
-    }
-
-    default:
-      return;
-  }
 }
 
 function populateFieldInstance<TField extends Field>(
@@ -255,25 +129,25 @@ function populateFieldInstance<TField extends Field>(
 }
 
 function populateStringField(field: StringField, rawValue: unknown): StringFieldInstance {
-  const fieldInstance = field as StringFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as string | undefined;
   return field;
 }
 
 function populateNumberField(field: NumberField, rawValue: unknown): NumberFieldInstance {
-  const fieldInstance = field as NumberFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as number | undefined;
   return field;
 }
 
 function populateBooleanField(field: BooleanField, rawValue: unknown): BooleanFieldInstance {
-  const fieldInstance = field as BooleanFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as boolean | undefined;
   return field;
 }
 
 function populateColorField(field: ColorFieldInstance, rawValue: unknown): ColorFieldInstance {
-  const fieldInstance = field as ColorFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as string | undefined;
   return field;
 }
@@ -283,11 +157,12 @@ function populateObjectField(
   rawValue: unknown,
   context: ParseContext,
 ): ObjectFieldInstance {
-  const fieldInstance = field as ObjectFieldInstance;
-  const schemaKeys = new Set(Object.keys(field.properties));
-  fieldInstance.properties = Object.entries(field.properties).reduce(
+  const fieldInstance = cloneFieldInstance(field);
+  const schemaProperties = field.properties;
+  const schemaKeys = new Set(Object.keys(schemaProperties));
+  fieldInstance.properties = Object.entries(schemaProperties).reduce(
     (properties, [schemaKey, childField]) => {
-      properties[schemaKey] = createEmptyFieldInstance(childField, context.resolvedRefsByRef);
+      properties[schemaKey] = createEmptyFieldInstance(childField, context.assetsByRef);
       return properties;
     },
     {} as Record<string, FieldInstance>,
@@ -301,7 +176,7 @@ function populateObjectField(
   for (const [schemaKey, childData] of Object.entries(rawValue)) {
     if (schemaKeys.has(schemaKey)) {
       fieldInstance.properties[schemaKey] = populateFieldInstance(
-        field.properties[schemaKey] as FieldInstance,
+        cloneFieldInstance(schemaProperties[schemaKey]),
         childData,
         context,
       );
@@ -318,24 +193,29 @@ function populateArrayField(
   rawValue: unknown,
   context: ParseContext,
 ): ArrayFieldInstance {
-  const { items: itemsField, ...fieldBase } = field;
-  const fieldInstance = fieldBase as ArrayFieldInstance;
+  const itemsField = field.items;
+  const fieldInstance = cloneFieldInstance(field) as ArrayFieldInstance;
   fieldInstance.items = [];
   fieldInstance.itemFieldTypes = itemsField;
   if (Array.isArray(itemsField)) {
+    fieldInstance.items = itemsField.map((itemField, index) => {
+      const item = populateFieldInstance(cloneFieldInstance(itemField), rawValue?.[index], context);
+      item.schemaKey = index.toString();
+      return item;
+    });
     fieldInstance.isTuple = true;
-    fieldInstance.items = itemsField.map((itemField, index) =>
-      populateFieldInstance(cloneFieldInstance(itemField), rawValue?.[index], context),
-    );
     return fieldInstance;
   }
 
   if (Array.isArray(rawValue)) {
-    fieldInstance.items = rawValue.map((item, index) =>
-      populateFieldInstance(cloneFieldInstance(itemsField), item, context),
-    );
+    fieldInstance.items = rawValue.map((rawItem, index) => {
+      const item = populateFieldInstance(cloneFieldInstance(itemsField), rawItem, context);
+      item.schemaKey = index.toString();
+      return item;
+    });
   }
 
+  fieldInstance.isTuple = false;
   return fieldInstance;
 }
 
@@ -367,48 +247,46 @@ function populateVariantField(
   rawValue: unknown,
   context: ParseContext,
 ): VariantFieldInstance {
-  const fieldInstance = field as VariantFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.identityField = populateFieldInstance(
-    field.identityField,
+    cloneFieldInstance(field.identityField),
     rawValue?.[field.identityField.schemaKey],
     context,
   );
   if (fieldInstance.identityField.value) {
+    let variantMatch = field.variantsByIdentity[fieldInstance.identityField.value];
+    if (variantMatch.type === "ref") {
+      variantMatch = context.assetsByRef[variantMatch.$ref]?.rootField as ObjectField | undefined;
+    }
+    if (!variantMatch) {
+      throw new Error(`Could not resolve asset reference: ${fieldInstance.identityField.value}`);
+    }
     fieldInstance.activeVariant = populateFieldInstance(
-      field.variantsByIdentity[fieldInstance.identityField.value],
+      cloneFieldInstance(variantMatch),
       rawValue,
       context,
     );
-    fieldInstance.activeVariant.properties[fieldInstance.identityField.schemaKey] =
-      fieldInstance.identityField;
   }
 
-  return field;
+  return fieldInstance;
 }
 
 function populateRefField(
   field: RefField,
   rawValue: unknown,
   context: ParseContext,
-): RefFieldInstance {
-  const fieldInstance = field as RefFieldInstance;
-  const resolvedField = context.resolvedRefsByRef.get(field.$ref);
-
-  if (resolvedField === null) {
-    fieldInstance.resolvedField = null;
-    return fieldInstance;
-  }
+): FieldInstance {
+  const resolvedField = context.assetsByRef[field.$ref]?.rootField;
 
   if (!resolvedField) {
-    return fieldInstance;
+    throw new Error("Resolved field not found");
   }
 
-  fieldInstance.resolvedField = populateFieldInstance(
-    cloneFieldInstance(applyRefMetadata(field, resolvedField)),
+  return populateFieldInstance(
+    transferMetadata(field, cloneFieldInstance(resolvedField)),
     rawValue,
     context,
   );
-  return field;
 }
 
 function populateInlineOrReferenceField(
@@ -416,13 +294,10 @@ function populateInlineOrReferenceField(
   rawValue: unknown,
   context: ParseContext,
 ): InlineOrReferenceFieldInstance {
-  const fieldInstance = field as InlineOrReferenceFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
 
   if (!rawValue) {
-    fieldInstance.activeField = createEmptyFieldInstance(
-      field.stringField,
-      context.resolvedRefsByRef,
-    );
+    fieldInstance.activeField = createEmptyFieldInstance(field.stringField, context.assetsByRef);
     return fieldInstance;
   }
 
@@ -443,13 +318,13 @@ function populateInlineOrReferenceField(
 }
 
 function populateTimelineField(field: TimelineField, rawValue: unknown): TimelineFieldInstance {
-  const fieldInstance = field as TimelineFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.unparsedData = rawValue !== undefined ? rawValue : undefined;
   return fieldInstance;
 }
 
 function populateRawJsonField(field: RawJsonField, rawValue: unknown): RawJsonFieldInstance {
-  const fieldInstance = field as RawJsonFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = isObject(rawValue) ? JSON.stringify(rawValue, null, 2) : "{\n\n}";
   return fieldInstance;
 }
@@ -458,25 +333,13 @@ function populateWeightedTimelineField(
   field: WeightedTimelineField,
   rawValue: unknown,
 ): WeightedTimelineFieldInstance {
-  const fieldInstance = field as WeightedTimelineFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.unparsedData = rawValue;
   return fieldInstance;
 }
 
 function cloneFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
   return structuredClone($state.snapshot(field)) as TField & FieldInstance;
-}
-
-function applyRefMetadata(field: RefField, resolvedField: Field): Field {
-  return {
-    ...resolvedField,
-    schemaKey: field.schemaKey ?? resolvedField.schemaKey,
-    title: field.title ?? resolvedField.title,
-    section: field.section ?? resolvedField.section,
-    markdownDescription: field.markdownDescription ?? resolvedField.markdownDescription,
-    collapsedByDefault: field.collapsedByDefault ?? resolvedField.collapsedByDefault,
-    nullable: field.nullable ?? resolvedField.nullable,
-  };
 }
 
 function stripBom(text: string): string {

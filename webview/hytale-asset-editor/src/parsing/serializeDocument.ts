@@ -5,7 +5,6 @@ import type {
   InlineOrReferenceFieldInstance,
   MapFieldInstance,
   ObjectFieldInstance,
-  RefFieldInstance,
   RootFieldInstance,
   VariantFieldInstance,
 } from "./fieldInstances";
@@ -48,8 +47,6 @@ function serializeField(
       return serializeMapField(field as MapFieldInstance, fallbackToEmptyObject);
     case "variant":
       return serializeVariantField(field as VariantFieldInstance, fallbackToEmptyObject);
-    case "ref":
-      return serializeRefField(field as RefFieldInstance, fallbackToEmptyObject);
     case "inlineOrReference":
       return serializeInlineOrReferenceField(
         field as InlineOrReferenceFieldInstance,
@@ -97,10 +94,6 @@ function serializeVariantField(
   fallbackToEmptyObject = false,
 ): unknown {
   return serializeField(field.activeVariant, fallbackToEmptyObject);
-}
-
-function serializeRefField(field: RefFieldInstance, fallbackToEmptyObject = false): unknown {
-  return serializeField(field.resolvedField, fallbackToEmptyObject);
 }
 
 function serializeInlineOrReferenceField(

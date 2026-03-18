@@ -1,4 +1,5 @@
 import path from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
@@ -6,13 +7,16 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { build as buildWithEsbuild } from "esbuild";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const dataRootDir = path.resolve(currentDir, "../../default-data/export-data");
 const schemaDir = path.resolve(currentDir, "../../default-data/export-data/schemas");
 const runtimeBundlePath = path.join("/tmp", `hytale-asset-editor-schema-runtime-${process.pid}.mjs`);
 const devDocumentPath = "/tmp/Server/Item/Items/Armor/Bronze/Armor_Bronze_Hands.json";
 const devBootstrapRoute = "/__asset-editor/dev-bootstrap";
 const devResolveRefRoute = "/__asset-editor/resolve-ref";
+const devAutocompleteRoute = "/__asset-editor/autocomplete";
 
 let schemaRuntimePromise;
+let indexesByKind;
 
 async function getSchemaRuntime() {
   if (!schemaRuntimePromise) {
@@ -42,6 +46,7 @@ async function getDevBootstrapPayload() {
   }
   return {
     assetDefinition,
+    assetsByRef: runtime.assetsByRef,
     documentPath: devDocumentPath,
     text: "{}",
     version: 1,
@@ -50,6 +55,93 @@ async function getDevBootstrapPayload() {
 
 function jsonResponse(body) {
   return JSON.stringify(body);
+}
+
+function readRequestBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.on("data", chunk => {
+      body += chunk;
+    });
+    req.on("end", () => resolve(body));
+    req.on("error", reject);
+  });
+}
+
+function loadIndexes() {
+  if (indexesByKind) {
+    return indexesByKind;
+  }
+
+  indexesByKind = new Map();
+  const indexRoot = path.join(dataRootDir, "indexes");
+  if (!existsSync(indexRoot)) {
+    return indexesByKind;
+  }
+
+  for (const directoryName of readdirSync(indexRoot)) {
+    const directoryPath = path.join(indexRoot, directoryName);
+    if (!existsSync(directoryPath)) {
+      continue;
+    }
+
+    const shardsByKey = new Map();
+    for (const fileName of readdirSync(directoryPath)) {
+      const shard = JSON.parse(readFileSync(path.join(directoryPath, fileName), "utf8"));
+      shardsByKey.set(shard.key, shard);
+    }
+
+    indexesByKind.set(directoryName, shardsByKey);
+  }
+
+  return indexesByKind;
+}
+
+function getCommonAssetPathValues(shard, reference) {
+  const values = [];
+
+  for (const [directParentFolder, filesByFileType] of Object.entries(shard.values)) {
+    if (!reference.folders.some(folder => directParentFolder.startsWith(folder))) {
+      continue;
+    }
+
+    const fileNames = reference.extension
+      ? (filesByFileType[reference.extension] ?? [])
+      : Object.values(filesByFileType).flat();
+
+    values.push(
+      ...fileNames.map(fileName => path.normalize(path.join(directParentFolder, fileName))),
+    );
+  }
+
+  return values;
+}
+
+function getAutocompleteValues(reference) {
+  const indexes = loadIndexes();
+  const shardsByKey = indexes.get(reference.indexKind);
+  if (!shardsByKey) {
+    return [];
+  }
+
+  const shard = shardsByKey.get(reference.key);
+  if (!shard) {
+    return [];
+  }
+
+  switch (reference.indexKind) {
+    case "exportFamily":
+    case "registeredAssets":
+      return Object.keys(shard.values);
+    case "referenceBundle":
+      return shard.values;
+    case "uiDataSet":
+      return [];
+    case "commonAssetPaths":
+      return getCommonAssetPathValues(shard, reference);
+    default:
+      return [];
+  }
 }
 
 function assetEditorDevPlugin() {
@@ -73,6 +165,19 @@ function assetEditorDevPlugin() {
               jsonResponse({
                 $ref,
                 field: $ref ? runtime.assetsByRef.get($ref)?.rootField ?? null : null,
+              }),
+            );
+            return;
+          }
+
+          if (requestUrl.pathname === devAutocompleteRoute) {
+            const requestBody = await readRequestBody(req);
+            const { symbolLookup, fieldId } = JSON.parse(requestBody || "{}");
+            res.setHeader("Content-Type", "application/json");
+            res.end(
+              jsonResponse({
+                fieldId,
+                values: symbolLookup ? getAutocompleteValues(symbolLookup) : [],
               }),
             );
             return;

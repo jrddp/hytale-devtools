@@ -1,54 +1,44 @@
-import type { AssetDefinition, Field } from "@shared/fieldTypes";
 import type { AssetEditorWebviewToExtensionMessage } from "@shared/asset-editor/messageTypes";
-import { SvelteMap, SvelteSet } from "svelte/reactivity";
+import type { AssetDefinition, Field } from "@shared/fieldTypes";
 import type { VSCodeApi } from "./common";
-import { createEmptyFieldInstance as createEmptyFieldInstanceFromSchema, parseDocumentText } from "./parsing/parseDocument.svelte";
-import type { FieldInstance, RootFieldInstance } from "./parsing/fieldInstances";
+import type {
+  FieldInstance,
+  ObjectFieldInstance,
+  RootFieldInstance,
+  VariantFieldInstance,
+} from "./parsing/fieldInstances";
+import {
+  createEmptyFieldInstance as createEmptyFieldInstanceFromSchema,
+  parseDocumentText,
+} from "./parsing/parseDocument.svelte";
 import { serializeDocument, serializeDocumentText } from "./parsing/serializeDocument";
-
-export type DocumentParseStatus = "idle" | "waiting-for-refs" | "ready" | "error";
 
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
   assetDefinition = $state<AssetDefinition | null>(null);
+  rootFieldInstance = $state<ObjectFieldInstance | VariantFieldInstance | null>(null);
+
   documentPath = $state("");
-  documentText = $state("");
   documentVersion = $state(0);
   documentRootField = $state<RootFieldInstance | null>(null);
-  documentParseStatus = $state<DocumentParseStatus>("idle");
   documentParseError = $state<string | null>(null);
-  resolvedRefsByRef = new SvelteMap<string, Field | null>();
-  pendingRefs = new SvelteSet<string>();
+
+  assetsByRef = $state<Record<string, AssetDefinition> | null>(null);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
+
   collapseAllVersion = $state(0);
   collapseAllTarget = $state<boolean | null>(null);
   hideUnsetFields = $state(false);
 
-  requestRef(refId: string) {
-    if (!refId || this.resolvedRefsByRef.has(refId) || this.pendingRefs.has(refId)) {
-      return;
-    }
-
-    this.pendingRefs.add(refId);
-    this.vscode.postMessage({
-      type: "resolveRef",
-      $ref: refId,
-    });
-  }
-
   setAssetDefinition(assetDefinition: AssetDefinition | null) {
     this.assetDefinition = assetDefinition;
     this.documentPath = "";
-    this.documentText = "";
     this.documentVersion = 0;
-    this.resetResolvedRefs();
     this.documentRootField = null;
-    this.documentParseStatus = "idle";
     this.documentParseError = null;
     this.autocompleteField = undefined;
     this.autocompleteValues = [];
-    this.reparseDocument();
   }
 
   setDocument({
@@ -61,25 +51,13 @@ export class Workspace {
     version: number;
   }) {
     this.documentPath = documentPath;
-    this.documentText = text;
     this.documentVersion = version;
-    this.reparseDocument();
-  }
-
-  setResolvedRef(refId: string, field: Field | null) {
-    this.pendingRefs.delete(refId);
-    this.resolvedRefsByRef.set(refId, field);
-    this.reparseDocument();
+    this.reparseDocument(text);
   }
 
   setAutocompleteValues(fieldId: string, values: string[]) {
     this.autocompleteField = fieldId;
-    this.autocompleteValues = sortVariantsToBottom(values);
-  }
-
-  resetResolvedRefs() {
-    this.resolvedRefsByRef.clear();
-    this.pendingRefs.clear();
+    this.autocompleteValues = sortAssetVariantsToBottom(values);
   }
 
   setAllPanelsCollapsed(collapsed: boolean) {
@@ -130,40 +108,27 @@ export class Workspace {
   }
 
   createEmptyFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
-    return createEmptyFieldInstanceFromSchema(field, this.resolvedRefsByRef);
+    return createEmptyFieldInstanceFromSchema(field, this.assetsByRef);
   }
 
-  private reparseDocument() {
+  reparseDocument(text: string) {
     if (!this.assetDefinition || !this.documentPath) {
-      this.documentParseStatus = "idle";
       this.documentParseError = null;
       return;
     }
 
     const result = parseDocumentText({
-      text: this.documentText,
-      rootField: this.assetDefinition.rootField,
-      resolvedRefsByRef: this.resolvedRefsByRef,
+      text: text,
+      assetDefinition: this.assetDefinition,
+      assetsByRef: this.assetsByRef,
     });
 
     switch (result.status) {
       case "ready":
         this.documentRootField = result.rootField;
-        this.documentParseStatus = "ready";
         this.documentParseError = null;
-        return;
-      case "waiting-for-refs":
-        for (const refId of result.missingRefs) {
-          this.requestRef(refId);
-        }
-        this.documentParseStatus = "waiting-for-refs";
-        this.documentParseError = null;
-        if (!this.documentRootField) {
-          this.documentRootField = null;
-        }
         return;
       case "error":
-        this.documentParseStatus = "error";
         this.documentParseError = result.error;
         if (!this.documentRootField) {
           this.documentRootField = null;
@@ -177,7 +142,7 @@ export class Workspace {
 
 export const workspace = new Workspace();
 
-function sortVariantsToBottom(sourceValues: string[]): string[] {
+function sortAssetVariantsToBottom(sourceValues: string[]): string[] {
   return [...sourceValues].sort((left, right) => {
     const leftStartsWithStar = left.startsWith("*");
     const rightStartsWithStar = right.startsWith("*");

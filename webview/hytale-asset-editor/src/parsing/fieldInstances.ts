@@ -8,7 +8,6 @@ import type {
   NumberField,
   ObjectField,
   RawJsonField,
-  RefField,
   StringField,
   TimelineField,
   VariantField,
@@ -24,7 +23,6 @@ export type FieldInstance =
   | ArrayFieldInstance
   | MapFieldInstance
   | VariantFieldInstance
-  | RefFieldInstance
   | InlineOrReferenceFieldInstance
   | RawJsonFieldInstance
   | TimelineFieldInstance
@@ -46,11 +44,8 @@ export type MapFieldInstance = MapField & {
   entries: { key: string; valueField: FieldInstance }[];
 };
 
-export type RefFieldInstance = RefField & {
-  resolvedField?: FieldInstance | null;
-};
 export type InlineOrReferenceFieldInstance = InlineOrReferenceField & {
-  activeField: StringFieldInstance | ObjectFieldInstance | RefFieldInstance;
+  activeField: StringFieldInstance | ObjectFieldInstance;
 };
 export type RawJsonFieldInstance = RawJsonField & { value?: string };
 export type TimelineFieldInstance = TimelineField & { unparsedData?: unknown };

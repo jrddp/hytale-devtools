@@ -23,7 +23,7 @@
     afterEnterPressed,
   }: {
     inputId: string;
-    initialValue: string;
+    initialValue?: string;
     placeholder?: string;
     disabled?: boolean;
     autocompleteOptions?: AutocompleteOption[];
@@ -51,13 +51,15 @@
 
   $effect(() => {
     if (initialValue !== lastCommittedValue) {
-      value = initialValue;
-      lastCommittedValue = initialValue;
+      value = initialValue ?? "";
+      lastCommittedValue = initialValue ?? "";
     }
   });
 
   const filteredAutocompleteOptions = $derived(
-    autocompleteOptions.filter(option => option.value.toLowerCase().includes(value.toLowerCase())),
+    autocompleteOptions.filter(option =>
+      option.value.toLowerCase().includes((value ?? "").toLowerCase()),
+    ),
   );
   const shouldAutocomplete = $derived(isFocused && filteredAutocompleteOptions.length > 0);
   const previewOption = $derived(
