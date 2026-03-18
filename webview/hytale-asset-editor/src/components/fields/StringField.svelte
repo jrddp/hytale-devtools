@@ -44,6 +44,7 @@
   }
 
   function commitValue(value: string) {
+    console.log("Committing value", value, field.value);
     if (!value) value = undefined;
     if (value === field.value) {
       return;

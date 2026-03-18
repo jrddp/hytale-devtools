@@ -1,16 +1,16 @@
-import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import path from "node:path";
 import { describe, expect, test } from "vitest";
 
 import type {
   ArrayField,
+  AssetDefinition,
+  BooleanField,
   Field,
   FieldBase,
   InlineOrReferenceField,
   MapField,
   NumberField,
   ObjectField,
+  RawJsonField,
   RefField,
   StringField,
   VariantField,
@@ -19,10 +19,6 @@ import type { RootFieldInstance } from "../../webview/hytale-asset-editor/src/pa
 import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument.svelte";
 import { serializeDocument } from "../../webview/hytale-asset-editor/src/parsing/serializeDocument";
 
-const BASE_GAME_ASSETS_DIR_ENV = "BASE_GAME_ASSETS_DIR";
-
-loadDotEnv(path.resolve(process.cwd(), ".env"));
-
 function baseField(schemaKey: string | null, type: FieldBase["type"]): FieldBase {
   return {
     schemaKey,
@@ -30,6 +26,23 @@ function baseField(schemaKey: string | null, type: FieldBase["type"]): FieldBase
     section: "General",
     collapsedByDefault: false,
   };
+}
+
+function assetDefinition(rootField: ObjectField | VariantField, title = "Test Asset"): AssetDefinition {
+  return {
+    title,
+    rootField,
+    buttons: [],
+    refDependencies: new Set<string>(),
+  };
+}
+
+function assetDefinitionsByRef(
+  fieldsByRef: Record<string, ObjectField | VariantField>,
+): Record<string, AssetDefinition> {
+  return Object.fromEntries(
+    Object.entries(fieldsByRef).map(([ref, rootField]) => [ref, assetDefinition(rootField, ref)]),
+  );
 }
 
 function stringField(schemaKey: string, overrides: Partial<StringField> = {}): StringField {
@@ -43,6 +56,19 @@ function numberField(schemaKey: string, overrides: Partial<NumberField> = {}): N
   return {
     ...baseField(schemaKey, "number"),
     ...overrides,
+  };
+}
+
+function booleanField(schemaKey: string, overrides: Partial<BooleanField> = {}): BooleanField {
+  return {
+    ...baseField(schemaKey, "boolean"),
+    ...overrides,
+  };
+}
+
+function rawJsonField(schemaKey: string): RawJsonField {
+  return {
+    ...baseField(schemaKey, "rawJson"),
   };
 }
 
@@ -92,66 +118,40 @@ function inlineOrReferenceField(
 function variantField(
   schemaKey: string,
   identityKey: string,
-  variantsByIdentity: Record<string, ObjectField>,
+  variantsByIdentity: Record<string, RefField | ObjectField>,
+  identityFieldOverrides: Partial<StringField> = {},
 ): VariantField {
   return {
     ...baseField(schemaKey, "variant"),
     identityField: {
       ...stringField(identityKey),
       enumVals: Object.keys(variantsByIdentity),
+      ...identityFieldOverrides,
     },
     variantsByIdentity,
   };
 }
 
-function parseUntilReady({
+function parseReady({
   text,
   rootField,
-  resolveRef = () => null,
+  assetsByRef = {},
 }: {
   text: string;
   rootField: ObjectField | VariantField;
-  resolveRef?: (refId: string) => Field | null;
+  assetsByRef?: Record<string, AssetDefinition>;
 }): RootFieldInstance {
-  const resolvedRefsByRef = new Map<string, Field | null>();
+  const result = parseDocumentText({
+    text,
+    assetDefinition: assetDefinition(rootField),
+    assetsByRef,
+  });
 
-  for (let pass = 0; pass < 100; pass += 1) {
-    const result = parseDocumentText({
-      text,
-      rootField,
-      resolvedRefsByRef,
-    });
-
-    switch (result.status) {
-      case "ready":
-        return result.rootField;
-      case "error":
-        throw new Error(result.error);
-      case "waiting-for-refs": {
-        let resolvedMissingRef = false;
-
-        for (const refId of result.missingRefs) {
-          if (resolvedRefsByRef.has(refId)) {
-            continue;
-          }
-
-          resolvedRefsByRef.set(refId, resolveRef(refId) ?? null);
-          resolvedMissingRef = true;
-        }
-
-        if (!resolvedMissingRef) {
-          throw new Error(`Parser remained stuck waiting for refs: ${result.missingRefs.join(", ")}`);
-        }
-        break;
-      }
-    }
+  if (result.status !== "ready") {
+    throw new Error(`Expected ready parse result, received ${result.status}`);
   }
 
-  throw new Error("Parser exceeded 100 ref-resolution passes.");
-}
-
-function parseJsonText(text: string): unknown {
-  return JSON.parse(text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
+  return result.rootField;
 }
 
 function normalizeRoundTripJson(value: unknown, isRoot = true): unknown {
@@ -175,56 +175,12 @@ function normalizeRoundTripJson(value: unknown, isRoot = true): unknown {
   return typeof value === "number" && Object.is(value, -0) ? 0 : value;
 }
 
-function loadDotEnv(envPath: string): void {
-  if (!existsSync(envPath)) {
-    return;
-  }
-
-  for (const rawLine of readFileSync(envPath, "utf8").split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) {
-      continue;
-    }
-
-    const equalsIndex = line.indexOf("=");
-    if (equalsIndex <= 0) {
-      continue;
-    }
-
-    const key = line.slice(0, equalsIndex).trim();
-    if (process.env[key]) {
-      continue;
-    }
-
-    const value = line.slice(equalsIndex + 1).trim().replace(/^(['"])(.*)\1$/, "$2");
-    process.env[key] = value;
-  }
-}
-
-function walkJsonFiles(dirPath: string): string[] {
-  const files: string[] = [];
-
-  for (const entry of readdirSync(dirPath)) {
-    const fullPath = path.join(dirPath, entry);
-    const stats = statSync(fullPath);
-
-    if (stats.isDirectory()) {
-      files.push(...walkJsonFiles(fullPath));
-      continue;
-    }
-
-    if (fullPath.endsWith(".json")) {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
-}
-
 describe("asset editor serializeDocument", () => {
-  test("round-trips representative parsed documents", () => {
+  test("round-trips representative parsed documents with current assetsByRef resolution", () => {
     const rootField = objectField(null, {
       name: stringField("name"),
+      weight: numberField("weight"),
+      enabled: booleanField("enabled"),
       details: objectField("details", {
         tier: stringField("tier"),
       }),
@@ -233,23 +189,17 @@ describe("asset editor serializeDocument", () => {
       labels: mapField("labels", stringField("label")),
       owner: refField("owner", "owner#"),
       item: variantField("item", "kind", {
-        armor: objectField("", {
-          kind: stringField("kind", { const: "armor" }),
-          defense: numberField("defense"),
-        }),
-        tool: objectField("", {
-          kind: stringField("kind", { const: "tool" }),
-          power: numberField("power"),
-        }),
+        armor: refField("", "armor#"),
+        tool: refField("", "tool#"),
       }),
-      inlineRef: inlineOrReferenceField("inlineRef", objectField("", { title: stringField("title") })),
-      payload: objectField("payload", {
-        nested: stringField("nested"),
-      }),
+      inlineRef: inlineOrReferenceField("inlineRef", refField("", "inline#")),
+      payload: rawJsonField("payload"),
     });
 
     const documentJson = {
       name: "Armor Bronze Hands",
+      weight: 0,
+      enabled: false,
       details: {
         tier: "bronze",
       },
@@ -274,60 +224,237 @@ describe("asset editor serializeDocument", () => {
       },
     };
 
-    const root = parseUntilReady({
+    const root = parseReady({
       text: JSON.stringify(documentJson),
       rootField,
-      resolveRef: refId =>
-        ({
-          "owner#": objectField(null, {
-            title: stringField("title"),
-          }),
-        })[refId] ?? null,
+      assetsByRef: assetDefinitionsByRef({
+        "owner#": objectField(null, {
+          title: stringField("title"),
+        }),
+        "armor#": objectField(null, {
+          kind: stringField("kind", { const: "armor" }),
+          defense: numberField("defense"),
+        }),
+        "tool#": objectField(null, {
+          kind: stringField("kind", { const: "tool" }),
+          power: numberField("power"),
+        }),
+        "inline#": objectField(null, {
+          title: stringField("title"),
+        }),
+      }),
     });
 
     expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson(documentJson));
   });
 
-  test("treats empty composites and null inline refs the same as missing", () => {
+  test("omits unset scalars and empty composites from object output", () => {
     const rootField = objectField(null, {
+      name: stringField("name"),
+      count: numberField("count"),
+      enabled: booleanField("enabled"),
       meta: objectField("meta", {}),
       tags: arrayField("tags", stringField("tag")),
-      dimensions: arrayField("dimensions", [numberField("x"), numberField("y")]),
       labels: mapField("labels", stringField("label")),
       inlineRef: inlineOrReferenceField("inlineRef", objectField("", { title: stringField("title") })),
     });
 
-    const documentJson = {
-      meta: {},
-      tags: [],
-      dimensions: [],
-      labels: {},
-      inlineRef: null,
-    };
-
-    const root = parseUntilReady({
-      text: JSON.stringify(documentJson),
+    const root = parseReady({
+      text: JSON.stringify({
+        meta: {},
+        tags: [],
+        labels: {},
+        inlineRef: null,
+      }),
       rootField,
     });
 
-    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(normalizeRoundTripJson({}));
+    expect(serializeDocument(root)).toEqual({});
   });
 
-  if (process.env[BASE_GAME_ASSETS_DIR_ENV]) {
-    test(
-      "round-trips supported BaseGame assets",
-      () => {
-        const scriptPath = path.resolve(process.cwd(), "test/asset-editor-parser/baseGameRoundTrip.mjs");
-        const result = spawnSync(process.execPath, ["--experimental-strip-types", scriptPath], {
-          cwd: process.cwd(),
-          env: process.env,
-          encoding: "utf8",
-          maxBuffer: 1024 * 1024 * 32,
-        });
+  test("does not drop variant fields whose discriminator is implied by the schema default", () => {
+    const rootField = objectField(null, {
+      ticker: variantField(
+        "ticker",
+        "Type",
+        {
+          Default: objectField("", {
+            Type: stringField("Type", { const: "Default" }),
+            CanDemote: booleanField("CanDemote"),
+            SupportedBy: stringField("SupportedBy"),
+          }),
+        },
+        { default: "Default" },
+      ),
+    });
 
-        expect(result.status, [result.stdout, result.stderr].filter(Boolean).join("\n\n")).toBe(0);
-      },
-      300_000,
+    const root = parseReady({
+      text: JSON.stringify({
+        ticker: {
+          CanDemote: true,
+          SupportedBy: "Lava_Source",
+        },
+      }),
+      rootField,
+    });
+
+    expect(serializeDocument(root)).toHaveProperty("ticker");
+  });
+
+  test("round-trips inheritance-based variant roots when Type is omitted and no default exists", () => {
+    const root = parseReady({
+      text: JSON.stringify({
+        Parent: "DamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 7,
+        },
+        DamageEffects: {
+          Knockback: {
+            Type: "Directional",
+            Force: 1,
+          },
+        },
+      }),
+      rootField: variantField(null, "Type", {
+        DamageEntity: objectField("", {
+          Type: stringField("Type", { const: "DamageEntity" }),
+          Parent: stringField("Parent"),
+          DamageCalculator: objectField("DamageCalculator", {
+            BaseDamage: numberField("BaseDamage"),
+          }),
+          DamageEffects: objectField("DamageEffects", {
+            Knockback: variantField(
+              "Knockback",
+              "Type",
+              {
+                Directional: objectField("", {
+                  Type: stringField("Type", { const: "Directional" }),
+                  Force: numberField("Force"),
+                }),
+              },
+              { default: "Directional" },
+            ),
+          }),
+        }),
+      }),
+    });
+
+    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(
+      normalizeRoundTripJson({
+        Parent: "DamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 7,
+        },
+        DamageEffects: {
+          Knockback: {
+            Type: "Directional",
+            Force: 1,
+          },
+        },
+      }),
     );
-  }
+  });
+
+  test("does not drop inline ref objects when the resolved ref points at a variant root", () => {
+    const rootField = objectField(null, {
+      next: inlineOrReferenceField("next", refField("", "interaction#")),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        next: {
+          Parent: "Teleporter_Try_Place",
+          Value: 2,
+        },
+      }),
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "interaction#": variantField(
+          null,
+          "Type",
+          {
+            MemoriesCondition: objectField("", {
+              Type: stringField("Type", { const: "MemoriesCondition" }),
+              Parent: stringField("Parent"),
+              Value: numberField("Value"),
+            }),
+          },
+          { default: "MemoriesCondition" },
+        ),
+      }),
+    });
+
+    expect(serializeDocument(root)).toHaveProperty("next");
+  });
+
+  test("does not drop inline ref objects when the resolved variant root omits Type and has no default", () => {
+    const rootField = objectField(null, {
+      next: inlineOrReferenceField("next", refField("", "interaction#")),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        next: {
+          Parent: "Teleporter_Try_Place",
+          Value: 2,
+        },
+      }),
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "interaction#": variantField(null, "Type", {
+          MemoriesCondition: objectField("", {
+            Type: stringField("Type", { const: "MemoriesCondition" }),
+            Parent: stringField("Parent"),
+            Value: numberField("Value"),
+          }),
+        }),
+      }),
+    });
+
+    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(
+      normalizeRoundTripJson({
+        next: {
+          Parent: "Teleporter_Try_Place",
+          Value: 2,
+        },
+      }),
+    );
+  });
+
+  test("does not serialize absent nullable ref-backed objects just because they contain nested defaulted variants", () => {
+    const rootField = objectField(null, {
+      damageEffects: {
+        ...refField("damageEffects", "damageEffects#"),
+        nullable: true,
+      },
+      statModifierEffects: {
+        ...refField("statModifierEffects", "damageEffects#"),
+        nullable: true,
+      },
+    });
+
+    const damageEffectsField = objectField(null, {
+      Knockback: variantField(
+        "Knockback",
+        "Type",
+        {
+          Directional: objectField("", {
+            Type: stringField("Type", { const: "Directional" }),
+            Force: numberField("Force"),
+          }),
+        },
+        { default: "Directional" },
+      ),
+    });
+
+    const root = parseReady({
+      text: "{}",
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "damageEffects#": damageEffectsField,
+      }),
+    });
+
+    expect(serializeDocument(root)).toEqual({});
+  });
 });

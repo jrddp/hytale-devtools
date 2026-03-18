@@ -94,6 +94,7 @@ export class Workspace {
   }
 
   applyDocumentState() {
+    console.log("Applying document state", this.documentRootField);
     const text = this.serializeDocumentText();
     if (!text) {
       return;

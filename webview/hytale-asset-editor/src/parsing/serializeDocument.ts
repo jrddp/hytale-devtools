@@ -24,7 +24,7 @@ export function serializeDocumentText(rootField: RootFieldInstance): string {
   return JSON.stringify(serializeDocument(rootField), null, "\t");
 }
 
-/** @param fallbackToEmptyObject - causes unset objects/arrays to be saved as {} or [] instead of undefined. */
+/** @param fallbackToEmptyObject - causes unset composite fields to serialize as {} / [] and array-like scalar holes as null. */
 function serializeField(
   field: FieldInstance | null | undefined,
   fallbackToEmptyObject = false,
@@ -38,7 +38,7 @@ function serializeField(
     case "number":
     case "boolean":
     case "color":
-      return field.value;
+      return field.value ?? (fallbackToEmptyObject ? null : undefined);
     case "object":
       return serializeObjectField(field as ObjectFieldInstance, fallbackToEmptyObject);
     case "array":
@@ -53,7 +53,7 @@ function serializeField(
         fallbackToEmptyObject,
       );
     case "rawJson":
-      return JSON.parse(field.value);
+      return field.value !== undefined ? JSON.parse(field.value) : undefined;
     case "timeline":
     case "weightedTimeline":
       return field.unparsedData;
@@ -67,7 +67,9 @@ function serializeObjectField(field: ObjectFieldInstance, fallbackToEmptyObject 
 
   for (const [key, childField] of Object.entries(field.properties)) {
     const childValue = serializeField(childField);
-    serialized[key] = childValue;
+    if (childValue !== undefined) {
+      serialized[key] = childValue;
+    }
   }
 
   return Object.keys(serialized).length > 0 ? serialized : fallbackToEmptyObject ? {} : undefined;
@@ -75,6 +77,9 @@ function serializeObjectField(field: ObjectFieldInstance, fallbackToEmptyObject 
 
 function serializeArrayField(field: ArrayFieldInstance, fallbackToEmptyObject = false): unknown {
   const serialized = field.items.map(item => serializeField(item, true));
+  if (field.isTuple && serialized.every(item => item === null)) {
+    return fallbackToEmptyObject ? [] : undefined;
+  }
   return serialized.length > 0 ? serialized : fallbackToEmptyObject ? [] : undefined;
 }
 

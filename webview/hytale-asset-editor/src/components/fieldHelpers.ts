@@ -92,7 +92,7 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export function transferMetadata(source: Field, target: Field): Field {
+export function transferMetadata<TField extends Field, TFieldInstance extends FieldInstance>(source: TField, target: TFieldInstance): TFieldInstance {
   return {
     ...target,
     schemaKey: source.schemaKey ?? target.schemaKey,

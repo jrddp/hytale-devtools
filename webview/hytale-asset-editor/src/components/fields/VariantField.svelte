@@ -38,6 +38,13 @@
   });
 
   function onChangeIdentity() {
+    const effectiveIdentity = selectedIdentity ?? field.identityField.default;
+
+    if (!effectiveIdentity) {
+      field.activeVariant = undefined;
+      return;
+    }
+
     field.activeVariant = workspace.createEmptyFieldInstance(
       field.variantsByIdentity[selectedIdentity],
     );

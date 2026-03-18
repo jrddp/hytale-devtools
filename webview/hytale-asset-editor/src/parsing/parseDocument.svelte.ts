@@ -2,6 +2,7 @@ import type {
   ArrayField,
   AssetDefinition,
   BooleanField,
+  ColorField,
   Field,
   InlineOrReferenceField,
   MapField,
@@ -15,7 +16,7 @@ import type {
   WeightedTimelineField,
 } from "@shared/fieldTypes";
 import { isObject } from "@shared/typeUtils";
-import { transferMetadata } from "src/components/fieldHelpers";
+import { transferMetadata } from "../components/fieldHelpers";
 import type {
   ArrayFieldInstance,
   BooleanFieldInstance,
@@ -131,25 +132,25 @@ function populateFieldInstance<TField extends Field>(
 function populateStringField(field: StringField, rawValue: unknown): StringFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as string | undefined;
-  return field;
+  return fieldInstance;
 }
 
 function populateNumberField(field: NumberField, rawValue: unknown): NumberFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as number | undefined;
-  return field;
+  return fieldInstance;
 }
 
 function populateBooleanField(field: BooleanField, rawValue: unknown): BooleanFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as boolean | undefined;
-  return field;
+  return fieldInstance;
 }
 
-function populateColorField(field: ColorFieldInstance, rawValue: unknown): ColorFieldInstance {
+function populateColorField(field: ColorField, rawValue: unknown): ColorFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
   fieldInstance.value = rawValue as string | undefined;
-  return field;
+  return fieldInstance;
 }
 
 function populateObjectField(
@@ -224,7 +225,7 @@ function populateMapField(
   rawValue: unknown,
   context: ParseContext,
 ): MapFieldInstance {
-  const fieldInstance = field as MapFieldInstance;
+  const fieldInstance = cloneFieldInstance(field);
   fieldInstance.entries = [];
 
   if (!rawValue) {
@@ -248,24 +249,32 @@ function populateVariantField(
   context: ParseContext,
 ): VariantFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
+  const storedIdentity = rawValue?.[field.identityField.schemaKey];
+  const effectiveIdentity = storedIdentity ?? field.identityField.default;
+
   fieldInstance.identityField = populateFieldInstance(
     cloneFieldInstance(field.identityField),
-    rawValue?.[field.identityField.schemaKey],
+    storedIdentity,
     context,
   );
-  if (fieldInstance.identityField.value) {
-    let variantMatch = field.variantsByIdentity[fieldInstance.identityField.value];
+
+  if (effectiveIdentity) {
+    let variantMatch = field.variantsByIdentity[effectiveIdentity];
     if (variantMatch.type === "ref") {
-      variantMatch = context.assetsByRef[variantMatch.$ref]?.rootField as ObjectField | undefined;
-    }
-    if (!variantMatch) {
-      throw new Error(`Could not resolve asset reference: ${fieldInstance.identityField.value}`);
+      const ref = variantMatch.$ref;
+      variantMatch = context.assetsByRef[ref]?.rootField as ObjectField | undefined;
+      if (!variantMatch) {
+        throw new Error(`Could not resolve asset reference: ${ref}`);
+      }
     }
     fieldInstance.activeVariant = populateFieldInstance(
       cloneFieldInstance(variantMatch),
       rawValue,
       context,
     );
+    fieldInstance.activeVariant.properties[field.identityField.schemaKey] =
+      fieldInstance.identityField;
+    fieldInstance.activeVariant = transferMetadata(field, fieldInstance.activeVariant);
   }
 
   return fieldInstance;

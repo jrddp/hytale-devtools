@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import type {
   ArrayField,
+  AssetDefinition,
   BooleanField,
   Field,
   FieldBase,
@@ -15,7 +16,7 @@ import type {
   TimelineField,
   VariantField,
   WeightedTimelineField,
-} from "@shared/fieldTypes";
+} from "../../src/shared/fieldTypes";
 import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument.svelte";
 import type {
   ArrayFieldInstance,
@@ -25,7 +26,6 @@ import type {
   NumberFieldInstance,
   ObjectFieldInstance,
   RawJsonFieldInstance,
-  RefFieldInstance,
   RootFieldInstance,
   StringFieldInstance,
   TimelineFieldInstance,
@@ -40,6 +40,23 @@ function baseField(schemaKey: string | null, type: FieldBase["type"]): FieldBase
     section: "General",
     collapsedByDefault: false,
   };
+}
+
+function assetDefinition(rootField: ObjectField | VariantField, title = "Test Asset"): AssetDefinition {
+  return {
+    title,
+    rootField,
+    buttons: [],
+    refDependencies: new Set<string>(),
+  };
+}
+
+function assetDefinitionsByRef(
+  fieldsByRef: Record<string, ObjectField | VariantField>,
+): Record<string, AssetDefinition> {
+  return Object.fromEntries(
+    Object.entries(fieldsByRef).map(([ref, rootField]) => [ref, assetDefinition(rootField, ref)]),
+  );
 }
 
 function stringField(schemaKey: string, overrides: Partial<StringField> = {}): StringField {
@@ -127,13 +144,15 @@ function inlineOrReferenceField(
 function variantField(
   schemaKey: string,
   identityKey: string,
-  variantsByIdentity: Record<string, ObjectField>,
+  variantsByIdentity: Record<string, RefField | ObjectField>,
+  identityFieldOverrides: Partial<StringField> = {},
 ): VariantField {
   return {
     ...baseField(schemaKey, "variant"),
     identityField: {
       ...stringField(identityKey),
       enumVals: Object.keys(variantsByIdentity),
+      ...identityFieldOverrides,
     },
     variantsByIdentity,
   };
@@ -147,11 +166,30 @@ function expectReady(result: ReturnType<typeof parseDocumentText>): RootFieldIns
   return result.rootField;
 }
 
+function parseReady({
+  text,
+  rootField,
+  assetsByRef = {},
+}: {
+  text: string;
+  rootField: ObjectField | VariantField;
+  assetsByRef?: Record<string, AssetDefinition>;
+}): RootFieldInstance {
+  return expectReady(
+    parseDocumentText({
+      text,
+      assetDefinition: assetDefinition(rootField),
+      assetsByRef,
+    }),
+  );
+}
+
 describe("asset editor parseDocumentText", () => {
   test("rejects invalid JSON", () => {
     const result = parseDocumentText({
       text: "{",
-      rootField: objectField(null, {}),
+      assetDefinition: assetDefinition(objectField(null, {})),
+      assetsByRef: {},
     });
 
     expect(result).toMatchObject({
@@ -162,7 +200,8 @@ describe("asset editor parseDocumentText", () => {
   test("rejects non-object roots", () => {
     const result = parseDocumentText({
       text: "[]",
-      rootField: objectField(null, {}),
+      assetDefinition: assetDefinition(objectField(null, {})),
+      assetsByRef: {},
     });
 
     expect(result).toEqual({
@@ -181,17 +220,15 @@ describe("asset editor parseDocumentText", () => {
       }),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          name: "Armor Bronze Hands",
-          weight: 12,
-          enabled: true,
-          details: { tier: "bronze" },
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        name: "Armor Bronze Hands",
+        weight: 12,
+        enabled: true,
+        details: { tier: "bronze" },
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+    }) as ObjectFieldInstance;
 
     expect((root.properties.name as StringFieldInstance).value).toBe("Armor Bronze Hands");
     expect((root.properties.weight as NumberFieldInstance).value).toBe(12);
@@ -207,15 +244,13 @@ describe("asset editor parseDocumentText", () => {
       dimensions: arrayField("dimensions", [numberField("x"), numberField("y")]),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          tags: ["armor", "bronze"],
-          dimensions: [2, 4, 8],
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        tags: ["armor", "bronze"],
+        dimensions: [2, 4, 8],
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+    }) as ObjectFieldInstance;
 
     const tags = root.properties.tags as ArrayFieldInstance;
     const dimensions = root.properties.dimensions as ArrayFieldInstance;
@@ -233,17 +268,15 @@ describe("asset editor parseDocumentText", () => {
       labels: mapField("labels", stringField("label")),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          labels: {
-            armor: "Bronze",
-            slot: "Hands",
-          },
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        labels: {
+          armor: "Bronze",
+          slot: "Hands",
+        },
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+    }) as ObjectFieldInstance;
 
     const labels = root.properties.labels as MapFieldInstance;
     expect(labels.entries).toHaveLength(2);
@@ -251,7 +284,7 @@ describe("asset editor parseDocumentText", () => {
     expect((labels.entries[0]?.valueField as StringFieldInstance).value).toBe("Bronze");
   });
 
-  test("selects only the active variant branch", () => {
+  test("resolves object-backed variant branches", () => {
     const rootField = objectField(null, {
       item: variantField("item", "kind", {
         armor: objectField("", {
@@ -265,17 +298,15 @@ describe("asset editor parseDocumentText", () => {
       }),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          item: {
-            kind: "tool",
-            power: 7,
-          },
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        item: {
+          kind: "tool",
+          power: 7,
+        },
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+    }) as ObjectFieldInstance;
 
     const item = root.properties.item as VariantFieldInstance;
     expect(item.identityField.value).toBe("tool");
@@ -283,138 +314,218 @@ describe("asset editor parseDocumentText", () => {
     expect((item.activeVariant?.properties.kind as StringFieldInstance).value).toBe("tool");
   });
 
-  test("waits for only reachable refs and resolves them across multiple passes", () => {
-    const toolVariant = objectField("", {
-      kind: stringField("kind", { const: "tool" }),
-      owner: refField("owner", "owner#"),
-    });
-    const armorVariant = objectField("", {
-      kind: stringField("kind", { const: "armor" }),
-      stats: refField("stats", "stats#"),
-    });
+  test("uses the variant default discriminator when the raw object omits it", () => {
     const rootField = objectField(null, {
+      ticker: variantField(
+        "ticker",
+        "Type",
+        {
+          Default: objectField("", {
+            Type: stringField("Type", { const: "Default" }),
+            CanDemote: booleanField("CanDemote"),
+            SupportedBy: stringField("SupportedBy"),
+          }),
+        },
+        { default: "Default" },
+      ),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        ticker: {
+          CanDemote: true,
+          SupportedBy: "Lava_Source",
+        },
+      }),
+      rootField,
+    }) as ObjectFieldInstance;
+
+    const ticker = root.properties.ticker as VariantFieldInstance;
+    expect(ticker.identityField.value).toBeUndefined();
+    expect(ticker.activeVariant).toBeDefined();
+    expect((ticker.activeVariant?.properties.CanDemote as BooleanFieldInstance).value).toBe(true);
+    expect((ticker.activeVariant?.properties.SupportedBy as StringFieldInstance).value).toBe(
+      "Lava_Source",
+    );
+    expect(ticker.activeVariant?.properties.Type).toBe(ticker.identityField);
+  });
+
+  test("parses inheritance-based variant roots when Type is omitted and no default exists", () => {
+    const root = parseReady({
+      text: JSON.stringify({
+        Parent: "DamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 7,
+        },
+        DamageEffects: {
+          Knockback: {
+            Type: "Directional",
+            Force: 1,
+          },
+        },
+      }),
+      rootField: variantField(null, "Type", {
+        DamageEntity: objectField("", {
+          Type: stringField("Type", { const: "DamageEntity" }),
+          Parent: stringField("Parent"),
+          DamageCalculator: objectField("DamageCalculator", {
+            BaseDamage: numberField("BaseDamage"),
+          }),
+          DamageEffects: objectField("DamageEffects", {
+            Knockback: variantField(
+              "Knockback",
+              "Type",
+              {
+                Directional: objectField("", {
+                  Type: stringField("Type", { const: "Directional" }),
+                  Force: numberField("Force"),
+                }),
+              },
+              { default: "Directional" },
+            ),
+          }),
+        }),
+      }),
+    }) as VariantFieldInstance;
+
+    expect(root.activeVariant).toBeDefined();
+    expect((root.activeVariant?.properties.Parent as StringFieldInstance).value).toBe(
+      "DamageEntityParent",
+    );
+    expect(
+      ((root.activeVariant?.properties.DamageCalculator as ObjectFieldInstance).properties
+        .BaseDamage as NumberFieldInstance).value,
+    ).toBe(7);
+  });
+
+  test("resolves ref-backed variants and object fields from assetsByRef", () => {
+    const rootField = objectField(null, {
+      owner: refField("owner", "owner#"),
       item: variantField("item", "kind", {
-        armor: armorVariant,
-        tool: toolVariant,
+        armor: refField("", "armor#"),
+        tool: refField("", "tool#"),
       }),
     });
 
-    const text = JSON.stringify({
-      item: {
-        kind: "tool",
+    const assetsByRef = assetDefinitionsByRef({
+      "owner#": objectField(null, {
+        title: stringField("title"),
+      }),
+      "armor#": objectField(null, {
+        kind: stringField("kind", { const: "armor" }),
+        defense: numberField("defense"),
+      }),
+      "tool#": objectField(null, {
+        kind: stringField("kind", { const: "tool" }),
+        power: numberField("power"),
+      }),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
         owner: {
-          profile: {
-            handle: "@caretaker",
-          },
           title: "Caretaker",
         },
+        item: {
+          kind: "tool",
+          power: 7,
+        },
+      }),
+      rootField,
+      assetsByRef,
+    }) as ObjectFieldInstance;
+
+    const owner = root.properties.owner as ObjectFieldInstance;
+    const item = root.properties.item as VariantFieldInstance;
+
+    expect((owner.properties.title as StringFieldInstance).value).toBe("Caretaker");
+    expect(item.identityField.value).toBe("tool");
+    expect((item.activeVariant?.properties.power as NumberFieldInstance).value).toBe(7);
+  });
+
+  test("creates empty resolved ref-backed object fields when the property is absent", () => {
+    const rootField = objectField(null, {
+      owner: refField("owner", "owner#"),
+    });
+
+    const root = parseReady({
+      text: "{}",
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "owner#": objectField(null, {
+          title: stringField("title"),
+        }),
+      }),
+    }) as ObjectFieldInstance;
+
+    const owner = root.properties.owner as ObjectFieldInstance;
+    expect(owner.type).toBe("object");
+    expect((owner.properties.title as StringFieldInstance).value).toBeUndefined();
+  });
+
+  test("does not materialize nested defaulted variants inside an absent ref-backed object field", () => {
+    const rootField = objectField(null, {
+      damageEffects: {
+        ...refField("damageEffects", "damageEffects#"),
+        nullable: true,
+      },
+      statModifierEffects: {
+        ...refField("statModifierEffects", "damageEffects#"),
+        nullable: true,
       },
     });
 
-    const firstPass = parseDocumentText({
-      text,
-      rootField,
-    });
-    expect(firstPass).toEqual({
-      status: "waiting-for-refs",
-      missingRefs: ["owner#"],
-    });
-
-    const secondPass = parseDocumentText({
-      text,
-      rootField,
-      resolvedRefsByRef: new Map([
-        [
-          "owner#",
-          objectField(null, {
-            title: stringField("title"),
-            profile: refField("profile", "profile#"),
+    const damageEffectsField = objectField(null, {
+      Knockback: variantField(
+        "Knockback",
+        "Type",
+        {
+          Directional: objectField("", {
+            Type: stringField("Type", { const: "Directional" }),
+            Force: numberField("Force"),
           }),
-        ],
-      ]),
-    });
-    expect(secondPass).toEqual({
-      status: "waiting-for-refs",
-      missingRefs: ["profile#"],
+        },
+        { default: "Directional" },
+      ),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text,
-        rootField,
-        resolvedRefsByRef: new Map([
-          [
-            "owner#",
-            objectField(null, {
-              title: stringField("title"),
-              profile: refField("profile", "profile#"),
-            }),
-          ],
-          [
-            "profile#",
-            objectField(null, {
-              handle: stringField("handle"),
-            }),
-          ],
-        ]),
-      }),
-    ) as ObjectFieldInstance;
-
-    const owner = (root.properties.item as VariantFieldInstance).activeVariant?.properties
-      .owner as RefFieldInstance;
-    expect((owner.resolvedField as ObjectFieldInstance).properties.title.value).toBe("Caretaker");
-  });
-
-  test("resolves ref-backed object fields even when the property is absent from the document", () => {
-    const rootField = objectField(null, {
-      owner: refField("owner", "owner#"),
-    });
-
-    const waiting = parseDocumentText({
+    const root = parseReady({
       text: "{}",
       rootField,
-    });
-    expect(waiting).toEqual({
-      status: "waiting-for-refs",
-      missingRefs: ["owner#"],
-    });
-
-    const root = expectReady(
-      parseDocumentText({
-        text: "{}",
-        rootField,
-        resolvedRefsByRef: new Map([
-          [
-            "owner#",
-            objectField(null, {
-              title: stringField("title"),
-            }),
-          ],
-        ]),
+      assetsByRef: assetDefinitionsByRef({
+        "damageEffects#": damageEffectsField,
       }),
-    ) as ObjectFieldInstance;
+    }) as ObjectFieldInstance;
 
-    const owner = root.properties.owner as RefFieldInstance;
-    expect((owner.resolvedField as ObjectFieldInstance).properties.title.type).toBe("string");
+    const damageEffects = root.properties.damageEffects as ObjectFieldInstance;
+    const statModifierEffects = root.properties.statModifierEffects as ObjectFieldInstance;
+
+    expect(((damageEffects.properties.Knockback as VariantFieldInstance).identityField.value)).toBeUndefined();
+    expect(
+      ((statModifierEffects.properties.Knockback as VariantFieldInstance).identityField.value),
+    ).toBeUndefined();
   });
 
-  test("parses inline-or-reference string and inline modes", () => {
+  test("parses inline-or-reference string and inline object modes", () => {
     const rootField = objectField(null, {
-      referenceOnly: inlineOrReferenceField("referenceOnly", objectField("", { name: stringField("name") })),
-      inlineOnly: inlineOrReferenceField("inlineOnly", objectField("", { name: stringField("name") })),
+      referenceOnly: inlineOrReferenceField("referenceOnly", refField("", "inline#")),
+      inlineOnly: inlineOrReferenceField("inlineOnly", refField("", "inline#")),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          referenceOnly: "Items/Armor/Bronze",
-          inlineOnly: {
-            name: "Inline Item",
-          },
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        referenceOnly: "Items/Armor/Bronze",
+        inlineOnly: {
+          name: "Inline Item",
+        },
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "inline#": objectField(null, {
+          name: stringField("name"),
+        }),
+      }),
+    }) as ObjectFieldInstance;
 
     const referenceOnly = root.properties.referenceOnly as InlineOrReferenceFieldInstance;
     const inlineOnly = root.properties.inlineOnly as InlineOrReferenceFieldInstance;
@@ -427,20 +538,90 @@ describe("asset editor parseDocumentText", () => {
     ).toBe("Inline Item");
   });
 
+  test("parses inline-or-reference objects when the resolved ref points at a variant root", () => {
+    const rootField = objectField(null, {
+      next: inlineOrReferenceField("next", refField("", "interaction#")),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        next: {
+          Parent: "Teleporter_Try_Place",
+          Value: 2,
+        },
+      }),
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "interaction#": variantField(
+          null,
+          "Type",
+          {
+            MemoriesCondition: objectField("", {
+              Type: stringField("Type", { const: "MemoriesCondition" }),
+              Parent: stringField("Parent"),
+              Value: numberField("Value"),
+            }),
+          },
+          { default: "MemoriesCondition" },
+        ),
+      }),
+    }) as ObjectFieldInstance;
+
+    const next = root.properties.next as InlineOrReferenceFieldInstance;
+    expect(next.activeField.type).toBe("variant");
+    expect((next.activeField as VariantFieldInstance).activeVariant).toBeDefined();
+    expect(((next.activeField as VariantFieldInstance).identityField.value)).toBeUndefined();
+    expect(
+      (((next.activeField as VariantFieldInstance).activeVariant?.properties.Parent as StringFieldInstance)
+        .value),
+    ).toBe("Teleporter_Try_Place");
+  });
+
+  test("parses inline-or-reference objects when the resolved variant root omits Type and has no default", () => {
+    const rootField = objectField(null, {
+      next: inlineOrReferenceField("next", refField("", "interaction#")),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        next: {
+          Parent: "Teleporter_Try_Place",
+          Value: 2,
+        },
+      }),
+      rootField,
+      assetsByRef: assetDefinitionsByRef({
+        "interaction#": variantField(null, "Type", {
+          MemoriesCondition: objectField("", {
+            Type: stringField("Type", { const: "MemoriesCondition" }),
+            Parent: stringField("Parent"),
+            Value: numberField("Value"),
+          }),
+        }),
+      }),
+    }) as ObjectFieldInstance;
+
+    const next = root.properties.next as InlineOrReferenceFieldInstance;
+    expect(next.activeField.type).toBe("variant");
+    expect((next.activeField as VariantFieldInstance).activeVariant).toBeDefined();
+    expect(
+      (((next.activeField as VariantFieldInstance).activeVariant?.properties.Parent as StringFieldInstance)
+        .value),
+    ).toBe("Teleporter_Try_Place");
+  });
+
   test("preserves unknown keys on object fields", () => {
     const rootField = objectField(null, {
       name: stringField("name"),
     });
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          name: 42,
-          extra: true,
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        name: 42,
+        extra: true,
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+    }) as ObjectFieldInstance;
 
     expect((root.properties.name as StringFieldInstance).value as unknown).toBe(42);
     expect(root.unparsedData).toEqual({ extra: true });
@@ -457,16 +638,14 @@ describe("asset editor parseDocumentText", () => {
       nested: { value: 1 },
     };
 
-    const root = expectReady(
-      parseDocumentText({
-        text: JSON.stringify({
-          payload: rawPayload,
-          timeline: [{ time: 0, value: "Idle" }],
-          weighted: { Common: 2, Rare: 1 },
-        }),
-        rootField,
+    const root = parseReady({
+      text: JSON.stringify({
+        payload: rawPayload,
+        timeline: [{ time: 0, value: "Idle" }],
+        weighted: { Common: 2, Rare: 1 },
       }),
-    ) as ObjectFieldInstance;
+      rootField,
+    }) as ObjectFieldInstance;
 
     expect((root.properties.payload as RawJsonFieldInstance).value).toBe(
       JSON.stringify(rawPayload, null, 2),
