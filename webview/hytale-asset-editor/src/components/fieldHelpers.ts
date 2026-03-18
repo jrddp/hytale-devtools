@@ -1,4 +1,4 @@
-import type { Field } from "@shared/fieldTypes";
+import type { Field } from "../../../../src/shared/fieldTypes";
 import type { FieldInstance } from "../parsing/fieldInstances";
 
 export type FieldSection = {

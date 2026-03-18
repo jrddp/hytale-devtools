@@ -10,14 +10,15 @@ import {
 } from "../shared/fieldTypes";
 import { firstGlobMatch, safeParseJSONFile } from "../shared/fileUtils";
 import { isObject } from "../shared/typeUtils";
+import { schemaPathToGlobPattern } from "../utils/hytalePaths";
 import { type CommonSchemaFile, type StandardSchemaFile } from "./schemaDefinitionTypes";
 import { schemaDefinitionToAssetDefinition } from "./schemaToFieldResolver";
 
 export class SchemaRuntime {
   /** maps exact $ref strings to their definitions */
   readonly assetsByRef = new Map<string, AssetDefinition>();
-  /** maps server asset paths to their definitions (paths excluding Server, e.g. Server/{path}) */
-  readonly assetsByPath = new Map<string, AssetDefinition>();
+  /** maps path matching glob patterns to their definitions */
+  readonly assetsByGlobPattern = new Map<string, AssetDefinition>();
   readonly schemaDir: string;
   private readonly logger: BasicLogger;
 
@@ -106,14 +107,8 @@ export class SchemaRuntime {
   }
 
   getAssetDefinitionForPath(assetPath: string): AssetDefinition | undefined {
-    assetPath = path.normalize(assetPath);
-    for (const [schemaPath, assetDefinition] of this.assetsByPath) {
-      if (firstGlobMatch(assetPath, [`**/Server/${schemaPath}/**`])) {
-        return assetDefinition;
-      }
-    }
-
-    return undefined;
+    const match = firstGlobMatch(assetPath, Array.from(this.assetsByGlobPattern.keys()));
+    return match ? this.assetsByGlobPattern.get(match) : undefined;
   }
 
   private loadAssetDefinitions(): void {
@@ -158,8 +153,13 @@ export class SchemaRuntime {
           continue;
         }
         assetDefinition.path = fileContent.hytale.path;
+        assetDefinition.extension = fileContent.hytale.extension;
         this.assetsByRef.set(`${fileContent.$id}#`, assetDefinition);
-        this.assetsByPath.set(fileContent.hytale.path, assetDefinition);
+        const globPattern = schemaPathToGlobPattern(
+          fileContent.hytale.path,
+          fileContent.hytale.extension,
+        );
+        this.assetsByGlobPattern.set(globPattern, assetDefinition);
       }
     }
 

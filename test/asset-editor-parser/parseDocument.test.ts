@@ -17,7 +17,7 @@ import type {
   VariantField,
   WeightedTimelineField,
 } from "../../src/shared/fieldTypes";
-import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument.svelte";
+import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument";
 import type {
   ArrayFieldInstance,
   BooleanFieldInstance,

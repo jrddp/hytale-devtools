@@ -1,5 +1,6 @@
 import path from "path";
 import * as vscode from "vscode";
+import { AssetCacheRuntime } from "./asset-cache/assetCacheRuntime";
 import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
 import { WorkspaceRuntime } from "./node-editor/workspaceResolver";
@@ -8,11 +9,17 @@ import { createSchemaWatcherRuntime } from "./schema/schemaWatcher";
 import { loadIndexesFromRoot } from "./schema/symbolResolver";
 import { type IndexKind, type SymbolIndex } from "./shared/indexTypes";
 import { ensureHytaleHomeConfiguredOnStartup } from "./utils/hytaleHomeConfiguration";
-import { resolveDataRootDirFromContext, SCHEMAS_DIRECTORY_NAME } from "./utils/hytalePaths";
+import {
+  getAssetsZipPath,
+  resolveDataRootDirFromContext,
+  resolvePatchlineForContext,
+  SCHEMAS_DIRECTORY_NAME,
+} from "./utils/hytalePaths";
 
 export let LOGGER: vscode.LogOutputChannel;
 export let schemaRuntime: SchemaRuntime;
 export let workspaceRuntime: WorkspaceRuntime;
+export let assetCacheRuntime: AssetCacheRuntime;
 export let indexes: Map<IndexKind, SymbolIndex>;
 
 function reloadSchemaData(context: vscode.ExtensionContext, reason: string): void {
@@ -29,6 +36,17 @@ function reloadSchemaData(context: vscode.ExtensionContext, reason: string): voi
   );
 
   indexes = loadIndexesFromRoot(dataRoot.rootPath);
+  assetCacheRuntime = new AssetCacheRuntime(
+    getAssetsZipPath(resolvePatchlineForContext(context)),
+    schemaRuntime,
+    LOGGER,
+  );
+
+  void assetCacheRuntime.ready.catch(error => {
+    LOGGER.error(
+      `Failed to load base-game asset cache: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
 
   LOGGER.info(`Loaded schema data from ${dataRoot.source} (${dataRoot.rootPath}) - (${reason})`);
 }

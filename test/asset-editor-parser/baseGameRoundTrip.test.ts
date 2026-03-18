@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, test } from "vitest";
 
 import { SchemaRuntime } from "../../src/schema/schemaLoader";
-import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument.svelte";
+import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument";
 import { serializeDocument } from "../../webview/hytale-asset-editor/src/parsing/serializeDocument";
 
 const BASE_GAME_ASSETS_DIR_ENV = "BASE_GAME_ASSETS_DIR";

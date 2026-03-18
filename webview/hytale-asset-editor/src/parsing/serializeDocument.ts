@@ -1,4 +1,4 @@
-import { isObject } from "@shared/typeUtils";
+import { isObject } from "../../../../src/shared/typeUtils";
 import type {
   ArrayFieldInstance,
   FieldInstance,

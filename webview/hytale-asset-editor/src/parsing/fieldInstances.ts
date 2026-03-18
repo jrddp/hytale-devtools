@@ -12,7 +12,7 @@ import type {
   TimelineField,
   VariantField,
   WeightedTimelineField,
-} from "@shared/fieldTypes";
+} from "../../../../src/shared/fieldTypes";
 
 export type FieldInstance =
   | StringFieldInstance

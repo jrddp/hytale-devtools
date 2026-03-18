@@ -10,7 +10,7 @@ import type {
 import {
   createEmptyFieldInstance as createEmptyFieldInstanceFromSchema,
   parseDocumentText,
-} from "./parsing/parseDocument.svelte";
+} from "./parsing/parseDocument";
 import { serializeDocument, serializeDocumentText } from "./parsing/serializeDocument";
 
 export class Workspace {
@@ -82,7 +82,7 @@ export class Workspace {
       return null;
     }
 
-    return serializeDocument(this.documentRootField);
+    return serializeDocument($state.snapshot(this.documentRootField));
   }
 
   serializeDocumentText() {
@@ -90,7 +90,7 @@ export class Workspace {
       return null;
     }
 
-    return serializeDocumentText(this.documentRootField);
+    return serializeDocumentText($state.snapshot(this.documentRootField));
   }
 
   applyDocumentState() {
@@ -109,7 +109,10 @@ export class Workspace {
   }
 
   createEmptyFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
-    return createEmptyFieldInstanceFromSchema(field, this.assetsByRef);
+    return createEmptyFieldInstanceFromSchema(
+      $state.snapshot(field) as TField,
+      $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
+    );
   }
 
   reparseDocument(text: string) {
@@ -120,8 +123,8 @@ export class Workspace {
 
     const result = parseDocumentText({
       text: text,
-      assetDefinition: this.assetDefinition,
-      assetsByRef: this.assetsByRef,
+      assetDefinition: $state.snapshot(this.assetDefinition) as AssetDefinition,
+      assetsByRef: $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
     });
 
     switch (result.status) {

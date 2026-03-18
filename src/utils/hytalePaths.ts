@@ -199,3 +199,7 @@ export function resolveDataRootDirFromContext(
     resolvePatchlineForContext(context),
   );
 }
+
+export function schemaPathToGlobPattern(schemaPath: string, extension: string): string {
+  return `**/Server/${schemaPath}/**/*${extension}`;
+}

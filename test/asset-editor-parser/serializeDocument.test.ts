@@ -16,7 +16,7 @@ import type {
   VariantField,
 } from "@shared/fieldTypes";
 import type { RootFieldInstance } from "../../webview/hytale-asset-editor/src/parsing/fieldInstances";
-import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument.svelte";
+import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument";
 import { serializeDocument } from "../../webview/hytale-asset-editor/src/parsing/serializeDocument";
 
 function baseField(schemaKey: string | null, type: FieldBase["type"]): FieldBase {

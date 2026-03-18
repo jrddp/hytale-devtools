@@ -14,8 +14,8 @@ import type {
   TimelineField,
   VariantField,
   WeightedTimelineField,
-} from "@shared/fieldTypes";
-import { isObject } from "@shared/typeUtils";
+} from "../../../../src/shared/fieldTypes";
+import { isObject } from "../../../../src/shared/typeUtils";
 import { transferMetadata } from "../components/fieldHelpers";
 import type {
   ArrayFieldInstance,
@@ -348,7 +348,7 @@ function populateWeightedTimelineField(
 }
 
 function cloneFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
-  return structuredClone($state.snapshot(field)) as TField & FieldInstance;
+  return structuredClone(field) as TField & FieldInstance;
 }
 
 function stripBom(text: string): string {

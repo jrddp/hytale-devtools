@@ -147,4 +147,5 @@ export type AssetDefinition = {
   buttons: ButtonTypes[];
   refDependencies: Set<string>;
   path?: string;
+  extension?: string;
 };
