@@ -1,4 +1,7 @@
-import type { AssetEditorWebviewToExtensionMessage } from "@shared/asset-editor/messageTypes";
+import type {
+  AssetEditorParentState,
+  AssetEditorWebviewToExtensionMessage,
+} from "@shared/asset-editor/messageTypes";
 import type { AssetDefinition, Field } from "@shared/fieldTypes";
 import type { VSCodeApi } from "./common";
 import type {
@@ -24,6 +27,9 @@ export class Workspace {
   documentParseError = $state<string | null>(null);
 
   assetsByRef = $state<Record<string, AssetDefinition> | null>(null);
+  parentStatus = $state<AssetEditorParentState["status"]>("none");
+  parentName = $state<string | null>(null);
+  parentInstance = $state<AssetEditorParentState["parentInstance"]>(undefined);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
 
@@ -39,6 +45,9 @@ export class Workspace {
     this.documentParseError = null;
     this.autocompleteField = undefined;
     this.autocompleteValues = [];
+    this.parentStatus = "none";
+    this.parentName = null;
+    this.parentInstance = undefined;
   }
 
   setDocument({
@@ -58,6 +67,12 @@ export class Workspace {
   setAutocompleteValues(fieldId: string, values: string[]) {
     this.autocompleteField = fieldId;
     this.autocompleteValues = sortAssetVariantsToBottom(values);
+  }
+
+  setParentState(parent: AssetEditorParentState) {
+    this.parentStatus = parent.status;
+    this.parentName = parent.parentName ?? null;
+    this.parentInstance = parent.parentInstance;
   }
 
   setAllPanelsCollapsed(collapsed: boolean) {

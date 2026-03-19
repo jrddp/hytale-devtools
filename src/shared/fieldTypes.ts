@@ -57,6 +57,7 @@ export type StringField = FieldBase & {
   localizationKeyTemplate?: string;
   const?: string;
   bannedValues?: string[];
+  definesParent?: boolean;
 };
 
 export type NumberField = FieldBase & {

@@ -20,6 +20,7 @@ export class AssetCacheRuntime {
   readonly assetInstances = new Map<string, Map<string, AssetInstance>>();
   readonly assetsZipPath: string;
   readonly ready: Promise<void>;
+  isReady = false;
 
   loadedAssetCount = 0;
   failedAssetCount = 0;
@@ -31,7 +32,9 @@ export class AssetCacheRuntime {
     this.assetsZipPath = assetsZipPath;
     this.logger = logger;
     this.schemaRuntime = schemaRuntime;
-    this.ready = this.loadAssets();
+    this.ready = this.loadAssets().finally(() => {
+      this.isReady = true;
+    });
   }
 
   getAssetsOfType(type: string): Map<string, AssetInstance> | undefined {

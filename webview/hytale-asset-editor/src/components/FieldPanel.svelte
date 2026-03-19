@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { Field } from "@shared/fieldTypes";
   import { ChevronDown, ChevronRight, CircleX, Info } from "lucide-svelte";
   import { marked } from "marked";
+  import type { RenderFieldProps } from "src/common";
   import { workspace } from "src/workspace.svelte";
-  import type { Snippet } from "svelte";
   import { createTooltip } from "../../../shared/components/tooltip/createTooltip.svelte";
   import TooltipContent from "../../../shared/components/tooltip/TooltipContent.svelte";
   import { createStickyHeader } from "./createStickyHeader.svelte";
@@ -11,31 +10,24 @@
 
   const STICKY_HEADER_HEIGHT_PX = 44;
 
-  interface Props {
-    field: Field;
-    depth?: number;
-    summary?: string;
-    inline?: boolean;
-    collapsedByDefault?: boolean;
-    collapsed?: boolean;
-    collapseEnabled?: boolean;
-    onunset?: () => void;
-    actions?: Snippet;
-    children?: Snippet;
-  }
-
   let {
     field,
     depth = 0,
     inline = false,
-    summary,
+    onunset,
     collapsedByDefault = true,
     collapseEnabled = true,
-    onunset,
-    actions,
-    children,
     collapsed = $bindable(collapsedByDefault),
-  }: Props = $props();
+    summary,
+    actions,
+    glyphs,
+    children,
+  }: RenderFieldProps & {
+    inline?: boolean;
+    collapsedByDefault?: boolean;
+    collapseEnabled?: boolean;
+    collapsed?: boolean;
+  } = $props();
 
   const infoTooltip = createTooltip();
   const stickyHeader = createStickyHeader({
@@ -67,7 +59,7 @@
   </h2>
   <button
     {@attach infoTooltip.trigger}
-    class="relative inline-flex items-center justify-center w-4 h-4 rounded-sm group/info opacity-70"
+    class="relative inline-flex items-center justify-center size-4 rounded-sm opacity-70"
     aria-label={`Info about ${label}`}
     tabindex={-1}
     onclick={event => {
@@ -87,6 +79,9 @@
       </div>
     </TooltipContent>
   </button>
+
+  {@render glyphs?.()}
+
   {#if summary}
     <div class="text-xs truncate text-vsc-muted">{summary}</div>
   {/if}

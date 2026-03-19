@@ -84,6 +84,7 @@ export class MockVSCodeApi implements VSCodeApi {
       type: "bootstrap",
       assetDefinition: payload.assetDefinition as never,
       assetsByRef: payload.assetsByRef as never,
+      parent: { status: "none" },
     });
     this.send({
       type: "update",
@@ -149,6 +150,15 @@ export class MockVSCodeApi implements VSCodeApi {
         return;
       case "autocompleteRequest":
         await this.sendAutocompleteValues(message.symbolLookup, message.fieldId);
+        return;
+      case "resolveParent":
+        this.send({
+          type: "parentUpdate",
+          parent: {
+            status: "missing",
+            parentName: message.parentName,
+          },
+        });
         return;
       case "apply":
       case "openRawJson":

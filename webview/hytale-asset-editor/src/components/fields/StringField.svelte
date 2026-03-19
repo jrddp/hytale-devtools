@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { createTooltip } from "@webview-shared/components/tooltip/createTooltip.svelte";
+  import TooltipContent from "@webview-shared/components/tooltip/TooltipContent.svelte";
+  import { LoaderCircle } from "lucide-svelte";
   import { type RenderFieldProps } from "src/common";
   import SingleLineAutocompleteInput from "../../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
@@ -12,7 +15,7 @@
     oncommitchange,
     onunset,
   }: RenderFieldProps<StringFieldInstance> & {
-    oncommitchange?: (value: string) => void;
+    oncommitchange?: (value: string | undefined) => void;
   } = $props();
 
   let inputId = $derived(getFieldEditorId(field));
@@ -43,23 +46,53 @@
     });
   }
 
-  function commitValue(value: string) {
-    console.log("Committing value", value, field.value);
-    if (!value) value = undefined;
-    if (value === field.value) {
+  function commitValue(value?: string) {
+    const nextValue = value || undefined;
+    if (nextValue === field.value) {
       return;
     }
 
-    field.value = value;
+    field.value = nextValue;
     workspace.applyDocumentState();
-    oncommitchange?.(value);
+
+    if (field.definesParent) {
+      workspace.setParentState({ status: "none" });
+      if (nextValue) {
+        workspace.vscode.postMessage({
+          type: "resolveParent",
+          parentName: nextValue,
+        });
+      }
+    }
+
+    oncommitchange?.(nextValue);
   }
+
+  const parentTooltip = $derived(
+    field.definesParent && workspace.parentStatus === "loading" ? createTooltip() : undefined,
+  );
 </script>
+
+{#snippet glyphs()}
+  {#if field.definesParent && workspace.parentStatus === "loading"}
+    <div class="flex items-center size-4 opacity-70" {@attach parentTooltip.trigger}>
+      <LoaderCircle size={12} class="duration-700 origin-center animate-spin" />
+    </div>
+    <TooltipContent
+      tooltip={parentTooltip}
+      placement="right"
+      class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
+    >
+      <div>Assets are being loaded. Parent data will be available soon.</div>
+    </TooltipContent>
+  {/if}
+{/snippet}
 
 <FieldPanel
   {field}
   {depth}
   inline
+  {glyphs}
   onunset={isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
 >
   <SingleLineAutocompleteInput

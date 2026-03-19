@@ -281,6 +281,7 @@ function propertyDefinitionToField(
         isLocalizationKey: definition.hytale?.uiEditorComponent?.component === "LocalizationKey",
         localizationKeyTemplate: definition.hytale?.uiEditorComponent?.keyTemplate,
         const: definition.const,
+        definesParent: !!definition.hytaleParent,
       };
 
     // # Number
