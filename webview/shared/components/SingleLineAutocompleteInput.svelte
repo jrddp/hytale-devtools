@@ -40,13 +40,17 @@
   let value = $state("");
   let lastCommittedValue = $state("");
   let isFocused = $state(false);
+  let inputElement = $state<HTMLInputElement>();
+  let isEntireValueSelected = $state(false);
   let activeAutocompleteIndex = $state(-1);
   let autocompleteListElement = $state<HTMLDivElement>();
   let previewAnchorElement = $state<HTMLElement | null>(null);
 
   $effect(() => {
     void value;
+    void isEntireValueSelected;
     activeAutocompleteIndex = -1;
+    queueMicrotask(scrollActiveAutocompleteIntoView);
   });
 
   $effect(() => {
@@ -61,9 +65,12 @@
       option.value.toLowerCase().includes((value ?? "").toLowerCase()),
     ),
   );
-  const shouldAutocomplete = $derived(isFocused && filteredAutocompleteOptions.length > 0);
+  const visibleAutocompleteOptions = $derived(
+    value.length > 0 && isEntireValueSelected ? autocompleteOptions : filteredAutocompleteOptions,
+  );
+  const shouldAutocomplete = $derived(isFocused && visibleAutocompleteOptions.length > 0);
   const previewOption = $derived(
-    filteredAutocompleteOptions[activeAutocompleteIndex >= 0 ? activeAutocompleteIndex : 0],
+    visibleAutocompleteOptions[activeAutocompleteIndex >= 0 ? activeAutocompleteIndex : 0],
   );
   const previewHtml = $derived(
     previewOption?.markdownDescription
@@ -97,8 +104,21 @@
     }
   }
 
+  function updateSelectionState(target: HTMLInputElement | null = inputElement ?? null) {
+    if (!target) {
+      isEntireValueSelected = false;
+      return;
+    }
+
+    const selectionStart = target.selectionStart;
+    const selectionEnd = target.selectionEnd;
+    isEntireValueSelected =
+      target.value.length > 0 && selectionStart === 0 && selectionEnd === target.value.length;
+  }
+
   function confirmValue() {
     isFocused = false;
+    isEntireValueSelected = false;
     activeAutocompleteIndex = -1;
     if (value === lastCommittedValue) {
       return;
@@ -113,6 +133,12 @@
       return;
     }
 
+    if (activeAutocompleteIndex === -1) {
+      const firstButton = autocompleteListElement.querySelector("button");
+      firstButton?.scrollIntoView({ block: "nearest" });
+      console.log("Button scrolled to:", firstButton);
+      return;
+    }
     const activeItemElement = autocompleteListElement.querySelector('[data-active="true"]');
     activeItemElement?.scrollIntoView({ block: "nearest" });
   }
@@ -124,7 +150,33 @@
 
   function handleFocus() {
     isFocused = true;
+    queueMicrotask(() => updateSelectionState());
     onfocus?.();
+  }
+
+  function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
+    updateSelectionState(event.currentTarget);
+  }
+
+  function handleKeyup(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
+    updateSelectionState(event.currentTarget);
+  }
+
+  function handleSelectionChange(event: Event & { currentTarget: HTMLInputElement }) {
+    const input = event.currentTarget;
+    queueMicrotask(() => updateSelectionState(input));
+  }
+
+  function handleMouseup(event: MouseEvent & { currentTarget: HTMLInputElement }) {
+    stopPointerEvent(event);
+    const input = event.currentTarget;
+    queueMicrotask(() => updateSelectionState(input));
+  }
+
+  function handleClick(event: MouseEvent & { currentTarget: HTMLInputElement }) {
+    stopPointerEvent(event);
+    const input = event.currentTarget;
+    queueMicrotask(() => updateSelectionState(input));
   }
 
   function handleInputKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
@@ -133,8 +185,7 @@
         if (!shouldAutocomplete) return;
         event.preventDefault();
         event.stopPropagation();
-        activeAutocompleteIndex =
-          (activeAutocompleteIndex + 1) % filteredAutocompleteOptions.length;
+        activeAutocompleteIndex = (activeAutocompleteIndex + 1) % visibleAutocompleteOptions.length;
         queueMicrotask(scrollActiveAutocompleteIntoView);
         return;
       case "ArrowUp":
@@ -144,8 +195,8 @@
         activeAutocompleteIndex =
           activeAutocompleteIndex === -1
             ? 0
-            : (activeAutocompleteIndex - 1 + filteredAutocompleteOptions.length) %
-              filteredAutocompleteOptions.length;
+            : (activeAutocompleteIndex - 1 + visibleAutocompleteOptions.length) %
+              visibleAutocompleteOptions.length;
         queueMicrotask(scrollActiveAutocompleteIntoView);
         return;
       case "Escape":
@@ -157,7 +208,7 @@
         event.preventDefault();
         event.stopPropagation();
         if (shouldAutocomplete) {
-          const selectedValue = filteredAutocompleteOptions[activeAutocompleteIndex]?.value;
+          const selectedValue = visibleAutocompleteOptions[activeAutocompleteIndex]?.value;
           if (selectedValue !== undefined) {
             value = selectedValue;
           }
@@ -173,6 +224,7 @@
 
 <div class="relative min-w-0">
   <input
+    bind:this={inputElement}
     id={inputId}
     type="text"
     class={inputClass}
@@ -181,11 +233,15 @@
     {placeholder}
     {disabled}
     onfocus={handleFocus}
+    oninput={handleInput}
     onkeydown={handleInputKeydown}
+    onkeyup={handleKeyup}
+    onselect={handleSelectionChange}
     onblur={confirmValue}
     onpointerdown={stopPointerEvent}
     onmousedown={stopPointerEvent}
-    onclick={stopPointerEvent}
+    onmouseup={handleMouseup}
+    onclick={handleClick}
   />
 
   {#if shouldAutocomplete}
@@ -197,7 +253,7 @@
       onpointerdown={stopPointerEvent}
       onmousedown={stopPointerEvent}
     >
-      {#each filteredAutocompleteOptions as option, index (option.value)}
+      {#each visibleAutocompleteOptions as option, index (option.value)}
         <button
           type="button"
           tabindex="-1"
