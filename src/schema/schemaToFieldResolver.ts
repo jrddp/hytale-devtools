@@ -196,6 +196,7 @@ function propertyDefinitionToField(
         StringPropertyDefinition,
         RefPropertyDefinition,
       ];
+      state.refDependencies.add(refDefinition.$ref);
       const stringField: StringField = {
         ...fieldBase,
         type: "string",
