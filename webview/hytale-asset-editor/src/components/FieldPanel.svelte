@@ -139,7 +139,7 @@
       role="button"
       tabindex={collapseEnabled ? 0 : -1}
       style:top={isStickyEnabled ? `${stickyTop}px` : undefined}
-      style:z-index={isStickyEnabled && stickyHeader.isStuck() ? `${120 - depth}` : undefined}
+      style:z-index={isStickyEnabled && stickyHeader.hasPassedStickyThreshold() ? `${120 - depth}` : undefined}
       onclick={event => {
         collapsed = !collapsed;
         event.preventDefault();

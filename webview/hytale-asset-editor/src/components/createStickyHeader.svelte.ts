@@ -15,10 +15,12 @@ export function createStickyHeader({
   let scrollRootElement: HTMLElement | null = null;
 
   let isStuck = $state(false);
+  let hasPassedStickyThreshold = $state(false);
 
   function update() {
     if (!enabled() || !headerElement || !panelElement || !scrollRootElement) {
       isStuck = false;
+      hasPassedStickyThreshold = false;
       return;
     }
 
@@ -26,8 +28,10 @@ export function createStickyHeader({
     const panelRect = panelElement.getBoundingClientRect();
     const stickyTop = rootTop + top();
 
+    hasPassedStickyThreshold = panelRect.top < stickyTop;
     isStuck =
-      panelRect.top < stickyTop && panelRect.bottom > stickyTop + headerElement.offsetHeight;
+      hasPassedStickyThreshold &&
+      panelRect.bottom > stickyTop + headerElement.offsetHeight;
   }
 
   $effect(() => {
@@ -70,11 +74,13 @@ export function createStickyHeader({
       currentScrollRootElement?.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
       isStuck = false;
+      hasPassedStickyThreshold = false;
     };
   };
 
   return {
     header,
+    hasPassedStickyThreshold: () => hasPassedStickyThreshold,
     isStuck: () => isStuck,
     update,
   };
