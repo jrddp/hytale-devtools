@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { BooleanFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
@@ -14,11 +13,18 @@
     onunset?: () => void;
   } = $props();
 
-  let checked = $state(false);
   const isSet = $derived(field.value !== undefined);
+  const checked = $derived(field.value ?? field.inheritedValue ?? field.default ?? false);
+  const fallbackLabel = $derived.by(() => {
+    if (field.value !== undefined) {
+      return null;
+    }
 
-  onMount(() => {
-    checked = isSet ? checked : Boolean(field.default);
+    if (field.inheritedValue !== undefined) {
+      return "Inherited";
+    }
+
+    return "Default";
   });
 
   function commitValue(value: boolean) {
@@ -37,12 +43,12 @@
     <input
       class="size-6 accent-vsc-activity-bar-badge-bg"
       type="checkbox"
-      {checked}
+      checked={checked}
       onchange={event => commitValue(event.currentTarget.checked)}
       class:accent-vsc-muted={!isSet}
     />
-    {#if !isSet}
-      <div class="italic text-vsc-muted opacity-70">(Unset)</div>
+    {#if fallbackLabel}
+      <div class="italic text-vsc-muted opacity-70">({fallbackLabel})</div>
     {/if}
   </div>
 </FieldPanel>

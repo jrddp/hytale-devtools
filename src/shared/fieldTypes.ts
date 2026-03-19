@@ -42,6 +42,7 @@ export type FieldBase = {
   suffix?: string;
   nullable?: boolean;
   collapsedByDefault?: boolean;
+  inheritsValue?: boolean;
 };
 
 export type StringField = FieldBase & {

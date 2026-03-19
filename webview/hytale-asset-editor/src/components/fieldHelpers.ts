@@ -103,3 +103,10 @@ export function transferMetadata<TField extends Field, TFieldInstance extends Fi
     nullable: source.nullable ?? target.nullable,
   };
 }
+
+export function getFieldPlaceholder(
+  field: Pick<Field, "default"> & { inheritedValue?: string | number },
+): string {
+  const fallbackValue = field.inheritedValue ?? field.default;
+  return fallbackValue !== undefined ? String(fallbackValue) : "Unset";
+}

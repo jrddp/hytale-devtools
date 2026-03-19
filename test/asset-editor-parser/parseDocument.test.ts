@@ -170,16 +170,19 @@ function parseReady({
   text,
   rootField,
   assetsByRef = {},
+  parentData,
 }: {
   text: string;
   rootField: ObjectField | VariantField;
   assetsByRef?: Record<string, AssetDefinition>;
+  parentData?: unknown;
 }): RootFieldInstance {
   return expectReady(
     parseDocumentText({
       text,
       assetDefinition: assetDefinition(rootField),
       assetsByRef,
+      parentData,
     }),
   );
 }
@@ -238,6 +241,50 @@ describe("asset editor parseDocumentText", () => {
     ).toBe("bronze");
   });
 
+  test("populates inherited scalar values when fields opt into inheritance", () => {
+    const rootField = objectField(null, {
+      name: stringField("name", { inheritsValue: true }),
+      weight: numberField("weight", { inheritsValue: true }),
+      enabled: booleanField("enabled", { inheritsValue: true }),
+    });
+
+    const root = parseReady({
+      text: "{}",
+      parentData: {
+        name: "",
+        weight: 0,
+        enabled: false,
+      },
+      rootField,
+    }) as ObjectFieldInstance;
+
+    expect((root.properties.name as StringFieldInstance).inheritedValue).toBe("");
+    expect((root.properties.weight as NumberFieldInstance).inheritedValue).toBe(0);
+    expect((root.properties.enabled as BooleanFieldInstance).inheritedValue).toBe(false);
+  });
+
+  test("traverses parent object data without adding inherited values to object fields", () => {
+    const rootField = objectField(null, {
+      details: objectField("details", {
+        tier: stringField("tier", { inheritsValue: true }),
+      }),
+    });
+
+    const root = parseReady({
+      text: "{}",
+      parentData: {
+        details: {
+          tier: "bronze",
+        },
+      },
+      rootField,
+    }) as ObjectFieldInstance;
+
+    const details = root.properties.details as ObjectFieldInstance;
+    expect((details.properties.tier as StringFieldInstance).inheritedValue).toBe("bronze");
+    expect(details.unparsedData).toEqual({});
+  });
+
   test("parses list arrays and tuple arrays", () => {
     const rootField = objectField(null, {
       tags: arrayField("tags", stringField("tag")),
@@ -263,6 +310,48 @@ describe("asset editor parseDocumentText", () => {
     expect(dimensions.isTuple).toBe(true);
   });
 
+  test("populates array items and inheritedItems from parent data", () => {
+    const rootField = objectField(null, {
+      tags: arrayField(
+        "tags",
+        objectField("", {
+          name: stringField("name", { inheritsValue: true }),
+        }),
+      ),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        tags: [{ name: "child" }],
+      }),
+      parentData: {
+        tags: [{ name: "parent" }, { name: "legacy" }],
+      },
+      rootField,
+    }) as ObjectFieldInstance;
+
+    const tags = root.properties.tags as ArrayFieldInstance;
+    expect(
+      (((tags.items[0] as ObjectFieldInstance).properties.name as StringFieldInstance).value),
+    ).toBe("child");
+    expect(
+      (((tags.items[0] as ObjectFieldInstance).properties.name as StringFieldInstance).inheritedValue),
+    ).toBe("parent");
+    expect(tags.inheritedItems).toHaveLength(2);
+    expect(
+      (
+        ((tags.inheritedItems[0] as ObjectFieldInstance).properties.name as StringFieldInstance)
+          .value
+      ),
+    ).toBe("parent");
+    expect(
+      (
+        ((tags.inheritedItems[1] as ObjectFieldInstance).properties.name as StringFieldInstance)
+          .value
+      ),
+    ).toBe("legacy");
+  });
+
   test("parses map entries", () => {
     const rootField = objectField(null, {
       labels: mapField("labels", stringField("label")),
@@ -282,6 +371,62 @@ describe("asset editor parseDocumentText", () => {
     expect(labels.entries).toHaveLength(2);
     expect(labels.entries[0]?.key).toBe("armor");
     expect((labels.entries[0]?.valueField as StringFieldInstance).value).toBe("Bronze");
+  });
+
+  test("populates map entries and inheritedEntries from parent data", () => {
+    const rootField = objectField(null, {
+      labels: mapField(
+        "labels",
+        objectField("", {
+          title: stringField("title", { inheritsValue: true }),
+        }),
+      ),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        labels: {
+          slot: {
+            title: "Child",
+          },
+        },
+      }),
+      parentData: {
+        labels: {
+          slot: {
+            title: "Parent",
+          },
+          rarity: {
+            title: "Common",
+          },
+        },
+      },
+      rootField,
+    }) as ObjectFieldInstance;
+
+    const labels = root.properties.labels as MapFieldInstance;
+    expect(labels.entries).toHaveLength(1);
+    expect(labels.entries[0]?.key).toBe("slot");
+    expect(
+      (((labels.entries[0]?.valueField as ObjectFieldInstance).properties.title as StringFieldInstance)
+        .value),
+    ).toBe("Child");
+    expect(
+      (
+        ((labels.entries[0]?.valueField as ObjectFieldInstance).properties.title as StringFieldInstance)
+          .inheritedValue
+      ),
+    ).toBe("Parent");
+    expect(labels.inheritedEntries).toHaveLength(2);
+    expect(labels.inheritedEntries[1]?.key).toBe("rarity");
+    expect(
+      (
+        (
+          (labels.inheritedEntries[1]?.valueField as ObjectFieldInstance).properties
+            .title as StringFieldInstance
+        ).value
+      ),
+    ).toBe("Common");
   });
 
   test("resolves object-backed variant branches", () => {
@@ -396,6 +541,38 @@ describe("asset editor parseDocumentText", () => {
       ((root.activeVariant?.properties.DamageCalculator as ObjectFieldInstance).properties
         .BaseDamage as NumberFieldInstance).value,
     ).toBe(7);
+  });
+
+  test("uses parent variant data to resolve inherited child values", () => {
+    const rootField = objectField(null, {
+      item: variantField("item", "kind", {
+        tool: objectField("", {
+          kind: stringField("kind", { const: "tool" }),
+          power: numberField("power", { inheritsValue: true }),
+        }),
+      }),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        item: {
+          power: 7,
+        },
+      }),
+      parentData: {
+        item: {
+          kind: "tool",
+          power: 5,
+        },
+      },
+      rootField,
+    }) as ObjectFieldInstance;
+
+    const item = root.properties.item as VariantFieldInstance;
+    expect(item.activeVariant).toBeDefined();
+    expect((item.identityField.value)).toBeUndefined();
+    expect((item.activeVariant?.properties.power as NumberFieldInstance).value).toBe(7);
+    expect((item.activeVariant?.properties.power as NumberFieldInstance).inheritedValue).toBe(5);
   });
 
   test("resolves ref-backed variants and object fields from assetsByRef", () => {

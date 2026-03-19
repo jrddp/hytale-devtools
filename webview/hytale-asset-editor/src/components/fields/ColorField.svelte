@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import type { ColorFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
+  import { getFieldPlaceholder } from "../fieldHelpers";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -15,6 +16,10 @@
   } = $props();
 
   const isSet = $derived(field.value !== undefined);
+  const placeholder = $derived(getFieldPlaceholder(field));
+  const hasFallbackPlaceholder = $derived(
+    field.inheritedValue !== undefined || field.default !== undefined,
+  );
 
   let draftValue = $state<string>();
 
@@ -70,8 +75,8 @@
       type="text"
       class="flex-1 px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg"
       bind:value={draftValue}
-      placeholder={field.default ?? "Unset"}
-      class:placeholder:italic={field.default === undefined}
+      {placeholder}
+      class:placeholder:italic={!hasFallbackPlaceholder}
       spellcheck="false"
       onblur={commitValue}
       onkeydown={event => {

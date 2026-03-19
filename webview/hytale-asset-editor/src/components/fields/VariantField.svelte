@@ -22,7 +22,9 @@
     onSectionsChange?: (sections: OutlineSection[]) => void;
   } = $props();
 
-  const selectedIdentity = $derived(field.identityField.value);
+  const selectedIdentity = $derived(
+    field.identityField.value ?? field.identityField.inheritedValue ?? field.identityField.default,
+  );
   const visibleProperties = $derived.by(() => {
     return workspace.hideUnsetFields
       ? Object.fromEntries(
@@ -38,15 +40,22 @@
   });
 
   function onChangeIdentity() {
-    const effectiveIdentity = selectedIdentity ?? field.identityField.default;
+    const effectiveIdentity =
+      field.identityField.value ?? field.identityField.inheritedValue ?? field.identityField.default;
 
     if (!effectiveIdentity) {
       field.activeVariant = undefined;
       return;
     }
 
+    const nextVariantField = field.variantsByIdentity[effectiveIdentity];
+    if (!nextVariantField) {
+      field.activeVariant = undefined;
+      return;
+    }
+
     field.activeVariant = workspace.createEmptyFieldInstance(
-      field.variantsByIdentity[selectedIdentity],
+      nextVariantField,
     );
     field.activeVariant.properties[field.identityField.schemaKey] = field.identityField;
   }

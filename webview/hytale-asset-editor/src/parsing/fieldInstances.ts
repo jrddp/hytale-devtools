@@ -34,23 +34,33 @@ export type ScalarFieldInstance =
   | BooleanFieldInstance
   | ColorFieldInstance;
 
-export type StringFieldInstance = StringField & { value?: string };
-export type NumberFieldInstance = NumberField & { value?: number | string };
-export type BooleanFieldInstance = BooleanField & { value?: boolean };
-export type ColorFieldInstance = ColorField & { value?: string };
+export type StringFieldInstance = StringField & { value?: string; inheritedValue?: string };
+export type NumberFieldInstance = NumberField & {
+  value?: number | string;
+  inheritedValue?: number | string;
+};
+export type BooleanFieldInstance = BooleanField & { value?: boolean; inheritedValue?: boolean };
+export type ColorFieldInstance = ColorField & { value?: string; inheritedValue?: string };
 
 export type MapFieldInstance = MapField & {
   valueField: FieldInstance;
   entries: { key: string; valueField: FieldInstance }[];
+  inheritedEntries: { key: string; valueField: FieldInstance }[];
 };
 
 export type InlineOrReferenceFieldInstance = InlineOrReferenceField & {
   activeField: StringFieldInstance | ObjectFieldInstance;
+  inheritedActiveField: StringFieldInstance | ObjectFieldInstance;
 };
-export type RawJsonFieldInstance = RawJsonField & { value?: string };
-export type TimelineFieldInstance = TimelineField & { unparsedData?: unknown };
+
+export type RawJsonFieldInstance = RawJsonField & { value?: string; inheritedValue?: string };
+export type TimelineFieldInstance = TimelineField & {
+  unparsedData?: unknown;
+  inheritedUnparsedData?: unknown;
+};
 export type WeightedTimelineFieldInstance = WeightedTimelineField & {
   unparsedData?: unknown;
+  inheritedUnparsedData?: unknown;
 };
 
 export type ObjectFieldInstance = Omit<ObjectField, "properties"> & {
@@ -58,7 +68,10 @@ export type ObjectFieldInstance = Omit<ObjectField, "properties"> & {
   unparsedData: Record<string, unknown>;
 };
 
-export type ArrayFieldInstance = Omit<ArrayField, "items"> & { items: FieldInstance[] } & (
+export type ArrayFieldInstance = Omit<ArrayField, "items"> & {
+  items: FieldInstance[];
+  inheritedItems: FieldInstance[];
+} & (
     | {
         isTuple: true;
         itemFieldTypes: Field[];

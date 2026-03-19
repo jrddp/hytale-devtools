@@ -52,10 +52,12 @@ export function parseDocumentText({
   text,
   assetDefinition,
   assetsByRef,
+  parentData,
 }: {
   text: string;
   assetDefinition: AssetDefinition;
   assetsByRef: Record<string, AssetDefinition>;
+  parentData?: unknown;
 }): ParseDocumentResult {
   let documentRoot: unknown;
 
@@ -77,9 +79,14 @@ export function parseDocumentText({
 
   return {
     status: "ready",
-    rootField: populateFieldInstance(cloneFieldInstance(assetDefinition.rootField), documentRoot, {
-      assetsByRef,
-    }),
+    rootField: populateFieldInstance(
+      cloneFieldInstance(assetDefinition.rootField),
+      documentRoot,
+      parentData,
+      {
+        assetsByRef,
+      },
+    ),
   };
 }
 
@@ -87,78 +94,115 @@ export function createEmptyFieldInstance<TField extends Field>(
   field: TField,
   assetsByRef: Record<string, AssetDefinition>,
 ): TField & FieldInstance {
-  return populateFieldInstance(cloneFieldInstance(field), undefined, {
-    assetsByRef,
-  }) as TField & FieldInstance;
+  return populateFieldInstance(
+    cloneFieldInstance(field),
+    undefined,
+    undefined,
+    {
+      assetsByRef,
+    },
+  ) as TField & FieldInstance;
 }
 
 function populateFieldInstance<TField extends Field>(
   field: TField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): TField & FieldInstance {
   switch (field.type) {
     case "string":
-      return populateStringField(field, rawValue);
+      return populateStringField(field, rawData, parentData);
     case "number":
-      return populateNumberField(field, rawValue);
+      return populateNumberField(field, rawData, parentData);
     case "boolean":
-      return populateBooleanField(field, rawValue);
+      return populateBooleanField(field, rawData, parentData);
     case "color":
-      return populateColorField(field, rawValue);
+      return populateColorField(field, rawData, parentData);
     case "object":
-      return populateObjectField(field, rawValue, context);
+      return populateObjectField(field, rawData, parentData, context);
     case "array":
-      return populateArrayField(field, rawValue, context);
+      return populateArrayField(field, rawData, parentData, context);
     case "map":
-      return populateMapField(field, rawValue, context);
+      return populateMapField(field, rawData, parentData, context);
     case "variant":
-      return populateVariantField(field, rawValue, context);
+      return populateVariantField(field, rawData, parentData, context);
     case "ref":
-      return populateRefField(field, rawValue, context);
+      return populateRefField(field, rawData, parentData, context);
     case "inlineOrReference":
-      return populateInlineOrReferenceField(field, rawValue, context);
+      return populateInlineOrReferenceField(field, rawData, parentData, context);
     case "timeline":
-      return populateTimelineField(field, rawValue);
+      return populateTimelineField(field, rawData, parentData);
     case "weightedTimeline":
-      return populateWeightedTimelineField(field, rawValue);
+      return populateWeightedTimelineField(field, rawData, parentData);
     case "rawJson":
-      return populateRawJsonField(field, rawValue);
+      return populateRawJsonField(field, rawData, parentData);
     default:
       throw new Error(`Unsupported field type: ${JSON.stringify(field)}`);
   }
 }
 
-function populateStringField(field: StringField, rawValue: unknown): StringFieldInstance {
+function populateStringField(
+  field: StringField,
+  rawData: unknown,
+  parentData: unknown,
+): StringFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.value = rawValue as string | undefined;
+  fieldInstance.value = rawData as string | undefined;
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedValue = parentData as string;
+  }
   return fieldInstance;
 }
 
-function populateNumberField(field: NumberField, rawValue: unknown): NumberFieldInstance {
+function populateNumberField(
+  field: NumberField,
+  rawData: unknown,
+  parentData: unknown,
+): NumberFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.value = rawValue as number | undefined;
+  fieldInstance.value = rawData as number | string | undefined;
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedValue = parentData as number | string;
+  }
   return fieldInstance;
 }
 
-function populateBooleanField(field: BooleanField, rawValue: unknown): BooleanFieldInstance {
+function populateBooleanField(
+  field: BooleanField,
+  rawData: unknown,
+  parentData: unknown,
+): BooleanFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.value = rawValue as boolean | undefined;
+  fieldInstance.value = rawData as boolean | undefined;
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedValue = parentData as boolean;
+  }
   return fieldInstance;
 }
 
-function populateColorField(field: ColorField, rawValue: unknown): ColorFieldInstance {
+function populateColorField(
+  field: ColorField,
+  rawData: unknown,
+  parentData: unknown,
+): ColorFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.value = rawValue as string | undefined;
+  fieldInstance.value = rawData as string | undefined;
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedValue = parentData as string;
+  }
   return fieldInstance;
 }
 
 function populateObjectField(
   field: ObjectField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): ObjectFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
+  const rawDataObject = isObject(rawData) ? rawData : undefined;
+  const parentDataObject = isObject(parentData) ? parentData : undefined;
   const schemaProperties = field.properties;
   const schemaKeys = new Set(Object.keys(schemaProperties));
   fieldInstance.properties = Object.entries(schemaProperties).reduce(
@@ -170,18 +214,29 @@ function populateObjectField(
   );
   fieldInstance.unparsedData = {};
 
-  if (!rawValue) {
+  if (!rawDataObject && !parentDataObject) {
     return fieldInstance;
   }
 
-  for (const [schemaKey, childData] of Object.entries(rawValue)) {
-    if (schemaKeys.has(schemaKey)) {
-      fieldInstance.properties[schemaKey] = populateFieldInstance(
-        cloneFieldInstance(schemaProperties[schemaKey]),
-        childData,
-        context,
-      );
-    } else {
+  for (const schemaKey of schemaKeys) {
+    const childData = rawDataObject?.[schemaKey];
+    const childsParentData = parentDataObject?.[schemaKey];
+
+    fieldInstance.properties[schemaKey] = populateFieldInstance(
+      cloneFieldInstance(schemaProperties[schemaKey]),
+      childData,
+      childsParentData,
+      context,
+    );
+  }
+
+  if (!rawDataObject) {
+    return fieldInstance;
+  }
+
+  // persist unparsed data (such as $NodeEditorMetadata)
+  for (const [schemaKey, childData] of Object.entries(rawDataObject)) {
+    if (!schemaKeys.has(schemaKey)) {
       fieldInstance.unparsedData[schemaKey] = childData;
     }
   }
@@ -191,16 +246,35 @@ function populateObjectField(
 
 function populateArrayField(
   field: ArrayField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): ArrayFieldInstance {
   const itemsField = field.items;
+  const rawItems = Array.isArray(rawData) ? rawData : undefined;
+  const parentItems = Array.isArray(parentData) ? parentData : undefined;
   const fieldInstance = cloneFieldInstance(field) as ArrayFieldInstance;
   fieldInstance.items = [];
+  fieldInstance.inheritedItems = [];
   fieldInstance.itemFieldTypes = itemsField;
   if (Array.isArray(itemsField)) {
     fieldInstance.items = itemsField.map((itemField, index) => {
-      const item = populateFieldInstance(cloneFieldInstance(itemField), rawValue?.[index], context);
+      const item = populateFieldInstance(
+        cloneFieldInstance(itemField),
+        rawItems?.[index],
+        parentItems?.[index],
+        context,
+      );
+      item.schemaKey = index.toString();
+      return item;
+    });
+    fieldInstance.inheritedItems = itemsField.map((itemField, index) => {
+      const item = populateFieldInstance(
+        cloneFieldInstance(itemField),
+        parentItems?.[index],
+        undefined,
+        context,
+      );
       item.schemaKey = index.toString();
       return item;
     });
@@ -208,9 +282,27 @@ function populateArrayField(
     return fieldInstance;
   }
 
-  if (Array.isArray(rawValue)) {
-    fieldInstance.items = rawValue.map((rawItem, index) => {
-      const item = populateFieldInstance(cloneFieldInstance(itemsField), rawItem, context);
+  if (rawItems) {
+    fieldInstance.items = rawItems.map((rawItem, index) => {
+      const item = populateFieldInstance(
+        cloneFieldInstance(itemsField),
+        rawItem,
+        parentItems?.[index],
+        context,
+      );
+      item.schemaKey = index.toString();
+      return item;
+    });
+  }
+
+  if (parentItems) {
+    fieldInstance.inheritedItems = parentItems.map((parentItem, index) => {
+      const item = populateFieldInstance(
+        cloneFieldInstance(itemsField),
+        parentItem,
+        undefined,
+        context,
+      );
       item.schemaKey = index.toString();
       return item;
     });
@@ -222,39 +314,60 @@ function populateArrayField(
 
 function populateMapField(
   field: MapField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): MapFieldInstance {
+  const rawEntries = isObject(rawData) ? rawData : undefined;
+  const parentEntries = isObject(parentData) ? parentData : undefined;
   const fieldInstance = cloneFieldInstance(field);
   fieldInstance.entries = [];
+  fieldInstance.inheritedEntries = [];
 
-  if (!rawValue) {
-    return fieldInstance;
+  if (rawEntries) {
+    fieldInstance.entries = Object.entries(rawEntries).map(([key, value]) => ({
+      key,
+      valueField: populateFieldInstance(
+        cloneFieldInstance(field.valueField as Field),
+        value,
+        parentEntries?.[key],
+        context,
+      ),
+    }));
   }
 
-  fieldInstance.entries = Object.entries(rawValue).map(([key, value]) => ({
-    key,
-    valueField: populateFieldInstance(
-      cloneFieldInstance(field.valueField as Field),
-      value,
-      context,
-    ),
-  }));
+  if (parentEntries) {
+    fieldInstance.inheritedEntries = Object.entries(parentEntries).map(([key, value]) => ({
+      key,
+      valueField: populateFieldInstance(
+        cloneFieldInstance(field.valueField as Field),
+        value,
+        undefined,
+        context,
+      ),
+    }));
+  }
+
   return fieldInstance;
 }
 
 function populateVariantField(
   field: VariantField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): VariantFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  const storedIdentity = rawValue?.[field.identityField.schemaKey];
-  const effectiveIdentity = storedIdentity ?? field.identityField.default;
+  const rawDataObject = isObject(rawData) ? rawData : undefined;
+  const parentDataObject = isObject(parentData) ? parentData : undefined;
+  const storedIdentity = rawDataObject?.[field.identityField.schemaKey];
+  const inheritedIdentity = parentDataObject?.[field.identityField.schemaKey];
+  const effectiveIdentity = getEffectiveVariantIdentity(field, storedIdentity, inheritedIdentity);
 
   fieldInstance.identityField = populateFieldInstance(
     cloneFieldInstance(field.identityField),
     storedIdentity,
+    inheritedIdentity,
     context,
   );
 
@@ -269,7 +382,8 @@ function populateVariantField(
     }
     fieldInstance.activeVariant = populateFieldInstance(
       cloneFieldInstance(variantMatch),
-      rawValue,
+      rawDataObject,
+      parentDataObject,
       context,
     );
     fieldInstance.activeVariant.properties[field.identityField.schemaKey] =
@@ -282,69 +396,138 @@ function populateVariantField(
 
 function populateRefField(
   field: RefField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): FieldInstance {
   const resolvedField = context.assetsByRef[field.$ref]?.rootField;
 
   if (!resolvedField) {
-    throw new Error("Resolved field not found");
+    throw new Error(`Resolved field not found for reference: ${field.$ref}. Assets supported: ${Object.keys(context.assetsByRef).join(", ")}`);
   }
 
   return populateFieldInstance(
     transferMetadata(field, cloneFieldInstance(resolvedField)),
-    rawValue,
+    rawData,
+    parentData,
     context,
   );
 }
 
 function populateInlineOrReferenceField(
   field: InlineOrReferenceField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
   context: ParseContext,
 ): InlineOrReferenceFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-
-  if (!rawValue) {
-    fieldInstance.activeField = createEmptyFieldInstance(field.stringField, context.assetsByRef);
-    return fieldInstance;
-  }
-
-  if (typeof rawValue === "string") {
-    fieldInstance.activeField = populateStringField(
-      field.stringField,
-      rawValue,
-    ) as StringFieldInstance;
-    return fieldInstance;
-  }
-
-  fieldInstance.activeField = populateFieldInstance(
-    field.inlineField,
-    rawValue,
+  fieldInstance.activeField = populateInlineOrReferenceActiveField(
+    field,
+    rawData,
+    parentData,
     context,
-  ) as ObjectFieldInstance;
+  );
+  fieldInstance.inheritedActiveField = populateInlineOrReferenceActiveField(
+    field,
+    parentData,
+    undefined,
+    context,
+  );
   return fieldInstance;
 }
 
-function populateTimelineField(field: TimelineField, rawValue: unknown): TimelineFieldInstance {
+function populateTimelineField(
+  field: TimelineField,
+  rawData: unknown,
+  parentData: unknown,
+): TimelineFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.unparsedData = rawValue !== undefined ? rawValue : undefined;
+  fieldInstance.unparsedData = rawData !== undefined ? rawData : undefined;
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedUnparsedData = parentData;
+  }
   return fieldInstance;
 }
 
-function populateRawJsonField(field: RawJsonField, rawValue: unknown): RawJsonFieldInstance {
+function populateRawJsonField(
+  field: RawJsonField,
+  rawData: unknown,
+  parentData: unknown,
+): RawJsonFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.value = isObject(rawValue) ? JSON.stringify(rawValue, null, 2) : "{\n\n}";
+  fieldInstance.value = stringifyRawJsonValue(rawData);
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedValue = stringifyRawJsonValue(parentData);
+  }
   return fieldInstance;
 }
 
 function populateWeightedTimelineField(
   field: WeightedTimelineField,
-  rawValue: unknown,
+  rawData: unknown,
+  parentData: unknown,
 ): WeightedTimelineFieldInstance {
   const fieldInstance = cloneFieldInstance(field);
-  fieldInstance.unparsedData = rawValue;
+  fieldInstance.unparsedData = rawData;
+  if (field.inheritsValue && parentData !== undefined) {
+    fieldInstance.inheritedUnparsedData = parentData;
+  }
   return fieldInstance;
+}
+
+function populateInlineOrReferenceActiveField(
+  field: InlineOrReferenceField,
+  data: unknown,
+  parentData: unknown,
+  context: ParseContext,
+): StringFieldInstance | ObjectFieldInstance {
+  if (data === undefined) {
+    return createEmptyFieldInstance(field.stringField, context.assetsByRef);
+  }
+
+  if (typeof data === "string") {
+    return populateStringField(
+      field.stringField,
+      data,
+      typeof parentData === "string" ? parentData : undefined,
+    ) as StringFieldInstance;
+  }
+
+  if (isObject(data)) {
+    return populateFieldInstance(
+      field.inlineField,
+      data,
+      isObject(parentData) ? parentData : undefined,
+      context,
+    ) as ObjectFieldInstance;
+  }
+
+  return createEmptyFieldInstance(field.stringField, context.assetsByRef);
+}
+
+function getEffectiveVariantIdentity(
+  field: VariantField,
+  storedIdentity: unknown,
+  inheritedIdentity: unknown,
+): string | undefined {
+  if (typeof storedIdentity === "string") {
+    return storedIdentity;
+  }
+
+  if (typeof inheritedIdentity === "string") {
+    return inheritedIdentity;
+  }
+
+  if (typeof field.identityField.default === "string") {
+    return field.identityField.default;
+  }
+
+  const variantKeys = Object.keys(field.variantsByIdentity);
+  return variantKeys.length === 1 ? variantKeys[0] : undefined;
+}
+
+function stringifyRawJsonValue(rawData: unknown): string {
+  return isObject(rawData) ? JSON.stringify(rawData, null, 2) : "{\n\n}";
 }
 
 function cloneFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {

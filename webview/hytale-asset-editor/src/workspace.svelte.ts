@@ -22,6 +22,7 @@ export class Workspace {
   rootFieldInstance = $state<ObjectFieldInstance | VariantFieldInstance | null>(null);
 
   documentPath = $state("");
+  documentText = $state<string | null>(null);
   documentVersion = $state(0);
   documentRootField = $state<RootFieldInstance | null>(null);
   documentParseError = $state<string | null>(null);
@@ -40,6 +41,7 @@ export class Workspace {
   setAssetDefinition(assetDefinition: AssetDefinition | null) {
     this.assetDefinition = assetDefinition;
     this.documentPath = "";
+    this.documentText = null;
     this.documentVersion = 0;
     this.documentRootField = null;
     this.documentParseError = null;
@@ -60,8 +62,9 @@ export class Workspace {
     version: number;
   }) {
     this.documentPath = documentPath;
+    this.documentText = text;
     this.documentVersion = version;
-    this.reparseDocument(text);
+    this.reparseDocument();
   }
 
   setAutocompleteValues(fieldId: string, values: string[]) {
@@ -73,6 +76,9 @@ export class Workspace {
     this.parentStatus = parent.status;
     this.parentName = parent.parentName ?? null;
     this.parentInstance = parent.parentInstance;
+    if (this.documentText !== null) {
+      this.reparseDocument();
+    }
   }
 
   setAllPanelsCollapsed(collapsed: boolean) {
@@ -130,16 +136,17 @@ export class Workspace {
     );
   }
 
-  reparseDocument(text: string) {
-    if (!this.assetDefinition || !this.documentPath) {
+  reparseDocument() {
+    if (!this.assetDefinition || !this.documentPath || this.documentText === null) {
       this.documentParseError = null;
       return;
     }
 
     const result = parseDocumentText({
-      text: text,
+      text: this.documentText,
       assetDefinition: $state.snapshot(this.assetDefinition) as AssetDefinition,
       assetsByRef: $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
+      parentData: $state.snapshot(this.parentInstance)?.rawJson,
     });
 
     switch (result.status) {

@@ -6,6 +6,7 @@
   import SingleLineAutocompleteInput from "../../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
+  import { getFieldPlaceholder } from "../fieldHelpers";
   import { getFieldEditorId } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
@@ -21,6 +22,10 @@
   let inputId = $derived(getFieldEditorId(field));
 
   const isSet = $derived(field.value !== undefined);
+  const placeholder = $derived(getFieldPlaceholder(field));
+  const hasFallbackPlaceholder = $derived(
+    field.inheritedValue !== undefined || field.default !== undefined,
+  );
 
   const autocompleteOptions = $derived(
     (field.enumVals?.length
@@ -98,11 +103,9 @@
   <SingleLineAutocompleteInput
     {inputId}
     initialValue={field.value ?? ""}
-    placeholder={field.default ?? "Unset"}
+    {placeholder}
     {autocompleteOptions}
-    inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg {Boolean(
-      field.default,
-    )
+    inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg {hasFallbackPlaceholder
       ? ''
       : 'placeholder:italic'}"
     listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"

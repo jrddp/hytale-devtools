@@ -44,6 +44,7 @@ function propertyDefinitionToField(
     height: definition.hytale?.uiEditorComponent?.height,
     suffix: definition.hytale?.uiEditorComponent?.suffix,
     collapsedByDefault: true,
+    inheritsValue: definition.hytale?.inheritsProperty,
   };
 
   // fields are collapsed by default unless explicitly set
