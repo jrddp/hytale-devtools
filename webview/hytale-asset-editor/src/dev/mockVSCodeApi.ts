@@ -42,6 +42,7 @@ type DevBootstrapResponse = {
   preview?: {
     type: "Item";
     icon?: number[];
+    loading?: boolean;
   };
 };
 

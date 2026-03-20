@@ -72,7 +72,7 @@ export class AssetCacheRuntime {
   }
 
   getAssetByPath(assetPath: string): JsonAssetInstance | undefined {
-    return this.recordsByPath.get(normalizeAssetLookupPath(assetPath))?.cachedAsset;
+    return this.getRecordByPath(assetPath)?.cachedAsset;
   }
 
   async loadAsset(type: string, name: string): Promise<AssetInstance | undefined> {
@@ -82,16 +82,26 @@ export class AssetCacheRuntime {
 
   async loadAssetByPath(assetPath: string): Promise<AssetInstance | undefined> {
     await this.ready;
-    return await this.loadRecord(this.recordsByPath.get(normalizeAssetLookupPath(assetPath)));
+    return await this.loadRecord(this.getRecordByPath(assetPath));
   }
 
   async readAssetBytesByPath(assetPath: string): Promise<Buffer | undefined> {
     await this.ready;
-    const record = this.recordsByPath.get(normalizeAssetLookupPath(assetPath));
+    const record = this.getRecordByPath(assetPath);
     if (!record) {
       return undefined;
     }
     return await this.readRecordBytes(record);
+  }
+
+  private getRecordByPath(assetPath: string): IndexedAssetRecord | undefined {
+    const normalizedPath = normalizeAssetLookupPath(assetPath);
+    return (
+      this.recordsByPath.get(normalizedPath) ??
+      (!normalizedPath.startsWith("Common/") && !normalizedPath.startsWith("Server/")
+        ? this.recordsByPath.get(`Common/${normalizedPath}`)
+        : undefined)
+    );
   }
 
   private async loadAssets(): Promise<void> {

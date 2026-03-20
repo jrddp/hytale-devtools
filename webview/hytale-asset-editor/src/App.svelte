@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { AssetEditorExtensionToWebviewMessage } from "@shared/asset-editor/messageTypes";
+  import { LoaderCircle } from "lucide-svelte";
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
@@ -308,6 +309,11 @@
                       class="size-full object-contain"
                       style:image-rendering="pixelated"
                     />
+                  </div>
+                {:else if workspace.preview?.loading}
+                  <div class="flex flex-col items-center justify-center size-full gap-3 px-6 text-center text-sm font-medium text-vsc-muted">
+                    <LoaderCircle size={18} class="duration-700 origin-center animate-spin" />
+                    <div>Loading assets...</div>
                   </div>
                 {:else}
                   <div class="flex items-center justify-center size-full px-6 text-center text-sm font-medium text-vsc-muted">

@@ -1,9 +1,12 @@
-import { AssetPreviewType, type AssetDefinition, type JsonAssetInstance } from "../fieldTypes";
+import type { AssetPreviewType, AssetDefinition, JsonAssetInstance } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
 
-export type AssetEditorPreview = { type: AssetPreviewType | "none" } | {
+export type AssetEditorPreview =
+  | { type: Exclude<AssetPreviewType, "Item"> | "none"; loading?: boolean }
+  | {
   type: "Item";
   icon?: number[];
+  loading?: boolean;
 };
 
 export type AssetEditorParentState = {

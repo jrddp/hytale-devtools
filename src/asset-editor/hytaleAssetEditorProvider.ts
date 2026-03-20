@@ -85,7 +85,7 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             parent,
             preview: loadPreview
               ? await resolveDocumentPreview(document, assetDefinition, parent, runtime)
-              : { type: assetDefinition.preview ?? "none" },
+              : { type: assetDefinition.preview ?? "none", loading: true },
           };
 
           if (!isDisposed) {
