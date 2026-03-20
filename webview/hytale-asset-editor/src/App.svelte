@@ -4,10 +4,10 @@
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
   import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
-  import { fade } from "svelte/transition";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
@@ -226,7 +226,10 @@
   });
 </script>
 
-<main class="flex flex-col h-screen min-h-0 text-sm bg-vsc-bg text-vsc-editor-fg" in:fade={{ duration: 50 }}>
+<main
+  class="flex flex-col h-screen min-h-0 text-sm bg-vsc-bg text-vsc-editor-fg"
+  in:fade={{ duration: 50 }}
+>
   {#if extensionError}
     <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
       {extensionError}
@@ -300,23 +303,31 @@
         <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <aside class="space-y-4 lg:sticky lg:top-4">
             {#if workspace.assetDefinition.preview === "Item"}
-              <div class="aspect-square overflow-hidden border rounded-xl border-vsc-border bg-vsc-panel">
+              <!-- bg #1f2c3c is the actual hotbar color -->
+              <div
+                class="overflow-hidden border aspect-square rounded-xl border-vsc-border bg-vsc-panel"
+                class:!bg-[#1F2C3C]={workspace.preview?.type === "Item" && previewImageUrl}
+              >
                 {#if previewImageUrl}
-                  <div class="flex items-center justify-center size-full p-3">
+                  <div class="flex items-center justify-center p-3 size-full">
                     <img
                       src={previewImageUrl}
                       alt="Asset preview"
-                      class="size-full object-contain"
+                      class="object-contain size-full"
                       style:image-rendering="pixelated"
                     />
                   </div>
                 {:else if workspace.preview?.loading}
-                  <div class="flex flex-col items-center justify-center size-full gap-3 px-6 text-center text-sm font-medium text-vsc-muted">
+                  <div
+                    class="flex flex-col items-center justify-center gap-3 px-6 text-sm font-medium text-center size-full text-vsc-muted"
+                  >
                     <LoaderCircle size={18} class="duration-700 origin-center animate-spin" />
                     <div>Loading assets...</div>
                   </div>
                 {:else}
-                  <div class="flex items-center justify-center size-full px-6 text-center text-sm font-medium text-vsc-muted">
+                  <div
+                    class="flex items-center justify-center px-6 text-sm font-medium text-center size-full text-vsc-muted"
+                  >
                     No icon found.
                   </div>
                 {/if}
