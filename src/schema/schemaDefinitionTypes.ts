@@ -1,6 +1,7 @@
 // # Property Metadata Definitions
 
 import { type IndexReference } from "../shared/indexTypes";
+import { type AssetPreviewType } from "../shared/fieldTypes";
 
 type HytaleDevtoolsMetadata = {
   symbolRef: IndexReference;
@@ -206,7 +207,7 @@ type SchemaHytaleMetadata = {
   uiCreateButtons?: ButtonDefinition[];
   uiEditorFeatures?: UiEditorFeature[];
   uiEditorIgnore?: boolean;
-  uiEditorPreview?: "EqualizerEffect" | "Item" | "Model" | "ReverbEffect";
+  uiEditorPreview?: AssetPreviewType;
   uiRebuildCaches?: UiRebuildCache[];
   uiRebuildCachesForChildProperties?: boolean;
   uiSidebarButtons?: ButtonDefinition[];

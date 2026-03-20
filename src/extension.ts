@@ -23,6 +23,7 @@ export let assetCacheRuntime: AssetCacheRuntime;
 export let indexes: Map<IndexKind, SymbolIndex>;
 
 function reloadSchemaData(context: vscode.ExtensionContext, reason: string): void {
+  assetCacheRuntime?.dispose();
   const dataRoot = resolveDataRootDirFromContext(context);
 
   schemaRuntime = new SchemaRuntime(
@@ -130,4 +131,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  assetCacheRuntime?.dispose();
+}

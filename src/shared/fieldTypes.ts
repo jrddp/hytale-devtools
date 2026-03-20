@@ -1,5 +1,7 @@
 import { type IndexReference } from "./indexTypes";
 
+export type AssetPreviewType = "EqualizerEffect" | "Item" | "Model" | "ReverbEffect";
+
 export type FieldType = 
   | "string"
   | "number"
@@ -144,10 +146,30 @@ export type InlineOrReferenceField = FieldBase & {
 
 export type ButtonTypes = "EquipItem" | "ResetModel" | "UseModel";
 
+type AssetInstanceBase = {
+  name: string;
+  type: string;
+  path: string;
+  package: string;
+};
+
+export type JsonAssetInstance = AssetInstanceBase & {
+  contentType: "json";
+  rawJson: Record<string, unknown>;
+};
+
+export type ImageAssetInstance = AssetInstanceBase & {
+  contentType: "image";
+  bytes: Uint8Array;
+};
+
+export type CachedAssetInstance = JsonAssetInstance | ImageAssetInstance;
+
 export type AssetDefinition = {
   title: string;
   rootField: ObjectField | VariantField;
   buttons: ButtonTypes[];
+  preview?: AssetPreviewType;
   refDependencies: Set<string>;
   path?: string;
   extension?: string;

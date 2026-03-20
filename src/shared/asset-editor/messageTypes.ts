@@ -1,11 +1,10 @@
-import { type AssetInstance } from "../../asset-cache/assetCacheRuntime";
-import { type AssetDefinition } from "../fieldTypes";
+import { type AssetDefinition, type JsonAssetInstance } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
 
 export type AssetEditorParentState = {
   status: "loading" | "none" | "loaded" | "missing";
   parentName?: string;
-  parentInstance?: AssetInstance;
+  parentInstance?: JsonAssetInstance;
 };
 
 export type AssetEditorBootstrapMessage = {

@@ -457,14 +457,16 @@ export function schemaDefinitionToAssetDefinition(
     logger,
   });
   const buttons = definition.hytale.uiSidebarButtons?.map(button => button.buttonId) ?? [];
+  const preview = definition.hytale.uiEditorPreview;
   if (!rootField || (rootField.type !== "variant" && rootField.type !== "object")) {
-    logger.error("Unexpected root field for asset definition: ${JSON.stringify(definition)}");
+    logger.error(`Unexpected root field for asset definition: ${JSON.stringify(definition)}`);
     return null;
   }
   return {
     title: definition.title,
     rootField,
     buttons,
+    preview,
     refDependencies,
   };
 }

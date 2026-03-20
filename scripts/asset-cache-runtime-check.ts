@@ -99,16 +99,16 @@ async function main(): Promise<void> {
 
   const totalCacheObject = cacheMapToObject(
     new Map(
-      Array.from(assetCacheRuntime.assetsByDefinitionTitle.entries()).map(([assetType, assets]) => [
+      Array.from(assetCacheRuntime.assetInstances.entries()).map(([assetType, assets]) => [
         assetType,
         cacheMapToObject(assets),
       ]),
     ),
   );
-  const totalV8ByteSize = v8Serialize(assetCacheRuntime.assetsByDefinitionTitle).byteLength;
+  const totalV8ByteSize = v8Serialize(assetCacheRuntime.assetInstances).byteLength;
   const totalJsonByteSize = Buffer.byteLength(JSON.stringify(totalCacheObject), "utf8");
 
-  const perTypeSummaries = Array.from(assetCacheRuntime.assetsByDefinitionTitle.entries())
+  const perTypeSummaries = Array.from(assetCacheRuntime.assetInstances.entries())
     .map(([assetType, assets]) => {
       const assetsObject = cacheMapToObject(assets);
       return {
@@ -122,8 +122,9 @@ async function main(): Promise<void> {
 
   console.log(`Assets zip: ${normalizedAssetsZipPath}`);
   console.log(`Load time: ${formatDuration(loadElapsedMs)}`);
-  console.log(`Loaded asset types: ${assetCacheRuntime.assetsByDefinitionTitle.size}`);
-  console.log(`Loaded assets: ${assetCacheRuntime.loadedAssetCount}`);
+  console.log(`Indexed asset count: ${assetCacheRuntime.indexedAssetCount}`);
+  console.log(`Cached asset types: ${assetCacheRuntime.assetInstances.size}`);
+  console.log(`Cached assets: ${assetCacheRuntime.loadedAssetCount}`);
   console.log(
     `V8 serialized size: ${formatMegabytes(totalV8ByteSize)} (${totalV8ByteSize} bytes)`,
   );
@@ -135,6 +136,8 @@ async function main(): Promise<void> {
   if (assetCacheRuntime.failedAssetCount > 0) {
     console.log(`Failed to parse: ${assetCacheRuntime.failedAssetCount}`);
   }
+
+  assetCacheRuntime.dispose();
 }
 
 void main();
