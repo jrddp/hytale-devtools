@@ -95,8 +95,8 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(changeModPatchlineCommand);
 
-  context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
+  context.subscriptions.push(registerHytaleAssetEditorProvider(context));
 
   if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {
     void ensureHytaleHomeConfiguredOnStartup();
