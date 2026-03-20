@@ -12,6 +12,11 @@
     var(--vscode-sideBar-background)
   );
   --color-vsc-panel-alt: var(--vscode-sideBar-background);
+  --color-vsc-panel-readonly: color-mix(
+    in srgb,
+    var(--color-vsc-panel) 96%,
+    black 4%
+  );
   --color-vsc-panel-hover: var(--color-vsc-list-hover);
   --color-vsc-selected-bg: var(--color-vsc-list-active-bg);
   --color-vsc-selected-fg: var(--color-vsc-list-active-fg);

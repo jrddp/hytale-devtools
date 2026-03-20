@@ -36,6 +36,7 @@ export type FieldBase = {
   section: "General" | string | null;
   markdownDescription?: string;
   title?: string;
+  readonly?: boolean;
   default?: any;
   width?: number;
   height?: number;

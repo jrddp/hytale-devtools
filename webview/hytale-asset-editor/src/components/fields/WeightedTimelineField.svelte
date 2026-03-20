@@ -3,7 +3,11 @@
   import { workspace } from "../../workspace.svelte";
   import type { WeightedTimelineFieldInstance } from "../../parsing/fieldInstances";
 
-  let { field, depth = 0 }: { field: WeightedTimelineFieldInstance; depth?: number } = $props();
+  let {
+    field,
+    depth = 0,
+    readOnly = false,
+  }: { field: WeightedTimelineFieldInstance; depth?: number; readOnly?: boolean } = $props();
 
   const value = $derived(
     field.unparsedData === undefined ? "" : JSON.stringify(field.unparsedData, null, 2),
@@ -48,11 +52,12 @@
   }
 </script>
 
-<FieldPanel field={field} {depth} summary="Weighted timeline field - raw JSON editor">
+<FieldPanel field={field} {depth} {readOnly} summary="Weighted timeline field - raw JSON editor">
   <textarea
     class="min-h-28 w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
     bind:value={draftValue}
     placeholder={"[ ... ]"}
+    readonly={readOnly}
     onblur={commitValue}
   ></textarea>
 </FieldPanel>

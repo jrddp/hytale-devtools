@@ -99,6 +99,7 @@ export function transferMetadata<TField extends Field, TFieldInstance extends Fi
     title: source.title ?? target.title,
     section: source.section ?? target.section,
     markdownDescription: source.markdownDescription ?? target.markdownDescription,
+    readonly: source.readonly ?? target.readonly,
     collapsedByDefault: source.collapsedByDefault ?? target.collapsedByDefault,
     nullable: source.nullable ?? target.nullable,
   };

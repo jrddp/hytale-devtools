@@ -13,31 +13,32 @@
   import VariantFieldView from "./fields/VariantField.svelte";
   import WeightedTimelineFieldView from "./fields/WeightedTimelineField.svelte";
 
-  let { field, ...props }: RenderFieldProps = $props();
+  let { field, readOnly = false, ...props }: RenderFieldProps = $props();
+  const effectiveReadOnly = $derived(readOnly || field.readonly === true);
 </script>
 
 {#if field.type === "string"}
-  <StringFieldView {field} {...props} />
+  <StringFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "number"}
-  <NumberFieldView {field} {...props} />
+  <NumberFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "boolean"}
-  <BooleanFieldView {field} {...props} />
+  <BooleanFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "color"}
-  <ColorFieldView {field} {...props} />
+  <ColorFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "array"}
-  <ArrayFieldView {field} {...props} />
+  <ArrayFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "object"}
-  <ObjectFieldView {field} {...props} />
+  <ObjectFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "map"}
-  <MapFieldView {field} {...props} />
+  <MapFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "inlineOrReference"}
-  <InlineOrReferenceFieldView {field} {...props} />
+  <InlineOrReferenceFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "variant"}
-  <VariantFieldView {field} {...props} />
+  <VariantFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "timeline"}
-  <TimelineFieldView {field} {...props} />
+  <TimelineFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else if field.type === "weightedTimeline"}
-  <WeightedTimelineFieldView {field} {...props} />
+  <WeightedTimelineFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {:else}
-  <RawJsonFieldView {field} {...props} />
+  <RawJsonFieldView {field} readOnly={effectiveReadOnly} {...props} />
 {/if}

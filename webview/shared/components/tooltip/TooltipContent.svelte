@@ -7,6 +7,7 @@
     shift,
     type Middleware,
     type Placement,
+    type ReferenceElement,
     type Strategy,
   } from "@floating-ui/dom";
   import type { Snippet } from "svelte";
@@ -30,6 +31,10 @@
 
   let contentElement = $state<HTMLElement | null>(null);
 
+  function isElement(referenceElement: ReferenceElement): referenceElement is Element {
+    return referenceElement instanceof Element;
+  }
+
   async function updatePosition() {
     const referenceElement = tooltip.getReferenceElement();
 
@@ -50,9 +55,7 @@
 
   $effect(() => {
     if (!tooltip.isOpen() || !contentElement) return;
-
-    const referenceElement = tooltip.getReferenceElement();
-    if (!referenceElement) return;
+    void tooltip.getReferenceVersion();
 
     Object.assign(contentElement.style, {
       position: strategy,
@@ -62,6 +65,15 @@
       zIndex: "3002",
       pointerEvents: tooltip.interactive ? "auto" : "none",
     });
+
+    void updatePosition();
+  });
+
+  $effect(() => {
+    if (!tooltip.isOpen() || !contentElement) return;
+
+    const referenceElement = tooltip.getReferenceElement();
+    if (!referenceElement || tooltip.usesVirtualReference() || !isElement(referenceElement)) return;
 
     return autoUpdate(referenceElement, contentElement, updatePosition);
   });

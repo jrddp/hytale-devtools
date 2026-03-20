@@ -1,15 +1,40 @@
+import type { ReferenceElement, VirtualElement } from "@floating-ui/dom";
+
 export type CreateTooltipOptions = {
   interactive?: boolean;
+  followCursor?: boolean;
 };
 
 export type TooltipController = ReturnType<typeof createTooltip>;
 
-export function createTooltip({ interactive = false }: CreateTooltipOptions = {}) {
-  let referenceElement: HTMLElement | null = null;
+export function createTooltip({
+  interactive = false,
+  followCursor = false,
+}: CreateTooltipOptions = {}) {
+  let referenceElement = $state<HTMLElement | null>(null);
+  let pointerX = $state(0);
+  let pointerY = $state(0);
+  let hasPointerPosition = $state(false);
+  let referenceVersion = $state(0);
 
   let isOpen = $state(false);
   let isPointerOverTrigger = false;
   let isPointerOverContent = false;
+
+  const virtualReference: VirtualElement = {
+    getBoundingClientRect() {
+      return {
+        x: pointerX,
+        y: pointerY,
+        left: pointerX,
+        right: pointerX,
+        top: pointerY,
+        bottom: pointerY,
+        width: 0,
+        height: 0,
+      };
+    },
+  };
 
   function open() {
     isOpen = true;
@@ -18,6 +43,8 @@ export function createTooltip({ interactive = false }: CreateTooltipOptions = {}
   function forceClose() {
     isPointerOverTrigger = false;
     isPointerOverContent = false;
+    hasPointerPosition = false;
+    referenceVersion += 1;
     isOpen = false;
   }
 
@@ -29,14 +56,33 @@ export function createTooltip({ interactive = false }: CreateTooltipOptions = {}
     isOpen = false;
   }
 
-  function handleTriggerPointerEnter() {
+  function handleTriggerPointerEnter(event: MouseEvent) {
     isPointerOverTrigger = true;
+    if (followCursor) {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      hasPointerPosition = true;
+      referenceVersion += 1;
+    }
     open();
   }
 
   function handleTriggerPointerLeave() {
     isPointerOverTrigger = false;
+    hasPointerPosition = false;
+    referenceVersion += 1;
     close();
+  }
+
+  function handleTriggerPointerMove(event: MouseEvent) {
+    if (!followCursor) {
+      return;
+    }
+
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    hasPointerPosition = true;
+    referenceVersion += 1;
   }
 
   function handleContentPointerEnter() {
@@ -77,6 +123,7 @@ export function createTooltip({ interactive = false }: CreateTooltipOptions = {}
 
       node.addEventListener("mouseenter", handleTriggerPointerEnter);
       node.addEventListener("mouseleave", handleTriggerPointerLeave);
+      node.addEventListener("mousemove", handleTriggerPointerMove);
       node.addEventListener("focus", handleTriggerFocus);
       node.addEventListener("blur", handleTriggerBlur);
 
@@ -87,6 +134,7 @@ export function createTooltip({ interactive = false }: CreateTooltipOptions = {}
 
         node.removeEventListener("mouseenter", handleTriggerPointerEnter);
         node.removeEventListener("mouseleave", handleTriggerPointerLeave);
+        node.removeEventListener("mousemove", handleTriggerPointerMove);
         node.removeEventListener("focus", handleTriggerFocus);
         node.removeEventListener("blur", handleTriggerBlur);
       };
@@ -96,7 +144,11 @@ export function createTooltip({ interactive = false }: CreateTooltipOptions = {}
     trigger,
     interactive,
     isOpen: () => isOpen,
-    getReferenceElement: () => referenceElement,
+    followCursor,
+    getReferenceElement: (): ReferenceElement | null =>
+      followCursor && hasPointerPosition ? virtualReference : referenceElement,
+    getReferenceVersion: () => referenceVersion,
+    usesVirtualReference: () => followCursor && hasPointerPosition,
     handleContentPointerEnter,
     handleContentPointerLeave,
     open,

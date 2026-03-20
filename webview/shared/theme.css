@@ -5,6 +5,10 @@
   --color-vsc-editor-widget-border: var(--vscode-editorWidget-border);
   --color-vsc-input-bg: var(--vscode-input-background);
   --color-vsc-input-fg: var(--vscode-input-foreground);
+  --color-vsc-input-placeholder-fg: var(
+    --vscode-input-placeholderForeground,
+    var(--vscode-descriptionForeground)
+  );
   --color-vsc-input-border: var(--vscode-input-border);
   --color-vsc-activity-bar-bg: var(--vscode-activityBar-background);
   --color-vsc-muted: var(--vscode-descriptionForeground);

@@ -15,6 +15,8 @@
   let {
     field,
     depth = 0,
+    readOnly = false,
+    readOnlyMessage,
     root = false,
     onSectionsChange,
   }: RenderFieldProps<VariantFieldInstance> & {
@@ -68,11 +70,24 @@
 </script>
 
 {#if field.activeVariant}
-  <FieldPanel {field} {depth}>
-    <ObjectField field={field.activeVariant} {depth} root={true} renderSections={root} />
+  <FieldPanel {field} {depth} {readOnly}>
+    <ObjectField
+      field={field.activeVariant}
+      {depth}
+      {readOnly}
+      {readOnlyMessage}
+      root={true}
+      renderSections={root}
+    />
   </FieldPanel>
 {:else}
-  <FieldPanel field={field.identityField} {depth}>
-    <StringField field={field.identityField} {depth} oncommitchange={onChangeIdentity} />
+  <FieldPanel field={field.identityField} {depth} {readOnly}>
+    <StringField
+      field={field.identityField}
+      {depth}
+      {readOnly}
+      {readOnlyMessage}
+      oncommitchange={onChangeIdentity}
+    />
   </FieldPanel>
 {/if}

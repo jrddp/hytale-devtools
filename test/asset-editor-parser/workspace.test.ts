@@ -6,7 +6,11 @@ import type {
   StringField,
 } from "../../src/shared/fieldTypes";
 import type { AssetEditorParentState } from "../../src/shared/asset-editor/messageTypes";
-import type { ObjectFieldInstance, StringFieldInstance } from "../../webview/hytale-asset-editor/src/parsing/fieldInstances";
+import type {
+  ArrayFieldInstance,
+  ObjectFieldInstance,
+  StringFieldInstance,
+} from "../../webview/hytale-asset-editor/src/parsing/fieldInstances";
 import { Workspace } from "../../webview/hytale-asset-editor/src/workspace.svelte";
 
 function baseField(schemaKey: string | null, type: FieldBase["type"]): FieldBase {
@@ -88,5 +92,43 @@ describe("asset editor workspace parent parsing", () => {
     expect((afterParent.properties.Name as StringFieldInstance).inheritedValue).toBe(
       "Inherited Name",
     );
+  });
+
+  test("workspace collection inheritance serializes correctly after a plain clone override", () => {
+    const workspace = new Workspace();
+    const definition = assetDefinition(
+      {
+        ...baseField(null, "object"),
+        properties: {
+          Tags: {
+            ...baseField("Tags", "array"),
+            items: stringField("Tag", { inheritsValue: true }),
+          },
+        },
+      } as ObjectField,
+    );
+
+    workspace.assetsByRef = {};
+    workspace.setAssetDefinition(definition);
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: "{}",
+      version: 1,
+    });
+    workspace.setParentState(
+      loadedParent({
+        Tags: ["Inherited"],
+      }),
+    );
+
+    const root = workspace.documentRootField as ObjectFieldInstance;
+    const tags = root.properties.Tags as ArrayFieldInstance;
+
+    expect(tags.inheritedItems).toHaveLength(1);
+    tags.items = structuredClone(tags.inheritedItems);
+
+    expect(workspace.serializeDocument()).toEqual({
+      Tags: ["Inherited"],
+    });
   });
 });

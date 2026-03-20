@@ -53,7 +53,11 @@ function serializeField(
         fallbackToEmptyObject,
       );
     case "rawJson":
-      return field.value !== undefined ? JSON.parse(field.value) : undefined;
+      if (field.value === undefined) {
+        return undefined;
+      }
+      const value = JSON.parse(field.value);
+      return value ? value : fallbackToEmptyObject ? {} : undefined;
     case "timeline":
     case "weightedTimeline":
       return field.unparsedData;

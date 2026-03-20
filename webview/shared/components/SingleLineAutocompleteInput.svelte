@@ -1,5 +1,6 @@
 <script lang="ts">
   import { marked } from "marked";
+  import type { HTMLInputAttributes } from "svelte/elements";
   import FloatingMarkdownPreviewCard from "./FloatingMarkdownPreviewCard.svelte";
 
   type AutocompleteOption = {
@@ -21,6 +22,7 @@
     oncommit,
     onfocus,
     afterEnterPressed,
+    ...inputAttributes
   }: {
     inputId: string;
     initialValue?: string;
@@ -35,7 +37,8 @@
     oncommit?: (value: string) => void;
     onfocus?: () => void;
     afterEnterPressed?: (input: HTMLInputElement) => void;
-  } = $props();
+  } & Omit<HTMLInputAttributes, "id" | "type" | "value" | "class" | "placeholder" | "disabled"> =
+    $props();
 
   let value = $state("");
   let lastCommittedValue = $state("");
@@ -136,7 +139,6 @@
     if (activeAutocompleteIndex === -1) {
       const firstButton = autocompleteListElement.querySelector("button");
       firstButton?.scrollIntoView({ block: "nearest" });
-      console.log("Button scrolled to:", firstButton);
       return;
     }
     const activeItemElement = autocompleteListElement.querySelector('[data-active="true"]');
@@ -146,6 +148,7 @@
   function applyAutocompleteValue(nextValue: string) {
     value = nextValue;
     confirmValue();
+    inputElement?.blur();
   }
 
   function handleFocus() {
@@ -232,6 +235,7 @@
     bind:value
     {placeholder}
     {disabled}
+    {...inputAttributes}
     onfocus={handleFocus}
     oninput={handleInput}
     onkeydown={handleInputKeydown}

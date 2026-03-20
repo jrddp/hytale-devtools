@@ -14,6 +14,8 @@
   const {
     field,
     depth = 0,
+    readOnly = false,
+    readOnlyMessage,
     root = false,
     renderSections: renderSectionHeaders = false,
     onSectionsChange,
@@ -24,12 +26,13 @@
     onSectionsChange?: (sections: OutlineSection[]) => void;
   } = $props();
 
+  const properties = $derived(field.properties ?? {});
   const visibleProperties = $derived(
     workspace.hideUnsetFields
       ? Object.fromEntries(
-          Object.entries(field.properties).filter(([, childField]) => isFieldSet(childField)),
+          Object.entries(properties).filter(([, childField]) => isFieldSet(childField)),
         )
-      : field.properties,
+      : properties,
   );
   const sections = $derived(groupFieldsBySection(visibleProperties));
   const outlineSections = $derived(buildOutlineSections(sections));
@@ -60,7 +63,12 @@
 
           <div class="space-y-3">
             {#each section.fields as childField, index (`${childField.schemaKey ?? childField.type}-${index}`)}
-              <FieldRenderer field={childField} depth={root ? depth : depth + 1} />
+              <FieldRenderer
+                field={childField}
+                depth={root ? depth : depth + 1}
+                {readOnly}
+                {readOnlyMessage}
+              />
             {/each}
           </div>
         </section>
@@ -75,7 +83,8 @@
   <FieldPanel
     {field}
     {depth}
-    summary={`${Object.keys(field.properties).length} subfields`}
+    {readOnly}
+    summary={`${Object.keys(properties).length} subfields`}
     collapsedByDefault={field.collapsedByDefault ?? true}
     children={sectionList}
   />

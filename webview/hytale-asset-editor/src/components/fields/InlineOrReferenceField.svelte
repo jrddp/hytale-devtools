@@ -4,11 +4,17 @@
   import StringField from "src/components/fields/StringField.svelte";
   import type { InlineOrReferenceFieldInstance } from "../../parsing/fieldInstances";
 
-  const { field, depth = 0, ...props }: RenderFieldProps<InlineOrReferenceFieldInstance> = $props();
+  const {
+    field,
+    depth = 0,
+    readOnly = false,
+    readOnlyMessage,
+    ...props
+  }: RenderFieldProps<InlineOrReferenceFieldInstance> = $props();
 </script>
 
 {#if field.activeField.type === "string"}
-  <StringField field={field.activeField} {depth} />
+  <StringField field={field.activeField} {depth} {readOnly} {readOnlyMessage} />
 {:else}
-  <ObjectField field={field.activeField} {depth} />
+  <ObjectField field={field.activeField} {depth} {readOnly} {readOnlyMessage} />
 {/if}

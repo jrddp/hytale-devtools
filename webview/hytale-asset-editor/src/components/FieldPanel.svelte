@@ -13,12 +13,14 @@
   let {
     field,
     depth = 0,
+    readOnly = false,
     inline = false,
     onunset,
     collapsedByDefault = true,
     collapseEnabled = true,
     collapsed = $bindable(collapsedByDefault),
     summary,
+    childReadOnly = false,
     actions,
     glyphs,
     children,
@@ -27,6 +29,7 @@
     collapsedByDefault?: boolean;
     collapseEnabled?: boolean;
     collapsed?: boolean;
+    childReadOnly?: boolean;
   } = $props();
 
   const infoTooltip = createTooltip();
@@ -62,10 +65,7 @@
     class="relative inline-flex items-center justify-center size-4 rounded-sm opacity-70"
     aria-label={`Info about ${label}`}
     tabindex={-1}
-    onclick={event => {
-      console.log(field);
-      event.stopPropagation();
-    }}
+    onclick={event => event.stopPropagation()}
   >
     <Info size={12} />
     <TooltipContent
@@ -76,6 +76,7 @@
       <div class="space-y-1">
         <div class="font-semibold">{field.schemaKey} ({humanize(field.type)})</div>
         {@html descriptionHtml}
+        <div>Can inherit? {field.inheritsValue}</div>
       </div>
     </TooltipContent>
   </button>
@@ -88,7 +89,9 @@
 {/snippet}
 
 <section
-  class="border rounded-md border-vsc-border bg-vsc-panel"
+  class="border rounded-md border-vsc-border"
+  class:bg-vsc-panel={!readOnly}
+  class:bg-vsc-panel-readonly={readOnly}
   data-depth={depth}
   data-field-panel
 >
@@ -98,7 +101,7 @@
         <div class="flex items-center gap-1 truncate">
           {@render title()}
         </div>
-        {#if onunset}
+        {#if onunset && !readOnly}
           <button
             type="button"
             class="pointer-events-none inline-flex size-0 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/inline-field:size-6 group-hover/inline-field:pointer-events-auto group-hover/inline-field:opacity-100 group-focus-within/inline-field:pointer-events-auto group-focus-within/inline-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
@@ -130,7 +133,8 @@
       class:border-b={!collapsed}
       class:rounded-b-md={collapsed}
       class:sticky={isStickyEnabled}
-      class:bg-vsc-panel={!stickyHeader.isStuck()}
+      class:bg-vsc-panel={!stickyHeader.isStuck() && !readOnly}
+      class:bg-vsc-panel-readonly={!stickyHeader.isStuck() && readOnly}
       class:bg-vsc-editor-widget-bg={stickyHeader.isStuck()}
       class:shadow-sm={stickyHeader.isStuck()}
       class:cursor-pointer={collapseEnabled}
@@ -171,7 +175,7 @@
     </div>
 
     {#if !collapsed && children}
-      <div class="p-3 space-y-3">
+      <div class="p-3 space-y-3" class:bg-vsc-panel-readonly={readOnly || childReadOnly}>
         {@render children()}
       </div>
     {/if}

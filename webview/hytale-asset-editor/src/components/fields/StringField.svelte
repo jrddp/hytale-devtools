@@ -3,6 +3,7 @@
   import TooltipContent from "@webview-shared/components/tooltip/TooltipContent.svelte";
   import { LoaderCircle } from "lucide-svelte";
   import { type RenderFieldProps } from "src/common";
+  import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
   import SingleLineAutocompleteInput from "../../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
@@ -13,6 +14,8 @@
   let {
     field,
     depth = 0,
+    readOnly = false,
+    readOnlyMessage,
     oncommitchange,
     onunset,
   }: RenderFieldProps<StringFieldInstance> & {
@@ -20,9 +23,15 @@
   } = $props();
 
   let inputId = $derived(getFieldEditorId(field));
+  const isLocked = $derived(readOnly || field.const !== undefined);
 
   const isSet = $derived(field.value !== undefined);
-  const placeholder = $derived(getFieldPlaceholder(field));
+  const value = $derived(
+    isLocked
+      ? (field.value ?? field.const ?? field.inheritedValue ?? field.default ?? "")
+      : (field.value ?? ""),
+  );
+  const placeholder = $derived(isLocked && value !== "" ? "" : getFieldPlaceholder(field));
   const hasFallbackPlaceholder = $derived(
     field.inheritedValue !== undefined || field.default !== undefined,
   );
@@ -96,24 +105,34 @@
 <FieldPanel
   {field}
   {depth}
+  {readOnly}
   inline
   {glyphs}
-  onunset={isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
+  onunset={!isLocked && isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
 >
-  <SingleLineAutocompleteInput
-    {inputId}
-    initialValue={field.value ?? ""}
-    {placeholder}
-    {autocompleteOptions}
-    inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg {hasFallbackPlaceholder
-      ? ''
-      : 'placeholder:italic'}"
-    listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
-    optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
-    previewClass="z-[160]"
-    disabled={field.const !== undefined}
-    onfocus={requestAutocomplete}
-    oncommit={commitValue}
-    afterEnterPressed={input => input.blur()}
-  />
+  <ReadOnlyInputWrapper readOnly={isLocked} {readOnlyMessage} class="w-full min-w-0">
+    {#if isLocked}
+      <div
+        class="w-full rounded-md border border-vsc-border bg-vsc-panel-readonly px-3 py-2 text-vsc-input-fg font-semibold select-text whitespace-pre-wrap break-all"
+      >
+        {value !== "" ? value : placeholder}
+      </div>
+    {:else}
+      <SingleLineAutocompleteInput
+        {inputId}
+        initialValue={value}
+        {placeholder}
+        {autocompleteOptions}
+        inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg {(!hasFallbackPlaceholder)
+          ? 'placeholder:italic'
+          : ''}"
+        listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
+        optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
+        previewClass="z-[160]"
+        onfocus={requestAutocomplete}
+        oncommit={commitValue}
+        afterEnterPressed={input => input.blur()}
+      />
+    {/if}
+  </ReadOnlyInputWrapper>
 </FieldPanel>

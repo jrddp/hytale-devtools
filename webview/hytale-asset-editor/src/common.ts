@@ -12,6 +12,8 @@ export type VSCodeApi = {
 export type RenderFieldProps<TField extends FieldInstance = FieldInstance> = {
   field: TField;
   depth: number;
+  readOnly?: boolean;
+  readOnlyMessage?: string;
   summary?: string;
   onunset?: () => void;
   /** For inline fields, render to the right of children. For collapsable fields, render next to title. */
