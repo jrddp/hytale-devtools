@@ -7,6 +7,7 @@ import {
   type AssetEditorExtensionToWebviewMessage,
   type AssetEditorParentState,
   type AssetEditorPreview,
+  type AssetEditorPreviewRequest,
   type AssetEditorPreviewUpdateMessage,
   type AssetEditorWebviewToExtensionMessage,
 } from "../shared/asset-editor/messageTypes";
@@ -39,6 +40,7 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       const assetDefinition = schemaRuntime.getAssetDefinitionForPath(documentPath);
       const runtime = assetCacheRuntime;
       let isDisposed = false;
+      let previewResolutionVersion = 0;
       if (!assetDefinition) {
         LOGGER.error(
           `No asset definition matched ${documentPath}. Falling back to the JSON editor.`,
@@ -110,6 +112,19 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         void webviewPanel.webview.postMessage(payload);
       };
 
+      const postResolvedPreview = async (previewPromise: Promise<AssetEditorPreview | undefined>) => {
+        const resolutionVersion = ++previewResolutionVersion;
+        const preview = await previewPromise;
+        if (isDisposed || resolutionVersion !== previewResolutionVersion) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
+          type: "previewUpdate",
+          preview,
+        } satisfies AssetEditorPreviewUpdateMessage);
+      };
+
       const sendResolvedParentAndPreview = async (parent: AssetEditorParentState) => {
         if (isDisposed) {
           return;
@@ -124,16 +139,23 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
           return;
         }
 
-        const documentVersion = document.version;
-        const preview = await resolveDocumentPreview(document, assetDefinition, parent, runtime);
-        if (isDisposed || document.version !== documentVersion) {
+        await postResolvedPreview(resolveDocumentPreview(document, assetDefinition, parent, runtime));
+      };
+
+      const sendResolvedPreview = async (request: AssetEditorPreviewRequest) => {
+        if (isDisposed) {
           return;
         }
 
-        await webviewPanel.webview.postMessage({
-          type: "previewUpdate",
-          preview,
-        } satisfies AssetEditorPreviewUpdateMessage);
+        if (!runtime.isReady) {
+          await webviewPanel.webview.postMessage({
+            type: "previewUpdate",
+            preview: { type: request.type, loading: true },
+          } satisfies AssetEditorPreviewUpdateMessage);
+          return;
+        }
+
+        await postResolvedPreview(resolvePreviewRequest(request, runtime));
       };
 
       const sendResolvedDocumentParentAndPreview = () => {
@@ -144,7 +166,6 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       const documentChangeSubscription = vscode.workspace.onDidChangeTextDocument(event => {
         if (event.document.uri.toString() === document.uri.toString()) {
           updateWebview();
-          sendResolvedDocumentParentAndPreview();
         }
       });
 
@@ -190,6 +211,9 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             void sendResolvedParentAndPreview(
               resolveParentState(assetDefinition, runtime, message.parentName),
             );
+            return;
+          case "resolvePreview":
+            void sendResolvedPreview(message.request);
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
@@ -299,17 +323,77 @@ async function resolveDocumentPreview(
   const jsonData = readDocumentJson(document);
   const parentData = parent.parentInstance?.rawJson;
   const iconPath = (jsonData?.["Icon"] ?? parentData?.["Icon"]) as string | undefined;
+  const modelPath = (jsonData?.["Model"] ?? parentData?.["Model"]) as string | undefined;
+  const texturePath = resolveWithFallbackTexture(
+    (jsonData?.["Texture"] ?? parentData?.["Texture"]) as string | undefined,
+    modelPath,
+  );
 
   switch (assetDefinition.preview) {
     case "Item":
-      const iconBytes = iconPath ? await runtime.readAssetBytesByPath(iconPath) : undefined;
-      return {
-        type: "Item",
-        icon: iconBytes ? Array.from(iconBytes) : undefined,
-      };
+      return await resolveItemPreview(iconPath, runtime);
+    case "Model":
+      return await resolveModelPreview(modelPath, texturePath, runtime);
     default:
       return undefined;
   }
+}
+
+async function resolvePreviewRequest(
+  request: AssetEditorPreviewRequest,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview> {
+  switch (request.type) {
+    case "Item":
+      return await resolveItemPreview(request.iconPath, runtime);
+    case "Model":
+      return await resolveModelPreview(
+        request.modelPath,
+        resolveWithFallbackTexture(request.texturePath, request.modelPath),
+        runtime,
+      );
+  }
+}
+
+async function resolveItemPreview(
+  iconPath: string | undefined,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview> {
+  const iconBytes = iconPath ? await runtime.readAssetBytesByPath(iconPath) : undefined;
+  return {
+    type: "Item",
+    icon: iconBytes ? Array.from(iconBytes) : undefined,
+  };
+}
+
+async function resolveModelPreview(
+  modelPath: string | undefined,
+  texturePath: string | undefined,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview> {
+  const [modelAsset, textureBytes] = await Promise.all([
+    modelPath ? runtime.loadAssetByPath(modelPath) : undefined,
+    texturePath ? runtime.readAssetBytesByPath(texturePath) : undefined,
+  ]);
+
+  return {
+    type: "Model",
+    model: modelAsset?.contentType === "json" ? modelAsset.rawJson : undefined,
+    texture: textureBytes ? Array.from(textureBytes) : undefined,
+  };
+}
+
+// The base game code falls back to the same path as the model, but with .png instead of .blockymodel.
+function resolveWithFallbackTexture(
+  texturePath: string | undefined,
+  modelPath: string | undefined,
+): string | undefined {
+  return (
+    texturePath ??
+    (modelPath?.toLowerCase().endsWith(".blockymodel")
+      ? modelPath.replace(/\.blockymodel$/i, ".png")
+      : undefined)
+  );
 }
 
 function readDocumentJson(document: vscode.TextDocument): Record<string, unknown> | undefined {

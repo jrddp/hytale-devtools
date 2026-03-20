@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { AssetEditorExtensionToWebviewMessage } from "@shared/asset-editor/messageTypes";
-  import { LoaderCircle } from "lucide-svelte";
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
@@ -8,6 +7,7 @@
   import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
+  import AssetPreview from "./preview/AssetPreview.svelte";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
@@ -20,21 +20,9 @@
   let outlineSections = $state<OutlineSection[]>([]);
   let activeOutlineSectionId = $state<string | null>(null);
   let pendingOutlineSectionId = $state<string | null>(null);
-  let previewImageUrl = $state<string | null>(null);
 
   $effect(() => {
     workspace.vscode = vscode;
-  });
-
-  $effect(() => {
-    const preview = workspace.preview;
-
-    if (preview?.type !== "Item" || !preview.icon) {
-      previewImageUrl = null;
-      return;
-    }
-
-    previewImageUrl = createPngDataUrl(preview.icon);
   });
 
   $effect(() => {
@@ -201,17 +189,6 @@
     activeOutlineSectionId = nextActiveSectionId;
   }
 
-  function createPngDataUrl(bytes: number[]): string {
-    const chunkSize = 0x8000;
-    let binary = "";
-
-    for (let index = 0; index < bytes.length; index += chunkSize) {
-      binary += String.fromCharCode(...bytes.slice(index, index + chunkSize));
-    }
-
-    return `data:image/png;base64,${btoa(binary)}`;
-  }
-
   onMount(() => {
     window.addEventListener("message", handleMessage);
     vscode.postMessage({ type: "ready" });
@@ -302,37 +279,7 @@
       <div class="p-4">
         <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <aside class="space-y-4 lg:sticky lg:top-4">
-            {#if workspace.assetDefinition.preview === "Item"}
-              <!-- bg #1f2c3c is the actual hotbar color -->
-              <div
-                class="overflow-hidden border aspect-square rounded-xl border-vsc-border bg-vsc-panel"
-                class:!bg-[#1F2C3C]={workspace.preview?.type === "Item" && previewImageUrl}
-              >
-                {#if previewImageUrl}
-                  <div class="flex items-center justify-center p-3 size-full">
-                    <img
-                      src={previewImageUrl}
-                      alt="Asset preview"
-                      class="object-contain size-full"
-                      style:image-rendering="pixelated"
-                    />
-                  </div>
-                {:else if workspace.preview?.loading}
-                  <div
-                    class="flex flex-col items-center justify-center gap-3 px-6 text-sm font-medium text-center size-full text-vsc-muted"
-                  >
-                    <LoaderCircle size={18} class="duration-700 origin-center animate-spin" />
-                    <div>Loading assets...</div>
-                  </div>
-                {:else}
-                  <div
-                    class="flex items-center justify-center px-6 text-sm font-medium text-center size-full text-vsc-muted"
-                  >
-                    No icon found.
-                  </div>
-                {/if}
-              </div>
-            {/if}
+            <AssetPreview />
             <div class="p-2 border rounded-xl border-vsc-border bg-vsc-panel">
               {#if outlineSections.length === 0}
                 <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>

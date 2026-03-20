@@ -1,5 +1,6 @@
 import type {
   AssetEditorExtensionToWebviewMessage,
+  AssetEditorPreview,
   AssetEditorWebviewToExtensionMessage,
 } from "@shared/asset-editor/messageTypes";
 import type { IndexReference } from "@shared/indexTypes";
@@ -39,11 +40,7 @@ type DevBootstrapResponse = {
   documentPath: string;
   text: string;
   version: number;
-  preview?: {
-    type: "Item";
-    icon?: number[];
-    loading?: boolean;
-  };
+  preview?: AssetEditorPreview;
 };
 
 export class MockVSCodeApi implements VSCodeApi {

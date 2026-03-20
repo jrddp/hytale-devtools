@@ -3,7 +3,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export interface BlockymodelViewerRuntime {
   setOrbit(enabled: boolean): void;
-  setBackground(color: string): void;
   setGridVisible(visible: boolean): void;
   setModelObject(object: THREE.Object3D | null): void;
   dispose(): void;
@@ -11,7 +10,6 @@ export interface BlockymodelViewerRuntime {
 
 interface BlockymodelViewerRuntimeOptions {
   orbit?: boolean;
-  background?: string;
   showGrid?: boolean;
 }
 
@@ -62,7 +60,7 @@ export function createBlockymodelViewerRuntime(
 ): BlockymodelViewerRuntime {
   const { width, height } = getSize(host);
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(options.background ?? "#d9d3c5");
+  scene.background = null;
 
   const hemiLight = new THREE.HemisphereLight(0xfff8ee, 0x6f7a84, 0.85);
   scene.add(hemiLight);
@@ -81,11 +79,12 @@ export function createBlockymodelViewerRuntime(
   scene.add(grid);
 
   const camera = createCamera(width, height);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(width, height);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = false;
+  renderer.setClearColor(0x000000, 0);
   host.appendChild(renderer.domElement);
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -119,10 +118,6 @@ export function createBlockymodelViewerRuntime(
   return {
     setOrbit(enabled: boolean): void {
       controls.enabled = enabled;
-      render();
-    },
-    setBackground(color: string): void {
-      scene.background = new THREE.Color(color);
       render();
     },
     setGridVisible(visible: boolean): void {

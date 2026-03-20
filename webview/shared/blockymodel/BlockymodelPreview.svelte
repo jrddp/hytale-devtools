@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as THREE from "three";
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { buildBlockymodelObject3D } from "./buildBlockymodelObject";
   import type { BlockymodelFile } from "./blockymodelTypes";
   import {
@@ -13,7 +13,6 @@
     textureUrl?: string | null;
     textureBytes?: Uint8Array | number[] | null;
     orbit?: boolean;
-    background?: string;
     showGrid?: boolean;
     class?: string;
   }
@@ -23,7 +22,6 @@
     textureUrl = null,
     textureBytes = null,
     orbit = false,
-    background = "#d9d3c5",
     showGrid = true,
     class: className = "",
   }: Props = $props();
@@ -123,12 +121,12 @@
     clearCurrentTexture();
   }
 
-  async function rebuild(): Promise<void> {
-    if (!runtime) {
-      return;
-    }
-
-    if (!model) {
+  async function rebuild(
+    nextRuntime: BlockymodelViewerRuntime,
+    nextModel: BlockymodelFile | null,
+    nextTextureUrl: string | undefined,
+  ): Promise<void> {
+    if (!nextModel) {
       clearCurrentSceneState();
       errorMessage = "";
       loading = false;
@@ -136,11 +134,11 @@
     }
 
     const version = ++rebuildVersion;
-    loading = Boolean(resolvedTextureUrl);
+    loading = Boolean(nextTextureUrl);
     errorMessage = "";
 
     try {
-      const nextTexture = resolvedTextureUrl ? await loadTexture(resolvedTextureUrl) : null;
+      const nextTexture = nextTextureUrl ? await loadTexture(nextTextureUrl) : null;
       if (version !== rebuildVersion) {
         nextTexture?.dispose();
         return;
@@ -148,8 +146,8 @@
 
       clearCurrentSceneState();
       currentTexture = nextTexture;
-      currentObject = buildBlockymodelObject3D(model, nextTexture ?? undefined);
-      runtime.setModelObject(currentObject);
+      currentObject = buildBlockymodelObject3D(nextModel, nextTexture ?? undefined);
+      nextRuntime.setModelObject(currentObject);
     } catch (error) {
       if (version !== rebuildVersion) {
         return;
@@ -171,7 +169,6 @@
 
     runtime = createBlockymodelViewerRuntime(container, {
       orbit,
-      background,
       showGrid,
     });
 
@@ -188,17 +185,21 @@
   });
 
   $effect(() => {
-    runtime?.setBackground(background);
-  });
-
-  $effect(() => {
     runtime?.setGridVisible(showGrid);
   });
 
   $effect(() => {
-    if (runtime) {
-      void rebuild();
+    const nextRuntime = runtime;
+    const nextModel = model;
+    const nextTextureUrl = resolvedTextureUrl;
+
+    if (!nextRuntime) {
+      return;
     }
+
+    untrack(() => {
+      void rebuild(nextRuntime, nextModel, nextTextureUrl);
+    });
   });
 </script>
 

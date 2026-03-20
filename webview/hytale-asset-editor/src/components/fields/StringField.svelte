@@ -6,9 +6,10 @@
   import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
   import SingleLineAutocompleteInput from "../../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
+  import { isPreviewPointer } from "../../preview/previewRequests";
   import { workspace } from "../../workspace.svelte";
   import { getFieldPlaceholder } from "../fieldHelpers";
-  import { getFieldInputId } from "../fieldEditorIds";
+  import { getFieldInputId, getFieldJsonPointer } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -32,6 +33,7 @@
   const isMinimal = $derived(fieldPanelOverrides?.minimal === true);
 
   const isSet = $derived(field.value !== undefined);
+  const jsonPointer = $derived(getFieldJsonPointer(field));
   const value = $derived(
     isLocked
       ? (field.value ?? field.const ?? field.inheritedValue ?? field.default ?? "")
@@ -110,6 +112,10 @@
           parentName: nextValue,
         });
       }
+    }
+
+    if (isPreviewPointer(jsonPointer)) {
+      workspace.requestResolvedPreview();
     }
 
     return true;

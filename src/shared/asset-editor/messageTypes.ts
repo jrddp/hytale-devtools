@@ -2,12 +2,29 @@ import type { AssetPreviewType, AssetDefinition, JsonAssetInstance } from "../fi
 import type { IndexReference } from "../indexTypes";
 
 export type AssetEditorPreview =
-  | { type: Exclude<AssetPreviewType, "Item"> | "none"; loading?: boolean }
+  | { type: Exclude<AssetPreviewType, "Item" | "Model"> | "none"; loading?: boolean }
   | {
-  type: "Item";
-  icon?: number[];
-  loading?: boolean;
-};
+      type: "Item";
+      icon?: number[];
+      loading?: boolean;
+    }
+  | {
+      type: "Model";
+      model?: Record<string, unknown>;
+      texture?: number[];
+      loading?: boolean;
+    };
+
+export type AssetEditorPreviewRequest =
+  | {
+      type: "Item";
+      iconPath?: string;
+    }
+  | {
+      type: "Model";
+      modelPath?: string;
+      texturePath?: string;
+    };
 
 export type AssetEditorParentState = {
   status: "loading" | "none" | "loaded" | "missing";
@@ -63,6 +80,7 @@ export type AssetEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
   | { type: "resolveParent"; parentName: string }
+  | { type: "resolvePreview"; request: AssetEditorPreviewRequest }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | {
       type: "apply";

@@ -11,6 +11,7 @@ import type {
   RootFieldInstance,
   VariantFieldInstance,
 } from "./parsing/fieldInstances";
+import { buildPreviewRequest } from "./preview/previewRequests";
 import {
   assignFieldInstancePaths,
   createEmptyFieldInstance as createEmptyFieldInstanceFromSchema,
@@ -136,6 +137,18 @@ export class Workspace {
       sourceVersion: this.documentVersion,
     };
     this.vscode.postMessage(payload);
+  }
+
+  requestResolvedPreview() {
+    const request = buildPreviewRequest(this.assetDefinition?.preview, this.documentRootField);
+    if (!request) {
+      return;
+    }
+
+    this.vscode.postMessage({
+      type: "resolvePreview",
+      request,
+    });
   }
 
   createEmptyFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
