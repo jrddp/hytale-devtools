@@ -1,14 +1,21 @@
 import type { FieldInstance } from "../parsing/fieldInstances";
 
 export function getFieldPanelId(field: FieldInstance): string {
-  return getFieldPanelIdForPointer(field.fieldPath);
+  return getFieldPanelIdForPointer(getFieldJsonPointer(field));
 }
 
 export function getFieldInputId(field: FieldInstance): string {
   return `${getFieldPanelId(field)}-input`;
 }
 
-/** @param pointer - pointer to field with no prepending slash */
+export function getFieldJsonPointer(field: Pick<FieldInstance, "fieldPath">): string {
+  return normalizeFieldPointer(field.fieldPath);
+}
+
+// Asset editor pointers use slash-delimited paths like `Tags/Test/0`.
+// They should not include a leading slash; `/Tags/Test/0` is tolerated for convenience.
+// Literal `~` and `/` characters inside a path segment use the same escaping as the
+// field-path builder: `~` -> `~0` and `/` -> `~1`.
 export function getFieldPanelIdForPointer(pointer: string): string {
   const normalizedPointer = normalizeFieldPointer(pointer);
   return `asset-${normalizedPointer || "root"}`;

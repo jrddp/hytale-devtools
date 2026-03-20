@@ -39,6 +39,10 @@ type DevBootstrapResponse = {
   documentPath: string;
   text: string;
   version: number;
+  preview?: {
+    type: "Item";
+    icon?: number[];
+  };
 };
 
 export class MockVSCodeApi implements VSCodeApi {
@@ -85,6 +89,7 @@ export class MockVSCodeApi implements VSCodeApi {
       assetDefinition: payload.assetDefinition as never,
       assetsByRef: payload.assetsByRef as never,
       parent: { status: "none" },
+      preview: payload.preview,
     });
     this.send({
       type: "update",

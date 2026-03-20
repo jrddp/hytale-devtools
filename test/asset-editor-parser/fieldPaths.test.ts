@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { AssetDefinition } from "../../src/shared/fieldTypes";
 import {
+  getFieldJsonPointer,
   getFieldInputId,
   getFieldPanelIdForPointer,
   getFieldPanelId,
@@ -70,6 +71,7 @@ describe("asset editor field paths", () => {
     expect(tags.fieldPath).toBe("Tags");
     expect(values.fieldPath).toBe("Tags/Test");
     expect(item.fieldPath).toBe("Tags/Test/0");
+    expect(getFieldJsonPointer(item)).toBe("Tags/Test/0");
     expect(getFieldPanelId(item)).toBe("asset-Tags/Test/0");
     expect(getFieldInputId(item)).toBe("asset-Tags/Test/0-input");
     expect(getFieldPanelIdForPointer("Tags/Test/0")).toBe("asset-Tags/Test/0");

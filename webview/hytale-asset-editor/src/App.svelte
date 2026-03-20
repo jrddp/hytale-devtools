@@ -19,9 +19,21 @@
   let outlineSections = $state<OutlineSection[]>([]);
   let activeOutlineSectionId = $state<string | null>(null);
   let pendingOutlineSectionId = $state<string | null>(null);
+  let previewImageUrl = $state<string | null>(null);
 
   $effect(() => {
     workspace.vscode = vscode;
+  });
+
+  $effect(() => {
+    const preview = workspace.preview;
+
+    if (preview?.type !== "Item" || !preview.icon) {
+      previewImageUrl = null;
+      return;
+    }
+
+    previewImageUrl = createPngDataUrl(preview.icon);
   });
 
   $effect(() => {
@@ -92,10 +104,14 @@
         workspace.assetsByRef = message.assetsByRef;
         workspace.setAssetDefinition(message.assetDefinition);
         workspace.setParentState(message.parent);
+        workspace.setPreview(message.preview);
         extensionError = "";
         return;
       case "parentUpdate":
         workspace.setParentState(message.parent);
+        return;
+      case "previewUpdate":
+        workspace.setPreview(message.preview);
         return;
       case "update":
         workspace.setDocument(message);
@@ -184,6 +200,17 @@
     activeOutlineSectionId = nextActiveSectionId;
   }
 
+  function createPngDataUrl(bytes: number[]): string {
+    const chunkSize = 0x8000;
+    let binary = "";
+
+    for (let index = 0; index < bytes.length; index += chunkSize) {
+      binary += String.fromCharCode(...bytes.slice(index, index + chunkSize));
+    }
+
+    return `data:image/png;base64,${btoa(binary)}`;
+  }
+
   onMount(() => {
     window.addEventListener("message", handleMessage);
     vscode.postMessage({ type: "ready" });
@@ -270,7 +297,25 @@
     <div bind:this={scrollRootElement} class="flex-1 min-h-0 overflow-auto" data-sticky-scroll-root>
       <div class="p-4">
         <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
-          <aside class="lg:sticky lg:top-4">
+          <aside class="space-y-4 lg:sticky lg:top-4">
+            {#if workspace.assetDefinition.preview === "Item"}
+              <div class="aspect-square overflow-hidden border rounded-xl border-vsc-border bg-vsc-panel">
+                {#if previewImageUrl}
+                  <div class="flex items-center justify-center size-full p-3">
+                    <img
+                      src={previewImageUrl}
+                      alt="Asset preview"
+                      class="size-full object-contain"
+                      style:image-rendering="pixelated"
+                    />
+                  </div>
+                {:else}
+                  <div class="flex items-center justify-center size-full px-6 text-center text-sm font-medium text-vsc-muted">
+                    No icon found.
+                  </div>
+                {/if}
+              </div>
+            {/if}
             <div class="p-2 border rounded-xl border-vsc-border bg-vsc-panel">
               {#if outlineSections.length === 0}
                 <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>

@@ -1,4 +1,5 @@
 import type {
+  AssetEditorPreview,
   AssetEditorParentState,
   AssetEditorWebviewToExtensionMessage,
 } from "@shared/asset-editor/messageTypes";
@@ -32,6 +33,7 @@ export class Workspace {
   parentStatus = $state<AssetEditorParentState["status"]>("none");
   parentName = $state<string | null>(null);
   parentInstance = $state<AssetEditorParentState["parentInstance"]>(undefined);
+  preview = $state<AssetEditorPreview | undefined>(undefined);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
 
@@ -51,6 +53,7 @@ export class Workspace {
     this.parentStatus = "none";
     this.parentName = null;
     this.parentInstance = undefined;
+    this.preview = undefined;
   }
 
   setDocument({
@@ -80,6 +83,10 @@ export class Workspace {
     if (this.documentText !== null) {
       this.reparseDocument();
     }
+  }
+
+  setPreview(preview: AssetEditorPreview | undefined) {
+    this.preview = preview;
   }
 
   setAllPanelsCollapsed(collapsed: boolean) {

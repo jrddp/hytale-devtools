@@ -1,5 +1,10 @@
-import { type AssetDefinition, type JsonAssetInstance } from "../fieldTypes";
+import { AssetPreviewType, type AssetDefinition, type JsonAssetInstance } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
+
+export type AssetEditorPreview = { type: AssetPreviewType | "none" } | {
+  type: "Item";
+  icon?: number[];
+};
 
 export type AssetEditorParentState = {
   status: "loading" | "none" | "loaded" | "missing";
@@ -12,11 +17,17 @@ export type AssetEditorBootstrapMessage = {
   assetDefinition: AssetDefinition;
   assetsByRef: Record<string, AssetDefinition>;
   parent: AssetEditorParentState;
+  preview?: AssetEditorPreview;
 };
 
 export type AssetEditorParentUpdateMessage = {
   type: "parentUpdate";
   parent: AssetEditorParentState;
+};
+
+export type AssetEditorPreviewUpdateMessage = {
+  type: "previewUpdate";
+  preview?: AssetEditorPreview;
 };
 
 export type AssetEditorDocumentUpdateMessage = {
@@ -40,6 +51,7 @@ export type AssetEditorAutocompletionValuesMessage = {
 export type AssetEditorExtensionToWebviewMessage =
   | AssetEditorBootstrapMessage
   | AssetEditorParentUpdateMessage
+  | AssetEditorPreviewUpdateMessage
   | AssetEditorDocumentUpdateMessage
   | AssetEditorErrorMessage
   | AssetEditorAutocompletionValuesMessage;

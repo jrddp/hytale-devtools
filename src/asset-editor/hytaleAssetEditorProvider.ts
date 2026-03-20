@@ -3,8 +3,11 @@ import { type AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import { assetCacheRuntime, LOGGER, schemaRuntime } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
 import {
-  type AssetEditorParentState,
+  type AssetEditorBootstrapMessage,
   type AssetEditorExtensionToWebviewMessage,
+  type AssetEditorParentState,
+  type AssetEditorPreview,
+  type AssetEditorPreviewUpdateMessage,
   type AssetEditorWebviewToExtensionMessage,
 } from "../shared/asset-editor/messageTypes";
 import { type AssetDefinition } from "../shared/fieldTypes";
@@ -60,7 +63,7 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         title: "Hytale Asset Editor",
       });
 
-      const sendBootstrap = () => {
+      const sendBootstrap = async (loadPreview: boolean) => {
         try {
           // send minimal ref-resolutions to preserve memory
           const assetsByRef = Array.from(schemaRuntime.assetsByRef.entries()).reduce(
@@ -73,17 +76,27 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             {} as Record<string, AssetDefinition>,
           );
 
-          const payload: AssetEditorExtensionToWebviewMessage = {
+          const parent = resolveDocumentParentState(document, assetDefinition, runtime);
+
+          const payload: AssetEditorBootstrapMessage = {
             type: "bootstrap",
             assetDefinition,
             assetsByRef,
-            parent: resolveDocumentParentState(document, assetDefinition, runtime),
+            parent,
+            preview: loadPreview
+              ? await resolveDocumentPreview(document, assetDefinition, parent, runtime)
+              : { type: assetDefinition.preview ?? "none" },
           };
-          void webviewPanel.webview.postMessage(payload);
+
+          if (!isDisposed) {
+            await webviewPanel.webview.postMessage(payload);
+          }
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
           LOGGER.error(`Unable to build asset editor schema data: ${message}`);
-          void this.postError(webviewPanel.webview, message);
+          if (!isDisposed) {
+            await this.postError(webviewPanel.webview, message);
+          }
         }
       };
 
@@ -97,26 +110,41 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         void webviewPanel.webview.postMessage(payload);
       };
 
-      const sendParentUpdate = () => {
-        const payload: AssetEditorExtensionToWebviewMessage = {
+      const sendResolvedParentAndPreview = async (parent: AssetEditorParentState) => {
+        if (isDisposed) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
           type: "parentUpdate",
-          parent: resolveDocumentParentState(document, assetDefinition, runtime),
-        };
-        void webviewPanel.webview.postMessage(payload);
+          parent,
+        } satisfies AssetEditorExtensionToWebviewMessage);
+
+        if (!runtime.isReady || isDisposed) {
+          return;
+        }
+
+        const documentVersion = document.version;
+        const preview = await resolveDocumentPreview(document, assetDefinition, parent, runtime);
+        if (isDisposed || document.version !== documentVersion) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
+          type: "previewUpdate",
+          preview,
+        } satisfies AssetEditorPreviewUpdateMessage);
       };
 
-      const sendResolvedParentUpdate = (parentName: string) => {
-        const payload: AssetEditorExtensionToWebviewMessage = {
-          type: "parentUpdate",
-          parent: resolveParentState(assetDefinition, runtime, parentName),
-        };
-        void webviewPanel.webview.postMessage(payload);
+      const sendResolvedDocumentParentAndPreview = () => {
+        const parent = resolveDocumentParentState(document, assetDefinition, runtime);
+        void sendResolvedParentAndPreview(parent);
       };
 
       const documentChangeSubscription = vscode.workspace.onDidChangeTextDocument(event => {
         if (event.document.uri.toString() === document.uri.toString()) {
           updateWebview();
-          sendParentUpdate();
+          sendResolvedDocumentParentAndPreview();
         }
       });
 
@@ -129,30 +157,39 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         LOGGER.info("Message received:", message.type);
         switch (message.type) {
           case "ready":
-            sendBootstrap();
-            updateWebview();
-            if (!runtime.isReady) {
-              void runtime.ready
-                .then(() => {
-                  if (!isDisposed && assetCacheRuntime === runtime) {
-                    sendParentUpdate();
-                  }
-                })
-                .catch(error => {
-                  if (!isDisposed) {
-                    void this.postError(
-                      webviewPanel.webview,
-                      `Failed to load base-game asset cache: ${error instanceof Error ? error.message : String(error)}`,
-                    );
-                  }
-                });
+            if (runtime.isReady) {
+              void sendBootstrap(true).finally(() => {
+                if (!isDisposed) {
+                  updateWebview();
+                }
+              });
+              return;
             }
+
+            void sendBootstrap(false);
+            updateWebview();
+            void runtime.ready
+              .then(() => {
+                if (!isDisposed && assetCacheRuntime === runtime) {
+                  sendResolvedDocumentParentAndPreview();
+                }
+              })
+              .catch(error => {
+                if (!isDisposed) {
+                  void this.postError(
+                    webviewPanel.webview,
+                    `Failed to load base-game asset cache: ${error instanceof Error ? error.message : String(error)}`,
+                  );
+                }
+              });
             return;
           case "autocompleteRequest":
             void this.autocompleteRequest(message, webviewPanel.webview);
             return;
           case "resolveParent":
-            sendResolvedParentUpdate(message.parentName);
+            void sendResolvedParentAndPreview(
+              resolveParentState(assetDefinition, runtime, message.parentName),
+            );
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
@@ -230,7 +267,9 @@ function resolveDocumentParentState(
   assetDefinition: AssetDefinition,
   runtime: AssetCacheRuntime,
 ): AssetEditorParentState {
-  return resolveParentState(assetDefinition, runtime, readParentName(document));
+  const jsonData = readDocumentJson(document);
+  const parentName = jsonData?.["Parent"] as string | undefined;
+  return resolveParentState(assetDefinition, runtime, parentName);
 }
 
 function resolveParentState(
@@ -241,33 +280,41 @@ function resolveParentState(
   if (!parentName) {
     return { status: "none" };
   }
+  const parentData = runtime.getAsset(assetDefinition.title, parentName);
+  if (parentData) {
+    return { status: "loaded", parentName, parentInstance: parentData };
+  }
   if (!runtime.isReady) {
-    return {
-      status: "loading",
-      parentName,
-    };
+    return { status: "loading", parentName };
   }
-
-  const parentInstance = runtime.getAsset(assetDefinition.title, parentName);
-  if (!parentInstance) {
-    return {
-      status: "missing",
-      parentName,
-    };
-  }
-
-  return {
-    status: "loaded",
-    parentName,
-    parentInstance,
-  };
+  return { status: "missing", parentName };
 }
 
-function readParentName(document: vscode.TextDocument): string | undefined {
+async function resolveDocumentPreview(
+  document: vscode.TextDocument,
+  assetDefinition: AssetDefinition,
+  parent: AssetEditorParentState,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview | undefined> {
+  const jsonData = readDocumentJson(document);
+  const parentData = parent.parentInstance?.rawJson;
+  const iconPath = (jsonData?.["Icon"] ?? parentData?.["Icon"]) as string | undefined;
+
+  switch (assetDefinition.preview) {
+    case "Item":
+      const iconBytes = iconPath ? await runtime.readAssetBytesByPath(iconPath) : undefined;
+      return {
+        type: "Item",
+        icon: iconBytes ? Array.from(iconBytes) : undefined,
+      };
+    default:
+      return undefined;
+  }
+}
+
+function readDocumentJson(document: vscode.TextDocument): Record<string, unknown> | undefined {
   try {
-    const documentJson = JSON.parse(document.getText()) as Record<string, unknown>;
-    const parentValue = documentJson["Parent"];
-    return typeof parentValue === "string" && parentValue.length > 0 ? parentValue : undefined;
+    return JSON.parse(document.getText()) as Record<string, unknown>;
   } catch {
     return undefined;
   }
