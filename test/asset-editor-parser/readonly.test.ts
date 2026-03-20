@@ -40,6 +40,7 @@ describe("asset editor readonly metadata", () => {
       $ref: "LockedAsset.json#",
     } as const;
     const target = {
+      fieldPath: "LockedRef",
       schemaKey: null,
       type: "object",
       section: "General",

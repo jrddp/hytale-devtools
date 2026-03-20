@@ -1,15 +1,32 @@
 import type { FieldInstance } from "../parsing/fieldInstances";
 
-const fieldEditorIds = new WeakMap<FieldInstance, string>();
-let nextFieldEditorId = 0;
+export function getFieldPanelId(field: FieldInstance): string {
+  return getFieldPanelIdForPointer(field.fieldPath);
+}
 
-export function getFieldEditorId(field: FieldInstance): string {
-  let fieldEditorId = fieldEditorIds.get(field);
-  if (!fieldEditorId) {
-    nextFieldEditorId += 1;
-    fieldEditorId = `asset-field-${nextFieldEditorId}`;
-    fieldEditorIds.set(field, fieldEditorId);
-  }
+export function getFieldInputId(field: FieldInstance): string {
+  return `${getFieldPanelId(field)}-input`;
+}
 
-  return fieldEditorId;
+/** @param pointer - pointer to field with no prepending slash */
+export function getFieldPanelIdForPointer(pointer: string): string {
+  const normalizedPointer = normalizeFieldPointer(pointer);
+  return `asset-${normalizedPointer || "root"}`;
+}
+
+export function getFieldValueByPointer(
+  pointer: string,
+  root: Document | ParentNode = document,
+): string | null {
+  const panelId = getFieldPanelIdForPointer(pointer);
+  const panelElement =
+    "getElementById" in root
+      ? root.getElementById(panelId)
+      : root.querySelector<HTMLElement>(`#${CSS.escape(panelId)}`);
+
+  return panelElement?.getAttribute("data-value") ?? null;
+}
+
+function normalizeFieldPointer(pointer: string): string {
+  return pointer.startsWith("/") ? pointer.slice(1) : pointer;
 }

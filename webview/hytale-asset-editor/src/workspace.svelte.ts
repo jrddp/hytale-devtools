@@ -11,6 +11,7 @@ import type {
   VariantFieldInstance,
 } from "./parsing/fieldInstances";
 import {
+  assignFieldInstancePaths,
   createEmptyFieldInstance as createEmptyFieldInstanceFromSchema,
   parseDocumentText,
 } from "./parsing/parseDocument";
@@ -116,6 +117,7 @@ export class Workspace {
 
   applyDocumentState() {
     console.log("Applying document state", this.documentRootField);
+    this.syncFieldPaths();
     const text = this.serializeDocumentText();
     if (!text) {
       return;
@@ -134,6 +136,17 @@ export class Workspace {
       $state.snapshot(field) as TField,
       $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
     );
+  }
+
+  syncFieldPaths(field?: FieldInstance) {
+    if (field) {
+      assignFieldInstancePaths(field, field.fieldPath);
+      return;
+    }
+
+    if (this.documentRootField) {
+      assignFieldInstancePaths(this.documentRootField, "");
+    }
   }
 
   reparseDocument() {

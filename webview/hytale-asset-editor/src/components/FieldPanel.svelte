@@ -6,7 +6,9 @@
   import { createTooltip } from "../../../shared/components/tooltip/createTooltip.svelte";
   import TooltipContent from "../../../shared/components/tooltip/TooltipContent.svelte";
   import { createStickyHeader } from "./createStickyHeader.svelte";
+  import { getFieldPanelId } from "./fieldEditorIds";
   import { getFieldLabel, humanize } from "./fieldHelpers";
+  import type { FieldInstance } from "../parsing/fieldInstances";
 
   const STICKY_HEADER_HEIGHT_PX = 44;
 
@@ -43,6 +45,8 @@
   const isMinimal = $derived(fieldPanelOverrides?.minimal === true);
   const titleOverride = $derived(fieldPanelOverrides?.title);
   const label = $derived(getFieldLabel(field));
+  const panelId = $derived(getFieldPanelId(field));
+  const fieldValue = $derived(getFieldDataValue(field));
   const descriptionHtml = $derived(
     field.markdownDescription ? marked(field.markdownDescription) : undefined,
   );
@@ -75,6 +79,20 @@
     event.stopPropagation();
     event.preventDefault();
     onunset?.();
+  }
+
+  function getFieldDataValue(field: FieldInstance): string | undefined {
+    switch (field.type) {
+      case "string":
+      case "color":
+        return field.value;
+      case "number":
+        return field.value !== undefined ? field.value.toString() : undefined;
+      case "boolean":
+        return field.value !== undefined ? String(field.value) : undefined;
+      default:
+        return undefined;
+    }
   }
 </script>
 
@@ -146,14 +164,18 @@
 {/snippet}
 
 {#if isMinimal}
-  {@render children?.()}
+  <section id={panelId} data-field-panel={panelId} data-value={fieldValue}>
+    {@render children?.()}
+  </section>
 {:else}
   <section
+    id={panelId}
     class="border rounded-md border-vsc-border"
     class:bg-vsc-panel={!readOnly}
     class:bg-vsc-panel-readonly={readOnly}
     data-depth={depth}
-    data-field-panel
+    data-field-panel={panelId}
+    data-value={fieldValue}
   >
     {#if inline}
       <div class="group/inline-field flex min-h-12 items-center gap-1 px-4 py-2">
@@ -171,7 +193,7 @@
               type="button"
               class="pointer-events-none inline-flex size-0 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/inline-field:size-6 group-hover/inline-field:pointer-events-auto group-hover/inline-field:opacity-100 group-focus-within/inline-field:pointer-events-auto group-focus-within/inline-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
               aria-label={`Unset ${label}`}
-              onclick={onunset}
+              onclick={handleUnsetClick}
             >
               <CircleX size={14} />
             </button>

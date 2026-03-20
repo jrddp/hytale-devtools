@@ -5,6 +5,7 @@
   import type { ColorFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
   import { getFieldPlaceholder } from "../fieldHelpers";
+  import { getFieldInputId } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -18,6 +19,7 @@
   }: RenderFieldProps<ColorFieldInstance> = $props();
 
   const isSet = $derived(field.value !== undefined);
+  const inputId = $derived(getFieldInputId(field));
   const placeholder = $derived(getFieldPlaceholder(field));
   const hasFallbackPlaceholder = $derived(
     field.inheritedValue !== undefined || field.default !== undefined,
@@ -87,6 +89,7 @@
   <ReadOnlyInputWrapper readOnly={readOnly} {readOnlyMessage} class="min-w-0">
     <div class="flex items-center gap-3">
       <input
+        id={readOnly ? inputId : undefined}
         type="color"
         class="w-8 h-8 border rounded-md border-vsc-border {readOnly
           ? 'opacity-70 bg-vsc-panel-readonly'
@@ -104,6 +107,7 @@
         </div>
       {:else}
         <input
+          id={inputId}
           type="text"
           class="flex-1 px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
           bind:value={draftValue}

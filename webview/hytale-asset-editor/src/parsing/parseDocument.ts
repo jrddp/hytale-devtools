@@ -77,16 +77,19 @@ export function parseDocumentText({
     };
   }
 
+  const rootField = populateFieldInstance(
+    cloneFieldInstance(assetDefinition.rootField),
+    documentRoot,
+    parentData,
+    {
+      assetsByRef,
+    },
+  );
+  assignFieldInstancePaths(rootField, "");
+
   return {
     status: "ready",
-    rootField: populateFieldInstance(
-      cloneFieldInstance(assetDefinition.rootField),
-      documentRoot,
-      parentData,
-      {
-        assetsByRef,
-      },
-    ),
+    rootField,
   };
 }
 
@@ -94,7 +97,7 @@ export function createEmptyFieldInstance<TField extends Field>(
   field: TField,
   assetsByRef: Record<string, AssetDefinition>,
 ): TField & FieldInstance {
-  return populateFieldInstance(
+  const fieldInstance = populateFieldInstance(
     cloneFieldInstance(field),
     undefined,
     undefined,
@@ -102,6 +105,57 @@ export function createEmptyFieldInstance<TField extends Field>(
       assetsByRef,
     },
   ) as TField & FieldInstance;
+  assignFieldInstancePaths(fieldInstance, getDefaultFieldPath(fieldInstance));
+  return fieldInstance;
+}
+
+export function assignFieldInstancePaths<TField extends FieldInstance>(
+  field: TField,
+  basePath = "",
+): TField {
+  field.fieldPath = basePath;
+
+  switch (field.type) {
+    case "object":
+      for (const [schemaKey, childField] of Object.entries(field.properties)) {
+        childField.schemaKey = schemaKey;
+        assignFieldInstancePaths(childField, appendFieldPath(basePath, schemaKey));
+      }
+      return field;
+    case "array":
+      for (const [index, item] of field.items.entries()) {
+        item.schemaKey = index.toString();
+        assignFieldInstancePaths(item, appendFieldPath(basePath, index.toString()));
+      }
+      for (const [index, item] of field.inheritedItems.entries()) {
+        item.schemaKey = index.toString();
+        assignFieldInstancePaths(item, appendFieldPath(basePath, index.toString()));
+      }
+      return field;
+    case "map":
+      for (const entry of field.entries) {
+        assignFieldInstancePaths(entry.valueField, appendFieldPath(basePath, entry.key));
+      }
+      for (const entry of field.inheritedEntries) {
+        assignFieldInstancePaths(entry.valueField, appendFieldPath(basePath, entry.key));
+      }
+      return field;
+    case "variant":
+      assignFieldInstancePaths(
+        field.identityField,
+        appendFieldPath(basePath, field.identityField.schemaKey),
+      );
+      if (field.activeVariant) {
+        assignFieldInstancePaths(field.activeVariant, basePath);
+      }
+      return field;
+    case "inlineOrReference":
+      assignFieldInstancePaths(field.activeField, basePath);
+      assignFieldInstancePaths(field.inheritedActiveField, basePath);
+      return field;
+    default:
+      return field;
+  }
 }
 
 function populateFieldInstance<TField extends Field>(
@@ -523,4 +577,21 @@ function cloneFieldInstance<TField extends Field>(field: TField): TField & Field
 
 function stripBom(text: string): string {
   return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+}
+
+function getDefaultFieldPath(field: Pick<Field, "schemaKey">): string {
+  return field.schemaKey ? escapeFieldPathSegment(field.schemaKey) : "";
+}
+
+function appendFieldPath(parentPath: string, segment: string): string {
+  const escapedSegment = escapeFieldPathSegment(segment);
+  return parentPath ? `${parentPath}/${escapedSegment}` : escapedSegment;
+}
+
+function escapeFieldPathSegment(segment: string): string {
+  if (segment.length === 0) {
+    return "$empty";
+  }
+
+  return segment.replaceAll("~", "~0").replaceAll("/", "~1");
 }

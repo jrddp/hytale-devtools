@@ -8,7 +8,7 @@
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
   import { getFieldPlaceholder } from "../fieldHelpers";
-  import { getFieldEditorId } from "../fieldEditorIds";
+  import { getFieldInputId } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -27,7 +27,7 @@
     oncommitchange?: (value: string | undefined) => boolean | void;
   } = $props();
 
-  let inputId = $derived(getFieldEditorId(field));
+  let inputId = $derived(getFieldInputId(field));
   const isLocked = $derived(readOnly || field.const !== undefined);
   const isMinimal = $derived(fieldPanelOverrides?.minimal === true);
 

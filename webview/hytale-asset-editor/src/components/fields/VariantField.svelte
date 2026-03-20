@@ -63,6 +63,7 @@
       nextVariantField,
     );
     field.activeVariant.properties[field.identityField.schemaKey] = field.identityField;
+    workspace.syncFieldPaths(field);
   }
 
   $effect(() => {
