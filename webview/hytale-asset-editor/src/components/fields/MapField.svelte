@@ -18,7 +18,9 @@
     readOnly = false,
     readOnlyMessage,
     fieldPanelOverrides,
+    handle,
   }: RenderFieldProps<MapFieldInstance> = $props();
+
   const hasInheritedOnlyEntries = $derived(
     field.entries.length === 0 && field.inheritedEntries.length > 0,
   );
@@ -106,6 +108,7 @@
   {depth}
   {readOnly}
   {fieldPanelOverrides}
+  {handle}
   {summary}
   childReadOnly={hasInheritedOnlyEntries}
   collapsedByDefault={false}

@@ -20,6 +20,7 @@
     root = false,
     renderSections: renderSectionHeaders = false,
     onSectionsChange,
+    handle,
     ...props
   }: RenderFieldProps<ObjectFieldInstance> & {
     root?: boolean;
@@ -86,6 +87,7 @@
     {depth}
     {readOnly}
     fieldPanelOverrides={fieldPanelOverrides}
+    {handle}
     summary={`${Object.keys(properties).length} subfields`}
     collapsedByDefault={field.collapsedByDefault ?? true}
     children={sectionList}

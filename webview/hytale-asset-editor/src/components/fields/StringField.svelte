@@ -18,6 +18,7 @@
     readOnlyMessage,
     applyDocumentStateOnCommit = true,
     fieldPanelOverrides,
+    handle,
     oncommitchange,
     onunset,
   }: RenderFieldProps<StringFieldInstance> & {
@@ -137,6 +138,7 @@
   {depth}
   {readOnly}
   fieldPanelOverrides={fieldPanelOverrides}
+  {handle}
   inline
   {glyphs}
   onunset={!isLocked && isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}

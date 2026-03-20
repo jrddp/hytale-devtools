@@ -2,6 +2,12 @@ import { type AssetEditorWebviewToExtensionMessage } from "@shared/asset-editor/
 import { type FieldInstance } from "src/parsing/fieldInstances";
 import type { Snippet } from "svelte";
 
+export type FieldPanelHandle = {
+  ariaLabel?: string;
+  attach?: (node: HTMLElement) => void | (() => void);
+  icon?: Snippet;
+};
+
 export type VSCodeApi = {
   postMessage: (message: AssetEditorWebviewToExtensionMessage) => void;
   getState?: () => Record<string, unknown> | undefined;
@@ -27,6 +33,8 @@ export type RenderFieldProps<TField extends FieldInstance = FieldInstance> = {
   // TODO implement
   actions?: Snippet;
   children?: Snippet;
+  /** Render as a drag handle to the left of the field title. */
+  handle?: FieldPanelHandle;
   /** Render to the right of the title. */
   glyphs?: Snippet;
 };

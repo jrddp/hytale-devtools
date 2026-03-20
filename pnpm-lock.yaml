@@ -78,6 +78,9 @@ importers:
       marked:
         specifier: ^16.3.0
         version: 16.4.2
+      svelte-dnd-action:
+        specifier: ^0.9.69
+        version: 0.9.69(svelte@5.53.6)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.4
@@ -2414,6 +2417,11 @@ packages:
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
+
+  svelte-dnd-action@0.9.69:
+    resolution: {integrity: sha512-NAmSOH7htJoYraTQvr+q5whlIuVoq88vEuHr4NcFgscDRUxfWPPxgie2OoxepBCQCikrXZV4pqV86aun60wVyw==}
+    peerDependencies:
+      svelte: '>=3.23.0 || ^5.0.0-next.0'
 
   svelte-eslint-parser@1.5.1:
     resolution: {integrity: sha512-UbY7DYoDg+x4AKLUcX5xWuEWylgmm8ZD2Z89YT/AK6Wm/ckeMTnOMwr6AVC99znXbRC26xzWEPhSgmB62E07Gg==}
@@ -4920,6 +4928,10 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - picomatch
+
+  svelte-dnd-action@0.9.69(svelte@5.53.6):
+    dependencies:
+      svelte: 5.53.6
 
   svelte-eslint-parser@1.5.1(svelte@5.53.6):
     dependencies:

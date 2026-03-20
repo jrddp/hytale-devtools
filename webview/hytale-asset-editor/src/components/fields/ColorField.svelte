@@ -13,6 +13,7 @@
     readOnly = false,
     readOnlyMessage,
     fieldPanelOverrides,
+    handle,
     onunset,
   }: RenderFieldProps<ColorFieldInstance> = $props();
 
@@ -78,6 +79,7 @@
   {depth}
   {readOnly}
   fieldPanelOverrides={fieldPanelOverrides}
+  {handle}
   summary={field.colorType}
   inline
   onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}

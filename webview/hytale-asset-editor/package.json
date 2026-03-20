@@ -12,7 +12,8 @@
   "dependencies": {
     "@floating-ui/dom": "^1.7.6",
     "lucide-svelte": "^0.564.0",
-    "marked": "^16.3.0"
+    "marked": "^16.3.0",
+    "svelte-dnd-action": "^0.9.69"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.2.4",

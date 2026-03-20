@@ -11,6 +11,7 @@
     readOnly = false,
     readOnlyMessage,
     fieldPanelOverrides,
+    handle,
     onunset,
   }: RenderFieldProps<BooleanFieldInstance> = $props();
 
@@ -44,6 +45,7 @@
   {depth}
   {readOnly}
   fieldPanelOverrides={fieldPanelOverrides}
+  {handle}
   inline
   onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
 >

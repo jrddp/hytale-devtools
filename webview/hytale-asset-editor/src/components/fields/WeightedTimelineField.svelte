@@ -9,6 +9,7 @@
     depth = 0,
     readOnly = false,
     fieldPanelOverrides,
+    handle,
   }: RenderFieldProps<WeightedTimelineFieldInstance> = $props();
 
   const value = $derived(
@@ -54,7 +55,14 @@
   }
 </script>
 
-<FieldPanel field={field} {depth} {readOnly} {fieldPanelOverrides} summary="Weighted timeline field - raw JSON editor">
+<FieldPanel
+  field={field}
+  {depth}
+  {readOnly}
+  {fieldPanelOverrides}
+  {handle}
+  summary="Weighted timeline field - raw JSON editor"
+>
   <textarea
     class="min-h-28 w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
     bind:value={draftValue}

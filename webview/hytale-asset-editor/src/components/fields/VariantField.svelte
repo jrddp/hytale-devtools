@@ -20,6 +20,7 @@
     fieldPanelOverrides,
     root = false,
     onSectionsChange,
+    handle,
   }: RenderFieldProps<VariantFieldInstance> & {
     root?: boolean;
     onSectionsChange?: (sections: OutlineSection[]) => void;
@@ -71,7 +72,7 @@
 </script>
 
 {#if field.activeVariant}
-  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides}>
+  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} {handle}>
     <ObjectField
       field={field.activeVariant}
       {depth}
@@ -82,7 +83,7 @@
     />
   </FieldPanel>
 {:else}
-  <FieldPanel field={field.identityField} {depth} {readOnly} {fieldPanelOverrides}>
+  <FieldPanel field={field.identityField} {depth} {readOnly} {fieldPanelOverrides} {handle}>
     <StringField
       field={field.identityField}
       {depth}
