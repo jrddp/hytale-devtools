@@ -17,6 +17,7 @@
     depth = 0,
     readOnly = false,
     readOnlyMessage,
+    fieldPanelOverrides,
     root = false,
     onSectionsChange,
   }: RenderFieldProps<VariantFieldInstance> & {
@@ -70,7 +71,7 @@
 </script>
 
 {#if field.activeVariant}
-  <FieldPanel {field} {depth} {readOnly}>
+  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides}>
     <ObjectField
       field={field.activeVariant}
       {depth}
@@ -81,7 +82,7 @@
     />
   </FieldPanel>
 {:else}
-  <FieldPanel field={field.identityField} {depth} {readOnly}>
+  <FieldPanel field={field.identityField} {depth} {readOnly} {fieldPanelOverrides}>
     <StringField
       field={field.identityField}
       {depth}

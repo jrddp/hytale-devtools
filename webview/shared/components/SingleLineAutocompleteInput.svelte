@@ -18,6 +18,8 @@
     listClass = "",
     optionClass = "",
     previewClass = "",
+    fitContentWidth = false,
+    sizerClass = "",
     stopPointerPropagation = false,
     oncommit,
     onfocus,
@@ -33,8 +35,10 @@
     listClass?: string;
     optionClass?: string;
     previewClass?: string;
+    fitContentWidth?: boolean;
+    sizerClass?: string;
     stopPointerPropagation?: boolean;
-    oncommit?: (value: string) => void;
+    oncommit?: (value: string) => boolean | void;
     onfocus?: () => void;
     afterEnterPressed?: (input: HTMLInputElement) => void;
   } & Omit<HTMLInputAttributes, "id" | "type" | "value" | "class" | "placeholder" | "disabled"> =
@@ -48,6 +52,7 @@
   let activeAutocompleteIndex = $state(-1);
   let autocompleteListElement = $state<HTMLDivElement>();
   let previewAnchorElement = $state<HTMLElement | null>(null);
+  let inputSizerWidth = $state(0);
 
   $effect(() => {
     void value;
@@ -75,6 +80,10 @@
   const previewOption = $derived(
     visibleAutocompleteOptions[activeAutocompleteIndex >= 0 ? activeAutocompleteIndex : 0],
   );
+  const sizerText = $derived.by(() => {
+    const text = value || placeholder || " ";
+    return text.replaceAll(" ", "\u00A0");
+  });
   const previewHtml = $derived(
     previewOption?.markdownDescription
       ? (marked.parse(previewOption.markdownDescription, {
@@ -127,8 +136,14 @@
       return;
     }
 
-    oncommit?.(value);
+    const commitResult = oncommit?.(value);
+    if (commitResult === false) {
+      value = lastCommittedValue;
+      return false;
+    }
+
     lastCommittedValue = value;
+    return true;
   }
 
   function scrollActiveAutocompleteIntoView() {
@@ -236,6 +251,8 @@
     {placeholder}
     {disabled}
     {...inputAttributes}
+    style:width={fitContentWidth ? `${Math.ceil(inputSizerWidth) + 2}px` : undefined}
+    style:max-width={fitContentWidth ? "100%" : undefined}
     onfocus={handleFocus}
     oninput={handleInput}
     onkeydown={handleInputKeydown}
@@ -247,6 +264,20 @@
     onmouseup={handleMouseup}
     onclick={handleClick}
   />
+
+  {#if fitContentWidth}
+    <div
+      aria-hidden="true"
+      class={`absolute left-0 top-0 inline-block pointer-events-none whitespace-pre ${sizerClass}`.trim()}
+      style="visibility: hidden; width: max-content; min-width: 0; max-width: none;"
+      {@attach element => {
+        void sizerText;
+        inputSizerWidth = element.getBoundingClientRect().width;
+      }}
+    >
+      {sizerText}
+    </div>
+  {/if}
 
   {#if shouldAutocomplete}
     <div

@@ -12,6 +12,7 @@
     depth = 0,
     readOnly = false,
     readOnlyMessage,
+    fieldPanelOverrides,
     onunset,
   }: RenderFieldProps<NumberFieldInstance> = $props();
 
@@ -78,6 +79,7 @@
   {field}
   {depth}
   {readOnly}
+  fieldPanelOverrides={fieldPanelOverrides}
   inline
   onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
 >

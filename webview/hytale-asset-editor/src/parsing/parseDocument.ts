@@ -362,7 +362,7 @@ function populateVariantField(
   const parentDataObject = isObject(parentData) ? parentData : undefined;
   const storedIdentity = rawDataObject?.[field.identityField.schemaKey];
   const inheritedIdentity = parentDataObject?.[field.identityField.schemaKey];
-  const effectiveIdentity = getEffectiveVariantIdentity(field, storedIdentity, inheritedIdentity);
+  const effectiveIdentity = storedIdentity ?? inheritedIdentity ?? field.identityField.default;
 
   fieldInstance.identityField = populateFieldInstance(
     cloneFieldInstance(field.identityField),
@@ -503,27 +503,6 @@ function populateInlineOrReferenceActiveField(
   }
 
   return createEmptyFieldInstance(field.stringField, context.assetsByRef);
-}
-
-function getEffectiveVariantIdentity(
-  field: VariantField,
-  storedIdentity: unknown,
-  inheritedIdentity: unknown,
-): string | undefined {
-  if (typeof storedIdentity === "string") {
-    return storedIdentity;
-  }
-
-  if (typeof inheritedIdentity === "string") {
-    return inheritedIdentity;
-  }
-
-  if (typeof field.identityField.default === "string") {
-    return field.identityField.default;
-  }
-
-  const variantKeys = Object.keys(field.variantsByIdentity);
-  return variantKeys.length === 1 ? variantKeys[0] : undefined;
 }
 
 function stringifyRawJsonValue(rawData: unknown): string {

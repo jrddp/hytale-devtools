@@ -16,6 +16,7 @@
     depth = 0,
     readOnly = false,
     readOnlyMessage,
+    fieldPanelOverrides,
     root = false,
     renderSections: renderSectionHeaders = false,
     onSectionsChange,
@@ -84,6 +85,7 @@
     {field}
     {depth}
     {readOnly}
+    fieldPanelOverrides={fieldPanelOverrides}
     summary={`${Object.keys(properties).length} subfields`}
     collapsedByDefault={field.collapsedByDefault ?? true}
     children={sectionList}

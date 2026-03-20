@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { RenderFieldProps } from "src/common";
   import FieldPanel from "../FieldPanel.svelte";
   import { workspace } from "../../workspace.svelte";
   import type { WeightedTimelineFieldInstance } from "../../parsing/fieldInstances";
@@ -7,7 +8,8 @@
     field,
     depth = 0,
     readOnly = false,
-  }: { field: WeightedTimelineFieldInstance; depth?: number; readOnly?: boolean } = $props();
+    fieldPanelOverrides,
+  }: RenderFieldProps<WeightedTimelineFieldInstance> = $props();
 
   const value = $derived(
     field.unparsedData === undefined ? "" : JSON.stringify(field.unparsedData, null, 2),
@@ -52,7 +54,7 @@
   }
 </script>
 
-<FieldPanel field={field} {depth} {readOnly} summary="Weighted timeline field - raw JSON editor">
+<FieldPanel field={field} {depth} {readOnly} {fieldPanelOverrides} summary="Weighted timeline field - raw JSON editor">
   <textarea
     class="min-h-28 w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
     bind:value={draftValue}

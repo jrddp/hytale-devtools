@@ -9,11 +9,18 @@ export type VSCodeApi = {
   isDevEnv?: boolean;
 };
 
+export type FieldPanelOverrides = {
+  minimal?: boolean;
+  title?: Snippet;
+};
+
 export type RenderFieldProps<TField extends FieldInstance = FieldInstance> = {
   field: TField;
   depth: number;
   readOnly?: boolean;
   readOnlyMessage?: string;
+  applyDocumentStateOnCommit?: boolean;
+  fieldPanelOverrides?: FieldPanelOverrides;
   summary?: string;
   onunset?: () => void;
   /** For inline fields, render to the right of children. For collapsable fields, render next to title. */

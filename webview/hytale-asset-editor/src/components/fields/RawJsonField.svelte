@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { RenderFieldProps } from "src/common";
   import { onMount } from "svelte";
   import type { RawJsonFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
@@ -8,11 +9,8 @@
     field,
     depth = 0,
     readOnly = false,
-  }: {
-    field: RawJsonFieldInstance;
-    depth?: number;
-    readOnly?: boolean;
-  } = $props();
+    fieldPanelOverrides,
+  }: RenderFieldProps<RawJsonFieldInstance> = $props();
 
   let draftValue = $state("");
 
@@ -34,7 +32,7 @@
   }
 </script>
 
-<FieldPanel {field} {depth} {readOnly} summary="Raw JSON">
+<FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} summary="Raw JSON">
   <textarea
     class="w-full px-3 py-2 border rounded-md min-h-28 border-vsc-border bg-vsc-input-bg text-vsc-input-fg"
     bind:value={draftValue}

@@ -2,18 +2,23 @@
   import { Plus, Redo2 } from "lucide-svelte";
   import type { RenderFieldProps } from "src/common";
   import FieldRenderer from "src/components/FieldRenderer.svelte";
-  import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
   import { isFieldSet } from "src/components/fieldHelpers";
-  import type { Snippet } from "svelte";
-  import type { FieldInstance, MapFieldInstance } from "../../parsing/fieldInstances";
+  import type {
+    FieldInstance,
+    MapFieldInstance,
+    StringFieldInstance,
+  } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
+  import StringField from "./StringField.svelte";
 
-  interface Props extends RenderFieldProps<MapFieldInstance> {
-    renderField?: Snippet<[FieldInstance, number, (() => void)?]>;
-  }
-
-  let { field, renderField, depth = 0, readOnly = false, readOnlyMessage }: Props = $props();
+  let {
+    field,
+    depth = 0,
+    readOnly = false,
+    readOnlyMessage,
+    fieldPanelOverrides,
+  }: RenderFieldProps<MapFieldInstance> = $props();
   const hasInheritedOnlyEntries = $derived(
     field.entries.length === 0 && field.inheritedEntries.length > 0,
   );
@@ -29,13 +34,18 @@
       ? `${visibleEntries.length} inherited entries`
       : `${visibleEntries.length} map entries`,
   );
+  const entryKeyFields = new WeakMap<FieldInstance, StringFieldInstance>();
 
   function addEntry() {
+    const key = `Entry ${field.entries.length + 1}`;
+    const valueField = workspace.createEmptyFieldInstance(field.valueField);
+    valueField.schemaKey = key;
+
     field.entries = [
       ...field.entries,
       {
-        key: `entry${field.entries.length + 1}`,
-        valueField: workspace.createEmptyFieldInstance(field.valueField),
+        key,
+        valueField,
       },
     ];
     workspace.applyDocumentState();
@@ -59,16 +69,35 @@
   }
 
   function commitEntryKey(nextKey: string, index: number) {
-    if (field.entries[index]?.key === nextKey) {
+    const normalizedKey = nextKey.trim();
+    if (!normalizedKey) {
+      return false;
+    }
+
+    if (field.entries[index]?.key === normalizedKey) {
       return;
     }
 
-    field.entries[index].key = nextKey;
+    field.entries[index].key = normalizedKey;
+    field.entries[index].valueField.schemaKey = normalizedKey;
 
     // TODO FIXME we should be persisting empty map entries since we want to ensure we persist their keys
     if (isFieldSet(field.entries[index]?.valueField)) {
       workspace.applyDocumentState();
     }
+
+    return true;
+  }
+
+  function getEntryKeyField(entry: { key: string; valueField: FieldInstance }) {
+    let entryKeyField = entryKeyFields.get(entry.valueField);
+    if (!entryKeyField) {
+      entryKeyField = workspace.createEmptyFieldInstance(field.keyField);
+      entryKeyFields.set(entry.valueField, entryKeyField);
+    }
+
+    entryKeyField.value = entry.key;
+    return entryKeyField;
   }
 </script>
 
@@ -76,6 +105,7 @@
   {field}
   {depth}
   {readOnly}
+  {fieldPanelOverrides}
   {summary}
   childReadOnly={hasInheritedOnlyEntries}
   collapsedByDefault={false}
@@ -98,56 +128,28 @@
   {/if}
 
   {#each visibleEntries as entry, index (`${entry.key}-${entry.valueField.schemaKey ?? entry.valueField.type}-${index}`)}
-    <div class="p-3 space-y-3 border border-dashed rounded-md border-vsc-border">
-      <div class="flex items-center gap-2">
-        <ReadOnlyInputWrapper
-          readOnly={entriesReadOnly}
-          readOnlyMessage={childReadOnlyMessage}
-          class="w-full min-w-0"
-        >
-          {#if entriesReadOnly}
-            <div
-              class="w-full px-3 py-2 font-semibold break-all whitespace-pre-wrap border rounded-md select-text border-vsc-border bg-vsc-panel-readonly text-vsc-input-fg"
-            >
-              {entry.key}
-            </div>
-          {:else}
-            <input
-              type="text"
-              class="w-full px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-              value={entry.key}
-              placeholder="Key"
-              onblur={event => commitEntryKey(event.currentTarget.value, index)}
-              onkeydown={event => {
-                if (event.key !== "Enter") {
-                  return;
-                }
-
-                event.preventDefault();
-                commitEntryKey(event.currentTarget.value, index);
-                event.currentTarget.blur();
-              }}
-            />
-          {/if}
-        </ReadOnlyInputWrapper>
-      </div>
-
-      {#if renderField}
-        {@render renderField(
-          entry.valueField,
-          depth + 1,
-          !entriesReadOnly ? () => removeEntry(index) : undefined,
-        )}
-      {:else}
-        <FieldRenderer
-          field={entry.valueField}
-          depth={depth + 1}
-          readOnly={entriesReadOnly}
-          readOnlyMessage={childReadOnlyMessage}
-          onunset={!entriesReadOnly ? () => removeEntry(index) : undefined}
-        />
-      {/if}
-    </div>
+    {@const entryKeyField = getEntryKeyField(entry)}
+    {#snippet entryTitle()}
+      <StringField
+        field={entryKeyField}
+        depth={depth + 1}
+        readOnly={entriesReadOnly}
+        readOnlyMessage={childReadOnlyMessage}
+        applyDocumentStateOnCommit={false}
+        fieldPanelOverrides={{ minimal: true }}
+        oncommitchange={nextKey => commitEntryKey(nextKey ?? "", index)}
+      />
+    {/snippet}
+    <FieldRenderer
+      field={entry.valueField}
+      depth={depth + 1}
+      readOnly={entriesReadOnly}
+      readOnlyMessage={childReadOnlyMessage}
+      fieldPanelOverrides={{
+        title: entryTitle,
+      }}
+      onunset={!entriesReadOnly ? () => removeEntry(index) : undefined}
+    />
   {/each}
 
   {#if !readOnly && !hasInheritedOnlyEntries}

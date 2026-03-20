@@ -12,6 +12,7 @@
     depth = 0,
     readOnly = false,
     readOnlyMessage,
+    fieldPanelOverrides,
   }: RenderFieldProps<ArrayFieldInstance> = $props();
   const hasInheritedOnlyItems = $derived(field.items.length === 0 && field.inheritedItems.length > 0);
   const visibleItems = $derived(hasInheritedOnlyItems ? field.inheritedItems : field.items);
@@ -25,14 +26,20 @@
     hasInheritedOnlyItems ? `${visibleItems.length} inherited items` : `${visibleItems.length} list items`,
   );
 
+  function updateItemSchemaKeys(items: FieldInstance[]) {
+    items.forEach((item, index) => {
+      item.schemaKey = index.toString();
+    });
+  }
+
   function addItem() {
     if (field.isTuple === true) {
       console.error("Attempted to add item to tuple array");
       return;
     }
     const newItem = workspace.createEmptyFieldInstance(field.itemFieldTypes);
-    newItem.schemaKey = field.items.length.toString();
     field.items.push(newItem);
+    updateItemSchemaKeys(field.items);
     workspace.applyDocumentState();
   }
 
@@ -42,11 +49,13 @@
     }
 
     field.items = structuredClone($state.snapshot(field.inheritedItems)) as FieldInstance[];
+    updateItemSchemaKeys(field.items);
     workspace.applyDocumentState();
   }
 
   function removeItem(index: number) {
     field.items.splice(index, 1);
+    updateItemSchemaKeys(field.items);
     workspace.applyDocumentState();
   }
 </script>
@@ -55,6 +64,7 @@
   {field}
   {depth}
   {readOnly}
+  fieldPanelOverrides={fieldPanelOverrides}
   childReadOnly={hasInheritedOnlyItems}
   {summary}
   collapsedByDefault={field.collapsedByDefault ?? true}

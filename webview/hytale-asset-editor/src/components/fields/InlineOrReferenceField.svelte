@@ -14,7 +14,7 @@
 </script>
 
 {#if field.activeField.type === "string"}
-  <StringField field={field.activeField} {depth} {readOnly} {readOnlyMessage} />
+  <StringField field={field.activeField} {depth} {readOnly} {readOnlyMessage} {...props} />
 {:else}
-  <ObjectField field={field.activeField} {depth} {readOnly} {readOnlyMessage} />
+  <ObjectField field={field.activeField} {depth} {readOnly} {readOnlyMessage} {...props} />
 {/if}

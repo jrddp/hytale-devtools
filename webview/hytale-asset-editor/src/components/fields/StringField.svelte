@@ -16,14 +16,17 @@
     depth = 0,
     readOnly = false,
     readOnlyMessage,
+    applyDocumentStateOnCommit = true,
+    fieldPanelOverrides,
     oncommitchange,
     onunset,
   }: RenderFieldProps<StringFieldInstance> & {
-    oncommitchange?: (value: string | undefined) => void;
+    oncommitchange?: (value: string | undefined) => boolean | void;
   } = $props();
 
   let inputId = $derived(getFieldEditorId(field));
   const isLocked = $derived(readOnly || field.const !== undefined);
+  const isMinimal = $derived(fieldPanelOverrides?.minimal === true);
 
   const isSet = $derived(field.value !== undefined);
   const value = $derived(
@@ -31,9 +34,27 @@
       ? (field.value ?? field.const ?? field.inheritedValue ?? field.default ?? "")
       : (field.value ?? ""),
   );
-  const placeholder = $derived(isLocked && value !== "" ? "" : getFieldPlaceholder(field));
+  const placeholder = $derived(
+    isMinimal ? "" : isLocked && value !== "" ? "" : getFieldPlaceholder(field),
+  );
   const hasFallbackPlaceholder = $derived(
     field.inheritedValue !== undefined || field.default !== undefined,
+  );
+  const inputClass = $derived(
+    isMinimal
+      ? `rounded-md border border-vsc-border bg-vsc-input-bg px-2 py-1.5 text-sm font-semibold text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 ${!hasFallbackPlaceholder
+          ? "placeholder:italic"
+          : ""}`
+      : `w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg ${!hasFallbackPlaceholder
+          ? "placeholder:italic"
+          : ""}`,
+  );
+  const inputSizerClass = $derived(isMinimal ? "box-border px-2 py-1.5 text-sm font-semibold" : "");
+  const readOnlyWrapperClass = $derived(isMinimal ? "min-w-0" : "w-full min-w-0");
+  const readOnlyValueClass = $derived(
+    isMinimal
+      ? "inline-block max-w-full rounded-md border border-vsc-border bg-vsc-panel-readonly px-2 py-1.5 text-sm font-semibold text-vsc-input-fg select-text whitespace-pre-wrap break-all"
+      : "w-full rounded-md border border-vsc-border bg-vsc-panel-readonly px-3 py-2 text-vsc-input-fg font-semibold select-text whitespace-pre-wrap break-all",
   );
 
   const autocompleteOptions = $derived(
@@ -66,8 +87,17 @@
       return;
     }
 
+    const previousValue = field.value;
     field.value = nextValue;
-    workspace.applyDocumentState();
+    const commitResult = oncommitchange?.(nextValue);
+    if (commitResult === false) {
+      field.value = previousValue;
+      return false;
+    }
+
+    if (applyDocumentStateOnCommit) {
+      workspace.applyDocumentState();
+    }
 
     if (field.definesParent) {
       workspace.setParentState({ status: "none" });
@@ -79,7 +109,7 @@
       }
     }
 
-    oncommitchange?.(nextValue);
+    return true;
   }
 
   const parentTooltip = $derived(
@@ -106,15 +136,14 @@
   {field}
   {depth}
   {readOnly}
+  fieldPanelOverrides={fieldPanelOverrides}
   inline
   {glyphs}
   onunset={!isLocked && isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
 >
-  <ReadOnlyInputWrapper readOnly={isLocked} {readOnlyMessage} class="w-full min-w-0">
+  <ReadOnlyInputWrapper readOnly={isLocked} {readOnlyMessage} class={readOnlyWrapperClass}>
     {#if isLocked}
-      <div
-        class="w-full rounded-md border border-vsc-border bg-vsc-panel-readonly px-3 py-2 text-vsc-input-fg font-semibold select-text whitespace-pre-wrap break-all"
-      >
+      <div class={readOnlyValueClass}>
         {value !== "" ? value : placeholder}
       </div>
     {:else}
@@ -123,9 +152,9 @@
         initialValue={value}
         {placeholder}
         {autocompleteOptions}
-        inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg {(!hasFallbackPlaceholder)
-          ? 'placeholder:italic'
-          : ''}"
+        fitContentWidth={isMinimal}
+        sizerClass={inputSizerClass}
+        {inputClass}
         listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
         optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
         previewClass="z-[160]"
