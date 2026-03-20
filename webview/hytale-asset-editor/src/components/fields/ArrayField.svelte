@@ -49,6 +49,8 @@
     }));
   });
   const renderedItemViews = $derived(draftItemViews ?? visibleItemViews);
+  // this is dynamic to prevent wiggling on undo/redo
+  const activeFlipDurationMs = $derived(draftItemViews ? FLIP_DURATION_MS : 0);
 
   const gripHandle = (node: HTMLElement) => {
     const result = dragHandle(node);
@@ -135,6 +137,19 @@
       icon: renderHandleIcon,
     };
   }
+
+  function getPreviewSchemaKey(index: number) {
+    return index.toString();
+  }
+
+  function transformDraggedElement(element: HTMLElement, _item: ArrayFieldDndItem, index: number) {
+    const titleElement = element.querySelector<HTMLElement>("[data-array-preview-schema-key]");
+    if (!titleElement) {
+      return;
+    }
+
+    titleElement.textContent = getPreviewSchemaKey(index);
+  }
 </script>
 
 {#snippet renderHandleIcon()}
@@ -168,7 +183,9 @@
         class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
         use:dragHandleZone={{
           items: renderedItemViews,
-          flipDurationMs: FLIP_DURATION_MS,
+          flipDurationMs: activeFlipDurationMs,
+          dropFromOthersDisabled: true,
+          transformDraggedElement,
           dropTargetStyle: {
             outline: "none",
           },
@@ -177,12 +194,20 @@
         onfinalize={handleFinalize}
       >
         {#each renderedItemViews as itemView, index (itemView.id)}
-          <div animate:flip={{ duration: FLIP_DURATION_MS }}>
+          <div animate:flip={{ duration: activeFlipDurationMs }}>
+            {#snippet itemTitle()}
+              <h2 class="relative truncate text-sm font-semibold" data-array-preview-schema-key>
+                {getPreviewSchemaKey(index)}
+              </h2>
+            {/snippet}
             <FieldRenderer
               field={itemView.field}
               depth={depth + 1}
               readOnly={itemsReadOnly}
               readOnlyMessage={childReadOnlyMessage}
+              fieldPanelOverrides={{
+                title: itemTitle,
+              }}
               handle={createHandle(itemView.field, index)}
               onunset={!itemsReadOnly ? () => removeItem(index) : undefined}
             />
@@ -192,11 +217,19 @@
     </div>
   {:else}
     {#each renderedItemViews as itemView, index (itemView.id)}
+      {#snippet itemTitle()}
+        <h2 class="relative truncate text-sm font-semibold" data-array-preview-schema-key>
+          {getPreviewSchemaKey(index)}
+        </h2>
+      {/snippet}
       <FieldRenderer
         field={itemView.field}
         depth={depth + 1}
         readOnly={itemsReadOnly}
         readOnlyMessage={childReadOnlyMessage}
+        fieldPanelOverrides={{
+          title: itemTitle,
+        }}
         onunset={!itemsReadOnly ? () => removeItem(index) : undefined}
       />
     {/each}

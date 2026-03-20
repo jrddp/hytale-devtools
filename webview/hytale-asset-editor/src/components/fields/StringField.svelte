@@ -19,9 +19,11 @@
     applyDocumentStateOnCommit = true,
     fieldPanelOverrides,
     handle,
+    inputElement = $bindable(),
     oncommitchange,
     onunset,
   }: RenderFieldProps<StringFieldInstance> & {
+    inputElement?: HTMLInputElement;
     oncommitchange?: (value: string | undefined) => boolean | void;
   } = $props();
 
@@ -151,6 +153,7 @@
     {:else}
       <SingleLineAutocompleteInput
         {inputId}
+        bind:inputElement
         initialValue={value}
         {placeholder}
         {autocompleteOptions}

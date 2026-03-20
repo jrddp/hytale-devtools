@@ -11,6 +11,7 @@
   let {
     inputId,
     initialValue,
+    inputElement = $bindable(),
     placeholder = "",
     disabled = false,
     autocompleteOptions = [],
@@ -28,6 +29,7 @@
   }: {
     inputId: string;
     initialValue?: string;
+    inputElement?: HTMLInputElement;
     placeholder?: string;
     disabled?: boolean;
     autocompleteOptions?: AutocompleteOption[];
@@ -47,7 +49,6 @@
   let value = $state("");
   let lastCommittedValue = $state("");
   let isFocused = $state(false);
-  let inputElement = $state<HTMLInputElement>();
   let isEntireValueSelected = $state(false);
   let activeAutocompleteIndex = $state(-1);
   let autocompleteListElement = $state<HTMLDivElement>();

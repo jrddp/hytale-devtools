@@ -1,6 +1,7 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
   import { GripVertical, Plus, Redo2 } from "lucide-svelte";
+  import { tick } from "svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import { type FieldPanelHandle, type RenderFieldProps } from "src/common";
   import FieldRenderer from "src/components/FieldRenderer.svelte";
@@ -49,6 +50,7 @@
   );
 
   const entryKeyFields = new WeakMap<FieldInstance, StringFieldInstance>();
+  let entryKeyInputElements = $state<Record<string, HTMLInputElement | undefined>>({});
   let draftEntryViews = $state<MapEntryDndItem[] | null>(null);
 
   const visibleEntryViews = $derived.by(() => {
@@ -58,6 +60,8 @@
     }));
   });
   const renderedEntryViews = $derived(draftEntryViews ?? visibleEntryViews);
+  // this is dynamic to prevent wiggling on undo/redo
+  const activeFlipDurationMs = $derived(draftEntryViews ? FLIP_DURATION_MS : 0);
 
   const gripHandle = (node: HTMLElement) => {
     const result = dragHandle(node);
@@ -66,6 +70,7 @@
 
   function addEntry() {
     const key = `Entry ${field.entries.length + 1}`;
+    const entryId = `map-field-entry-${key}`;
     const valueField = workspace.createEmptyFieldInstance(field.valueField);
     valueField.schemaKey = key;
 
@@ -77,6 +82,7 @@
       },
     ];
     workspace.applyDocumentState();
+    void focusEntryKeyInput(entryId);
   }
 
   function overrideParentValue() {
@@ -188,6 +194,18 @@
       icon: renderHandleIcon,
     };
   }
+
+  async function focusEntryKeyInput(entryId: string) {
+    await tick();
+
+    const input = entryKeyInputElements[entryId];
+    if (!input) {
+      return;
+    }
+
+    input.focus();
+    input.select();
+  }
 </script>
 
 {#snippet renderHandleIcon()}
@@ -221,7 +239,8 @@
         class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
         use:dragHandleZone={{
           items: renderedEntryViews,
-          flipDurationMs: FLIP_DURATION_MS,
+          flipDurationMs: activeFlipDurationMs,
+          dropFromOthersDisabled: true,
           dropTargetStyle: {
             outline: "none",
           },
@@ -230,10 +249,11 @@
         onfinalize={handleFinalize}
       >
         {#each renderedEntryViews as entryView, index (entryView.id)}
-          <div animate:flip={{ duration: FLIP_DURATION_MS }}>
+          <div animate:flip={{ duration: activeFlipDurationMs }}>
             {#snippet entryTitle()}
               <StringField
                 field={getEntryKeyField(entryView.entry)}
+                bind:inputElement={entryKeyInputElements[entryView.id]}
                 depth={depth + 1}
                 readOnly={entriesReadOnly}
                 readOnlyMessage={childReadOnlyMessage}
@@ -263,6 +283,7 @@
       {#snippet entryTitle()}
         <StringField
           field={entryKeyField}
+          bind:inputElement={entryKeyInputElements[entryView.id]}
           depth={depth + 1}
           readOnly={entriesReadOnly}
           readOnlyMessage={childReadOnlyMessage}
