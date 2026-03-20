@@ -10,6 +10,7 @@
     readOnly = false,
     fieldPanelOverrides,
     handle,
+    onunset,
   }: RenderFieldProps<WeightedTimelineFieldInstance> = $props();
 
   const value = $derived(
@@ -61,6 +62,7 @@
   {readOnly}
   {fieldPanelOverrides}
   {handle}
+  {onunset}
   summary="Weighted timeline field - raw JSON editor"
 >
   <textarea

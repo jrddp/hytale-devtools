@@ -10,6 +10,7 @@
     readOnly = false,
     fieldPanelOverrides,
     handle,
+    onunset,
   }: RenderFieldProps<TimelineFieldInstance> = $props();
 
   const value = $derived(
@@ -61,6 +62,7 @@
   {readOnly}
   {fieldPanelOverrides}
   {handle}
+  {onunset}
   summary="Timeline field - raw JSON editor"
 >
   <textarea

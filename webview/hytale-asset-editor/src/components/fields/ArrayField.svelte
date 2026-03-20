@@ -23,10 +23,12 @@
     readOnlyMessage,
     fieldPanelOverrides,
     handle,
+    onunset,
   }: RenderFieldProps<ArrayFieldInstance> = $props();
 
   const hasInheritedOnlyItems = $derived(field.items.length === 0 && field.inheritedItems.length > 0);
   const visibleItems = $derived(hasInheritedOnlyItems ? field.inheritedItems : field.items);
+  const hasVisibleItems = $derived(visibleItems.length > 0);
   const itemsReadOnly = $derived(readOnly || hasInheritedOnlyItems);
   const childReadOnlyMessage = $derived(
     hasInheritedOnlyItems
@@ -162,6 +164,7 @@
   {readOnly}
   fieldPanelOverrides={fieldPanelOverrides}
   {handle}
+  {onunset}
   childReadOnly={hasInheritedOnlyItems}
   {summary}
   collapsedByDefault={field.collapsedByDefault ?? true}
@@ -177,7 +180,7 @@
     </button>
   {/if}
 
-  {#if canReorder}
+  {#if canReorder && hasVisibleItems}
     <div class="relative">
       <div
         class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
@@ -215,7 +218,7 @@
         {/each}
       </div>
     </div>
-  {:else}
+  {:else if hasVisibleItems}
     {#each renderedItemViews as itemView, index (itemView.id)}
       {#snippet itemTitle()}
         <h2 class="relative truncate text-sm font-semibold" data-array-preview-schema-key>

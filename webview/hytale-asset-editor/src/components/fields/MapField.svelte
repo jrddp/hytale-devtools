@@ -30,12 +30,14 @@
     readOnlyMessage,
     fieldPanelOverrides,
     handle,
+    onunset,
   }: RenderFieldProps<MapFieldInstance> = $props();
 
   const hasInheritedOnlyEntries = $derived(
     field.entries.length === 0 && field.inheritedEntries.length > 0,
   );
   const visibleEntries = $derived(hasInheritedOnlyEntries ? field.inheritedEntries : field.entries);
+  const hasVisibleEntries = $derived(visibleEntries.length > 0);
   const entriesReadOnly = $derived(readOnly || hasInheritedOnlyEntries);
   const canReorder = $derived(!readOnly && !hasInheritedOnlyEntries);
   const childReadOnlyMessage = $derived(
@@ -218,6 +220,7 @@
   {readOnly}
   {fieldPanelOverrides}
   {handle}
+  {onunset}
   {summary}
   childReadOnly={hasInheritedOnlyEntries}
   collapsedByDefault={false}
@@ -233,7 +236,7 @@
     </button>
   {/if}
 
-  {#if canReorder}
+  {#if canReorder && hasVisibleEntries}
     <div class="relative">
       <div
         class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
@@ -277,7 +280,7 @@
         {/each}
       </div>
     </div>
-  {:else}
+  {:else if hasVisibleEntries}
     {#each renderedEntryViews as entryView, index (entryView.id)}
       {@const entryKeyField = getEntryKeyField(entryView.entry)}
       {#snippet entryTitle()}

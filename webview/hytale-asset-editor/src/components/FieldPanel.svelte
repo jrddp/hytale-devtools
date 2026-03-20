@@ -70,6 +70,12 @@
 
     event.stopPropagation();
   }
+
+  function handleUnsetClick(event: MouseEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+    onunset?.();
+  }
 </script>
 
 {#snippet handleControl()}
@@ -131,7 +137,9 @@
   </button>
 
   {@render glyphs?.()}
+{/snippet}
 
+{#snippet summaryContent()}
   {#if summary}
     <div class="text-xs truncate text-vsc-muted">{summary}</div>
   {/if}
@@ -154,6 +162,7 @@
             {@render handleControl()}
             <div class="flex min-w-0 items-center gap-1 truncate">
               {@render title()}
+              {@render summaryContent()}
             </div>
           </div>
 
@@ -184,7 +193,7 @@
     {:else}
       <div
         {@attach stickyHeader.header}
-        class="relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow] rounded-t-md"
+        class="group/collapsible-field relative flex items-center w-full min-h-11 gap-3 px-3 py-2.5 border-vsc-border transition-[background-color,box-shadow] rounded-t-md"
         class:border-b={!collapsed}
         class:rounded-b-md={collapsed}
         class:sticky={isStickyEnabled}
@@ -232,10 +241,23 @@
           </span>
 
           {@render title()}
+
+          {#if onunset && !readOnly}
+            <button
+              type="button"
+              class="pointer-events-none relative z-10 inline-flex size-0 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/collapsible-field:size-6 group-hover/collapsible-field:pointer-events-auto group-hover/collapsible-field:opacity-100 group-focus-within/collapsible-field:pointer-events-auto group-focus-within/collapsible-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+              aria-label={`Unset ${label}`}
+              onclick={handleUnsetClick}
+              onkeydown={stopHeaderKeydown}
+            >
+              <CircleX size={14} />
+            </button>
+          {/if}
         </div>
 
-        {#if actions}
-          <div class="relative z-10 flex items-center justify-center gap-2">
+        {#if summary || actions}
+          <div class="relative z-10 flex min-w-0 shrink-0 items-center justify-end gap-3">
+            {@render summaryContent()}
             {@render actions()}
           </div>
         {/if}

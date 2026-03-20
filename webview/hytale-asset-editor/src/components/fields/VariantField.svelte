@@ -18,6 +18,7 @@
     readOnly = false,
     readOnlyMessage,
     fieldPanelOverrides,
+    onunset,
     root = false,
     onSectionsChange,
     handle,
@@ -72,7 +73,7 @@
 </script>
 
 {#if field.activeVariant}
-  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} {handle}>
+  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} {handle} {onunset}>
     <ObjectField
       field={field.activeVariant}
       {depth}
@@ -83,7 +84,14 @@
     />
   </FieldPanel>
 {:else}
-  <FieldPanel field={field.identityField} {depth} {readOnly} {fieldPanelOverrides} {handle}>
+  <FieldPanel
+    field={field.identityField}
+    {depth}
+    {readOnly}
+    {fieldPanelOverrides}
+    {handle}
+    {onunset}
+  >
     <StringField
       field={field.identityField}
       {depth}
