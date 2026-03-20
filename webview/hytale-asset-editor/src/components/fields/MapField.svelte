@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { Plus, Redo2 } from "lucide-svelte";
-  import type { RenderFieldProps } from "src/common";
+  import { flip } from "svelte/animate";
+  import { GripVertical, Plus, Redo2 } from "lucide-svelte";
+  import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
+  import { type FieldPanelHandle, type RenderFieldProps } from "src/common";
   import FieldRenderer from "src/components/FieldRenderer.svelte";
   import { isFieldSet } from "src/components/fieldHelpers";
   import type {
@@ -11,6 +13,14 @@
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
   import StringField from "./StringField.svelte";
+
+  type MapEntry = MapFieldInstance["entries"][number];
+  type MapEntryDndItem = {
+    id: string;
+    entry: MapEntry;
+  };
+
+  const FLIP_DURATION_MS = 100;
 
   let {
     field,
@@ -26,6 +36,7 @@
   );
   const visibleEntries = $derived(hasInheritedOnlyEntries ? field.inheritedEntries : field.entries);
   const entriesReadOnly = $derived(readOnly || hasInheritedOnlyEntries);
+  const canReorder = $derived(!readOnly && !hasInheritedOnlyEntries);
   const childReadOnlyMessage = $derived(
     hasInheritedOnlyEntries
       ? `Inherited by ${field.schemaKey ?? "parent"}.\nOverride to edit.`
@@ -36,7 +47,22 @@
       ? `${visibleEntries.length} inherited entries`
       : `${visibleEntries.length} map entries`,
   );
+
   const entryKeyFields = new WeakMap<FieldInstance, StringFieldInstance>();
+  let draftEntryViews = $state<MapEntryDndItem[] | null>(null);
+
+  const visibleEntryViews = $derived.by(() => {
+    return visibleEntries.map(entry => ({
+      id: getEntryId(entry),
+      entry,
+    }));
+  });
+  const renderedEntryViews = $derived(draftEntryViews ?? visibleEntryViews);
+
+  const gripHandle = (node: HTMLElement) => {
+    const result = dragHandle(node);
+    return () => result?.destroy?.();
+  };
 
   function addEntry() {
     const key = `Entry ${field.entries.length + 1}`;
@@ -58,40 +84,54 @@
       return;
     }
 
-    field.entries = structuredClone($state.snapshot(field.inheritedEntries)) as {
-      key: string;
-      valueField: FieldInstance;
-    }[];
+    field.entries = structuredClone($state.snapshot(field.inheritedEntries)) as MapEntry[];
+    syncEntrySchemaKeys(field.entries);
+    draftEntryViews = null;
     workspace.applyDocumentState();
   }
 
-  function removeEntry(index: number) {
-    field.entries.splice(index, 1);
+  function findEntryIndex(entryValueField: FieldInstance) {
+    return field.entries.findIndex(entry => entry.valueField === entryValueField);
+  }
+
+  function removeEntry(entryValueField: FieldInstance) {
+    const entryIndex = findEntryIndex(entryValueField);
+    if (entryIndex === -1) {
+      return;
+    }
+
+    field.entries.splice(entryIndex, 1);
+    draftEntryViews = null;
     workspace.applyDocumentState();
   }
 
-  function commitEntryKey(nextKey: string, index: number) {
+  function commitEntryKey(nextKey: string, entryValueField: FieldInstance) {
     const normalizedKey = nextKey.trim();
     if (!normalizedKey) {
       return false;
     }
 
-    if (field.entries[index]?.key === normalizedKey) {
+    const entryIndex = findEntryIndex(entryValueField);
+    if (entryIndex === -1) {
+      return false;
+    }
+
+    if (field.entries[entryIndex]?.key === normalizedKey) {
       return;
     }
 
-    field.entries[index].key = normalizedKey;
-    field.entries[index].valueField.schemaKey = normalizedKey;
+    field.entries[entryIndex].key = normalizedKey;
+    field.entries[entryIndex].valueField.schemaKey = normalizedKey;
 
     // TODO FIXME we should be persisting empty map entries since we want to ensure we persist their keys
-    if (isFieldSet(field.entries[index]?.valueField)) {
+    if (isFieldSet(field.entries[entryIndex]?.valueField)) {
       workspace.applyDocumentState();
     }
 
     return true;
   }
 
-  function getEntryKeyField(entry: { key: string; valueField: FieldInstance }) {
+  function getEntryKeyField(entry: MapEntry) {
     let entryKeyField = entryKeyFields.get(entry.valueField);
     if (!entryKeyField) {
       entryKeyField = workspace.createEmptyFieldInstance(field.keyField);
@@ -101,7 +141,58 @@
     entryKeyField.value = entry.key;
     return entryKeyField;
   }
+
+  function syncEntrySchemaKeys(entries: MapEntry[]) {
+    entries.forEach(entry => {
+      entry.valueField.schemaKey = entry.key;
+    });
+  }
+
+  // Keep row identity derived from the serialized map key so rows survive reparses.
+  function getEntryId(entry: MapEntry): string {
+    return `map-field-entry-${entry.key}`;
+  }
+
+  function handleConsider(event: CustomEvent<DndEvent<MapEntryDndItem>>) {
+    if (!canReorder) {
+      return;
+    }
+
+    draftEntryViews = event.detail.items;
+  }
+
+  function handleFinalize(event: CustomEvent<DndEvent<MapEntryDndItem>>) {
+    if (!canReorder) {
+      draftEntryViews = null;
+      return;
+    }
+
+    const nextEntries = event.detail.items.map(item => item.entry);
+    const didOrderChange = nextEntries.some((entry, index) => entry !== field.entries[index]);
+
+    draftEntryViews = null;
+    if (!didOrderChange) {
+      return;
+    }
+
+    field.entries = nextEntries;
+    syncEntrySchemaKeys(field.entries);
+    workspace.applyDocumentState();
+  }
+
+  function createHandle(entry: MapEntry, index: number): FieldPanelHandle {
+    const entryLabel = entry.key.trim() || "entry";
+    return {
+      ariaLabel: `Reorder ${entryLabel} map entry ${index + 1}`,
+      attach: gripHandle,
+      icon: renderHandleIcon,
+    };
+  }
 </script>
+
+{#snippet renderHandleIcon()}
+  <GripVertical size={14} />
+{/snippet}
 
 <FieldPanel
   {field}
@@ -124,36 +215,74 @@
     </button>
   {/if}
 
-  {#if visibleEntries.length === 0}
-    <div class="px-3 py-2 border border-dashed rounded-md border-vsc-border opacity-65">
-      No entries
+  {#if canReorder}
+    <div class="relative">
+      <div
+        class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
+        use:dragHandleZone={{
+          items: renderedEntryViews,
+          flipDurationMs: FLIP_DURATION_MS,
+          dropTargetStyle: {
+            outline: "none",
+          },
+        }}
+        onconsider={handleConsider}
+        onfinalize={handleFinalize}
+      >
+        {#each renderedEntryViews as entryView, index (entryView.id)}
+          <div animate:flip={{ duration: FLIP_DURATION_MS }}>
+            {#snippet entryTitle()}
+              <StringField
+                field={getEntryKeyField(entryView.entry)}
+                depth={depth + 1}
+                readOnly={entriesReadOnly}
+                readOnlyMessage={childReadOnlyMessage}
+                applyDocumentStateOnCommit={false}
+                fieldPanelOverrides={{ minimal: true }}
+                oncommitchange={nextKey => commitEntryKey(nextKey ?? "", entryView.entry.valueField)}
+              />
+            {/snippet}
+            <FieldRenderer
+              field={entryView.entry.valueField}
+              depth={depth + 1}
+              readOnly={entriesReadOnly}
+              readOnlyMessage={childReadOnlyMessage}
+              fieldPanelOverrides={{
+                title: entryTitle,
+              }}
+              handle={createHandle(entryView.entry, index)}
+              onunset={!entriesReadOnly ? () => removeEntry(entryView.entry.valueField) : undefined}
+            />
+          </div>
+        {/each}
+      </div>
     </div>
-  {/if}
-
-  {#each visibleEntries as entry, index (`${entry.key}-${entry.valueField.schemaKey ?? entry.valueField.type}-${index}`)}
-    {@const entryKeyField = getEntryKeyField(entry)}
-    {#snippet entryTitle()}
-      <StringField
-        field={entryKeyField}
+  {:else}
+    {#each renderedEntryViews as entryView, index (entryView.id)}
+      {@const entryKeyField = getEntryKeyField(entryView.entry)}
+      {#snippet entryTitle()}
+        <StringField
+          field={entryKeyField}
+          depth={depth + 1}
+          readOnly={entriesReadOnly}
+          readOnlyMessage={childReadOnlyMessage}
+          applyDocumentStateOnCommit={false}
+          fieldPanelOverrides={{ minimal: true }}
+          oncommitchange={nextKey => commitEntryKey(nextKey ?? "", entryView.entry.valueField)}
+        />
+      {/snippet}
+      <FieldRenderer
+        field={entryView.entry.valueField}
         depth={depth + 1}
         readOnly={entriesReadOnly}
         readOnlyMessage={childReadOnlyMessage}
-        applyDocumentStateOnCommit={false}
-        fieldPanelOverrides={{ minimal: true }}
-        oncommitchange={nextKey => commitEntryKey(nextKey ?? "", index)}
+        fieldPanelOverrides={{
+          title: entryTitle,
+        }}
+        onunset={!entriesReadOnly ? () => removeEntry(entryView.entry.valueField) : undefined}
       />
-    {/snippet}
-    <FieldRenderer
-      field={entry.valueField}
-      depth={depth + 1}
-      readOnly={entriesReadOnly}
-      readOnlyMessage={childReadOnlyMessage}
-      fieldPanelOverrides={{
-        title: entryTitle,
-      }}
-      onunset={!entriesReadOnly ? () => removeEntry(index) : undefined}
-    />
-  {/each}
+    {/each}
+  {/if}
 
   {#if !readOnly && !hasInheritedOnlyEntries}
     <button

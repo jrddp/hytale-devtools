@@ -22,6 +22,7 @@
     readOnly = false,
     readOnlyMessage,
     fieldPanelOverrides,
+    handle,
   }: RenderFieldProps<ArrayFieldInstance> = $props();
 
   const hasInheritedOnlyItems = $derived(field.items.length === 0 && field.inheritedItems.length > 0);
@@ -145,6 +146,7 @@
   {depth}
   {readOnly}
   fieldPanelOverrides={fieldPanelOverrides}
+  {handle}
   childReadOnly={hasInheritedOnlyItems}
   {summary}
   collapsedByDefault={field.collapsedByDefault ?? true}

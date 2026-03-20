@@ -325,27 +325,35 @@ function populateMapField(
   fieldInstance.inheritedEntries = [];
 
   if (rawEntries) {
-    fieldInstance.entries = Object.entries(rawEntries).map(([key, value]) => ({
-      key,
-      valueField: populateFieldInstance(
+    fieldInstance.entries = Object.entries(rawEntries).map(([key, value]) => {
+      const valueField = populateFieldInstance(
         cloneFieldInstance(field.valueField as Field),
         value,
         parentEntries?.[key],
         context,
-      ),
-    }));
+      );
+      valueField.schemaKey = key;
+      return {
+        key,
+        valueField,
+      };
+    });
   }
 
   if (parentEntries) {
-    fieldInstance.inheritedEntries = Object.entries(parentEntries).map(([key, value]) => ({
-      key,
-      valueField: populateFieldInstance(
+    fieldInstance.inheritedEntries = Object.entries(parentEntries).map(([key, value]) => {
+      const valueField = populateFieldInstance(
         cloneFieldInstance(field.valueField as Field),
         value,
         undefined,
         context,
-      ),
-    }));
+      );
+      valueField.schemaKey = key;
+      return {
+        key,
+        valueField,
+      };
+    });
   }
 
   return fieldInstance;
