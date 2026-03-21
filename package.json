@@ -172,7 +172,7 @@
             "filenamePattern": "**/Server/HytaleGenerator/Assignments/**/*.json"
           }
         ],
-        "priority": "default"
+        "priority": "option"
       },
       {
         "viewType": "hytale-devtools.hytaleAssetEditor",
