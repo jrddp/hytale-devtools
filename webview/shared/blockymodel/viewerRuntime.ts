@@ -1,9 +1,17 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+type BlockymodelViewAngles = {
+  roll: number;
+  pitch: number;
+  yaw: number;
+};
+
 export interface BlockymodelViewerRuntime {
   setOrbit(enabled: boolean): void;
   setGridVisible(visible: boolean): void;
+  setScale(scale: number): void;
+  setViewAngles(angles: Partial<BlockymodelViewAngles>): void;
   setModelObject(object: THREE.Object3D | null): void;
   dispose(): void;
 }
@@ -11,6 +19,8 @@ export interface BlockymodelViewerRuntime {
 interface BlockymodelViewerRuntimeOptions {
   orbit?: boolean;
   showGrid?: boolean;
+  scale?: number;
+  onViewAnglesChange?: (angles: BlockymodelViewAngles) => void;
 }
 
 function getSize(host: HTMLElement): { width: number; height: number } {
@@ -31,6 +41,7 @@ function fitCameraToObject(
   camera: THREE.PerspectiveCamera,
   controls: OrbitControls,
   object: THREE.Object3D,
+  scale: number,
 ): void {
   const box = new THREE.Box3().setFromObject(object);
   if (box.isEmpty()) {
@@ -43,7 +54,7 @@ function fitCameraToObject(
   const center = box.getCenter(new THREE.Vector3());
   const maxDimension = Math.max(size.x, size.y, size.z, 1);
   const fovRadians = THREE.MathUtils.degToRad(camera.fov);
-  const distance = (maxDimension / (2 * Math.tan(fovRadians / 2))) * 1.5;
+  const distance = ((maxDimension / (2 * Math.tan(fovRadians / 2))) * 1.5) / Math.max(scale, 0.01);
 
   camera.position.set(center.x + distance, center.y + distance * 0.55, center.z + distance);
   camera.near = Math.max(0.05, distance / 200);
@@ -92,12 +103,71 @@ export function createBlockymodelViewerRuntime(
   controls.enableDamping = false;
 
   let currentObject: THREE.Object3D | null = null;
+  let currentScale = options.scale ?? 1;
+  let hasCustomViewAngles = false;
+  let currentViewAngles: BlockymodelViewAngles = {
+    roll: 0,
+    pitch: 0,
+    yaw: 0,
+  };
+
+  const toDegrees = THREE.MathUtils.radToDeg;
+  const toRadians = THREE.MathUtils.degToRad;
+
+  const getCameraDistance = () => camera.position.distanceTo(controls.target);
+
+  const syncViewAnglesFromCamera = () => {
+    const offset = camera.position.clone().sub(controls.target);
+    const horizontalDistance = Math.hypot(offset.x, offset.z);
+
+    currentViewAngles = {
+      roll: currentViewAngles.roll,
+      pitch: toDegrees(Math.atan2(offset.y, horizontalDistance)),
+      yaw: toDegrees(Math.atan2(offset.x, offset.z)),
+    };
+
+    options.onViewAnglesChange?.(currentViewAngles);
+  };
+
+  const applyRoll = () => {
+    camera.lookAt(controls.target);
+    if (currentViewAngles.roll === 0) {
+      return;
+    }
+
+    const viewAxis = controls.target.clone().sub(camera.position).normalize();
+    camera.quaternion.multiply(
+      new THREE.Quaternion().setFromAxisAngle(viewAxis, toRadians(currentViewAngles.roll)),
+    );
+    camera.updateMatrixWorld();
+  };
+
+  const applyViewAngles = () => {
+    const radius = getCameraDistance();
+    const yaw = toRadians(currentViewAngles.yaw);
+    const pitch = toRadians(currentViewAngles.pitch);
+    const cosPitch = Math.cos(pitch);
+
+    camera.position.set(
+      controls.target.x + radius * Math.sin(yaw) * cosPitch,
+      controls.target.y + radius * Math.sin(pitch),
+      controls.target.z + radius * Math.cos(yaw) * cosPitch,
+    );
+    controls.update();
+    render();
+  };
 
   const render = () => {
+    applyRoll();
     renderer.render(scene, camera);
   };
 
-  controls.addEventListener("change", render);
+  const handleControlsChange = () => {
+    syncViewAnglesFromCamera();
+    render();
+  };
+
+  controls.addEventListener("change", handleControlsChange);
 
   const resizeObserver = new ResizeObserver(() => {
     const next = getSize(host);
@@ -106,7 +176,12 @@ export function createBlockymodelViewerRuntime(
     camera.updateProjectionMatrix();
 
     if (currentObject) {
-      fitCameraToObject(camera, controls, currentObject);
+      fitCameraToObject(camera, controls, currentObject, currentScale);
+      if (hasCustomViewAngles) {
+        applyViewAngles();
+        return;
+      }
+      syncViewAnglesFromCamera();
     } else {
       render();
     }
@@ -124,6 +199,31 @@ export function createBlockymodelViewerRuntime(
       grid.visible = visible;
       render();
     },
+    setScale(scale: number): void {
+      currentScale = scale > 0 ? scale : 1;
+      if (!currentObject) {
+        render();
+        return;
+      }
+
+      fitCameraToObject(camera, controls, currentObject, currentScale);
+      if (hasCustomViewAngles) {
+        applyViewAngles();
+        return;
+      }
+
+      syncViewAnglesFromCamera();
+      render();
+    },
+    setViewAngles(angles: Partial<BlockymodelViewAngles>): void {
+      currentViewAngles = {
+        roll: angles.roll ?? currentViewAngles.roll,
+        pitch: angles.pitch ?? currentViewAngles.pitch,
+        yaw: angles.yaw ?? currentViewAngles.yaw,
+      };
+      hasCustomViewAngles = true;
+      applyViewAngles();
+    },
     setModelObject(object: THREE.Object3D | null): void {
       if (currentObject) {
         scene.remove(currentObject);
@@ -132,16 +232,29 @@ export function createBlockymodelViewerRuntime(
       currentObject = object;
       if (object) {
         scene.add(object);
-        fitCameraToObject(camera, controls, object);
+        fitCameraToObject(camera, controls, object, currentScale);
+        if (hasCustomViewAngles) {
+          applyViewAngles();
+          return;
+        }
+        syncViewAnglesFromCamera();
+        render();
       } else {
         controls.target.set(0, 0, 0);
         controls.update();
+        hasCustomViewAngles = false;
+        currentViewAngles = {
+          roll: 0,
+          pitch: 0,
+          yaw: 0,
+        };
+        options.onViewAnglesChange?.(currentViewAngles);
         render();
       }
     },
     dispose(): void {
       resizeObserver.disconnect();
-      controls.removeEventListener("change", render);
+      controls.removeEventListener("change", handleControlsChange);
       controls.dispose();
       renderer.dispose();
       renderer.domElement.remove();

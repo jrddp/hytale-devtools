@@ -44,6 +44,8 @@
       <BlockymodelPreview
         model={workspace.preview.model as unknown as BlockymodelFile}
         textureBytes={workspace.preview.texture}
+        orbit={true}
+        scale={1.35}
         showGrid={false}
         class="size-full"
       />

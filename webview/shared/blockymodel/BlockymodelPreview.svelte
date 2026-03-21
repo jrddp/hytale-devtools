@@ -13,6 +13,11 @@
     textureUrl?: string | null;
     textureBytes?: Uint8Array | number[] | null;
     orbit?: boolean;
+    /** View angles in degrees. */
+    roll?: number;
+    pitch?: number;
+    yaw?: number;
+    scale?: number;
     showGrid?: boolean;
     class?: string;
   }
@@ -22,6 +27,10 @@
     textureUrl = null,
     textureBytes = null,
     orbit = false,
+    roll = $bindable(),
+    pitch = $bindable(),
+    yaw = $bindable(),
+    scale = 1,
     showGrid = true,
     class: className = "",
   }: Props = $props();
@@ -33,6 +42,7 @@
   let rebuildVersion = 0;
   let errorMessage = $state("");
   let loading = $state(false);
+  let syncingViewAngles = false;
 
   const resolvedTextureUrl = $derived.by(() => {
     if (textureUrl) {
@@ -169,7 +179,17 @@
 
     runtime = createBlockymodelViewerRuntime(container, {
       orbit,
+      scale,
       showGrid,
+      onViewAnglesChange: angles => {
+        syncingViewAngles = true;
+        roll = angles.roll;
+        pitch = angles.pitch;
+        yaw = angles.yaw;
+        queueMicrotask(() => {
+          syncingViewAngles = false;
+        });
+      },
     });
 
     return () => {
@@ -186,6 +206,26 @@
 
   $effect(() => {
     runtime?.setGridVisible(showGrid);
+  });
+
+  $effect(() => {
+    runtime?.setScale(scale);
+  });
+
+  $effect(() => {
+    if (!runtime || syncingViewAngles) {
+      return;
+    }
+
+    if (roll === undefined && pitch === undefined && yaw === undefined) {
+      return;
+    }
+
+    runtime.setViewAngles({
+      roll,
+      pitch,
+      yaw,
+    });
   });
 
   $effect(() => {
