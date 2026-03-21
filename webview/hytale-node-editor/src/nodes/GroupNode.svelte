@@ -9,24 +9,17 @@
   const GROUP_TITLE_BASE_SIZE_PX = 18;
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 12;
 
-  let { id, data, selected, dragging, draggable }: GroupNodeType = $props();
-
-  $effect(() => {
-    if (workspace.controlScheme === "mouse") {
-      updateNode(id, { draggable: selected || hoveringTitlebar });
-    } else if (!draggable) {
-      updateNode(id, { draggable: true });
-    }
-  });
+  let { id, data, selected, dragging }: GroupNodeType = $props();
 
   const viewport = useViewport();
-  const { updateNodeData, updateNode } = useSvelteFlow();
+  const { updateNodeData } = useSvelteFlow();
 
   let titleInputElement = $state<HTMLInputElement | undefined>();
   let titleSizerWidth = $state(0);
   let lastComittedTitle = $derived(data.titleOverride ?? data.defaultTitle);
   let effectiveTitle = $derived(data.titleOverride ?? data.defaultTitle);
   let isEditingTitle = $state(false);
+  const bodyDragDisabled = $derived(workspace.controlScheme === "mouse" && !selected);
   const titleCompensationScale = $derived(
     Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, Math.max(1, 1 / viewport.current.zoom)),
   );
@@ -40,8 +33,6 @@
     }
     isEditingTitle = false;
   };
-
-  let hoveringTitlebar = $state(false);
 
   function handleTitleInputKeydown(event: KeyboardEvent) {
     if (isPlainEnterNavigationEvent(event)) {
@@ -73,8 +64,6 @@
     class="absolute inset-x-0 top-0 flex items-end h-8 gap-1 px-2 pb-1 overflow-visible border-b rounded-t-lg border-vsc-editor-widget-border/80 bg-vsc-input-bg/60 cursor-grab active:cursor-grabbing"
     role="group"
     aria-label="Group title bar"
-    onpointerenter={() => (hoveringTitlebar = true)}
-    onpointerleave={() => (hoveringTitlebar = false)}
   >
     <div class="z-10 flex items-end min-w-0 gap-1 overflow-visible">
       {#if isEditingTitle}
@@ -115,6 +104,12 @@
       {/if}
     </div>
   </div>
+
+  <div
+    aria-hidden="true"
+    class="absolute inset-x-0 bottom-0 top-8"
+    class:nodrag={bodyDragDisabled}
+  ></div>
 
   <ZoomCompensatedNodeResizer
     isVisible={selected && !dragging}
