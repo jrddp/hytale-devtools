@@ -50,6 +50,7 @@ async function getDevBootstrapPayload() {
     documentPath: devDocumentPath,
     text: "{}",
     version: 1,
+    preview: undefined,
   };
 }
 

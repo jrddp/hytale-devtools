@@ -1,4 +1,5 @@
 import type {
+  AssetEditorPreview,
   AssetEditorParentState,
   AssetEditorWebviewToExtensionMessage,
 } from "@shared/asset-editor/messageTypes";
@@ -10,7 +11,9 @@ import type {
   RootFieldInstance,
   VariantFieldInstance,
 } from "./parsing/fieldInstances";
+import { buildPreviewRequest, type PreviewPointer } from "./preview/previewRequests";
 import {
+  assignFieldInstancePaths,
   createEmptyFieldInstance as createEmptyFieldInstanceFromSchema,
   parseDocumentText,
 } from "./parsing/parseDocument";
@@ -31,6 +34,7 @@ export class Workspace {
   parentStatus = $state<AssetEditorParentState["status"]>("none");
   parentName = $state<string | null>(null);
   parentInstance = $state<AssetEditorParentState["parentInstance"]>(undefined);
+  preview = $state<AssetEditorPreview | undefined>(undefined);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
 
@@ -50,6 +54,7 @@ export class Workspace {
     this.parentStatus = "none";
     this.parentName = null;
     this.parentInstance = undefined;
+    this.preview = undefined;
   }
 
   setDocument({
@@ -79,6 +84,10 @@ export class Workspace {
     if (this.documentText !== null) {
       this.reparseDocument();
     }
+  }
+
+  setPreview(preview: AssetEditorPreview | undefined) {
+    this.preview = preview;
   }
 
   setAllPanelsCollapsed(collapsed: boolean) {
@@ -116,6 +125,7 @@ export class Workspace {
 
   applyDocumentState() {
     console.log("Applying document state", this.documentRootField);
+    this.syncFieldPaths();
     const text = this.serializeDocumentText();
     if (!text) {
       return;
@@ -129,11 +139,35 @@ export class Workspace {
     this.vscode.postMessage(payload);
   }
 
+  /** @param overrides - record of pointer to override value, e.g. overriding "Icon" with a specific preview. */
+  requestResolvedPreview(overrides: Partial<Record<PreviewPointer, string | undefined>> = {}) {
+    const request = buildPreviewRequest(this.assetDefinition?.preview, this.documentRootField, overrides);
+    if (!request) {
+      return;
+    }
+
+    this.vscode.postMessage({
+      type: "resolvePreview",
+      request,
+    });
+  }
+
   createEmptyFieldInstance<TField extends Field>(field: TField): TField & FieldInstance {
     return createEmptyFieldInstanceFromSchema(
       $state.snapshot(field) as TField,
       $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
     );
+  }
+
+  syncFieldPaths(field?: FieldInstance) {
+    if (field) {
+      assignFieldInstancePaths(field, field.fieldPath);
+      return;
+    }
+
+    if (this.documentRootField) {
+      assignFieldInstancePaths(this.documentRootField, "");
+    }
   }
 
   reparseDocument() {

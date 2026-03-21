@@ -1,10 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import * as yauzl from "yauzl";
-import { indexes, LOGGER } from "../extension";
+import { assetCacheRuntime, indexes, LOGGER } from "../extension";
 import { type RegisteredAssetsIndexShard } from "../shared/indexTypes";
-import { getAssetsZipPath, resolvePatchlineForContext } from "../utils/hytalePaths";
 
 interface AssetTypeQuickPickItem extends vscode.QuickPickItem {
   assetShard?: RegisteredAssetsIndexShard;
@@ -80,7 +78,7 @@ export async function copyBaseGameAsset(context: vscode.ExtensionContext): Promi
   LOGGER.info(`Destination path: ${destinationPath}`);
 
   if (!choseEmpty) {
-    copyAsset(context, asset.assetPath!, destinationPath)
+    copyAsset(asset.assetPath!, destinationPath)
       .then(() => {
         LOGGER.info(`Copied asset to ${destinationPath}`);
         // open asset in editor
@@ -152,36 +150,13 @@ async function showAssetQuickPick(
 }
 
 async function copyAsset(
-  context: vscode.ExtensionContext,
   assetPath: string,
   destinationPath: string,
 ): Promise<void> {
-  if (assetPath.startsWith("/")) {
-    assetPath = assetPath.slice(1);
-  }
-  const assetsZipPath = getAssetsZipPath(resolvePatchlineForContext(context));
-
   await fs.promises.mkdir(path.dirname(destinationPath), { recursive: true });
-  // extract asset from assets zip
-  return new Promise((resolve, reject) => {
-    yauzl.open(assetsZipPath, { lazyEntries: true }, (openError, zipFile) => {
-      zipFile.readEntry();
-      zipFile.on("entry", function (entry) {
-        if (entry.fileName !== assetPath) {
-          zipFile.readEntry();
-        } else {
-          zipFile.openReadStream(entry, (readError, readStream) => {
-            if (readError) {
-              throw new Error(`Failed to open read stream: ${readError.message}`);
-            }
-            readStream.pipe(fs.createWriteStream(destinationPath));
-            zipFile.close();
-          });
-        }
-      });
-      zipFile.on("close", () => {
-        resolve();
-      });
-    });
-  });
+  const assetBytes = await assetCacheRuntime.readAssetBytesByPath(assetPath);
+  if (!assetBytes) {
+    throw new Error(`Asset not found in indexed Assets.zip: ${assetPath}`);
+  }
+  await fs.promises.writeFile(destinationPath, assetBytes);
 }

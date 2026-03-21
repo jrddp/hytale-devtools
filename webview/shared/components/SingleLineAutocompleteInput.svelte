@@ -20,9 +20,11 @@
     optionClass = "",
     previewClass = "",
     fitContentWidth = false,
+    considerDebounceMs = 75,
     sizerClass = "",
     stopPointerPropagation = false,
     oncommit,
+    onconsider,
     onfocus,
     afterEnterPressed,
     ...inputAttributes
@@ -38,9 +40,11 @@
     optionClass?: string;
     previewClass?: string;
     fitContentWidth?: boolean;
+    considerDebounceMs?: number;
     sizerClass?: string;
     stopPointerPropagation?: boolean;
     oncommit?: (value: string) => boolean | void;
+    onconsider?: (value?: string) => void;
     onfocus?: () => void;
     afterEnterPressed?: (input: HTMLInputElement) => void;
   } & Omit<HTMLInputAttributes, "id" | "type" | "value" | "class" | "placeholder" | "disabled"> =
@@ -54,6 +58,8 @@
   let autocompleteListElement = $state<HTMLDivElement>();
   let previewAnchorElement = $state<HTMLElement | null>(null);
   let inputSizerWidth = $state(0);
+  let lastConsideredValue: string | undefined;
+  let considerTimeout: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
     void value;
@@ -94,6 +100,32 @@
       : undefined,
   );
   const previewAnchorIndex = $derived(activeAutocompleteIndex >= 0 ? activeAutocompleteIndex : 0);
+  const consideredValue = $derived(
+    shouldAutocomplete && activeAutocompleteIndex >= 0
+      ? visibleAutocompleteOptions[activeAutocompleteIndex]?.value
+      : undefined,
+  );
+
+  $effect(() => {
+    if (consideredValue === lastConsideredValue) {
+      return;
+    }
+
+    clearTimeout(considerTimeout);
+
+    if (consideredValue === undefined) {
+      lastConsideredValue = undefined;
+      onconsider?.(undefined);
+      return;
+    }
+
+    considerTimeout = setTimeout(() => {
+      lastConsideredValue = consideredValue;
+      onconsider?.(consideredValue);
+    }, considerDebounceMs);
+
+    return () => clearTimeout(considerTimeout);
+  });
 
   $effect(() => {
     if (!shouldAutocomplete || !autocompleteListElement) {

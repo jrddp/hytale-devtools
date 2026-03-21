@@ -3,6 +3,7 @@
   import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
   import type { BooleanFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
+  import { getFieldInputId } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -16,6 +17,7 @@
   }: RenderFieldProps<BooleanFieldInstance> = $props();
 
   const isSet = $derived(field.value !== undefined);
+  const inputId = $derived(getFieldInputId(field));
   const checked = $derived(field.value ?? field.inheritedValue ?? field.default ?? false);
   const fallbackLabel = $derived.by(() => {
     if (field.value !== undefined) {
@@ -57,6 +59,7 @@
   >
     <div class="flex items-center gap-2">
       <input
+        id={inputId}
         class="size-6 accent-vsc-activity-bar-badge-bg"
         class:accent-vsc-muted={!isSet}
         class:cursor-default={readOnly}

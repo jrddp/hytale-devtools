@@ -83,6 +83,7 @@
         valueField,
       },
     ];
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
     void focusEntryKeyInput(entryId);
   }
@@ -95,6 +96,7 @@
     field.entries = structuredClone($state.snapshot(field.inheritedEntries)) as MapEntry[];
     syncEntrySchemaKeys(field.entries);
     draftEntryViews = null;
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 
@@ -110,6 +112,7 @@
 
     field.entries.splice(entryIndex, 1);
     draftEntryViews = null;
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 
@@ -130,6 +133,7 @@
 
     field.entries[entryIndex].key = normalizedKey;
     field.entries[entryIndex].valueField.schemaKey = normalizedKey;
+    workspace.syncFieldPaths(field);
 
     // TODO FIXME we should be persisting empty map entries since we want to ensure we persist their keys
     if (isFieldSet(field.entries[entryIndex]?.valueField)) {
@@ -184,7 +188,7 @@
     }
 
     field.entries = nextEntries;
-    syncEntrySchemaKeys(field.entries);
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 

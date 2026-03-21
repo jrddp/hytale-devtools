@@ -3,8 +3,12 @@ import { type AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import { assetCacheRuntime, LOGGER, schemaRuntime } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
 import {
-  type AssetEditorParentState,
+  type AssetEditorBootstrapMessage,
   type AssetEditorExtensionToWebviewMessage,
+  type AssetEditorParentState,
+  type AssetEditorPreview,
+  type AssetEditorPreviewRequest,
+  type AssetEditorPreviewUpdateMessage,
   type AssetEditorWebviewToExtensionMessage,
 } from "../shared/asset-editor/messageTypes";
 import { type AssetDefinition } from "../shared/fieldTypes";
@@ -36,6 +40,7 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
       const assetDefinition = schemaRuntime.getAssetDefinitionForPath(documentPath);
       const runtime = assetCacheRuntime;
       let isDisposed = false;
+      let previewResolutionVersion = 0;
       if (!assetDefinition) {
         LOGGER.error(
           `No asset definition matched ${documentPath}. Falling back to the JSON editor.`,
@@ -60,7 +65,7 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         title: "Hytale Asset Editor",
       });
 
-      const sendBootstrap = () => {
+      const sendBootstrap = async (loadPreview: boolean) => {
         try {
           // send minimal ref-resolutions to preserve memory
           const assetsByRef = Array.from(schemaRuntime.assetsByRef.entries()).reduce(
@@ -73,17 +78,27 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             {} as Record<string, AssetDefinition>,
           );
 
-          const payload: AssetEditorExtensionToWebviewMessage = {
+          const parent = resolveDocumentParentState(document, assetDefinition, runtime);
+
+          const payload: AssetEditorBootstrapMessage = {
             type: "bootstrap",
             assetDefinition,
             assetsByRef,
-            parent: resolveDocumentParentState(document, assetDefinition, runtime),
+            parent,
+            preview: loadPreview
+              ? await resolveDocumentPreview(document, assetDefinition, parent, runtime)
+              : { type: assetDefinition.preview ?? "none", loading: true },
           };
-          void webviewPanel.webview.postMessage(payload);
+
+          if (!isDisposed) {
+            await webviewPanel.webview.postMessage(payload);
+          }
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
           LOGGER.error(`Unable to build asset editor schema data: ${message}`);
-          void this.postError(webviewPanel.webview, message);
+          if (!isDisposed) {
+            await this.postError(webviewPanel.webview, message);
+          }
         }
       };
 
@@ -97,26 +112,60 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         void webviewPanel.webview.postMessage(payload);
       };
 
-      const sendParentUpdate = () => {
-        const payload: AssetEditorExtensionToWebviewMessage = {
-          type: "parentUpdate",
-          parent: resolveDocumentParentState(document, assetDefinition, runtime),
-        };
-        void webviewPanel.webview.postMessage(payload);
+      const postResolvedPreview = async (previewPromise: Promise<AssetEditorPreview | undefined>) => {
+        const resolutionVersion = ++previewResolutionVersion;
+        const preview = await previewPromise;
+        if (isDisposed || resolutionVersion !== previewResolutionVersion) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
+          type: "previewUpdate",
+          preview,
+        } satisfies AssetEditorPreviewUpdateMessage);
       };
 
-      const sendResolvedParentUpdate = (parentName: string) => {
-        const payload: AssetEditorExtensionToWebviewMessage = {
+      const sendResolvedParentAndPreview = async (parent: AssetEditorParentState) => {
+        if (isDisposed) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
           type: "parentUpdate",
-          parent: resolveParentState(assetDefinition, runtime, parentName),
-        };
-        void webviewPanel.webview.postMessage(payload);
+          parent,
+        } satisfies AssetEditorExtensionToWebviewMessage);
+
+        if (!runtime.isReady || isDisposed) {
+          return;
+        }
+
+        await postResolvedPreview(resolveDocumentPreview(document, assetDefinition, parent, runtime));
+      };
+
+      const sendResolvedPreview = async (request: AssetEditorPreviewRequest) => {
+        if (isDisposed) {
+          return;
+        }
+
+        if (!runtime.isReady) {
+          await webviewPanel.webview.postMessage({
+            type: "previewUpdate",
+            preview: { type: request.type, loading: true },
+          } satisfies AssetEditorPreviewUpdateMessage);
+          return;
+        }
+
+        await postResolvedPreview(resolvePreviewRequest(request, runtime));
+      };
+
+      const sendResolvedDocumentParentAndPreview = () => {
+        const parent = resolveDocumentParentState(document, assetDefinition, runtime);
+        void sendResolvedParentAndPreview(parent);
       };
 
       const documentChangeSubscription = vscode.workspace.onDidChangeTextDocument(event => {
         if (event.document.uri.toString() === document.uri.toString()) {
           updateWebview();
-          sendParentUpdate();
         }
       });
 
@@ -129,30 +178,42 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
         LOGGER.info("Message received:", message.type);
         switch (message.type) {
           case "ready":
-            sendBootstrap();
-            updateWebview();
-            if (!runtime.isReady) {
-              void runtime.ready
-                .then(() => {
-                  if (!isDisposed && assetCacheRuntime === runtime) {
-                    sendParentUpdate();
-                  }
-                })
-                .catch(error => {
-                  if (!isDisposed) {
-                    void this.postError(
-                      webviewPanel.webview,
-                      `Failed to load base-game asset cache: ${error instanceof Error ? error.message : String(error)}`,
-                    );
-                  }
-                });
+            if (runtime.isReady) {
+              void sendBootstrap(true).finally(() => {
+                if (!isDisposed) {
+                  updateWebview();
+                }
+              });
+              return;
             }
+
+            void sendBootstrap(false);
+            updateWebview();
+            void runtime.ready
+              .then(() => {
+                if (!isDisposed && assetCacheRuntime === runtime) {
+                  sendResolvedDocumentParentAndPreview();
+                }
+              })
+              .catch(error => {
+                if (!isDisposed) {
+                  void this.postError(
+                    webviewPanel.webview,
+                    `Failed to load base-game asset cache: ${error instanceof Error ? error.message : String(error)}`,
+                  );
+                }
+              });
             return;
           case "autocompleteRequest":
             void this.autocompleteRequest(message, webviewPanel.webview);
             return;
           case "resolveParent":
-            sendResolvedParentUpdate(message.parentName);
+            void sendResolvedParentAndPreview(
+              resolveParentState(assetDefinition, runtime, message.parentName),
+            );
+            return;
+          case "resolvePreview":
+            void sendResolvedPreview(message.request);
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
@@ -230,7 +291,9 @@ function resolveDocumentParentState(
   assetDefinition: AssetDefinition,
   runtime: AssetCacheRuntime,
 ): AssetEditorParentState {
-  return resolveParentState(assetDefinition, runtime, readParentName(document));
+  const jsonData = readDocumentJson(document);
+  const parentName = jsonData?.["Parent"] as string | undefined;
+  return resolveParentState(assetDefinition, runtime, parentName);
 }
 
 function resolveParentState(
@@ -241,33 +304,101 @@ function resolveParentState(
   if (!parentName) {
     return { status: "none" };
   }
+  const parentData = runtime.getAsset(assetDefinition.title, parentName);
+  if (parentData) {
+    return { status: "loaded", parentName, parentInstance: parentData };
+  }
   if (!runtime.isReady) {
-    return {
-      status: "loading",
-      parentName,
-    };
+    return { status: "loading", parentName };
   }
+  return { status: "missing", parentName };
+}
 
-  const parentInstance = runtime.getAsset(assetDefinition.title, parentName);
-  if (!parentInstance) {
-    return {
-      status: "missing",
-      parentName,
-    };
+async function resolveDocumentPreview(
+  document: vscode.TextDocument,
+  assetDefinition: AssetDefinition,
+  parent: AssetEditorParentState,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview | undefined> {
+  const jsonData = readDocumentJson(document);
+  const parentData = parent.parentInstance?.rawJson;
+  const iconPath = (jsonData?.["Icon"] ?? parentData?.["Icon"]) as string | undefined;
+  const modelPath = (jsonData?.["Model"] ?? parentData?.["Model"]) as string | undefined;
+  const texturePath = resolveWithFallbackTexture(
+    (jsonData?.["Texture"] ?? parentData?.["Texture"]) as string | undefined,
+    modelPath,
+  );
+
+  switch (assetDefinition.preview) {
+    case "Item":
+      return await resolveItemPreview(iconPath, runtime);
+    case "Model":
+      return await resolveModelPreview(modelPath, texturePath, runtime);
+    default:
+      return undefined;
   }
+}
 
+async function resolvePreviewRequest(
+  request: AssetEditorPreviewRequest,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview> {
+  switch (request.type) {
+    case "Item":
+      return await resolveItemPreview(request.iconPath, runtime);
+    case "Model":
+      return await resolveModelPreview(
+        request.modelPath,
+        resolveWithFallbackTexture(request.texturePath, request.modelPath),
+        runtime,
+      );
+  }
+}
+
+async function resolveItemPreview(
+  iconPath: string | undefined,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview> {
+  const iconBytes = iconPath ? await runtime.readAssetBytesByPath(iconPath) : undefined;
   return {
-    status: "loaded",
-    parentName,
-    parentInstance,
+    type: "Item",
+    icon: iconBytes ? Array.from(iconBytes) : undefined,
   };
 }
 
-function readParentName(document: vscode.TextDocument): string | undefined {
+async function resolveModelPreview(
+  modelPath: string | undefined,
+  texturePath: string | undefined,
+  runtime: AssetCacheRuntime,
+): Promise<AssetEditorPreview> {
+  const [modelAsset, textureBytes] = await Promise.all([
+    modelPath ? runtime.loadAssetByPath(modelPath) : undefined,
+    texturePath ? runtime.readAssetBytesByPath(texturePath) : undefined,
+  ]);
+
+  return {
+    type: "Model",
+    model: modelAsset?.contentType === "json" ? modelAsset.rawJson : undefined,
+    texture: textureBytes ? Array.from(textureBytes) : undefined,
+  };
+}
+
+// The base game code falls back to the same path as the model, but with .png instead of .blockymodel.
+function resolveWithFallbackTexture(
+  texturePath: string | undefined,
+  modelPath: string | undefined,
+): string | undefined {
+  return (
+    texturePath ??
+    (modelPath?.toLowerCase().endsWith(".blockymodel")
+      ? modelPath.replace(/\.blockymodel$/i, ".png")
+      : undefined)
+  );
+}
+
+function readDocumentJson(document: vscode.TextDocument): Record<string, unknown> | undefined {
   try {
-    const documentJson = JSON.parse(document.getText()) as Record<string, unknown>;
-    const parentValue = documentJson["Parent"];
-    return typeof parentValue === "string" && parentValue.length > 0 ? parentValue : undefined;
+    return JSON.parse(document.getText()) as Record<string, unknown>;
   } catch {
     return undefined;
   }

@@ -1,11 +1,35 @@
-import { type AssetInstance } from "../../asset-cache/assetCacheRuntime";
-import { type AssetDefinition } from "../fieldTypes";
+import type { AssetPreviewType, AssetDefinition, JsonAssetInstance } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
+
+export type AssetEditorPreview =
+  | { type: Exclude<AssetPreviewType, "Item" | "Model"> | "none"; loading?: boolean }
+  | {
+      type: "Item";
+      icon?: number[];
+      loading?: boolean;
+    }
+  | {
+      type: "Model";
+      model?: Record<string, unknown>;
+      texture?: number[];
+      loading?: boolean;
+    };
+
+export type AssetEditorPreviewRequest =
+  | {
+      type: "Item";
+      iconPath?: string;
+    }
+  | {
+      type: "Model";
+      modelPath?: string;
+      texturePath?: string;
+    };
 
 export type AssetEditorParentState = {
   status: "loading" | "none" | "loaded" | "missing";
   parentName?: string;
-  parentInstance?: AssetInstance;
+  parentInstance?: JsonAssetInstance;
 };
 
 export type AssetEditorBootstrapMessage = {
@@ -13,11 +37,17 @@ export type AssetEditorBootstrapMessage = {
   assetDefinition: AssetDefinition;
   assetsByRef: Record<string, AssetDefinition>;
   parent: AssetEditorParentState;
+  preview?: AssetEditorPreview;
 };
 
 export type AssetEditorParentUpdateMessage = {
   type: "parentUpdate";
   parent: AssetEditorParentState;
+};
+
+export type AssetEditorPreviewUpdateMessage = {
+  type: "previewUpdate";
+  preview?: AssetEditorPreview;
 };
 
 export type AssetEditorDocumentUpdateMessage = {
@@ -41,6 +71,7 @@ export type AssetEditorAutocompletionValuesMessage = {
 export type AssetEditorExtensionToWebviewMessage =
   | AssetEditorBootstrapMessage
   | AssetEditorParentUpdateMessage
+  | AssetEditorPreviewUpdateMessage
   | AssetEditorDocumentUpdateMessage
   | AssetEditorErrorMessage
   | AssetEditorAutocompletionValuesMessage;
@@ -49,6 +80,7 @@ export type AssetEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
   | { type: "resolveParent"; parentName: string }
+  | { type: "resolvePreview"; request: AssetEditorPreviewRequest }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | {
       type: "apply";

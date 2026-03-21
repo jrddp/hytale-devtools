@@ -6,9 +6,10 @@
   import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
   import SingleLineAutocompleteInput from "../../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { StringFieldInstance } from "../../parsing/fieldInstances";
+  import { isPreviewPointer } from "../../preview/previewRequests";
   import { workspace } from "../../workspace.svelte";
   import { getFieldPlaceholder } from "../fieldHelpers";
-  import { getFieldEditorId } from "../fieldEditorIds";
+  import { getFieldInputId, getFieldJsonPointer } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -27,11 +28,12 @@
     oncommitchange?: (value: string | undefined) => boolean | void;
   } = $props();
 
-  let inputId = $derived(getFieldEditorId(field));
+  let inputId = $derived(getFieldInputId(field));
   const isLocked = $derived(readOnly || field.const !== undefined);
   const isMinimal = $derived(fieldPanelOverrides?.minimal === true);
 
   const isSet = $derived(field.value !== undefined);
+  const jsonPointer = $derived(getFieldJsonPointer(field));
   const value = $derived(
     isLocked
       ? (field.value ?? field.const ?? field.inheritedValue ?? field.default ?? "")
@@ -112,7 +114,40 @@
       }
     }
 
+    if (isPreviewPointer(jsonPointer)) {
+      workspace.requestResolvedPreview();
+    }
+
     return true;
+  }
+
+  function considerValue(value?: string) {
+    if (field.definesParent) {
+      const parentName = value ?? field.value;
+      if (parentName) {
+        workspace.vscode.postMessage({
+          type: "resolveParent",
+          parentName,
+        });
+      } else {
+        workspace.setParentState({ status: "none" });
+        workspace.requestResolvedPreview();
+      }
+      return;
+    }
+
+    if (!isPreviewPointer(jsonPointer)) {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.requestResolvedPreview();
+      return;
+    }
+
+    workspace.requestResolvedPreview({
+      [jsonPointer]: value,
+    });
   }
 
   const parentTooltip = $derived(
@@ -158,12 +193,14 @@
         {placeholder}
         {autocompleteOptions}
         fitContentWidth={isMinimal}
+        considerDebounceMs={field.definesParent ? 100 : undefined}
         sizerClass={inputSizerClass}
         {inputClass}
         listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
         optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
         previewClass="z-[160]"
         onfocus={requestAutocomplete}
+        onconsider={considerValue}
         oncommit={commitValue}
         afterEnterPressed={input => input.blur()}
       />

@@ -1,5 +1,6 @@
 import type {
   AssetEditorExtensionToWebviewMessage,
+  AssetEditorPreview,
   AssetEditorWebviewToExtensionMessage,
 } from "@shared/asset-editor/messageTypes";
 import type { IndexReference } from "@shared/indexTypes";
@@ -39,6 +40,7 @@ type DevBootstrapResponse = {
   documentPath: string;
   text: string;
   version: number;
+  preview?: AssetEditorPreview;
 };
 
 export class MockVSCodeApi implements VSCodeApi {
@@ -85,6 +87,7 @@ export class MockVSCodeApi implements VSCodeApi {
       assetDefinition: payload.assetDefinition as never,
       assetsByRef: payload.assetsByRef as never,
       parent: { status: "none" },
+      preview: payload.preview,
     });
     this.send({
       type: "update",

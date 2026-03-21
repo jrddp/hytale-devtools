@@ -22,6 +22,10 @@ import {
   type StringPropertyDefinition,
 } from "./schemaDefinitionTypes";
 
+const ROOT_SCHEMA_KEY = "$root";
+const VARIANT_SCHEMA_KEY = "$variant";
+const MAP_KEY_SCHEMA_KEY = "$key";
+
 type ParsingState = {
   currentSection: string | null;
   unhydratedVariants: VariantField[];
@@ -178,7 +182,11 @@ function propertyDefinitionToField(
         unmappedFields: definition.anyOf
           .map(
             variantDefinition =>
-              propertyDefinitionToField("", variantDefinition, state) as ObjectField | RefField,
+              propertyDefinitionToField(
+                VARIANT_SCHEMA_KEY,
+                variantDefinition,
+                state,
+              ) as ObjectField | RefField,
           )
           .filter(field => field !== null),
       };
@@ -414,7 +422,7 @@ function propertyDefinitionToField(
       if (definition.additionalProperties) {
         const mapKeyField: StringField = definition.propertyNames
           ? (propertyDefinitionToField(schemaKey, definition.propertyNames, state) as StringField)
-          : { schemaKey: null, type: "string", section: null };
+          : { schemaKey: MAP_KEY_SCHEMA_KEY, type: "string", section: null };
         const mapValueField = propertyDefinitionToField(
           schemaKey,
           definition.additionalProperties,
@@ -450,21 +458,23 @@ export function schemaDefinitionToAssetDefinition(
   logger: BasicLogger,
 ): AssetDefinition | null {
   const refDependencies = new Set<string>();
-  const rootField = propertyDefinitionToField("", definition, {
+  const rootField = propertyDefinitionToField(ROOT_SCHEMA_KEY, definition, {
     currentSection: "General",
     unhydratedVariants,
     refDependencies,
     logger,
   });
   const buttons = definition.hytale.uiSidebarButtons?.map(button => button.buttonId) ?? [];
+  const preview = definition.hytale.uiEditorPreview;
   if (!rootField || (rootField.type !== "variant" && rootField.type !== "object")) {
-    logger.error("Unexpected root field for asset definition: ${JSON.stringify(definition)}");
+    logger.error(`Unexpected root field for asset definition: ${JSON.stringify(definition)}`);
     return null;
   }
   return {
     title: definition.title,
     rootField,
     buttons,
+    preview,
     refDependencies,
   };
 }

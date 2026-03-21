@@ -3,10 +3,11 @@
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
   import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
-  import { fade } from "svelte/transition";
+  import AssetPreview from "./preview/AssetPreview.svelte";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
@@ -92,10 +93,14 @@
         workspace.assetsByRef = message.assetsByRef;
         workspace.setAssetDefinition(message.assetDefinition);
         workspace.setParentState(message.parent);
+        workspace.setPreview(message.preview);
         extensionError = "";
         return;
       case "parentUpdate":
         workspace.setParentState(message.parent);
+        return;
+      case "previewUpdate":
+        workspace.setPreview(message.preview);
         return;
       case "update":
         workspace.setDocument(message);
@@ -198,7 +203,10 @@
   });
 </script>
 
-<main class="flex flex-col h-screen min-h-0 text-sm bg-vsc-bg text-vsc-editor-fg" in:fade={{ duration: 50 }}>
+<main
+  class="flex flex-col h-screen min-h-0 text-sm bg-vsc-bg text-vsc-editor-fg"
+  in:fade={{ duration: 50 }}
+>
   {#if extensionError}
     <div class="px-3 py-2 border rounded-md border-vsc-border bg-red-500/10 text-vsc-error">
       {extensionError}
@@ -270,7 +278,8 @@
     <div bind:this={scrollRootElement} class="flex-1 min-h-0 overflow-auto" data-sticky-scroll-root>
       <div class="p-4">
         <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
-          <aside class="lg:sticky lg:top-4">
+          <aside class="space-y-4 lg:sticky lg:top-4">
+            <AssetPreview />
             <div class="p-2 border rounded-xl border-vsc-border bg-vsc-panel">
               {#if outlineSections.length === 0}
                 <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>

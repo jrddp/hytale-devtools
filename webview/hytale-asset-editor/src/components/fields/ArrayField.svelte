@@ -67,7 +67,7 @@
 
     const newItem = workspace.createEmptyFieldInstance(field.itemFieldTypes);
     field.items.push(newItem);
-    syncItemSchemaKeys(field.items);
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 
@@ -77,15 +77,15 @@
     }
 
     field.items = structuredClone($state.snapshot(field.inheritedItems)) as FieldInstance[];
-    syncItemSchemaKeys(field.items);
     draftItemViews = null;
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 
   function removeItem(index: number) {
     field.items.splice(index, 1);
-    syncItemSchemaKeys(field.items);
     draftItemViews = null;
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 
@@ -96,12 +96,6 @@
       fieldClientIds.set(item, id);
     }
     return id;
-  }
-
-  function syncItemSchemaKeys(items: FieldInstance[]) {
-    items.forEach((item, index) => {
-      item.schemaKey = index.toString();
-    });
   }
 
   function handleConsider(event: CustomEvent<DndEvent<ArrayFieldDndItem>>) {
@@ -127,7 +121,7 @@
     }
 
     field.items = nextItems;
-    syncItemSchemaKeys(field.items);
+    workspace.syncFieldPaths(field);
     workspace.applyDocumentState();
   }
 

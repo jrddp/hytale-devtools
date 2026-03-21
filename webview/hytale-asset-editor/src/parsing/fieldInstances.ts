@@ -36,6 +36,7 @@ export type ScalarFieldInstance =
 
 export type FieldInstanceBase = {
   readonly?: boolean;
+  fieldPath: string;
 };
 
 export type StringFieldInstance = FieldInstanceBase &

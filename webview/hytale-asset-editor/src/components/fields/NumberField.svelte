@@ -5,6 +5,7 @@
   import type { NumberFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
   import { getFieldPlaceholder } from "../fieldHelpers";
+  import { getFieldInputId } from "../fieldEditorIds";
   import FieldPanel from "../FieldPanel.svelte";
 
   let {
@@ -20,10 +21,22 @@
   // TODO handle infinity - it isn't in any actual assets but the schema technically allows it
 
   const isSet = $derived(field.value !== undefined);
+  const inputId = $derived(getFieldInputId(field));
   const placeholder = $derived(getFieldPlaceholder(field));
   const hasFallbackPlaceholder = $derived(
     field.inheritedValue !== undefined || field.default !== undefined,
   );
+  const resolvedValue = $derived.by(() => {
+    if (field.value !== undefined) {
+      return field.value.toString();
+    }
+
+    if (readOnly) {
+      return field.inheritedValue?.toString() ?? field.default?.toString() ?? "";
+    }
+
+    return "";
+  });
 
   let draftValue = $state<string>();
 
@@ -90,10 +103,11 @@
       <div
         class="w-full rounded-md border border-vsc-border bg-vsc-panel-readonly px-3 py-2 text-vsc-input-fg font-semibold select-text whitespace-pre-wrap break-all"
       >
-        {field.value?.toString ?? placeholder}
+        {resolvedValue !== "" ? resolvedValue : placeholder}
       </div>
     {:else}
       <input
+        id={inputId}
         type="text"
         class="w-full px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
         bind:value={draftValue}
