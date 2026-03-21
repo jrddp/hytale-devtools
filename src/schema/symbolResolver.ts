@@ -77,14 +77,18 @@ export function getValuesByIndexReference(reference: IndexReference): string[] {
   return [];
 }
 
-function getCommonAssetPathValues(
+export function getCommonAssetPathValues(
   shard: CommonAssetPathsIndexShard,
   reference: Extract<IndexReference, { indexKind: "commonAssetPaths" }>,
 ): string[] {
+  const requestedFolders = reference.folders
+    .map(normalizeCommonAssetFolder)
+    .filter((folder): folder is string => folder.length > 0);
   const values: string[] = [];
 
   for (const [directParentFolder, filesByFileType] of Object.entries(shard.values)) {
-    if (!reference.folders.some(folder => directParentFolder.startsWith(folder))) {
+    const normalizedParentFolder = normalizeCommonAssetFolder(directParentFolder);
+    if (!requestedFolders.some(folder => folderMatches(folder, normalizedParentFolder))) {
       continue;
     }
 
@@ -93,9 +97,24 @@ function getCommonAssetPathValues(
       : Object.values(filesByFileType).flat();
 
     values.push(
-      ...fileNames.map(fileName => path.normalize(path.join(directParentFolder, fileName))),
+      ...fileNames.map(fileName => path.posix.join(normalizedParentFolder, fileName)),
     );
   }
 
   return values;
+}
+
+function normalizeCommonAssetFolder(folder: string): string {
+  let normalizedFolder = path.posix.normalize(folder.replaceAll("\\", "/"));
+  if (normalizedFolder.startsWith("Common/")) {
+    normalizedFolder = normalizedFolder.slice("Common/".length);
+  }
+
+  return normalizedFolder.replace(/^\/+/, "").replace(/\/+$/, "");
+}
+
+function folderMatches(requestedFolder: string, directParentFolder: string): boolean {
+  return (
+    directParentFolder === requestedFolder || directParentFolder.startsWith(`${requestedFolder}/`)
+  );
 }
