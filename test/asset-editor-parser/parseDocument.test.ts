@@ -543,6 +543,52 @@ describe("asset editor parseDocumentText", () => {
     ).toBe(7);
   });
 
+  test("resolves multi-branch root variants from parentData when Type is omitted", () => {
+    const root = parseReady({
+      text: JSON.stringify({
+        Parent: "DamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 7,
+        },
+      }),
+      parentData: {
+        Type: "DamageEntity",
+        Parent: "BaseDamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 5,
+        },
+      },
+      rootField: variantField(null, "Type", {
+        DamageEntity: objectField("", {
+          Type: stringField("Type", { const: "DamageEntity" }),
+          Parent: stringField("Parent"),
+          DamageCalculator: objectField("DamageCalculator", {
+            BaseDamage: numberField("BaseDamage", { inheritsValue: true }),
+          }),
+        }),
+        MemoriesCondition: objectField("", {
+          Type: stringField("Type", { const: "MemoriesCondition" }),
+          Parent: stringField("Parent"),
+          Value: numberField("Value"),
+        }),
+      }),
+    }) as VariantFieldInstance;
+
+    expect(root.activeVariant).toBeDefined();
+    expect((root.identityField.value)).toBeUndefined();
+    expect((root.activeVariant?.properties.Parent as StringFieldInstance).value).toBe(
+      "DamageEntityParent",
+    );
+    expect(
+      ((root.activeVariant?.properties.DamageCalculator as ObjectFieldInstance).properties
+        .BaseDamage as NumberFieldInstance).value,
+    ).toBe(7);
+    expect(
+      ((root.activeVariant?.properties.DamageCalculator as ObjectFieldInstance).properties
+        .BaseDamage as NumberFieldInstance).inheritedValue,
+    ).toBe(5);
+  });
+
   test("uses parent variant data to resolve inherited child values", () => {
     const rootField = objectField(null, {
       item: variantField("item", "kind", {

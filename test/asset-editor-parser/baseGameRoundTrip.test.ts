@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, test } from "vitest";
 
+import { AssetCacheRuntime } from "../../src/asset-cache/assetCacheRuntime";
 import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument";
 import { serializeDocument } from "../../webview/hytale-asset-editor/src/parsing/serializeDocument";
@@ -59,6 +60,15 @@ function walkJsonFiles(dirPath: string): string[] {
 
 function parseJsonText(text: string): unknown {
   return JSON.parse(text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
+}
+
+function readParentName(documentJson: unknown): string | undefined {
+  if (!isRecord(documentJson)) {
+    return undefined;
+  }
+
+  const parentValue = documentJson.Parent;
+  return typeof parentValue === "string" && parentValue.length > 0 ? parentValue : undefined;
 }
 
 function canonicalizeJson(value: unknown): unknown {
@@ -235,12 +245,48 @@ function describeRoundTripMismatch(expected: unknown, actual: unknown, maxMismat
     .join("\n");
 }
 
+async function createDirectoryBackedAssetCacheRuntime(
+  schemaRuntime: SchemaRuntime,
+  supportedAssetPaths: string[],
+): Promise<AssetCacheRuntime> {
+  const logger = {
+    error() {},
+    warn() {},
+    info() {},
+    debug() {},
+  };
+  const runtime = new AssetCacheRuntime("/tmp/nonexistent-assets.zip", schemaRuntime, logger);
+  await runtime.ready;
+
+  for (const assetPath of supportedAssetPaths) {
+    const assetDefinition = schemaRuntime.getAssetDefinitionForPath(assetPath);
+    if (!assetDefinition) {
+      continue;
+    }
+
+    const assetName = path.basename(assetPath, path.extname(assetPath));
+    if (!runtime.assetInstances.has(assetDefinition.title)) {
+      runtime.assetInstances.set(assetDefinition.title, new Map());
+    }
+
+    runtime.assetInstances.get(assetDefinition.title)!.set(assetName, {
+      name: assetName,
+      type: assetDefinition.title,
+      path: assetPath,
+      package: "Hytale:Hytale",
+      rawJson: parseJsonText(readFileSync(assetPath, "utf8")) as Record<string, unknown>,
+    });
+  }
+
+  return runtime;
+}
+
 describe("asset editor BaseGame round-trip", () => {
   const baseGameAssetsDir = process.env[BASE_GAME_ASSETS_DIR_ENV];
 
   test.skipIf(!baseGameAssetsDir)(
     "round-trips supported BaseGame assets",
-    () => {
+    async () => {
       const normalizedAssetsRoot = path.resolve(baseGameAssetsDir!, "Server");
       if (!existsSync(normalizedAssetsRoot)) {
         throw new Error(`BaseGame Server directory not found: ${normalizedAssetsRoot}`);
@@ -256,6 +302,10 @@ describe("asset editor BaseGame round-trip", () => {
         throw new Error(`No supported asset-editor files found under ${normalizedAssetsRoot}`);
       }
 
+      const assetCacheRuntime = await createDirectoryBackedAssetCacheRuntime(
+        schemaRuntime,
+        supportedAssetPaths,
+      );
       const failures: string[] = [];
 
       for (const [index, assetPath] of supportedAssetPaths.entries()) {
@@ -275,10 +325,14 @@ describe("asset editor BaseGame round-trip", () => {
 
         try {
           const originalJson = parseJsonText(readFileSync(assetPath, "utf8"));
+          const parentData = readParentName(originalJson)
+            ? assetCacheRuntime.getAsset(assetDefinition.title, readParentName(originalJson)!)?.rawJson
+            : undefined;
           const result = parseDocumentText({
             text: JSON.stringify(originalJson),
             assetDefinition,
             assetsByRef,
+            parentData,
           });
 
           if (result.status === "error") {

@@ -136,15 +136,18 @@ function parseReady({
   text,
   rootField,
   assetsByRef = {},
+  parentData,
 }: {
   text: string;
   rootField: ObjectField | VariantField;
   assetsByRef?: Record<string, AssetDefinition>;
+  parentData?: unknown;
 }): RootFieldInstance {
   const result = parseDocumentText({
     text,
     assetDefinition: assetDefinition(rootField),
     assetsByRef,
+    parentData,
   });
 
   if (result.status !== "ready") {
@@ -350,6 +353,47 @@ describe("asset editor serializeDocument", () => {
             Type: "Directional",
             Force: 1,
           },
+        },
+      }),
+    );
+  });
+
+  test("round-trips multi-branch root variants when parentData provides the discriminator", () => {
+    const root = parseReady({
+      text: JSON.stringify({
+        Parent: "DamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 7,
+        },
+      }),
+      parentData: {
+        Type: "DamageEntity",
+        Parent: "BaseDamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 5,
+        },
+      },
+      rootField: variantField(null, "Type", {
+        DamageEntity: objectField("", {
+          Type: stringField("Type", { const: "DamageEntity" }),
+          Parent: stringField("Parent"),
+          DamageCalculator: objectField("DamageCalculator", {
+            BaseDamage: numberField("BaseDamage", { inheritsValue: true }),
+          }),
+        }),
+        MemoriesCondition: objectField("", {
+          Type: stringField("Type", { const: "MemoriesCondition" }),
+          Parent: stringField("Parent"),
+          Value: numberField("Value"),
+        }),
+      }),
+    });
+
+    expect(normalizeRoundTripJson(serializeDocument(root))).toEqual(
+      normalizeRoundTripJson({
+        Parent: "DamageEntityParent",
+        DamageCalculator: {
+          BaseDamage: 7,
         },
       }),
     );
