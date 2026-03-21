@@ -27,7 +27,7 @@ export type PendingConnection =
     };
 
 // updateNodeData can't be called outside of a component, so we pass this.
-/** [nodeId, dataUpdates] -> use like updates.forEach((update) => updateNodeData(...update)) */
+/** [nodeId, dataUpdates] */
 export type NodeDataUpdates = [string, Partial<FlowNodeData>];
 export type NodeUpdates = [string, Partial<FlowNode>];
 
@@ -306,21 +306,72 @@ export function getOrderedChildrenForHandle(parentId: string, parentHandleId: st
     .map(childId => workspace.getNodeById(childId))
     .sort((a, b) => (a.data.inputConnectionIndex ?? -1) - (b.data.inputConnectionIndex ?? -1));
 }
-export function getSiblingOrderUpdates(node: FlowNode): NodeDataUpdates[] {
-  const siblings = getNodeSiblingIds(node.id, "same-parent-handle");
-  if (siblings.length <= 1) {
-    return [[node.id, { inputConnectionIndex: undefined }]];
+
+export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
+  const childIdsByHandle = new Map<string, string[]>();
+
+  for (const edge of workspace.edges) {
+    if (!edge.sourceHandle) {
+      continue;
+    }
+
+    const key = `${edge.source}:${edge.sourceHandle}`;
+    const childIds = childIdsByHandle.get(key);
+    if (childIds) {
+      childIds.push(edge.target);
   } else {
-    return siblings
-      .map(id => workspace.getNodeById(id))
-      .sort((a, b) => {
-        // higher to lower (+Y IS DOWN)
-        return getAbsolutePosition(a).y - getAbsolutePosition(b).y;
-      })
-      .map((node, idx) => {
-        return [node.id, { inputConnectionIndex: idx }];
+      childIdsByHandle.set(key, [edge.target]);
+    }
+  }
+
+  const absoluteYByNodeId = new Map<string, number>();
+  const getAbsoluteY = (nodeId: string) => {
+    const cached = absoluteYByNodeId.get(nodeId);
+    if (cached != undefined) {
+      return cached;
+    }
+
+    const absoluteY = getAbsolutePosition(workspace.getNodeById(nodeId)).y;
+    absoluteYByNodeId.set(nodeId, absoluteY);
+    return absoluteY;
+  };
+
+  const updates: NodeDataUpdates[] = [];
+  const nodesWithIncomingOrder = new Set<string>();
+
+  for (const childIds of childIdsByHandle.values()) {
+    if (childIds.length === 0) {
+      continue;
+    }
+
+    childIds.forEach(childId => nodesWithIncomingOrder.add(childId));
+
+    if (childIds.length === 1) {
+      const node = workspace.getNodeById(childIds[0]);
+      if (node.data.inputConnectionIndex != undefined) {
+        updates.push([node.id, { inputConnectionIndex: undefined }]);
+      }
+      continue;
+    }
+
+    const orderedChildren = childIds
+      .map(childId => workspace.getNodeById(childId))
+      .sort((nodeA, nodeB) => getAbsoluteY(nodeA.id) - getAbsoluteY(nodeB.id));
+
+    orderedChildren.forEach((node, index) => {
+      if ((node.data.inputConnectionIndex ?? -1) !== index) {
+        updates.push([node.id, { inputConnectionIndex: index }]);
+      }
       });
   }
+
+  for (const node of workspace.nodes) {
+    if (!nodesWithIncomingOrder.has(node.id) && node.data.inputConnectionIndex != undefined) {
+      updates.push([node.id, { inputConnectionIndex: undefined }]);
+    }
+  }
+
+  return updates;
 }
 
 /** Returns list of node ids for the groups that the provided node is a descendent of, in order of parent to child. */

@@ -33,9 +33,9 @@
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import {
+    getAllSiblingOrderUpdates,
     getAbsoluteCenterPosition,
     getAbsolutePosition,
-    getSiblingOrderUpdates,
     isValidConnection,
     pruneConflictingEdges,
     recalculateGroupParents,
@@ -51,8 +51,6 @@
     screenToFlowPosition,
     setCenter: setViewportCenter,
     setViewport,
-    updateNodeData,
-    updateNode,
     deleteElements,
   } = useSvelteFlow();
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
@@ -403,7 +401,7 @@
 
           const updates = getAutoPositionNodeUpdates(targetNodes);
           if (updates.length > 0) {
-            updates.forEach(update => updateNode(...update));
+            workspace.applyNodeUpdates(updates);
             recalculateGroupParents();
             applyDocumentState("layout-applied");
           }
@@ -425,11 +423,9 @@
             retained.push(action);
             break;
           }
-          // reorder siblings based on y position
-          nodes
-            .map(node => getSiblingOrderUpdates(node))
-            .flat()
-            .forEach(update => updateNodeData(...update));
+          workspace.applyNodeUpdates(
+            getAllSiblingOrderUpdates().map(([nodeId, data]) => [nodeId, { data }]),
+          );
 
           clearPendingConnection("both", true);
           recalculateGroupParents();
@@ -600,9 +596,11 @@
     const { nodes: copiedNodes, edges: copiedEdges } = workspace.copiedSelection;
 
     // deselect existing nodes
-    workspace.nodes.forEach(node => {
-      updateNode(node.id, { selected: false });
-    });
+    workspace.applyNodeUpdates(
+      workspace.nodes
+        .filter(node => node.selected)
+        .map(node => [node.id, { selected: false }]),
+    );
 
     const pastedNodeIds = new Map<string, string>();
     const pastedNodes = copiedNodes.map(node => {

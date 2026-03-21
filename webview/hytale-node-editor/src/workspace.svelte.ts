@@ -21,6 +21,7 @@ import { serializeDocument } from "src/node-editor/parsing/serializeDocument";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 
 export type SelectionType = "replace" | "add";
+export type WorkspaceNodeUpdate = [string, Partial<FlowNode>];
 
 export interface WorkspaceState {
   nodes: FlowNode[];
@@ -209,6 +210,35 @@ export class Workspace {
         }
       }
     });
+  }
+
+  applyNodeUpdates(updates: WorkspaceNodeUpdate[]): void {
+    if (updates.length === 0) {
+      return;
+    }
+
+    const updatesById = new Map(updates);
+    let didChange = false;
+    const nextNodes = this.nodes.map(node => {
+      const update = updatesById.get(node.id);
+      if (!update) {
+        return node;
+      }
+
+      const nextData = update.data ? { ...node.data, ...update.data } : node.data;
+      const nextNode = update.data ? { ...node, ...update, data: nextData } : { ...node, ...update };
+
+      if (nextNode === node) {
+        return node;
+      }
+
+      didChange = true;
+      return nextNode;
+    });
+
+    if (didChange) {
+      this.nodes = nextNodes;
+    }
   }
 
   updateControlSchemeSetting(controlScheme: NodeEditorControlScheme): void {

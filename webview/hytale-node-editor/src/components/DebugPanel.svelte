@@ -34,6 +34,7 @@
   const areEdgesVisible = $derived(workspace.edges.every(edge => !edge.hidden));
 
   let fps = $state(0);
+  let worstFrameMs = $state(0);
 
   let rafId: number | undefined;
   let lastFrameTimestamp = 0;
@@ -106,9 +107,11 @@
     const durations = frameSamples.map(sample => sample.duration);
     if (durations.length === 0) {
       fps = 0;
+      worstFrameMs = 0;
     } else {
       const totalFrameMs = durations.reduce((sum, duration) => sum + duration, 0);
       fps = totalFrameMs > 0 ? (durations.length * 1000) / totalFrameMs : 0;
+      worstFrameMs = Math.max(...durations);
     }
   }
 
@@ -197,6 +200,9 @@
     <div class="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1 text-[0.7rem] text-vsc-muted">
       <div>FPS</div>
       <div class="text-vsc-editor-fg">{formatMetric(fps, 0)}</div>
+
+      <div>Max frame</div>
+      <div class="text-vsc-editor-fg">{formatMetric(worstFrameMs, 1)} ms</div>
 
       <div>Zoom</div>
       <div class="text-vsc-editor-fg">{formatMetric(currentZoom, 2)}x</div>
