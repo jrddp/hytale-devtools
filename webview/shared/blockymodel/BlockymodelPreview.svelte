@@ -245,9 +245,6 @@
 
 <div class={`preview ${className}`} data-blockymodel-preview>
   <div bind:this={container} class="viewport"></div>
-  {#if loading}
-    <div class="status status-loading">Loading model...</div>
-  {/if}
   {#if errorMessage}
     <div class="status status-error">{errorMessage}</div>
   {/if}
@@ -278,15 +275,8 @@
     pointer-events: none;
   }
 
-  .status-loading {
-    inset-block-start: 12px;
-    background: rgba(24, 36, 49, 0.7);
-    color: #f0f5ff;
-    border: 1px solid rgba(165, 193, 225, 0.45);
-  }
-
   .status-error {
-    inset-block-start: 46px;
+    inset-block-start: 12px;
     background: rgba(112, 20, 20, 0.9);
     color: #ffe5e5;
     border: 1px solid rgba(255, 173, 173, 0.56);
