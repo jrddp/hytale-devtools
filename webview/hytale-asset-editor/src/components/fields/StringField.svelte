@@ -122,6 +122,20 @@
   }
 
   function considerValue(value?: string) {
+    if (field.definesParent) {
+      const parentName = value ?? field.value;
+      if (parentName) {
+        workspace.vscode.postMessage({
+          type: "resolveParent",
+          parentName,
+        });
+      } else {
+        workspace.setParentState({ status: "none" });
+        workspace.requestResolvedPreview();
+      }
+      return;
+    }
+
     if (!isPreviewPointer(jsonPointer)) {
       return;
     }
@@ -179,6 +193,7 @@
         {placeholder}
         {autocompleteOptions}
         fitContentWidth={isMinimal}
+        considerDebounceMs={field.definesParent ? 100 : undefined}
         sizerClass={inputSizerClass}
         {inputClass}
         listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"

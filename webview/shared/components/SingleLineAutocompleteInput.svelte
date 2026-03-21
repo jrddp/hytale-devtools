@@ -20,6 +20,7 @@
     optionClass = "",
     previewClass = "",
     fitContentWidth = false,
+    considerDebounceMs = 75,
     sizerClass = "",
     stopPointerPropagation = false,
     oncommit,
@@ -39,6 +40,7 @@
     optionClass?: string;
     previewClass?: string;
     fitContentWidth?: boolean;
+    considerDebounceMs?: number;
     sizerClass?: string;
     stopPointerPropagation?: boolean;
     oncommit?: (value: string) => boolean | void;
@@ -57,6 +59,7 @@
   let previewAnchorElement = $state<HTMLElement | null>(null);
   let inputSizerWidth = $state(0);
   let lastConsideredValue: string | undefined;
+  let considerTimeout: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
     void value;
@@ -108,8 +111,20 @@
       return;
     }
 
-    lastConsideredValue = consideredValue;
-    onconsider?.(consideredValue);
+    clearTimeout(considerTimeout);
+
+    if (consideredValue === undefined) {
+      lastConsideredValue = undefined;
+      onconsider?.(undefined);
+      return;
+    }
+
+    considerTimeout = setTimeout(() => {
+      lastConsideredValue = consideredValue;
+      onconsider?.(consideredValue);
+    }, considerDebounceMs);
+
+    return () => clearTimeout(considerTimeout);
   });
 
   $effect(() => {
