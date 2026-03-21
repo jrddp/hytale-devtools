@@ -39,7 +39,7 @@
     if (effectiveTitle !== lastComittedTitle) {
       updateNodeData(id, { titleOverride: effectiveTitle });
       lastComittedTitle = effectiveTitle;
-      applyDocumentState("node-title-updated");
+      applyDocumentState("node-renamed");
     }
     isEditingTitle = false;
   };
@@ -63,7 +63,7 @@
     if (currentComment !== lastComittedComment) {
       updateNodeData(id, { currentComment });
       lastComittedComment = currentComment;
-      applyDocumentState("node-comment-updated");
+      applyDocumentState("node-properties-updated");
     }
     isEditingComment = false;
   };

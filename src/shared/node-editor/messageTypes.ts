@@ -35,7 +35,19 @@ export interface NodeEditorDocumentUpdateMessage {
   documentRoot: AssetDocumentShape;
   version: number;
   documentPath: string;
+  acknowledgedClientEditId?: number;
 }
+
+export type NodeEditorDocumentEditKind =
+  | "layout-applied"
+  | "elements-created"
+  | "elements-deleted"
+  | "connections-changed"
+  | "nodes-moved"
+  | "node-renamed"
+  | "node-resized"
+  | "node-properties-updated"
+  | "document-edited";
 
 export type ExtensionToWebviewMessage =
   | NodeEditorDocumentUpdateMessage
@@ -47,7 +59,14 @@ export type ExtensionToWebviewMessage =
 
 export type WebviewToExtensionMessage =
   | { type: "ready" }
-  | { type: "apply"; documentRoot: AssetDocumentShape; sourceVersion?: number }
+  | {
+      type: "edit";
+      kind: NodeEditorDocumentEditKind;
+      beforeRoot: AssetDocumentShape;
+      afterRoot: AssetDocumentShape;
+      sourceVersion?: number;
+      clientEditId: number;
+    }
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }

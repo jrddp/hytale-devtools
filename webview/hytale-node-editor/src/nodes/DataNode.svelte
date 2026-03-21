@@ -19,7 +19,7 @@
         },
       },
     });
-    applyDocumentState("custom-field-updated");
+    applyDocumentState("node-properties-updated");
   }
 </script>
 

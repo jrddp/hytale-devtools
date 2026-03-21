@@ -405,7 +405,7 @@
           if (updates.length > 0) {
             updates.forEach(update => updateNode(...update));
             recalculateGroupParents();
-            applyDocumentState("auto-layout-applied");
+            applyDocumentState("layout-applied");
           }
           break;
 
@@ -642,7 +642,7 @@
 
     workspace.nodes = [...workspace.nodes, ...pastedNodes];
     workspace.addEdges(pastedEdges);
-    applyDocumentState("nodes-pasted");
+    applyDocumentState("elements-created");
     event.preventDefault();
     event.stopPropagation();
   }
@@ -661,7 +661,7 @@
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
         addMenuInstance = undefined;
         if (clearPendingConnection("both", false)) {
-          applyDocumentState("connection-removed");
+          applyDocumentState("connections-changed");
         }
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]"))
@@ -704,7 +704,7 @@
     onconnect: connection => {
       pruneConflictingEdges(connection);
       workspace.addEdges([connection]);
-      applyDocumentState("edge-created");
+      applyDocumentState("connections-changed");
     },
     // ## On Connect Start
     onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
@@ -744,7 +744,7 @@
     // ## On Node Drag Stop
     onnodedragstop: event => {
       recalculateGroupParents();
-      applyDocumentState("node-moved");
+      applyDocumentState("nodes-moved");
     },
     // ## On Node Context Menu
     onnodecontextmenu: ({ event: pointerEvent, node }) => {
@@ -820,7 +820,7 @@
       // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
       workspace.actionRequests.push({ type: "document-refresh" });
       addMenuInstance = undefined;
-      applyDocumentState("node-created");
+      applyDocumentState("elements-created");
     },
   };
 </script>

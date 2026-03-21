@@ -46,7 +46,7 @@ export function registerHytaleNodeEditorProvider(
 
 class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNodeDocument> {
   private readonly onDidChangeCustomDocumentEmitter =
-    new vscode.EventEmitter<vscode.CustomDocumentContentChangeEvent<HytaleNodeDocument>>();
+    new vscode.EventEmitter<vscode.CustomDocumentEditEvent<HytaleNodeDocument>>();
   public readonly onDidChangeCustomDocument = this.onDidChangeCustomDocumentEmitter.event;
 
   private readonly webviewPanelsByDocumentUri = new Map<string, Set<vscode.WebviewPanel>>();
@@ -152,8 +152,8 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
             sendBootstrap();
             void this.postDocumentUpdate(document);
             return;
-          case "apply":
-            void this.applyWebviewEdits(document, message, webviewPanel.webview);
+          case "edit":
+            void this.applyWebviewEdit(document, message, webviewPanel.webview);
             return;
           case "clipboard":
             void this.updateClipboard(message.clipboard);
@@ -294,25 +294,29 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     return undefined;
   }
 
-  private async postDocumentUpdate(document: HytaleNodeDocument): Promise<void> {
+  private async postDocumentUpdate(
+    document: HytaleNodeDocument,
+    acknowledgedClientEditId?: number,
+  ): Promise<void> {
     const payload: ExtensionToWebviewMessage = {
       type: "update",
       documentRoot: document.documentRoot,
       version: document.version,
       documentPath: document.uri.fsPath,
+      acknowledgedClientEditId,
     };
 
     const panels = this.webviewPanelsByDocumentUri.get(document.uri.toString());
     await Promise.all(Array.from(panels ?? [], panel => panel.webview.postMessage(payload)));
   }
 
-  private async applyWebviewEdits(
+  private async applyWebviewEdit(
     document: HytaleNodeDocument,
-    message: Extract<WebviewToExtensionMessage, { type: "apply" }>,
+    message: Extract<WebviewToExtensionMessage, { type: "edit" }>,
     webview: vscode.Webview,
   ): Promise<void> {
-    if (!isObject(message.documentRoot)) {
-      LOGGER.error("Unable to apply edit from node editor! Document root not parsed as object.");
+    if (!isObject(message.beforeRoot) || !isObject(message.afterRoot)) {
+      LOGGER.error("Unable to apply edit from node editor! Edit payload did not contain valid roots.");
       return;
     }
 
@@ -326,9 +330,19 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
       return;
     }
 
-    document.applyDocumentRoot(message.documentRoot);
-    this.onDidChangeCustomDocumentEmitter.fire({ document });
-    await this.postDocumentUpdate(document);
+    document.applyDocumentRoot(message.afterRoot);
+    this.onDidChangeCustomDocumentEmitter.fire({
+      document,
+      undo: async () => {
+        document.applyDocumentRoot(message.beforeRoot);
+        await this.postDocumentUpdate(document);
+      },
+      redo: async () => {
+        document.applyDocumentRoot(message.afterRoot);
+        await this.postDocumentUpdate(document);
+      },
+    });
+    await this.postDocumentUpdate(document, message.clientEditId);
   }
 
   private async openRawJsonInTextEditor(): Promise<void> {

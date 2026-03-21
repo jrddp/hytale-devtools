@@ -186,9 +186,9 @@
     const didResize = await resizeNodeToFitContent(currentSize.width, currentSize.height);
 
     if (didChange) {
-      applyDocumentState("comment-renamed");
+      applyDocumentState("node-renamed");
     } else if (didResize) {
-      applyDocumentState("comment-resized");
+      applyDocumentState("node-resized");
     }
 
     isCommittingTitle = false;
@@ -210,9 +210,9 @@
     const didResize = await resizeNodeToFitContent(currentSize.width, currentSize.height);
 
     if (didChange) {
-      applyDocumentState("comment-text-updated");
+      applyDocumentState("node-properties-updated");
     } else if (didResize) {
-      applyDocumentState("comment-resized");
+      applyDocumentState("node-resized");
     }
 
     isCommittingComment = false;
@@ -242,9 +242,9 @@
     isPreviewingFontSize = false;
 
     if (didChange) {
-      applyDocumentState("comment-font-size-updated");
+      applyDocumentState("node-properties-updated");
     } else if (didResize) {
-      applyDocumentState("comment-resized");
+      applyDocumentState("node-resized");
     }
 
     isCommittingFontSize = false;
@@ -295,7 +295,7 @@
   }
 
   function handleResizeEnd() {
-    applyDocumentState("comment-resized");
+    applyDocumentState("node-resized");
   }
 
   function handleFontSizeInput(event: Event & { currentTarget: HTMLInputElement }) {

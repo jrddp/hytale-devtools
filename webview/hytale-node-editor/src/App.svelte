@@ -58,8 +58,9 @@
         }
         return;
       case "update":
-        handleDocumentUpdateMessage(message);
-        workspace.actionRequests.push({ type: "document-refresh" });
+        if (handleDocumentUpdateMessage(message)) {
+          workspace.actionRequests.push({ type: "document-refresh" });
+        }
         return;
       case "autocompletionValues":
         workspace.autocompleteField = message.fieldId;
@@ -86,14 +87,27 @@
     }
   }
 
-  function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage) {
-    if (message.version === workspace.sourceVersion) return;
+  function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage): boolean {
+    if (
+      typeof message.acknowledgedClientEditId === "number" &&
+      message.acknowledgedClientEditId === workspace.pendingLocalEditId
+    ) {
+      workspace.sourceVersion = message.version;
+      workspace.committedDocumentRoot = message.documentRoot;
+      workspace.pendingLocalEditId = undefined;
+      extensionError = "";
+      return false;
+    }
+
+    if (message.version === workspace.sourceVersion) return false;
     try {
       const { nodes, edges, rootNodeId } = parseDocument(message.documentRoot);
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
       workspace.sourceVersion = message.version;
+      workspace.committedDocumentRoot = message.documentRoot;
+      workspace.pendingLocalEditId = undefined;
       workspace.isInitialized = true;
 
       // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
@@ -103,11 +117,13 @@
 
       graphLoadVersion += 1;
       extensionError = "";
+      return true;
     } catch (error) {
       console.error(error);
       if (!extensionError) {
         extensionError = error instanceof Error ? error.message : "could not parse flow json.";
       }
+      return false;
     }
   }
 

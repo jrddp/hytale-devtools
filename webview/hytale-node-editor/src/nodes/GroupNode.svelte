@@ -29,7 +29,7 @@
     if (effectiveTitle !== lastComittedTitle) {
       updateNodeData(id, { titleOverride: effectiveTitle });
       lastComittedTitle = effectiveTitle;
-      applyDocumentState("group-renamed");
+      applyDocumentState("node-renamed");
     }
     isEditingTitle = false;
   };
@@ -50,7 +50,7 @@
   }
 
   function handleResizeEnd() {
-    applyDocumentState("group-resized");
+    applyDocumentState("node-resized");
   }
 </script>
 

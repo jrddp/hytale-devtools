@@ -26,7 +26,7 @@
       jsonString:
         typeof nextValue === "string" ? nextValue : String(nextValue ?? DEFAULT_RAW_JSON_TEXT),
     });
-    applyDocumentState("raw-json-field-updated");
+    applyDocumentState("node-properties-updated");
   }
 </script>
 

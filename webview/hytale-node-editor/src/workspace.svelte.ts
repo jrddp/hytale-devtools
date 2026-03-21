@@ -1,9 +1,11 @@
 import {
   type ActionRequest,
   type NodeEditorControlScheme,
+  type NodeEditorDocumentEditKind,
   type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
+import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
@@ -63,6 +65,9 @@ export class Workspace {
   rootNodeId = $state<string | undefined>();
   vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
+  committedDocumentRoot = $state.raw<AssetDocumentShape | undefined>(undefined);
+  pendingLocalEditId = $state<number | undefined>();
+  nextClientEditId = $state(0);
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
   areNodesMeasured = $derived(this.nodes.every(node => hasRenderableNodeSize(node)));
 
@@ -226,14 +231,27 @@ export const workspace = new Workspace();
 
 /** Serializes current document state and applies changes with VSCode.
  * This effectively marks the view as dirty and adds the serialization to the undo tree. */
-export function applyDocumentState(reason?: string) {
-  const payload: Extract<WebviewToExtensionMessage, { type: "apply" }> = {
-    type: "apply",
-    documentRoot: serializeDocument(),
+export function applyDocumentState(reason: NodeEditorDocumentEditKind = "document-edited") {
+  const beforeRoot = workspace.committedDocumentRoot;
+  if (!beforeRoot) {
+    throw new Error("Cannot create an undoable edit before the document has been initialized.");
+  }
+
+  const afterRoot = serializeDocument();
+  const clientEditId = workspace.nextClientEditId + 1;
+  workspace.nextClientEditId = clientEditId;
+  workspace.pendingLocalEditId = clientEditId;
+  workspace.committedDocumentRoot = afterRoot;
+
+  const payload: Extract<WebviewToExtensionMessage, { type: "edit" }> = {
+    type: "edit",
+    kind: reason,
+    beforeRoot,
+    afterRoot,
     sourceVersion: workspace.sourceVersion,
+    clientEditId,
   };
 
   workspace.actionRequests.push({ type: "document-refresh" });
   workspace.vscode.postMessage(payload);
-  workspace.sourceVersion++;
 }
