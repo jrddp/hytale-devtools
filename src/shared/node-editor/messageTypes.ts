@@ -26,6 +26,7 @@ export interface NodeEditorBootstrapPayload {
   controlScheme: NodeEditorControlScheme;
   platform: NodeEditorPlatform;
   clipboard: NodeEditorClipboardSelection;
+  isDevelopment: boolean;
 }
 
 export interface NodeEditorDocumentUpdateMessage {

@@ -11,18 +11,24 @@
     type Viewport,
     type XYPosition,
   } from "@xyflow/svelte";
-  import { getOverlappingArea, nodeToRect, pointToRendererPoint } from "@xyflow/system";
+  import { getOverlappingArea, pointToRendererPoint } from "@xyflow/system";
   import "@xyflow/svelte/dist/style.css";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
   import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
+  import DebugPanel from "src/components/DebugPanel.svelte";
+  import LowDetailNodeCanvasOverlay from "src/components/LowDetailNodeCanvasOverlay.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
   import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
-  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
-  import { logVSCodeTheme } from "src/node-editor/dev/mockVSCodeTheme";
+  import {
+    CONNECTION_RADIUS,
+    GROUP_NODE_TYPE,
+    MULTISELECT_KEY,
+    nodeTypes,
+  } from "src/constants";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
@@ -36,7 +42,7 @@
     resolveFitViewNodeIds,
   } from "src/node-editor/utils/nodeUtils.svelte";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
-  import { untrack } from "svelte";
+  import { tick, untrack } from "svelte";
   import type { FlowEdge, FlowNode } from "./common";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
@@ -97,6 +103,94 @@
       }
     | undefined = $state();
   let helpMenuOpen = $state(false);
+  let showPerformanceLab = $state(false);
+  let canvasOverlayReady = $state(false);
+  let canvasOverlayReadyToken = 0;
+
+  const useCanvasLowDetailOverlay = $derived(workspace.renderDetailMode === "low" && canvasOverlayReady);
+  const useVisibleElementCulling = $derived(workspace.areNodesMeasured);
+
+  function getRenderableNodeSize(node: FlowNode) {
+    const width = node.measured?.width ?? node.width;
+    const height = node.measured?.height ?? node.height;
+    if (typeof width !== "number" || width <= 0 || typeof height !== "number" || height <= 0) {
+      return null;
+    }
+    return { width, height };
+  }
+
+  function getCanvasSelectableNodeAtPoint(flowPosition: XYPosition) {
+    if (!useCanvasLowDetailOverlay) {
+      return undefined;
+    }
+
+    const matchingNodeIds = new Set(
+      workspace
+        .searchNodesCollidingWith({
+          minX: flowPosition.x,
+          minY: flowPosition.y,
+          maxX: flowPosition.x,
+          maxY: flowPosition.y,
+        })
+        .map(node => node.id),
+    );
+    if (matchingNodeIds.size === 0) {
+      return undefined;
+    }
+
+    for (let index = workspace.nodes.length - 1; index >= 0; index--) {
+      const node = workspace.nodes[index];
+      if (
+        !matchingNodeIds.has(node.id) ||
+        node.type === GROUP_NODE_TYPE ||
+        node.hidden ||
+        (node.selectable ?? flowStore.elementsSelectable) === false
+      ) {
+        continue;
+      }
+
+      const size = getRenderableNodeSize(node);
+      if (!size) {
+        continue;
+      }
+
+      const position = getAbsolutePosition(node);
+      if (
+        flowPosition.x >= position.x &&
+        flowPosition.x <= position.x + size.width &&
+        flowPosition.y >= position.y &&
+        flowPosition.y <= position.y + size.height
+      ) {
+        return node;
+      }
+    }
+
+    return undefined;
+  }
+
+  $effect(() => {
+    const nextDetailMode =
+      viewport.current.zoom >= workspace.lowDetailZoomThreshold ? "full" : "low";
+    if (workspace.renderDetailMode !== nextDetailMode) {
+      workspace.renderDetailMode = nextDetailMode;
+    }
+  });
+
+  $effect(() => {
+    if (!workspace.areNodesMeasured) {
+      canvasOverlayReadyToken++;
+      canvasOverlayReady = false;
+      return;
+    }
+
+    const token = ++canvasOverlayReadyToken;
+    canvasOverlayReady = false;
+    void tick().then(() => {
+      if (token === canvasOverlayReadyToken && workspace.areNodesMeasured) {
+        canvasOverlayReady = true;
+      }
+    });
+  });
 
   // # Handle actions requests
   $effect(() => {
@@ -127,14 +221,29 @@
     const defaultEdgeSelectable = flowStore.defaultEdgeOptions.selectable ?? true;
 
     const selectedNodeIds = new Set<string>();
-    for (const internalNode of flowStore.nodeLookup.values()) {
-      const node = internalNode.internals.userNode;
+    for (const node of workspace.searchNodesCollidingWith({
+      minX: selectionRect.x,
+      minY: selectionRect.y,
+      maxX: selectionRect.x + selectionRect.width,
+      maxY: selectionRect.y + selectionRect.height,
+    })) {
       const isSelectable = node.selectable ?? defaultNodeSelectable;
-      if (!isSelectable || internalNode.hidden) {
+      if (!isSelectable || node.hidden) {
         continue;
       }
 
-      const nodeRect = nodeToRect(internalNode);
+      const size = getRenderableNodeSize(node);
+      if (!size) {
+        continue;
+      }
+
+      const position = getAbsolutePosition(node);
+      const nodeRect = {
+        x: position.x,
+        y: position.y,
+        width: size.width,
+        height: size.height,
+      };
       const nodeArea = nodeRect.width * nodeRect.height;
       const overlappingArea = getOverlappingArea(selectionRect, nodeRect);
       if (node.type === GROUP_NODE_TYPE) {
@@ -322,7 +431,6 @@
           recalculateGroupParents();
           break;
         case "reveal-selection":
-          console.log("reveal-selection called but not implemented");
           break;
         default:
           const _exhaustiveCheck: never = action;
@@ -376,12 +484,10 @@
 
     switch (event.key) {
       case "d":
-        if (event.metaKey) {
-          console.log("workspace", workspace);
-          if (workspace.selectedNodes) console.log(...workspace.selectedNodes);
-          logVSCodeTheme();
+        if (workspace.isDevelopment && (event.metaKey || event.ctrlKey)) {
+          showPerformanceLab = !showPerformanceLab;
+          captured = true;
         }
-        captured = true;
         break;
       case "Escape":
         helpMenuOpen = false;
@@ -562,6 +668,32 @@
     },
   };
 
+  function handleFlowWrapperClickCapture(event: MouseEvent) {
+    if (
+      !useCanvasLowDetailOverlay ||
+      !(event.target instanceof HTMLElement) ||
+      event.button !== 0 ||
+      event.defaultPrevented ||
+      event.target.closest(".svelte-flow__panel, [data-add-menu], [data-search-menu]")
+    ) {
+      return;
+    }
+
+    const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+    const canvasNode = getCanvasSelectableNodeAtPoint(flowPosition);
+    if (!canvasNode) {
+      return;
+    }
+
+    const selectionType = multiselectModifierPressed ? "add" : "replace";
+    if (selectionType === "replace" && edges.some(edge => edge.selected)) {
+      edges = edges.map(edge => (edge.selected ? { ...edge, selected: false } : edge));
+    }
+    workspace.selectNode(canvasNode.id, selectionType);
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
   // # Svelte Flow Events
   const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
     // ## On Connect
@@ -701,7 +833,12 @@
   onblur={windowEvents.onblur}
 />
 
-<div class="relative w-full h-full overflow-hidden" bind:this={flowWrapperElement}>
+<div
+  class="relative w-full h-full overflow-hidden"
+  class:canvas-low-detail-active={useCanvasLowDetailOverlay}
+  onclickcapture={handleFlowWrapperClickCapture}
+  bind:this={flowWrapperElement}
+>
   <SvelteFlow
     bind:nodes
     bind:edges
@@ -719,7 +856,7 @@
     selectionOnDrag={workspace.controlScheme === "trackpad" || multiselectModifierPressed}
     panActivationKey={null}
     minZoom={MIN_FLOW_ZOOM}
-    onlyRenderVisibleElements={nodes.length >= 50}
+    onlyRenderVisibleElements={useVisibleElementCulling}
     connectionRadius={CONNECTION_RADIUS}
     isValidConnection={connection => {
       // todo abuse validation checking + connection radius detection to trigger events for snap/snapping handles (so we can preview the pruning)
@@ -729,7 +866,13 @@
     {...svelteFlowEvents}
   >
     <Background bgColor={"var(--vscode-editor-background)"} />
+    {#if useCanvasLowDetailOverlay}
+      <LowDetailNodeCanvasOverlay active />
+    {/if}
     <NodeEditorActionMenu />
+    {#if workspace.isDevelopment && showPerformanceLab}
+      <DebugPanel />
+    {/if}
     {#if searchMenuInstance}
       <NodeSearchPanel
         oncancel={() => {
@@ -763,3 +906,9 @@
     <NodeHelpPanel onclose={() => (helpMenuOpen = false)} />
   {/if}
 </div>
+
+<style>
+  :global(.canvas-low-detail-active .svelte-flow__node:not(.svelte-flow__node-groupnode)) {
+    display: none;
+  }
+</style>

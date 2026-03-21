@@ -104,6 +104,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           controlScheme: readNodeEditorControlScheme(),
           platform: readNodeEditorPlatform(),
           clipboard: this.copiedSelection,
+          isDevelopment: this.context.extensionMode === vscode.ExtensionMode.Development,
         };
         void webviewPanel.webview.postMessage(payload);
       };

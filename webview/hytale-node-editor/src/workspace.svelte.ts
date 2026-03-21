@@ -26,6 +26,15 @@ export interface WorkspaceState {
   rootNodeId?: string;
 }
 
+export type NodeRenderDetailMode = "full" | "low";
+const DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD = 0.1;
+
+function hasRenderableNodeSize(node: FlowNode) {
+  const width = node.measured?.width ?? node.width;
+  const height = node.measured?.height ?? node.height;
+  return typeof width === "number" && width > 0 && typeof height === "number" && height > 0;
+}
+
 class NodeRBush extends RBush<FlowNode> {
   toBBox(node: FlowNode) {
     const { x, y } = getAbsolutePosition(node);
@@ -55,14 +64,17 @@ export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
   selectedNodes = $derived(this.nodes.filter(node => node.selected));
-  areNodesMeasured = $derived(this.nodes.every(node => node.measured !== undefined));
+  areNodesMeasured = $derived(this.nodes.every(node => hasRenderableNodeSize(node)));
 
   /** clipboard snapshot of copied/cut nodes plus edges fully contained within that selection */
   copiedSelection = $state.raw<NodeEditorClipboardSelection>(createEmptyNodeEditorClipboardSelection());
+  isDevelopment = $state(false);
+  renderDetailMode = $state<NodeRenderDetailMode>("full");
+  lowDetailZoomThreshold = $state(DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD);
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));
-  /** Gets effective selection of nodes - including children of directly selected nodes */
+  /** Gets effective selection of nodes, including children of directly selected nodes. */
   private effectivelySelectedNodes = $derived.by(() => {
     // note: nodes order always includes parents first so this guarentees that we mark parents selection first
     // we are intentionally starting set as empty instead of using selectedNodes
@@ -99,7 +111,11 @@ export class Workspace {
     return incomingConnections;
   });
   /** Spatially indexed nodes for collision searching (e.g. setting group inheritence) */
-  private spatialIndex: NodeRBush = $derived(new NodeRBush().load(this.nodes));
+  private spatialIndex: NodeRBush = $derived.by(() => {
+    const spatialIndex = new NodeRBush();
+    spatialIndex.load(this.nodes.filter(node => hasRenderableNodeSize(node)));
+    return spatialIndex;
+  });
 
   getNodeById(nodeId: string) {
     return this.nodesById.get(nodeId);

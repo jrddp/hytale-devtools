@@ -8,7 +8,10 @@
   import { type VSCodeApi } from "src/common";
   import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
-  import { EDITABLE_SELECTOR, selectAllActiveEditableText } from "src/node-editor/utils/flowKeyboard";
+  import {
+    EDITABLE_SELECTOR,
+    selectAllActiveEditableText,
+  } from "src/node-editor/utils/flowKeyboard";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import Flow from "./Flow.svelte";
@@ -37,7 +40,6 @@
   function handleMessage(event: MessageEvent<ExtensionToWebviewMessage>) {
     const message = event.data;
 
-    console.log("message received", message);
     switch (message.type) {
       // should be called before initial update
       case "bootstrap":
@@ -45,6 +47,7 @@
         workspace.controlScheme = message.controlScheme;
         workspace.platform = message.platform;
         workspace.copiedSelection = message.clipboard;
+        workspace.isDevelopment = message.isDevelopment;
         if (!localWebviewState.viewport) {
           workspace.actionRequests.push({
             type: "fit-view",
@@ -105,7 +108,6 @@
       }
     }
   }
-
 
   onMount(() => {
     if (typeof vscode.getState === "function") {

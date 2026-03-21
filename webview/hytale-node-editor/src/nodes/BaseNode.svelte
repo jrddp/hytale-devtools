@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useSvelteFlow, useViewport } from "@xyflow/svelte";
+  import { useSvelteFlow } from "@xyflow/svelte";
   import { MessageCircleMore } from "lucide-svelte";
   import type { FlowNode } from "src/common";
   import { readColorForCss } from "src/node-editor/utils/colors";
@@ -9,8 +9,7 @@
   import HoverTooltip from "src/components/HoverTooltip.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
 
-  const viewport = useViewport();
-  const { updateNode, updateNodeData } = useSvelteFlow();
+  const { updateNodeData } = useSvelteFlow();
   const { id, data, children, selected, dragging, ...props }: FlowNode & { children?: Snippet } =
     $props();
 
@@ -145,7 +144,7 @@
           aria-hidden="true"
           {@attach el => {
             void effectiveTitle;
-            titleSizerWidth = el.getBoundingClientRect().width / viewport.current.zoom;
+            titleSizerWidth = el.scrollWidth;
           }}
         >
           {effectiveTitle}
@@ -193,19 +192,21 @@
   <div class="flex gap-4 py-2">
     <!-- Input Pins -->
     <div class="flex flex-col gap-2">
-      {#each inputPins as pin}
+      {#each inputPins as pin (pin.localId)}
         <NodePinHandle nodeId={id} {pin} type="target" />
       {/each}
     </div>
 
     <!-- Content (Fields) -->
-    <div>
-      {@render children?.()}
-    </div>
+    {#if children}
+      <div class="min-w-0">
+        {@render children()}
+      </div>
+    {/if}
 
     <!-- Output Pins -->
     <div class="flex flex-col items-end flex-1 gap-2">
-      {#each outputPins as pin}
+      {#each outputPins as pin (pin.localId)}
         <HoverTooltip text={pin.description} placement="left" wrapperClass="w-full">
           <div class="flex items-center justify-end gap-2">
             <div class="text-xs text-vsc-muted whitespace-nowrap">
