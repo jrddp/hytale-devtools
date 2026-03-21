@@ -6,7 +6,7 @@
   } from "@shared/node-editor/messageTypes";
   import { SvelteFlowProvider, type Viewport } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
-  import { parseDocumentText } from "src/node-editor/parsing/parseDocument.svelte";
+  import { parseDocument } from "src/node-editor/parsing/parseDocument.svelte";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
   import {
     EDITABLE_SELECTOR,
@@ -29,8 +29,9 @@
   let graphLoadVersion = $state(0);
   let localWebviewState = $state<NodeEditorWebviewState>({});
   let extensionError = $state("");
-  let isWebviewVisible =
-    typeof document !== "undefined" ? document.visibilityState !== "hidden" : true;
+  let isWebviewVisible = $state(
+    typeof document !== "undefined" ? document.visibilityState !== "hidden" : true,
+  );
 
   function persistWebviewState(nextState: NodeEditorWebviewState) {
     localWebviewState = nextState;
@@ -88,7 +89,7 @@
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage) {
     if (message.version === workspace.sourceVersion) return;
     try {
-      const { nodes, edges, rootNodeId } = parseDocumentText(message.text);
+      const { nodes, edges, rootNodeId } = parseDocument(message.documentRoot);
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
@@ -101,6 +102,7 @@
       }
 
       graphLoadVersion += 1;
+      extensionError = "";
     } catch (error) {
       console.error(error);
       if (!extensionError) {

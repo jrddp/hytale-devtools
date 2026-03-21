@@ -15,6 +15,8 @@ import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 import { workspace } from "src/workspace.svelte";
 
 export function serializeDocument(): AssetDocumentShape {
+  console.log("Serializing document...");
+
   const { rootNodeId, nodes, edges } = workspace;
 
   const nodeEditorMetadata: NodeEditorMetadata = {

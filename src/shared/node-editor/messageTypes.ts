@@ -1,5 +1,6 @@
 import { type Selection } from "vscode";
 import { type IndexReference } from "../indexTypes";
+import { type AssetDocumentShape } from "./assetTypes";
 import { type NodeEditorClipboardSelection } from "./clipboardTypes";
 import { type NodeEditorWorkspaceContext } from "./workspaceTypes";
 
@@ -31,7 +32,7 @@ export interface NodeEditorBootstrapPayload {
 
 export interface NodeEditorDocumentUpdateMessage {
   type: "update";
-  text: string;
+  documentRoot: AssetDocumentShape;
   version: number;
   documentPath: string;
 }
@@ -46,7 +47,7 @@ export type ExtensionToWebviewMessage =
 
 export type WebviewToExtensionMessage =
   | { type: "ready" }
-  | { type: "apply"; text: string; sourceVersion?: number }
+  | { type: "apply"; documentRoot: AssetDocumentShape; sourceVersion?: number }
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }

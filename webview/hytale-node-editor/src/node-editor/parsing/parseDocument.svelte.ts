@@ -39,6 +39,14 @@ export function parseDocumentText(
   text: string,
   workspaceContext: NodeEditorWorkspaceContext = workspace.context,
 ): WorkspaceState {
+  return parseDocument(JSON.parse(text) as AssetDocumentShape, workspaceContext);
+}
+
+export function parseDocument(
+  documentRoot: AssetDocumentShape,
+  workspaceContext: NodeEditorWorkspaceContext = workspace.context,
+): WorkspaceState {
+  console.log("Parsing document...");
   if (!workspaceContext) {
     throw new Error(
       "Workspace context was not set before parsing document text. This should not happen.",
@@ -46,7 +54,6 @@ export function parseDocumentText(
   }
   const { rootTemplateOrVariantId, variantKindsById, nodeTemplatesById } = workspaceContext;
 
-  const documentRoot: AssetDocumentShape = JSON.parse(text);
   if (!isObject(documentRoot)) {
     throw new Error("Document must be a JSON object.");
   }

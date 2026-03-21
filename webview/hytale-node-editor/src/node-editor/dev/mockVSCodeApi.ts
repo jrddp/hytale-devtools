@@ -34,7 +34,7 @@ export class MockVSCodeApi implements VSCodeApi {
         });
         this.sendMockedVSCodeMessage({
           type: "update",
-          text: JSON.stringify(basicBiomeAsset),
+          documentRoot: basicBiomeAsset,
           version: 1,
           documentPath: "test",
         });

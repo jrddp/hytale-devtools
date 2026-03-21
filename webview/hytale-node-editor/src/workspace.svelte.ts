@@ -227,11 +227,9 @@ export const workspace = new Workspace();
 /** Serializes current document state and applies changes with VSCode.
  * This effectively marks the view as dirty and adds the serialization to the undo tree. */
 export function applyDocumentState(reason?: string) {
-  const serialized = serializeDocument();
-
   const payload: Extract<WebviewToExtensionMessage, { type: "apply" }> = {
     type: "apply",
-    text: JSON.stringify(serialized, null, "\t"),
+    documentRoot: serializeDocument(),
     sourceVersion: workspace.sourceVersion,
   };
 

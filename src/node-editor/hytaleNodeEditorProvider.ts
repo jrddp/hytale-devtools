@@ -5,15 +5,17 @@ import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "../shared/node-editor/clipboardTypes";
-import type {
-  ActionType,
-  ExtensionToWebviewMessage,
-  NodeEditorControlScheme,
-  NodeEditorPlatform,
-  WebviewToExtensionMessage,
+import type { AssetDocumentShape } from "../shared/node-editor/assetTypes";
+import {
+  type ActionType,
+  type ExtensionToWebviewMessage,
+  type NodeEditorControlScheme,
+  type NodeEditorPlatform,
+  type WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
 import { isObject } from "../shared/typeUtils";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
+import { HytaleNodeDocument } from "./hytaleNodeDocument";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
@@ -42,37 +44,55 @@ export function registerHytaleNodeEditorProvider(
   return vscode.Disposable.from(providerRegistration, provider, ...quickActionCommandRegistrations);
 }
 
-class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
-  private readonly webviewPanelsByDocumentUri = new Map<string, vscode.WebviewPanel>();
-  private activeDocumentPath: string | undefined;
+class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNodeDocument> {
+  private readonly onDidChangeCustomDocumentEmitter =
+    new vscode.EventEmitter<vscode.CustomDocumentContentChangeEvent<HytaleNodeDocument>>();
+  public readonly onDidChangeCustomDocument = this.onDidChangeCustomDocumentEmitter.event;
+
+  private readonly webviewPanelsByDocumentUri = new Map<string, Set<vscode.WebviewPanel>>();
+  private activeDocumentUri: string | undefined;
   private copiedSelection: NodeEditorClipboardSelection = createEmptyNodeEditorClipboardSelection();
   private selectionSubscription: vscode.Disposable | undefined;
 
   constructor(private readonly context: vscode.ExtensionContext) {
-    // Watch editor selection changes
-    vscode.window.onDidChangeTextEditorSelection(event => {
+    this.selectionSubscription = vscode.window.onDidChangeTextEditorSelection(event => {
       const uri = event.textEditor.document.uri.toString();
       const selection = event.selections[0];
       if (selection) {
-        const webviewPanel = this.webviewPanelsByDocumentUri.get(uri);
+        const panels = this.webviewPanelsByDocumentUri.get(uri);
         const payload: ExtensionToWebviewMessage = {
           type: "action",
           request: { type: "reveal-selection", selection },
         };
-        webviewPanel?.webview.postMessage(payload);
+        for (const panel of panels ?? []) {
+          void panel.webview.postMessage(payload);
+        }
       }
     });
   }
 
-  public resolveCustomTextEditor(
-    document: vscode.TextDocument,
+  public async openCustomDocument(
+    uri: vscode.Uri,
+    openContext: vscode.CustomDocumentOpenContext,
+    _token: vscode.CancellationToken,
+  ): Promise<HytaleNodeDocument> {
+    const sourceUri = openContext.backupId ? vscode.Uri.parse(openContext.backupId) : uri;
+    const { documentRoot, eol } = await readDocumentRootFromUri(sourceUri);
+    return new HytaleNodeDocument(uri, documentRoot, eol);
+  }
+
+  public async resolveCustomEditor(
+    document: HytaleNodeDocument,
     webviewPanel: vscode.WebviewPanel,
-  ): void {
+    _token: vscode.CancellationToken,
+  ): Promise<void> {
     try {
+      const documentUri = document.uri.toString();
       const documentPath = document.uri.fsPath;
-      this.webviewPanelsByDocumentUri.set(documentPath, webviewPanel);
+      this.getPanelsForDocument(documentUri).add(webviewPanel);
+
       if (webviewPanel.active) {
-        this.activeDocumentPath = documentPath;
+        this.activeDocumentUri = documentUri;
       }
 
       webviewPanel.webview.options = {
@@ -92,7 +112,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       const sendBootstrap = () => {
         const workspaceContext = workspaceRuntime.resolveWorkspaceContext(documentPath);
         if (!workspaceContext) {
-          this.postError(
+          void this.postError(
             webviewPanel.webview,
             `Workspace context could not be resolved for path ${documentPath}.`,
           );
@@ -100,7 +120,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
         }
         const payload: ExtensionToWebviewMessage = {
           type: "bootstrap",
-          workspaceContext: workspaceContext,
+          workspaceContext,
           controlScheme: readNodeEditorControlScheme(),
           platform: readNodeEditorPlatform(),
           clipboard: this.copiedSelection,
@@ -109,58 +129,37 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
         void webviewPanel.webview.postMessage(payload);
       };
 
-      const updateWebview = () => {
-        const payload: ExtensionToWebviewMessage = {
-          type: "update",
-          text: document.getText(),
-          version: document.version,
-          documentPath,
-        };
-        void webviewPanel.webview.postMessage(payload);
-      };
-
-      const documentChangeSubscription = vscode.workspace.onDidChangeTextDocument(event => {
-        if (event.document.uri.toString() === document.uri.toString()) {
-          updateWebview();
-        }
-      });
-
       const panelViewStateSubscription = webviewPanel.onDidChangeViewState(event => {
         if (event.webviewPanel.active) {
-          this.activeDocumentPath = documentPath;
-        } else if (this.activeDocumentPath === documentPath) {
-          this.activeDocumentPath = undefined;
+          this.activeDocumentUri = documentUri;
+        } else if (this.activeDocumentUri === documentUri) {
+          this.activeDocumentUri = undefined;
         }
       });
 
       webviewPanel.onDidDispose(() => {
-        documentChangeSubscription.dispose();
         panelViewStateSubscription.dispose();
-
-        const existingPanel = this.webviewPanelsByDocumentUri.get(documentPath);
-        if (existingPanel === webviewPanel) {
-          this.webviewPanelsByDocumentUri.delete(documentPath);
-        }
-        if (this.activeDocumentPath === documentPath) {
-          this.activeDocumentPath = undefined;
+        this.removePanelForDocument(documentUri, webviewPanel);
+        if (this.activeDocumentUri === documentUri) {
+          this.activeDocumentUri = undefined;
         }
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: WebviewToExtensionMessage) => {
-        LOGGER.info(`Message received: ${JSON.stringify(message, null, 2)}`);
+        LOGGER.info(`Node editor message received: ${message.type}`);
         switch (message.type) {
           case "ready":
             sendBootstrap();
-            updateWebview();
+            void this.postDocumentUpdate(document);
             return;
           case "apply":
-            void this.applyWebviewEdits(document, message, webviewPanel.webview, updateWebview);
+            void this.applyWebviewEdits(document, message, webviewPanel.webview);
             return;
           case "clipboard":
             void this.updateClipboard(message.clipboard);
             return;
           case "openRawJson":
-            void this.openRawJsonInTextEditor(document, webviewPanel);
+            void this.openRawJsonInTextEditor();
             return;
           case "openKeybindings":
             void this.openNodeEditorKeybindings(message.query);
@@ -171,6 +170,7 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
           case "autocompleteRequest":
             LOGGER.info(`Autocomplete request received for field ${message.fieldId}`);
             void this.autocompleteRequest(message, webviewPanel.webview);
+            return;
           default:
             return;
         }
@@ -183,12 +183,53 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     }
   }
 
+  public async saveCustomDocument(
+    document: HytaleNodeDocument,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<void> {
+    await writeDocumentRootToUri(document.uri, document.documentRoot, document.eol);
+  }
+
+  public async saveCustomDocumentAs(
+    document: HytaleNodeDocument,
+    destination: vscode.Uri,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<void> {
+    await writeDocumentRootToUri(destination, document.documentRoot, document.eol);
+  }
+
+  public async revertCustomDocument(
+    document: HytaleNodeDocument,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<void> {
+    const { documentRoot, eol } = await readDocumentRootFromUri(document.uri);
+    document.replaceDocumentRoot(documentRoot, eol);
+    await this.postDocumentUpdate(document);
+  }
+
+  public async backupCustomDocument(
+    document: HytaleNodeDocument,
+    context: vscode.CustomDocumentBackupContext,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<vscode.CustomDocumentBackup> {
+    await writeDocumentRootToUri(context.destination, document.documentRoot, document.eol);
+
+    return {
+      id: context.destination.toString(),
+      delete: () => vscode.workspace.fs.delete(context.destination),
+    };
+  }
+
   public dispose(): void {
     this.selectionSubscription?.dispose();
     this.selectionSubscription = undefined;
+    this.onDidChangeCustomDocumentEmitter.dispose();
   }
 
-  public async triggerQuickActionByCommandId(actionType: ActionType | "go-to-root", allowEditableTarget: boolean = false): Promise<void> {
+  public async triggerQuickActionByCommandId(
+    actionType: ActionType | "go-to-root",
+    allowEditableTarget: boolean = false,
+  ): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
       return;
@@ -205,65 +246,93 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
     });
   }
 
-  private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
-    const activePanel = this.activeDocumentPath
-      ? this.webviewPanelsByDocumentUri.get(this.activeDocumentPath)
-      : undefined;
-    if (activePanel) {
-      return activePanel;
+  private getPanelsForDocument(documentUri: string): Set<vscode.WebviewPanel> {
+    let panels = this.webviewPanelsByDocumentUri.get(documentUri);
+    if (!panels) {
+      panels = new Set();
+      this.webviewPanelsByDocumentUri.set(documentUri, panels);
+    }
+    return panels;
+  }
+
+  private removePanelForDocument(documentUri: string, panel: vscode.WebviewPanel): void {
+    const panels = this.webviewPanelsByDocumentUri.get(documentUri);
+    if (!panels) {
+      return;
     }
 
-    for (const webviewPanel of this.webviewPanelsByDocumentUri.values()) {
-      if (webviewPanel.visible) {
-        return webviewPanel;
+    panels.delete(panel);
+    if (panels.size === 0) {
+      this.webviewPanelsByDocumentUri.delete(documentUri);
+    }
+  }
+
+  private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
+    const activePanels = this.activeDocumentUri
+      ? this.webviewPanelsByDocumentUri.get(this.activeDocumentUri)
+      : undefined;
+    if (activePanels) {
+      for (const panel of activePanels) {
+        return panel;
       }
     }
 
-    for (const webviewPanel of this.webviewPanelsByDocumentUri.values()) {
-      return webviewPanel;
+    for (const panels of this.webviewPanelsByDocumentUri.values()) {
+      for (const panel of panels) {
+        if (panel.visible) {
+          return panel;
+        }
+      }
+    }
+
+    for (const panels of this.webviewPanelsByDocumentUri.values()) {
+      for (const panel of panels) {
+        return panel;
+      }
     }
 
     return undefined;
   }
 
+  private async postDocumentUpdate(document: HytaleNodeDocument): Promise<void> {
+    const payload: ExtensionToWebviewMessage = {
+      type: "update",
+      documentRoot: document.documentRoot,
+      version: document.version,
+      documentPath: document.uri.fsPath,
+    };
+
+    const panels = this.webviewPanelsByDocumentUri.get(document.uri.toString());
+    await Promise.all(Array.from(panels ?? [], panel => panel.webview.postMessage(payload)));
+  }
+
   private async applyWebviewEdits(
-    document: vscode.TextDocument,
+    document: HytaleNodeDocument,
     message: Extract<WebviewToExtensionMessage, { type: "apply" }>,
     webview: vscode.Webview,
-    updateWebview: () => void,
   ): Promise<void> {
-    if (typeof message.text !== "string") {
-      LOGGER.error("Unable to apply edit from node editor! Message text not parsed as string.");
+    if (!isObject(message.documentRoot)) {
+      LOGGER.error("Unable to apply edit from node editor! Document root not parsed as object.");
       return;
     }
 
-    // if (typeof message.sourceVersion === "number" && message.sourceVersion !== document.version) {
-    //   LOGGER.error("Version mismatch detected when applying edit from node editor.");
-    //   await this.postError(webview, "The file changed in another editor. Please retry.");
-    //   updateWebview();
-    //   return;
-    // }
-
-    const edit = new vscode.WorkspaceEdit();
-    const normalizedText = normalizeTextEol(message.text, document.eol);
-    edit.replace(document.uri, getDocumentRange(document), normalizedText);
-    const applied = await vscode.workspace.applyEdit(edit);
-
-    if (!applied) {
-      await this.postError(webview, "VS Code rejected the edit request.");
+    if (
+      typeof message.sourceVersion === "number" &&
+      message.sourceVersion !== document.version
+    ) {
+      LOGGER.error("Version mismatch detected when applying edit from node editor.");
+      await this.postError(webview, "The file changed in another editor. Please retry.");
+      await this.postDocumentUpdate(document);
+      return;
     }
+
+    document.applyDocumentRoot(message.documentRoot);
+    this.onDidChangeCustomDocumentEmitter.fire({ document });
+    await this.postDocumentUpdate(document);
   }
 
-  private async openRawJsonInTextEditor(
-    document: vscode.TextDocument,
-    webviewPanel: vscode.WebviewPanel,
-  ): Promise<void> {
-    const targetViewColumn = webviewPanel.viewColumn ?? vscode.ViewColumn.Active;
-    await vscode.window.showTextDocument(document, {
-      viewColumn: targetViewColumn,
-      preserveFocus: false,
-      preview: true,
-    });
+  private async openRawJsonInTextEditor(): Promise<void> {
+    await vscode.commands.executeCommand("workbench.action.reopenTextEditor");
   }
 
   private async openNodeEditorKeybindings(query: string | undefined): Promise<void> {
@@ -317,9 +386,10 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
       clipboard: this.copiedSelection,
     };
 
-    await Promise.all(
-      Array.from(this.webviewPanelsByDocumentUri.values(), panel => panel.webview.postMessage(payload)),
+    const allPanels = Array.from(this.webviewPanelsByDocumentUri.values()).flatMap(panels =>
+      Array.from(panels),
     );
+    await Promise.all(allPanels.map(panel => panel.webview.postMessage(payload)));
   }
 
   private async postError(webview: vscode.Webview, message: string): Promise<void> {
@@ -331,16 +401,41 @@ class HytaleNodeEditorProvider implements vscode.CustomTextEditorProvider {
   }
 }
 
-function getDocumentRange(document: vscode.TextDocument): vscode.Range {
-  const start = new vscode.Position(0, 0);
-  const lastLine = document.lineAt(document.lineCount - 1);
-  const end = new vscode.Position(document.lineCount - 1, lastLine.text.length);
-  return new vscode.Range(start, end);
+async function readDocumentRootFromUri(
+  uri: vscode.Uri,
+): Promise<{ documentRoot: AssetDocumentShape; eol: "\n" | "\r\n" }> {
+  const bytes = await vscode.workspace.fs.readFile(uri);
+  const text = stripBom(Buffer.from(bytes).toString("utf8"));
+  const parsed = JSON.parse(text) as unknown;
+  if (!isObject(parsed)) {
+    throw new Error("Document must be a JSON object.");
+  }
+
+  return {
+    documentRoot: parsed as AssetDocumentShape,
+    eol: detectTextEol(text),
+  };
 }
 
-function normalizeTextEol(text: string, eol: vscode.EndOfLine): string {
-  const targetEol = eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
-  return text.replace(/\r\n|\r|\n/g, targetEol);
+async function writeDocumentRootToUri(
+  uri: vscode.Uri,
+  documentRoot: AssetDocumentShape,
+  eol: "\n" | "\r\n",
+): Promise<void> {
+  const normalizedText = normalizeTextEol(JSON.stringify(documentRoot, null, "\t"), eol);
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(normalizedText, "utf8"));
+}
+
+function stripBom(text: string): string {
+  return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+}
+
+function detectTextEol(text: string): "\n" | "\r\n" {
+  return text.includes("\r\n") ? "\r\n" : "\n";
+}
+
+function normalizeTextEol(text: string, eol: "\n" | "\r\n"): string {
+  return text.replace(/\r\n|\r|\n/g, eol);
 }
 
 function readNodeEditorControlScheme(): NodeEditorControlScheme {
