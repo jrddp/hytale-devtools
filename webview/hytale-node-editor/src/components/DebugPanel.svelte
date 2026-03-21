@@ -29,6 +29,9 @@
   });
   const visibleGroupCount = $derived(visibleNodeCount - visibleNonGroupNodeCount);
   const currentZoom = $derived(flowStore.viewport.zoom);
+  const areNodesVisible = $derived(nonGroupNodes.every(node => !node.hidden));
+  const areGroupsVisible = $derived(groupNodes.every(node => !node.hidden));
+  const areEdgesVisible = $derived(workspace.edges.every(edge => !edge.hidden));
 
   let fps = $state(0);
 
@@ -124,6 +127,61 @@
       Math.max(MIN_THRESHOLD, nextValue),
     );
   }
+
+  function updateNodes(
+    predicate: (node: FlowNode) => boolean,
+    updater: (node: FlowNode) => FlowNode,
+  ) {
+    let didChange = false;
+    const nextNodes = workspace.nodes.map(node => {
+      if (!predicate(node)) {
+        return node;
+      }
+
+      const nextNode = updater(node);
+      didChange = didChange || nextNode !== node;
+      return nextNode;
+    });
+
+    if (didChange) {
+      workspace.nodes = nextNodes;
+    }
+  }
+
+  function updateEdges(updater: (edge: FlowEdge) => FlowEdge) {
+    let didChange = false;
+    const nextEdges = workspace.edges.map(edge => {
+      const nextEdge = updater(edge);
+      didChange = didChange || nextEdge !== edge;
+      return nextEdge;
+    });
+
+    if (didChange) {
+      workspace.edges = nextEdges;
+    }
+  }
+
+  function setElementVisibility(target: "nodes" | "groups" | "edges", visible: boolean) {
+    const hidden = !visible;
+
+    switch (target) {
+      case "nodes":
+        updateNodes(
+          node => node.type !== GROUP_NODE_TYPE && !!node.hidden !== hidden,
+          node => ({ ...node, hidden }),
+        );
+        break;
+      case "groups":
+        updateNodes(
+          node => node.type === GROUP_NODE_TYPE && !!node.hidden !== hidden,
+          node => ({ ...node, hidden }),
+        );
+        break;
+      case "edges":
+        updateEdges(edge => (!!edge.hidden === hidden ? edge : { ...edge, hidden }));
+        break;
+    }
+  }
 </script>
 
 <Panel position="bottom-left" class="pointer-events-auto">
@@ -170,6 +228,48 @@
         value={workspace.lowDetailZoomThreshold}
         oninput={handleThresholdInput}
       />
+    </div>
+
+    <div class="grid gap-2 border-t border-vsc-editor-widget-border pt-3 text-xs text-vsc-muted">
+      <label class="flex items-center justify-between gap-3">
+        <span>Custom box selection</span>
+        <input
+          class="h-4 w-4"
+          type="checkbox"
+          checked={workspace.useCustomSelectionBoxLogic}
+          onchange={event => (workspace.useCustomSelectionBoxLogic = event.currentTarget.checked)}
+        />
+      </label>
+
+      <label class="flex items-center justify-between gap-3">
+        <span>Show nodes ({nonGroupNodes.length})</span>
+        <input
+          class="h-4 w-4"
+          type="checkbox"
+          checked={areNodesVisible}
+          onchange={event => setElementVisibility("nodes", event.currentTarget.checked)}
+        />
+      </label>
+
+      <label class="flex items-center justify-between gap-3">
+        <span>Show groups ({groupNodes.length})</span>
+        <input
+          class="h-4 w-4"
+          type="checkbox"
+          checked={areGroupsVisible}
+          onchange={event => setElementVisibility("groups", event.currentTarget.checked)}
+        />
+      </label>
+
+      <label class="flex items-center justify-between gap-3">
+        <span>Show edges ({workspace.edges.length})</span>
+        <input
+          class="h-4 w-4"
+          type="checkbox"
+          checked={areEdgesVisible}
+          onchange={event => setElementVisibility("edges", event.currentTarget.checked)}
+        />
+      </label>
     </div>
   </section>
 </Panel>

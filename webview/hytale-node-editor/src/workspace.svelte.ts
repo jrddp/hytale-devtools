@@ -71,6 +71,7 @@ export class Workspace {
   isDevelopment = $state(false);
   renderDetailMode = $state<NodeRenderDetailMode>("full");
   lowDetailZoomThreshold = $state(DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD);
+  useCustomSelectionBoxLogic = $state(true);
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));

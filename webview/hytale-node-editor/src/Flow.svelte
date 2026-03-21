@@ -310,7 +310,11 @@
   }
 
   $effect(() => {
-    if (flowStore.selectionRectMode !== "user" || !flowStore.selectionRect) {
+    if (
+      !workspace.useCustomSelectionBoxLogic ||
+      flowStore.selectionRectMode !== "user" ||
+      !flowStore.selectionRect
+    ) {
       return;
     }
 
@@ -765,7 +769,7 @@
       onviewportchange?.($state.snapshot(flowStore.viewport));
     },
     onselectionend: () => {
-      if (!lastUserSelectionRect) {
+      if (!workspace.useCustomSelectionBoxLogic || !lastUserSelectionRect) {
         return;
       }
 
