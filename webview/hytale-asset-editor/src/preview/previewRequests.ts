@@ -4,24 +4,27 @@ import type {
 import type { AssetPreviewType } from "@shared/fieldTypes";
 import type { RootFieldInstance } from "../parsing/fieldInstances";
 
-export function isPreviewPointer(pointer: string): boolean {
+export type PreviewPointer = "Icon" | "Model" | "Texture";
+
+export function isPreviewPointer(pointer: string): pointer is PreviewPointer {
   return pointer === "Icon" || pointer === "Model" || pointer === "Texture";
 }
 
 export function buildPreviewRequest(
   previewType: AssetPreviewType | undefined,
   rootField: RootFieldInstance | null,
+  overrides: Partial<Record<PreviewPointer, string | undefined>> = {},
 ): AssetEditorPreviewRequest | undefined {
   switch (previewType) {
     case "Item":
       return {
         type: "Item",
-        iconPath: getEffectiveRootStringFieldValue(rootField, "Icon"),
+        iconPath: getEffectiveValue(rootField, "Icon", overrides),
       };
     case "Model": {
-      const modelPath = getEffectiveRootStringFieldValue(rootField, "Model");
+      const modelPath = getEffectiveValue(rootField, "Model", overrides);
       const texturePath =
-        getEffectiveRootStringFieldValue(rootField, "Texture") ??
+        getEffectiveValue(rootField, "Texture", overrides) ??
         (modelPath?.toLowerCase().endsWith(".blockymodel")
           ? modelPath.replace(/\.blockymodel$/i, ".png")
           : undefined);
@@ -37,10 +40,16 @@ export function buildPreviewRequest(
   }
 }
 
-function getEffectiveRootStringFieldValue(
+/** ! Assumes top-level pointer */
+function getEffectiveValue(
   rootField: RootFieldInstance | null,
-  pointer: "Icon" | "Model" | "Texture",
+  pointer: PreviewPointer,
+  overrides: Partial<Record<PreviewPointer, string | undefined>>,
 ): string | undefined {
+  if (pointer in overrides) {
+    return overrides[pointer];
+  }
+
   const field =
     rootField?.type === "object"
       ? rootField.properties[pointer]

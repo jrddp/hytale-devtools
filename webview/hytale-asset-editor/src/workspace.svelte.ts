@@ -11,7 +11,7 @@ import type {
   RootFieldInstance,
   VariantFieldInstance,
 } from "./parsing/fieldInstances";
-import { buildPreviewRequest } from "./preview/previewRequests";
+import { buildPreviewRequest, type PreviewPointer } from "./preview/previewRequests";
 import {
   assignFieldInstancePaths,
   createEmptyFieldInstance as createEmptyFieldInstanceFromSchema,
@@ -139,8 +139,9 @@ export class Workspace {
     this.vscode.postMessage(payload);
   }
 
-  requestResolvedPreview() {
-    const request = buildPreviewRequest(this.assetDefinition?.preview, this.documentRootField);
+  /** @param overrides - record of pointer to override value, e.g. overriding "Icon" with a specific preview. */
+  requestResolvedPreview(overrides: Partial<Record<PreviewPointer, string | undefined>> = {}) {
+    const request = buildPreviewRequest(this.assetDefinition?.preview, this.documentRootField, overrides);
     if (!request) {
       return;
     }

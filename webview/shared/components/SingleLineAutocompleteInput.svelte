@@ -23,6 +23,7 @@
     sizerClass = "",
     stopPointerPropagation = false,
     oncommit,
+    onconsider,
     onfocus,
     afterEnterPressed,
     ...inputAttributes
@@ -41,6 +42,7 @@
     sizerClass?: string;
     stopPointerPropagation?: boolean;
     oncommit?: (value: string) => boolean | void;
+    onconsider?: (value?: string) => void;
     onfocus?: () => void;
     afterEnterPressed?: (input: HTMLInputElement) => void;
   } & Omit<HTMLInputAttributes, "id" | "type" | "value" | "class" | "placeholder" | "disabled"> =
@@ -54,6 +56,7 @@
   let autocompleteListElement = $state<HTMLDivElement>();
   let previewAnchorElement = $state<HTMLElement | null>(null);
   let inputSizerWidth = $state(0);
+  let lastConsideredValue: string | undefined;
 
   $effect(() => {
     void value;
@@ -94,6 +97,20 @@
       : undefined,
   );
   const previewAnchorIndex = $derived(activeAutocompleteIndex >= 0 ? activeAutocompleteIndex : 0);
+  const consideredValue = $derived(
+    shouldAutocomplete && activeAutocompleteIndex >= 0
+      ? visibleAutocompleteOptions[activeAutocompleteIndex]?.value
+      : undefined,
+  );
+
+  $effect(() => {
+    if (consideredValue === lastConsideredValue) {
+      return;
+    }
+
+    lastConsideredValue = consideredValue;
+    onconsider?.(consideredValue);
+  });
 
   $effect(() => {
     if (!shouldAutocomplete || !autocompleteListElement) {

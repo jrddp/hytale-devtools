@@ -121,6 +121,21 @@
     return true;
   }
 
+  function considerValue(value?: string) {
+    if (!isPreviewPointer(jsonPointer)) {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.requestResolvedPreview();
+      return;
+    }
+
+    workspace.requestResolvedPreview({
+      [jsonPointer]: value,
+    });
+  }
+
   const parentTooltip = $derived(
     field.definesParent && workspace.parentStatus === "loading" ? createTooltip() : undefined,
   );
@@ -170,6 +185,7 @@
         optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
         previewClass="z-[160]"
         onfocus={requestAutocomplete}
+        onconsider={considerValue}
         oncommit={commitValue}
         afterEnterPressed={input => input.blur()}
       />
