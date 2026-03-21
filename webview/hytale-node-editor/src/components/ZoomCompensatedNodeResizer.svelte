@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { NodeResizer, type OnResizeEnd, useViewport } from "@xyflow/svelte";
+  import { NodeResizer, type OnResizeEnd } from "@xyflow/svelte";
+  import { workspace } from "src/workspace.svelte";
 
   const RESIZER_HANDLE_BASE_SIZE_PX = 10;
   const RESIZER_HANDLE_MAX_COMPENSATION_SCALE = 5.5;
@@ -28,30 +29,11 @@
     onResizeEnd = undefined,
   }: Props = $props();
 
-  const viewport = useViewport();
-
-  let viewportZoom = $derived(readViewportZoom(viewport.current.zoom));
-  let handleCompensationScale = $derived(readHandleCompensationScale(viewportZoom));
+  let handleCompensationScale = $derived(
+    Math.min(RESIZER_HANDLE_MAX_COMPENSATION_SCALE, workspace.zoomCompensationScale),
+  );
   let handleSizePx = $derived(Math.round(RESIZER_HANDLE_BASE_SIZE_PX * handleCompensationScale));
   let computedHandleStyle = $derived(`width:${handleSizePx}px;height:${handleSizePx}px;`);
-
-  function readViewportZoom(candidateZoom: unknown) {
-    const zoom = Number(candidateZoom);
-    if (!Number.isFinite(zoom) || zoom <= 0) {
-      return 1;
-    }
-
-    return zoom;
-  }
-
-  function readHandleCompensationScale(zoom: number) {
-    if (!Number.isFinite(zoom) || zoom >= 1) {
-      return 1;
-    }
-
-    const inverseScale = 1 / zoom;
-    return Math.min(RESIZER_HANDLE_MAX_COMPENSATION_SCALE, Math.max(1, inverseScale));
-  }
 </script>
 
 <NodeResizer

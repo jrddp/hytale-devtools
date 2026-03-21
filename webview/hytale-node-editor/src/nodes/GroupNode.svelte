@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useSvelteFlow, useViewport } from "@xyflow/svelte";
+  import { useSvelteFlow } from "@xyflow/svelte";
   import { type GroupNodeType } from "src/common";
   import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
   import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "src/constants";
@@ -11,7 +11,6 @@
 
   let { id, data, selected, dragging }: GroupNodeType = $props();
 
-  const viewport = useViewport();
   const { updateNodeData } = useSvelteFlow();
 
   let titleInputElement = $state<HTMLInputElement | undefined>();
@@ -21,7 +20,7 @@
   let isEditingTitle = $state(false);
   const bodyDragDisabled = $derived(workspace.controlScheme === "mouse" && !selected);
   const titleCompensationScale = $derived(
-    Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, Math.max(1, 1 / viewport.current.zoom)),
+    Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, workspace.zoomCompensationScale),
   );
   const commitTitle = () => {
     effectiveTitle = effectiveTitle.trim();
@@ -86,7 +85,7 @@
           {@attach el => {
             void effectiveTitle;
             titleSizerWidth =
-              (titleCompensationScale * el.getBoundingClientRect().width) / viewport.current.zoom;
+              (titleCompensationScale * el.getBoundingClientRect().width) / workspace.viewportZoom;
           }}
         >
           {effectiveTitle}

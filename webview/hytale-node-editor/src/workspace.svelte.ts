@@ -16,12 +16,20 @@ import {
 } from "@shared/node-editor/workspaceTypes";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
-import { type FlowEdge, type FlowNode, type VSCodeApi } from "src/common";
+import {
+  type FlowEdge,
+  type FlowNode,
+  type FlowNodeData,
+  type VSCodeApi,
+} from "src/common";
 import { serializeDocument } from "src/node-editor/parsing/serializeDocument";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 
 export type SelectionType = "replace" | "add";
-export type WorkspaceNodeUpdate = [string, Partial<FlowNode>];
+export type WorkspaceNodeUpdate = [
+  string,
+  Omit<Partial<FlowNode>, "data"> & { data?: Partial<FlowNodeData> },
+];
 
 export interface WorkspaceState {
   nodes: FlowNode[];
@@ -77,6 +85,8 @@ export class Workspace {
   isDevelopment = $state(false);
   renderDetailMode = $state<NodeRenderDetailMode>("full");
   lowDetailZoomThreshold = $state(DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD);
+  viewportZoom = $state(1);
+  zoomCompensationScale = $derived(this.viewportZoom < 1 ? 1 / this.viewportZoom : 1);
   useCustomSelectionBoxLogic = $state(true);
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
@@ -227,13 +237,33 @@ export class Workspace {
 
       const nextData = update.data ? { ...node.data, ...update.data } : node.data;
       const nextNode = update.data ? { ...node, ...update, data: nextData } : { ...node, ...update };
+      let changed = false;
+      for (const [key, value] of Object.entries(update)) {
+        if (key === "data") {
+          for (const [dataKey, dataValue] of Object.entries(value ?? {})) {
+            if (node.data[dataKey] !== dataValue) {
+              changed = true;
+              break;
+            }
+          }
+          if (changed) {
+            break;
+          }
+          continue;
+        }
 
-      if (nextNode === node) {
+        if (node[key] !== value) {
+          changed = true;
+          break;
+        }
+      }
+
+      if (!changed) {
         return node;
       }
 
       didChange = true;
-      return nextNode;
+      return nextNode as FlowNode;
     });
 
     if (didChange) {
@@ -254,6 +284,12 @@ export class Workspace {
       value: controlScheme,
     };
     this.vscode.postMessage(payload);
+  }
+
+  updateViewportZoom(zoom: number): void {
+    if (this.viewportZoom !== zoom) {
+      this.viewportZoom = zoom;
+    }
   }
 }
 

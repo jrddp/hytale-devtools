@@ -23,12 +23,7 @@
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
   import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
-  import {
-    CONNECTION_RADIUS,
-    GROUP_NODE_TYPE,
-    MULTISELECT_KEY,
-    nodeTypes,
-  } from "src/constants";
+  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
@@ -105,7 +100,9 @@
   let canvasOverlayReady = $state(false);
   let canvasOverlayReadyToken = 0;
 
-  const useCanvasLowDetailOverlay = $derived(workspace.renderDetailMode === "low" && canvasOverlayReady);
+  const useCanvasLowDetailOverlay = $derived(
+    workspace.renderDetailMode === "low" && canvasOverlayReady,
+  );
   const useVisibleElementCulling = $derived(workspace.areNodesMeasured);
 
   function getRenderableNodeSize(node: FlowNode) {
@@ -167,8 +164,9 @@
   }
 
   $effect(() => {
-    const nextDetailMode =
-      viewport.current.zoom >= workspace.lowDetailZoomThreshold ? "full" : "low";
+    const zoom = viewport.current.zoom;
+    workspace.updateViewportZoom(zoom);
+    const nextDetailMode = zoom >= workspace.lowDetailZoomThreshold ? "full" : "low";
     if (workspace.renderDetailMode !== nextDetailMode) {
       workspace.renderDetailMode = nextDetailMode;
     }
@@ -204,10 +202,11 @@
     width: number;
     height: number;
   }) {
-    const selectionOrigin = pointToRendererPoint(
-      { x: domSelectionRect.x, y: domSelectionRect.y },
-      [flowStore.viewport.x, flowStore.viewport.y, flowStore.viewport.zoom],
-    );
+    const selectionOrigin = pointToRendererPoint({ x: domSelectionRect.x, y: domSelectionRect.y }, [
+      flowStore.viewport.x,
+      flowStore.viewport.y,
+      flowStore.viewport.zoom,
+    ]);
     const selectionRect = {
       x: selectionOrigin.x,
       y: selectionOrigin.y,
@@ -597,9 +596,7 @@
 
     // deselect existing nodes
     workspace.applyNodeUpdates(
-      workspace.nodes
-        .filter(node => node.selected)
-        .map(node => [node.id, { selected: false }]),
+      workspace.nodes.filter(node => node.selected).map(node => [node.id, { selected: false }]),
     );
 
     const pastedNodeIds = new Map<string, string>();
@@ -761,8 +758,7 @@
       }
     },
     // ## On Pane Click (left click)
-    onpaneclick: ({ event }) => {
-    },
+    onpaneclick: ({ event }) => {},
     onmoveend: () => {
       onviewportchange?.($state.snapshot(flowStore.viewport));
     },
