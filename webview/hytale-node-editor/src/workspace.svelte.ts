@@ -77,8 +77,8 @@ export class Workspace {
   committedDocumentRoot = $state.raw<AssetDocumentShape | undefined>(undefined);
   pendingLocalEditId = $state<number | undefined>();
   nextClientEditId = $state(0);
-  selectedNodes = $derived(this.nodes.filter(node => node.selected));
-  areNodesMeasured = $derived(this.nodes.every(node => hasRenderableNodeSize(node)));
+  areNodesMeasured = $state(false);
+  private pendingMeasurementNodeIds = $state.raw<Set<string>>(new Set());
 
   /** clipboard snapshot of copied/cut nodes plus edges fully contained within that selection */
   copiedSelection = $state.raw<NodeEditorClipboardSelection>(createEmptyNodeEditorClipboardSelection());
@@ -94,7 +94,6 @@ export class Workspace {
   /** Gets effective selection of nodes, including children of directly selected nodes. */
   private effectivelySelectedNodes = $derived.by(() => {
     // note: nodes order always includes parents first so this guarentees that we mark parents selection first
-    // we are intentionally starting set as empty instead of using selectedNodes
     const selectedNodeIds = new Set();
     const selectedNodeList = [];
     for (const node of this.nodes) {
@@ -144,6 +143,66 @@ export class Workspace {
 
   searchNodesCollidingWith(bbox: BBox) {
     return this.spatialIndex.search(bbox);
+  }
+
+  resetMeasurementTracking(nodes: FlowNode[] = this.nodes) {
+    const pendingMeasurementNodeIds = new Set<string>();
+    for (const node of nodes) {
+      if (!hasRenderableNodeSize(node)) {
+        pendingMeasurementNodeIds.add(node.id);
+      }
+    }
+
+    this.pendingMeasurementNodeIds = pendingMeasurementNodeIds;
+    this.areNodesMeasured = pendingMeasurementNodeIds.size === 0;
+  }
+
+  trackMeasurementForNodeIds(nodeIds: Iterable<string>) {
+    const pendingMeasurementNodeIds = new Set(this.pendingMeasurementNodeIds);
+    let didChange = false;
+
+    for (const nodeId of nodeIds) {
+      const node = this.getNodeById(nodeId);
+      if (!node || hasRenderableNodeSize(node)) {
+        if (pendingMeasurementNodeIds.delete(nodeId)) {
+          didChange = true;
+        }
+        continue;
+      }
+
+      if (!pendingMeasurementNodeIds.has(nodeId)) {
+        pendingMeasurementNodeIds.add(nodeId);
+        didChange = true;
+      }
+    }
+
+    if (didChange) {
+      this.pendingMeasurementNodeIds = pendingMeasurementNodeIds;
+    }
+    this.areNodesMeasured = pendingMeasurementNodeIds.size === 0;
+  }
+
+  reconcilePendingMeasurements() {
+    if (this.pendingMeasurementNodeIds.size === 0) {
+      this.areNodesMeasured = true;
+      return;
+    }
+
+    const pendingMeasurementNodeIds = new Set(this.pendingMeasurementNodeIds);
+    let didChange = false;
+
+    for (const nodeId of this.pendingMeasurementNodeIds) {
+      const node = this.getNodeById(nodeId);
+      if (!node || hasRenderableNodeSize(node)) {
+        pendingMeasurementNodeIds.delete(nodeId);
+        didChange = true;
+      }
+    }
+
+    if (didChange) {
+      this.pendingMeasurementNodeIds = pendingMeasurementNodeIds;
+    }
+    this.areNodesMeasured = pendingMeasurementNodeIds.size === 0;
   }
 
   getEffectivelySelectedNodes(): FlowNode[] {

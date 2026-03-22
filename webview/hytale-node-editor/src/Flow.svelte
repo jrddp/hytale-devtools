@@ -27,6 +27,7 @@
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
+  import { asCssColor, resolveComputedColor } from "src/node-editor/utils/colors";
   import {
     getAllSiblingOrderUpdates,
     getAbsoluteCenterPosition,
@@ -99,11 +100,31 @@
   let showPerformanceLab = $state(false);
   let canvasOverlayReady = $state(false);
   let canvasOverlayReadyToken = 0;
+  let lowDetailRenderCache = $state.raw<
+    Array<{
+      id: string;
+      kind: "group" | "node";
+      x: number;
+      y: number;
+      width: number;
+        height: number;
+        accentColor?: string;
+    }>
+  >([]);
+  let lowDetailSelectedNodeIds = $state.raw<string[]>([]);
+  let lowDetailDraggedNodeIds = $state.raw<string[]>([]);
+  let lowDetailDragDelta = $state<XYPosition>({ x: 0, y: 0 });
+  let lowDetailDragActive = $state(false);
+  let forcedLowDetailSelectionMode = $state(false);
+  let lowDetailHiddenNodeIds = $state.raw<Set<string>>(new Set());
 
   const useCanvasLowDetailOverlay = $derived(
     workspace.renderDetailMode === "low" && canvasOverlayReady,
   );
   const useVisibleElementCulling = $derived(workspace.areNodesMeasured);
+  const lowDetailRenderCacheById = $derived(
+    new Map(lowDetailRenderCache.map(item => [item.id, item])),
+  );
 
   function getRenderableNodeSize(node: FlowNode) {
     const width = node.measured?.width ?? node.width;
@@ -112,6 +133,28 @@
       return null;
     }
     return { width, height };
+  }
+
+  function areNodeIdSetsEqual(left: Set<string>, right: Set<string>) {
+    if (left.size !== right.size) {
+      return false;
+    }
+
+    for (const nodeId of left) {
+      if (!right.has(nodeId)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function isLowDetailCanvasSourceNode(node: FlowNode) {
+    if (node.type === GROUP_NODE_TYPE) {
+      return !node.hidden;
+    }
+
+    return lowDetailHiddenNodeIds.has(node.id) || !node.hidden;
   }
 
   function getCanvasSelectableNodeAtPoint(flowPosition: XYPosition) {
@@ -137,7 +180,7 @@
       const node = workspace.nodes[index];
       if (
         !matchingNodeIds.has(node.id) ||
-        node.hidden ||
+        !isLowDetailCanvasSourceNode(node) ||
         (node.selectable ?? flowStore.elementsSelectable) === false
       ) {
         continue;
@@ -160,6 +203,101 @@
     }
 
     return undefined;
+  }
+
+  function buildLowDetailRenderCache() {
+    const absolutePositionsById = new Map<string, XYPosition>();
+    const resolveAbsolutePosition = (node: FlowNode): XYPosition => {
+      const cached = absolutePositionsById.get(node.id);
+      if (cached) {
+        return cached;
+      }
+
+      const position = node.parentId
+        ? (() => {
+            const parent = workspace.getNodeById(node.parentId);
+            const parentPosition = resolveAbsolutePosition(parent);
+            return {
+              x: parentPosition.x + node.position.x,
+              y: parentPosition.y + node.position.y,
+            };
+          })()
+        : node.position;
+
+      absolutePositionsById.set(node.id, position);
+      return position;
+    };
+
+    const nextCache = [];
+    for (const node of workspace.nodes) {
+      if (!isLowDetailCanvasSourceNode(node)) {
+        continue;
+      }
+
+      const size = getRenderableNodeSize(node);
+      if (!size) {
+        continue;
+      }
+
+      const position = resolveAbsolutePosition(node);
+      nextCache.push({
+        id: node.id,
+        kind: node.type === GROUP_NODE_TYPE ? "group" : "node",
+        x: position.x,
+        y: position.y,
+        width: size.width,
+        height: size.height,
+        accentColor:
+          node.type === GROUP_NODE_TYPE
+            ? undefined
+            : resolveComputedColor(asCssColor(node.data.nodeColor)),
+      });
+    }
+
+    lowDetailRenderCache = nextCache;
+    lowDetailSelectedNodeIds = workspace.nodes.flatMap(node => (node.selected ? [node.id] : []));
+  }
+
+  function syncLowDetailSelectionMode(selectedNodeCount: number) {
+    if (!useCanvasLowDetailOverlay || flowStore.selectionRectMode === "user") {
+      return;
+    }
+
+    if (selectedNodeCount > 0) {
+      if (flowStore.selectionRectMode !== "nodes") {
+        flowStore.selectionRect = null;
+        flowStore.selectionRectMode = "nodes";
+        forcedLowDetailSelectionMode = true;
+      }
+      return;
+    }
+
+    if (forcedLowDetailSelectionMode && flowStore.selectionRectMode === "nodes") {
+      flowStore.selectionRectMode = null;
+      forcedLowDetailSelectionMode = false;
+    }
+  }
+
+  function updateLowDetailDragDelta(draggedNodes: FlowNode[]) {
+    for (const node of draggedNodes) {
+      const cachedNode = lowDetailRenderCacheById.get(node.id);
+      if (!cachedNode) {
+        continue;
+      }
+
+      const absolutePosition = flowStore.nodeLookup.get(node.id)?.internals.positionAbsolute;
+      if (!absolutePosition) {
+        continue;
+      }
+
+      lowDetailDragDelta = {
+        x: absolutePosition.x - cachedNode.x,
+        y: absolutePosition.y - cachedNode.y,
+      };
+      return;
+    }
+
+    lowDetailDragDelta = { x: 0, y: 0 };
   }
 
   $effect(() => {
@@ -185,6 +323,88 @@
         canvasOverlayReady = true;
       }
     });
+  });
+
+  $effect(() => {
+    if (workspace.areNodesMeasured) {
+      return;
+    }
+
+    void nodes;
+    workspace.reconcilePendingMeasurements();
+  });
+
+  $effect(() => {
+    if (!useCanvasLowDetailOverlay) {
+      if (lowDetailHiddenNodeIds.size === 0) {
+        return;
+      }
+
+      const hiddenNodeIds = [...lowDetailHiddenNodeIds];
+      lowDetailHiddenNodeIds = new Set();
+      workspace.applyNodeUpdates(hiddenNodeIds.map(nodeId => [nodeId, { hidden: false }]));
+      return;
+    }
+
+    const nextHiddenNodeIds = new Set<string>();
+    for (const node of workspace.nodes) {
+      if (node.type === GROUP_NODE_TYPE) {
+        continue;
+      }
+
+      if (lowDetailHiddenNodeIds.has(node.id) || !node.hidden) {
+        nextHiddenNodeIds.add(node.id);
+      }
+    }
+
+    const updates = [];
+    for (const node of workspace.nodes) {
+      if (node.type === GROUP_NODE_TYPE) {
+        continue;
+      }
+
+      const shouldBeHidden = nextHiddenNodeIds.has(node.id);
+      if (shouldBeHidden && !node.hidden) {
+        updates.push([node.id, { hidden: true }]);
+      } else if (!shouldBeHidden && lowDetailHiddenNodeIds.has(node.id) && node.hidden) {
+        updates.push([node.id, { hidden: false }]);
+      }
+    }
+
+    if (!areNodeIdSetsEqual(lowDetailHiddenNodeIds, nextHiddenNodeIds)) {
+      lowDetailHiddenNodeIds = nextHiddenNodeIds;
+    }
+    if (updates.length > 0) {
+      workspace.applyNodeUpdates(updates);
+    }
+  });
+
+  $effect(() => {
+    if (!useCanvasLowDetailOverlay) {
+      lowDetailDragActive = false;
+      lowDetailDragDelta = { x: 0, y: 0 };
+      lowDetailRenderCache = [];
+      lowDetailSelectedNodeIds = [];
+      lowDetailDraggedNodeIds = [];
+      lowDetailHiddenNodeIds = new Set();
+      if (forcedLowDetailSelectionMode && flowStore.selectionRectMode === "nodes") {
+        flowStore.selectionRectMode = null;
+      }
+      forcedLowDetailSelectionMode = false;
+      return;
+    }
+
+    if (lowDetailDragActive) {
+      return;
+    }
+
+    void workspace.nodes;
+    buildLowDetailRenderCache();
+  });
+
+  $effect(() => {
+    void lowDetailSelectedNodeIds.length;
+    syncLowDetailSelectionMode(lowDetailSelectedNodeIds.length);
   });
 
   // # Handle actions requests
@@ -224,7 +444,7 @@
       maxY: selectionRect.y + selectionRect.height,
     })) {
       const isSelectable = node.selectable ?? defaultNodeSelectable;
-      if (!isSelectable || node.hidden) {
+      if (!isSelectable || !isLowDetailCanvasSourceNode(node)) {
         continue;
       }
 
@@ -635,6 +855,7 @@
     });
 
     workspace.nodes = [...workspace.nodes, ...pastedNodes];
+    workspace.trackMeasurementForNodeIds(pastedNodes.map(node => node.id));
     workspace.addEdges(pastedEdges);
     applyDocumentState("elements-created");
     event.preventDefault();
@@ -669,7 +890,7 @@
   function handleFlowWrapperClickCapture(event: MouseEvent) {
     if (
       !useCanvasLowDetailOverlay ||
-      !(event.target instanceof HTMLElement) ||
+      !(event.target instanceof Element) ||
       event.button !== 0 ||
       event.defaultPrevented ||
       event.target.closest(".svelte-flow__panel, [data-add-menu], [data-search-menu]")
@@ -688,6 +909,10 @@
       edges = edges.map(edge => (edge.selected ? { ...edge, selected: false } : edge));
     }
     workspace.selectNode(canvasNode.id, selectionType);
+    lowDetailSelectedNodeIds = workspace.nodes.flatMap(node => (node.selected ? [node.id] : []));
+    flowStore.selectionRect = null;
+    flowStore.selectionRectMode = "nodes";
+    forcedLowDetailSelectionMode = true;
     event.preventDefault();
     event.stopPropagation();
   }
@@ -761,6 +986,10 @@
     onmoveend: () => {
       onviewportchange?.($state.snapshot(flowStore.viewport));
     },
+    onselectionchange: ({ nodes: selectedNodes }) => {
+      lowDetailSelectedNodeIds = selectedNodes.map(node => node.id);
+      syncLowDetailSelectionMode(selectedNodes.length);
+    },
     onselectionend: () => {
       if (!workspace.useCustomSelectionBoxLogic || !lastUserSelectionRect) {
         return;
@@ -768,6 +997,35 @@
 
       const selectionRect = lastUserSelectionRect;
       requestAnimationFrame(() => applySelectionBoxOverrides(selectionRect));
+    },
+    onselectiondragstart: (_event, nodes) => {
+      if (!useCanvasLowDetailOverlay || nodes.length === 0) {
+        return;
+      }
+
+      lowDetailDragActive = true;
+      lowDetailDraggedNodeIds = workspace.getEffectivelySelectedNodes().map(node => node.id);
+      lowDetailDragDelta = { x: 0, y: 0 };
+      updateLowDetailDragDelta(nodes);
+    },
+    onselectiondrag: (_event, nodes) => {
+      if (!useCanvasLowDetailOverlay || !lowDetailDragActive || nodes.length === 0) {
+        return;
+      }
+
+      updateLowDetailDragDelta(nodes);
+    },
+    onselectiondragstop: (_event, nodes) => {
+      if (!useCanvasLowDetailOverlay) {
+        return;
+      }
+
+      if (nodes.length > 0) {
+        updateLowDetailDragDelta(nodes);
+      }
+      lowDetailDragActive = false;
+      lowDetailDraggedNodeIds = [];
+      lowDetailDragDelta = { x: 0, y: 0 };
     },
     // ## On Pane Context Menu (right click)
     onpanecontextmenu: ({ event }) => {
@@ -801,6 +1059,7 @@
         ...createNodeFromTemplate(template, addMenuInstance!.spawnPosition),
       };
       workspace.nodes = [...workspace.nodes, newNode];
+      workspace.trackMeasurementForNodeIds([newNode.id]);
       if (isCreatingRootNode) {
         workspace.rootNodeId = newNode.id;
       } else if (pendingSourceConnection) {
@@ -864,7 +1123,14 @@
   >
     <Background bgColor={"var(--vscode-editor-background)"} />
     {#if useCanvasLowDetailOverlay}
-      <LowDetailNodeCanvasOverlay active />
+      <LowDetailNodeCanvasOverlay
+        active
+        items={lowDetailRenderCache}
+        selectedNodeIds={lowDetailSelectedNodeIds}
+        draggedNodeIds={lowDetailDraggedNodeIds}
+        dragDelta={lowDetailDragDelta}
+        dragging={lowDetailDragActive}
+      />
     {/if}
     <NodeEditorActionMenu />
     {#if workspace.isDevelopment && showPerformanceLab}
@@ -905,7 +1171,7 @@
 </div>
 
 <style>
-  :global(.canvas-low-detail-active .svelte-flow__node) {
+  :global(.canvas-low-detail-active .svelte-flow__node-groupnode) {
     display: none;
   }
 </style>

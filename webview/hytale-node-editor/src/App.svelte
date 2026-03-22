@@ -105,6 +105,7 @@
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
+      workspace.resetMeasurementTracking(nodes);
       workspace.sourceVersion = message.version;
       workspace.committedDocumentRoot = message.documentRoot;
       workspace.pendingLocalEditId = undefined;

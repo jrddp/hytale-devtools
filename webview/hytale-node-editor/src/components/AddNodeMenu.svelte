@@ -2,7 +2,7 @@
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import { type XYPosition } from "@xyflow/svelte";
   import { marked } from "marked";
-  import { readColorForCss } from "src/node-editor/utils/colors";
+  import { asCssColor } from "src/node-editor/utils/colors";
   import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
@@ -208,7 +208,7 @@
                 <span
                   aria-hidden="true"
                   class="relative h-8 w-2.5"
-                  style="background-color: {readColorForCss(template.nodeColor)};"
+                  style="background-color: {asCssColor(template.nodeColor)};"
                 ></span>
 
                 <span class="flex-1 min-w-0">

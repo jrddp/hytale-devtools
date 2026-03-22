@@ -4,7 +4,7 @@
   import { Panel, type XYPosition } from "@xyflow/svelte";
   import { Search } from "lucide-svelte";
   import { type FlowNode } from "src/common";
-  import { readColorForCss } from "src/node-editor/utils/colors";
+  import { asCssColor } from "src/node-editor/utils/colors";
   import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import { getAbsoluteCenterPosition } from "src/node-editor/utils/nodeUtils.svelte";
   import { workspace } from "src/workspace.svelte";
@@ -232,7 +232,7 @@
               <span
                 aria-hidden="true"
                 class="absolute left-0 w-6 h-full"
-                style="background-color: {readColorForCss(item.node.data.nodeColor)};"
+                style="background-color: {asCssColor(item.node.data.nodeColor)};"
               ></span>
 
               <div class="flex flex-col items-start justify-center ml-6">

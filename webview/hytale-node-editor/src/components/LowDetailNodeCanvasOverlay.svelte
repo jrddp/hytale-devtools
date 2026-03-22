@@ -1,23 +1,69 @@
 <!-- This component renders optimized canvas-based node and group mockups above xy-flow in low-detail mode. -->
 <script lang="ts">
-  import { useStore } from "@xyflow/svelte";
+  import { useStore, type XYPosition } from "@xyflow/svelte";
+  import RBush, { type BBox } from "rbush";
   import type { FlowEdge, FlowNode } from "src/common";
-  import { GROUP_NODE_TYPE } from "src/constants";
-  import { readColorForCss } from "src/node-editor/utils/colors";
-  import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
-  import { workspace } from "src/workspace.svelte";
+  import { resolveComputedColor } from "src/node-editor/utils/colors";
   import { onDestroy } from "svelte";
 
-  const DEFAULT_NODE_WIDTH_PX = 112;
-  const DEFAULT_NODE_HEIGHT_PX = 28;
+  type OverlayItem = {
+    id: string;
+    kind: "group" | "node";
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    accentColor?: string;
+  };
+
+  type IndexedOverlayItem = OverlayItem & {
+    order: number;
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+  };
+
+  type VisibleOverlayItem = IndexedOverlayItem & {
+    selected: boolean;
+  };
 
   let {
     active = false,
+    items = [],
+    selectedNodeIds = [],
+    draggedNodeIds = [],
+    dragDelta = { x: 0, y: 0 },
+    dragging = false,
   }: {
     active?: boolean;
+    items?: OverlayItem[];
+    selectedNodeIds?: string[];
+    draggedNodeIds?: string[];
+    dragDelta?: XYPosition;
+    dragging?: boolean;
   } = $props();
 
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
+  const selectedNodeIdSet = $derived(new Set(selectedNodeIds));
+  const draggedNodeIdSet = $derived(new Set(draggedNodeIds));
+  const indexedItems = $derived(
+    items.map((item, order) => ({
+      ...item,
+      order,
+      minX: item.x,
+      minY: item.y,
+      maxX: item.x + item.width,
+      maxY: item.y + item.height,
+    })),
+  );
+  const itemById = $derived(new Map(indexedItems.map(item => [item.id, item])));
+  const overlayIndex = $derived.by(() => {
+    const index = new RBush<IndexedOverlayItem>();
+    index.load(indexedItems);
+    return index;
+  });
+
   const overlayNodes = $derived.by(() => {
     if (!active) {
       return [];
@@ -34,50 +80,47 @@
     const maxX = (width - viewport.x) / viewport.zoom + viewportPadding;
     const maxY = (height - viewport.y) / viewport.zoom + viewportPadding;
 
-    const overlayItems = [];
-
-    for (const node of workspace.nodes) {
-      if (node.hidden) {
+    const visibleBounds: BBox = { minX, minY, maxX, maxY };
+    const visibleNodes: VisibleOverlayItem[] = [];
+    for (const item of overlayIndex.search(visibleBounds)) {
+      if (dragging && draggedNodeIdSet.has(item.id)) {
         continue;
       }
 
-      const nodeWidth = node.measured?.width ?? node.width ?? DEFAULT_NODE_WIDTH_PX;
-      const nodeHeight = node.measured?.height ?? node.height ?? DEFAULT_NODE_HEIGHT_PX;
-      const position = getAbsolutePosition(node);
-
-      if (
-        position.x + nodeWidth < minX ||
-        position.y + nodeHeight < minY ||
-        position.x > maxX ||
-        position.y > maxY
-      ) {
-        continue;
-      }
-
-      if (node.type === GROUP_NODE_TYPE) {
-        overlayItems.push({
-          kind: "group" as const,
-          x: position.x,
-          y: position.y,
-          width: nodeWidth,
-          height: nodeHeight,
-          selected: !!node.selected,
-        });
-        continue;
-      }
-
-      overlayItems.push({
-        kind: "node" as const,
-        x: position.x,
-        y: position.y,
-        width: nodeWidth,
-        height: nodeHeight,
-        accentColor: readColorForCss(node.data.nodeColor),
-        selected: !!node.selected,
+      visibleNodes.push({
+        ...item,
+        selected: selectedNodeIdSet.has(item.id),
       });
     }
 
-    return overlayItems;
+    if (dragging) {
+      for (const draggedNodeId of draggedNodeIdSet) {
+        const item = itemById.get(draggedNodeId);
+        if (!item) {
+          continue;
+        }
+
+        const x = item.x + dragDelta.x;
+        const y = item.y + dragDelta.y;
+        if (x + item.width < minX || y + item.height < minY || x > maxX || y > maxY) {
+          continue;
+        }
+
+        visibleNodes.push({
+          ...item,
+          x,
+          y,
+          minX: x,
+          minY: y,
+          maxX: x + item.width,
+          maxY: y + item.height,
+          selected: selectedNodeIdSet.has(item.id),
+        });
+      }
+    }
+
+    visibleNodes.sort((a, b) => a.order - b.order);
+    return visibleNodes;
   });
 
   let canvasElement = $state<HTMLCanvasElement | undefined>();
@@ -124,29 +167,6 @@
     };
   });
 
-  function readThemeVariable(variableName: string) {
-    if (typeof window === "undefined") {
-      return "";
-    }
-
-    const bodyResolved = document.body
-      ? getComputedStyle(document.body).getPropertyValue(variableName).trim()
-      : "";
-    const rootResolved = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
-    return bodyResolved || rootResolved;
-  }
-
-  function resolveCanvasColor(color: string) {
-    const trimmed = color.trim();
-    if (!trimmed.startsWith("var(") || typeof window === "undefined") {
-      return trimmed;
-    }
-
-    const variableName = trimmed.slice(4, -1).trim();
-    const resolved = readThemeVariable(variableName);
-    return resolved.startsWith("var(") ? resolveCanvasColor(resolved) : resolved || trimmed;
-  }
-
   function drawRect({
     context,
     x,
@@ -186,6 +206,7 @@
     height: number;
     viewport: { x: number; y: number; zoom: number };
     nodes: Array<{
+      id: string;
       kind: "group" | "node";
       x: number;
       y: number;
@@ -223,11 +244,9 @@
       return;
     }
 
-    const shellFill =
-      readThemeVariable("--vscode-editorWidget-background") ||
-      resolveCanvasColor("var(--vscode-editorWidget-background)");
-    const shellBorder = resolveCanvasColor("var(--vscode-editorWidget-border)");
-    const selectionBorder = resolveCanvasColor("var(--vscode-focusBorder)");
+    const shellFill = resolveComputedColor("var(--vscode-editorWidget-background)");
+    const shellBorder = resolveComputedColor("var(--vscode-editorWidget-border)");
+    const selectionBorder = resolveComputedColor("var(--vscode-focusBorder)");
     const groupFill = shellFill;
 
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
@@ -270,7 +289,7 @@
         y: node.y,
         width: node.width,
         height: Math.min(node.height, 4),
-        fillStyle: resolveCanvasColor(node.accentColor ?? "var(--vscode-focusBorder)"),
+        fillStyle: node.accentColor ?? selectionBorder,
       });
 
       context.globalAlpha = 1;

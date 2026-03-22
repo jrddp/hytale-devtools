@@ -2,7 +2,7 @@
   import { useSvelteFlow } from "@xyflow/svelte";
   import { MessageCircleMore } from "lucide-svelte";
   import type { FlowNode } from "src/common";
-  import { readColorForCss } from "src/node-editor/utils/colors";
+  import { asCssColor } from "src/node-editor/utils/colors";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
   import { applyDocumentState } from "src/workspace.svelte";
   import type { Snippet } from "svelte";
@@ -25,7 +25,7 @@
     comment,
   } = $derived(data);
 
-  const cssColor = $derived(readColorForCss(nodeColor));
+  const cssColor = $derived(asCssColor(nodeColor));
 
   // # Title State
   let lastComittedTitle = $derived(titleOverride);

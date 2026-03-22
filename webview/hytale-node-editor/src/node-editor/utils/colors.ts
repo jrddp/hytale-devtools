@@ -1,4 +1,6 @@
 const DEFAULT_COLOR = "#808080";
+// cached to avoid recalculating every frame for the low detail canvas
+const resolvedCssColorCache = new Map<string, string>();
 
 const COLOR_NAME_MAP = {
   aqua: "#0f8b8d",
@@ -20,7 +22,10 @@ const COLOR_NAME_MAP = {
   yellow: "#b79a3b",
 };
 
-export function readColorForCss(nodeDefinedColor?: string) {
+/**
+ * Converts an workspace definition colors (including named colors) to CSS color strings
+ */
+export function asCssColor(nodeDefinedColor?: string) {
   if (!nodeDefinedColor) return DEFAULT_COLOR;
   if (nodeDefinedColor.startsWith("#") || nodeDefinedColor.startsWith("var")) {
     return nodeDefinedColor;
@@ -32,4 +37,32 @@ export function readColorForCss(nodeDefinedColor?: string) {
 
   console.error(`Could not read node color: ${nodeDefinedColor}`);
   return DEFAULT_COLOR;
+}
+
+function readThemeVariable(variableName: string) {
+  const bodyResolved = getComputedStyle(document.body).getPropertyValue(variableName);
+  const rootResolved = getComputedStyle(document.documentElement).getPropertyValue(variableName);
+  return bodyResolved || rootResolved;
+}
+
+/**
+ * Resolves and caches CSS color with support for var(...)
+ */
+export function resolveComputedColor(color: string) {
+  const cached = resolvedCssColorCache.get(color);
+  if (cached) {
+    return cached;
+  }
+
+  let resolved = color;
+  if (color.startsWith("var(")) {
+    const variableName = color.slice(4, -1);
+    const themeValue = readThemeVariable(variableName);
+    resolved = themeValue.startsWith("var(")
+      ? resolveComputedColor(themeValue)
+      : themeValue || color;
+  }
+
+  resolvedCssColorCache.set(color, resolved);
+  return resolved;
 }

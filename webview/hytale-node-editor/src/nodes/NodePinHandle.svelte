@@ -2,7 +2,7 @@
   import { type NodePin } from "@shared/node-editor/workspaceTypes";
   import { Handle, Position } from "@xyflow/svelte";
   import { PIN_WIDTH_PX } from "src/constants";
-  import { readColorForCss } from "../node-editor/utils/colors";
+  import { asCssColor } from "../node-editor/utils/colors";
 
   const DIAMETER_PX = PIN_WIDTH_PX * 2;
 
@@ -23,7 +23,7 @@
 
   const side = $derived(type === "source" ? "right" : "left");
 
-  const cssColor = $derived(readColorForCss(pin.color));
+  const cssColor = $derived(asCssColor(pin.color));
 
   const clipPath = $derived.by(() => {
     switch (pin.multiplicity) {
