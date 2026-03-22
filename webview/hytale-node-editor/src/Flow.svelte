@@ -137,7 +137,6 @@
       const node = workspace.nodes[index];
       if (
         !matchingNodeIds.has(node.id) ||
-        node.type === GROUP_NODE_TYPE ||
         node.hidden ||
         (node.selectable ?? flowStore.elementsSelectable) === false
       ) {
@@ -906,7 +905,7 @@
 </div>
 
 <style>
-  :global(.canvas-low-detail-active .svelte-flow__node:not(.svelte-flow__node-groupnode)) {
+  :global(.canvas-low-detail-active .svelte-flow__node) {
     display: none;
   }
 </style>

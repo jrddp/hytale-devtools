@@ -1,4 +1,4 @@
-<!-- This component renders an optimized canvas-based node mockup above xy-flow to save performance when rendering many nodes -->
+<!-- This component renders optimized canvas-based node and group mockups above xy-flow in low-detail mode. -->
 <script lang="ts">
   import { useStore } from "@xyflow/svelte";
   import type { FlowEdge, FlowNode } from "src/common";
@@ -34,35 +34,50 @@
     const maxX = (width - viewport.x) / viewport.zoom + viewportPadding;
     const maxY = (height - viewport.y) / viewport.zoom + viewportPadding;
 
-    return workspace.nodes.flatMap(node => {
-      if (node.type === GROUP_NODE_TYPE || node.hidden) {
-        return [];
+    const overlayItems = [];
+
+    for (const node of workspace.nodes) {
+      if (node.hidden) {
+        continue;
       }
 
       const nodeWidth = node.measured?.width ?? node.width ?? DEFAULT_NODE_WIDTH_PX;
       const nodeHeight = node.measured?.height ?? node.height ?? DEFAULT_NODE_HEIGHT_PX;
-
       const position = getAbsolutePosition(node);
+
       if (
         position.x + nodeWidth < minX ||
         position.y + nodeHeight < minY ||
         position.x > maxX ||
         position.y > maxY
       ) {
-        return [];
+        continue;
       }
 
-      return [
-        {
+      if (node.type === GROUP_NODE_TYPE) {
+        overlayItems.push({
+          kind: "group" as const,
           x: position.x,
           y: position.y,
           width: nodeWidth,
           height: nodeHeight,
-          accentColor: readColorForCss(node.data.nodeColor),
           selected: !!node.selected,
-        },
-      ];
-    });
+        });
+        continue;
+      }
+
+      overlayItems.push({
+        kind: "node" as const,
+        x: position.x,
+        y: position.y,
+        width: nodeWidth,
+        height: nodeHeight,
+        accentColor: readColorForCss(node.data.nodeColor),
+        selected: !!node.selected,
+      });
+    }
+
+    return overlayItems;
   });
 
   let canvasElement = $state<HTMLCanvasElement | undefined>();
@@ -171,12 +186,13 @@
     height: number;
     viewport: { x: number; y: number; zoom: number };
     nodes: Array<{
+      kind: "group" | "node";
       x: number;
       y: number;
       width: number;
       height: number;
-      accentColor: string;
       selected: boolean;
+      accentColor?: string;
     }>;
     active: boolean;
   }) {
@@ -212,12 +228,33 @@
       resolveCanvasColor("var(--vscode-editorWidget-background)");
     const shellBorder = resolveCanvasColor("var(--vscode-editorWidget-border)");
     const selectionBorder = resolveCanvasColor("var(--vscode-focusBorder)");
+    const groupFill = shellFill;
 
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     context.translate(viewport.x, viewport.y);
     context.scale(viewport.zoom, viewport.zoom);
 
     for (const node of nodes) {
+      if (node.kind === "group") {
+        drawRect({
+          context,
+          x: node.x,
+          y: node.y,
+          width: node.width,
+          height: node.height,
+          fillStyle: groupFill,
+          alpha: 0.4,
+        });
+
+        context.globalAlpha = 1;
+        context.strokeStyle = node.selected ? selectionBorder : shellBorder;
+        context.lineWidth = node.selected ? 2 : 1;
+        context.setLineDash(node.selected ? [] : [6, 4]);
+        context.strokeRect(node.x + 0.5, node.y + 0.5, node.width - 1, node.height - 1);
+        context.setLineDash([]);
+        continue;
+      }
+
       drawRect({
         context,
         x: node.x,
@@ -233,7 +270,7 @@
         y: node.y,
         width: node.width,
         height: Math.min(node.height, 4),
-        fillStyle: resolveCanvasColor(node.accentColor),
+        fillStyle: resolveCanvasColor(node.accentColor ?? "var(--vscode-focusBorder)"),
       });
 
       context.globalAlpha = 1;
