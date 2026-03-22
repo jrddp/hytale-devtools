@@ -11,7 +11,13 @@
     type Viewport,
     type XYPosition,
   } from "@xyflow/svelte";
-  import { getOverlappingArea, pointToRendererPoint } from "@xyflow/system";
+  import {
+    getBezierPath,
+    getOverlappingArea,
+    getSmoothStepPath,
+    getStraightPath,
+    pointToRendererPoint,
+  } from "@xyflow/system";
   import "@xyflow/svelte/dist/style.css";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
@@ -107,8 +113,16 @@
       x: number;
       y: number;
       width: number;
-        height: number;
-        accentColor?: string;
+      height: number;
+      accentColor?: string;
+    }>
+  >([]);
+  let lowDetailEdgeRenderCache = $state.raw<
+    Array<{
+      id: string;
+      path: string;
+      selected: boolean;
+      animated: boolean;
     }>
   >([]);
   let lowDetailSelectedNodeIds = $state.raw<string[]>([]);
@@ -117,6 +131,7 @@
   let lowDetailDragActive = $state(false);
   let forcedLowDetailSelectionMode = $state(false);
   let lowDetailHiddenNodeIds = $state.raw<Set<string>>(new Set());
+  let lowDetailHiddenEdgeIds = $state.raw<Set<string>>(new Set());
 
   const useCanvasLowDetailOverlay = $derived(
     workspace.renderDetailMode === "low" && canvasOverlayReady,
@@ -149,12 +164,39 @@
     return true;
   }
 
-  function isLowDetailCanvasSourceNode(node: FlowNode) {
-    if (node.type === GROUP_NODE_TYPE) {
-      return !node.hidden;
-    }
+  function isNodeHiddenByDebug(node: FlowNode) {
+    return node.type === GROUP_NODE_TYPE
+      ? workspace.debugState.hideGroups
+      : workspace.debugState.hideNodes;
+  }
 
-    return lowDetailHiddenNodeIds.has(node.id) || !node.hidden;
+  function isLowDetailCanvasSourceNode(node: FlowNode) {
+    return !isNodeHiddenByDebug(node) && (lowDetailHiddenNodeIds.has(node.id) || !node.hidden);
+  }
+
+  function isLowDetailCanvasSourceEdge(edge: FlowEdge) {
+    return !workspace.debugState.hideEdges && (lowDetailHiddenEdgeIds.has(edge.id) || !edge.hidden);
+  }
+
+  function buildLowDetailEdgePath(edge: {
+    type?: string;
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+    sourcePosition: Position;
+    targetPosition: Position;
+  }) {
+    switch (edge.type) {
+      case "straight":
+        return getStraightPath(edge)[0];
+      case "smoothstep":
+        return getSmoothStepPath(edge)[0];
+      case "step":
+        return getSmoothStepPath({ ...edge, borderRadius: 0 })[0];
+      default:
+        return getBezierPath(edge)[0];
+    }
   }
 
   function getCanvasSelectableNodeAtPoint(flowPosition: XYPosition) {
@@ -303,7 +345,7 @@
   $effect(() => {
     const zoom = viewport.current.zoom;
     workspace.updateViewportZoom(zoom);
-    const nextDetailMode = zoom >= workspace.lowDetailZoomThreshold ? "full" : "low";
+    const nextDetailMode = zoom >= workspace.debugState.lowDetailZoomThreshold ? "full" : "low";
     if (workspace.renderDetailMode !== nextDetailMode) {
       workspace.renderDetailMode = nextDetailMode;
     }
@@ -335,38 +377,19 @@
   });
 
   $effect(() => {
-    if (!useCanvasLowDetailOverlay) {
-      if (lowDetailHiddenNodeIds.size === 0) {
-        return;
-      }
-
-      const hiddenNodeIds = [...lowDetailHiddenNodeIds];
-      lowDetailHiddenNodeIds = new Set();
-      workspace.applyNodeUpdates(hiddenNodeIds.map(nodeId => [nodeId, { hidden: false }]));
-      return;
-    }
-
     const nextHiddenNodeIds = new Set<string>();
-    for (const node of workspace.nodes) {
-      if (node.type === GROUP_NODE_TYPE) {
-        continue;
-      }
-
-      if (lowDetailHiddenNodeIds.has(node.id) || !node.hidden) {
-        nextHiddenNodeIds.add(node.id);
-      }
-    }
-
     const updates = [];
     for (const node of workspace.nodes) {
-      if (node.type === GROUP_NODE_TYPE) {
-        continue;
+      const hiddenByDebug = isNodeHiddenByDebug(node);
+      const hiddenByLowDetail = useCanvasLowDetailOverlay && !hiddenByDebug;
+      if (hiddenByLowDetail) {
+        nextHiddenNodeIds.add(node.id);
       }
 
-      const shouldBeHidden = nextHiddenNodeIds.has(node.id);
+      const shouldBeHidden = hiddenByDebug || hiddenByLowDetail;
       if (shouldBeHidden && !node.hidden) {
         updates.push([node.id, { hidden: true }]);
-      } else if (!shouldBeHidden && lowDetailHiddenNodeIds.has(node.id) && node.hidden) {
+      } else if (!shouldBeHidden && node.hidden) {
         updates.push([node.id, { hidden: false }]);
       }
     }
@@ -380,13 +403,44 @@
   });
 
   $effect(() => {
+    const nextHiddenEdgeIds = new Set<string>();
+    const hideEdgesByDebug = workspace.debugState.hideEdges;
+    for (const edge of workspace.edges) {
+      if (useCanvasLowDetailOverlay && !hideEdgesByDebug) {
+        nextHiddenEdgeIds.add(edge.id);
+      }
+    }
+
+    if (!areNodeIdSetsEqual(lowDetailHiddenEdgeIds, nextHiddenEdgeIds)) {
+      lowDetailHiddenEdgeIds = nextHiddenEdgeIds;
+    }
+
+    let didChange = false;
+    const nextEdges = edges.map(edge => {
+      const shouldBeHidden = hideEdgesByDebug || nextHiddenEdgeIds.has(edge.id);
+      if (!!edge.hidden === shouldBeHidden) {
+        return edge;
+      }
+
+      didChange = true;
+      return { ...edge, hidden: shouldBeHidden };
+    });
+
+    if (didChange) {
+      edges = nextEdges;
+    }
+  });
+
+  $effect(() => {
     if (!useCanvasLowDetailOverlay) {
       lowDetailDragActive = false;
       lowDetailDragDelta = { x: 0, y: 0 };
       lowDetailRenderCache = [];
+      lowDetailEdgeRenderCache = [];
       lowDetailSelectedNodeIds = [];
       lowDetailDraggedNodeIds = [];
       lowDetailHiddenNodeIds = new Set();
+      lowDetailHiddenEdgeIds = new Set();
       if (forcedLowDetailSelectionMode && flowStore.selectionRectMode === "nodes") {
         flowStore.selectionRectMode = null;
       }
@@ -400,6 +454,28 @@
 
     void workspace.nodes;
     buildLowDetailRenderCache();
+  });
+
+  $effect(() => {
+    if (!useCanvasLowDetailOverlay) {
+      return;
+    }
+
+    void flowStore.visible.edges;
+    lowDetailEdgeRenderCache = Array.from(flowStore.visible.edges.values()).flatMap(edge => {
+      if (!isLowDetailCanvasSourceEdge(edge)) {
+        return [];
+      }
+
+      return [
+        {
+          id: edge.id,
+          path: buildLowDetailEdgePath(edge),
+          selected: !!edge.selected,
+          animated: !!edge.animated,
+        },
+      ];
+    });
   });
 
   $effect(() => {
@@ -481,7 +557,7 @@
     });
 
     const selectedEdgeIds = new Set<string>();
-    if (containerRect) {
+    if (!useCanvasLowDetailOverlay && containerRect) {
       for (const edge of flowStore.edges) {
         const isSelectable = edge.selectable ?? defaultEdgeSelectable;
         if (!isSelectable || edge.hidden) {
@@ -527,7 +603,7 @@
 
   $effect(() => {
     if (
-      !workspace.useCustomSelectionBoxLogic ||
+      !workspace.debugState.useCustomSelectionBoxLogic ||
       flowStore.selectionRectMode !== "user" ||
       !flowStore.selectionRect
     ) {
@@ -991,7 +1067,7 @@
       syncLowDetailSelectionMode(selectedNodes.length);
     },
     onselectionend: () => {
-      if (!workspace.useCustomSelectionBoxLogic || !lastUserSelectionRect) {
+      if (!workspace.debugState.useCustomSelectionBoxLogic || !lastUserSelectionRect) {
         return;
       }
 
@@ -1091,7 +1167,6 @@
 
 <div
   class="relative w-full h-full overflow-hidden"
-  class:canvas-low-detail-active={useCanvasLowDetailOverlay}
   onclickcapture={handleFlowWrapperClickCapture}
   bind:this={flowWrapperElement}
 >
@@ -1126,10 +1201,12 @@
       <LowDetailNodeCanvasOverlay
         active
         items={lowDetailRenderCache}
+        edges={lowDetailEdgeRenderCache}
         selectedNodeIds={lowDetailSelectedNodeIds}
         draggedNodeIds={lowDetailDraggedNodeIds}
         dragDelta={lowDetailDragDelta}
         dragging={lowDetailDragActive}
+        edgeWidth={workspace.debugState.lowDetailCanvasEdgeBaseWidth * workspace.zoomCompensationScale}
       />
     {/if}
     <NodeEditorActionMenu />
@@ -1169,9 +1246,3 @@
     <NodeHelpPanel onclose={() => (helpMenuOpen = false)} />
   {/if}
 </div>
-
-<style>
-  :global(.canvas-low-detail-active .svelte-flow__node-groupnode) {
-    display: none;
-  }
-</style>

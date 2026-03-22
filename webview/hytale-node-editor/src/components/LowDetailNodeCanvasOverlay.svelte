@@ -28,20 +28,31 @@
     selected: boolean;
   };
 
+  type OverlayEdge = {
+    id: string;
+    path: string;
+    selected: boolean;
+    animated: boolean;
+  };
+
   let {
     active = false,
     items = [],
+    edges = [],
     selectedNodeIds = [],
     draggedNodeIds = [],
     dragDelta = { x: 0, y: 0 },
     dragging = false,
+    edgeWidth = 1,
   }: {
     active?: boolean;
     items?: OverlayItem[];
+    edges?: OverlayEdge[];
     selectedNodeIds?: string[];
     draggedNodeIds?: string[];
     dragDelta?: XYPosition;
     dragging?: boolean;
+    edgeWidth?: number;
   } = $props();
 
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
@@ -58,6 +69,7 @@
     })),
   );
   const itemById = $derived(new Map(indexedItems.map(item => [item.id, item])));
+  const edgePathsById = $derived(new Map(edges.map(edge => [edge.id, new Path2D(edge.path)])));
   const overlayIndex = $derived.by(() => {
     const index = new RBush<IndexedOverlayItem>();
     index.load(indexedItems);
@@ -138,6 +150,8 @@
     const height = flowStore.height;
     const viewport = flowStore.viewport;
     const nodes = overlayNodes;
+    const overlayEdges = edges;
+    const edgePaths = edgePathsById;
     const isActive = active;
 
     if (!canvas) {
@@ -154,6 +168,9 @@
         width,
         height,
         viewport,
+        edges: overlayEdges,
+        edgePaths,
+        edgeWidth,
         nodes,
         active: isActive,
       });
@@ -198,6 +215,9 @@
     width,
     height,
     viewport,
+    edges,
+    edgePaths,
+    edgeWidth,
     nodes,
     active,
   }: {
@@ -205,6 +225,9 @@
     width: number;
     height: number;
     viewport: { x: number; y: number; zoom: number };
+    edges: OverlayEdge[];
+    edgePaths: Map<string, Path2D>;
+    edgeWidth: number;
     nodes: Array<{
       id: string;
       kind: "group" | "node";
@@ -247,11 +270,30 @@
     const shellFill = resolveComputedColor("var(--vscode-editorWidget-background)");
     const shellBorder = resolveComputedColor("var(--vscode-editorWidget-border)");
     const selectionBorder = resolveComputedColor("var(--vscode-focusBorder)");
+    const edgeStroke = getComputedStyle(flowStore.domNode).getPropertyValue("--xy-edge-stroke") || "#b1b1b7";
+    const selectedEdgeStroke =
+      getComputedStyle(flowStore.domNode).getPropertyValue("--xy-edge-stroke-selected") || "#555";
     const groupFill = shellFill;
 
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     context.translate(viewport.x, viewport.y);
     context.scale(viewport.zoom, viewport.zoom);
+
+    context.setLineDash([]);
+    for (const edge of edges) {
+      const path = edgePaths.get(edge.id);
+      if (!path) {
+        continue;
+      }
+
+      context.globalAlpha = 1;
+      context.strokeStyle = edge.selected ? selectedEdgeStroke : edgeStroke;
+      context.lineWidth = edgeWidth;
+      context.setLineDash(edge.animated ? [5, 5] : []);
+      context.stroke(path);
+    }
+
+    context.setLineDash([]);
 
     for (const node of nodes) {
       if (node.kind === "group") {

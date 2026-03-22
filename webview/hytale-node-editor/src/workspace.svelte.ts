@@ -39,6 +39,16 @@ export interface WorkspaceState {
 
 export type NodeRenderDetailMode = "full" | "low";
 const DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD = 0.1;
+const DEFAULT_LOW_DETAIL_CANVAS_EDGE_BASE_WIDTH = 1;
+
+export interface NodeEditorDebugState {
+  hideNodes: boolean;
+  hideGroups: boolean;
+  hideEdges: boolean;
+  useCustomSelectionBoxLogic: boolean;
+  lowDetailZoomThreshold: number;
+  lowDetailCanvasEdgeBaseWidth: number;
+}
 
 function hasRenderableNodeSize(node: FlowNode) {
   const width = node.measured?.width ?? node.width;
@@ -84,10 +94,16 @@ export class Workspace {
   copiedSelection = $state.raw<NodeEditorClipboardSelection>(createEmptyNodeEditorClipboardSelection());
   isDevelopment = $state(false);
   renderDetailMode = $state<NodeRenderDetailMode>("full");
-  lowDetailZoomThreshold = $state(DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD);
   viewportZoom = $state(1);
   zoomCompensationScale = $derived(this.viewportZoom < 1 ? 1 / this.viewportZoom : 1);
-  useCustomSelectionBoxLogic = $state(true);
+  debugState = $state<NodeEditorDebugState>({
+    hideNodes: false,
+    hideGroups: false,
+    hideEdges: false,
+    useCustomSelectionBoxLogic: true,
+    lowDetailZoomThreshold: DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD,
+    lowDetailCanvasEdgeBaseWidth: DEFAULT_LOW_DETAIL_CANVAS_EDGE_BASE_WIDTH,
+  });
 
   // unfortunately, we can't keep a single dynamically updating map because nodes and edges are immutable and are completely reset every change
   private nodesById = $derived(new Map(this.nodes.map(node => [node.id, node])));

@@ -10,6 +10,9 @@
   const MIN_THRESHOLD = 0.02;
   const MAX_THRESHOLD = 1;
   const THRESHOLD_STEP = 0.01;
+  const EDGE_WIDTH_MIN = 0.5;
+  const EDGE_WIDTH_MAX = 4;
+  const EDGE_WIDTH_STEP = 0.25;
 
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
   const nonGroupNodes = $derived.by(() =>
@@ -29,9 +32,6 @@
   });
   const visibleGroupCount = $derived(visibleNodeCount - visibleNonGroupNodeCount);
   const currentZoom = $derived(flowStore.viewport.zoom);
-  const areNodesVisible = $derived(nonGroupNodes.every(node => !node.hidden));
-  const areGroupsVisible = $derived(groupNodes.every(node => !node.hidden));
-  const areEdgesVisible = $derived(workspace.edges.every(edge => !edge.hidden));
 
   let fps = $state(0);
   let worstFrameMs = $state(0);
@@ -125,65 +125,22 @@
       return;
     }
 
-    workspace.lowDetailZoomThreshold = Math.min(
+    workspace.debugState.lowDetailZoomThreshold = Math.min(
       MAX_THRESHOLD,
       Math.max(MIN_THRESHOLD, nextValue),
     );
   }
 
-  function updateNodes(
-    predicate: (node: FlowNode) => boolean,
-    updater: (node: FlowNode) => FlowNode,
-  ) {
-    let didChange = false;
-    const nextNodes = workspace.nodes.map(node => {
-      if (!predicate(node)) {
-        return node;
-      }
-
-      const nextNode = updater(node);
-      didChange = didChange || nextNode !== node;
-      return nextNode;
-    });
-
-    if (didChange) {
-      workspace.nodes = nextNodes;
+  function handleEdgeWidthInput(event: Event) {
+    const nextValue = Number((event.currentTarget as HTMLInputElement).value);
+    if (!Number.isFinite(nextValue)) {
+      return;
     }
-  }
 
-  function updateEdges(updater: (edge: FlowEdge) => FlowEdge) {
-    let didChange = false;
-    const nextEdges = workspace.edges.map(edge => {
-      const nextEdge = updater(edge);
-      didChange = didChange || nextEdge !== edge;
-      return nextEdge;
-    });
-
-    if (didChange) {
-      workspace.edges = nextEdges;
-    }
-  }
-
-  function setElementVisibility(target: "nodes" | "groups" | "edges", visible: boolean) {
-    const hidden = !visible;
-
-    switch (target) {
-      case "nodes":
-        updateNodes(
-          node => node.type !== GROUP_NODE_TYPE && !!node.hidden !== hidden,
-          node => ({ ...node, hidden }),
-        );
-        break;
-      case "groups":
-        updateNodes(
-          node => node.type === GROUP_NODE_TYPE && !!node.hidden !== hidden,
-          node => ({ ...node, hidden }),
-        );
-        break;
-      case "edges":
-        updateEdges(edge => (!!edge.hidden === hidden ? edge : { ...edge, hidden }));
-        break;
-    }
+    workspace.debugState.lowDetailCanvasEdgeBaseWidth = Math.min(
+      EDGE_WIDTH_MAX,
+      Math.max(EDGE_WIDTH_MIN, nextValue),
+    );
   }
 </script>
 
@@ -223,7 +180,9 @@
     <div class="grid gap-1 border-t border-vsc-editor-widget-border pt-3 text-[0.7rem] text-vsc-muted">
       <div class="flex items-center justify-between gap-2">
         <span>Low-detail threshold</span>
-        <span class="text-vsc-editor-fg">{formatMetric(workspace.lowDetailZoomThreshold, 2)}x</span>
+        <span class="text-vsc-editor-fg">
+          {formatMetric(workspace.debugState.lowDetailZoomThreshold, 2)}x
+        </span>
       </div>
       <input
         class="w-full"
@@ -231,8 +190,24 @@
         min={MIN_THRESHOLD}
         max={MAX_THRESHOLD}
         step={THRESHOLD_STEP}
-        value={workspace.lowDetailZoomThreshold}
+        value={workspace.debugState.lowDetailZoomThreshold}
         oninput={handleThresholdInput}
+      />
+
+      <div class="mt-2 flex items-center justify-between gap-2">
+        <span>Canvas edge base width</span>
+        <span class="text-vsc-editor-fg">
+          {formatMetric(workspace.debugState.lowDetailCanvasEdgeBaseWidth, 2)} px
+        </span>
+      </div>
+      <input
+        class="w-full"
+        type="range"
+        min={EDGE_WIDTH_MIN}
+        max={EDGE_WIDTH_MAX}
+        step={EDGE_WIDTH_STEP}
+        value={workspace.debugState.lowDetailCanvasEdgeBaseWidth}
+        oninput={handleEdgeWidthInput}
       />
     </div>
 
@@ -242,38 +217,38 @@
         <input
           class="h-4 w-4"
           type="checkbox"
-          checked={workspace.useCustomSelectionBoxLogic}
-          onchange={event => (workspace.useCustomSelectionBoxLogic = event.currentTarget.checked)}
+          checked={workspace.debugState.useCustomSelectionBoxLogic}
+          onchange={event => (workspace.debugState.useCustomSelectionBoxLogic = event.currentTarget.checked)}
         />
       </label>
 
       <label class="flex items-center justify-between gap-3">
-        <span>Show nodes ({nonGroupNodes.length})</span>
+        <span>Hide nodes ({nonGroupNodes.length})</span>
         <input
           class="h-4 w-4"
           type="checkbox"
-          checked={areNodesVisible}
-          onchange={event => setElementVisibility("nodes", event.currentTarget.checked)}
+          checked={workspace.debugState.hideNodes}
+          onchange={event => (workspace.debugState.hideNodes = event.currentTarget.checked)}
         />
       </label>
 
       <label class="flex items-center justify-between gap-3">
-        <span>Show groups ({groupNodes.length})</span>
+        <span>Hide groups ({groupNodes.length})</span>
         <input
           class="h-4 w-4"
           type="checkbox"
-          checked={areGroupsVisible}
-          onchange={event => setElementVisibility("groups", event.currentTarget.checked)}
+          checked={workspace.debugState.hideGroups}
+          onchange={event => (workspace.debugState.hideGroups = event.currentTarget.checked)}
         />
       </label>
 
       <label class="flex items-center justify-between gap-3">
-        <span>Show edges ({workspace.edges.length})</span>
+        <span>Hide edges ({workspace.edges.length})</span>
         <input
           class="h-4 w-4"
           type="checkbox"
-          checked={areEdgesVisible}
-          onchange={event => setElementVisibility("edges", event.currentTarget.checked)}
+          checked={workspace.debugState.hideEdges}
+          onchange={event => (workspace.debugState.hideEdges = event.currentTarget.checked)}
         />
       </label>
     </div>
