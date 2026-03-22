@@ -12,13 +12,11 @@
     type XYPosition,
   } from "@xyflow/svelte";
   import {
-    getBezierPath,
     getOverlappingArea,
-    getSmoothStepPath,
-    getStraightPath,
     pointToRendererPoint,
   } from "@xyflow/system";
   import "@xyflow/svelte/dist/style.css";
+  import RBush from "rbush";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
@@ -34,6 +32,12 @@
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import { asCssColor, resolveComputedColor } from "src/node-editor/utils/colors";
+  import {
+    buildIndexedBezierEdgeGeometry,
+    createEdgeSelectionBounds,
+    edgeGeometryIntersectsRect,
+    type IndexedBezierEdgeGeometry,
+  } from "src/node-editor/utils/edgeGeometry";
   import {
     getAllSiblingOrderUpdates,
     getAbsoluteCenterPosition,
@@ -140,6 +144,15 @@
   const lowDetailRenderCacheById = $derived(
     new Map(lowDetailRenderCache.map(item => [item.id, item])),
   );
+  const visibleEdgeGeometries = $derived.by(() => {
+    void flowStore.visible.edges;
+    return Array.from(flowStore.visible.edges.values()).map(edge => buildIndexedBezierEdgeGeometry(edge));
+  });
+  const visibleEdgeGeometryIndex = $derived.by(() => {
+    const index = new RBush<IndexedBezierEdgeGeometry>();
+    index.load(visibleEdgeGeometries);
+    return index;
+  });
 
   function getRenderableNodeSize(node: FlowNode) {
     const width = node.measured?.width ?? node.width;
@@ -174,29 +187,8 @@
     return !isNodeHiddenByDebug(node) && (lowDetailHiddenNodeIds.has(node.id) || !node.hidden);
   }
 
-  function isLowDetailCanvasSourceEdge(edge: FlowEdge) {
+  function isLowDetailCanvasSourceEdge(edge: Pick<FlowEdge, "id" | "hidden">) {
     return !workspace.debugState.hideEdges && (lowDetailHiddenEdgeIds.has(edge.id) || !edge.hidden);
-  }
-
-  function buildLowDetailEdgePath(edge: {
-    type?: string;
-    sourceX: number;
-    sourceY: number;
-    targetX: number;
-    targetY: number;
-    sourcePosition: Position;
-    targetPosition: Position;
-  }) {
-    switch (edge.type) {
-      case "straight":
-        return getStraightPath(edge)[0];
-      case "smoothstep":
-        return getSmoothStepPath(edge)[0];
-      case "step":
-        return getSmoothStepPath({ ...edge, borderRadius: 0 })[0];
-      default:
-        return getBezierPath(edge)[0];
-    }
   }
 
   function getCanvasSelectableNodeAtPoint(flowPosition: XYPosition) {
@@ -461,8 +453,7 @@
       return;
     }
 
-    void flowStore.visible.edges;
-    lowDetailEdgeRenderCache = Array.from(flowStore.visible.edges.values()).flatMap(edge => {
+    lowDetailEdgeRenderCache = visibleEdgeGeometries.flatMap(edge => {
       if (!isLowDetailCanvasSourceEdge(edge)) {
         return [];
       }
@@ -470,9 +461,9 @@
       return [
         {
           id: edge.id,
-          path: buildLowDetailEdgePath(edge),
-          selected: !!edge.selected,
-          animated: !!edge.animated,
+          path: edge.path,
+          selected: edge.selected,
+          animated: edge.animated,
         },
       ];
     });
@@ -508,7 +499,6 @@
       width: domSelectionRect.width / flowStore.viewport.zoom,
       height: domSelectionRect.height / flowStore.viewport.zoom,
     };
-    const containerRect = flowStore.domNode?.getBoundingClientRect();
     const defaultNodeSelectable = flowStore.elementsSelectable;
     const defaultEdgeSelectable = flowStore.defaultEdgeOptions.selectable ?? true;
 
@@ -557,30 +547,15 @@
     });
 
     const selectedEdgeIds = new Set<string>();
-    if (!useCanvasLowDetailOverlay && containerRect) {
-      for (const edge of flowStore.edges) {
-        const isSelectable = edge.selectable ?? defaultEdgeSelectable;
-        if (!isSelectable || edge.hidden) {
-          continue;
-        }
+    const edgeSelectionBounds = createEdgeSelectionBounds(selectionRect);
+    for (const edge of visibleEdgeGeometryIndex.search(edgeSelectionBounds)) {
+      const isSelectable = edge.selectable ?? defaultEdgeSelectable;
+      if (!isSelectable || !isLowDetailCanvasSourceEdge(edge)) {
+        continue;
+      }
 
-        const edgeElement = flowStore.domNode?.querySelector<SVGGElement>(
-          `.svelte-flow__edge[data-id="${CSS.escape(edge.id)}"]`,
-        );
-        if (!edgeElement) {
-          continue;
-        }
-
-        const edgeRect = edgeElement.getBoundingClientRect();
-        const relativeEdgeRect = {
-          x: edgeRect.left - containerRect.left,
-          y: edgeRect.top - containerRect.top,
-          width: edgeRect.width,
-          height: edgeRect.height,
-        };
-        if (getOverlappingArea(domSelectionRect, relativeEdgeRect) > 0) {
-          selectedEdgeIds.add(edge.id);
-        }
+      if (edgeGeometryIntersectsRect(edge, edgeSelectionBounds)) {
+        selectedEdgeIds.add(edge.id);
       }
     }
 
