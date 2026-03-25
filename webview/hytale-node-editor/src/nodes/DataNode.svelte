@@ -1,7 +1,8 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
   import { type DataNodeType } from "src/common";
-  import { applyDocumentState } from "src/workspace.svelte";
+  import { createNodePropertiesUpdatedEdit } from "src/node-editor/utils/graphDocument";
+  import { applyGraphEdit } from "src/workspace.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
 
@@ -10,6 +11,7 @@
   const { updateNodeData } = useSvelteFlow();
 
   function updateField(schemaKey: string, nextValue: unknown) {
+    const previousValue = fieldsBySchemaKey[schemaKey]?.value;
     updateNodeData(id, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
@@ -19,13 +21,24 @@
         },
       },
     });
-    applyDocumentState("node-properties-updated");
+    const edit = createNodePropertiesUpdatedEdit([
+      {
+        type: "field-value",
+        nodeId: id,
+        schemaKey,
+        beforeValue: previousValue,
+        afterValue: nextValue,
+      },
+    ]);
+    if (edit) {
+      applyGraphEdit(edit);
+    }
   }
 </script>
 
 <BaseNode {id} {...props}>
   <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
-    {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field]}
+    {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
       <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
     {/each}
   </div>

@@ -4,7 +4,8 @@
   import type { FlowNode } from "src/common";
   import { asCssColor } from "src/node-editor/utils/colors";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { applyDocumentState } from "src/workspace.svelte";
+  import { createNodePropertiesUpdatedEdit } from "src/node-editor/utils/graphDocument";
+  import { applyDocumentState, applyGraphEdit } from "src/workspace.svelte";
   import type { Snippet } from "svelte";
   import HoverTooltip from "src/components/HoverTooltip.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
@@ -61,9 +62,20 @@
   let isEditingComment = $state(false);
   const commitComment = () => {
     if (currentComment !== lastComittedComment) {
-      updateNodeData(id, { currentComment });
+      const beforeComment = lastComittedComment;
+      updateNodeData(id, { comment: currentComment });
       lastComittedComment = currentComment;
-      applyDocumentState("node-properties-updated");
+      const edit = createNodePropertiesUpdatedEdit([
+        {
+          type: "comment",
+          nodeId: id,
+          beforeComment,
+          afterComment: currentComment,
+        },
+      ]);
+      if (edit) {
+        applyGraphEdit(edit);
+      }
     }
     isEditingComment = false;
   };

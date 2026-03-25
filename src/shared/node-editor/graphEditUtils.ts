@@ -2,6 +2,7 @@ import type {
   NodeEditorGraphDocument,
   NodeEditorGraphEdit,
   NodeEditorGraphNode,
+  NodeEditorGraphPropertyChange,
   NodeMoveChange,
   NodeRenameChange,
   NodeResizeChange,
@@ -63,6 +64,44 @@ function applyNodeResizeChanges(
   }
 }
 
+function applyNodePropertyChanges(
+  document: NodeEditorGraphDocument,
+  changes: NodeEditorGraphPropertyChange[],
+  target: "before" | "after",
+): void {
+  const nodesById = indexNodesById(document);
+  for (const change of changes) {
+    const node = nodesById.get(change.nodeId);
+    if (!node) {
+      continue;
+    }
+
+    switch (change.type) {
+      case "field-value":
+        if (node.data.fieldsBySchemaKey?.[change.schemaKey]) {
+          node.data.fieldsBySchemaKey[change.schemaKey].value =
+            target === "before" ? change.beforeValue : change.afterValue;
+        }
+        break;
+      case "comment":
+        node.data.comment = target === "before" ? change.beforeComment : change.afterComment;
+        break;
+      case "font-size":
+        if ("fontSize" in node.data) {
+          node.data.fontSize =
+            target === "before" ? change.beforeFontSize : change.afterFontSize;
+        }
+        break;
+      case "raw-json":
+        if ("jsonString" in node.data) {
+          node.data.jsonString =
+            target === "before" ? change.beforeJsonString : change.afterJsonString;
+        }
+        break;
+    }
+  }
+}
+
 export function applyNodeEditorGraphEdit(
   document: NodeEditorGraphDocument,
   edit: NodeEditorGraphEdit,
@@ -77,6 +116,12 @@ export function applyNodeEditorGraphEdit(
       return;
     case "node-resized":
       applyNodeResizeChanges(document, edit.changes, target);
+      return;
+    case "node-properties-updated":
+      applyNodePropertyChanges(document, edit.propertyChanges, target);
+      if (edit.resizeChanges?.length) {
+        applyNodeResizeChanges(document, edit.resizeChanges, target);
+      }
       return;
   }
 }
@@ -107,6 +152,43 @@ export function invertNodeEditorGraphEdit(
       return {
         kind: edit.kind,
         changes: edit.changes.map(change => ({
+          nodeId: change.nodeId,
+          before: change.after,
+          after: change.before,
+        })),
+      };
+    case "node-properties-updated":
+      return {
+        kind: edit.kind,
+        propertyChanges: edit.propertyChanges.map(change => {
+          switch (change.type) {
+            case "field-value":
+              return {
+                ...change,
+                beforeValue: change.afterValue,
+                afterValue: change.beforeValue,
+              };
+            case "comment":
+              return {
+                ...change,
+                beforeComment: change.afterComment,
+                afterComment: change.beforeComment,
+              };
+            case "font-size":
+              return {
+                ...change,
+                beforeFontSize: change.afterFontSize,
+                afterFontSize: change.beforeFontSize,
+              };
+            case "raw-json":
+              return {
+                ...change,
+                beforeJsonString: change.afterJsonString,
+                afterJsonString: change.beforeJsonString,
+              };
+          }
+        }),
+        resizeChanges: edit.resizeChanges?.map(change => ({
           nodeId: change.nodeId,
           before: change.after,
           after: change.before,

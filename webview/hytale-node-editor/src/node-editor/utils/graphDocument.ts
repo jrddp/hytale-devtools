@@ -11,6 +11,7 @@ import type {
   NodeEditorGraphEdit,
   NodeEditorGraphEdge,
   NodeEditorGraphNode,
+  NodeEditorGraphPropertyChange,
   RawJsonGraphNode,
   LinkGraphNode,
   NodeMoveChange,
@@ -91,6 +92,41 @@ function flowNodeToGraphNode(node: FlowNode): NodeEditorGraphNode {
         height: node.height,
       } as CommentGraphNode;
   }
+}
+
+export function createNodeResizeChange(
+  nodeId: string,
+  before: { width?: number; height?: number },
+  after: { width?: number; height?: number },
+): NodeResizeChange | undefined {
+  if (before.width === after.width && before.height === after.height) {
+    return undefined;
+  }
+
+  return {
+    nodeId,
+    before,
+    after,
+  };
+}
+
+export function createNodePropertiesUpdatedEdit(
+  propertyChanges: NodeEditorGraphPropertyChange[],
+  resizeChanges: NodeResizeChange[] = [],
+): Extract<NodeEditorGraphEdit, { kind: "node-properties-updated" }> | undefined {
+  if (propertyChanges.length === 0 && resizeChanges.length === 0) {
+    return undefined;
+  }
+
+  return {
+    kind: "node-properties-updated",
+    propertyChanges,
+    resizeChanges: resizeChanges.length > 0 ? resizeChanges : undefined,
+  };
+}
+
+export function graphEditRequiresDocumentRefresh(edit: NodeEditorGraphEdit): boolean {
+  return edit.kind === "nodes-moved" || edit.kind === "node-resized";
 }
 
 export function graphDocumentToWorkspaceState(document: NodeEditorGraphDocument): WorkspaceState {
@@ -218,6 +254,8 @@ export function applyGraphEditToWorkspaceState(
       return applyNodeRenamedToWorkspaceState(state, edit.changes);
     case "node-resized":
       return applyNodeResizedToWorkspaceState(state, edit.changes);
+    case "node-properties-updated":
+      return applyNodePropertiesUpdatedToWorkspaceState(state, edit);
   }
 }
 
@@ -294,4 +332,75 @@ function applyNodeResizedToWorkspaceState(
       };
     }) as FlowNode[],
   };
+}
+
+function applyNodePropertiesUpdatedToWorkspaceState(
+  state: WorkspaceState,
+  edit: Extract<NodeEditorGraphEdit, { kind: "node-properties-updated" }>,
+): WorkspaceState {
+  const propertyChangesByNodeId = new Map<string, NodeEditorGraphPropertyChange[]>();
+  for (const change of edit.propertyChanges) {
+    if (!propertyChangesByNodeId.has(change.nodeId)) {
+      propertyChangesByNodeId.set(change.nodeId, []);
+    }
+    propertyChangesByNodeId.get(change.nodeId)!.push(change);
+  }
+
+  let nextState = state;
+
+  if (propertyChangesByNodeId.size > 0) {
+    nextState = {
+      ...nextState,
+      nodes: nextState.nodes.map(node => {
+        const propertyChanges = propertyChangesByNodeId.get(node.id);
+        if (!propertyChanges) {
+          return node;
+        }
+
+        const nextNode = {
+          ...node,
+          data: {
+            ...node.data,
+          },
+        };
+
+        for (const change of propertyChanges) {
+          switch (change.type) {
+            case "field-value":
+              if (nextNode.data.fieldsBySchemaKey?.[change.schemaKey]) {
+                nextNode.data.fieldsBySchemaKey = {
+                  ...nextNode.data.fieldsBySchemaKey,
+                  [change.schemaKey]: {
+                    ...nextNode.data.fieldsBySchemaKey[change.schemaKey],
+                    value: change.afterValue,
+                  },
+                };
+              }
+              break;
+            case "comment":
+              nextNode.data.comment = change.afterComment;
+              break;
+            case "font-size":
+              if ("fontSize" in nextNode.data) {
+                nextNode.data.fontSize = change.afterFontSize;
+              }
+              break;
+            case "raw-json":
+              if ("jsonString" in nextNode.data) {
+                nextNode.data.jsonString = change.afterJsonString;
+              }
+              break;
+          }
+        }
+
+        return nextNode;
+      }) as FlowNode[],
+    };
+  }
+
+  if (edit.resizeChanges?.length) {
+    nextState = applyNodeResizedToWorkspaceState(nextState, edit.resizeChanges);
+  }
+
+  return nextState;
 }

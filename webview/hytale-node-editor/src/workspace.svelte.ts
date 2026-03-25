@@ -1,13 +1,4 @@
 import {
-  type ActionRequest,
-  type NodeEditorControlScheme,
-  type NodeEditorDocumentEditKind,
-  type NodeEditorGraphEditMessage,
-  type NodeEditorPlatform,
-  type SnapshotNodeEditorGraphEditKind,
-  type WebviewToExtensionMessage,
-} from "@shared/node-editor/messageTypes";
-import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "@shared/node-editor/clipboardTypes";
@@ -17,23 +8,28 @@ import {
   type NodeEditorGraphEdit,
 } from "@shared/node-editor/graphTypes";
 import {
+  type ActionRequest,
+  type NodeEditorControlScheme,
+  type NodeEditorDocumentEditKind,
+  type NodeEditorGraphEditMessage,
+  type NodeEditorPlatform,
+  type SnapshotNodeEditorGraphEditKind,
+  type WebviewToExtensionMessage,
+} from "@shared/node-editor/messageTypes";
+import {
   type NodeEditorWorkspaceContext,
   type NodeTemplate,
 } from "@shared/node-editor/workspaceTypes";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
+import { type FlowEdge, type FlowNode, type FlowNodeData, type VSCodeApi } from "src/common";
 import {
   buildNodeRenamedEdit,
   buildNodeResizedEdit,
   buildNodesMovedEdit,
+  graphEditRequiresDocumentRefresh,
   workspaceStateToGraphDocument,
 } from "src/node-editor/utils/graphDocument";
-import {
-  type FlowEdge,
-  type FlowNode,
-  type FlowNodeData,
-  type VSCodeApi,
-} from "src/common";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 
 export type SelectionType = "replace" | "add";
@@ -102,7 +98,9 @@ export class Workspace {
   private pendingMeasurementNodeIds = $state.raw<Set<string>>(new Set());
 
   /** clipboard snapshot of copied/cut nodes plus edges fully contained within that selection */
-  copiedSelection = $state.raw<NodeEditorClipboardSelection>(createEmptyNodeEditorClipboardSelection());
+  copiedSelection = $state.raw<NodeEditorClipboardSelection>(
+    createEmptyNodeEditorClipboardSelection(),
+  );
   isDevelopment = $state(false);
   renderDetailMode = $state<NodeRenderDetailMode>("full");
   viewportZoom = $state(1);
@@ -322,7 +320,9 @@ export class Workspace {
       }
 
       const nextData = update.data ? { ...node.data, ...update.data } : node.data;
-      const nextNode = update.data ? { ...node, ...update, data: nextData } : { ...node, ...update };
+      const nextNode = update.data
+        ? { ...node, ...update, data: nextData }
+        : { ...node, ...update };
       let changed = false;
       for (const [key, value] of Object.entries(update)) {
         if (key === "data") {
@@ -381,9 +381,7 @@ export class Workspace {
 
 export const workspace = new Workspace();
 
-/** Serializes current document state and applies changes with VSCode.
- * This effectively marks the view as dirty and adds the serialization to the undo tree. */
-export function applyDocumentState(reason: NodeEditorDocumentEditKind = "document-edited") {
+export function applyGraphEdit(edit: NodeEditorGraphEdit) {
   const beforeDocument = workspace.committedGraphDocument;
   if (!beforeDocument) {
     throw new Error("Cannot create an undoable edit before the document has been initialized.");
@@ -392,14 +390,25 @@ export function applyDocumentState(reason: NodeEditorDocumentEditKind = "documen
   const clientEditId = workspace.nextClientEditId + 1;
   workspace.nextClientEditId = clientEditId;
   workspace.pendingLocalEditId = clientEditId;
+  const afterDocument = structuredClone(beforeDocument);
+  applyNodeEditorGraphEdit(afterDocument, edit);
+  workspace.committedGraphDocument = afterDocument;
+  queuePostGraphEditActions(edit);
+  postGraphEdit(edit, clientEditId);
+}
+
+/** Serializes current document state and applies changes with VSCode.
+ * This effectively marks the view as dirty and adds the serialization to the undo tree. */
+export function applyDocumentState(reason: NodeEditorDocumentEditKind = "document-edited") {
+  const beforeDocument = workspace.committedGraphDocument;
+  if (!beforeDocument) {
+    throw new Error("Cannot create an undoable edit before the document has been initialized.");
+  }
+
   const graphEdit = buildGraphEdit(reason, beforeDocument);
 
   if (graphEdit) {
-    const afterDocument = structuredClone(beforeDocument);
-    applyNodeEditorGraphEdit(afterDocument, graphEdit);
-    workspace.committedGraphDocument = afterDocument;
-    queueDocumentRefreshForGraphEdit(graphEdit);
-    postGraphEdit(graphEdit, clientEditId);
+    applyGraphEdit(graphEdit);
     return;
   }
 
@@ -408,6 +417,9 @@ export function applyDocumentState(reason: NodeEditorDocumentEditKind = "documen
     return;
   }
 
+  const clientEditId = workspace.nextClientEditId + 1;
+  workspace.nextClientEditId = clientEditId;
+  workspace.pendingLocalEditId = clientEditId;
   const afterDocument = workspaceStateToGraphDocument(
     {
       nodes: workspace.nodes,
@@ -444,7 +456,9 @@ function buildGraphEdit(
   }
 }
 
-function isGraphEditKind(reason: NodeEditorDocumentEditKind): reason is NodeEditorGraphEdit["kind"] {
+function isGraphEditKind(
+  reason: NodeEditorDocumentEditKind,
+): reason is NodeEditorGraphEdit["kind"] {
   return reason === "nodes-moved" || reason === "node-renamed" || reason === "node-resized";
 }
 
@@ -477,11 +491,21 @@ function postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {
         clientEditId,
       } satisfies NodeEditorGraphEditMessage);
       return;
+    case "node-properties-updated":
+      workspace.vscode.postMessage({
+        type: "edit",
+        kind: edit.kind,
+        propertyChanges: edit.propertyChanges,
+        resizeChanges: edit.resizeChanges,
+        sourceVersion: workspace.sourceVersion,
+        clientEditId,
+      } satisfies NodeEditorGraphEditMessage);
+      return;
   }
 }
 
-function queueDocumentRefreshForGraphEdit(edit: NodeEditorGraphEdit): void {
-  if (edit.kind === "nodes-moved" || edit.kind === "node-resized") {
+function queuePostGraphEditActions(edit: NodeEditorGraphEdit): void {
+  if (graphEditRequiresDocumentRefresh(edit)) {
     workspace.actionRequests.push({ type: "document-refresh" });
   }
 }

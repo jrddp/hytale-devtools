@@ -14,6 +14,7 @@ import { type NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import {
   type ActionType,
   type ExtensionToWebviewMessage,
+  type NodeEditorGraphEditMessage,
   type NodeEditorControlScheme,
   type NodeEditorDocumentEditKind,
   type NodeEditorPlatform,
@@ -352,10 +353,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     }
 
     if (isGraphEditMessage(message)) {
-      const edit: NodeEditorGraphEdit = {
-        kind: message.kind,
-        changes: message.changes,
-      } as NodeEditorGraphEdit;
+      const edit = graphEditMessageToGraphEdit(message);
       const undoEdit = invertNodeEditorGraphEdit(edit);
 
       document.applyGraphEdit(edit);
@@ -550,13 +548,44 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
 }
 
 function isGraphEditKind(kind: NodeEditorDocumentEditKind): kind is NodeEditorGraphEdit["kind"] {
-  return kind === "nodes-moved" || kind === "node-renamed" || kind === "node-resized";
+  return (
+    kind === "nodes-moved" ||
+    kind === "node-renamed" ||
+    kind === "node-resized" ||
+    kind === "node-properties-updated"
+  );
 }
 
 function isGraphEditMessage(
   message: Extract<WebviewToExtensionMessage, { type: "edit" }>,
-): message is Extract<WebviewToExtensionMessage, { type: "edit"; kind: NodeEditorGraphEdit["kind"] }> {
+): message is NodeEditorGraphEditMessage {
   return isGraphEditKind(message.kind);
+}
+
+function graphEditMessageToGraphEdit(message: NodeEditorGraphEditMessage): NodeEditorGraphEdit {
+  switch (message.kind) {
+    case "nodes-moved":
+      return {
+        kind: message.kind,
+        changes: message.changes,
+      };
+    case "node-renamed":
+      return {
+        kind: message.kind,
+        changes: message.changes,
+      };
+    case "node-resized":
+      return {
+        kind: message.kind,
+        changes: message.changes,
+      };
+    case "node-properties-updated":
+      return {
+        kind: message.kind,
+        propertyChanges: message.propertyChanges,
+        resizeChanges: message.resizeChanges,
+      };
+  }
 }
 
 function escapeHtml(value: string): string {

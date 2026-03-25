@@ -117,7 +117,39 @@ export type NodeResizeChange = {
   };
 };
 
+export type NodeEditorGraphPropertyChange =
+  | {
+      type: "field-value";
+      nodeId: string;
+      schemaKey: string;
+      beforeValue: unknown;
+      afterValue: unknown;
+    }
+  | {
+      type: "comment";
+      nodeId: string;
+      beforeComment?: string;
+      afterComment?: string;
+    }
+  | {
+      type: "font-size";
+      nodeId: string;
+      beforeFontSize?: number;
+      afterFontSize?: number;
+    }
+  | {
+      type: "raw-json";
+      nodeId: string;
+      beforeJsonString: string;
+      afterJsonString: string;
+    };
+
 export type NodeEditorGraphEdit =
   | { kind: "nodes-moved"; changes: NodeMoveChange[] }
   | { kind: "node-renamed"; changes: NodeRenameChange[] }
-  | { kind: "node-resized"; changes: NodeResizeChange[] };
+  | { kind: "node-resized"; changes: NodeResizeChange[] }
+  | {
+      kind: "node-properties-updated";
+      propertyChanges: NodeEditorGraphPropertyChange[];
+      resizeChanges?: NodeResizeChange[];
+    };

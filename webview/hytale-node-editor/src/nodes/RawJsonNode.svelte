@@ -3,7 +3,8 @@
   import { useSvelteFlow } from "@xyflow/svelte";
   import { type RawJsonNodeType } from "src/common";
   import { DEFAULT_RAW_JSON_TEXT } from "src/constants";
-  import { applyDocumentState } from "src/workspace.svelte";
+  import { createNodePropertiesUpdatedEdit } from "src/node-editor/utils/graphDocument";
+  import { applyGraphEdit } from "src/workspace.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
 
@@ -22,11 +23,22 @@
   );
 
   function updateData(nextValue: unknown) {
+    const nextJsonString =
+      typeof nextValue === "string" ? nextValue : String(nextValue ?? DEFAULT_RAW_JSON_TEXT);
     updateNodeData(id, {
-      jsonString:
-        typeof nextValue === "string" ? nextValue : String(nextValue ?? DEFAULT_RAW_JSON_TEXT),
+      jsonString: nextJsonString,
     });
-    applyDocumentState("node-properties-updated");
+    const edit = createNodePropertiesUpdatedEdit([
+      {
+        type: "raw-json",
+        nodeId: id,
+        beforeJsonString: dataFieldValue,
+        afterJsonString: nextJsonString,
+      },
+    ]);
+    if (edit) {
+      applyGraphEdit(edit);
+    }
   }
 </script>
 

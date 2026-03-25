@@ -7,7 +7,11 @@
   import { type NodeEditorGraphEdit } from "@shared/node-editor/graphTypes";
   import { SvelteFlowProvider, type Viewport } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
-  import { graphDocumentToWorkspaceState, applyGraphEditToWorkspaceState } from "src/node-editor/utils/graphDocument";
+  import {
+    applyGraphEditToWorkspaceState,
+    graphDocumentToWorkspaceState,
+    graphEditRequiresDocumentRefresh,
+  } from "src/node-editor/utils/graphDocument";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
   import {
     EDITABLE_SELECTOR,
@@ -143,7 +147,7 @@
     workspace.nodes = nextState.nodes;
     workspace.edges = nextState.edges;
     workspace.rootNodeId = nextState.rootNodeId;
-    if (edit.kind === "nodes-moved" || edit.kind === "node-resized") {
+    if (graphEditRequiresDocumentRefresh(edit)) {
       workspace.actionRequests.push({ type: "document-refresh" });
     }
     return true;

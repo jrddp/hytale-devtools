@@ -9,11 +9,15 @@
     DEFAULT_COMMENT_WIDTH,
   } from "src/constants";
   import {
+    createNodePropertiesUpdatedEdit,
+    createNodeResizeChange,
+  } from "src/node-editor/utils/graphDocument";
+  import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
   } from "src/node-editor/utils/focusNavigation";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { applyDocumentState } from "src/workspace.svelte";
+  import { applyDocumentState, applyGraphEdit } from "src/workspace.svelte";
 
   const MIN_FONT_SIZE = 8;
   const MAX_FONT_SIZE = 128;
@@ -201,6 +205,7 @@
     isCommittingComment = true;
 
     const nextComment = comment;
+    const previousComment = lastCommittedComment;
     const didChange = nextComment !== lastCommittedComment;
     if (didChange) {
       lastCommittedComment = nextComment;
@@ -208,9 +213,24 @@
     }
     const currentSize = readCurrentNodeSize();
     const didResize = await resizeNodeToFitContent(currentSize.width, currentSize.height);
+    const nextSize = didResize ? readCurrentNodeSize() : currentSize;
 
     if (didChange) {
-      applyDocumentState("node-properties-updated");
+      const resizeChange = createNodeResizeChange(id, currentSize, nextSize);
+      const edit = createNodePropertiesUpdatedEdit(
+        [
+          {
+            type: "comment",
+            nodeId: id,
+            beforeComment: previousComment,
+            afterComment: nextComment,
+          },
+        ],
+        resizeChange ? [resizeChange] : [],
+      );
+      if (edit) {
+        applyGraphEdit(edit);
+      }
     } else if (didResize) {
       applyDocumentState("node-resized");
     }
@@ -227,23 +247,43 @@
     const nextFontSize = previewFontSize;
     fontSizeInputValue = String(nextFontSize);
     const didChange = nextFontSize !== lastCommittedFontSize;
+    const beforeStoredFontSize =
+      lastCommittedFontSize === DEFAULT_COMMENT_FONT_SIZE ? undefined : lastCommittedFontSize;
+    const afterStoredFontSize =
+      nextFontSize === DEFAULT_COMMENT_FONT_SIZE ? undefined : nextFontSize;
+    const beforeSize = isPreviewingFontSize
+      ? {
+          width: fontSizePreviewBaseWidth,
+          height: fontSizePreviewBaseHeight,
+        }
+      : readCurrentNodeSize();
     if (didChange) {
       lastCommittedFontSize = nextFontSize;
       updateNodeData(id, {
-        fontSize: nextFontSize === DEFAULT_COMMENT_FONT_SIZE ? undefined : nextFontSize,
+        fontSize: afterStoredFontSize,
       });
     }
-    const currentSize = readCurrentNodeSize();
-    const previewBaseWidth = isPreviewingFontSize ? fontSizePreviewBaseWidth : currentSize.width;
-    const previewBaseHeight = isPreviewingFontSize
-      ? fontSizePreviewBaseHeight
-      : currentSize.height;
-    const didResize = await resizeNodeToFitContent(previewBaseWidth, previewBaseHeight);
+    await resizeNodeToFitContent(beforeSize.width, beforeSize.height);
+    const nextSize = readCurrentNodeSize();
     isPreviewingFontSize = false;
+    const resizeChange = createNodeResizeChange(id, beforeSize, nextSize);
 
     if (didChange) {
-      applyDocumentState("node-properties-updated");
-    } else if (didResize) {
+      const edit = createNodePropertiesUpdatedEdit(
+        [
+          {
+            type: "font-size",
+            nodeId: id,
+            beforeFontSize: beforeStoredFontSize,
+            afterFontSize: afterStoredFontSize,
+          },
+        ],
+        resizeChange ? [resizeChange] : [],
+      );
+      if (edit) {
+        applyGraphEdit(edit);
+      }
+    } else if (resizeChange) {
       applyDocumentState("node-resized");
     }
 
@@ -365,15 +405,15 @@
         {...noMousePropogation}
       />
     {:else}
-      <div
+      <button
         bind:this={titleElement}
         class="min-w-0 flex-1 truncate select-none text-left font-semibold text-vsc-input-fg"
-        role="presentation"
         style:font-size={`${previewFontSize}px`}
+        type="button"
         ondblclick={() => (isEditingTitle = true)}
       >
         {title}
-      </div>
+      </button>
     {/if}
 
     <div

@@ -79,6 +79,17 @@ export type NodeEditorGraphEditMessage =
       changes: Extract<NodeEditorGraphEdit, { kind: "node-resized" }>["changes"];
       sourceVersion?: number;
       clientEditId: number;
+    }
+  | {
+      type: "edit";
+      kind: "node-properties-updated";
+      propertyChanges: Extract<
+        NodeEditorGraphEdit,
+        { kind: "node-properties-updated" }
+      >["propertyChanges"];
+      resizeChanges?: Extract<NodeEditorGraphEdit, { kind: "node-properties-updated" }>["resizeChanges"];
+      sourceVersion?: number;
+      clientEditId: number;
     };
 
 export type SnapshotNodeEditorEditMessage = {
