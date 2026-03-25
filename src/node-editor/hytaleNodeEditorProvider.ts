@@ -228,7 +228,6 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
 
   public async triggerQuickActionByCommandId(
     actionType: ActionType | "go-to-root",
-    allowEditableTarget: boolean = false,
   ): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
@@ -238,6 +237,8 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     if (actionType === "go-to-root") {
       actionType = "reveal-node";
     }
+
+    const allowEditableTarget = actionType === "search-nodes";
 
     await targetPanel.webview.postMessage({
       type: "action",
