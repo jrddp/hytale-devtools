@@ -4,6 +4,7 @@
     Position,
     SelectionMode,
     SvelteFlow,
+    useConnection,
     type SvelteFlowProps,
     useStore,
     useSvelteFlow,
@@ -57,6 +58,7 @@
     deleteElements,
   } = useSvelteFlow();
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
+  const liveConnection = useConnection();
 
   const viewport = useViewport();
   const getViewportCenter = (viewport: Viewport) => ({
@@ -94,6 +96,7 @@
   let pendingSourceConflictingEdges: FlowEdge[] = [];
   let pendingTargetConnection: { target: string; targetHandle: string } | undefined;
   let pendingTargetConflictingEdges: FlowEdge[] = [];
+  let pendingConnectionPreviewKey = $state<string | undefined>();
 
   let addMenuInstance:
     | { screenPosition: XYPosition; spawnPosition: XYPosition; connectionFilter?: string }
@@ -533,6 +536,13 @@
     syncLowDetailSelectionMode(lowDetailSelectedNodeIds.length);
   });
 
+  $effect(() => {
+    void pendingSourceConnection;
+    void pendingTargetConnection;
+    void liveConnection.current;
+    syncPendingConnectionPreview();
+  });
+
   // # Handle actions requests
   $effect(() => {
     void workspace.areNodesMeasured;
@@ -785,6 +795,7 @@
     restoreConflicts: boolean,
   ): boolean {
     let hadConflicts = false;
+    pendingConnectionPreviewKey = undefined;
     if (type === "source" || type === "both") {
       pendingSourceConnection = undefined;
       if (restoreConflicts) {
@@ -802,6 +813,67 @@
       pendingTargetConflictingEdges = [];
     }
     return hadConflicts;
+  }
+
+  function syncPendingConnectionPreview() {
+    const currentConnection = liveConnection.current;
+    if (!currentConnection.inProgress) {
+      return;
+    }
+
+    const nextPreviewConnection = pendingSourceConnection
+      ? {
+          ...pendingSourceConnection,
+          target: currentConnection.toNode?.id,
+          targetHandle: currentConnection.toHandle?.id,
+        }
+      : pendingTargetConnection
+        ? {
+            ...pendingTargetConnection,
+            source: currentConnection.toNode?.id,
+            sourceHandle: currentConnection.toHandle?.id,
+          }
+        : undefined;
+
+    if (!nextPreviewConnection) {
+      return;
+    }
+
+    const nextPreviewKey = pendingSourceConnection
+      ? [
+          "source",
+          nextPreviewConnection.source,
+          nextPreviewConnection.sourceHandle,
+          nextPreviewConnection.target ?? "",
+          nextPreviewConnection.targetHandle ?? "",
+        ].join(":")
+      : [
+          "target",
+          nextPreviewConnection.source ?? "",
+          nextPreviewConnection.sourceHandle ?? "",
+          nextPreviewConnection.target,
+          nextPreviewConnection.targetHandle,
+        ].join(":");
+
+    if (nextPreviewKey === pendingConnectionPreviewKey) {
+      return;
+    }
+
+    if (pendingSourceConflictingEdges.length > 0) {
+      workspace.addEdges(pendingSourceConflictingEdges);
+      pendingSourceConflictingEdges = [];
+    }
+    if (pendingTargetConflictingEdges.length > 0) {
+      workspace.addEdges(pendingTargetConflictingEdges);
+      pendingTargetConflictingEdges = [];
+    }
+
+    pendingConnectionPreviewKey = nextPreviewKey;
+    if (pendingSourceConnection) {
+      pendingSourceConflictingEdges = pruneConflictingEdges(nextPreviewConnection);
+    } else {
+      pendingTargetConflictingEdges = pruneConflictingEdges(nextPreviewConnection);
+    }
   }
 
   // ! window event
@@ -1058,14 +1130,20 @@
             source: nodeId!,
             sourceHandle: handleId!,
           };
-          pendingSourceConflictingEdges = pruneConflictingEdges(pendingSourceConnection);
+          pendingSourceConflictingEdges = [];
+          pendingTargetConnection = undefined;
+          pendingTargetConflictingEdges = [];
+          pendingConnectionPreviewKey = undefined;
           break;
         case "target":
           pendingTargetConnection = {
             target: nodeId!,
             targetHandle: handleId!,
           };
-          pendingTargetConflictingEdges = pruneConflictingEdges(pendingTargetConnection);
+          pendingTargetConflictingEdges = [];
+          pendingSourceConnection = undefined;
+          pendingSourceConflictingEdges = [];
+          pendingConnectionPreviewKey = undefined;
           break;
       }
     },

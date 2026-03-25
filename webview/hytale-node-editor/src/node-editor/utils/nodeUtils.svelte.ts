@@ -177,14 +177,19 @@ export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[]
   const { source, sourceHandle, target, targetHandle } = connection;
   const prunedIds = new Set<string>();
   const prunedEdges: FlowEdge[] = [];
+  const pruneEdge = (edge: FlowEdge | undefined) => {
+    if (!edge || prunedIds.has(edge.id)) {
+      return;
+    }
+
+    prunedIds.add(edge.id);
+    prunedEdges.push(edge);
+  };
 
   const conflictingInput: FlowEdge | undefined = target
     ? workspace.getIncomingConnection(target)
     : undefined;
-  if (conflictingInput) {
-    prunedIds.add(conflictingInput.id);
-    prunedEdges.push(conflictingInput);
-  }
+  pruneEdge(conflictingInput);
 
   if (source && sourceHandle) {
     const outputPin = (workspace.getNodeById(source) as DataNodeType).data.outputPins?.find(
@@ -193,8 +198,7 @@ export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[]
 
     if (outputPin && outputPin.multiplicity === "single") {
       for (const edge of workspace.getOutgoingConnectionsForHandle(source, sourceHandle) ?? []) {
-        prunedIds.add(edge.id);
-        prunedEdges.push(edge);
+        pruneEdge(edge);
       }
     }
   }
