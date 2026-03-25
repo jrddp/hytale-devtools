@@ -16,7 +16,6 @@ import {
   type ExtensionToWebviewMessage,
   type NodeEditorGraphEditMessage,
   type NodeEditorControlScheme,
-  type NodeEditorDocumentEditKind,
   type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
@@ -339,7 +338,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
 
   private async applyWebviewEdit(
     document: HytaleNodeDocument,
-    message: Extract<WebviewToExtensionMessage, { type: "edit" }>,
+    message: NodeEditorGraphEditMessage,
     webview: vscode.Webview,
   ): Promise<void> {
     if (
@@ -352,39 +351,22 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
       return;
     }
 
-    if (isGraphEditMessage(message)) {
-      const edit = graphEditMessageToGraphEdit(message);
-      const undoEdit = invertNodeEditorGraphEdit(edit);
+    const edit = graphEditMessageToGraphEdit(message);
+    const undoEdit = invertNodeEditorGraphEdit(edit);
 
-      document.applyGraphEdit(edit);
-      this.onDidChangeCustomDocumentEmitter.fire({
-        document,
-        undo: async () => {
-          document.applyGraphEdit(undoEdit);
-          await this.postDocumentUpdate(document, undefined, undoEdit);
-        },
-        redo: async () => {
-          document.applyGraphEdit(edit);
-          await this.postDocumentUpdate(document, undefined, edit);
-        },
-      });
-      await this.postDocumentUpdate(document, message.clientEditId, edit);
-      return;
-    }
-
-    document.replaceGraphDocument(message.afterDocument, document.eol);
+    document.applyGraphEdit(edit);
     this.onDidChangeCustomDocumentEmitter.fire({
       document,
       undo: async () => {
-        document.replaceGraphDocument(message.beforeDocument, document.eol);
-        await this.postDocumentUpdate(document);
+        document.applyGraphEdit(undoEdit);
+        await this.postDocumentUpdate(document, undefined, undoEdit);
       },
       redo: async () => {
-        document.replaceGraphDocument(message.afterDocument, document.eol);
-        await this.postDocumentUpdate(document);
+        document.applyGraphEdit(edit);
+        await this.postDocumentUpdate(document, undefined, edit);
       },
     });
-    await this.postDocumentUpdate(document, message.clientEditId);
+    await this.postDocumentUpdate(document, message.clientEditId, edit);
   }
 
   private async openRawJsonInTextEditor(): Promise<void> {
@@ -545,22 +527,6 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
   }
 
   return undefined;
-}
-
-function isGraphEditKind(kind: NodeEditorDocumentEditKind): kind is NodeEditorGraphEdit["kind"] {
-  return (
-    kind === "element-list-changed" ||
-    kind === "nodes-moved" ||
-    kind === "node-renamed" ||
-    kind === "node-resized" ||
-    kind === "node-properties-updated"
-  );
-}
-
-function isGraphEditMessage(
-  message: Extract<WebviewToExtensionMessage, { type: "edit" }>,
-): message is NodeEditorGraphEditMessage {
-  return isGraphEditKind(message.kind);
 }
 
 function graphEditMessageToGraphEdit(message: NodeEditorGraphEditMessage): NodeEditorGraphEdit {

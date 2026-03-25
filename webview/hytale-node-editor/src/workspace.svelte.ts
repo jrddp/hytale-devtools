@@ -10,10 +10,8 @@ import {
 import {
   type ActionRequest,
   type NodeEditorControlScheme,
-  type NodeEditorDocumentEditKind,
   type NodeEditorGraphEditMessage,
   type NodeEditorPlatform,
-  type SnapshotNodeEditorGraphEditKind,
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
 import {
@@ -29,7 +27,6 @@ import {
   buildNodeResizedEdit,
   buildNodesMovedEdit,
   graphEditRequiresDocumentRefresh,
-  workspaceStateToGraphDocument,
 } from "src/node-editor/utils/graphDocument";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 
@@ -415,51 +412,23 @@ export function applyGraphEdit(edit: NodeEditorGraphEdit) {
   postGraphEdit(edit, clientEditId);
 }
 
-/** Serializes current document state and applies changes with VSCode.
- * This effectively marks the view as dirty and adds the serialization to the undo tree. */
-export function applyDocumentState(reason: NodeEditorDocumentEditKind = "document-edited") {
+/** Builds an undoable graph edit from current workspace state and posts it to VS Code. */
+export function applyDocumentState(reason: NodeEditorGraphEdit["kind"]) {
   const beforeDocument = workspace.committedGraphDocument;
   if (!beforeDocument) {
     throw new Error("Cannot create an undoable edit before the document has been initialized.");
   }
 
   const graphEdit = buildGraphEdit(reason, beforeDocument);
-
-  if (graphEdit) {
-    applyGraphEdit(graphEdit);
+  if (!graphEdit) {
     return;
   }
 
-  if (isGraphEditKind(reason)) {
-    workspace.pendingLocalEditId = undefined;
-    return;
-  }
-
-  const clientEditId = workspace.nextClientEditId + 1;
-  workspace.nextClientEditId = clientEditId;
-  workspace.pendingLocalEditId = clientEditId;
-  const afterDocument = workspaceStateToGraphDocument(
-    {
-      nodes: workspace.nodes,
-      edges: workspace.edges,
-      rootNodeId: workspace.rootNodeId,
-    },
-    workspace.context.rootMenuName,
-  );
-  workspace.committedGraphDocument = afterDocument;
-  workspace.actionRequests.push({ type: "document-refresh" });
-  workspace.vscode.postMessage({
-    type: "edit",
-    kind: reason as SnapshotNodeEditorGraphEditKind,
-    beforeDocument,
-    afterDocument,
-    sourceVersion: workspace.sourceVersion,
-    clientEditId,
-  });
+  applyGraphEdit(graphEdit);
 }
 
 function buildGraphEdit(
-  reason: NodeEditorDocumentEditKind,
+  reason: NodeEditorGraphEdit["kind"],
   beforeDocument: NodeEditorGraphDocument,
 ): NodeEditorGraphEdit | undefined {
   switch (reason) {
@@ -479,20 +448,7 @@ function buildGraphEdit(
       return buildNodeRenamedEdit(beforeDocument, workspace.nodes);
     case "node-resized":
       return buildNodeResizedEdit(beforeDocument, workspace.nodes);
-    default:
-      return undefined;
   }
-}
-
-function isGraphEditKind(
-  reason: NodeEditorDocumentEditKind,
-): reason is NodeEditorGraphEdit["kind"] {
-  return (
-    reason === "element-list-changed" ||
-    reason === "nodes-moved" ||
-    reason === "node-renamed" ||
-    reason === "node-resized"
-  );
 }
 
 function postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {

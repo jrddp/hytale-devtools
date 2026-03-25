@@ -42,20 +42,6 @@ export interface NodeEditorDocumentUpdateMessage {
   appliedEdit?: NodeEditorGraphEdit;
 }
 
-export type NodeEditorDocumentEditKind =
-  | "element-list-changed"
-  | "nodes-moved"
-  | "node-renamed"
-  | "node-resized"
-  | "node-properties-updated"
-  | "document-edited";
-
-export type NodeEditorGraphEditKind = NodeEditorGraphEdit["kind"];
-export type SnapshotNodeEditorGraphEditKind = Exclude<
-  NodeEditorDocumentEditKind,
-  NodeEditorGraphEditKind
->;
-
 export type NodeEditorGraphEditMessage =
   | {
       type: "edit";
@@ -120,15 +106,6 @@ export type NodeEditorGraphEditMessage =
       clientEditId: number;
     };
 
-export type SnapshotNodeEditorEditMessage = {
-  type: "edit";
-  kind: SnapshotNodeEditorGraphEditKind;
-  beforeDocument: NodeEditorGraphDocument;
-  afterDocument: NodeEditorGraphDocument;
-  sourceVersion?: number;
-  clientEditId: number;
-};
-
 export type ExtensionToWebviewMessage =
   | NodeEditorDocumentUpdateMessage
   | NodeEditorBootstrapPayload
@@ -140,7 +117,6 @@ export type ExtensionToWebviewMessage =
 export type WebviewToExtensionMessage =
   | { type: "ready" }
   | NodeEditorGraphEditMessage
-  | SnapshotNodeEditorEditMessage
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }
