@@ -4,6 +4,7 @@
   import { Panel, type XYPosition } from "@xyflow/svelte";
   import { Search } from "lucide-svelte";
   import { type FlowNode } from "src/common";
+  import { GROUP_NODE_TYPE } from "src/constants";
   import { asCssColor } from "src/node-editor/utils/colors";
   import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import { getAbsoluteCenterPosition } from "src/node-editor/utils/nodeUtils.svelte";
@@ -76,6 +77,10 @@
 
   /** @returns {content, itemid?} where itemid is the calculated ID of any field item that should be focused upon selection */
   function getInnerContent(node: FlowNode): ContentEntry[] {
+    if (node.type === GROUP_NODE_TYPE) {
+      return [{ content: `Group: ${node.data.titleOverride ?? node.data.defaultTitle}` }];
+    }
+
     const content: ContentEntry[] = [{ content: node.data.templateId }];
     if (node.data.comment) {
       content.push({ content: node.data.comment });
@@ -114,17 +119,25 @@
 
   // matched node and the subtitle to display (display searched content if the search matches something other than the title)
   const matchedNodes: [SearchedNode, ContentEntry][] = $derived.by(() => {
-    return enrichedNodes.reduce((acc, node) => {
+    return enrichedNodes.reduce((acc, eNode) => {
       if (searchQuery.trim() === "") {
-        acc.push([node, { content: node.node.data.templateId }]);
-      } else if (node.effectiveTitle.toLowerCase().includes(searchQuery.toLowerCase())) {
-        acc.push([node, { content: `Name: ${node.effectiveTitle}` }]);
+        acc.push([
+          eNode,
+          {
+            content:
+              eNode.node.type === GROUP_NODE_TYPE
+                ? `Group: ${eNode.effectiveTitle}`
+                : eNode.node.data.templateId,
+          },
+        ]);
+      } else if (eNode.effectiveTitle.toLowerCase().includes(searchQuery.toLowerCase())) {
+        acc.push([eNode, { content: `Name: ${eNode.effectiveTitle}` }]);
       } else {
-        const contentMatch = node.innerContent.find(entry =>
+        const contentMatch = eNode.innerContent.find(entry =>
           entry.content.toLowerCase().includes(searchQuery.toLowerCase()),
         );
         if (contentMatch) {
-          acc.push([node, contentMatch]);
+          acc.push([eNode, contentMatch]);
         }
       }
       return acc;
@@ -148,7 +161,7 @@
     activeIndex = 0;
   });
 
-  function handleKeyDown(event) {
+  function handleKeyDown(event: KeyboardEvent) {
     switch (event.key) {
       case "Escape":
         oncancel();

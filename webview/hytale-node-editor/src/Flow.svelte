@@ -11,16 +11,12 @@
     type Viewport,
     type XYPosition,
   } from "@xyflow/svelte";
-  import {
-    getOverlappingArea,
-    pointToRendererPoint,
-  } from "@xyflow/system";
   import "@xyflow/svelte/dist/style.css";
+  import { getOverlappingArea, pointToRendererPoint } from "@xyflow/system";
   import RBush from "rbush";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
-  import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
   import DebugPanel from "src/components/DebugPanel.svelte";
   import LowDetailNodeCanvasOverlay from "src/components/LowDetailNodeCanvasOverlay.svelte";
@@ -29,8 +25,6 @@
   import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
-  import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
-  import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import { asCssColor, resolveComputedColor } from "src/node-editor/utils/colors";
   import {
     buildIndexedBezierEdgeGeometry,
@@ -38,10 +32,12 @@
     edgeGeometryIntersectsRect,
     type IndexedBezierEdgeGeometry,
   } from "src/node-editor/utils/edgeGeometry";
+  import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
+  import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import {
-    getAllSiblingOrderUpdates,
     getAbsoluteCenterPosition,
     getAbsolutePosition,
+    getAllSiblingOrderUpdates,
     isValidConnection,
     pruneConflictingEdges,
     recalculateGroupParents,
@@ -49,6 +45,7 @@
   } from "src/node-editor/utils/nodeUtils.svelte";
   import { applyDocumentState, workspace } from "src/workspace.svelte";
   import { tick, untrack } from "svelte";
+  import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import type { FlowEdge, FlowNode } from "./common";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
@@ -107,7 +104,7 @@
       }
     | undefined = $state();
   let helpMenuOpen = $state(false);
-  let showPerformanceLab = $state(false);
+  let showDebugOverlay = $state(false);
   let canvasOverlayReady = $state(false);
   let canvasOverlayReadyToken = 0;
   let lowDetailRenderCache = $state.raw<
@@ -147,7 +144,9 @@
   );
   const visibleEdgeGeometries = $derived.by(() => {
     void flowStore.visible.edges;
-    return Array.from(flowStore.visible.edges.values()).map(edge => buildIndexedBezierEdgeGeometry(edge));
+    return Array.from(flowStore.visible.edges.values()).map(edge =>
+      buildIndexedBezierEdgeGeometry(edge),
+    );
   });
   const visibleEdgeGeometryIndex = $derived.by(() => {
     const index = new RBush<IndexedBezierEdgeGeometry>();
@@ -756,7 +755,8 @@
     switch (event.key) {
       case "d":
         if (workspace.isDevelopment && (event.metaKey || event.ctrlKey)) {
-          showPerformanceLab = !showPerformanceLab;
+          showDebugOverlay = !showDebugOverlay;
+          console.log(workspace.nodes.filter(node => node.selected));
           captured = true;
         }
         break;
@@ -1183,12 +1183,13 @@
         draggedNodeIds={lowDetailDraggedNodeIds}
         dragDelta={lowDetailDragDelta}
         dragging={lowDetailDragActive}
-        edgeWidth={workspace.debugState.lowDetailCanvasEdgeBaseWidth * workspace.zoomCompensationScale}
+        edgeWidth={workspace.debugState.lowDetailCanvasEdgeBaseWidth *
+          workspace.zoomCompensationScale}
         zoomCompensationScale={workspace.zoomCompensationScale}
       />
     {/if}
     <NodeEditorActionMenu />
-    {#if workspace.isDevelopment && showPerformanceLab}
+    {#if workspace.isDevelopment && showDebugOverlay}
       <DebugPanel />
     {/if}
     {#if searchMenuInstance}
@@ -1199,15 +1200,16 @@
         }}
         onselection={(node, inputId) => {
           workspace.actionRequests.push({ type: "reveal-node", nodeId: node.id });
-          workspace.selectNode(node.id, "replace");
+          if (node.type !== GROUP_NODE_TYPE) {
+            workspace.selectNode(node.id, "replace");
+          }
           searchMenuInstance = undefined;
-          // focus field that matched the search
+
           if (inputId) {
-            const inputElement = document.getElementById(inputId);
-            if (inputElement) {
+            requestAnimationFrame(() => {
+              const inputElement = document.getElementById(inputId);
               inputElement.focus();
-              // inputElement.select();
-            }
+            });
           }
         }}
         viewportCenter={getViewportCenter(searchMenuInstance!.initialViewport)}
