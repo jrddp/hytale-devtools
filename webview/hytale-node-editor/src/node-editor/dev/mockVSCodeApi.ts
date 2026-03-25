@@ -1,8 +1,10 @@
 import { createEmptyNodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
+import { parseAssetDocumentToGraphDocument } from "@shared/node-editor/graphDocument";
 import {
   type ExtensionToWebviewMessage,
   type WebviewToExtensionMessage,
 } from "@shared/node-editor/messageTypes";
+import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
 import { type VSCodeApi } from "src/common";
 import { mockedThemeVars } from "src/node-editor/dev/mockVSCodeTheme";
@@ -24,6 +26,10 @@ export class MockVSCodeApi implements VSCodeApi {
     switch (message.type) {
       case "ready":
         const workspaceContext = mockedWorkspaceContext as unknown as NodeEditorWorkspaceContext;
+        const graphDocument = parseAssetDocumentToGraphDocument(
+          basicBiomeAsset as AssetDocumentShape,
+          workspaceContext,
+        );
         this.sendMockedVSCodeMessage({
           type: "bootstrap",
           workspaceContext,
@@ -34,7 +40,7 @@ export class MockVSCodeApi implements VSCodeApi {
         });
         this.sendMockedVSCodeMessage({
           type: "update",
-          documentRoot: basicBiomeAsset,
+          graphDocument,
           version: 1,
           documentPath: "test",
         });

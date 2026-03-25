@@ -23,7 +23,7 @@ export type NodeEditorMetadata = {
     string,
     {
       $Position: DefinedPosition;
-      $Title: string;
+      $Title: string | undefined;
     }
   >;
   $FloatingNodes?: NodeAssetJson[];
@@ -31,7 +31,7 @@ export type NodeEditorMetadata = {
     string,
     {
       $Position: DefinedPosition;
-      $Title: string;
+      $Title: string | undefined;
       inputConnections: string[]; // connections in the format of {NodeId}:{LocalPinId}
       outputConnections: string[];
       sourceEndpoint?: string;
@@ -55,4 +55,3 @@ export type AssetDocumentShape = {
   $NodeEditorMetadata?: NodeEditorMetadata;
   $Groups?: GroupJson[];
 } & NodeAssetJson;
-

@@ -1,5 +1,12 @@
 import type { WebviewToExtensionMessage } from "@shared/node-editor/messageTypes";
-import type { NodeTemplate } from "@shared/node-editor/workspaceTypes";
+import type {
+  CommentNodeData,
+  DataNodeData,
+  GroupNodeData,
+  LinkNodeData,
+  NodeBaseData,
+  RawJsonNodeData,
+} from "@shared/node-editor/graphTypes";
 import type { Edge, Node } from "@xyflow/svelte";
 
 export type VSCodeApi = {
@@ -8,31 +15,7 @@ export type VSCodeApi = {
   setState?: (state: Record<string, unknown>) => unknown;
 };
 
-export type NodeBaseData = Record<string, unknown> &
-  NodeTemplate & {
-    // if this is a child of a multiple/map type pin, this indicates the list order among its siblings
-    inputConnectionIndex?: number;
-    titleOverride?: string;
-    comment?: string;
-  };
-
-// non-metadata nodes
-
-export type DataNodeData = NodeBaseData & {
-  unparsedMetadata?: Record<string, unknown>;
-};
-
-export type RawJsonNodeData = NodeBaseData & {
-  jsonString: string;
-};
-
-export type LinkNodeData = NodeBaseData & {};
-
-export type GroupNodeData = NodeBaseData;
-
-export type CommentNodeData = NodeBaseData & {
-  fontSize?: number;
-};
+export type { NodeBaseData };
 
 export type DataNodeType = Node<DataNodeData, "datanode"> & {
   type: "datanode";

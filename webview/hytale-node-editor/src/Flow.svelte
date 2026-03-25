@@ -729,7 +729,7 @@
           if (updates.length > 0) {
             workspace.applyNodeUpdates(updates);
             recalculateGroupParents();
-            applyDocumentState("layout-applied");
+            applyDocumentState("nodes-moved");
           }
           break;
 

@@ -4,9 +4,10 @@
     type NodeEditorDocumentUpdateMessage,
     type WebviewToExtensionMessage,
   } from "@shared/node-editor/messageTypes";
+  import { type NodeEditorGraphEdit } from "@shared/node-editor/graphTypes";
   import { SvelteFlowProvider, type Viewport } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
-  import { parseDocument } from "src/node-editor/parsing/parseDocument.svelte";
+  import { graphDocumentToWorkspaceState, applyGraphEditToWorkspaceState } from "src/node-editor/utils/graphDocument";
   import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
   import {
     EDITABLE_SELECTOR,
@@ -25,13 +26,8 @@
     workspace.vscode = vscode;
   });
 
-  // bumped for each parsed document update so Flow can run one-time load hooks.
-  let graphLoadVersion = $state(0);
   let localWebviewState = $state<NodeEditorWebviewState>({});
   let extensionError = $state("");
-  let isWebviewVisible = $state(
-    typeof document !== "undefined" ? document.visibilityState !== "hidden" : true,
-  );
 
   function persistWebviewState(nextState: NodeEditorWebviewState) {
     localWebviewState = nextState;
@@ -93,7 +89,7 @@
       message.acknowledgedClientEditId === workspace.pendingLocalEditId
     ) {
       workspace.sourceVersion = message.version;
-      workspace.committedDocumentRoot = message.documentRoot;
+      workspace.committedGraphDocument = message.graphDocument;
       workspace.pendingLocalEditId = undefined;
       extensionError = "";
       return false;
@@ -101,13 +97,21 @@
 
     if (message.version === workspace.sourceVersion) return false;
     try {
-      const { nodes, edges, rootNodeId } = parseDocument(message.documentRoot);
+      if (message.appliedEdit && applyIncomingGraphEdit(message.appliedEdit)) {
+        workspace.sourceVersion = message.version;
+        workspace.committedGraphDocument = message.graphDocument;
+        workspace.pendingLocalEditId = undefined;
+        extensionError = "";
+        return false;
+      }
+
+      const { nodes, edges, rootNodeId } = graphDocumentToWorkspaceState(message.graphDocument);
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
       workspace.resetMeasurementTracking(nodes);
       workspace.sourceVersion = message.version;
-      workspace.committedDocumentRoot = message.documentRoot;
+      workspace.committedGraphDocument = message.graphDocument;
       workspace.pendingLocalEditId = undefined;
       workspace.isInitialized = true;
 
@@ -115,8 +119,6 @@
       if (nodes.every(node => node.position.x === 0 && node.position.y === 0)) {
         workspace.actionRequests.push({ type: "auto-position-nodes" });
       }
-
-      graphLoadVersion += 1;
       extensionError = "";
       return true;
     } catch (error) {
@@ -126,6 +128,25 @@
       }
       return false;
     }
+  }
+
+  function applyIncomingGraphEdit(edit: NodeEditorGraphEdit): boolean {
+    const nextState = applyGraphEditToWorkspaceState(
+      {
+        nodes: workspace.nodes,
+        edges: workspace.edges,
+        rootNodeId: workspace.rootNodeId,
+      },
+      edit,
+    );
+
+    workspace.nodes = nextState.nodes;
+    workspace.edges = nextState.edges;
+    workspace.rootNodeId = nextState.rootNodeId;
+    if (edit.kind === "nodes-moved" || edit.kind === "node-resized") {
+      workspace.actionRequests.push({ type: "document-refresh" });
+    }
+    return true;
   }
 
   onMount(() => {

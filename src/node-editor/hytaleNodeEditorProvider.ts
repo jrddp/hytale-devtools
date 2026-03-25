@@ -6,10 +6,16 @@ import {
   type NodeEditorClipboardSelection,
 } from "../shared/node-editor/clipboardTypes";
 import type { AssetDocumentShape } from "../shared/node-editor/assetTypes";
+import { parseAssetDocumentToGraphDocument, serializeGraphDocument } from "../shared/node-editor/graphDocument";
+import {
+  invertNodeEditorGraphEdit,
+} from "../shared/node-editor/graphEditUtils";
+import { type NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import {
   type ActionType,
   type ExtensionToWebviewMessage,
   type NodeEditorControlScheme,
+  type NodeEditorDocumentEditKind,
   type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
@@ -78,7 +84,16 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
   ): Promise<HytaleNodeDocument> {
     const sourceUri = openContext.backupId ? vscode.Uri.parse(openContext.backupId) : uri;
     const { documentRoot, eol } = await readDocumentRootFromUri(sourceUri);
-    return new HytaleNodeDocument(uri, documentRoot, eol);
+    const workspaceContext = workspaceRuntime.resolveWorkspaceContext(uri.fsPath);
+    if (!workspaceContext) {
+      throw new Error(`Workspace context could not be resolved for path ${uri.fsPath}.`);
+    }
+
+    return new HytaleNodeDocument(
+      uri,
+      parseAssetDocumentToGraphDocument(documentRoot, workspaceContext),
+      eol,
+    );
   }
 
   public async resolveCustomEditor(
@@ -187,7 +202,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     document: HytaleNodeDocument,
     _cancellation: vscode.CancellationToken,
   ): Promise<void> {
-    await writeDocumentRootToUri(document.uri, document.documentRoot, document.eol);
+    await writeDocumentRootToUri(document.uri, serializeGraphDocument(document.graphDocument), document.eol);
   }
 
   public async saveCustomDocumentAs(
@@ -195,7 +210,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     destination: vscode.Uri,
     _cancellation: vscode.CancellationToken,
   ): Promise<void> {
-    await writeDocumentRootToUri(destination, document.documentRoot, document.eol);
+    await writeDocumentRootToUri(destination, serializeGraphDocument(document.graphDocument), document.eol);
   }
 
   public async revertCustomDocument(
@@ -203,7 +218,11 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     _cancellation: vscode.CancellationToken,
   ): Promise<void> {
     const { documentRoot, eol } = await readDocumentRootFromUri(document.uri);
-    document.replaceDocumentRoot(documentRoot, eol);
+    const workspaceContext = workspaceRuntime.resolveWorkspaceContext(document.uri.fsPath);
+    if (!workspaceContext) {
+      throw new Error(`Workspace context could not be resolved for path ${document.uri.fsPath}.`);
+    }
+    document.replaceGraphDocument(parseAssetDocumentToGraphDocument(documentRoot, workspaceContext), eol);
     await this.postDocumentUpdate(document);
   }
 
@@ -212,7 +231,11 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     context: vscode.CustomDocumentBackupContext,
     _cancellation: vscode.CancellationToken,
   ): Promise<vscode.CustomDocumentBackup> {
-    await writeDocumentRootToUri(context.destination, document.documentRoot, document.eol);
+    await writeDocumentRootToUri(
+      context.destination,
+      serializeGraphDocument(document.graphDocument),
+      document.eol,
+    );
 
     return {
       id: context.destination.toString(),
@@ -298,13 +321,15 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
   private async postDocumentUpdate(
     document: HytaleNodeDocument,
     acknowledgedClientEditId?: number,
+    appliedEdit?: NodeEditorGraphEdit,
   ): Promise<void> {
     const payload: ExtensionToWebviewMessage = {
       type: "update",
-      documentRoot: document.documentRoot,
+      graphDocument: document.graphDocument,
       version: document.version,
       documentPath: document.uri.fsPath,
       acknowledgedClientEditId,
+      appliedEdit,
     };
 
     const panels = this.webviewPanelsByDocumentUri.get(document.uri.toString());
@@ -316,11 +341,6 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     message: Extract<WebviewToExtensionMessage, { type: "edit" }>,
     webview: vscode.Webview,
   ): Promise<void> {
-    if (!isObject(message.beforeRoot) || !isObject(message.afterRoot)) {
-      LOGGER.error("Unable to apply edit from node editor! Edit payload did not contain valid roots.");
-      return;
-    }
-
     if (
       typeof message.sourceVersion === "number" &&
       message.sourceVersion !== document.version
@@ -331,15 +351,38 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
       return;
     }
 
-    document.applyDocumentRoot(message.afterRoot);
+    if (isGraphEditMessage(message)) {
+      const edit: NodeEditorGraphEdit = {
+        kind: message.kind,
+        changes: message.changes,
+      } as NodeEditorGraphEdit;
+      const undoEdit = invertNodeEditorGraphEdit(edit);
+
+      document.applyGraphEdit(edit);
+      this.onDidChangeCustomDocumentEmitter.fire({
+        document,
+        undo: async () => {
+          document.applyGraphEdit(undoEdit);
+          await this.postDocumentUpdate(document, undefined, undoEdit);
+        },
+        redo: async () => {
+          document.applyGraphEdit(edit);
+          await this.postDocumentUpdate(document, undefined, edit);
+        },
+      });
+      await this.postDocumentUpdate(document, message.clientEditId, edit);
+      return;
+    }
+
+    document.replaceGraphDocument(message.afterDocument, document.eol);
     this.onDidChangeCustomDocumentEmitter.fire({
       document,
       undo: async () => {
-        document.applyDocumentRoot(message.beforeRoot);
+        document.replaceGraphDocument(message.beforeDocument, document.eol);
         await this.postDocumentUpdate(document);
       },
       redo: async () => {
-        document.applyDocumentRoot(message.afterRoot);
+        document.replaceGraphDocument(message.afterDocument, document.eol);
         await this.postDocumentUpdate(document);
       },
     });
@@ -504,6 +547,16 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
   }
 
   return undefined;
+}
+
+function isGraphEditKind(kind: NodeEditorDocumentEditKind): kind is NodeEditorGraphEdit["kind"] {
+  return kind === "nodes-moved" || kind === "node-renamed" || kind === "node-resized";
+}
+
+function isGraphEditMessage(
+  message: Extract<WebviewToExtensionMessage, { type: "edit" }>,
+): message is Extract<WebviewToExtensionMessage, { type: "edit"; kind: NodeEditorGraphEdit["kind"] }> {
+  return isGraphEditKind(message.kind);
 }
 
 function escapeHtml(value: string): string {

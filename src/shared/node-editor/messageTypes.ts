@@ -1,7 +1,10 @@
 import { type Selection } from "vscode";
 import { type IndexReference } from "../indexTypes";
-import { type AssetDocumentShape } from "./assetTypes";
 import { type NodeEditorClipboardSelection } from "./clipboardTypes";
+import {
+  type NodeEditorGraphDocument,
+  type NodeEditorGraphEdit,
+} from "./graphTypes";
 import { type NodeEditorWorkspaceContext } from "./workspaceTypes";
 
 export type NodeEditorControlScheme = "mouse" | "trackpad";
@@ -32,14 +35,14 @@ export interface NodeEditorBootstrapPayload {
 
 export interface NodeEditorDocumentUpdateMessage {
   type: "update";
-  documentRoot: AssetDocumentShape;
+  graphDocument: NodeEditorGraphDocument;
   version: number;
   documentPath: string;
   acknowledgedClientEditId?: number;
+  appliedEdit?: NodeEditorGraphEdit;
 }
 
 export type NodeEditorDocumentEditKind =
-  | "layout-applied"
   | "elements-created"
   | "elements-deleted"
   | "connections-changed"
@@ -48,6 +51,44 @@ export type NodeEditorDocumentEditKind =
   | "node-resized"
   | "node-properties-updated"
   | "document-edited";
+
+export type NodeEditorGraphEditKind = NodeEditorGraphEdit["kind"];
+export type SnapshotNodeEditorGraphEditKind = Exclude<
+  NodeEditorDocumentEditKind,
+  NodeEditorGraphEditKind
+>;
+
+export type NodeEditorGraphEditMessage =
+  | {
+      type: "edit";
+      kind: "nodes-moved";
+      changes: Extract<NodeEditorGraphEdit, { kind: "nodes-moved" }>["changes"];
+      sourceVersion?: number;
+      clientEditId: number;
+    }
+  | {
+      type: "edit";
+      kind: "node-renamed";
+      changes: Extract<NodeEditorGraphEdit, { kind: "node-renamed" }>["changes"];
+      sourceVersion?: number;
+      clientEditId: number;
+    }
+  | {
+      type: "edit";
+      kind: "node-resized";
+      changes: Extract<NodeEditorGraphEdit, { kind: "node-resized" }>["changes"];
+      sourceVersion?: number;
+      clientEditId: number;
+    };
+
+export type SnapshotNodeEditorEditMessage = {
+  type: "edit";
+  kind: SnapshotNodeEditorGraphEditKind;
+  beforeDocument: NodeEditorGraphDocument;
+  afterDocument: NodeEditorGraphDocument;
+  sourceVersion?: number;
+  clientEditId: number;
+};
 
 export type ExtensionToWebviewMessage =
   | NodeEditorDocumentUpdateMessage
@@ -59,14 +100,8 @@ export type ExtensionToWebviewMessage =
 
 export type WebviewToExtensionMessage =
   | { type: "ready" }
-  | {
-      type: "edit";
-      kind: NodeEditorDocumentEditKind;
-      beforeRoot: AssetDocumentShape;
-      afterRoot: AssetDocumentShape;
-      sourceVersion?: number;
-      clientEditId: number;
-    }
+  | NodeEditorGraphEditMessage
+  | SnapshotNodeEditorEditMessage
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openRawJson" }
   | { type: "openKeybindings"; query?: string }
