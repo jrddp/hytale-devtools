@@ -26,7 +26,7 @@
   import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
   import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
-  import { asCssColor, resolveComputedColor } from "src/node-editor/utils/colors";
+  import { createConnectionPreviewController } from "src/node-editor/utils/connectionPreview.svelte";
   import {
     buildIndexedBezierEdgeGeometry,
     createEdgeSelectionBounds,
@@ -35,6 +35,7 @@
   } from "src/node-editor/utils/edgeGeometry";
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
+  import { createLowDetailController } from "src/node-editor/utils/lowDetailController.svelte";
   import {
     getAbsoluteCenterPosition,
     getAbsolutePosition,
@@ -59,6 +60,8 @@
   } = useSvelteFlow();
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
   const liveConnection = useConnection();
+  const connectionPreview = createConnectionPreviewController();
+  const lowDetail = createLowDetailController();
 
   const viewport = useViewport();
   const getViewportCenter = (viewport: Viewport) => ({
@@ -92,11 +95,6 @@
   } | null>(null);
 
   let cursorPos = $state<XYPosition>();
-  let pendingSourceConnection: { source: string; sourceHandle: string } | undefined;
-  let pendingSourceConflictingEdges: FlowEdge[] = [];
-  let pendingTargetConnection: { target: string; targetHandle: string } | undefined;
-  let pendingTargetConflictingEdges: FlowEdge[] = [];
-  let pendingConnectionPreviewKey = $state<string | undefined>();
 
   let addMenuInstance:
     | { screenPosition: XYPosition; spawnPosition: XYPosition; connectionFilter?: string }
@@ -108,49 +106,12 @@
     | undefined = $state();
   let helpMenuOpen = $state(false);
   let showDebugOverlay = $state(false);
-  let canvasOverlayReady = $state(false);
-  let canvasOverlayReadyToken = 0;
-  let lowDetailRenderCache = $state.raw<
-    Array<{
-      id: string;
-      kind: "group" | "node";
-      title: string;
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      accentColor?: string;
-    }>
-  >([]);
-  let lowDetailEdgeRenderCache = $state.raw<
-    Array<{
-      id: string;
-      path: string;
-      selected: boolean;
-      animated: boolean;
-    }>
-  >([]);
-  let lowDetailSelectedNodeIds = $state.raw<string[]>([]);
-  let lowDetailDraggedNodeIds = $state.raw<string[]>([]);
-  let lowDetailDragDelta = $state<XYPosition>({ x: 0, y: 0 });
-  let lowDetailDragActive = $state(false);
-  let forcedLowDetailSelectionMode = $state(false);
-  let lowDetailHiddenNodeIds = $state.raw<Set<string>>(new Set());
-  let lowDetailHiddenEdgeIds = $state.raw<Set<string>>(new Set());
-  let searchLowDetailCacheLocked = $state(false);
-  let searchPreviewRenderDetailOverride = $state<NodeRenderDetailMode | undefined>();
-  let searchPreviewTransitionToken = $state(0);
-  const activeRenderDetailMode = $derived(
-    searchPreviewRenderDetailOverride ?? workspace.renderDetailMode,
-  );
+  const activeRenderDetailMode = $derived(lowDetail.activeRenderDetailMode);
 
   const useCanvasLowDetailOverlay = $derived(
-    canvasOverlayReady && activeRenderDetailMode === "low",
+    lowDetail.canvasOverlayReady && activeRenderDetailMode === "low",
   );
   const useVisibleElementCulling = $derived(workspace.hasCompletedInitialMeasurement);
-  const lowDetailRenderCacheById = $derived(
-    new Map(lowDetailRenderCache.map(item => [item.id, item])),
-  );
   const visibleEdgeGeometries = $derived.by(() => {
     void flowStore.visible.edges;
     return Array.from(flowStore.visible.edges.values()).map(edge =>
@@ -163,228 +124,6 @@
     return index;
   });
 
-  function getRenderableNodeSize(node: FlowNode) {
-    const width = node.measured?.width ?? node.width;
-    const height = node.measured?.height ?? node.height;
-    if (typeof width !== "number" || width <= 0 || typeof height !== "number" || height <= 0) {
-      return null;
-    }
-    return { width, height };
-  }
-
-  function areNodeIdSetsEqual(left: Set<string>, right: Set<string>) {
-    if (left.size !== right.size) {
-      return false;
-    }
-
-    for (const nodeId of left) {
-      if (!right.has(nodeId)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function isNodeHiddenByDebug(node: FlowNode) {
-    return node.type === GROUP_NODE_TYPE
-      ? workspace.debugState.hideGroups
-      : workspace.debugState.hideNodes;
-  }
-
-  function isNodePendingMeasurement(node: FlowNode) {
-    return workspace.isNodePendingMeasurement(node.id);
-  }
-
-  function isLowDetailCanvasSourceNode(node: FlowNode) {
-    return !isNodeHiddenByDebug(node) && (lowDetailHiddenNodeIds.has(node.id) || !node.hidden);
-  }
-
-  function isLowDetailCanvasSourceEdge(edge: Pick<FlowEdge, "id" | "hidden">) {
-    return !workspace.debugState.hideEdges && (lowDetailHiddenEdgeIds.has(edge.id) || !edge.hidden);
-  }
-
-  function getCanvasSelectableNodeAtPoint(flowPosition: XYPosition) {
-    if (!useCanvasLowDetailOverlay) {
-      return undefined;
-    }
-
-    const matchingNodeIds = new Set(
-      workspace
-        .searchNodesCollidingWith({
-          minX: flowPosition.x,
-          minY: flowPosition.y,
-          maxX: flowPosition.x,
-          maxY: flowPosition.y,
-        })
-        .map(node => node.id),
-    );
-    if (matchingNodeIds.size === 0) {
-      return undefined;
-    }
-
-    for (let index = workspace.nodes.length - 1; index >= 0; index--) {
-      const node = workspace.nodes[index];
-      if (
-        !matchingNodeIds.has(node.id) ||
-        !isLowDetailCanvasSourceNode(node) ||
-        (node.selectable ?? flowStore.elementsSelectable) === false
-      ) {
-        continue;
-      }
-
-      const size = getRenderableNodeSize(node);
-      if (!size) {
-        continue;
-      }
-
-      const position = getAbsolutePosition(node);
-      if (
-        flowPosition.x >= position.x &&
-        flowPosition.x <= position.x + size.width &&
-        flowPosition.y >= position.y &&
-        flowPosition.y <= position.y + size.height
-      ) {
-        return node;
-      }
-    }
-
-    return undefined;
-  }
-
-  function buildLowDetailRenderCache() {
-    const absolutePositionsById = new Map<string, XYPosition>();
-    const resolveAbsolutePosition = (node: FlowNode): XYPosition => {
-      const cached = absolutePositionsById.get(node.id);
-      if (cached) {
-        return cached;
-      }
-
-      const position = node.parentId
-        ? (() => {
-            const parent = workspace.getNodeById(node.parentId);
-            const parentPosition = resolveAbsolutePosition(parent);
-            return {
-              x: parentPosition.x + node.position.x,
-              y: parentPosition.y + node.position.y,
-            };
-          })()
-        : node.position;
-
-      absolutePositionsById.set(node.id, position);
-      return position;
-    };
-
-    const nextCache = [];
-    for (const node of workspace.nodes) {
-      if (!isLowDetailCanvasSourceNode(node)) {
-        continue;
-      }
-
-      const size = getRenderableNodeSize(node);
-      if (!size) {
-        continue;
-      }
-
-      const position = resolveAbsolutePosition(node);
-      nextCache.push({
-        id: node.id,
-        kind: node.type === GROUP_NODE_TYPE ? "group" : "node",
-        title: node.data.titleOverride ?? node.data.defaultTitle,
-        x: position.x,
-        y: position.y,
-        width: size.width,
-        height: size.height,
-        accentColor:
-          node.type === GROUP_NODE_TYPE
-            ? undefined
-            : resolveComputedColor(asCssColor(node.data.nodeColor)),
-      });
-    }
-
-    lowDetailRenderCache = nextCache;
-    lowDetailSelectedNodeIds = workspace.nodes.flatMap(node => (node.selected ? [node.id] : []));
-  }
-
-  function syncLowDetailSelectionMode(selectedNodeCount: number) {
-    if (!useCanvasLowDetailOverlay || flowStore.selectionRectMode === "user") {
-      return;
-    }
-
-    if (selectedNodeCount > 0) {
-      if (flowStore.selectionRectMode !== "nodes") {
-        flowStore.selectionRect = null;
-        flowStore.selectionRectMode = "nodes";
-        forcedLowDetailSelectionMode = true;
-      }
-      return;
-    }
-
-    if (forcedLowDetailSelectionMode && flowStore.selectionRectMode === "nodes") {
-      flowStore.selectionRectMode = null;
-      forcedLowDetailSelectionMode = false;
-    }
-  }
-
-  function updateLowDetailDragDelta(draggedNodes: FlowNode[]) {
-    for (const node of draggedNodes) {
-      const cachedNode = lowDetailRenderCacheById.get(node.id);
-      if (!cachedNode) {
-        continue;
-      }
-
-      const absolutePosition = flowStore.nodeLookup.get(node.id)?.internals.positionAbsolute;
-      if (!absolutePosition) {
-        continue;
-      }
-
-      lowDetailDragDelta = {
-        x: absolutePosition.x - cachedNode.x,
-        y: absolutePosition.y - cachedNode.y,
-      };
-      return;
-    }
-
-    lowDetailDragDelta = { x: 0, y: 0 };
-  }
-
-  function lockLowDetailSearchCache() {
-    if (!canvasOverlayReady || searchLowDetailCacheLocked) {
-      return;
-    }
-
-    buildLowDetailRenderCache();
-    searchLowDetailCacheLocked = true;
-  }
-
-  function unlockLowDetailSearchCache() {
-    searchLowDetailCacheLocked = false;
-  }
-
-  function beginSearchPreviewTransition() {
-    const token = ++searchPreviewTransitionToken;
-    searchPreviewRenderDetailOverride = workspace.renderDetailMode;
-    return token;
-  }
-
-  function clearSearchPreviewTransition() {
-    searchPreviewTransitionToken++;
-    searchPreviewRenderDetailOverride = undefined;
-  }
-
-  function resetSearchPreviewState() {
-    unlockLowDetailSearchCache();
-    clearSearchPreviewTransition();
-  }
-
-  function endSearchPreviewTransitionAfter(viewportChange: Promise<boolean>, token: number) {
-    void viewportChange.finally(() => {
-      if (token === searchPreviewTransitionToken) {
-        searchPreviewRenderDetailOverride = undefined;
-      }
-    });
-  }
-
   $effect(() => {
     const zoom = viewport.current.zoom;
     workspace.updateViewportZoom(zoom);
@@ -396,19 +135,22 @@
 
   $effect(() => {
     if (!workspace.hasCompletedInitialMeasurement) {
-      canvasOverlayReadyToken++;
-      canvasOverlayReady = false;
+      lowDetail.canvasOverlayReadyToken++;
+      lowDetail.canvasOverlayReady = false;
       return;
     }
 
-    if (canvasOverlayReady) {
+    if (lowDetail.canvasOverlayReady) {
       return;
     }
 
-    const token = ++canvasOverlayReadyToken;
+    const token = ++lowDetail.canvasOverlayReadyToken;
     void tick().then(() => {
-      if (token === canvasOverlayReadyToken && workspace.hasCompletedInitialMeasurement) {
-        canvasOverlayReady = true;
+      if (
+        token === lowDetail.canvasOverlayReadyToken &&
+        workspace.hasCompletedInitialMeasurement
+      ) {
+        lowDetail.canvasOverlayReady = true;
       }
     });
   });
@@ -426,9 +168,9 @@
     const nextHiddenNodeIds = new Set<string>();
     const updates = [];
     for (const node of workspace.nodes) {
-      const hiddenByDebug = isNodeHiddenByDebug(node);
+      const hiddenByDebug = lowDetail.isNodeHiddenByDebug(node);
       const hiddenByLowDetail =
-        useCanvasLowDetailOverlay && !hiddenByDebug && !isNodePendingMeasurement(node);
+        useCanvasLowDetailOverlay && !hiddenByDebug && !lowDetail.isNodePendingMeasurement(node);
       if (hiddenByLowDetail) {
         nextHiddenNodeIds.add(node.id);
       }
@@ -441,9 +183,7 @@
       }
     }
 
-    if (!areNodeIdSetsEqual(lowDetailHiddenNodeIds, nextHiddenNodeIds)) {
-      lowDetailHiddenNodeIds = nextHiddenNodeIds;
-    }
+    lowDetail.updateHiddenNodeIds(nextHiddenNodeIds);
     if (updates.length > 0) {
       workspace.applyNodeUpdates(updates);
     }
@@ -463,9 +203,7 @@
       }
     }
 
-    if (!areNodeIdSetsEqual(lowDetailHiddenEdgeIds, nextHiddenEdgeIds)) {
-      lowDetailHiddenEdgeIds = nextHiddenEdgeIds;
-    }
+    lowDetail.updateHiddenEdgeIds(nextHiddenEdgeIds);
 
     let didChange = false;
     const nextEdges = edges.map(edge => {
@@ -485,29 +223,16 @@
 
   $effect(() => {
     if (!useCanvasLowDetailOverlay) {
-      lowDetailDragActive = false;
-      lowDetailDragDelta = { x: 0, y: 0 };
-      lowDetailSelectedNodeIds = [];
-      lowDetailDraggedNodeIds = [];
-      lowDetailHiddenNodeIds = new Set();
-      lowDetailHiddenEdgeIds = new Set();
-      if (!searchLowDetailCacheLocked) {
-        lowDetailRenderCache = [];
-        lowDetailEdgeRenderCache = [];
-      }
-      if (forcedLowDetailSelectionMode && flowStore.selectionRectMode === "nodes") {
-        flowStore.selectionRectMode = null;
-      }
-      forcedLowDetailSelectionMode = false;
+      lowDetail.resetWhenCanvasDisabled(flowStore);
       return;
     }
 
-    if (lowDetailDragActive || searchLowDetailCacheLocked) {
+    if (lowDetail.dragActive || lowDetail.searchCacheLocked) {
       return;
     }
 
     void workspace.nodes;
-    buildLowDetailRenderCache();
+    lowDetail.buildRenderCache();
   });
 
   $effect(() => {
@@ -515,8 +240,8 @@
       return;
     }
 
-    lowDetailEdgeRenderCache = visibleEdgeGeometries.flatMap(edge => {
-      if (!isLowDetailCanvasSourceEdge(edge)) {
+    lowDetail.edgeRenderCache = visibleEdgeGeometries.flatMap(edge => {
+      if (!lowDetail.isCanvasSourceEdge(edge)) {
         return [];
       }
 
@@ -532,15 +257,15 @@
   });
 
   $effect(() => {
-    void lowDetailSelectedNodeIds.length;
-    syncLowDetailSelectionMode(lowDetailSelectedNodeIds.length);
+    void lowDetail.selectedNodeIds.length;
+    lowDetail.syncSelectionMode(useCanvasLowDetailOverlay, flowStore);
   });
 
   $effect(() => {
-    void pendingSourceConnection;
-    void pendingTargetConnection;
+    void connectionPreview.pendingSourceConnection;
+    void connectionPreview.pendingTargetConnection;
     void liveConnection.current;
-    syncPendingConnectionPreview();
+    connectionPreview.syncPreview(liveConnection.current);
   });
 
   // # Handle actions requests
@@ -579,11 +304,11 @@
       maxY: selectionRect.y + selectionRect.height,
     })) {
       const isSelectable = node.selectable ?? defaultNodeSelectable;
-      if (!isSelectable || !isLowDetailCanvasSourceNode(node)) {
+      if (!isSelectable || !lowDetail.isCanvasSourceNode(node)) {
         continue;
       }
 
-      const size = getRenderableNodeSize(node);
+      const size = lowDetail.getRenderableNodeSize(node);
       if (!size) {
         continue;
       }
@@ -619,7 +344,7 @@
     const edgeSelectionBounds = createEdgeSelectionBounds(selectionRect);
     for (const edge of visibleEdgeGeometryIndex.search(edgeSelectionBounds)) {
       const isSelectable = edge.selectable ?? defaultEdgeSelectable;
-      if (!isSelectable || !isLowDetailCanvasSourceEdge(edge)) {
+      if (!isSelectable || !lowDetail.isCanvasSourceEdge(edge)) {
         continue;
       }
 
@@ -686,7 +411,7 @@
             ((innerHeight.current ?? height) / height) * 0.8,
           );
           const previewTransitionToken = searchMenuInstance
-            ? beginSearchPreviewTransition()
+            ? lowDetail.beginSearchPreviewTransition()
             : undefined;
           const viewportChange = setViewportCenter(
             absolutePosition.x + width / 2,
@@ -697,7 +422,7 @@
             },
           );
           if (previewTransitionToken !== undefined) {
-            endSearchPreviewTransitionAfter(viewportChange, previewTransitionToken);
+            lowDetail.endSearchPreviewTransitionAfter(viewportChange, previewTransitionToken);
           }
           break;
 
@@ -727,7 +452,7 @@
           break;
 
         case "search-nodes":
-          lockLowDetailSearchCache();
+          lowDetail.lockSearchCache();
           searchMenuInstance = { initialViewport: $state.snapshot(viewport.current) };
           break;
 
@@ -776,7 +501,7 @@
             getAllSiblingOrderUpdates().map(([nodeId, data]) => [nodeId, { data }]),
           );
 
-          clearPendingConnection("both", true);
+          connectionPreview.clearPendingConnection("both", true);
           recalculateGroupParents();
           break;
         case "reveal-selection":
@@ -787,93 +512,6 @@
     }
     // length check to avoid trigger reactivity when there is no change
     if (retained.length !== workspace.actionRequests.length) workspace.actionRequests = retained;
-  }
-
-  /** @returns true if there were conflicts to restore/remove */
-  function clearPendingConnection(
-    type: "source" | "target" | "both",
-    restoreConflicts: boolean,
-  ): boolean {
-    let hadConflicts = false;
-    pendingConnectionPreviewKey = undefined;
-    if (type === "source" || type === "both") {
-      pendingSourceConnection = undefined;
-      if (restoreConflicts) {
-        workspace.addEdges(pendingSourceConflictingEdges);
-      }
-      hadConflicts = pendingSourceConflictingEdges.length > 0;
-      pendingSourceConflictingEdges = [];
-    }
-    if (type === "target" || type === "both") {
-      pendingTargetConnection = undefined;
-      if (restoreConflicts) {
-        workspace.addEdges(pendingTargetConflictingEdges);
-      }
-      hadConflicts = hadConflicts || pendingTargetConflictingEdges.length > 0;
-      pendingTargetConflictingEdges = [];
-    }
-    return hadConflicts;
-  }
-
-  function syncPendingConnectionPreview() {
-    const currentConnection = liveConnection.current;
-    if (!currentConnection.inProgress) {
-      return;
-    }
-
-    const nextPreviewConnection = pendingSourceConnection
-      ? {
-          ...pendingSourceConnection,
-          target: currentConnection.toNode?.id,
-          targetHandle: currentConnection.toHandle?.id,
-        }
-      : pendingTargetConnection
-        ? {
-            ...pendingTargetConnection,
-            source: currentConnection.toNode?.id,
-            sourceHandle: currentConnection.toHandle?.id,
-          }
-        : undefined;
-
-    if (!nextPreviewConnection) {
-      return;
-    }
-
-    const nextPreviewKey = pendingSourceConnection
-      ? [
-          "source",
-          nextPreviewConnection.source,
-          nextPreviewConnection.sourceHandle,
-          nextPreviewConnection.target ?? "",
-          nextPreviewConnection.targetHandle ?? "",
-        ].join(":")
-      : [
-          "target",
-          nextPreviewConnection.source ?? "",
-          nextPreviewConnection.sourceHandle ?? "",
-          nextPreviewConnection.target,
-          nextPreviewConnection.targetHandle,
-        ].join(":");
-
-    if (nextPreviewKey === pendingConnectionPreviewKey) {
-      return;
-    }
-
-    if (pendingSourceConflictingEdges.length > 0) {
-      workspace.addEdges(pendingSourceConflictingEdges);
-      pendingSourceConflictingEdges = [];
-    }
-    if (pendingTargetConflictingEdges.length > 0) {
-      workspace.addEdges(pendingTargetConflictingEdges);
-      pendingTargetConflictingEdges = [];
-    }
-
-    pendingConnectionPreviewKey = nextPreviewKey;
-    if (pendingSourceConnection) {
-      pendingSourceConflictingEdges = pruneConflictingEdges(nextPreviewConnection);
-    } else {
-      pendingTargetConflictingEdges = pruneConflictingEdges(nextPreviewConnection);
-    }
   }
 
   // ! window event
@@ -905,7 +543,7 @@
         helpMenuOpen = false;
         addMenuInstance = undefined;
         searchMenuInstance = undefined;
-        resetSearchPreviewState();
+        lowDetail.resetSearchPreviewState();
         captured = true;
         workspace.selectNodes([], "replace");
         break;
@@ -1070,13 +708,13 @@
     onpointerdown: (event: PointerEvent) => {
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
         addMenuInstance = undefined;
-        if (clearPendingConnection("both", false)) {
+        if (connectionPreview.clearPendingConnection("both", false)) {
           applyDocumentState("element-list-changed");
         }
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]")) {
         searchMenuInstance = undefined;
-        resetSearchPreviewState();
+        lowDetail.resetSearchPreviewState();
       }
     },
     onblur: () => {
@@ -1096,7 +734,7 @@
     }
 
     const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
-    const canvasNode = getCanvasSelectableNodeAtPoint(flowPosition);
+    const canvasNode = lowDetail.getCanvasSelectableNodeAtPoint(flowPosition, flowStore);
     if (!canvasNode) {
       return;
     }
@@ -1106,10 +744,12 @@
       edges = edges.map(edge => (edge.selected ? { ...edge, selected: false } : edge));
     }
     workspace.selectNode(canvasNode.id, selectionType);
-    lowDetailSelectedNodeIds = workspace.nodes.flatMap(node => (node.selected ? [node.id] : []));
+    lowDetail.updateSelectedNodeIds(
+      workspace.nodes.flatMap(node => (node.selected ? [node.id] : [])),
+    );
     flowStore.selectionRect = null;
     flowStore.selectionRectMode = "nodes";
-    forcedLowDetailSelectionMode = true;
+    lowDetail.forcedSelectionMode = true;
     event.preventDefault();
     event.stopPropagation();
   }
@@ -1124,28 +764,7 @@
     },
     // ## On Connect Start
     onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
-      switch (handleType) {
-        case "source":
-          pendingSourceConnection = {
-            source: nodeId!,
-            sourceHandle: handleId!,
-          };
-          pendingSourceConflictingEdges = [];
-          pendingTargetConnection = undefined;
-          pendingTargetConflictingEdges = [];
-          pendingConnectionPreviewKey = undefined;
-          break;
-        case "target":
-          pendingTargetConnection = {
-            target: nodeId!,
-            targetHandle: handleId!,
-          };
-          pendingTargetConflictingEdges = [];
-          pendingSourceConnection = undefined;
-          pendingSourceConflictingEdges = [];
-          pendingConnectionPreviewKey = undefined;
-          break;
-      }
+      connectionPreview.handleConnectStart(nodeId!, handleId!, handleType);
     },
     // ## On Connect End
     onconnectend: (event, connectionState) => {
@@ -1160,7 +779,7 @@
         };
       } else {
         // restore conflicts if invalid
-        clearPendingConnection("both", !connectionState.isValid);
+        connectionPreview.clearPendingConnection("both", !connectionState.isValid);
       }
     },
     // ## On Node Drag Stop
@@ -1190,8 +809,12 @@
       onviewportchange?.($state.snapshot(flowStore.viewport));
     },
     onselectionchange: ({ nodes: selectedNodes }) => {
-      lowDetailSelectedNodeIds = selectedNodes.map(node => node.id);
-      syncLowDetailSelectionMode(selectedNodes.length);
+      if (!useCanvasLowDetailOverlay) {
+        return;
+      }
+
+      lowDetail.updateSelectedNodeIds(selectedNodes.map(node => node.id));
+      lowDetail.syncSelectionMode(useCanvasLowDetailOverlay, flowStore);
     },
     onselectionend: () => {
       if (!workspace.debugState.useCustomSelectionBoxLogic || !lastUserSelectionRect) {
@@ -1206,17 +829,17 @@
         return;
       }
 
-      lowDetailDragActive = true;
-      lowDetailDraggedNodeIds = workspace.getEffectivelySelectedNodes().map(node => node.id);
-      lowDetailDragDelta = { x: 0, y: 0 };
-      updateLowDetailDragDelta(nodes);
+      lowDetail.dragActive = true;
+      lowDetail.draggedNodeIds = workspace.getEffectivelySelectedNodes().map(node => node.id);
+      lowDetail.dragDelta = { x: 0, y: 0 };
+      lowDetail.updateDragDelta(nodes, flowStore);
     },
     onselectiondrag: (_event, nodes) => {
-      if (!useCanvasLowDetailOverlay || !lowDetailDragActive || nodes.length === 0) {
+      if (!useCanvasLowDetailOverlay || !lowDetail.dragActive || nodes.length === 0) {
         return;
       }
 
-      updateLowDetailDragDelta(nodes);
+      lowDetail.updateDragDelta(nodes, flowStore);
     },
     onselectiondragstop: (_event, nodes) => {
       if (!useCanvasLowDetailOverlay) {
@@ -1224,11 +847,11 @@
       }
 
       if (nodes.length > 0) {
-        updateLowDetailDragDelta(nodes);
+        lowDetail.updateDragDelta(nodes, flowStore);
       }
-      lowDetailDragActive = false;
-      lowDetailDraggedNodeIds = [];
-      lowDetailDragDelta = { x: 0, y: 0 };
+      lowDetail.dragActive = false;
+      lowDetail.draggedNodeIds = [];
+      lowDetail.dragDelta = { x: 0, y: 0 };
     },
     // ## On Pane Context Menu (right click)
     onpanecontextmenu: ({ event }) => {
@@ -1251,7 +874,7 @@
   const addMenuEvents: Partial<AddMenuProps> = {
     // ## On Add Menu Cancel
     oncancel: () => {
-      clearPendingConnection("both", true);
+      connectionPreview.clearPendingConnection("both", true);
       addMenuInstance = undefined;
     },
 
@@ -1265,12 +888,16 @@
       workspace.trackMeasurementForNodeIds([newNode.id]);
       if (isCreatingRootNode) {
         workspace.rootNodeId = newNode.id;
-      } else if (pendingSourceConnection) {
+      } else if (connectionPreview.pendingSourceConnection) {
         workspace.addEdges([
-          { ...pendingSourceConnection, target: newNode.id, targetHandle: INPUT_HANDLE_ID },
+          {
+            ...connectionPreview.pendingSourceConnection,
+            target: newNode.id,
+            targetHandle: INPUT_HANDLE_ID,
+          },
         ]);
       }
-      clearPendingConnection("both", false);
+      connectionPreview.clearPendingConnection("both", false);
 
       // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
       workspace.actionRequests.push({ type: "document-refresh" });
@@ -1327,12 +954,12 @@
     {#if useCanvasLowDetailOverlay}
       <LowDetailNodeCanvasOverlay
         active
-        items={lowDetailRenderCache}
-        edges={lowDetailEdgeRenderCache}
-        selectedNodeIds={lowDetailSelectedNodeIds}
-        draggedNodeIds={lowDetailDraggedNodeIds}
-        dragDelta={lowDetailDragDelta}
-        dragging={lowDetailDragActive}
+        items={lowDetail.renderCache}
+        edges={lowDetail.edgeRenderCache}
+        selectedNodeIds={lowDetail.selectedNodeIds}
+        draggedNodeIds={lowDetail.draggedNodeIds}
+        dragDelta={lowDetail.dragDelta}
+        dragging={lowDetail.dragActive}
         edgeWidth={workspace.debugState.lowDetailCanvasEdgeBaseWidth *
           workspace.zoomCompensationScale}
         zoomCompensationScale={workspace.zoomCompensationScale}
@@ -1345,11 +972,11 @@
     {#if searchMenuInstance}
       <NodeSearchPanel
         oncancel={() => {
-          const previewTransitionToken = beginSearchPreviewTransition();
+          const previewTransitionToken = lowDetail.beginSearchPreviewTransition();
           const viewportChange = setViewport(searchMenuInstance!.initialViewport, { duration: 250 });
           searchMenuInstance = undefined;
-          unlockLowDetailSearchCache();
-          endSearchPreviewTransitionAfter(viewportChange, previewTransitionToken);
+          lowDetail.unlockSearchCache();
+          lowDetail.endSearchPreviewTransitionAfter(viewportChange, previewTransitionToken);
         }}
         onselection={(node, inputId) => {
           workspace.actionRequests.push({ type: "reveal-node", nodeId: node.id });
@@ -1357,7 +984,7 @@
             workspace.selectNode(node.id, "replace");
           }
           searchMenuInstance = undefined;
-          resetSearchPreviewState();
+          lowDetail.resetSearchPreviewState();
 
           if (inputId) {
             requestAnimationFrame(() => {
