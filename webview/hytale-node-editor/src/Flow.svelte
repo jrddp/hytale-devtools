@@ -144,7 +144,7 @@
   const useCanvasLowDetailOverlay = $derived(
     canvasOverlayReady && activeRenderDetailMode === "low",
   );
-  const useVisibleElementCulling = $derived(workspace.areNodesMeasured);
+  const useVisibleElementCulling = $derived(workspace.hasCompletedInitialMeasurement);
   const lowDetailRenderCacheById = $derived(
     new Map(lowDetailRenderCache.map(item => [item.id, item])),
   );
@@ -187,6 +187,10 @@
     return node.type === GROUP_NODE_TYPE
       ? workspace.debugState.hideGroups
       : workspace.debugState.hideNodes;
+  }
+
+  function isNodePendingMeasurement(node: FlowNode) {
+    return workspace.isNodePendingMeasurement(node.id);
   }
 
   function isLowDetailCanvasSourceNode(node: FlowNode) {
@@ -388,16 +392,19 @@
   });
 
   $effect(() => {
-    if (!workspace.areNodesMeasured) {
+    if (!workspace.hasCompletedInitialMeasurement) {
       canvasOverlayReadyToken++;
       canvasOverlayReady = false;
       return;
     }
 
+    if (canvasOverlayReady) {
+      return;
+    }
+
     const token = ++canvasOverlayReadyToken;
-    canvasOverlayReady = false;
     void tick().then(() => {
-      if (token === canvasOverlayReadyToken && workspace.areNodesMeasured) {
+      if (token === canvasOverlayReadyToken && workspace.hasCompletedInitialMeasurement) {
         canvasOverlayReady = true;
       }
     });
@@ -417,7 +424,8 @@
     const updates = [];
     for (const node of workspace.nodes) {
       const hiddenByDebug = isNodeHiddenByDebug(node);
-      const hiddenByLowDetail = useCanvasLowDetailOverlay && !hiddenByDebug;
+      const hiddenByLowDetail =
+        useCanvasLowDetailOverlay && !hiddenByDebug && !isNodePendingMeasurement(node);
       if (hiddenByLowDetail) {
         nextHiddenNodeIds.add(node.id);
       }
@@ -442,7 +450,12 @@
     const nextHiddenEdgeIds = new Set<string>();
     const hideEdgesByDebug = workspace.debugState.hideEdges;
     for (const edge of workspace.edges) {
-      if (useCanvasLowDetailOverlay && !hideEdgesByDebug) {
+      if (
+        useCanvasLowDetailOverlay &&
+        !hideEdgesByDebug &&
+        !workspace.isNodePendingMeasurement(edge.source) &&
+        !workspace.isNodePendingMeasurement(edge.target)
+      ) {
         nextHiddenEdgeIds.add(edge.id);
       }
     }
@@ -967,7 +980,7 @@
     workspace.nodes = [...workspace.nodes, ...pastedNodes];
     workspace.trackMeasurementForNodeIds(pastedNodes.map(node => node.id));
     workspace.addEdges(pastedEdges);
-    applyDocumentState("elements-created");
+    applyDocumentState("element-list-changed");
     event.preventDefault();
     event.stopPropagation();
   }
@@ -986,7 +999,7 @@
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
         addMenuInstance = undefined;
         if (clearPendingConnection("both", false)) {
-          applyDocumentState("connections-changed");
+          applyDocumentState("element-list-changed");
         }
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]")) {
@@ -1035,7 +1048,7 @@
     onconnect: connection => {
       pruneConflictingEdges(connection);
       workspace.addEdges([connection]);
-      applyDocumentState("connections-changed");
+      applyDocumentState("element-list-changed");
     },
     // ## On Connect Start
     onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
@@ -1152,7 +1165,7 @@
       if (nodes.some(node => node.id === workspace.rootNodeId)) {
         workspace.rootNodeId = undefined;
       }
-      applyDocumentState("elements-deleted");
+      applyDocumentState("element-list-changed");
     },
   };
 
@@ -1184,7 +1197,7 @@
       // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
       workspace.actionRequests.push({ type: "document-refresh" });
       addMenuInstance = undefined;
-      applyDocumentState("elements-created");
+      applyDocumentState("element-list-changed");
     },
   };
 </script>

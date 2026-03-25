@@ -145,6 +145,15 @@ export type NodeEditorGraphPropertyChange =
     };
 
 export type NodeEditorGraphEdit =
+  | {
+      kind: "element-list-changed";
+      addedNodes: NodeEditorGraphNode[];
+      removedNodes: NodeEditorGraphNode[];
+      addedEdges: NodeEditorGraphEdge[];
+      removedEdges: NodeEditorGraphEdge[];
+      beforeRootNodeId?: string;
+      afterRootNodeId?: string;
+    }
   | { kind: "nodes-moved"; changes: NodeMoveChange[] }
   | { kind: "node-renamed"; changes: NodeRenameChange[] }
   | { kind: "node-resized"; changes: NodeResizeChange[] }

@@ -1,6 +1,7 @@
 import type {
   NodeEditorGraphDocument,
   NodeEditorGraphEdit,
+  NodeEditorGraphEdge,
   NodeEditorGraphNode,
   NodeEditorGraphPropertyChange,
   NodeMoveChange,
@@ -10,6 +11,37 @@ import type {
 
 function indexNodesById(document: NodeEditorGraphDocument): Map<string, NodeEditorGraphNode> {
   return new Map(document.nodes.map(node => [node.id, node]));
+}
+
+function cloneGraphNode(node: NodeEditorGraphNode): NodeEditorGraphNode {
+  return structuredClone(node);
+}
+
+function cloneGraphEdge(edge: NodeEditorGraphEdge): NodeEditorGraphEdge {
+  return { ...edge };
+}
+
+function applyElementListChanged(
+  document: NodeEditorGraphDocument,
+  edit: Extract<NodeEditorGraphEdit, { kind: "element-list-changed" }>,
+  target: "before" | "after",
+): void {
+  const removedNodeIds = new Set(
+    (target === "before" ? edit.addedNodes : edit.removedNodes).map(node => node.id),
+  );
+  const removedEdgeIds = new Set(
+    (target === "before" ? edit.addedEdges : edit.removedEdges).map(edge => edge.id),
+  );
+  const addedNodes = target === "before" ? edit.removedNodes : edit.addedNodes;
+  const addedEdges = target === "before" ? edit.removedEdges : edit.addedEdges;
+
+  document.nodes = document.nodes
+    .filter(node => !removedNodeIds.has(node.id))
+    .concat(addedNodes.map(cloneGraphNode));
+  document.edges = document.edges
+    .filter(edge => !removedEdgeIds.has(edge.id))
+    .concat(addedEdges.map(cloneGraphEdge));
+  document.rootNodeId = target === "before" ? edit.beforeRootNodeId : edit.afterRootNodeId;
 }
 
 function applyNodeMoveChanges(
@@ -108,6 +140,9 @@ export function applyNodeEditorGraphEdit(
   target: "before" | "after" = "after",
 ): void {
   switch (edit.kind) {
+    case "element-list-changed":
+      applyElementListChanged(document, edit, target);
+      return;
     case "nodes-moved":
       applyNodeMoveChanges(document, edit.changes, target);
       return;
@@ -130,6 +165,16 @@ export function invertNodeEditorGraphEdit(
   edit: NodeEditorGraphEdit,
 ): NodeEditorGraphEdit {
   switch (edit.kind) {
+    case "element-list-changed":
+      return {
+        kind: edit.kind,
+        addedNodes: edit.removedNodes.map(cloneGraphNode),
+        removedNodes: edit.addedNodes.map(cloneGraphNode),
+        addedEdges: edit.removedEdges.map(cloneGraphEdge),
+        removedEdges: edit.addedEdges.map(cloneGraphEdge),
+        beforeRootNodeId: edit.afterRootNodeId,
+        afterRootNodeId: edit.beforeRootNodeId,
+      };
     case "nodes-moved":
       return {
         kind: edit.kind,

@@ -113,7 +113,7 @@
       workspace.nodes = nodes;
       workspace.edges = edges;
       workspace.rootNodeId = rootNodeId;
-      workspace.resetMeasurementTracking(nodes);
+      workspace.resetMeasurementTracking(nodes, true);
       workspace.sourceVersion = message.version;
       workspace.committedGraphDocument = message.graphDocument;
       workspace.pendingLocalEditId = undefined;
@@ -147,6 +147,9 @@
     workspace.nodes = nextState.nodes;
     workspace.edges = nextState.edges;
     workspace.rootNodeId = nextState.rootNodeId;
+    if (edit.kind === "element-list-changed") {
+      workspace.resetMeasurementTracking(nextState.nodes);
+    }
     if (graphEditRequiresDocumentRefresh(edit)) {
       workspace.actionRequests.push({ type: "document-refresh" });
     }

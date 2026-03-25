@@ -24,6 +24,7 @@ import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
 import { type FlowEdge, type FlowNode, type FlowNodeData, type VSCodeApi } from "src/common";
 import {
+  buildElementListChangedEdit,
   buildNodeRenamedEdit,
   buildNodeResizedEdit,
   buildNodesMovedEdit,
@@ -95,6 +96,7 @@ export class Workspace {
   pendingLocalEditId = $state<number | undefined>();
   nextClientEditId = $state(0);
   areNodesMeasured = $state(false);
+  hasCompletedInitialMeasurement = $state(false);
   private pendingMeasurementNodeIds = $state.raw<Set<string>>(new Set());
 
   /** clipboard snapshot of copied/cut nodes plus edges fully contained within that selection */
@@ -170,7 +172,7 @@ export class Workspace {
     return this.spatialIndex.search(bbox);
   }
 
-  resetMeasurementTracking(nodes: FlowNode[] = this.nodes) {
+  resetMeasurementTracking(nodes: FlowNode[] = this.nodes, resetOptimizationState = false) {
     const pendingMeasurementNodeIds = new Set<string>();
     for (const node of nodes) {
       if (!hasRenderableNodeSize(node)) {
@@ -180,6 +182,11 @@ export class Workspace {
 
     this.pendingMeasurementNodeIds = pendingMeasurementNodeIds;
     this.areNodesMeasured = pendingMeasurementNodeIds.size === 0;
+    if (resetOptimizationState) {
+      this.hasCompletedInitialMeasurement = pendingMeasurementNodeIds.size === 0;
+    } else if (pendingMeasurementNodeIds.size === 0) {
+      this.hasCompletedInitialMeasurement = true;
+    }
   }
 
   trackMeasurementForNodeIds(nodeIds: Iterable<string>) {
@@ -205,11 +212,15 @@ export class Workspace {
       this.pendingMeasurementNodeIds = pendingMeasurementNodeIds;
     }
     this.areNodesMeasured = pendingMeasurementNodeIds.size === 0;
+    if (pendingMeasurementNodeIds.size === 0) {
+      this.hasCompletedInitialMeasurement = true;
+    }
   }
 
   reconcilePendingMeasurements() {
     if (this.pendingMeasurementNodeIds.size === 0) {
       this.areNodesMeasured = true;
+      this.hasCompletedInitialMeasurement = true;
       return;
     }
 
@@ -228,6 +239,13 @@ export class Workspace {
       this.pendingMeasurementNodeIds = pendingMeasurementNodeIds;
     }
     this.areNodesMeasured = pendingMeasurementNodeIds.size === 0;
+    if (pendingMeasurementNodeIds.size === 0) {
+      this.hasCompletedInitialMeasurement = true;
+    }
+  }
+
+  isNodePendingMeasurement(nodeId: string) {
+    return this.pendingMeasurementNodeIds.has(nodeId);
   }
 
   getEffectivelySelectedNodes(): FlowNode[] {
@@ -445,6 +463,16 @@ function buildGraphEdit(
   beforeDocument: NodeEditorGraphDocument,
 ): NodeEditorGraphEdit | undefined {
   switch (reason) {
+    case "element-list-changed":
+      return buildElementListChangedEdit(
+        beforeDocument,
+        {
+          nodes: workspace.nodes,
+          edges: workspace.edges,
+          rootNodeId: workspace.rootNodeId,
+        },
+        workspace.context.rootMenuName,
+      );
     case "nodes-moved":
       return buildNodesMovedEdit(beforeDocument, workspace.nodes);
     case "node-renamed":
@@ -459,11 +487,30 @@ function buildGraphEdit(
 function isGraphEditKind(
   reason: NodeEditorDocumentEditKind,
 ): reason is NodeEditorGraphEdit["kind"] {
-  return reason === "nodes-moved" || reason === "node-renamed" || reason === "node-resized";
+  return (
+    reason === "element-list-changed" ||
+    reason === "nodes-moved" ||
+    reason === "node-renamed" ||
+    reason === "node-resized"
+  );
 }
 
 function postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {
   switch (edit.kind) {
+    case "element-list-changed":
+      workspace.vscode.postMessage({
+        type: "edit",
+        kind: edit.kind,
+        addedNodes: edit.addedNodes,
+        removedNodes: edit.removedNodes,
+        addedEdges: edit.addedEdges,
+        removedEdges: edit.removedEdges,
+        beforeRootNodeId: edit.beforeRootNodeId,
+        afterRootNodeId: edit.afterRootNodeId,
+        sourceVersion: workspace.sourceVersion,
+        clientEditId,
+      } satisfies NodeEditorGraphEditMessage);
+      return;
     case "nodes-moved":
       workspace.vscode.postMessage({
         type: "edit",

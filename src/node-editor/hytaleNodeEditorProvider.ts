@@ -549,6 +549,7 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
 
 function isGraphEditKind(kind: NodeEditorDocumentEditKind): kind is NodeEditorGraphEdit["kind"] {
   return (
+    kind === "element-list-changed" ||
     kind === "nodes-moved" ||
     kind === "node-renamed" ||
     kind === "node-resized" ||
@@ -564,6 +565,16 @@ function isGraphEditMessage(
 
 function graphEditMessageToGraphEdit(message: NodeEditorGraphEditMessage): NodeEditorGraphEdit {
   switch (message.kind) {
+    case "element-list-changed":
+      return {
+        kind: message.kind,
+        addedNodes: message.addedNodes,
+        removedNodes: message.removedNodes,
+        addedEdges: message.addedEdges,
+        removedEdges: message.removedEdges,
+        beforeRootNodeId: message.beforeRootNodeId,
+        afterRootNodeId: message.afterRootNodeId,
+      };
     case "nodes-moved":
       return {
         kind: message.kind,

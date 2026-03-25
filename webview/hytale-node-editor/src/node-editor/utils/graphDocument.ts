@@ -125,8 +125,49 @@ export function createNodePropertiesUpdatedEdit(
   };
 }
 
+export function buildElementListChangedEdit(
+  beforeDocument: NodeEditorGraphDocument,
+  state: WorkspaceState,
+  workspaceId?: string,
+): Extract<NodeEditorGraphEdit, { kind: "element-list-changed" }> | undefined {
+  const afterDocument = workspaceStateToGraphDocument(state, workspaceId);
+  const beforeNodeIds = new Set(beforeDocument.nodes.map(node => node.id));
+  const afterNodeIds = new Set(afterDocument.nodes.map(node => node.id));
+  const beforeEdgeIds = new Set(beforeDocument.edges.map(edge => edge.id));
+  const afterEdgeIds = new Set(afterDocument.edges.map(edge => edge.id));
+
+  const addedNodes = afterDocument.nodes.filter(node => !beforeNodeIds.has(node.id));
+  const removedNodes = beforeDocument.nodes.filter(node => !afterNodeIds.has(node.id));
+  const addedEdges = afterDocument.edges.filter(edge => !beforeEdgeIds.has(edge.id));
+  const removedEdges = beforeDocument.edges.filter(edge => !afterEdgeIds.has(edge.id));
+
+  if (
+    addedNodes.length === 0 &&
+    removedNodes.length === 0 &&
+    addedEdges.length === 0 &&
+    removedEdges.length === 0 &&
+    beforeDocument.rootNodeId === afterDocument.rootNodeId
+  ) {
+    return undefined;
+  }
+
+  return {
+    kind: "element-list-changed",
+    addedNodes,
+    removedNodes,
+    addedEdges,
+    removedEdges,
+    beforeRootNodeId: beforeDocument.rootNodeId,
+    afterRootNodeId: afterDocument.rootNodeId,
+  };
+}
+
 export function graphEditRequiresDocumentRefresh(edit: NodeEditorGraphEdit): boolean {
-  return edit.kind === "nodes-moved" || edit.kind === "node-resized";
+  return (
+    edit.kind === "element-list-changed" ||
+    edit.kind === "nodes-moved" ||
+    edit.kind === "node-resized"
+  );
 }
 
 export function graphDocumentToWorkspaceState(document: NodeEditorGraphDocument): WorkspaceState {
@@ -248,6 +289,8 @@ export function applyGraphEditToWorkspaceState(
   edit: NodeEditorGraphEdit,
 ): WorkspaceState {
   switch (edit.kind) {
+    case "element-list-changed":
+      return applyElementListChangedToWorkspaceState(state, edit);
     case "nodes-moved":
       return applyNodesMovedToWorkspaceState(state, edit.changes);
     case "node-renamed":
@@ -257,6 +300,25 @@ export function applyGraphEditToWorkspaceState(
     case "node-properties-updated":
       return applyNodePropertiesUpdatedToWorkspaceState(state, edit);
   }
+}
+
+function applyElementListChangedToWorkspaceState(
+  state: WorkspaceState,
+  edit: Extract<NodeEditorGraphEdit, { kind: "element-list-changed" }>,
+): WorkspaceState {
+  const removedNodeIds = new Set(edit.removedNodes.map(node => node.id));
+  const removedEdgeIds = new Set(edit.removedEdges.map(edge => edge.id));
+
+  return {
+    ...state,
+    nodes: state.nodes
+      .filter(node => !removedNodeIds.has(node.id))
+      .concat(edit.addedNodes.map(graphNodeToFlowNode)) as FlowNode[],
+    edges: state.edges
+      .filter(edge => !removedEdgeIds.has(edge.id))
+      .concat(edit.addedEdges.map(cloneGraphEdge)) as FlowEdge[],
+    rootNodeId: edit.afterRootNodeId,
+  };
 }
 
 function applyNodesMovedToWorkspaceState(

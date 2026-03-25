@@ -43,9 +43,7 @@ export interface NodeEditorDocumentUpdateMessage {
 }
 
 export type NodeEditorDocumentEditKind =
-  | "elements-created"
-  | "elements-deleted"
-  | "connections-changed"
+  | "element-list-changed"
   | "nodes-moved"
   | "node-renamed"
   | "node-resized"
@@ -59,6 +57,36 @@ export type SnapshotNodeEditorGraphEditKind = Exclude<
 >;
 
 export type NodeEditorGraphEditMessage =
+  | {
+      type: "edit";
+      kind: "element-list-changed";
+      addedNodes: Extract<
+        NodeEditorGraphEdit,
+        { kind: "element-list-changed" }
+      >["addedNodes"];
+      removedNodes: Extract<
+        NodeEditorGraphEdit,
+        { kind: "element-list-changed" }
+      >["removedNodes"];
+      addedEdges: Extract<
+        NodeEditorGraphEdit,
+        { kind: "element-list-changed" }
+      >["addedEdges"];
+      removedEdges: Extract<
+        NodeEditorGraphEdit,
+        { kind: "element-list-changed" }
+      >["removedEdges"];
+      beforeRootNodeId?: Extract<
+        NodeEditorGraphEdit,
+        { kind: "element-list-changed" }
+      >["beforeRootNodeId"];
+      afterRootNodeId?: Extract<
+        NodeEditorGraphEdit,
+        { kind: "element-list-changed" }
+      >["afterRootNodeId"];
+      sourceVersion?: number;
+      clientEditId: number;
+    }
   | {
       type: "edit";
       kind: "nodes-moved";
