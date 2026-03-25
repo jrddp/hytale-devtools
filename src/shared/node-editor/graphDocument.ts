@@ -458,6 +458,32 @@ function getGraphNodeAbsolutePosition(
   return { x, y };
 }
 
+function getOrderedConnectedNodeIds(
+  connectedNodeIds: string[],
+  nodesById: Map<string, NodeEditorGraphNode>,
+): string[] {
+  const absoluteYByNodeId = new Map<string, number>();
+  const getAbsoluteY = (nodeId: string) => {
+    const cached = absoluteYByNodeId.get(nodeId);
+    if (cached != undefined) {
+      return cached;
+    }
+
+    const node = nodesById.get(nodeId);
+    if (!node) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const absoluteY = getGraphNodeAbsolutePosition(node, nodesById).y;
+    absoluteYByNodeId.set(nodeId, absoluteY);
+    return absoluteY;
+  };
+
+  return [...connectedNodeIds].sort((leftId, rightId) => {
+    return getAbsoluteY(leftId) - getAbsoluteY(rightId);
+  });
+}
+
 export function serializeGraphDocument(document: NodeEditorGraphDocument): AssetDocumentShape {
   const { rootNodeId, nodes, edges } = document;
   const nodeEditorMetadata: NodeEditorMetadata = {
@@ -510,7 +536,10 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         json.$Comment = node.data.comment ?? undefined;
 
         for (const pin of node.data.outputPins) {
-          const connectedNodeIds = outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [];
+          const connectedNodeIds = getOrderedConnectedNodeIds(
+            outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [],
+            nodesById,
+          );
           if (connectedNodeIds.length === 0) {
             continue;
           }
