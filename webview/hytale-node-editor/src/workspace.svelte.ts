@@ -38,7 +38,7 @@ export interface WorkspaceState {
 }
 
 export type NodeRenderDetailMode = "full" | "low";
-const DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD = 0.1;
+const DEFAULT_LOW_DETAIL_ZOOM_THRESHOLD = 0.3;
 const DEFAULT_LOW_DETAIL_CANVAS_EDGE_BASE_WIDTH = 1;
 
 export interface NodeEditorDebugState {

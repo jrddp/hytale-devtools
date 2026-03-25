@@ -114,6 +114,7 @@
     Array<{
       id: string;
       kind: "group" | "node";
+      title: string;
       x: number;
       y: number;
       width: number;
@@ -277,6 +278,7 @@
       nextCache.push({
         id: node.id,
         kind: node.type === GROUP_NODE_TYPE ? "group" : "node",
+        title: node.data.titleOverride ?? node.data.defaultTitle,
         x: position.x,
         y: position.y,
         width: size.width,
@@ -1182,6 +1184,7 @@
         dragDelta={lowDetailDragDelta}
         dragging={lowDetailDragActive}
         edgeWidth={workspace.debugState.lowDetailCanvasEdgeBaseWidth * workspace.zoomCompensationScale}
+        zoomCompensationScale={workspace.zoomCompensationScale}
       />
     {/if}
     <NodeEditorActionMenu />

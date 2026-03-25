@@ -9,6 +9,7 @@
   type OverlayItem = {
     id: string;
     kind: "group" | "node";
+    title: string;
     x: number;
     y: number;
     width: number;
@@ -35,6 +36,14 @@
     animated: boolean;
   };
 
+  const GROUP_LABEL_BASE_SIZE_PX = 18;
+  const GROUP_LABEL_MAX_COMPENSATION_SCALE = 24;
+  const NODE_LABEL_BASE_SIZE_PX = 46;
+  const GROUP_LABEL_OFFSET_PX = 6;
+  const NODE_LABEL_PADDING_X = 8;
+  const NODE_LABEL_PADDING_Y = 8;
+  const NODE_LABEL_LINE_HEIGHT = 1.25;
+
   let {
     active = false,
     items = [],
@@ -44,6 +53,7 @@
     dragDelta = { x: 0, y: 0 },
     dragging = false,
     edgeWidth = 1,
+    zoomCompensationScale = 1,
   }: {
     active?: boolean;
     items?: OverlayItem[];
@@ -53,6 +63,7 @@
     dragDelta?: XYPosition;
     dragging?: boolean;
     edgeWidth?: number;
+    zoomCompensationScale?: number;
   } = $props();
 
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
@@ -153,6 +164,7 @@
     const overlayEdges = edges;
     const edgePaths = edgePathsById;
     const isActive = active;
+    const compensationScale = zoomCompensationScale;
 
     if (!canvas) {
       return;
@@ -171,6 +183,7 @@
         edges: overlayEdges,
         edgePaths,
         edgeWidth,
+        zoomCompensationScale: compensationScale,
         nodes,
         active: isActive,
       });
@@ -210,6 +223,131 @@
     context.fillRect(x, y, width, height);
   }
 
+  function drawNodeTitle({
+    context,
+    x,
+    y,
+    width,
+    height,
+    title,
+    fillStyle,
+    fontSize,
+  }: {
+    context: CanvasRenderingContext2D;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    title: string;
+    fillStyle: string;
+    fontSize: number;
+  }) {
+    if (!title) {
+      return;
+    }
+
+    const maxTextWidth = Math.max(0, width - 2 * NODE_LABEL_PADDING_X);
+    const maxTextHeight = Math.max(0, height - 2 * NODE_LABEL_PADDING_Y);
+    if (maxTextWidth <= 0 || maxTextHeight <= 0) {
+      return;
+    }
+
+    const lineHeight = fontSize * NODE_LABEL_LINE_HEIGHT;
+    const maxLines = Math.max(1, Math.floor(maxTextHeight / lineHeight));
+    const words = title.split(/\s+/).filter(Boolean);
+    const lines: string[] = [];
+    let currentLine = "";
+
+    const commitLine = (line: string) => {
+      if (line.length > 0) {
+        lines.push(line);
+      }
+    };
+
+    context.save();
+    context.globalAlpha = 1;
+    context.fillStyle = fillStyle;
+    context.font = `700 ${fontSize}px sans-serif`;
+    context.textAlign = "left";
+    context.textBaseline = "top";
+    context.beginPath();
+    context.rect(x, y, width, height);
+    context.clip();
+
+    if (words.length === 0) {
+      currentLine = title;
+    } else {
+      for (const word of words) {
+        const nextLine = currentLine.length > 0 ? `${currentLine} ${word}` : word;
+        if (context.measureText(nextLine).width <= maxTextWidth) {
+          currentLine = nextLine;
+          continue;
+        }
+
+        commitLine(currentLine);
+        currentLine = word;
+
+        if (lines.length === maxLines) {
+          break;
+        }
+      }
+    }
+
+    if (lines.length < maxLines) {
+      commitLine(currentLine);
+    }
+
+    if (lines.length > maxLines) {
+      lines.length = maxLines;
+    }
+
+    if (lines.length === maxLines && words.length > 0) {
+      let lastLine = lines[maxLines - 1] ?? "";
+      if (context.measureText(lastLine).width > maxTextWidth || title.trim() !== lines.join(" ")) {
+        while (lastLine.length > 0 && context.measureText(`${lastLine}...`).width > maxTextWidth) {
+          lastLine = lastLine.slice(0, -1).trimEnd();
+        }
+        lines[maxLines - 1] = lastLine.length > 0 ? `${lastLine}...` : "...";
+      }
+    }
+
+    for (const [index, line] of lines.entries()) {
+      context.fillText(
+        line,
+        x + NODE_LABEL_PADDING_X,
+        y + NODE_LABEL_PADDING_Y + index * lineHeight,
+      );
+    }
+    context.restore();
+  }
+
+  function drawGroupTitle({
+    context,
+    x,
+    y,
+    title,
+    fillStyle,
+    fontSize,
+  }: {
+    context: CanvasRenderingContext2D;
+    x: number;
+    y: number;
+    title: string;
+    fillStyle: string;
+    fontSize: number;
+  }) {
+    if (!title) {
+      return;
+    }
+
+    context.globalAlpha = 1;
+    context.fillStyle = fillStyle;
+    context.font = `700 ${fontSize}px sans-serif`;
+    context.textAlign = "left";
+    context.textBaseline = "bottom";
+    context.fillText(title, x, y - GROUP_LABEL_OFFSET_PX);
+  }
+
   function drawOverlay({
     canvas,
     width,
@@ -218,6 +356,7 @@
     edges,
     edgePaths,
     edgeWidth,
+    zoomCompensationScale,
     nodes,
     active,
   }: {
@@ -228,9 +367,11 @@
     edges: OverlayEdge[];
     edgePaths: Map<string, Path2D>;
     edgeWidth: number;
+    zoomCompensationScale: number;
     nodes: Array<{
       id: string;
       kind: "group" | "node";
+      title: string;
       x: number;
       y: number;
       width: number;
@@ -270,10 +411,16 @@
     const shellFill = resolveComputedColor("var(--vscode-editorWidget-background)");
     const shellBorder = resolveComputedColor("var(--vscode-editorWidget-border)");
     const selectionBorder = resolveComputedColor("var(--vscode-focusBorder)");
+    const nodeTitleFill = resolveComputedColor("var(--vscode-input-foreground)");
+    const groupTitleFill = resolveComputedColor("var(--vscode-editor-foreground)");
     const edgeStroke = getComputedStyle(flowStore.domNode).getPropertyValue("--xy-edge-stroke") || "#b1b1b7";
     const selectedEdgeStroke =
       getComputedStyle(flowStore.domNode).getPropertyValue("--xy-edge-stroke-selected") || "#555";
     const groupFill = shellFill;
+    const groupLabelFontSize =
+      GROUP_LABEL_BASE_SIZE_PX *
+      Math.min(GROUP_LABEL_MAX_COMPENSATION_SCALE, zoomCompensationScale);
+    const nodeLabelFontSize = NODE_LABEL_BASE_SIZE_PX;
 
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     context.translate(viewport.x, viewport.y);
@@ -296,23 +443,30 @@
     context.setLineDash([]);
 
     for (const node of nodes) {
-      if (node.kind === "group") {
-        drawRect({
-          context,
-          x: node.x,
-          y: node.y,
-          width: node.width,
-          height: node.height,
-          fillStyle: groupFill,
-          alpha: 0.4,
-        });
+      if (node.kind !== "group") {
+        continue;
+      }
 
-        context.globalAlpha = 1;
-        context.strokeStyle = node.selected ? selectionBorder : shellBorder;
-        context.lineWidth = node.selected ? 2 : 1;
-        context.setLineDash(node.selected ? [] : [6, 4]);
-        context.strokeRect(node.x + 0.5, node.y + 0.5, node.width - 1, node.height - 1);
-        context.setLineDash([]);
+      drawRect({
+        context,
+        x: node.x,
+        y: node.y,
+        width: node.width,
+        height: node.height,
+        fillStyle: groupFill,
+        alpha: 0.4,
+      });
+
+      context.globalAlpha = 1;
+      context.strokeStyle = node.selected ? selectionBorder : shellBorder;
+      context.lineWidth = node.selected ? 2 : 1;
+      context.setLineDash(node.selected ? [] : [6, 4]);
+      context.strokeRect(node.x + 0.5, node.y + 0.5, node.width - 1, node.height - 1);
+      context.setLineDash([]);
+    }
+
+    for (const node of nodes) {
+      if (node.kind === "group") {
         continue;
       }
 
@@ -338,6 +492,31 @@
       context.strokeStyle = node.selected ? selectionBorder : shellBorder;
       context.lineWidth = node.selected ? 2 : 1;
       context.strokeRect(node.x + 0.5, node.y + 0.5, node.width - 1, node.height - 1);
+      drawNodeTitle({
+        context,
+        x: node.x,
+        y: node.y + Math.min(node.height, 4),
+        width: node.width,
+        height: Math.max(0, node.height - Math.min(node.height, 4)),
+        title: node.title,
+        fillStyle: nodeTitleFill,
+        fontSize: nodeLabelFontSize,
+      });
+    }
+
+    for (const node of nodes) {
+      if (node.kind !== "group") {
+        continue;
+      }
+
+      drawGroupTitle({
+        context,
+        x: node.x,
+        y: node.y,
+        title: node.title,
+        fillStyle: groupTitleFill,
+        fontSize: groupLabelFontSize,
+      });
     }
   }
 </script>

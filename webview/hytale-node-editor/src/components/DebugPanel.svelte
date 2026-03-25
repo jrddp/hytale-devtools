@@ -7,7 +7,7 @@
 
   const FRAME_SAMPLE_WINDOW_MS = 1000;
   const FRAME_STATS_REFRESH_MS = 250;
-  const MIN_THRESHOLD = 0.02;
+  const MIN_THRESHOLD = 0;
   const MAX_THRESHOLD = 1;
   const THRESHOLD_STEP = 0.01;
   const EDGE_WIDTH_MIN = 0.5;
