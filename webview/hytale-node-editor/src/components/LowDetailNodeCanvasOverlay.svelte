@@ -36,6 +36,29 @@
     animated: boolean;
   };
 
+  type DrawState = {
+    canvas: HTMLCanvasElement;
+    width: number;
+    height: number;
+    viewport: { x: number; y: number; zoom: number };
+    edges: OverlayEdge[];
+    edgePaths: Map<string, Path2D>;
+    edgeWidth: number;
+    zoomCompensationScale: number;
+    nodes: Array<{
+      id: string;
+      kind: "group" | "node";
+      title: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      selected: boolean;
+      accentColor?: string;
+    }>;
+    active: boolean;
+  };
+
   const GROUP_LABEL_BASE_SIZE_PX = 18;
   const GROUP_LABEL_MAX_COMPENSATION_SCALE = 24;
   const NODE_LABEL_BASE_SIZE_PX = 46;
@@ -148,6 +171,7 @@
 
   let canvasElement = $state<HTMLCanvasElement | undefined>();
   let drawFrame: number | undefined;
+  let latestDrawState = $state<DrawState>();
 
   onDestroy(() => {
     if (drawFrame !== undefined) {
@@ -170,31 +194,31 @@
       return;
     }
 
+    latestDrawState = {
+      canvas,
+      width,
+      height,
+      viewport,
+      edges: overlayEdges,
+      edgePaths,
+      edgeWidth,
+      zoomCompensationScale: compensationScale,
+      nodes,
+      active: isActive,
+    };
+
     if (drawFrame !== undefined) {
-      cancelAnimationFrame(drawFrame);
+      return;
     }
 
     drawFrame = requestAnimationFrame(() => {
-      drawOverlay({
-        canvas,
-        width,
-        height,
-        viewport,
-        edges: overlayEdges,
-        edgePaths,
-        edgeWidth,
-        zoomCompensationScale: compensationScale,
-        nodes,
-        active: isActive,
-      });
-    });
-
-    return () => {
-      if (drawFrame !== undefined) {
-        cancelAnimationFrame(drawFrame);
-        drawFrame = undefined;
+      drawFrame = undefined;
+      if (!latestDrawState) {
+        return;
       }
-    };
+
+      drawOverlay(latestDrawState);
+    });
   });
 
   function drawRect({
@@ -359,28 +383,7 @@
     zoomCompensationScale,
     nodes,
     active,
-  }: {
-    canvas: HTMLCanvasElement;
-    width: number;
-    height: number;
-    viewport: { x: number; y: number; zoom: number };
-    edges: OverlayEdge[];
-    edgePaths: Map<string, Path2D>;
-    edgeWidth: number;
-    zoomCompensationScale: number;
-    nodes: Array<{
-      id: string;
-      kind: "group" | "node";
-      title: string;
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      selected: boolean;
-      accentColor?: string;
-    }>;
-    active: boolean;
-  }) {
+  }: DrawState) {
     const context = canvas.getContext("2d");
     if (!context) {
       return;

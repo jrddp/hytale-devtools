@@ -43,7 +43,7 @@
     recalculateGroupParents,
     resolveFitViewNodeIds,
   } from "src/node-editor/utils/nodeUtils.svelte";
-  import { applyDocumentState, workspace } from "src/workspace.svelte";
+  import { applyDocumentState, type NodeRenderDetailMode, workspace } from "src/workspace.svelte";
   import { tick, untrack } from "svelte";
   import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import type { FlowEdge, FlowNode } from "./common";
@@ -134,9 +134,15 @@
   let forcedLowDetailSelectionMode = $state(false);
   let lowDetailHiddenNodeIds = $state.raw<Set<string>>(new Set());
   let lowDetailHiddenEdgeIds = $state.raw<Set<string>>(new Set());
+  let searchLowDetailCacheLocked = $state(false);
+  let searchPreviewRenderDetailOverride = $state<NodeRenderDetailMode | undefined>();
+  let searchPreviewTransitionToken = $state(0);
+  const activeRenderDetailMode = $derived(
+    searchPreviewRenderDetailOverride ?? workspace.renderDetailMode,
+  );
 
   const useCanvasLowDetailOverlay = $derived(
-    workspace.renderDetailMode === "low" && canvasOverlayReady,
+    canvasOverlayReady && activeRenderDetailMode === "low",
   );
   const useVisibleElementCulling = $derived(workspace.areNodesMeasured);
   const lowDetailRenderCacheById = $derived(
@@ -335,6 +341,43 @@
     lowDetailDragDelta = { x: 0, y: 0 };
   }
 
+  function lockLowDetailSearchCache() {
+    if (!canvasOverlayReady || searchLowDetailCacheLocked) {
+      return;
+    }
+
+    buildLowDetailRenderCache();
+    searchLowDetailCacheLocked = true;
+  }
+
+  function unlockLowDetailSearchCache() {
+    searchLowDetailCacheLocked = false;
+  }
+
+  function beginSearchPreviewTransition() {
+    const token = ++searchPreviewTransitionToken;
+    searchPreviewRenderDetailOverride = workspace.renderDetailMode;
+    return token;
+  }
+
+  function clearSearchPreviewTransition() {
+    searchPreviewTransitionToken++;
+    searchPreviewRenderDetailOverride = undefined;
+  }
+
+  function resetSearchPreviewState() {
+    unlockLowDetailSearchCache();
+    clearSearchPreviewTransition();
+  }
+
+  function endSearchPreviewTransitionAfter(viewportChange: Promise<boolean>, token: number) {
+    void viewportChange.finally(() => {
+      if (token === searchPreviewTransitionToken) {
+        searchPreviewRenderDetailOverride = undefined;
+      }
+    });
+  }
+
   $effect(() => {
     const zoom = viewport.current.zoom;
     workspace.updateViewportZoom(zoom);
@@ -428,12 +471,14 @@
     if (!useCanvasLowDetailOverlay) {
       lowDetailDragActive = false;
       lowDetailDragDelta = { x: 0, y: 0 };
-      lowDetailRenderCache = [];
-      lowDetailEdgeRenderCache = [];
       lowDetailSelectedNodeIds = [];
       lowDetailDraggedNodeIds = [];
       lowDetailHiddenNodeIds = new Set();
       lowDetailHiddenEdgeIds = new Set();
+      if (!searchLowDetailCacheLocked) {
+        lowDetailRenderCache = [];
+        lowDetailEdgeRenderCache = [];
+      }
       if (forcedLowDetailSelectionMode && flowStore.selectionRectMode === "nodes") {
         flowStore.selectionRectMode = null;
       }
@@ -441,7 +486,7 @@
       return;
     }
 
-    if (lowDetailDragActive) {
+    if (lowDetailDragActive || searchLowDetailCacheLocked) {
       return;
     }
 
@@ -617,10 +662,20 @@
             ((innerWidth.current ?? width) / width) * 0.8,
             ((innerHeight.current ?? height) / height) * 0.8,
           );
-          setViewportCenter(absolutePosition.x + width / 2, absolutePosition.y + height / 2, {
-            zoom: Math.min(1.2, maxZoom),
-            duration: action.duration ?? 250,
-          });
+          const previewTransitionToken = searchMenuInstance
+            ? beginSearchPreviewTransition()
+            : undefined;
+          const viewportChange = setViewportCenter(
+            absolutePosition.x + width / 2,
+            absolutePosition.y + height / 2,
+            {
+              zoom: Math.min(1.2, maxZoom),
+              duration: action.duration ?? 250,
+            },
+          );
+          if (previewTransitionToken !== undefined) {
+            endSearchPreviewTransitionAfter(viewportChange, previewTransitionToken);
+          }
           break;
 
         case "fit-view":
@@ -649,6 +704,7 @@
           break;
 
         case "search-nodes":
+          lockLowDetailSearchCache();
           searchMenuInstance = { initialViewport: $state.snapshot(viewport.current) };
           break;
 
@@ -764,6 +820,7 @@
         helpMenuOpen = false;
         addMenuInstance = undefined;
         searchMenuInstance = undefined;
+        resetSearchPreviewState();
         captured = true;
         workspace.selectNodes([], "replace");
         break;
@@ -932,8 +989,10 @@
           applyDocumentState("connections-changed");
         }
       }
-      if (!(event.target as HTMLElement)?.closest("[data-search-menu]"))
+      if (!(event.target as HTMLElement)?.closest("[data-search-menu]")) {
         searchMenuInstance = undefined;
+        resetSearchPreviewState();
+      }
     },
     onblur: () => {
       multiselectModifierPressed = false;
@@ -1195,8 +1254,11 @@
     {#if searchMenuInstance}
       <NodeSearchPanel
         oncancel={() => {
-          setViewport(searchMenuInstance!.initialViewport, { duration: 250 });
+          const previewTransitionToken = beginSearchPreviewTransition();
+          const viewportChange = setViewport(searchMenuInstance!.initialViewport, { duration: 250 });
           searchMenuInstance = undefined;
+          unlockLowDetailSearchCache();
+          endSearchPreviewTransitionAfter(viewportChange, previewTransitionToken);
         }}
         onselection={(node, inputId) => {
           workspace.actionRequests.push({ type: "reveal-node", nodeId: node.id });
@@ -1204,6 +1266,7 @@
             workspace.selectNode(node.id, "replace");
           }
           searchMenuInstance = undefined;
+          resetSearchPreviewState();
 
           if (inputId) {
             requestAnimationFrame(() => {
