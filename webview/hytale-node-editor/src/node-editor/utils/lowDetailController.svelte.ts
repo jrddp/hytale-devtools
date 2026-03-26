@@ -1,19 +1,21 @@
 import type { SvelteFlowStore, XYPosition } from "@xyflow/svelte";
 import type { FlowEdge, FlowNode } from "src/common";
-import { GROUP_NODE_TYPE } from "src/constants";
+import { COMMENT_NODE_TYPE, DEFAULT_COMMENT_FONT_SIZE, GROUP_NODE_TYPE } from "src/constants";
 import { asCssColor, resolveComputedColor } from "src/node-editor/utils/colors";
 import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
 import { workspace, type NodeRenderDetailMode } from "src/workspace.svelte";
 
 export type LowDetailRenderItem = {
   id: string;
-  kind: "group" | "node";
+  kind: "group" | "node" | "comment";
   title: string;
   x: number;
   y: number;
   width: number;
   height: number;
   accentColor?: string;
+  commentText?: string;
+  fontSize?: number;
 };
 
 export type LowDetailEdgeRenderItem = {
@@ -181,16 +183,37 @@ export class LowDetailController {
       }
 
       const position = resolveAbsolutePosition(node);
+      const kind =
+        node.type === GROUP_NODE_TYPE
+          ? "group"
+          : node.type === COMMENT_NODE_TYPE
+            ? "comment"
+            : "node";
       nextCache.push({
         id: node.id,
-        kind: node.type === GROUP_NODE_TYPE ? "group" : "node",
+        kind,
         title: node.data.titleOverride ?? node.data.defaultTitle,
         x: position.x,
         y: position.y,
         width: size.width,
         height: size.height,
+        commentText:
+          kind === "comment"
+            ? typeof node.data.comment === "string"
+              ? node.data.comment
+              : typeof node.data.text === "string"
+                ? node.data.text
+                : ""
+            : undefined,
+        fontSize:
+          kind === "comment"
+            ? (() => {
+                const fontSize = Number(node.data.fontSize);
+                return Number.isFinite(fontSize) ? fontSize : DEFAULT_COMMENT_FONT_SIZE;
+              })()
+            : undefined,
         accentColor:
-          node.type === GROUP_NODE_TYPE
+          kind === "group" || kind === "comment"
             ? undefined
             : resolveComputedColor(asCssColor(node.data.nodeColor)),
       });

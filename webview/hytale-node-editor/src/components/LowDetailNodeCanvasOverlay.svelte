@@ -3,18 +3,21 @@
   import { useStore, type XYPosition } from "@xyflow/svelte";
   import RBush, { type BBox } from "rbush";
   import type { FlowEdge, FlowNode } from "src/common";
+  import { DEFAULT_COMMENT_FONT_SIZE } from "src/constants";
   import { resolveComputedColor } from "src/node-editor/utils/colors";
   import { onDestroy } from "svelte";
 
   type OverlayItem = {
     id: string;
-    kind: "group" | "node";
+    kind: "group" | "node" | "comment";
     title: string;
     x: number;
     y: number;
     width: number;
     height: number;
     accentColor?: string;
+    commentText?: string;
+    fontSize?: number;
   };
 
   type IndexedOverlayItem = OverlayItem & {
@@ -47,7 +50,7 @@
     zoomCompensationScale: number;
     nodes: Array<{
       id: string;
-      kind: "group" | "node";
+      kind: "group" | "node" | "comment";
       title: string;
       x: number;
       y: number;
@@ -55,6 +58,8 @@
       height: number;
       selected: boolean;
       accentColor?: string;
+      commentText?: string;
+      fontSize?: number;
     }>;
     active: boolean;
   };
@@ -63,6 +68,10 @@
   const GROUP_LABEL_MAX_COMPENSATION_SCALE = 24;
   const NODE_LABEL_BASE_SIZE_PX = 46;
   const GROUP_LABEL_OFFSET_PX = 6;
+  const COMMENT_TITLE_BAR_PADDING_X = 8;
+  const COMMENT_TITLE_BAR_PADDING_Y = 6;
+  const COMMENT_BODY_PADDING_X = 8;
+  const COMMENT_BODY_PADDING_Y = 8;
   const NODE_LABEL_PADDING_X = 8;
   const NODE_LABEL_PADDING_Y = 8;
   const NODE_LABEL_LINE_HEIGHT = 1.25;
@@ -247,43 +256,50 @@
     context.fillRect(x, y, width, height);
   }
 
-  function drawNodeTitle({
+  function drawWrappedText({
     context,
     x,
     y,
     width,
     height,
-    title,
+    text,
     fillStyle,
     fontSize,
+    fontWeight = 700,
+    paddingX = NODE_LABEL_PADDING_X,
+    paddingY = NODE_LABEL_PADDING_Y,
+    preserveLineBreaks = false,
   }: {
     context: CanvasRenderingContext2D;
     x: number;
     y: number;
     width: number;
     height: number;
-    title: string;
+    text: string;
     fillStyle: string;
     fontSize: number;
+    fontWeight?: number;
+    paddingX?: number;
+    paddingY?: number;
+    preserveLineBreaks?: boolean;
   }) {
-    if (!title) {
+    if (!text) {
       return;
     }
 
-    const maxTextWidth = Math.max(0, width - 2 * NODE_LABEL_PADDING_X);
-    const maxTextHeight = Math.max(0, height - 2 * NODE_LABEL_PADDING_Y);
+    const maxTextWidth = Math.max(0, width - 2 * paddingX);
+    const maxTextHeight = Math.max(0, height - 2 * paddingY);
     if (maxTextWidth <= 0 || maxTextHeight <= 0) {
       return;
     }
 
     const lineHeight = fontSize * NODE_LABEL_LINE_HEIGHT;
     const maxLines = Math.max(1, Math.floor(maxTextHeight / lineHeight));
-    const words = title.split(/\s+/).filter(Boolean);
     const lines: string[] = [];
-    let currentLine = "";
+    const paragraphs = preserveLineBreaks ? text.split("\n") : [text];
 
     const commitLine = (line: string) => {
-      if (line.length > 0) {
+      if (line.length > 0 || preserveLineBreaks) {
         lines.push(line);
       }
     };
@@ -291,43 +307,56 @@
     context.save();
     context.globalAlpha = 1;
     context.fillStyle = fillStyle;
-    context.font = `700 ${fontSize}px sans-serif`;
+    context.font = `${fontWeight} ${fontSize}px sans-serif`;
     context.textAlign = "left";
     context.textBaseline = "top";
     context.beginPath();
     context.rect(x, y, width, height);
     context.clip();
 
-    if (words.length === 0) {
-      currentLine = title;
-    } else {
-      for (const word of words) {
-        const nextLine = currentLine.length > 0 ? `${currentLine} ${word}` : word;
-        if (context.measureText(nextLine).width <= maxTextWidth) {
-          currentLine = nextLine;
-          continue;
+    for (const paragraph of paragraphs) {
+      const words = paragraph.split(/\s+/).filter(Boolean);
+      let currentLine = "";
+
+      if (words.length === 0) {
+        commitLine("");
+      } else {
+        for (const word of words) {
+          const nextLine = currentLine.length > 0 ? `${currentLine} ${word}` : word;
+          if (context.measureText(nextLine).width <= maxTextWidth) {
+            currentLine = nextLine;
+            continue;
+          }
+
+          commitLine(currentLine);
+          currentLine = word;
+
+          if (lines.length === maxLines) {
+            break;
+          }
         }
 
-        commitLine(currentLine);
-        currentLine = word;
-
-        if (lines.length === maxLines) {
-          break;
+        if (lines.length < maxLines) {
+          commitLine(currentLine);
         }
       }
-    }
 
-    if (lines.length < maxLines) {
-      commitLine(currentLine);
+      if (lines.length >= maxLines) {
+        break;
+      }
     }
 
     if (lines.length > maxLines) {
       lines.length = maxLines;
     }
 
-    if (lines.length === maxLines && words.length > 0) {
+    if (lines.length === maxLines && text.trim().length > 0) {
       let lastLine = lines[maxLines - 1] ?? "";
-      if (context.measureText(lastLine).width > maxTextWidth || title.trim() !== lines.join(" ")) {
+      const normalizedText = preserveLineBreaks ? text : text.trim();
+      if (
+        context.measureText(lastLine).width > maxTextWidth ||
+        normalizedText !== lines.join(preserveLineBreaks ? "\n" : " ")
+      ) {
         while (lastLine.length > 0 && context.measureText(`${lastLine}...`).width > maxTextWidth) {
           lastLine = lastLine.slice(0, -1).trimEnd();
         }
@@ -338,8 +367,8 @@
     for (const [index, line] of lines.entries()) {
       context.fillText(
         line,
-        x + NODE_LABEL_PADDING_X,
-        y + NODE_LABEL_PADDING_Y + index * lineHeight,
+        x + paddingX,
+        y + paddingY + index * lineHeight,
       );
     }
     context.restore();
@@ -415,6 +444,8 @@
     const shellBorder = resolveComputedColor("var(--vscode-editorWidget-border)");
     const selectionBorder = resolveComputedColor("var(--vscode-focusBorder)");
     const nodeTitleFill = resolveComputedColor("var(--vscode-input-foreground)");
+    const commentTextFill = resolveComputedColor("var(--vscode-editor-foreground)");
+    const commentTitleBarFill = resolveComputedColor("var(--vscode-input-background)");
     const groupTitleFill = resolveComputedColor("var(--vscode-editor-foreground)");
     const edgeStroke = getComputedStyle(flowStore.domNode).getPropertyValue("--xy-edge-stroke") || "#b1b1b7";
     const selectedEdgeStroke =
@@ -469,7 +500,7 @@
     }
 
     for (const node of nodes) {
-      if (node.kind === "group") {
+      if (node.kind === "group" || node.kind === "comment") {
         continue;
       }
 
@@ -495,15 +526,77 @@
       context.strokeStyle = node.selected ? selectionBorder : shellBorder;
       context.lineWidth = node.selected ? 2 : 1;
       context.strokeRect(node.x + 0.5, node.y + 0.5, node.width - 1, node.height - 1);
-      drawNodeTitle({
+      drawWrappedText({
         context,
         x: node.x,
         y: node.y + Math.min(node.height, 4),
         width: node.width,
         height: Math.max(0, node.height - Math.min(node.height, 4)),
-        title: node.title,
+        text: node.title,
         fillStyle: nodeTitleFill,
         fontSize: nodeLabelFontSize,
+      });
+    }
+
+    for (const node of nodes) {
+      if (node.kind !== "comment") {
+        continue;
+      }
+
+      const commentFontSize = node.fontSize ?? DEFAULT_COMMENT_FONT_SIZE;
+      const titleBarHeight = Math.min(node.height, commentFontSize * NODE_LABEL_LINE_HEIGHT + 12);
+
+      drawRect({
+        context,
+        x: node.x,
+        y: node.y,
+        width: node.width,
+        height: node.height,
+        fillStyle: shellFill,
+        alpha: 0.9,
+      });
+
+      drawRect({
+        context,
+        x: node.x,
+        y: node.y,
+        width: node.width,
+        height: titleBarHeight,
+        fillStyle: commentTitleBarFill,
+        alpha: 0.7,
+      });
+
+      context.globalAlpha = 1;
+      context.strokeStyle = node.selected ? selectionBorder : shellBorder;
+      context.lineWidth = node.selected ? 2 : 1;
+      context.strokeRect(node.x + 0.5, node.y + 0.5, node.width - 1, node.height - 1);
+
+      drawWrappedText({
+        context,
+        x: node.x,
+        y: node.y,
+        width: node.width,
+        height: titleBarHeight,
+        text: node.title,
+        fillStyle: nodeTitleFill,
+        fontSize: commentFontSize,
+        paddingX: COMMENT_TITLE_BAR_PADDING_X,
+        paddingY: COMMENT_TITLE_BAR_PADDING_Y,
+      });
+
+      drawWrappedText({
+        context,
+        x: node.x,
+        y: node.y + titleBarHeight,
+        width: node.width,
+        height: Math.max(0, node.height - titleBarHeight),
+        text: node.commentText ?? "",
+        fillStyle: commentTextFill,
+        fontSize: commentFontSize,
+        fontWeight: 400,
+        paddingX: COMMENT_BODY_PADDING_X,
+        paddingY: COMMENT_BODY_PADDING_Y,
+        preserveLineBreaks: true,
       });
     }
 
