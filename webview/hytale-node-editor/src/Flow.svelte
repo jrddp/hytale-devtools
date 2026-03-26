@@ -84,6 +84,7 @@
   const MIN_FLOW_ZOOM = 0;
   const SEARCH_NODE_FOCUS_DURATION_MS = 100;
   const SEARCH_NODE_FOCUS_ZOOM = 0.9;
+  const MOUSE_MODE_NO_PAN_CLASS = "__mouse-mode-disabled-nopan";
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
   let multiselectModifierPressed = $state(false);
@@ -95,6 +96,8 @@
   } | null>(null);
 
   let cursorPos = $state<XYPosition>();
+  let mouseModeRightPointerDownPosition = $state<XYPosition | undefined>();
+  let suppressMouseModeContextMenu = $state(false);
 
   let addMenuInstance:
     | { screenPosition: XYPosition; spawnPosition: XYPosition; connectionFilter?: string }
@@ -187,6 +190,22 @@
     if (updates.length > 0) {
       workspace.applyNodeUpdates(updates);
     }
+  });
+
+  $effect(() => {
+    if (workspace.controlScheme !== "mouse" || !flowWrapperElement) {
+      return;
+    }
+
+    void nodes;
+    void edges;
+    void flowStore.selectionRectMode;
+
+    queueMicrotask(() => {
+      flowWrapperElement
+        ?.querySelectorAll(`.${MOUSE_MODE_NO_PAN_CLASS}`)
+        .forEach(element => element.classList.remove(MOUSE_MODE_NO_PAN_CLASS));
+    });
   });
 
   $effect(() => {
@@ -704,6 +723,25 @@
     onpastecapture: handleWindowPaste,
     onpointermovecapture: (event: PointerEvent) => {
       cursorPos = { x: event.clientX, y: event.clientY };
+      if (
+        workspace.controlScheme === "mouse" &&
+        mouseModeRightPointerDownPosition &&
+        (event.buttons & 2) === 2
+      ) {
+        const dx = event.clientX - mouseModeRightPointerDownPosition.x;
+        const dy = event.clientY - mouseModeRightPointerDownPosition.y;
+        if (Math.hypot(dx, dy) > 4) {
+          suppressMouseModeContextMenu = true;
+        }
+      }
+    },
+    onpointerdowncapture: (event: PointerEvent) => {
+      if (workspace.controlScheme === "mouse" && event.button === 2) {
+        mouseModeRightPointerDownPosition = { x: event.clientX, y: event.clientY };
+        suppressMouseModeContextMenu = false;
+      } else {
+        mouseModeRightPointerDownPosition = undefined;
+      }
     },
     onpointerdown: (event: PointerEvent) => {
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
@@ -719,8 +757,38 @@
     },
     onblur: () => {
       multiselectModifierPressed = false;
+      mouseModeRightPointerDownPosition = undefined;
+      suppressMouseModeContextMenu = false;
+    },
+    onpointerup: (event: PointerEvent) => {
+      if (
+        workspace.controlScheme === "mouse" &&
+        event.button === 2 &&
+        !suppressMouseModeContextMenu &&
+        event.target instanceof Element &&
+        !event.target.closest(".svelte-flow__panel, [data-add-menu], [data-search-menu]")
+      ) {
+        const groupNodeTarget = event.target.closest(`.svelte-flow__node-${GROUP_NODE_TYPE}`);
+        const nodeTarget = event.target.closest(".svelte-flow__node");
+        if (!nodeTarget || groupNodeTarget) {
+          addMenuInstance = {
+            screenPosition: { x: event.clientX, y: event.clientY },
+            spawnPosition: screenToFlowPosition({ x: event.clientX, y: event.clientY }),
+          };
+        }
+      }
+
+      mouseModeRightPointerDownPosition = undefined;
+      suppressMouseModeContextMenu = false;
     },
   };
+
+  function handleFlowWrapperContextMenu(event: MouseEvent) {
+    if (workspace.controlScheme !== "mouse") {
+      return;
+    }
+    event.preventDefault();
+  }
 
   function handleFlowWrapperClickCapture(event: MouseEvent) {
     if (
@@ -789,6 +857,12 @@
     },
     // ## On Node Context Menu
     onnodecontextmenu: ({ event: pointerEvent, node }) => {
+      if (workspace.controlScheme === "mouse") {
+        pointerEvent.preventDefault();
+        pointerEvent.stopPropagation();
+        return;
+      }
+
       // groups should open add menu on right click
       if (node.type === GROUP_NODE_TYPE) {
         const flowPosition = screenToFlowPosition({
@@ -915,13 +989,17 @@
   oncutcapture={windowEvents.oncutcapture}
   onpastecapture={windowEvents.onpastecapture}
   onpointermovecapture={windowEvents.onpointermovecapture}
+  onpointerdowncapture={windowEvents.onpointerdowncapture}
   onpointerdown={windowEvents.onpointerdown}
+  onpointerup={windowEvents.onpointerup}
   onblur={windowEvents.onblur}
 />
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="relative w-full h-full overflow-hidden"
   onclickcapture={handleFlowWrapperClickCapture}
+  oncontextmenu={handleFlowWrapperContextMenu}
   bind:this={flowWrapperElement}
 >
   <SvelteFlow
@@ -929,16 +1007,17 @@
     bind:edges
     {initialViewport}
     {nodeTypes}
+    noPanClass={workspace.controlScheme === "mouse" ? MOUSE_MODE_NO_PAN_CLASS : "nopan"}
     disableKeyboardA11y={!!addMenuInstance || !!searchMenuInstance || helpMenuOpen}
     deleteKey={["Delete", "Backspace"]}
     selectionKey={null}
     selectionMode={SelectionMode.Partial}
     selectNodesOnDrag={false}
     zIndexMode={"auto"}
-    panOnDrag={workspace.controlScheme === "mouse" && !multiselectModifierPressed}
+    panOnDrag={workspace.controlScheme === "mouse" ? [2] : false}
     panOnScroll={workspace.controlScheme === "trackpad"}
     multiSelectionKey={MULTISELECT_KEY}
-    selectionOnDrag={workspace.controlScheme === "trackpad" || multiselectModifierPressed}
+    selectionOnDrag={true}
     panActivationKey={null}
     minZoom={MIN_FLOW_ZOOM}
     onlyRenderVisibleElements={useVisibleElementCulling}

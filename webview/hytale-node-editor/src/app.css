@@ -21,4 +21,9 @@
     cursor: not-allowed !important;
     background-color: red !important;
   }
+
+  .svelte-flow__selection-wrapper,
+  .svelte-flow__nodesselection-rect {
+    cursor: grab;
+  }
 }

@@ -37,7 +37,7 @@
   const NAVIGATION_ROWS: KeybindingRow[] = $derived([
     {
       label: "Pan canvas",
-      defaultKeybindings: workspace.controlScheme === "mouse" ? ["Drag"] : ["Scroll"],
+      defaultKeybindings: workspace.controlScheme === "mouse" ? ["Right drag"] : ["Scroll"],
     },
     {
       label: "Zoom",
@@ -45,7 +45,7 @@
     },
     {
       label: "Box select",
-      defaultKeybindings: workspace.controlScheme === "mouse" ? ["Shift+Drag"] : ["Drag"],
+      defaultKeybindings: ["Drag"],
     },
   ]);
 

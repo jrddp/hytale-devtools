@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useSvelteFlow } from "@xyflow/svelte";
+  import { useStore, useSvelteFlow } from "@xyflow/svelte";
   import { type GroupNodeType } from "src/common";
   import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
   import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "src/constants";
@@ -12,13 +12,19 @@
   let { id, data, selected, dragging }: GroupNodeType = $props();
 
   const { updateNodeData } = useSvelteFlow();
+  const flowStore = useStore();
 
   let titleInputElement = $state<HTMLInputElement | undefined>();
+  let bodyElement = $state<HTMLDivElement | undefined>();
   let titleSizerWidth = $state(0);
   let lastComittedTitle = $derived(data.titleOverride ?? data.defaultTitle);
   let effectiveTitle = $derived(data.titleOverride ?? data.defaultTitle);
   let isEditingTitle = $state(false);
-  const bodyDragDisabled = $derived(workspace.controlScheme === "mouse" && !selected);
+  let bodySelectionPointerId = $state<number | undefined>();
+  let bodySelectionStart = $state<{ x: number; y: number } | undefined>();
+  let bodySelectionDragging = $state(false);
+  let shouldDeselectOnBodyClick = $state(false);
+  const bodyDragDisabled = $derived(!selected);
   const titleCompensationScale = $derived(
     Math.min(GROUP_TITLE_MAX_COMPENSATION_SCALE, workspace.zoomCompensationScale),
   );
@@ -51,6 +57,112 @@
   function handleResizeEnd() {
     applyDocumentState("node-resized");
   }
+
+  function clearBodySelectionGesture() {
+    bodySelectionPointerId = undefined;
+    bodySelectionStart = undefined;
+    bodySelectionDragging = false;
+  }
+
+  function updateBodySelectionRect(clientX: number, clientY: number) {
+    if (!bodySelectionStart || !bodyElement) {
+      return;
+    }
+
+    const paneBounds = bodyElement
+      .closest<HTMLElement>(".svelte-flow__pane.svelte-flow__container")
+      ?.getBoundingClientRect();
+    if (!paneBounds) {
+      return;
+    }
+
+    const startX = bodySelectionStart.x - paneBounds.left;
+    const startY = bodySelectionStart.y - paneBounds.top;
+    flowStore.selectionRectMode = "user";
+    flowStore.selectionRect = {
+      startX,
+      startY,
+      x: Math.min(startX, clientX - paneBounds.left),
+      y: Math.min(startY, clientY - paneBounds.top),
+      width: Math.abs(clientX - paneBounds.left - startX),
+      height: Math.abs(clientY - paneBounds.top - startY),
+    };
+  }
+
+  function handleBodyPointerDown(event: PointerEvent) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    shouldDeselectOnBodyClick = selected;
+    if (selected) {
+      return;
+    }
+
+    bodyElement?.setPointerCapture(event.pointerId);
+    bodySelectionPointerId = event.pointerId;
+    bodySelectionStart = { x: event.clientX, y: event.clientY };
+    bodySelectionDragging = false;
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function handleBodyPointerMove(event: PointerEvent) {
+    if (bodySelectionPointerId !== event.pointerId || !bodySelectionStart) {
+      return;
+    }
+
+    const dx = event.clientX - bodySelectionStart.x;
+    const dy = event.clientY - bodySelectionStart.y;
+    if (!bodySelectionDragging && Math.hypot(dx, dy) > 1) {
+      bodySelectionDragging = true;
+    }
+    if (bodySelectionDragging) {
+      updateBodySelectionRect(event.clientX, event.clientY);
+    }
+  }
+
+  function handleBodyPointerUp(event: PointerEvent) {
+    if (bodySelectionPointerId !== event.pointerId) {
+      return;
+    }
+
+    bodyElement?.releasePointerCapture(event.pointerId);
+
+    if (bodySelectionDragging) {
+      updateBodySelectionRect(event.clientX, event.clientY);
+      flowStore.selectionRect = null;
+      flowStore.selectionRectMode = flowStore.nodes.some(node => node.selected) ? "nodes" : null;
+    } else {
+      flowStore.handleNodeSelection(id);
+    }
+
+    clearBodySelectionGesture();
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function handleBodyPointerCancel(event: PointerEvent) {
+    if (bodySelectionPointerId !== event.pointerId) {
+      return;
+    }
+
+    bodyElement?.releasePointerCapture(event.pointerId);
+    flowStore.selectionRect = null;
+    flowStore.selectionRectMode = null;
+    clearBodySelectionGesture();
+  }
+
+  function handleBodyClick(event: MouseEvent) {
+    if (!shouldDeselectOnBodyClick || dragging || event.button !== 0) {
+      return;
+    }
+
+    shouldDeselectOnBodyClick = false;
+    flowStore.handleNodeSelection(id, true, bodyElement);
+    event.preventDefault();
+    event.stopPropagation();
+  }
 </script>
 
 <div
@@ -58,6 +170,14 @@
   class:cursor-grabbing={dragging}
   style="outline: {selected && !dragging ? '2px solid var(--vscode-focusBorder)' : 'none'};"
 >
+  {#if selected}
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 rounded-lg pointer-events-none"
+      style="background: var(--xy-selection-background-color, var(--xy-selection-background-color-default));"
+    ></div>
+  {/if}
+
   <!-- Title Bar -->
   <div
     class="absolute inset-x-0 top-0 flex items-end h-8 gap-1 px-2 pb-1 overflow-visible border-b rounded-t-lg border-vsc-editor-widget-border/80 bg-vsc-input-bg/60 cursor-grab active:cursor-grabbing"
@@ -107,7 +227,16 @@
   <div
     aria-hidden="true"
     class="absolute inset-x-0 bottom-0 top-8"
+    bind:this={bodyElement}
     class:nodrag={bodyDragDisabled}
+    class:cursor-pointer={!selected}
+    class:cursor-grab={selected && !dragging}
+    class:cursor-grabbing={selected && dragging}
+    onpointerdown={handleBodyPointerDown}
+    onpointermove={handleBodyPointerMove}
+    onpointerup={handleBodyPointerUp}
+    onpointercancel={handleBodyPointerCancel}
+    onclick={handleBodyClick}
   ></div>
 
   <ZoomCompensatedNodeResizer
