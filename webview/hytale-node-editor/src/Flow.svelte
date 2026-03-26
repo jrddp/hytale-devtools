@@ -824,6 +824,24 @@
     event.preventDefault();
   }
 
+  // In low-detail mode the real node DOM is hidden, so clicks on canvas-rendered nodes still target the pane.
+  // We use this to keep XYFlow's pane handlers from treating those presses as empty-pane clicks.
+  function getLowDetailCanvasNodeFromPointerEvent(event: PointerEvent | MouseEvent) {
+    if (
+      helpMenuOpen ||
+      !useCanvasLowDetailOverlay ||
+      !(event.target instanceof Element) ||
+      event.button !== 0 ||
+      event.defaultPrevented ||
+      event.target.closest(FLOW_OVERLAY_TARGET_SELECTOR)
+    ) {
+      return undefined;
+    }
+
+    const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+    return lowDetail.getCanvasSelectableNodeAtPoint(flowPosition, flowStore);
+  }
+
   // retargets node drag when we are dragging unselected nodes (to prevent https://github.com/jrddp/hytale-devtools/issues/7)
   function shouldRetargetPrimaryNodeDrag(event: PointerEvent) {
     return (
@@ -846,6 +864,11 @@
   }
 
   function handleFlowWrapperPointerDownCapture(event: PointerEvent) {
+    if (getLowDetailCanvasNodeFromPointerEvent(event)) {
+      event.stopPropagation();
+      return;
+    }
+
     if (!shouldRetargetPrimaryNodeDrag(event)) {
       return;
     }
@@ -864,39 +887,28 @@
     flowStore.handleNodeSelection(nodeId!, false, nodeElement);
   }
 
+  function handleFlowWrapperPointerUpCapture(event: PointerEvent) {
+    if (getLowDetailCanvasNodeFromPointerEvent(event)) {
+      event.stopPropagation();
+    }
+  }
+
   function handleFlowWrapperClickCapture(event: MouseEvent) {
     if (handlePriority.suppressEdgeClick(event)) {
       return;
     }
 
-    if (
-      helpMenuOpen ||
-      !useCanvasLowDetailOverlay ||
-      !(event.target instanceof Element) ||
-      event.button !== 0 ||
-      event.defaultPrevented ||
-      event.target.closest(FLOW_OVERLAY_TARGET_SELECTOR)
-    ) {
-      return;
-    }
-
-    const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
-    const canvasNode = lowDetail.getCanvasSelectableNodeAtPoint(flowPosition, flowStore);
+    const canvasNode = getLowDetailCanvasNodeFromPointerEvent(event);
     if (!canvasNode) {
       return;
     }
 
-    const selectionType = multiselectModifierPressed ? "add" : "replace";
-    if (selectionType === "replace" && edges.some(edge => edge.selected)) {
-      edges = edges.map(edge => (edge.selected ? { ...edge, selected: false } : edge));
-    }
-    workspace.selectNode(canvasNode.id, selectionType);
-    lowDetail.updateSelectedNodeIds(
-      workspace.nodes.flatMap(node => (node.selected ? [node.id] : [])),
-    );
-    flowStore.selectionRect = null;
-    flowStore.selectionRectMode = "nodes";
-    lowDetail.forcedSelectionMode = true;
+    const multiselectActive =
+      multiselectModifierPressed || event.getModifierState(MULTISELECT_KEY);
+    flowStore.multiselectionKeyPressed = multiselectActive;
+    flowStore.handleNodeSelection(canvasNode.id, false);
+    lowDetail.updateSelectedNodeIds(flowStore.nodes.flatMap(node => (node.selected ? [node.id] : [])));
+    lowDetail.syncSelectionMode(useCanvasLowDetailOverlay, flowStore);
     event.preventDefault();
     event.stopPropagation();
   }
@@ -1079,6 +1091,7 @@
   class="relative w-full h-full overflow-hidden"
   onmousedowncapture={handleFlowWrapperMouseDownCapture}
   onpointerdowncapture={handleFlowWrapperPointerDownCapture}
+  onpointerupcapture={handleFlowWrapperPointerUpCapture}
   onclickcapture={handleFlowWrapperClickCapture}
   oncontextmenu={handleFlowWrapperContextMenu}
   bind:this={flowWrapperElement}
