@@ -34,6 +34,7 @@
     type IndexedBezierEdgeGeometry,
   } from "src/node-editor/utils/edgeGeometry";
   import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
+  import { createHandlePriorityController } from "src/node-editor/utils/handlePriority.svelte";
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import { createLowDetailController } from "src/node-editor/utils/lowDetailController.svelte";
   import {
@@ -86,6 +87,7 @@
   const FLOW_OVERLAY_TARGET_SELECTOR =
     ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]";
   const NODE_DRAG_RETARGET_BLOCKER_SELECTOR = `${FLOW_OVERLAY_TARGET_SELECTOR}, .svelte-flow__handle, [data-group-body]`;
+  const handlePriority = createHandlePriorityController(FLOW_OVERLAY_TARGET_SELECTOR);
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
   let multiselectModifierPressed = $state(false);
@@ -724,6 +726,7 @@
     onpastecapture: handleWindowPaste,
     onpointermovecapture: (event: PointerEvent) => {
       cursorPos = { x: event.clientX, y: event.clientY };
+      handlePriority.trackPointerMove(event);
       if (
         workspace.controlScheme === "mouse" &&
         mouseModeRightPointerDownPosition &&
@@ -760,6 +763,7 @@
       multiselectModifierPressed = false;
       mouseModeRightPointerDownPosition = undefined;
       suppressMouseModeContextMenu = false;
+      handlePriority.reset();
     },
     onpointerup: (event: PointerEvent) => {
       if (
@@ -805,6 +809,14 @@
     );
   }
 
+  function handleFlowWrapperMouseDownCapture(event: MouseEvent) {
+    handlePriority.handleMouseDownCapture(event, {
+      useCanvasLowDetailOverlay,
+      helpMenuOpen,
+      flowStore,
+    });
+  }
+
   function handleFlowWrapperPointerDownCapture(event: PointerEvent) {
     if (!shouldRetargetPrimaryNodeDrag(event)) {
       return;
@@ -825,6 +837,10 @@
   }
 
   function handleFlowWrapperClickCapture(event: MouseEvent) {
+    if (handlePriority.suppressEdgeClick(event)) {
+      return;
+    }
+
     if (
       helpMenuOpen ||
       !useCanvasLowDetailOverlay ||
@@ -1033,6 +1049,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="relative w-full h-full overflow-hidden"
+  onmousedowncapture={handleFlowWrapperMouseDownCapture}
   onpointerdowncapture={handleFlowWrapperPointerDownCapture}
   onclickcapture={handleFlowWrapperClickCapture}
   oncontextmenu={handleFlowWrapperContextMenu}
