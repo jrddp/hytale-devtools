@@ -764,9 +764,12 @@
       if (
         workspace.controlScheme === "mouse" &&
         event.button === 2 &&
+        !helpMenuOpen &&
         !suppressMouseModeContextMenu &&
         event.target instanceof Element &&
-        !event.target.closest(".svelte-flow__panel, [data-add-menu], [data-search-menu]")
+        !event.target.closest(
+          ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]",
+        )
       ) {
         const groupNodeTarget = event.target.closest(`.svelte-flow__node-${GROUP_NODE_TYPE}`);
         const nodeTarget = event.target.closest(".svelte-flow__node");
@@ -792,11 +795,14 @@
 
   function handleFlowWrapperClickCapture(event: MouseEvent) {
     if (
+      helpMenuOpen ||
       !useCanvasLowDetailOverlay ||
       !(event.target instanceof Element) ||
       event.button !== 0 ||
       event.defaultPrevented ||
-      event.target.closest(".svelte-flow__panel, [data-add-menu], [data-search-menu]")
+      event.target.closest(
+        ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]",
+      )
     ) {
       return;
     }
