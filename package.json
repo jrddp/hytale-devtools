@@ -172,7 +172,7 @@
             "filenamePattern": "**/Server/HytaleGenerator/Assignments/**/*.json"
           }
         ],
-        "priority": "option"
+        "priority": "default"
       },
       {
         "viewType": "hytale-devtools.hytaleAssetEditor",
@@ -437,7 +437,7 @@
             "filenamePattern": "**/Server/HytaleGenerator/WorldStructures/**/*.json"
           }
         ],
-        "priority": "default"
+        "priority": "option"
       }
     ]
   },
