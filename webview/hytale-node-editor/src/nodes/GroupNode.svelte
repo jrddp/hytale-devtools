@@ -227,6 +227,7 @@
   <div
     aria-hidden="true"
     class="absolute inset-x-0 bottom-0 top-8"
+    data-group-body="true"
     bind:this={bodyElement}
     class:nodrag={bodyDragDisabled}
     class:cursor-pointer={!selected}

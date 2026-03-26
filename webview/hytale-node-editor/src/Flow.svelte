@@ -82,9 +82,10 @@
   } = $props();
 
   const MIN_FLOW_ZOOM = 0;
-  const SEARCH_NODE_FOCUS_DURATION_MS = 100;
-  const SEARCH_NODE_FOCUS_ZOOM = 0.9;
   const MOUSE_MODE_NO_PAN_CLASS = "__mouse-mode-disabled-nopan";
+  const FLOW_OVERLAY_TARGET_SELECTOR =
+    ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]";
+  const NODE_DRAG_RETARGET_BLOCKER_SELECTOR = `${FLOW_OVERLAY_TARGET_SELECTOR}, .svelte-flow__handle, [data-group-body]`;
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
   let multiselectModifierPressed = $state(false);
@@ -767,9 +768,7 @@
         !helpMenuOpen &&
         !suppressMouseModeContextMenu &&
         event.target instanceof Element &&
-        !event.target.closest(
-          ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]",
-        )
+        !event.target.closest(FLOW_OVERLAY_TARGET_SELECTOR)
       ) {
         const groupNodeTarget = event.target.closest(`.svelte-flow__node-${GROUP_NODE_TYPE}`);
         const nodeTarget = event.target.closest(".svelte-flow__node");
@@ -793,6 +792,38 @@
     event.preventDefault();
   }
 
+  // retargets node drag when we are dragging unselected nodes (to prevent https://github.com/jrddp/hytale-devtools/issues/7)
+  function shouldRetargetPrimaryNodeDrag(event: PointerEvent) {
+    return (
+      !useCanvasLowDetailOverlay &&
+      !helpMenuOpen &&
+      event.button === 0 &&
+      !multiselectModifierPressed &&
+      !event.defaultPrevented &&
+      event.target instanceof Element &&
+      !event.target.closest(NODE_DRAG_RETARGET_BLOCKER_SELECTOR)
+    );
+  }
+
+  function handleFlowWrapperPointerDownCapture(event: PointerEvent) {
+    if (!shouldRetargetPrimaryNodeDrag(event)) {
+      return;
+    }
+
+    const nodeElement = (event.target as Element).closest<HTMLDivElement>(".svelte-flow__node");
+    if (!nodeElement) {
+      return;
+    }
+
+    const nodeId = nodeElement.dataset.id;
+    const node = nodeId ? flowStore.nodeLookup.get(nodeId) : undefined;
+    if (!node || node.selected) {
+      return;
+    }
+
+    flowStore.handleNodeSelection(nodeId!, false, nodeElement);
+  }
+
   function handleFlowWrapperClickCapture(event: MouseEvent) {
     if (
       helpMenuOpen ||
@@ -800,9 +831,7 @@
       !(event.target instanceof Element) ||
       event.button !== 0 ||
       event.defaultPrevented ||
-      event.target.closest(
-        ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]",
-      )
+      event.target.closest(FLOW_OVERLAY_TARGET_SELECTOR)
     ) {
       return;
     }
@@ -1004,6 +1033,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="relative w-full h-full overflow-hidden"
+  onpointerdowncapture={handleFlowWrapperPointerDownCapture}
   onclickcapture={handleFlowWrapperClickCapture}
   oncontextmenu={handleFlowWrapperContextMenu}
   bind:this={flowWrapperElement}
