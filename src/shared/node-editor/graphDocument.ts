@@ -465,7 +465,7 @@ function getOrderedConnectedNodeIds(
   const absoluteYByNodeId = new Map<string, number>();
   const getAbsoluteY = (nodeId: string) => {
     const cached = absoluteYByNodeId.get(nodeId);
-    if (cached != undefined) {
+    if (cached !== undefined) {
       return cached;
     }
 
