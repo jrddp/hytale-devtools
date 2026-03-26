@@ -13,7 +13,7 @@
     type XYPosition,
   } from "@xyflow/svelte";
   import "@xyflow/svelte/dist/style.css";
-  import { getOverlappingArea, pointToRendererPoint } from "@xyflow/system";
+  import { getOverlappingArea, getViewportForBounds, pointToRendererPoint } from "@xyflow/system";
   import RBush from "rbush";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
@@ -53,7 +53,7 @@
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
   const {
-    fitView,
+    getNodesBounds,
     screenToFlowPosition,
     setCenter: setViewportCenter,
     setViewport,
@@ -133,6 +133,7 @@
   $effect(() => {
     const zoom = viewport.current.zoom;
     workspace.updateViewportZoom(zoom);
+    lowDetail.syncRenderDetailTransitionForZoom(zoom);
     const nextDetailMode = zoom >= workspace.debugState.lowDetailZoomThreshold ? "full" : "low";
     if (workspace.renderDetailMode !== nextDetailMode) {
       workspace.renderDetailMode = nextDetailMode;
@@ -453,17 +454,44 @@
             retained.push(action);
             break;
           }
-          const fitNodes = resolveFitViewNodeIds({
+          const fitNodeIds = resolveFitViewNodeIds({
             nodes: workspace.nodes,
             rootNodeId: workspace.rootNodeId,
             maxDistanceToRoot: action.maxDistanceToRoot,
           });
-          fitView({
-            nodes: fitNodes.length > 0 ? fitNodes : undefined,
-            padding: 0.2,
-            minZoom: MIN_FLOW_ZOOM,
+          const fitNodeIdSet = new Set(fitNodeIds.map(node => node.id));
+          const nodesToFit =
+            fitNodeIdSet.size > 0
+              ? workspace.nodes.filter(node => fitNodeIdSet.has(node.id))
+              : workspace.nodes;
+          if (nodesToFit.length === 0) {
+            break;
+          }
+          const fitBounds = getNodesBounds(nodesToFit);
+          const nextViewport = getViewportForBounds(
+            fitBounds,
+            flowStore.width,
+            flowStore.height,
+            MIN_FLOW_ZOOM,
+            flowStore.maxZoom,
+            0.2,
+          );
+          const targetRenderDetailMode: NodeRenderDetailMode =
+            nextViewport.zoom >= workspace.debugState.lowDetailZoomThreshold ? "full" : "low";
+          const fitViewTransitionToken =
+            targetRenderDetailMode === activeRenderDetailMode
+              ? lowDetail.beginRenderDetailTransition(targetRenderDetailMode)
+              : lowDetail.beginThresholdRenderDetailTransition(
+                  targetRenderDetailMode,
+                  workspace.debugState.lowDetailZoomThreshold,
+                );
+          if (targetRenderDetailMode === "low" && lowDetail.canvasOverlayReady) {
+            lowDetail.buildRenderCache();
+          }
+          const fitViewChange = setViewport(nextViewport, {
             duration: action.duration ?? 250,
           });
+          lowDetail.endRenderDetailTransitionAfter(fitViewChange, fitViewTransitionToken);
           break;
 
         case "select-all":

@@ -64,13 +64,13 @@ export class LowDetailController {
   hiddenNodeIds = $state.raw<Set<string>>(new Set());
   hiddenEdgeIds = $state.raw<Set<string>>(new Set());
   searchCacheLocked = $state(false);
-  searchPreviewRenderDetailOverride = $state<NodeRenderDetailMode | undefined>();
-  searchPreviewTransitionToken = $state(0);
+  renderDetailTransitionOverride = $state<NodeRenderDetailMode | undefined>();
+  renderDetailTransitionToken = $state(0);
+  renderDetailTransitionSwitchTargetMode = $state<NodeRenderDetailMode | undefined>();
+  renderDetailTransitionSwitchZoom = $state<number | undefined>();
 
   renderCacheById = $derived(new Map(this.renderCache.map(item => [item.id, item])));
-  activeRenderDetailMode = $derived(
-    this.searchPreviewRenderDetailOverride ?? workspace.renderDetailMode,
-  );
+  activeRenderDetailMode = $derived(this.renderDetailTransitionOverride ?? workspace.renderDetailMode);
 
   getRenderableNodeSize(node: FlowNode) {
     const width = node.measured?.width ?? node.width;
@@ -298,15 +298,60 @@ export class LowDetailController {
     this.searchCacheLocked = false;
   }
 
-  beginSearchPreviewTransition() {
-    const token = ++this.searchPreviewTransitionToken;
-    this.searchPreviewRenderDetailOverride = workspace.renderDetailMode;
+  beginRenderDetailTransition(mode: NodeRenderDetailMode = workspace.renderDetailMode) {
+    const token = ++this.renderDetailTransitionToken;
+    this.renderDetailTransitionOverride = mode;
+    this.renderDetailTransitionSwitchTargetMode = undefined;
+    this.renderDetailTransitionSwitchZoom = undefined;
     return token;
   }
 
+  beginThresholdRenderDetailTransition(targetMode: NodeRenderDetailMode, switchZoom: number) {
+    const token = ++this.renderDetailTransitionToken;
+    this.renderDetailTransitionOverride = this.activeRenderDetailMode;
+    this.renderDetailTransitionSwitchTargetMode = targetMode;
+    this.renderDetailTransitionSwitchZoom = switchZoom;
+    return token;
+  }
+
+  syncRenderDetailTransitionForZoom(zoom: number) {
+    const targetMode = this.renderDetailTransitionSwitchTargetMode;
+    const switchZoom = this.renderDetailTransitionSwitchZoom;
+    if (!targetMode || switchZoom === undefined || this.renderDetailTransitionOverride === targetMode) {
+      return;
+    }
+
+    const shouldSwitch = targetMode === "full" ? zoom >= switchZoom : zoom < switchZoom;
+    if (shouldSwitch) {
+      this.renderDetailTransitionOverride = targetMode;
+      this.renderDetailTransitionSwitchTargetMode = undefined;
+      this.renderDetailTransitionSwitchZoom = undefined;
+    }
+  }
+
+  clearRenderDetailTransition() {
+    this.renderDetailTransitionToken++;
+    this.renderDetailTransitionOverride = undefined;
+    this.renderDetailTransitionSwitchTargetMode = undefined;
+    this.renderDetailTransitionSwitchZoom = undefined;
+  }
+
+  endRenderDetailTransitionAfter(viewportChange: Promise<boolean>, token: number) {
+    void viewportChange.finally(() => {
+      if (token === this.renderDetailTransitionToken) {
+        this.renderDetailTransitionOverride = undefined;
+        this.renderDetailTransitionSwitchTargetMode = undefined;
+        this.renderDetailTransitionSwitchZoom = undefined;
+      }
+    });
+  }
+
+  beginSearchPreviewTransition() {
+    return this.beginRenderDetailTransition();
+  }
+
   clearSearchPreviewTransition() {
-    this.searchPreviewTransitionToken++;
-    this.searchPreviewRenderDetailOverride = undefined;
+    this.clearRenderDetailTransition();
   }
 
   resetSearchPreviewState() {
@@ -315,11 +360,7 @@ export class LowDetailController {
   }
 
   endSearchPreviewTransitionAfter(viewportChange: Promise<boolean>, token: number) {
-    void viewportChange.finally(() => {
-      if (token === this.searchPreviewTransitionToken) {
-        this.searchPreviewRenderDetailOverride = undefined;
-      }
-    });
+    this.endRenderDetailTransitionAfter(viewportChange, token);
   }
 }
 
