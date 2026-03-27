@@ -444,6 +444,7 @@ export class WorkspaceRuntime {
           content.Description ??
           content.Options.Description,
         value: content.Options?.Default ?? content.Options?.DefaultValue,
+        isImplicit: true,
         inputWidth: content.Options?.Width,
         overrideAutocompleteValues,
         subfields: content.Options?.Fields

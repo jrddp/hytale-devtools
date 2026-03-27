@@ -365,9 +365,11 @@ export function parseAssetDocumentToGraphDocument(
 
       for (const key of Object.keys(clonedTemplateData.fieldsBySchemaKey)) {
         unprocessedData.delete(key);
+        const hasExplicitField = Object.hasOwn(localRoot, key);
         const value = localRoot[key];
-        if (value !== undefined) {
+        if (hasExplicitField) {
           clonedTemplateData.fieldsBySchemaKey[key].value = value;
+          clonedTemplateData.fieldsBySchemaKey[key].isImplicit = false;
         }
       }
 
@@ -672,6 +674,12 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         }
 
         for (const field of Object.values(node.data.fieldsBySchemaKey)) {
+          if (field.value === undefined) {
+            continue;
+          }
+          if (field.value === "" && field.isImplicit) {
+            continue;
+          }
           json[field.schemaKey as string] = field.value;
         }
 

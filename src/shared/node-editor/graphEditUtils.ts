@@ -111,8 +111,10 @@ function applyNodePropertyChanges(
     switch (change.type) {
       case "field-value":
         if (node.data.fieldsBySchemaKey?.[change.schemaKey]) {
-          node.data.fieldsBySchemaKey[change.schemaKey].value =
-            target === "before" ? change.beforeValue : change.afterValue;
+          const field = node.data.fieldsBySchemaKey[change.schemaKey];
+          field.value = target === "before" ? change.beforeValue : change.afterValue;
+          field.isImplicit =
+            target === "before" ? change.beforeIsImplicit : change.afterIsImplicit;
         }
         break;
       case "comment":
@@ -212,6 +214,8 @@ export function invertNodeEditorGraphEdit(
                 ...change,
                 beforeValue: change.afterValue,
                 afterValue: change.beforeValue,
+                beforeIsImplicit: change.afterIsImplicit,
+                afterIsImplicit: change.beforeIsImplicit,
               };
             case "comment":
               return {

@@ -24,6 +24,7 @@ export function nodeField(
     schemaKey,
     localId: schemaKey,
     type,
+    isImplicit: true,
     ...overrides,
   };
 }

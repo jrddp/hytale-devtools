@@ -21,6 +21,7 @@ const TEST_CONTEXT = workspaceContext({
       defaultTitle: "Root Node",
       fieldsBySchemaKey: {
         Name: nodeField("Name"),
+        Preset: nodeField("Preset", "string", { value: "Default Preset" }),
       },
       outputPins: [outputPin("Primary"), outputPin("Children", "multiple")],
       childTypes: {
@@ -186,5 +187,56 @@ describe("node editor serializeDocument", () => {
     const serializedChildren = serialized.Children as Array<{ Value?: string }>;
 
     expect(serializedChildren.map(child => child.Value)).toEqual(["Second Value", "First Value"]);
+  });
+
+  test("omits implicit empty string fields but preserves non-empty defaults", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      TEST_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
+
+    expect(serialized).not.toHaveProperty("Name");
+    expect(serialized.Preset).toBe("Default Preset");
+  });
+
+  test("preserves explicit empty string fields", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Name: "",
+      },
+      TEST_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
+
+    expect(serialized.Name).toBe("");
+  });
+
+  test("saves cleared implicit text fields as explicit empty strings after edits", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      TEST_CONTEXT,
+    );
+
+    const rootNode = findNodeByBaseId(parsed, "Root-1");
+    rootNode.data.fieldsBySchemaKey.Name = {
+      ...rootNode.data.fieldsBySchemaKey.Name,
+      value: "",
+      isImplicit: false,
+    };
+
+    const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
+
+    expect(serialized.Name).toBe("");
   });
 });

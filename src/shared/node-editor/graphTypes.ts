@@ -124,6 +124,8 @@ export type NodeEditorGraphPropertyChange =
       schemaKey: string;
       beforeValue: unknown;
       afterValue: unknown;
+      beforeIsImplicit?: boolean;
+      afterIsImplicit?: boolean;
     }
   | {
       type: "comment";
