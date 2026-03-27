@@ -435,6 +435,7 @@ function applyNodePropertiesUpdatedToWorkspaceState(
                   [change.schemaKey]: {
                     ...nextNode.data.fieldsBySchemaKey[change.schemaKey],
                     value: change.afterValue,
+                    isImplicit: change.afterIsImplicit,
                   },
                 };
               }

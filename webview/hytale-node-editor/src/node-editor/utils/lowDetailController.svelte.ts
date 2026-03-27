@@ -201,9 +201,7 @@ export class LowDetailController {
           kind === "comment"
             ? typeof node.data.comment === "string"
               ? node.data.comment
-              : typeof node.data.text === "string"
-                ? node.data.text
-                : ""
+              : ""
             : undefined,
         fontSize:
           kind === "comment"

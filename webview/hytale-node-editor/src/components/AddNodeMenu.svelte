@@ -4,15 +4,23 @@
   import { marked } from "marked";
   import { asCssColor } from "src/node-editor/utils/colors";
   import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
+  import {
+    templateHasCompatibleInput,
+    templateHasCompatibleOutput,
+  } from "src/node-editor/utils/nodeUtils.svelte";
   import { workspace } from "src/workspace.svelte";
   import { onMount } from "svelte";
   import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import MarkdownPreviewCard from "../../../shared/components/MarkdownPreviewCard.svelte";
 
+  export type AddMenuConnectionFilter = {
+    draggedFrom: "source" | "target";
+    pinType: string;
+  };
+
   export type AddMenuProps = {
     screenPosition: XYPosition;
-    // Variant Kind ID or Template ID. Implies there is a source connection to attach new node to as the child.
-    connectionFilter: string | undefined;
+    connectionFilter: AddMenuConnectionFilter | undefined;
     oncancel?: () => void;
     onselection?: (template: NodeTemplate) => void;
   };
@@ -59,10 +67,12 @@
       return workspace.getValidTemplates(workspace.context.rootTemplateOrVariantId);
     }
     if (connectionFilter !== undefined) {
-      return [
-        ...workspace.getValidTemplates(connectionFilter),
-        ...GENERIC_TEMPLATES.filter(template => template.inputPins.length > 0), // only allow templates that can connect
-      ];
+      const templates = [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];
+      return templates.filter(template =>
+        connectionFilter.draggedFrom === "source"
+          ? templateHasCompatibleInput(template, connectionFilter.pinType)
+          : templateHasCompatibleOutput(template, connectionFilter.pinType),
+      );
     } else {
       return [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];
     }

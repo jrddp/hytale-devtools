@@ -1,5 +1,5 @@
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
-import { type NodePin } from "@shared/node-editor/workspaceTypes";
+import { type NodePin, type NodeTemplate } from "@shared/node-editor/workspaceTypes";
 import { type Connection, type XYPosition } from "@xyflow/svelte";
 import { type BBox } from "rbush";
 import {
@@ -30,35 +30,77 @@ export type PendingConnection =
 /** [nodeId, dataUpdates] */
 export type NodeDataUpdates = [string, Partial<FlowNodeData>];
 export type NodeUpdates = [string, Partial<FlowNode>];
+export const GENERIC_CONNECTION_TYPE = "Generic";
 
 export function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
   return {
     ...data,
     schemaKey: INPUT_HANDLE_ID,
+    connectionType: GENERIC_CONNECTION_TYPE,
     localId: "Input",
     label: "Input",
     multiplicity: "single",
   };
 }
 
+export function areConnectionTypesCompatible(sourceType: string, targetType: string): boolean {
+  return (
+    sourceType === GENERIC_CONNECTION_TYPE ||
+    targetType === GENERIC_CONNECTION_TYPE ||
+    sourceType === targetType
+  );
+}
+
+export function templateHasCompatibleInput(template: NodeTemplate, pinType: string): boolean {
+  return template.inputPins.some(pin => areConnectionTypesCompatible(pinType, pin.connectionType));
+}
+
+export function templateHasCompatibleOutput(template: NodeTemplate, pinType: string): boolean {
+  return template.outputPins.some(pin => areConnectionTypesCompatible(pin.connectionType, pinType));
+}
+
+export function getCompatibleInputHandleId(
+  nodeOrTemplate: Pick<DataNodeType["data"], "inputPins"> | NodeTemplate,
+  pinType: string,
+): string | undefined {
+  return (
+    nodeOrTemplate.inputPins.find(pin => pin.connectionType === pinType)?.schemaKey ??
+    nodeOrTemplate.inputPins.find(pin =>
+      areConnectionTypesCompatible(pinType, pin.connectionType),
+    )?.schemaKey
+  );
+}
+
+export function getCompatibleOutputHandleId(
+  nodeOrTemplate: Pick<DataNodeType["data"], "outputPins"> | NodeTemplate,
+  pinType: string,
+): string | undefined {
+  return (
+    nodeOrTemplate.outputPins.find(pin => pin.connectionType === pinType)?.schemaKey ??
+    nodeOrTemplate.outputPins.find(pin =>
+      areConnectionTypesCompatible(pin.connectionType, pinType),
+    )?.schemaKey
+  );
+}
+
 export function isValidConnection(connection: Connection | FlowEdge): boolean {
   if (!connection.sourceHandle) return false;
   const sourceNode = workspace.getNodeById(connection.source) as DataNodeType;
   const targetNode = workspace.getNodeById(connection.target) as DataNodeType;
-  if (!sourceNode.data.childTypes || !targetNode.data.templateId) return false;
-  const variantKindOrTemplateId = sourceNode.data.childTypes[connection.sourceHandle];
-  const variantKind = workspace.context.variantKindsById[variantKindOrTemplateId];
-  const templateId = targetNode.data.templateId;
-  if (variantKind) {
-    return Object.values(variantKind.Variants).includes(templateId);
-  }
-  return variantKindOrTemplateId === templateId;
+  const sourcePin = sourceNode.data.outputPins?.find(pin => pin.schemaKey === connection.sourceHandle);
+  const targetPin = targetNode.data.inputPins?.find(pin => pin.schemaKey === connection.targetHandle);
+  if (!sourcePin || !targetPin) return false;
+  return areConnectionTypesCompatible(sourcePin.connectionType, targetPin.connectionType);
 }
 
 export function getOutputPin(nodeId: string, handleId: string): NodePin | undefined {
   const node = workspace.getNodeById(nodeId);
-  if (!node.data.hasOutputs) return undefined;
   return node.data.outputPins?.find(pin => pin.schemaKey === handleId);
+}
+
+export function getInputPin(nodeId: string, handleId: string): NodePin | undefined {
+  const node = workspace.getNodeById(nodeId);
+  return node.data.inputPins?.find(pin => pin.schemaKey === handleId);
 }
 
 export function recalculateGroupParents() {
@@ -186,9 +228,8 @@ export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[]
     prunedEdges.push(edge);
   };
 
-  const conflictingInput: FlowEdge | undefined = target
-    ? workspace.getIncomingConnection(target)
-    : undefined;
+  const conflictingInput: FlowEdge | undefined =
+    target && targetHandle ? workspace.getIncomingConnection(target, targetHandle) : undefined;
   pruneEdge(conflictingInput);
 
   if (source && sourceHandle) {

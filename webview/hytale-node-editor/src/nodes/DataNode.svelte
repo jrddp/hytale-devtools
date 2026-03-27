@@ -11,13 +11,16 @@
   const { updateNodeData } = useSvelteFlow();
 
   function updateField(schemaKey: string, nextValue: unknown) {
-    const previousValue = fieldsBySchemaKey[schemaKey]?.value;
+    const previousField = fieldsBySchemaKey[schemaKey];
+    const previousValue = previousField?.value;
+    const previousIsImplicit = previousField?.isImplicit;
     updateNodeData(id, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
         [schemaKey]: {
           ...fieldsBySchemaKey[schemaKey],
           value: nextValue,
+          isImplicit: false,
         },
       },
     });
@@ -28,6 +31,8 @@
         schemaKey,
         beforeValue: previousValue,
         afterValue: nextValue,
+        beforeIsImplicit: previousIsImplicit,
+        afterIsImplicit: false,
       },
     ]);
     if (edit) {

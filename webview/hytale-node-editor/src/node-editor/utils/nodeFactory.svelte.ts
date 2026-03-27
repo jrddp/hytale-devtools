@@ -66,6 +66,7 @@ export const LINK_TEMPLATE: NodeTemplate = {
   outputPins: [
     {
       schemaKey: LINK_OUTPUT_HANDLE_ID,
+      connectionType: "Generic",
       localId: LINK_OUTPUT_HANDLE_ID,
       label: LINK_DEFAULT_OUTPUT_LABEL,
       multiplicity: "single",

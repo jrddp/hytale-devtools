@@ -30,6 +30,8 @@ export interface NodeField {
   label?: string;
   description?: string;
   value?: unknown;
+  /** Represents whether a field is implied from an absent value when initially parsed. Used to preserve explicitly empty values. */
+  isImplicit?: boolean;
   inputWidth?: number;
   overrideAutocompleteValues?: string[];
   subfields?: NodeField[];
@@ -42,6 +44,7 @@ export interface NodePin {
   label?: string;
   description?: string;
   color?: string;
+  connectionType: string;
   localId: string;
   multiplicity: "single" | "multiple" | "map";
   fields?: NodeField[];

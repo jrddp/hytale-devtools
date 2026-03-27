@@ -3,7 +3,6 @@ import path, { join } from "path";
 import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
 import { safeParseJSONFile } from "../shared/fileUtils";
-import { isObject } from "../shared/typeUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 import {
@@ -15,6 +14,7 @@ import {
   type NodePin,
   type NodeTemplate,
 } from "../shared/node-editor/workspaceTypes";
+import { isObject } from "../shared/typeUtils";
 import {
   type NodeContentDefinition,
   type NodeContentDefinitionType,
@@ -24,7 +24,7 @@ import {
   type WorkspacePathRule,
 } from "./workspaceDefinitionTypes";
 
-const WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
+export const NODE_EDITOR_WORKSPACE_PATH_RULES: Record<string, WorkspacePathRule> = {
   "/Server/ScriptedBrushes/": {
     workspaceName: "Scriptable Brushes",
     rootId: "DropList",
@@ -80,7 +80,7 @@ export class WorkspaceRuntime {
 
   resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceContext | null {
     assetPath = path.normalize(assetPath);
-    const subpathMatch = Object.keys(WORKSPACE_PATH_RULES).find(subpath =>
+    const subpathMatch = Object.keys(NODE_EDITOR_WORKSPACE_PATH_RULES).find(subpath =>
       assetPath.includes(subpath),
     );
     if (!subpathMatch) {
@@ -111,7 +111,7 @@ export class WorkspaceRuntime {
     }
 
     if (!workspace || !rootDefinition) {
-      const matchedRule = WORKSPACE_PATH_RULES[subpathMatch];
+      const matchedRule = NODE_EDITOR_WORKSPACE_PATH_RULES[subpathMatch];
       workspace = this.nodeEditorWorkspaces[matchedRule.workspaceName];
       if (!workspace) {
         return null;
@@ -167,6 +167,19 @@ export class WorkspaceRuntime {
             continue;
           }
           templatesById[templateId].category = category;
+        }
+      }
+
+      // Use the workspace variant mapping as the source of truth for variant selector constants.
+      // Some template-local schema constants don't match the actual serialized asset token.
+      for (const variantKind of Object.values(workspaceDefinition.Variants ?? {})) {
+        for (const [variantValue, templateId] of Object.entries(variantKind.Variants ?? {})) {
+          const template = templatesById[templateId];
+          if (!template) {
+            continue;
+          }
+
+          template.schemaConstants[variantKind.VariantFieldName] = variantValue;
         }
       }
 
@@ -282,6 +295,7 @@ export class WorkspaceRuntime {
         return {
           schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
           localId: input.Id,
+          connectionType: input.Type,
           label: input.Label,
           description:
             input.Description ??
@@ -310,6 +324,7 @@ export class WorkspaceRuntime {
           map[output.Id] = {
             schemaKey: "",
             localId: output.Id,
+            connectionType: output.Type,
             label: output.Label,
             description: supplementedOutputDescriptions[output.Id] ?? output.Description,
             color: output.Color,
@@ -431,6 +446,7 @@ export class WorkspaceRuntime {
           content.Description ??
           content.Options.Description,
         value: content.Options?.Default ?? content.Options?.DefaultValue,
+        isImplicit: true,
         inputWidth: content.Options?.Width,
         overrideAutocompleteValues,
         subfields: content.Options?.Fields
