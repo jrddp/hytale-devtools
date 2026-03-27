@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     Background,
-    Position,
     SelectionMode,
     SvelteFlow,
     useConnection,
@@ -17,8 +16,10 @@
   import RBush from "rbush";
 
   import { type NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
-  import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
-  import AddNodeMenu, { type AddMenuProps } from "src/components/AddNodeMenu.svelte";
+  import AddNodeMenu, {
+    type AddMenuConnectionFilter,
+    type AddMenuProps,
+  } from "src/components/AddNodeMenu.svelte";
   import DebugPanel from "src/components/DebugPanel.svelte";
   import LowDetailNodeCanvasOverlay from "src/components/LowDetailNodeCanvasOverlay.svelte";
   import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
@@ -38,9 +39,13 @@
   import { createUuidV4 } from "src/node-editor/utils/idUtils";
   import { createLowDetailController } from "src/node-editor/utils/lowDetailController.svelte";
   import {
+    getCompatibleInputHandleId,
+    getCompatibleOutputHandleId,
     getAbsoluteCenterPosition,
     getAbsolutePosition,
     getAllSiblingOrderUpdates,
+    getInputPin,
+    getOutputPin,
     isValidConnection,
     pruneConflictingEdges,
     recalculateGroupParents,
@@ -103,7 +108,11 @@
   let suppressMouseModeContextMenu = $state(false);
 
   let addMenuInstance:
-    | { screenPosition: XYPosition; spawnPosition: XYPosition; connectionFilter?: string }
+    | {
+        screenPosition: XYPosition;
+        spawnPosition: XYPosition;
+        connectionFilter?: AddMenuConnectionFilter;
+      }
     | undefined = $state();
   let searchMenuInstance:
     | {
@@ -927,14 +936,35 @@
     },
     // ## On Connect End
     onconnectend: (event, connectionState) => {
-      // spawn add menu if ended not on another pin and started from the parent node
-      if (connectionState.fromPosition === Position.Right && connectionState.toNode === null) {
-        const fromNode = workspace.getNodeById(connectionState.fromNode!.id);
-        const connectionFilter = fromNode.data.childTypes[connectionState.fromHandle!.id];
+      if (connectionState.toNode === null && connectionPreview.pendingSourceConnection) {
+        const sourcePin = getOutputPin(
+          connectionPreview.pendingSourceConnection.source,
+          connectionPreview.pendingSourceConnection.sourceHandle,
+        );
         addMenuInstance = {
           screenPosition: connectionState.pointer!,
           spawnPosition: screenToFlowPosition(connectionState.pointer!),
-          connectionFilter: connectionFilter,
+          connectionFilter: sourcePin
+            ? {
+                draggedFrom: "source",
+                pinType: sourcePin.connectionType,
+              }
+            : undefined,
+        };
+      } else if (connectionState.toNode === null && connectionPreview.pendingTargetConnection) {
+        const targetPin = getInputPin(
+          connectionPreview.pendingTargetConnection.target,
+          connectionPreview.pendingTargetConnection.targetHandle,
+        );
+        addMenuInstance = {
+          screenPosition: connectionState.pointer!,
+          spawnPosition: screenToFlowPosition(connectionState.pointer!),
+          connectionFilter: targetPin
+            ? {
+                draggedFrom: "target",
+                pinType: targetPin.connectionType,
+              }
+            : undefined,
         };
       } else {
         // restore conflicts if invalid
@@ -1045,22 +1075,46 @@
 
     // ## On Template Selection (create new node)
     onselection: template => {
+      const menuInstance = addMenuInstance;
+      if (!menuInstance) {
+        return;
+      }
+
       const isCreatingRootNode = !workspace.getRootNode();
       const newNode: FlowNode = {
-        ...createNodeFromTemplate(template, addMenuInstance!.spawnPosition),
+        ...createNodeFromTemplate(template, menuInstance.spawnPosition),
       };
       workspace.nodes = [...workspace.nodes, newNode];
       workspace.trackMeasurementForNodeIds([newNode.id]);
       if (isCreatingRootNode) {
         workspace.rootNodeId = newNode.id;
       } else if (connectionPreview.pendingSourceConnection) {
-        workspace.addEdges([
-          {
-            ...connectionPreview.pendingSourceConnection,
-            target: newNode.id,
-            targetHandle: INPUT_HANDLE_ID,
-          },
-        ]);
+        const targetHandle = menuInstance.connectionFilter
+          ? getCompatibleInputHandleId(newNode.data, menuInstance.connectionFilter.pinType)
+          : undefined;
+        if (targetHandle) {
+          workspace.addEdges([
+            {
+              ...connectionPreview.pendingSourceConnection,
+              target: newNode.id,
+              targetHandle,
+            },
+          ]);
+        }
+      } else if (connectionPreview.pendingTargetConnection) {
+        const sourceHandle = menuInstance.connectionFilter
+          ? getCompatibleOutputHandleId(newNode.data, menuInstance.connectionFilter.pinType)
+          : undefined;
+        if (sourceHandle) {
+          workspace.addEdges([
+            {
+              source: newNode.id,
+              sourceHandle,
+              target: connectionPreview.pendingTargetConnection.target,
+              targetHandle: connectionPreview.pendingTargetConnection.targetHandle,
+            },
+          ]);
+        }
       }
       connectionPreview.clearPendingConnection("both", false);
 
@@ -1117,8 +1171,6 @@
     onlyRenderVisibleElements={useVisibleElementCulling}
     connectionRadius={CONNECTION_RADIUS}
     isValidConnection={connection => {
-      // todo abuse validation checking + connection radius detection to trigger events for snap/snapping handles (so we can preview the pruning)
-      // todo also while you're at it instead of *removing* conflicting edges we should render them as dashed lines it'll probably look better
       return isValidConnection(connection);
     }}
     {...svelteFlowEvents}

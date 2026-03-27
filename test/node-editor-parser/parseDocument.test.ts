@@ -5,6 +5,7 @@ import {
   findEdge,
   findNode,
   findNodeByBaseId,
+  inputPin,
   nodeField,
   nodeTemplate,
   outputPin,
@@ -33,6 +34,73 @@ const TEST_CONTEXT = workspaceContext({
       defaultTitle: "Leaf Node",
       fieldsBySchemaKey: {
         Value: nodeField("Value"),
+      },
+    }),
+  ],
+});
+
+const MULTI_INPUT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Multi Input Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [outputPin("Primary", "single", { connectionType: "Alpha" })],
+      childTypes: {
+        Primary: "Leaf",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("Leaf", {
+      inputPins: [
+        inputPin("input", "single", { connectionType: "Generic", localId: "Input" }),
+        inputPin("input1", "single", {
+          connectionType: "Alpha",
+          localId: "Restricted.Input",
+        }),
+      ],
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+    }),
+  ],
+});
+
+const SHARED_SUBTREE_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Shared Subtree Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [
+        outputPin("Left", "single", { connectionType: "Alpha" }),
+        outputPin("Right", "single", { connectionType: "Beta" }),
+      ],
+      childTypes: {
+        Left: "SharedLeaf",
+        Right: "SharedLeaf",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("SharedLeaf", {
+      inputPins: [
+        inputPin("input", "single", { connectionType: "Alpha", localId: "Input.Alpha" }),
+        inputPin("input1", "single", { connectionType: "Beta", localId: "Input.Beta" }),
+      ],
+      outputPins: [outputPin("Child", "single", { connectionType: "Gamma" })],
+      childTypes: {
+        Child: "Grandchild",
+      },
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+    }),
+    nodeTemplate("Grandchild", {
+      inputPins: [inputPin("input", "single", { connectionType: "Gamma", localId: "Input" })],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
       },
     }),
   ],
@@ -182,5 +250,101 @@ describe("node editor parseDocument", () => {
       sourceHandle: "Children",
       target: third.id,
     });
+  });
+
+  test("assigns parsed edges to the compatible input handle instead of always using the default input", () => {
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Primary: {
+          $NodeId: "Leaf-1",
+          Value: "Primary Value",
+        },
+      },
+      MULTI_INPUT_CONTEXT,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    const leaf = findNodeByBaseId(state, "Leaf-1");
+
+    expect(findEdge(state, `${root.id}:Primary-${leaf.id}`)).toMatchObject({
+      source: root.id,
+      sourceHandle: "Primary",
+      target: leaf.id,
+      targetHandle: "input1",
+    });
+  });
+
+  test("reuses repeated uuid-backed node payloads as the same parsed nodes", () => {
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-11111111-1111-4111-8111-111111111111",
+        Type: "Root",
+        Left: {
+          $NodeId: "SharedLeaf-22222222-2222-4222-8222-222222222222",
+          Value: "Shared",
+          Child: {
+            $NodeId: "Grandchild-33333333-3333-4333-8333-333333333333",
+            Name: "Grandchild",
+          },
+        },
+        Right: {
+          $NodeId: "SharedLeaf-22222222-2222-4222-8222-222222222222",
+          Value: "Shared",
+          Child: {
+            $NodeId: "Grandchild-33333333-3333-4333-8333-333333333333",
+            Name: "Grandchild",
+          },
+        },
+      },
+      SHARED_SUBTREE_CONTEXT,
+    );
+
+    expect(state.nodes).toHaveLength(3);
+    expect(state.edges).toHaveLength(3);
+
+    const root = findNode(state, "Root-11111111-1111-4111-8111-111111111111");
+    const sharedLeaf = findNode(state, "SharedLeaf-22222222-2222-4222-8222-222222222222");
+    const grandchild = findNode(state, "Grandchild-33333333-3333-4333-8333-333333333333");
+
+    expect(findEdge(state, `${root.id}:Left-${sharedLeaf.id}`)).toMatchObject({
+      source: root.id,
+      sourceHandle: "Left",
+      target: sharedLeaf.id,
+      targetHandle: "input",
+    });
+    expect(findEdge(state, `${root.id}:Right-${sharedLeaf.id}`)).toMatchObject({
+      source: root.id,
+      sourceHandle: "Right",
+      target: sharedLeaf.id,
+      targetHandle: "input1",
+    });
+    expect(findEdge(state, `${sharedLeaf.id}:Child-${grandchild.id}`)).toMatchObject({
+      source: sharedLeaf.id,
+      sourceHandle: "Child",
+      target: grandchild.id,
+      targetHandle: "input",
+    });
+  });
+
+  test("throws when the same reused node id is serialized with conflicting payloads", () => {
+    expect(() =>
+      parseWorkspaceDocument(
+        {
+          $NodeId: "Root-11111111-1111-4111-8111-111111111111",
+          Type: "Root",
+          Left: {
+            $NodeId: "SharedLeaf-22222222-2222-4222-8222-222222222222",
+            Value: "First",
+          },
+          Right: {
+            $NodeId: "SharedLeaf-22222222-2222-4222-8222-222222222222",
+            Value: "Second",
+          },
+        },
+        SHARED_SUBTREE_CONTEXT,
+      ),
+    ).toThrow(/Conflicting serialized payloads/);
   });
 });

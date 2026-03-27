@@ -2,6 +2,7 @@ import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "@shared/node-editor/clipboardTypes";
+import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { applyNodeEditorGraphEdit } from "@shared/node-editor/graphEditUtils";
 import {
   type NodeEditorGraphDocument,
@@ -142,11 +143,14 @@ export class Workspace {
     });
     return outgoingConnections;
   });
-  /** childId -> edge */
-  private incomingConnections: Map<string, FlowEdge> = $derived.by(() => {
-    const incomingConnections: Map<string, FlowEdge> = new Map();
+  /** childId -> targetHandleId -> edge */
+  private incomingConnections: Map<string, Map<string, FlowEdge>> = $derived.by(() => {
+    const incomingConnections: Map<string, Map<string, FlowEdge>> = new Map();
     this.edges.forEach(edge => {
-      incomingConnections.set(edge.target, edge);
+      if (!incomingConnections.has(edge.target)) {
+        incomingConnections.set(edge.target, new Map());
+      }
+      incomingConnections.get(edge.target)!.set(edge.targetHandle ?? INPUT_HANDLE_ID, edge);
     });
     return incomingConnections;
   });
@@ -265,8 +269,19 @@ export class Workspace {
     return [...outgoingConnections];
   }
 
-  getIncomingConnection(nodeId: string): FlowEdge | undefined {
-    return this.incomingConnections.get(nodeId);
+  getIncomingConnection(nodeId: string, handleId?: string): FlowEdge | undefined {
+    const incomingConnections = this.incomingConnections.get(nodeId);
+    if (!incomingConnections) {
+      return undefined;
+    }
+
+    if (handleId !== undefined) {
+      return incomingConnections.get(handleId);
+    }
+
+    // Legacy callers still ask for a single "parent" edge without specifying a handle.
+    // Prefer the default input when present, otherwise fall back to the first incoming edge.
+    return incomingConnections.get(INPUT_HANDLE_ID) ?? incomingConnections.values().next().value;
   }
 
   getValidTemplates(variantKindOrTemplateId: string | undefined): NodeTemplate[] {

@@ -5,6 +5,7 @@ import {
   expectCanonicalizedNodeId,
   findNodeByBaseId,
   formatSemanticDiff,
+  inputPin,
   nodeField,
   nodeTemplate,
   normalizeRoundTripJson,
@@ -36,6 +37,45 @@ const TEST_CONTEXT = workspaceContext({
       defaultTitle: "Leaf Node",
       fieldsBySchemaKey: {
         Value: nodeField("Value"),
+      },
+    }),
+  ],
+});
+
+const SHARED_SUBTREE_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Shared Subtree Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [
+        outputPin("Left", "single", { connectionType: "Alpha" }),
+        outputPin("Right", "single", { connectionType: "Beta" }),
+      ],
+      childTypes: {
+        Left: "SharedLeaf",
+        Right: "SharedLeaf",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("SharedLeaf", {
+      inputPins: [
+        inputPin("input", "single", { connectionType: "Alpha", localId: "Input.Alpha" }),
+        inputPin("input1", "single", { connectionType: "Beta", localId: "Input.Beta" }),
+      ],
+      outputPins: [outputPin("Child", "single", { connectionType: "Gamma" })],
+      childTypes: {
+        Child: "Grandchild",
+      },
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+    }),
+    nodeTemplate("Grandchild", {
+      inputPins: [inputPin("input", "single", { connectionType: "Gamma", localId: "Input" })],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
       },
     }),
   ],
@@ -238,5 +278,40 @@ describe("node editor serializeDocument", () => {
     const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
 
     expect(serialized.Name).toBe("");
+  });
+
+  test("serializes shared node subtrees under each parent branch using the same node ids", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-11111111-1111-4111-8111-111111111111",
+        Type: "Root",
+        Left: {
+          $NodeId: "SharedLeaf-22222222-2222-4222-8222-222222222222",
+          Value: "Shared",
+          Child: {
+            $NodeId: "Grandchild-33333333-3333-4333-8333-333333333333",
+            Name: "Grandchild",
+          },
+        },
+        Right: {
+          $NodeId: "SharedLeaf-22222222-2222-4222-8222-222222222222",
+          Value: "Shared",
+          Child: {
+            $NodeId: "Grandchild-33333333-3333-4333-8333-333333333333",
+            Name: "Grandchild",
+          },
+        },
+      },
+      SHARED_SUBTREE_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, SHARED_SUBTREE_CONTEXT.rootMenuName);
+    const left = serialized.Left as { $NodeId: string; Child?: { $NodeId: string } };
+    const right = serialized.Right as { $NodeId: string; Child?: { $NodeId: string } };
+
+    expect(left.$NodeId).toBe("SharedLeaf-22222222-2222-4222-8222-222222222222");
+    expect(right.$NodeId).toBe("SharedLeaf-22222222-2222-4222-8222-222222222222");
+    expect(left.Child?.$NodeId).toBe("Grandchild-33333333-3333-4333-8333-333333333333");
+    expect(right.Child?.$NodeId).toBe("Grandchild-33333333-3333-4333-8333-333333333333");
   });
 });

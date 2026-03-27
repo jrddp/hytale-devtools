@@ -103,10 +103,6 @@ export class ConnectionPreviewController {
           nextPreviewConnection.targetHandle,
         ].join(":");
 
-    if (nextPreviewKey === this.pendingConnectionPreviewKey) {
-      return;
-    }
-
     if (this.pendingSourceConflictingEdges.length > 0) {
       workspace.addEdges(this.pendingSourceConflictingEdges);
       this.pendingSourceConflictingEdges = [];
@@ -114,6 +110,15 @@ export class ConnectionPreviewController {
     if (this.pendingTargetConflictingEdges.length > 0) {
       workspace.addEdges(this.pendingTargetConflictingEdges);
       this.pendingTargetConflictingEdges = [];
+    }
+
+    if (currentConnection.isValid !== true) {
+      this.pendingConnectionPreviewKey = undefined;
+      return;
+    }
+
+    if (nextPreviewKey === this.pendingConnectionPreviewKey) {
+      return;
     }
 
     this.pendingConnectionPreviewKey = nextPreviewKey;

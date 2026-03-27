@@ -295,6 +295,7 @@ export class WorkspaceRuntime {
         return {
           schemaKey: INPUT_HANDLE_ID + (idx === 0 ? "" : idx),
           localId: input.Id,
+          connectionType: input.Type,
           label: input.Label,
           description:
             input.Description ??
@@ -323,6 +324,7 @@ export class WorkspaceRuntime {
           map[output.Id] = {
             schemaKey: "",
             localId: output.Id,
+            connectionType: output.Type,
             label: output.Label,
             description: supplementedOutputDescriptions[output.Id] ?? output.Description,
             color: output.Color,

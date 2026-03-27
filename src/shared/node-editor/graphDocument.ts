@@ -27,6 +27,8 @@ const DEFAULT_RAW_JSON_TEXT = "{\n\n}";
 const LINK_OUTPUT_HANDLE_ID = "output";
 const LINK_DEFAULT_OUTPUT_LABEL = "Children";
 const RAW_JSON_NODE_COLOR = "var(--vscode-focusBorder)";
+const GENERIC_CONNECTION_TYPE = "Generic";
+const NON_SEMANTIC_INLINE_METADATA_KEYS = new Set(["$Position", "$Title"]);
 
 const GROUP_TEMPLATE_ID = "$Group";
 const COMMENT_TEMPLATE_ID = "$Comment";
@@ -59,6 +61,7 @@ function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
   return {
     ...data,
     schemaKey: INPUT_HANDLE_ID,
+    connectionType: GENERIC_CONNECTION_TYPE,
     localId: "Input",
     label: "Input",
     multiplicity: "single",
@@ -96,6 +99,7 @@ const LINK_TEMPLATE: NodeTemplate = {
   outputPins: [
     {
       schemaKey: LINK_OUTPUT_HANDLE_ID,
+      connectionType: GENERIC_CONNECTION_TYPE,
       localId: LINK_OUTPUT_HANDLE_ID,
       label: LINK_DEFAULT_OUTPUT_LABEL,
       multiplicity: "single",
@@ -195,6 +199,41 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+function normalizeNodeDefinitionForReuse(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(normalizeNodeDefinitionForReuse);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([key]) => !NON_SEMANTIC_INLINE_METADATA_KEYS.has(key))
+        .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
+        .map(([key, nestedValue]) => [key, normalizeNodeDefinitionForReuse(nestedValue)]),
+    );
+  }
+
+  return value;
+}
+
+function areConnectionTypesCompatible(sourceType: string, targetType: string): boolean {
+  return (
+    sourceType === GENERIC_CONNECTION_TYPE ||
+    targetType === GENERIC_CONNECTION_TYPE ||
+    sourceType === targetType
+  );
+}
+
+function getCompatibleInputHandleId(template: NodeTemplate, outputPin: NodePin): string {
+  return (
+    template.inputPins.find(pin => pin.connectionType === outputPin.connectionType)?.schemaKey ??
+    template.inputPins.find(pin =>
+      areConnectionTypesCompatible(outputPin.connectionType, pin.connectionType),
+    )?.schemaKey ??
+    INPUT_HANDLE_ID
+  );
+}
+
 export function parseAssetDocumentToGraphDocument(
   documentRoot: AssetDocumentShape,
   workspaceContext: NodeEditorWorkspaceContext,
@@ -210,6 +249,7 @@ export function parseAssetDocumentToGraphDocument(
   const nodesById = new Map<string, NodeEditorGraphNode>();
   const usedNodeIds = new Set<string>();
   const canonicalNodeIdsByRawId = new Map<string, string[]>();
+  const normalizedDefinitionsByCanonicalNodeId = new Map<string, string>();
   const outgoingConnections = new Map<string, Map<string, NodeEditorGraphEdge[]>>();
 
   const addNode = (node: NodeEditorGraphNode) => {
@@ -265,13 +305,18 @@ export function parseAssetDocumentToGraphDocument(
     return canonicalNodeIds[0];
   };
 
-  const addEdge = (sourceId: string, sourceHandleId: string, childId: string) => {
+  const addEdge = (
+    sourceId: string,
+    sourceHandleId: string,
+    childId: string,
+    targetHandleId: string = INPUT_HANDLE_ID,
+  ) => {
     const edge: NodeEditorGraphEdge = {
       id: `${sourceId}:${sourceHandleId}-${childId}`,
       source: sourceId,
       sourceHandle: sourceHandleId,
       target: childId,
-      targetHandle: INPUT_HANDLE_ID,
+      targetHandle: targetHandleId,
     };
     edges.push(edge);
 
@@ -294,9 +339,21 @@ export function parseAssetDocumentToGraphDocument(
   ): string => {
     let templateId: string | undefined;
     const rawNodeId = localRoot.$NodeId;
+    const rawNodeIdInfo = rawNodeId
+      ? splitNodeIdSuffix(rawNodeId)
+      : { baseId: "", hasUuidSuffix: false };
     let nodeId: string;
     const position = localRoot.$Position ?? { $x: 0, $y: 0 };
     const variantKind = variantOrTemplateId ? variantKindsById[variantOrTemplateId] : undefined;
+
+    if (rawNodeId && rawNodeIdInfo.hasUuidSuffix && nodesById.has(rawNodeId)) {
+      const normalizedDefinition = JSON.stringify(normalizeNodeDefinitionForReuse(localRoot));
+      const previousDefinition = normalizedDefinitionsByCanonicalNodeId.get(rawNodeId);
+      if (previousDefinition && previousDefinition !== normalizedDefinition) {
+        throw new Error(`Conflicting serialized payloads found for reused node id ${rawNodeId}.`);
+      }
+      return rawNodeId;
+    }
 
     if (variantKind) {
       const nodeType = localRoot[variantKind.VariantFieldName] as string | undefined;
@@ -331,7 +388,13 @@ export function parseAssetDocumentToGraphDocument(
                 localRoot[schemaKey] as NodeAssetJson,
                 template.childTypes[schemaKey],
               );
-              addEdge(nodeId, schemaKey, childId);
+              const childNode = nodesById.get(childId);
+              addEdge(
+                nodeId,
+                schemaKey,
+                childId,
+                childNode?.type === "datanode" ? getCompatibleInputHandleId(childNode.data, pin) : INPUT_HANDLE_ID,
+              );
             }
             break;
           case "multiple":
@@ -341,8 +404,14 @@ export function parseAssetDocumentToGraphDocument(
                   localRoot[schemaKey][index] as NodeAssetJson,
                   template.childTypes[schemaKey],
                 );
-                nodesById.get(childId)!.data.inputConnectionIndex = index;
-                addEdge(nodeId, schemaKey, childId);
+                const childNode = nodesById.get(childId)!;
+                childNode.data.inputConnectionIndex = index;
+                addEdge(
+                  nodeId,
+                  schemaKey,
+                  childId,
+                  childNode.type === "datanode" ? getCompatibleInputHandleId(childNode.data, pin) : INPUT_HANDLE_ID,
+                );
               }
             }
             break;
@@ -354,8 +423,14 @@ export function parseAssetDocumentToGraphDocument(
                   value as NodeAssetJson,
                   template.childTypes[schemaKey],
                 );
-                nodesById.get(childId)!.data.inputConnectionIndex = index;
-                addEdge(nodeId, schemaKey, childId);
+                const childNode = nodesById.get(childId)!;
+                childNode.data.inputConnectionIndex = index;
+                addEdge(
+                  nodeId,
+                  schemaKey,
+                  childId,
+                  childNode.type === "datanode" ? getCompatibleInputHandleId(childNode.data, pin) : INPUT_HANDLE_ID,
+                );
                 index += 1;
               }
             }
@@ -392,6 +467,12 @@ export function parseAssetDocumentToGraphDocument(
           },
         ),
       );
+      if (rawNodeId && rawNodeIdInfo.hasUuidSuffix) {
+        normalizedDefinitionsByCanonicalNodeId.set(
+          nodeId,
+          JSON.stringify(normalizeNodeDefinitionForReuse(localRoot)),
+        );
+      }
     } else {
       nodeId = normalizeParsedNodeId(rawNodeId, "Generic");
 
@@ -413,6 +494,12 @@ export function parseAssetDocumentToGraphDocument(
           },
         ),
       );
+      if (rawNodeId && rawNodeIdInfo.hasUuidSuffix) {
+        normalizedDefinitionsByCanonicalNodeId.set(
+          nodeId,
+          JSON.stringify(normalizeNodeDefinitionForReuse(localRoot)),
+        );
+      }
     }
 
     return nodeId;
@@ -471,12 +558,17 @@ export function parseAssetDocumentToGraphDocument(
           if (!targetNodeId) {
             continue;
           }
+          const targetNode = nodesById.get(targetNodeId);
+          const linkTargetHandleId =
+            targetNode?.type === "datanode"
+              ? getCompatibleInputHandleId(targetNode.data, LINK_TEMPLATE.outputPins[0])
+              : INPUT_HANDLE_ID;
           for (const edge of outgoingConnections.get(sourceNodeId)?.get(sourceHandleId) ?? []) {
-            if (edge.target === targetNodeId && edge.targetHandle === INPUT_HANDLE_ID) {
+            if (edge.target === targetNodeId && edge.targetHandle === linkTargetHandleId) {
               edge.target = normalizedLinkId;
             }
           }
-          addEdge(normalizedLinkId, LINK_OUTPUT_HANDLE_ID, targetNodeId);
+          addEdge(normalizedLinkId, LINK_OUTPUT_HANDLE_ID, targetNodeId, linkTargetHandleId);
         }
       }
     }
@@ -602,7 +694,7 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
   };
 
   const outgoingConnections = new Map<string, Map<string, string[]>>();
-  const incomingConnections = new Map<string, string>();
+  const incomingConnectionCounts = new Map<string, number>();
 
   for (const edge of edges) {
     if (!outgoingConnections.has(edge.source)) {
@@ -612,11 +704,12 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
       outgoingConnections.get(edge.source)!.set(edge.sourceHandle, []);
     }
     outgoingConnections.get(edge.source)!.get(edge.sourceHandle)!.push(edge.target);
-    incomingConnections.set(edge.target, edge.source);
+    incomingConnectionCounts.set(edge.target, (incomingConnectionCounts.get(edge.target) ?? 0) + 1);
   }
 
   const nodesById = new Map(nodes.map(node => [node.id, node]));
-  const unprocessedNodeIds = new Set(nodes.map(node => node.id));
+  const serializedNodesById = new Map<string, NodeAssetJson | undefined>();
+  const serializationStack = new Set<string>();
 
   const recursiveSerializeNode = (nodeId: string | undefined): NodeAssetJson | undefined => {
     if (!nodeId) {
@@ -628,10 +721,15 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
       return undefined;
     }
 
-    if (!unprocessedNodeIds.has(nodeId)) {
+    if (serializationStack.has(nodeId)) {
       throw new Error(`Circular reference detected for node ${nodeId}.`);
     }
-    unprocessedNodeIds.delete(nodeId);
+    if (serializedNodesById.has(nodeId)) {
+      const cached = serializedNodesById.get(nodeId);
+      return cached ? structuredClone(cached) : undefined;
+    }
+
+    serializationStack.add(nodeId);
 
     const absolutePosition = getGraphNodeAbsolutePosition(node, nodesById);
     let json: NodeAssetJson | undefined = {};
@@ -744,20 +842,19 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         break;
     }
 
-    return json;
+    serializationStack.delete(nodeId);
+    serializedNodesById.set(nodeId, json ? structuredClone(json) : undefined);
+    return json ? structuredClone(json) : undefined;
   };
 
   const rootNodeSerialized = recursiveSerializeNode(rootNodeId);
 
-  while (unprocessedNodeIds.size > 0) {
-    const [nodeId] = unprocessedNodeIds;
-    let newRootId = nodeId;
-
-    while (incomingConnections.has(newRootId)) {
-      newRootId = incomingConnections.get(newRootId)!;
+  for (const node of nodes) {
+    if (node.id === rootNodeId || (incomingConnectionCounts.get(node.id) ?? 0) > 0) {
+      continue;
     }
 
-    const serializedRoot = recursiveSerializeNode(newRootId);
+    const serializedRoot = recursiveSerializeNode(node.id);
     if (serializedRoot) {
       nodeEditorMetadata.$FloatingNodes!.push(serializedRoot);
     }

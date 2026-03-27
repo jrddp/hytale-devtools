@@ -44,6 +44,7 @@ export interface NodePin {
   label?: string;
   description?: string;
   color?: string;
+  connectionType: string;
   localId: string;
   multiplicity: "single" | "multiple" | "map";
   fields?: NodeField[];

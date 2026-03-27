@@ -36,6 +36,7 @@ export function outputPin(
 ): NodePin {
   return {
     schemaKey,
+    connectionType: "Generic",
     localId: schemaKey,
     multiplicity,
     ...overrides,
@@ -49,6 +50,7 @@ export function inputPin(
 ): NodePin {
   return {
     schemaKey,
+    connectionType: "Generic",
     localId: schemaKey,
     multiplicity,
     ...overrides,
