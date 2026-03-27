@@ -33,9 +33,26 @@ const COMMENT_TEMPLATE_ID = "$Comment";
 const RAW_JSON_TEMPLATE_ID = "$RawJson";
 const LINK_TEMPLATE_ID = "$Link";
 const GENERIC_CATEGORY = "Generic";
+const UUID_SUFFIX_RE =
+  /^(.*)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
 
 function createNodeId(templateId: string): string {
   return `${templateId}-${crypto.randomUUID()}`;
+}
+
+function splitNodeIdSuffix(nodeId: string): { baseId: string; hasUuidSuffix: boolean } {
+  const match = nodeId.match(UUID_SUFFIX_RE);
+  if (!match) {
+    return {
+      baseId: nodeId,
+      hasUuidSuffix: false,
+    };
+  }
+
+  return {
+    baseId: match[1],
+    hasUuidSuffix: true,
+  };
 }
 
 function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
@@ -191,11 +208,61 @@ export function parseAssetDocumentToGraphDocument(
   const nodes: NodeEditorGraphNode[] = [];
   const edges: NodeEditorGraphEdge[] = [];
   const nodesById = new Map<string, NodeEditorGraphNode>();
+  const usedNodeIds = new Set<string>();
+  const canonicalNodeIdsByRawId = new Map<string, string[]>();
   const outgoingConnections = new Map<string, Map<string, NodeEditorGraphEdge[]>>();
 
   const addNode = (node: NodeEditorGraphNode) => {
     nodes.push(node);
     nodesById.set(node.id, node);
+    usedNodeIds.add(node.id);
+  };
+
+  const registerRawNodeId = (rawNodeId: string | undefined, canonicalNodeId: string) => {
+    if (!rawNodeId) {
+      return;
+    }
+    if (!canonicalNodeIdsByRawId.has(rawNodeId)) {
+      canonicalNodeIdsByRawId.set(rawNodeId, []);
+    }
+    canonicalNodeIdsByRawId.get(rawNodeId)!.push(canonicalNodeId);
+  };
+
+  const createUniqueParsedNodeId = (baseId: string): string => {
+    let parsedNodeId = createNodeId(baseId);
+    while (usedNodeIds.has(parsedNodeId)) {
+      parsedNodeId = createNodeId(baseId);
+    }
+    return parsedNodeId;
+  };
+
+  const normalizeParsedNodeId = (rawNodeId: string | undefined, baseId: string): string => {
+    if (!rawNodeId) {
+      return createUniqueParsedNodeId(baseId);
+    }
+
+    const { baseId: rawBaseId, hasUuidSuffix } = splitNodeIdSuffix(rawNodeId);
+    if (hasUuidSuffix && !usedNodeIds.has(rawNodeId)) {
+      registerRawNodeId(rawNodeId, rawNodeId);
+      return rawNodeId;
+    }
+
+    const normalizedNodeId = createUniqueParsedNodeId(rawBaseId || baseId);
+    registerRawNodeId(rawNodeId, normalizedNodeId);
+    return normalizedNodeId;
+  };
+
+  const resolveCanonicalNodeId = (nodeId: string): string | undefined => {
+    if (nodesById.has(nodeId)) {
+      return nodeId;
+    }
+
+    const canonicalNodeIds = canonicalNodeIdsByRawId.get(nodeId);
+    if (!canonicalNodeIds || canonicalNodeIds.length !== 1) {
+      return undefined;
+    }
+
+    return canonicalNodeIds[0];
   };
 
   const addEdge = (sourceId: string, sourceHandleId: string, childId: string) => {
@@ -226,7 +293,8 @@ export function parseAssetDocumentToGraphDocument(
     variantOrTemplateId: string | null,
   ): string => {
     let templateId: string | undefined;
-    let nodeId = localRoot.$NodeId;
+    const rawNodeId = localRoot.$NodeId;
+    let nodeId: string;
     const position = localRoot.$Position ?? { $x: 0, $y: 0 };
     const variantKind = variantOrTemplateId ? variantKindsById[variantOrTemplateId] : undefined;
 
@@ -237,18 +305,16 @@ export function parseAssetDocumentToGraphDocument(
       }
     }
 
-    if (!templateId && variantOrTemplateId) {
+    if (!templateId && variantOrTemplateId && !variantKind) {
       templateId = variantOrTemplateId;
     }
-    if (!templateId && nodeId) {
-      templateId = nodeId.substring(0, nodeId.indexOf("-"));
+    if (!templateId && rawNodeId) {
+      templateId = splitNodeIdSuffix(rawNodeId).baseId;
     }
 
     const template = templateId ? nodeTemplatesById[templateId] : undefined;
     if (template) {
-      if (!nodeId) {
-        nodeId = createNodeId(templateId!);
-      }
+      nodeId = normalizeParsedNodeId(rawNodeId, templateId!);
 
       const clonedTemplateData = cloneTemplate(template);
       const unprocessedData = new Set(Object.keys(localRoot).filter(key => !key.startsWith("$")));
@@ -320,13 +386,12 @@ export function parseAssetDocumentToGraphDocument(
           {
             unparsedMetadata,
             comment: localRoot.$Comment,
+            titleOverride: typeof localRoot.$Title === "string" ? localRoot.$Title : undefined,
           },
         ),
       );
     } else {
-      if (!nodeId) {
-        nodeId = createNodeId("Generic");
-      }
+      nodeId = normalizeParsedNodeId(rawNodeId, "Generic");
 
       const data: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(localRoot)) {
@@ -342,6 +407,7 @@ export function parseAssetDocumentToGraphDocument(
           nodeId,
           {
             jsonString: Object.keys(data).length > 0 ? JSON.stringify(data, null, "\t") : DEFAULT_RAW_JSON_TEXT,
+            titleOverride: typeof localRoot.$Title === "string" ? localRoot.$Title : undefined,
           },
         ),
       );
@@ -361,7 +427,8 @@ export function parseAssetDocumentToGraphDocument(
     }
 
     for (const [nodeId, info] of Object.entries(nodeEditorMetadata.$Nodes ?? {})) {
-      const node = nodesById.get(nodeId);
+      const resolvedNodeId = resolveCanonicalNodeId(nodeId);
+      const node = resolvedNodeId ? nodesById.get(resolvedNodeId) : undefined;
       if (!node) {
         continue;
       }
@@ -371,48 +438,70 @@ export function parseAssetDocumentToGraphDocument(
     }
 
     for (const [linkId, linkData] of Object.entries(nodeEditorMetadata.$Links ?? {})) {
+      const normalizedLinkId = normalizeParsedNodeId(linkId, LINK_TEMPLATE_ID);
       addNode(
         createGraphNodeFromTemplate(
           LINK_TEMPLATE,
           { x: linkData.$Position.$x, y: linkData.$Position.$y },
-          linkId,
+          normalizedLinkId,
         ),
       );
 
-      const sourcePin = linkData.sourceEndpoint;
-      const targetPins = linkData.outputConnections;
-      if (sourcePin && targetPins) {
-        const [sourceNodeId, sourcePinId] = sourcePin.split(":");
-        const sourceNode = nodesById.get(sourceNodeId) as DataGraphNode | undefined;
-        if (!sourceNode) {
-          continue;
+        const sourcePin = linkData.sourceEndpoint;
+        const targetPins = linkData.outputConnections;
+        if (sourcePin && targetPins) {
+          const [rawSourceNodeId, sourcePinId] = sourcePin.split(":");
+          const sourceNodeId = resolveCanonicalNodeId(rawSourceNodeId);
+          if (!sourceNodeId) {
+            continue;
+          }
+          const sourceNode = sourceNodeId ? (nodesById.get(sourceNodeId) as DataGraphNode | undefined) : undefined;
+          if (!sourceNode) {
+            continue;
         }
         const sourceHandleId =
           sourceNode.data.outputPins.find(pin => pin.localId === sourcePinId)?.schemaKey ??
           LINK_OUTPUT_HANDLE_ID;
 
         for (const targetPin of targetPins) {
-          const [targetNodeId] = targetPin.split(":");
+          const [rawTargetNodeId] = targetPin.split(":");
+          const targetNodeId = resolveCanonicalNodeId(rawTargetNodeId);
+          if (!targetNodeId) {
+            continue;
+          }
           for (const edge of outgoingConnections.get(sourceNodeId)?.get(sourceHandleId) ?? []) {
             if (edge.target === targetNodeId && edge.targetHandle === INPUT_HANDLE_ID) {
-              edge.target = linkId;
+              edge.target = normalizedLinkId;
             }
           }
-          addEdge(linkId, LINK_OUTPUT_HANDLE_ID, targetNodeId);
+          addEdge(normalizedLinkId, LINK_OUTPUT_HANDLE_ID, targetNodeId);
         }
       }
     }
 
     for (const groupJson of nodeEditorMetadata.$Groups ?? []) {
-      addNode(groupNodeFromJson(groupJson));
+      const normalizedGroupId = normalizeParsedNodeId(groupJson.$NodeId, "Group");
+      addNode(
+        createGraphNodeFromTemplate(
+          GROUP_TEMPLATE,
+          { x: groupJson.$Position.$x, y: groupJson.$Position.$y },
+          normalizedGroupId,
+          {
+            titleOverride: groupJson.$name,
+            width: groupJson.$width,
+            height: groupJson.$height,
+          },
+        ) as GroupGraphNode,
+      );
     }
 
     for (const commentJson of nodeEditorMetadata.$Comments ?? []) {
+      const normalizedCommentId = normalizeParsedNodeId(commentJson.$NodeId, "Comment");
       addNode(
         createGraphNodeFromTemplate(
           COMMENT_TEMPLATE,
           { x: commentJson.$Position.$x, y: commentJson.$Position.$y },
-          commentJson.$NodeId ?? createNodeId("Comment"),
+          normalizedCommentId,
           {
             width: commentJson.$width,
             height: commentJson.$height,
@@ -426,11 +515,26 @@ export function parseAssetDocumentToGraphDocument(
   }
 
   for (const groupJson of documentRoot.$Groups ?? []) {
-    addNode(groupNodeFromJson(groupJson));
+    const normalizedGroupId = normalizeParsedNodeId(groupJson.$NodeId, "Group");
+    addNode(
+      createGraphNodeFromTemplate(
+        GROUP_TEMPLATE,
+        { x: groupJson.$Position.$x, y: groupJson.$Position.$y },
+        normalizedGroupId,
+        {
+          titleOverride: groupJson.$name,
+          width: groupJson.$width,
+          height: groupJson.$height,
+        },
+      ) as GroupGraphNode,
+    );
   }
 
   return {
-    workspaceId: nodeEditorMetadata?.$WorkspaceID ?? workspaceContext.rootMenuName,
+    workspaceId:
+      nodeEditorMetadata?.$WorkspaceID ??
+      (typeof documentRoot.$WorkspaceID === "string" ? documentRoot.$WorkspaceID : undefined) ??
+      workspaceContext.rootMenuName,
     rootNodeId,
     nodes,
     edges,
@@ -465,7 +569,7 @@ function getOrderedConnectedNodeIds(
   const absoluteYByNodeId = new Map<string, number>();
   const getAbsoluteY = (nodeId: string) => {
     const cached = absoluteYByNodeId.get(nodeId);
-    if (cached != undefined) {
+    if (cached !== undefined) {
       return cached;
     }
 
