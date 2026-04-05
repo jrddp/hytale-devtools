@@ -12,9 +12,8 @@ import org.bson.BsonDocument;
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.AssetStore;
 import com.hypixel.hytale.codec.EmptyExtraInfo;
-import com.hypixel.hytale.codec.schema.SchemaContext;
 import com.hypixel.hytale.codec.schema.config.Schema;
-import com.hypixel.hytale.server.core.asset.AssetRegistryLoader;
+import com.hypixel.hytale.server.core.schema.SchemaGenerator;
 
 public final class SchemaExportService {
     private SchemaExportService() {
@@ -22,8 +21,7 @@ public final class SchemaExportService {
 
     @Nonnull
     public static SchemaExportData generate() {
-        SchemaContext schemaContext = new SchemaContext();
-        Map<String, Schema> schemas = AssetRegistryLoader.generateSchemas(schemaContext, new BsonDocument());
+        Map<String, Schema> schemas = SchemaGenerator.generateAssetSchemas();
 
         AssetStore<?, ?, ?>[] stores = AssetRegistry.getStoreMap().values().toArray(AssetStore[]::new);
         Arrays.sort(stores, Comparator.comparing(store -> store.getAssetClass().getSimpleName()));
