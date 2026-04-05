@@ -2,6 +2,7 @@
   "Id": "DensityGradient.VectorProvider",
   "Title": "DensityGradient VectorProvider",
   "Color": "Green",
+  "Description" : "Generates the gradient of the provided Density field. The resulting gradient vector shows which direction the Density field increases and how quickly it changes.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options" : {
         "Label" : "SampleDistance",
         "Default" : 1.0,
-        "Width" : 50
+        "Width" : 50,
+        "Description" : "How far apart the Density field value samples are taken. The optimal value for performance is 1.0. Greater values could be useful for smoothing out results for specific applications."
       }
     }
   ],

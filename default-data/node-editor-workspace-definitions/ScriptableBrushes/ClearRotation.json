@@ -1,0 +1,17 @@
+{
+  "Id": "ClearRotation",
+  "Description": "Clears the current rotations",
+  "Title": "Clear Rotation",
+  "Color": "blue",
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "clearrotation"
+  }
+}

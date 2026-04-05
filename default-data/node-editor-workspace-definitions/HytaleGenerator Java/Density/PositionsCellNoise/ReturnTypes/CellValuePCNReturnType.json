@@ -2,6 +2,7 @@
   "Id": "CellValuePCNReturnType",
   "Title": "CellValue ReturnType",
   "Color": "DarkPink",
+  "Description" : "The Density value is constant inside each cell and is sampled from the provided Densty field.",
   "Content": [
     {
       "Id" : "DefaultValue",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "DefaultValue",
         "Default" : 0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "This value is used outside of cells. This can happen when the field’s MaxDistance value is smaller than the distance between some Positions."
       }
     }
   ],
@@ -19,7 +21,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Label" : "Density",
-      "Multiple" : false
+      "Multiple" : false,
+      "Description" : "The Density value of each cell is sampled from this field at the cell’s core Position point."
     }
   ],
   "Inputs": [

@@ -2,6 +2,7 @@
   "Id": "Imported.Scanner",
   "Title": "Imported Scanner",
   "Color": "LightPurple",
+  "Description" : "Imports an exported Scanner.",
   "Content" : [
     {
       "Id": "Skip",
@@ -17,7 +18,8 @@
       "Options" : {
         "Label" : "Name",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The exported Scanner."
       }
     }
   ],

@@ -1,0 +1,31 @@
+{
+  "Id": "Imported.PropDistribution",
+  "Title": "Imported PropDistribution",
+  "Color": "Aqua",
+  "Description" : "Imports an exported PropDistribution.",
+  "Content": [
+    {
+      "Id" : "Name",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Name",
+        "Default" : "",
+        "Width" : 250,
+        "Description" : "The exported PropDistribution name."
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "PropDistribution.Connection",
+      "Color": "Aqua"
+    }
+  ],
+  "Schema": {
+    "Type" : "Imported",
+    "Name" : "Name"
+  }
+}

@@ -2,6 +2,7 @@
   "Id": "Bound.Positions",
   "Title": "Bound Positions",
   "Color": "Blue",
+  "Description" : "Limits the positions to a bounded region.",
   "Content" : [
     {
       "Id" : "ExportAs",

@@ -2,6 +2,7 @@
   "Id": "PCNDistanceFunction",
   "Title": "Distance Function",
   "Color": "Olive",
+  "Description" : "Determines the way in which the distance to the closest Position is calculated.",
   "Content": [
     {
       "Id" : "Type",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "Type",
         "Default" : "Euclidean",
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Euclidean | Manhattan"
       }
     }
   ],

@@ -2,6 +2,7 @@
   "Id": "VectorWarp.Density",
   "Title": "VectorWarp Density",
   "Color": "Purple",
+  "Description" : "Warps the input along the provided vector. The amount of warping is determined by the intensity of the second input Density field and the WarpFactor.\nFor example, if your warp field (second input) has a value of 0.5 and the WarpFactor is 15, then the number of blocks the first input will be warped by in the direction of the vector is 7.5 units (blocks),15 x 0.5 = 7.5.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "WarpFactor",
         "Default" : 1,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "With greater values you get more warping."
       }
     }
   ],
@@ -36,13 +38,15 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Density to warp.\n1: Warp source."
     },
     {
       "Id" : "WarpVector",
       "Type" : "Point3D.Connection",
       "Color" : "Orange",
-      "Label" : "WarpVector"
+      "Label" : "WarpVector",
+      "Description" : "Can be any vector. This determines the direction in which the warping happens. Negative values of the factor or the warping density field will result in flipped warping direction."
     }
   ],
   "Inputs": [

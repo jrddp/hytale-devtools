@@ -2,6 +2,7 @@
   "Id": "SimplexNoise3DDensityNode",
   "Title": "SimplexNoise3D Density",
   "Color": "Purple",
+  "Description" : "Outputs a value in the range [-1, 1] from a 3D Simplex noise field that varies on the x/y/z space.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "Lacunarity",
         "Default" : 2.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Impacts the scale of each consecutive octave. A good starting value would be 2.0, which results in each consecutive octave having details that are 2x smaller than the previous. Higher values result in grainier noise."
       }
     },
     {
@@ -35,7 +37,8 @@
       "Options": {
         "Label": "Persistence",
         "Default" : 0.5,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Multiplies the intensity of each consecutive octave. A good starting value would be 0.5, which results in each consecutive octave being half as strong as the previous."
       }
     },
     {
@@ -44,7 +47,8 @@
       "Options": {
         "Label": "ScaleXZ",
         "Default" : 50,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Represents the field’s period distance in blocks on the horizontal XZ plane. Greater values stretch the noise field outward. A good starting value would be 50."
       }
     },
     {
@@ -53,7 +57,8 @@
       "Options": {
         "Label": "ScaleY",
         "Default" : 50,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Represents the field’s period distance in blocks on the vertical Y axis. Greater values stretch the noise field outward. A good starting value would be 50."
       }
     },
     {
@@ -65,7 +70,8 @@
         "TickFrequency" : 1,
         "Width" : 150,
         "Min" : 1,
-        "Max" : 10
+        "Max" : 10,
+        "Description" : "Greater values result in more detail. A good starting value would be 4. Requiring values over 10 are uncommon."
       }
     },
     {

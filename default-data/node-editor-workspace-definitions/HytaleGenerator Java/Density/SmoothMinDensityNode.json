@@ -2,6 +2,7 @@
   "Id": "SmoothMinDensityNode",
   "Title": "SmoothMin Density",
   "Color": "Purple",
+  "Description" : "The output is a smoothed minimum between the two inputs. This node works the same as SmoothMax, please read that node’s description.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "Value",
         "Default" : 0.2,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Greater values result in more smoothing. A good starter value could be 0.2."
       }
     }
   ],
@@ -36,7 +38,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input A.\n1: Input B."
     }
   ],
   "Inputs": [

@@ -2,6 +2,7 @@
   "Id": "Rotator.Density",
   "Title": "Rotator Density",
   "Color": "Purple",
+  "Description" : "Aligns the input Density field so that its Y axis is aligned with the provided axis, and spins it around the new axis by the provided angle.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Float",
       "Options": {
         "Label": "SpinAngle",
-        "Default" : 0
+        "Default" : 0,
+        "Description" : "The angle in degrees to spin the field around the new axis."
       }
     }
   ],
@@ -35,13 +37,15 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     },
     {
       "Id" : "NewYAxis",
       "Type" : "Point3D.Connection",
       "Color" : "Orange",
-      "Label" : "NewYAxis"
+      "Label" : "NewYAxis",
+      "Description" : "Y-axis of the rotated field rlative to the parent's y-axis."
     }
   ],
   "Inputs": [

@@ -2,6 +2,7 @@
   "Id": "Constant.Curve",
   "Title": "Constant Curve",
   "Color": "Orange",
+  "Description" : "Outputs a constant value.",
   "Content" : [
     {
       "Id" : "ExportAs",

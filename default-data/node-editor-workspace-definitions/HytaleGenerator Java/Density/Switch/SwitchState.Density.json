@@ -2,6 +2,7 @@
   "Id": "SwitchState.Density",
   "Title": "SwitchState Density",
   "Color": "Purple",
+  "Description" : "Sets the contextual SwitchState for the downstream Density branch.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options" : {
         "Label" : "SwitchState",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "Name of the SwitchState to set for the children of this node."
       }
     }
   ],
@@ -36,7 +38,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

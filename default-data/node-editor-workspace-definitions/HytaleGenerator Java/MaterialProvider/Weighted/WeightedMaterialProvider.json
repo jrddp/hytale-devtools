@@ -2,6 +2,7 @@
   "Id": "WeightedMaterialProvider",
   "Title": "Weighted MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Picks the Material Provider slot to query from a list. Each slot has a weight that determines the likelihood of being picked.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Options" : {
         "Label" : "SkipChance",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Percentage of blocks to skip. When skipped, this provider returns no block and does not pick a slot."
       }
     }
   ],

@@ -9,7 +9,8 @@
       "Options": {
         "Label": "Value",
         "Default": 0.0,
-        "Width": 100
+        "Width": 100,
+        "Description" : "Pins the Density input to this value of the Gauge Density field. When the Gauge approaches this value, the output of the MultiMix appraoches the value of the Density field referenced by the index."
       }
     },
     {
@@ -18,7 +19,8 @@
       "Options": {
         "Label": "DensityIndex",
         "Default": -1,
-        "Width": 40
+        "Width": 40,
+        "Description" : "The number is the index of an input Density field."
       }
     }
   ],

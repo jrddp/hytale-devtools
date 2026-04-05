@@ -2,6 +2,7 @@
   "Id": "MultiMix.Density",
   "Title": "MultiMix Density",
   "Color": "Purple",
+  "Description" : "Mixes multiple inputs. How much of each input to use in the mix is gauged by the last input called the Gauge.\nThe inputs are ordered top-down (in the node editor) and each input is assigned an index: starting with 0 for the top one and incrementing downwards.\nThe keys let you pin the different inputs to Gauge values. Where the Gauge input's value approaches a Key's value, the input referenced by that Key is stronger in the final result.",
   "Content": [
     {
       "Id": "ExportAs",
@@ -19,7 +20,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple": true,
-      "Label": "Inputs"
+      "Label": "Inputs",
+      "Description" : "Unlimited inputs, their order is the index starting at 0. The last input is the Gauge."
     },
     {
       "Id": "Keys",

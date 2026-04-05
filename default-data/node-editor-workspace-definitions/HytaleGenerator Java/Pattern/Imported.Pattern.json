@@ -2,6 +2,7 @@
   "Id": "Imported.Pattern",
   "Title": "Imported Pattern",
   "Color": "Pink",
+  "Description" : "Imports an exported Pattern.",
   "Content" : [
     {
       "Id" : "Name",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "Name",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The exported Pattern."
       }
     },
     {

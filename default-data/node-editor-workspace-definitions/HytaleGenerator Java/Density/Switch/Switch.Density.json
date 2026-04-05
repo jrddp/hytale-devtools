@@ -2,6 +2,7 @@
   "Id": "Switch.Density",
   "Title": "Switch Density",
   "Color": "Purple",
+  "Description" : "Lets you switch between multiple Density branches based on the contextual SwitchState. The SwitchState is a string that can be placed in the context of a Density tree using a SwitchState Density node. The default SwitchState of a Density tree is 'Default'.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type" : "Case.Switch.Density.Connection",
       "Color" : "Orange",
       "Multiple" : true,
-      "Label" : "SwitchCases"
+      "Label" : "SwitchCases",
+      "Description" : "The possible paths to switch into based on the parent's SwitchState."
     }
   ],
   "Inputs": [

@@ -2,6 +2,7 @@
   "Id": "Shell.Density",
   "Title": "Shell Density",
   "Color": "Purple",
+  "Description" : "The Shell Density node allows you to define regions of the shell around the origin {0, 0, 0} of the field based on the direction and the distance from origin. The angles, thickness and Density values of the shell are fully configurable through Curve assets.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "Mirror",
-        "Default" : false
+        "Default" : false,
+        "Description" : "If true then the angle is mirrored in both directions of the axis."
       }
     }
   ],
@@ -34,19 +36,22 @@
       "Id": "AngleCurve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "AngleCurve"
+      "Label" : "AngleCurve",
+      "Description" : "Determines the Density value at any given angle from the axis."
     },
     {
       "Id": "DistanceCurve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "DistanceCurve"
+      "Label" : "DistanceCurve",
+      "Description" : "Determines the Density value at any distance from the origin."
     },
     {
       "Id": "Axis",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "Axis"
+      "Label" : "Axis",
+      "Description" : "Determines the axis against which the angle is calculated."
     }
   ],
   "Inputs": [

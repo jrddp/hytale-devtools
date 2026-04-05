@@ -2,6 +2,7 @@
   "Id": "OccurrencePositions",
   "Title": "Occurrence Positions",
   "Color": "Blue",
+  "Description" : "Discards a percentage of input positions based on a Density field. The value of the Density field at each position determines the chance that the position is kept.\n- Positions where the Density value is less than or equal to 0.0 have a 0% chance of being kept.\n- Positions where the Density value is greater than or equal to 1.0 have a 100% chance of being kept.\n- Positions where the Density value is between 0.0 and 1.0 have a proportional percentage chance of being kept. Example: 0.4 → 40%.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -36,14 +37,16 @@
       "Type": "PositionsConnection",
       "Color": "Blue",
       "Multiple" : false,
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "Input."
     },
     {
       "Id": "DensityConnection",
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : false,
-      "Label" : "FieldFunction"
+      "Label" : "FieldFunction",
+      "Description" : "Determines the chance of keeping the positions."
     }
   ],
   "Inputs": [

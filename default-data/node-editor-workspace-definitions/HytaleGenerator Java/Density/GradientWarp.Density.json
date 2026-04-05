@@ -2,6 +2,7 @@
   "Id": "GradientWarp.Density",
   "Title": "GradientWarp Density",
   "Color": "Purple",
+  "Description" : "Warps the first input based on the gradient of the second input Density field. This works similar to the legacy warping functionality, except it also works in 3D and you can plug any Density field into it.\nThis implementation is relatively expensive because it calculates the gradient of the input Density field. I recommend optimizing the use of this node by isolating and minimizing its use space. A fast version of this node can be implemented which would let you only use Simplex noise to warp. This will depend on the feedback and priorities.\nThis node incorporates a Cache2D so you don’t need to use a Cache2D node on its output.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "SampleRange",
         "Default" : 1,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "Distance between samples. Recommended value: 1."
       }
     },
     {
@@ -35,7 +37,8 @@
       "Options": {
         "Label": "WarpFactor",
         "Default" : 1,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "With greater values you get more warping."
       }
     },
     {
@@ -43,7 +46,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "2D Output",
-        "Default" : false
+        "Default" : false,
+        "Description" : "If true the output of this node is 2D. An internal Cache2D is used."
       }
     },
     {
@@ -51,7 +55,8 @@
       "Type": "Float",
       "Options": {
         "Label": "Y for 2D",
-        "Default" : 0
+        "Default" : 0,
+         "Description" : "Default is 0. The Y coordinate used from the input to calculate the gradient from."
       }
     }
   ],
@@ -61,7 +66,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Density that is warped.\n1: Warping source."
     }
   ],
   "Inputs": [

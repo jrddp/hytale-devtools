@@ -2,6 +2,7 @@
   "Id": "SmoothCeiling.Curve",
   "Title": "SmoothCeiling Curve",
   "Color": "Orange",
+  "Description" : "This curve puts a ceiling on the output of the child curve asset. As the curve approaches the ceiling within the provided range, it gets smoothed.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options": {
         "Label": "Ceiling",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The maximum value this curve will output."
       }
     },
     {
@@ -27,7 +29,8 @@
       "Options": {
         "Label": "Range",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curve."
       }
     }
   ],

@@ -2,6 +2,7 @@
   "Id": "Distance2MulPCNReturnType",
   "Title": "Distance2Mul ReturnType",
   "Color": "DarkPink",
+  "Description" : "The Distance2Mul ReturnType works like the traditional CellNoise's 'Distance2Mul' return type.",
   "Content": [
   ],
   "Outputs": [

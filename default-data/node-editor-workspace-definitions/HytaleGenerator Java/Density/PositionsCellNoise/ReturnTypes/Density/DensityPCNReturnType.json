@@ -2,6 +2,7 @@
   "Id": "DensityPCNReturnType",
   "Title": "Density ReturnType",
   "Color": "DarkPink",
+  "Description" : "The cell is populated with a Density field. The Density field is picked from a list of Delimiters. The Delimiters are picked if the ChoiceDensity field is within their range. The ChoiceDensity field’s value is sampled at the origin position of the cell.",
   "Content": [
     {
       "Id" : "DefaultValue",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "DefaultValue",
         "Default" : 0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "This value is used outside of cells. This can happen when the field’s MaxDistance value is smaller than the distance between some Positions."
       }
     }
   ],
@@ -19,14 +21,16 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Label" : "ChoiceDensity",
-      "Multiple" : false
+      "Multiple" : false,
+      "Description" : "Benefits from a Cache Density. Picks the delimiter to use for a Cell. This field is sampled at each Cell's origin."
     },
     {
       "Id": "Delimiters",
       "Type": "Delimiter.DensityReturnType.Connection",
       "Color": "Purple",
       "Label" : "Delimiters",
-      "Multiple" : true
+      "Multiple" : true,
+      "Description" : "Assign Density fields to cells based on the ChoiceDensity value at the Cell's origin."
     }
   ],
   "Inputs": [

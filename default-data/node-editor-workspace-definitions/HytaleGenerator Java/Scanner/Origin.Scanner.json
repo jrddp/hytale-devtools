@@ -2,6 +2,7 @@
   "Id": "Origin.Scanner",
   "Title": "Origin Scanner",
   "Color": "LightPurple",
+  "Description" : "Scans only in the origin position.",
   "Content" : [
     {
       "Id" : "ExportAs",

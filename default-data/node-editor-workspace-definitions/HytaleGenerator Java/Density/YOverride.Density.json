@@ -2,6 +2,7 @@
   "Id": "YOverride.Density",
   "Title": "YOverride Density",
   "Color": "Purple",
+  "Description" : "Overrides the Y coordinate the input sees.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -36,7 +37,7 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

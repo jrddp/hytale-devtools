@@ -5,7 +5,7 @@
   "Content": [
     {
       "Id" : "MinInclusive",
-      "Type" : "Integer",
+      "Type" : "Int",
       "Options" : {
         "Label" : "MinInclusive",
         "Default" : 0.0,
@@ -14,7 +14,7 @@
     },
     {
       "Id" : "MaxExclusive",
-      "Type" : "Integer",
+      "Type" : "Int",
       "Options" : {
         "Label" : "MaxExclusive",
         "Default" : 1.0,

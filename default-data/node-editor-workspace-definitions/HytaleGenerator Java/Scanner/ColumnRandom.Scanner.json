@@ -1,7 +1,7 @@
 {
   "Id": "ColumnRandom.Scanner",
-  "Title": "ColumnRandom Scanner",
-  "Color": "LightPurple",
+  "Title": "[DEPRECATED] ColumnRandom Scanner",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "ExportAs",

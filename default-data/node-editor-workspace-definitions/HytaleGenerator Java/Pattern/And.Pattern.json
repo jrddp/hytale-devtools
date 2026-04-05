@@ -2,6 +2,7 @@
   "Id": "And.Pattern",
   "Title": "And Pattern",
   "Color": "Pink",
+  "Description" : "Logical operation that validates only if all the Patterns in its list also validate.",
   "Content" : [
     {
       "Id" : "ExportAs",

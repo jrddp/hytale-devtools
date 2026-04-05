@@ -1,7 +1,7 @@
 {
   "Id": "ColumnLinear.Scanner",
-  "Title": "ColumnLinear Scanner",
-  "Color": "LightPurple",
+  "Title": "[DEPRECATED] ColumnLinear Scanner",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "ExportAs",

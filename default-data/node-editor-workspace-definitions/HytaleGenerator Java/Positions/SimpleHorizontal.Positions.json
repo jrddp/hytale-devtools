@@ -2,6 +2,7 @@
   "Id": "SimpleHorizontal.Positions",
   "Title": "SimpleHorizontal Positions",
   "Color": "Blue",
+  "Description" : "Keeps only positions within the provided Y range.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -27,14 +28,16 @@
       "Type": "PositionsConnection",
       "Color": "Blue",
       "Multiple" : false,
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "Input."
     },
     {
       "Id": "RangeY",
       "Type": "Decimal.Range.Connection",
       "Color": "Orange",
       "Multiple" : false,
-      "Label" : "RangeY"
+      "Label" : "RangeY",
+      "Description" : "The y-axis range within which input positions are kept."
     }
   ],
   "Inputs": [

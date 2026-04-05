@@ -2,6 +2,7 @@
   "Id": "AbsDensityNode",
   "Title": "Abs Density",
   "Color": "Purple",
+  "Description" : "The output is the absolute value of the input.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

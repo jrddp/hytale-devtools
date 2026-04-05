@@ -2,6 +2,7 @@
   "Id": "Offset.Prop",
   "Title": "Offset Prop",
   "Color": "Green",
+  "Description" : "Offsets the position of the child Prop.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Id": "Offset",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "Offset"
+      "Label" : "Offset",
+      "Description" : "The direction in which to offset the child Prop’s position."
     },
     {
       "Id": "Prop",

@@ -2,6 +2,7 @@
   "Id": "FieldFunction.Pattern",
   "Title": "FieldFunction Pattern",
   "Color": "Pink",
+  "Description" : "This Pattern validates only if the provided Density field at the position is within the specified delimiters. In combination with an And and Or pattern, this Pattern provides more control over the valid positions.\nImportant: because this Pattern queries a noise field, it can be expensive if placed high in the hierarchy. I recommend setting your Pattern structure such that this Pattern is the last to be tested. The diagram below shows examples of that.",
   "Content" : [
     {
       "Id" : "ExportAs",

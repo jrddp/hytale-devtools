@@ -2,6 +2,7 @@
   "Id": "Multiplier.Curve",
   "Title": "Multiplier Curve",
   "Color": "Orange",
+  "Description" : "This multiplies all the child curves’ outputs.",
   "Content" : [
     {
       "Id" : "ExportAs",

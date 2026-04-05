@@ -2,6 +2,7 @@
   "Id": "Cache.Density",
   "Title": "Cache Density",
   "Color": "Purple",
+  "Description" : "Caches the input for the current coordinates. The capacity determines how many coordinates' can be cached before having to drop the oldest one.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Int",
       "Options": {
         "Label": "Capacity",
-        "Default" : 3
+        "Default" : 3,
+        "Description" : "Determines how many coordinates this cache can hold at once. A safe value is 3."
       }
     }
   ],

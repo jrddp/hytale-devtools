@@ -2,6 +2,7 @@
   "Id": "XValue.Density",
   "Title": "XValue Density",
   "Color": "Purple",
+  "Description" : "The local X coordinate.",
   "Content": [
     {
       "Id" : "ExportAs",

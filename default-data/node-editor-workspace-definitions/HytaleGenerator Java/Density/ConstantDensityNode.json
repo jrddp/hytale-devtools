@@ -2,6 +2,7 @@
   "Id": "ConstantDensityNode",
   "Title": "Constant Density",
   "Color": "Purple",
+  "Description" : "Outputs a constant value.",
   "Content": [
     {
       "Id" : "ExportAs",

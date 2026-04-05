@@ -1,0 +1,92 @@
+{
+  "Id": "OffsetPositions",
+  "Title": "Offset Positions",
+  "Color": "Blue",
+  "Description" : "Offsets the positions by the provided vector.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "OffsetX",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "[DEPRECATED] OffsetX",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "OffsetY",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "[DEPRECATED] OffsetY",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "OffsetZ",
+      "Type" : "Float",
+      "Options" : {
+        "Label" : "[DEPRECATED] OffsetZ",
+        "Default" : 0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Offset",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Label" : "Offset",
+      "Description" : "Offset vector."
+    },
+    {
+      "Id": "PositionsConnection",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Positions",
+      "Description" : "Input."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Offset",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "OffsetX" : "OffsetX",
+    "OffsetY" : "OffsetY",
+    "OffsetZ" : "OffsetZ",
+    "Offset" : {
+      "Node" : "Point3D",
+      "Pin" : "Offset"
+    },
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "PositionsConnection"
+    }
+  }
+}

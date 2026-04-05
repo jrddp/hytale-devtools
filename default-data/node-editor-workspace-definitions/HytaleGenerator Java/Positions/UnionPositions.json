@@ -2,6 +2,7 @@
   "Id": "UnionPositions",
   "Title": "Union Positions",
   "Color": "Blue",
+  "Description" : "Combines all positions into a single Positions field.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type": "PositionsConnection",
       "Color": "Blue",
       "Multiple" : true,
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "Inputs."
     }
   ],
   "Inputs": [

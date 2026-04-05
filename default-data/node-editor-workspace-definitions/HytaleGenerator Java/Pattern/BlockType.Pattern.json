@@ -2,6 +2,7 @@
   "Id": "BlockType.Pattern",
   "Title": "BlockType Pattern",
   "Color": "Pink",
+  "Description" : "Checks against the block's Material.",
   "Content" : [
     {
       "Id" : "ExportAs",

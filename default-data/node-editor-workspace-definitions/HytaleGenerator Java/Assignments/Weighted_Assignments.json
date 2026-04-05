@@ -2,6 +2,7 @@
   "Id": "Weighted.Assignments",
   "Title": "Weighted Assignments",
   "Color": "Aqua",
+  "Description" : "Picks which Prop to assign randomly based on weights and a seed.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options" : {
         "Label" : "SkipChance",
         "Default" : 0.0,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "Chance to skip a position without assigning a Prop."
       }
     },
     {

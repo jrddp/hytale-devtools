@@ -2,6 +2,7 @@
   "Id": "Or.Pattern",
   "Title": "Or Pattern",
   "Color": "Pink",
+  "Description" : "Logical operation that validates if at least one of the Patterns in its list validates.",
   "Content" : [
     {
       "Id" : "ExportAs",

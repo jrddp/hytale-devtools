@@ -2,6 +2,7 @@
   "Id": "Not.Curve",
   "Title": "Not Curve",
   "Color": "Orange",
+  "Description" : "This applies a logical NOT operation on the child curve. When the child’s output is 1, this will output 0, and when the child’s output is 0, this will output 1. All numbers in between are scaled accordingly.",
   "Content" : [
     {
       "Id" : "ExportAs",

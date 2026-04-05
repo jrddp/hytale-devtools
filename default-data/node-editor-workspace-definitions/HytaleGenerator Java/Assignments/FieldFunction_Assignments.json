@@ -2,6 +2,7 @@
   "Id": "FieldFunction.Assignments",
   "Title": "FieldFunction Assignments",
   "Color": "Aqua",
+  "Description" : "Allows you to select which Props to assign based on a Density field and your configured delimiters. The Density’s value at each position determines which delimiter’s Prop to assign.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,14 +19,16 @@
       "Id": "FieldFunction.Pin",
       "Type": "DensityConnection",
       "Color": "Purple",
-      "Label" : "FieldFunction"
+      "Label" : "FieldFunction",
+      "Description" : "The Density field."
     },
     {
       "Id": "Delimiters.Pin",
       "Type": "Delimiter.FieldFunction.Assignments.Connection",
       "Color": "Orange",
       "Multiple" : true,
-      "Label" : "Delimiters"
+      "Label" : "Delimiters",
+      "Description" : "Attaches Props to value ranges of the Density field."
     }
   ],
   "Inputs": [

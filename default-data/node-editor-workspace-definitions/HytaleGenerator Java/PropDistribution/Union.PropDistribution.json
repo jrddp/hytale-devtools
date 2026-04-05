@@ -1,0 +1,42 @@
+{
+  "Id": "Union.PropDistribution",
+  "Title": "Union PropDistribution",
+  "Color": "Aqua",
+  "Description" : "Combines all children, keeping all their positioned Props.",
+  "Content": [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PropDistributions",
+      "Type": "PropDistribution.Connection",
+      "Color": "Aqua",
+      "Multiple" : true,
+      "Label" : "PropDistributions",
+      "Description" : "The children to combine."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OutputPin",
+      "Type": "PropDistribution.Connection",
+      "Color": "Aqua"
+    }
+  ],
+  "Schema": {
+    "Type" : "Union",
+    "ExportAs" : "ExportAs",
+    "PropDistributions" : {
+      "Node" : "PropDistribution.Variants",
+      "Pin" : "PropDistributions"
+    }
+  }
+}

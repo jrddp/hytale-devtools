@@ -2,6 +2,7 @@
   "Id": "SqrtDensityNode",
   "Title": "Sqrt Density",
   "Color": "Purple",
+  "Description" : "The output is the square root value of the input.\nFor negative inputs, this node uses a modified function to always return values that make sense and are useful.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

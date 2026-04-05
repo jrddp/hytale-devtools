@@ -2,6 +2,7 @@
   "Id": "Cuboid.Pattern",
   "Title": "Cuboid Pattern",
   "Color": "Pink",
+  "Description" : "Defines a cuboid region relative to the Pattern’s origin. The region is anchored by Min and Max inclusive points. This is similar to the shape of a creative Selection Tool. The SubPattern is tested against every position inside the cuboid. The Cuboid Pattern validates only if all the inner positions are validated by the SubPattern.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,19 +27,22 @@
       "Id": "Max",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "Max"
+      "Label" : "Max",
+      "Description" : "Inclusive maximum point of the cuboid relative to the Pattern’s origin."
     },
     {
       "Id": "Min",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "Min"
+      "Label" : "Min",
+      "Description" : "Inclusive minimum point of the cuboid relative to the Pattern’s origin."
     },
     {
       "Id": "SubPattern",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "SubPattern"
+      "Label" : "SubPattern",
+      "Description" : "The Cuboid uses this Pattern to validate the positions inside itself."
     }
   ],
   "Inputs": [

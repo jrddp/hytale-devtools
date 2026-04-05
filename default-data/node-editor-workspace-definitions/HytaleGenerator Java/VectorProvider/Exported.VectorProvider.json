@@ -2,6 +2,7 @@
   "Id": "Exported.VectorProvider",
   "Title": "Exported VectorProvider",
   "Color": "Green",
+  "Description" : "Allows exporting a VectorProvider as a single instance. Enabling SingleInstance on this node ensures all importers share the same logic.\nBy default, a completely different instance is created for every Imported node. When multiple Imported nodes import the same exported key, a new instance of that exported VectorProvider tree is created for each Imported node. SingleInstance ensures all importers share the same underlying instance of the node tree.\nThis node can be used to optimize caching when an exported VectorProvider is imported multiple times in the same context and contains caches. The caches would be shared between the different imported instances.\nImportant: This is still an experimental feature and could cause unexpected behaviors if misused.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -17,7 +18,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "SingleInstance",
-        "Default" : false
+        "Default" : false,
+        "Description" : "Enable this to share the export across all Imported nodes that reference this key."
       }
     }
   ],

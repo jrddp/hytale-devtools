@@ -1,7 +1,7 @@
 {
   "Id": "MeshPointGenerator",
-  "Title": "Mesh Point Generator",
-  "Color": "LightBlue",
+  "Title": "[DEPRECATED] Mesh Point Generator",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "Jitter",

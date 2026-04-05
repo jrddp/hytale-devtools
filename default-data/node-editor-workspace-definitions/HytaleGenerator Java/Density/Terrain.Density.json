@@ -2,6 +2,7 @@
   "Id": "Terrain.Density",
   "Title": "Terrain Density",
   "Color": "Purple",
+  "Description" : "Outputs the world's interpolated terrain Density.\nThis should only be used as part of a biome's MaterialProvider nodes. This won't work if used in the Terrain's Density nodes.",
   "Content": [
     {
       "Id" : "ExportAs",

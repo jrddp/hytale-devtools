@@ -2,6 +2,7 @@
   "Id": "Max.Curve",
   "Title": "Max Curve",
   "Color": "Orange",
+  "Description" : "This outputs the maximum value of all the child curves.",
   "Content" : [
     {
       "Id" : "ExportAs",

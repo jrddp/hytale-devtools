@@ -2,6 +2,7 @@
   "Id": "Inverter.Curve",
   "Title": "Inverter Curve",
   "Color": "Orange",
+  "Description" : "This inverts the child curve such that positive values become negative and negative values become positive.",
   "Content" : [
     {
       "Id" : "ExportAs",

@@ -2,6 +2,7 @@
   "Id": "ZValue.Density",
   "Title": "ZValue Density",
   "Color": "Purple",
+  "Description" : "The local Z coordinate.",
   "Content": [
     {
       "Id" : "ExportAs",

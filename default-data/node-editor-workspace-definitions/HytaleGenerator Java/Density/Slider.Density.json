@@ -2,6 +2,7 @@
   "Id": "Slider.Density",
   "Title": "Slider Density",
   "Color": "Purple",
+  "Description" : "Slides the input Density field in the direction of the provided vector.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -54,7 +55,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

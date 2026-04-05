@@ -2,6 +2,7 @@
   "Id": "Imported.Assignments",
   "Title": "Imported Assignments",
   "Color": "Aqua",
+  "Description" : "Imports exported Assignments.",
   "Content" : [
     {
       "Id" : "Name",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "Name",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The exported Assignments name."
       }
     }
   ],

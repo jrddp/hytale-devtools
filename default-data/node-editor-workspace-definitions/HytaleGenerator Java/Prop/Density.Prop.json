@@ -2,6 +2,7 @@
   "Id": "Density.Prop",
   "Title": "Density Prop",
   "Color": "Green",
+  "Description" : "Generates a Prop from a Density field and a MaterialProvider asset.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -23,42 +24,52 @@
   ],
   "Outputs": [
     {
-      "Id": "Pattern",
-      "Type": "Pattern.Connection",
-      "Color": "Pink",
-      "Label" : "Pattern"
-    },
-    {
-      "Id": "Scanner",
-      "Type": "Scanner.Connection",
-      "Color": "LightPurple",
-      "Label" : "Scanner"
-    },
+      "Id": "Bounds",
+      "Type": "Bounds3i.Connection",
+      "Color": "Orange",
+      "Label" : "Bounds",
+      "Multiple" : false,
+      "Description" : "The maximum reach."
+    },    
     {
       "Id": "Density",
       "Type": "DensityConnection",
       "Color": "Purple",
-      "Label" : "Density"
+      "Label" : "Density",
+      "Description" : "Gives shape to the Prop."
     },
     {
       "Id": "Material",
       "Type": "MaterialProviderConnection",
       "Color": "110,63,16",
       "Multiple" : false,
-      "Label" : "Material"
+      "Label" : "Material",
+      "Description" : "Determines the block types to use."
+    },
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] Pattern"
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] Scanner"
     },
     {
       "Id": "PlacementMask",
       "Type": "BlockMask.Connection",
-      "Color": "Olive",
+      "Color": "255,0,0",
       "Multiple" : false,
-      "Label" : "PlacementMask"
+      "Label" : "[DEPRECATED] PlacementMask"
     },
     {
       "Id": "Range",
       "Type": "Point3D.Connection",
-      "Color": "Orange",
-      "Label" : "Range"
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] Range"
     }
   ],
   "Inputs": [
@@ -72,13 +83,9 @@
     "Type" : "Density",
     "ExportAs" : "ExportAs",
     "Skip" : "Skip",
-    "Pattern" : {
-      "Node" : "Pattern.Variants",
-      "Pin" : "Pattern"
-    },
-    "Scanner" : {
-      "Node" : "Scanner.Variants",
-      "Pin" : "Scanner"
+    "Bounds" : {
+      "Node" : "Bounds3i",
+      "Pin" : "Bounds"
     },
     "Material" : {
       "Node" : "MaterialProviderVariants",
@@ -87,6 +94,14 @@
     "Density" : {
       "Node" : "DensityNodeVariants",
       "Pin" : "Density"
+    },
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
     },
     "PlacementMask" : {
       "Node" : "BlockMask",

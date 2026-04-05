@@ -2,6 +2,7 @@
   "Id": "Material",
   "Title": "Material",
   "Color": "Yellow",
+  "Description" : "Defines a block's solid and fluid Material content.",
   "Content" : [
     {
       "Id" : "Solid",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "Solid",
         "Default" : "",
-        "Width" : 350
+        "Width" : 350,
+        "Description" : "Defines the Solid Material's rotation."
       }
     },
     {
@@ -35,7 +37,8 @@
           "Type" : "Checkbox",
           "Options" : {
             "Label" : "SolidBottomUp",
-            "Default" : false
+            "Default" : false,
+            "Description" : "Rotates the Material upside down. The pin overrides this."
           }
         }
       ]

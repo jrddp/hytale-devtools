@@ -1,0 +1,40 @@
+{
+  "Id": "Delimiter.DensitySelector.Prop",
+  "Title": "Delimiter - DensitySelector Prop",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Label" : "Prop",
+      "Multiple" : false
+    },
+    {
+      "Id": "Range",
+      "Type": "Decimal.Range.Connection",
+      "Color": "Orange",
+      "Label" : "Range",
+      "Multiple" : false
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Delimiter.DensitySelector.Prop.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    },
+    "Range" : {
+      "Node" : "Decimal.Range",
+      "Pin" : "Range"
+    }
+  }
+}

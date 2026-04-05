@@ -1,0 +1,38 @@
+{
+  "Id": "Bounds3i",
+  "Title": "Integer 3D Bounds",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id": "PointA",
+      "Type": "Vector3i.Connection",
+      "Color": "Orange",
+      "Label" : "PointA"
+    },
+    {
+      "Id": "PointB",
+      "Type": "Vector3i.Connection",
+      "Color": "Orange",
+      "Label" : "PointB"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Bounds3i.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "PointA" : {
+      "Node" : "Vector3i",
+      "Pin" : "PointA"
+    },
+    "PointB" : {
+      "Node" : "Vector3i",
+      "Pin" : "PointB"
+    }
+  }
+}

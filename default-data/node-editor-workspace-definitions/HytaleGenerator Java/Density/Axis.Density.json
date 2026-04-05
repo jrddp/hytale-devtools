@@ -2,6 +2,7 @@
   "Id": "Axis.Density",
   "Title": "Axis Density",
   "Color": "Purple",
+  "Description" : "The Axis outputs a Density value in function of the distance from a provided Axis line that passes through the origin {0, 0, 0} of the field or through the anchor point if the IsAnchored flag is true. The provided Curve asset maps the distance to the output Density value.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "IsAnchored",
-        "Default" : false
+        "Default" : false,
+        "Description" : "If true, the Axis node will anchor itself to the closest anchor. Although you could use an Anchor node to anchor an Axis Density node, this internal method doesn’t produce some artifacts."
       }
     }
   ],
@@ -34,13 +36,15 @@
       "Id": "Curve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "Curve"
+      "Label" : "Curve",
+      "Description" : "Determines the Density value at any distance from the axis."
     },
     {
       "Id": "Axis",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "Axis"
+      "Label" : "Axis",
+      "Description" : "Determines the axis from which the distance is used."
     }
   ],
   "Inputs": [

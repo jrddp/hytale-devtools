@@ -2,6 +2,7 @@
   "Id": "FastGradientWarp.Density",
   "Title": "FastGradientWarp Density",
   "Color": "Purple",
+  "Description" : "This is a faster implementation of the GradientWarp node. It warps the input Density field using an internal simplex noise generator.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "WarpLacunarity",
         "Default" : 2.0,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "The lacunarity of the internal simplex field."
       }
     },
     {
@@ -35,7 +37,8 @@
       "Options": {
         "Label": "WarpPersistence",
         "Default" : 0.5,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "The persistence of the internal simplex field."
       }
     },
     {
@@ -44,7 +47,8 @@
       "Options": {
         "Label": "WarpScale",
         "Default" : 1,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "This determines the scale of the internal warper noise field."
       }
     },
     {
@@ -53,7 +57,8 @@
       "Options": {
         "Label": "WarpOctaves",
         "Default" : 1,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "The internal field’s octaves."
       }
     },
     {
@@ -62,7 +67,8 @@
       "Options": {
         "Label": "WarpFactor",
         "Default" : 1.0,
-        "Width" : 70
+        "Width" : 70,
+        "Description" : "The maximum distance coordinates can be warped."
       }
     },
     {
@@ -81,7 +87,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

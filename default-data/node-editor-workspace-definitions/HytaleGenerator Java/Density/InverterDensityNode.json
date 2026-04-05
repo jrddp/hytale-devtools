@@ -2,6 +2,7 @@
   "Id": "InverterDensityNode",
   "Title": "Inverter Density",
   "Color": "Purple",
+  "Description" : "The output is the input multiplied by -1.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

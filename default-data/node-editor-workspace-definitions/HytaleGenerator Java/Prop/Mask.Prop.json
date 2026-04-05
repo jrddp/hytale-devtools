@@ -1,0 +1,61 @@
+{
+  "Id": "Mask.Prop",
+  "Title": "Mask Prop",
+  "Color": "Green",
+  "Description" : "Masks the blocks placed by the child.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Label" : "Prop",
+      "Multiple" : false
+    },
+    {
+      "Id": "Mask",
+      "Type": "BlockMask.Connection",
+      "Color": "Olive",
+      "Label" : "Mask",
+      "Description" : "Determines which materials are allowed to be placed."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Mask",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    },
+    "Mask" : {
+      "Node" : "BlockMask",
+      "Pin" : "Mask"
+    }
+  }
+}

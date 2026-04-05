@@ -2,6 +2,7 @@
   "Id": "Surface.Pattern",
   "Title": "Surface Pattern",
   "Color": "Pink",
+  "Description" : "Validates if presented with a surface.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Float",
       "Options": {
         "Label": "SurfaceRadius",
-        "Default" : 1.0
+        "Default" : 1.0,
+        "Description" : "Determines the size of the surface area."
       }
     },
     {
@@ -33,7 +35,8 @@
       "Type": "Float",
       "Options": {
         "Label": "MediumRadius",
-        "Default" : 1.0
+        "Default" : 1.0,
+        "Description" : "Determines the size of the medium area."
       }
     },
     {
@@ -58,7 +61,8 @@
       "Options": {
         "Label": "Facings",
         "Type" : "String",
-        "Width" : 40
+        "Width" : 40,
+        "Description" : "N | S | E | W | U | D\nDirections the surface is facing."
       }
     },
     {
@@ -66,7 +70,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "RequireAllFacings",
-        "Default" : false
+        "Default" : false,
+        "Description" : "If true then the Pattern will only validate if all Facings validate."
       }
     }
   ],
@@ -75,13 +80,15 @@
       "Id": "Surface",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Surface"
+      "Label" : "Surface",
+      "Description" : "Validates every block of the surface."
     },
     {
       "Id": "Medium",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Medium"
+      "Label" : "Medium",
+      "Description" : "Validates every block of the medium."
     }
   ],
   "Inputs": [

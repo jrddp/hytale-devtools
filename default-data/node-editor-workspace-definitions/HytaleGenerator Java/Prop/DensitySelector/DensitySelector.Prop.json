@@ -1,0 +1,62 @@
+{
+  "Id": "DensitySelector.Prop",
+  "Title": "DensitySelector Prop",
+  "Color": "Green",
+  "Description" : "Selects a child Prop based on a Density field.\nThe first delimiter whose range contains the Density value at the Prop’s position determines the child Prop to use.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Delimiters",
+      "Type": "Delimiter.DensitySelector.Prop.Connection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Delimiters",
+      "Description" : "Determines which Prop is selected for which regions of the Density field."
+    },
+    {
+      "Id": "Density",
+      "Type": "DensityConnection",
+      "Color": "Orange",
+      "Multiple" : false,
+      "Label" : "Density"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "DensitySelector",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Delimiters" : {
+      "Node" : "Delimiter.DensitySelector.Prop",
+      "Pin" : "Delimiters"
+    },
+    "Density" : {
+      "Node" : "DensityNodeVariants",
+      "Pin" : "Density"
+    }
+  }
+}

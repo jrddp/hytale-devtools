@@ -2,6 +2,7 @@
   "Id": "SmoothClamp.Curve",
   "Title": "SmoothClamp Curve",
   "Color": "Orange",
+  "Description" : "This curve limits the range of the child curve asset within the provided walls. As the curve approaches the limits within the provided range, it gets smoothed.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -36,7 +37,8 @@
       "Options": {
         "Label": "Range",
         "Default" : 0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curve."
       }
     }
   ],

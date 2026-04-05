@@ -2,6 +2,7 @@
   "Id": "YSampled.Density",
   "Title": "YSampled Density",
   "Color": "Purple",
+  "Description" : "Reduces the performance cost of its child Density by interpolating between spread-out samples along the Y-axis.\nInstead of generating the child's Density value for every single coordinate, it generates the child's value in intervals determined by the SampleDistance and SampleOffset and interpolates the value between the samples.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Float",
       "Options": {
         "Label": "SampleDistance",
-        "Default" : 4
+        "Default" : 4,
+        "Description" : "Safe starting value: 4.0. Determines how far apart the samples are taken. Larger numbers result in more performance savings but less precise terrain vertically."
       }
     },
     {
@@ -33,7 +35,17 @@
       "Type": "Float",
       "Options": {
         "Label": "SampleOffset",
-        "Default" : 0
+        "Default" : 0,
+        "Description" : "Safe starting value: 0.0. Allows for non-zero-aligned sample distribution."
+      }
+    },
+    {
+      "Id": "Interpolate",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Interpolate",
+        "Default" : true,
+        "Description" : "Enables the smooth interpolation between the samples."
       }
     }
   ],
@@ -43,7 +55,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Input"
+      "Label" : "Input",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [
@@ -59,6 +72,7 @@
     "Skip" : "Skip",
     "SampleDistance" : "SampleDistance",
     "SampleOffset" : "SampleOffset",
+    "Interpolate" : "Interpolate",
     "Inputs" : {
       "Node" : "DensityNodeVariants",
       "Pin" : "DensityInputs"

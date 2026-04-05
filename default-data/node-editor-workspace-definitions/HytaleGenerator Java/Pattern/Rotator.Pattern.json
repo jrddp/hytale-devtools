@@ -1,0 +1,61 @@
+{
+  "Id": "Rotator.Pattern",
+  "Title": "Rotator Pattern",
+  "Color": "Pink",
+  "Description" : "Rotates the child Pattern.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern"
+    },
+    {
+      "Id" : "Rotation",
+      "Type" : "OrthogonalRotation.Connection",
+      "Color" : "Orange",
+      "Multiple" : false,
+      "Label" : "Rotation",
+      "Description" : "The child's rotation."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Pattern.Connection",
+      "Color": "Pink"
+    }
+  ],
+  "Schema": {
+    "Type" : "Rotator",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Rotation" : {
+      "Node" : "OrthogonalRotation",
+      "Pin" : "Rotation"
+    }
+  }
+}

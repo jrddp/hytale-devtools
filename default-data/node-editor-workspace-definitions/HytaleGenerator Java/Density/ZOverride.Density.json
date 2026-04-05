@@ -2,6 +2,7 @@
   "Id": "ZOverride.Density",
   "Title": "ZOverride Density",
   "Color": "Purple",
+  "Description" : "Overrides the Z coordinate the input sees.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -36,7 +37,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

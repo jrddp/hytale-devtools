@@ -2,6 +2,7 @@
   "Id": "Ceiling.Pattern",
   "Title": "Ceiling Pattern",
   "Color": "Pink",
+  "Description" : "Checks if there is a ceiling above the world position. The Origin validates the position and the Ceiling validates right above the position. For a simple Ceiling configuration, use BlockType or BlockSet Patterns in those slots.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,13 +27,15 @@
       "Id": "Ceiling",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Ceiling"
+      "Label" : "Ceiling",
+      "Description" : "Checks if there is a ceiling above the world position. The Origin validates the position and the Ceiling validates right above the position. For a simple Ceiling configuration, use BlockType or BlockSet Patterns in those slots."
     },
     {
       "Id": "Origin",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Origin"
+      "Label" : "Origin",
+      "Description" : "Validates the coordinate at the Origin position."
     }
   ],
   "Inputs": [

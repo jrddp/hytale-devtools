@@ -2,6 +2,7 @@
   "Id": "ImportedCurve",
   "Title": "Imported Curve",
   "Color": "Orange",
+  "Description" : "Imports an exported Curve.",
   "Content" : [
     {
       "Id": "Name",
@@ -9,7 +10,8 @@
       "Options": {
         "Label": "Name",
         "Default" : "",
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The exported Curve asset."
       }
     }
   ],

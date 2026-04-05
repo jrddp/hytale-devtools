@@ -2,6 +2,7 @@
   "Id": "Scale.Density",
   "Title": "Scale Density",
   "Color": "Purple",
+  "Description" : "Stretches or contracts the input Density field. The input’s Density field is scaled by the factor’s provided for each axis. Values above 1 stretches the field and values below 1 contract it. Values under 0 flip the field.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -54,7 +55,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

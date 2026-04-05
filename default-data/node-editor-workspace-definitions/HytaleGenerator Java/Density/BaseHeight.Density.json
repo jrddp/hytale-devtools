@@ -2,6 +2,7 @@
   "Id": "BaseHeight.Density",
   "Title": "BaseHeight Density",
   "Color": "Purple",
+  "Description" : "This node lets you reference a DecimalConstant from the WorldStructure.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options" : {
         "Label" : "BaseHeightName",
         "Default" : "Base",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "Name of the DecimalConstant to reference."
       }
     },
     {
@@ -34,7 +36,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "Distance",
-        "Default" : true
+        "Default" : true,
+        "Description" : "Toggles whether to output the raw Y coordinate of the BaseHeight or the distance from the BaseHeight from the query position."
       }
     }
   ],

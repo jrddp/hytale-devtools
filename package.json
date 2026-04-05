@@ -471,6 +471,7 @@
     "test:asset-editor-parser:vitest:watch": "vitest --config vitest.config.mts test/asset-editor-parser",
     "asset-parse-memory-check": "bun run scripts/asset-parse-memory-check.ts",
     "asset-cache-runtime-check": "bun run scripts/asset-cache-runtime-check.ts",
+    "extract-base-game-assets": "bun run scripts/extract-base-game-assets.ts",
     "check-types": "npm-run-all check-types:*",
     "check-types:extension": "tsc --noEmit",
     "check-types:webview:asset-editor": "pnpm --dir webview/hytale-asset-editor run check",

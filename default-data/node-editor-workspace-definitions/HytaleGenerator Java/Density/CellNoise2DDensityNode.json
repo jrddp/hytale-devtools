@@ -2,6 +2,7 @@
   "Id": "CellNoise2DDensityNode",
   "Title": "CellNoise2D Density",
   "Color": "Purple",
+  "Description" : "2D Voronoi noise.",
   "Content": [
     {
       "Id" : "ExportAs",

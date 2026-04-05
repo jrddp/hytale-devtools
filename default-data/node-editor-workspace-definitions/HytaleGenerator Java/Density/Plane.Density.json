@@ -2,6 +2,7 @@
   "Id": "Plane.Density",
   "Title": "Plane Density",
   "Color": "Purple",
+  "Description" : "The Plane Density node allows you to define a Density field in function of the distance from a user-defined plane that passes through the field’s origin {0, 0, 0} or through the anchor if the flag IsAnchored is enabled. You can granularly define the Density value using a Curve asset. The PlaneNormal vector determines the direction the plane is facing.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -34,13 +35,15 @@
       "Id": "Curve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "Curve"
+      "Label" : "Curve",
+      "Description" : "Determines the Density value at any distance from the plane."
     },
     {
       "Id": "PlaneNormal",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "PlaneNormal"
+      "Label" : "PlaneNormal",
+      "Description" : "Determines the direction the plane is facing."
     }
   ],
   "Inputs": [

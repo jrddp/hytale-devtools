@@ -2,6 +2,7 @@
   "Id": "SmoothMin.Curve",
   "Title": "SmoothMin Curve",
   "Color": "Orange",
+  "Description" : "This curve retrieves the minimum between the two curves provided. The intersection between the curves is smoothed as their values approach within the provided range.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options": {
         "Label": "Range",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The range determines how much smoothing is applied. A good starting value would be ¼ of the known range of your child curves."
       }
     }
   ],

@@ -2,6 +2,7 @@
   "Id": "SumDensityNode",
   "Title": "Sum Density",
   "Color": "Purple",
+  "Description" : "The output is the sum of all the inputs.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -34,7 +35,8 @@
     {
       "Id": "DensityOutput",
       "Type": "DensityConnection",
-      "Color": "Purple"
+      "Color": "Purple",
+      "Description" : "[0, infinite): Inputs."
     }
   ],
   "Schema": {

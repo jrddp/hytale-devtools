@@ -2,6 +2,7 @@
   "Id": "FieldFunctionMaterialProvider",
   "Title": "FieldFunction MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Selects a 3D region using a noise function and value delimiters. The delimiters link a Material Provider slot to a specific range of values in the noise function.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -19,14 +20,16 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : false,
-      "Label" : "FieldFunction"
+      "Label" : "FieldFunction",
+      "Description" : "Defines the Density value for each block. Same asset type used by DAOTerrain density."
     },
     {
       "Id": "DelimitersPin",
       "Type": "DelimiterFFMPConnection",
       "Color": "Orange",
       "Multiple" : true,
-      "Label" : "Delimiters"
+      "Label" : "Delimiters",
+      "Description" : "Higher entries have higher priority."
     }
   ],
   "Inputs": [

@@ -1,7 +1,7 @@
 {
   "Id": "SmoothFloorDensityNode",
-  "Title": "SmoothFloor Density",
-  "Color": "Purple",
+  "Title": "[DEPRECATED] SmoothFloor Density",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "ExportAs",

@@ -1,0 +1,48 @@
+{
+  "Id": "Vector3i",
+  "Title": "Integer 3D Vector",
+  "Color": "Orange",
+  "Content" : [
+    {
+      "Id" : "X",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "X",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "Y",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Y",
+        "Default" : 0,
+        "Width" : 100
+      }
+    },
+    {
+      "Id" : "Z",
+      "Type" : "Int",
+      "Options" : {
+        "Label" : "Z",
+        "Default" : 0,
+        "Width" : 100
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Vector3i.Connection",
+      "Type": "Vector3i.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "X" : "X",
+    "Y" : "Y",
+    "Z" : "Z"
+  }
+}

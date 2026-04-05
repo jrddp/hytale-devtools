@@ -2,6 +2,7 @@
   "Id": "SolidityMaterialProvider",
   "Title": "Solidity MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Separates terrain into Solid and Empty blocks. Provides a Material Provider slot for each selection.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -18,13 +19,15 @@
       "Id": "SolidPin",
       "Type": "MaterialProviderConnection",
       "Color": "110,63,16",
-      "Label" : "Solid"
+      "Label" : "Solid",
+      "Description" : "Where the terrain's Density value is greater than 0."
     },
     {
       "Id": "EmptyPin",
       "Type": "MaterialProviderConnection",
       "Color": "110,63,16",
-      "Label" : "Empty"
+      "Label" : "Empty",
+      "Description" : "Where the terrain's Density value is smaller or equal to 0."
     }
   ],
   "Inputs": [

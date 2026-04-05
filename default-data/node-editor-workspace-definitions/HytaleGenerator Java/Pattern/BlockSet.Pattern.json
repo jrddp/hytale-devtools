@@ -2,6 +2,7 @@
   "Id": "BlockSet.Pattern",
   "Title": "BlockSet Pattern",
   "Color": "Pink",
+  "Description" : "Checks if the block's Material belongs to the BlockSet.",
   "Content" : [
     {
       "Id" : "ExportAs",

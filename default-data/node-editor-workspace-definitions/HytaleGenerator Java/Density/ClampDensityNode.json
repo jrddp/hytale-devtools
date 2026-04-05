@@ -2,6 +2,7 @@
   "Id": "ClampDensityNode",
   "Title": "Clamp Density",
   "Color": "Purple",
+  "Description" : "This node ensures that the output is within the provided range which is defined by the two wall parameters. Input values that are inside the range don’t change and inputs values outside the range are brought back to the range’s extreme.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "WallA",
         "Default" : -1.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Output values limit A."
       }
     },
     {
@@ -35,7 +37,8 @@
       "Options": {
         "Label": "WallB",
         "Default" : 1.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Output values limit B."
       }
     }
   ],
@@ -45,7 +48,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Density to be clamped."
     }
   ],
   "Inputs": [

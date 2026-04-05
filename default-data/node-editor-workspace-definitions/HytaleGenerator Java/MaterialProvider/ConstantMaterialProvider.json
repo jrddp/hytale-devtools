@@ -2,6 +2,7 @@
   "Id": "ConstantMaterialProvider",
   "Title": "Constant MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Provides a constant Material.",
   "Content": [
     {
       "Id" : "ExportAs",

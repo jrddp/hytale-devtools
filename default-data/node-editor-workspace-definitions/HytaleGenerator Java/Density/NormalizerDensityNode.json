@@ -2,6 +2,7 @@
   "Id": "NormalizerDensityNode",
   "Title": "Normalizer Density",
   "Color": "Purple",
+  "Description" : "It linearly remaps the input's range. The scale is defined by the FromMin, FromMax, ToMin and ToMax parameters.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -63,7 +64,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

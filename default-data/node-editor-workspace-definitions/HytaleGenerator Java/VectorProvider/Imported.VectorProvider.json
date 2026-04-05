@@ -2,6 +2,7 @@
   "Id": "Imported.VectorProvider",
   "Title": "Imported VectorProvider",
   "Color": "Green",
+  "Description" : "Imports an exported VectorProvider.",
   "Content": [
     {
       "Id" : "Name",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "Name",
         "Default" : "",
-        "Width" : 350
+        "Width" : 350,
+        "Description" : "The exported VectorProvider."
       }
     }
   ],

@@ -2,6 +2,7 @@
   "Id": "Constant.VectorProvider",
   "Title": "Constant VectorProvider",
   "Color": "Green",
+  "Description" : "Generates the provided vector.",
   "Content": [
     {
       "Id" : "ExportAs",

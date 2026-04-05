@@ -2,6 +2,7 @@
   "Id": "PositionsPinch.Density",
   "Title": "PositionsPinch Density",
   "Color": "Purple",
+  "Description" : "Pinches or expands the first input’s Density field around the Positions.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options" : {
         "Label" : "MaxDistance",
         "Default" : 10,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The value represents how big the area of effect is in block units."
       }
     },
     {
@@ -34,7 +36,8 @@
       "Type" : "Checkbox",
       "Options" : {
         "Label" : "NormalizeDistance",
-        "Default" : true
+        "Default" : true,
+        "Description" : "Default is true. If true then the Curve’s input and output unit is normalized to the MaxDistance value, otherwise if false the Curve’s input and output unit is in blocks."
       }
     },
     {
@@ -42,7 +45,8 @@
       "Type" : "Checkbox",
       "Options" : {
         "Label" : "HorizontalPinch",
-        "Default" : true
+        "Default" : true,
+        "Description" : "Default is false. If true, the input is pinched horizontally only."
       }
     },
     {
@@ -51,7 +55,8 @@
       "Options" : {
         "Label" : "PositionsMaxY",
         "Default" : 0.0001,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Determines the upper Y level bound of the region queried from the Positions field. Any Positions that are at or above this value are ignored."
       }
     },
     {
@@ -60,7 +65,8 @@
       "Options" : {
         "Label" : "PositionsMinY",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Determines the lower Y level bound of the region queried from the Positions field. Any Positions that are below this value are ignored."
       }
     }
   ],
@@ -70,19 +76,22 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     },
     {
       "Id": "Positions",
       "Type": "PositionsConnection",
       "Color": "Blue",
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "The Positions are the anchors that pinch and expand the Density field around them."
     },
     {
       "Id": "PinchCurve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "PinchCurve"
+      "Label" : "PinchCurve",
+      "Description" : "The curve determines how the Density field is pinched or expanded depending on how close it is to a position."
     }
   ],
   "Inputs": [

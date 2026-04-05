@@ -2,6 +2,7 @@
   "Id": "YValue.Density",
   "Title": "YValue Density",
   "Color": "Purple",
+  "Description" : "The local Y coordinate.",
   "Content": [
     {
       "Id" : "ExportAs",

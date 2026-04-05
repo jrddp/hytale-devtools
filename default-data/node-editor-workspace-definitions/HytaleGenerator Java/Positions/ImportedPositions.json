@@ -2,6 +2,7 @@
   "Id": "ImportedPositions",
   "Title": "Imported Positions",
   "Color": "Blue",
+  "Description" : "Imports an exported PositionsProvider.",
   "Content" : [
     {
       "Id": "Skip",
@@ -17,7 +18,8 @@
       "Options": {
         "Label": "Name",
         "Default" : "",
-        "Width" : 150
+        "Width" : 150,
+        "Description" : "The exported PositionsProvider's name."
       }
     }
   ],

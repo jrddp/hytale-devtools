@@ -2,6 +2,7 @@
   "Id": "Weighted.Prop",
   "Title": "Weighted Prop",
   "Color": "Green",
+  "Description" : "Picks a Prop to place based on a seed and weights.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options" : {
         "Label" : "Seed",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The seed determining which Prop is picked. This seed also mutates the seed passed to the children."
       }
     }
   ],
@@ -36,7 +38,8 @@
       "Type": "Entry.Weighted.Prop.Connection",
       "Color": "Orange",
       "Multiple" : true,
-      "Label" : "Entries"
+      "Label" : "Entries",
+      "Description" : "Weighted entries."
     }
   ],
   "Inputs": [

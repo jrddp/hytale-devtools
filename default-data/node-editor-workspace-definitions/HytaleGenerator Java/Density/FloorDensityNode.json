@@ -1,7 +1,7 @@
 {
   "Id": "FloorDensityNode",
-  "Title": "Floor Density",
-  "Color": "Purple",
+  "Title": "[DEPRECATED] Floor Density",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "ExportAs",

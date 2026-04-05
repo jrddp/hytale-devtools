@@ -1,0 +1,75 @@
+{
+  "Id": "Clusters.Positions",
+  "Title": "Clusters Positions",
+  "Color": "Blue",
+  "Description" : "Generates clusters of positions anchored by a Distributor PositionProvider. The cluster size is determined by the ClusterBounds, and the cluster contents are determined by the Cluster PositionProvider.\nThe Cluster PositionProvider receives the cluster's position as an anchor.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Cluster",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Cluster",
+      "Description" : "Positions making up the cluster."
+    },
+    {
+      "Id": "Distributor",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Multiple" : false,
+      "Label" : "Distributor",
+      "Description" : "Each cluster is anchored to one of these positions."
+    },
+    {
+      "Id": "ClusterBounds",
+      "Type": "DecimalBounds3d.Connection",
+      "Color": "Orange",
+      "Multiple" : false,
+      "Label" : "ClusterBounds",
+      "Description" : "The maximum size of a cluster around its anchor."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Clusters",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Cluster" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Cluster"
+    },
+    "Distributor" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Distributor"
+    },
+    "ClusterBounds" : {
+      "Node" : "DecimalBounds3d",
+      "Pin" : "ClusterBounds"
+    }
+  }
+}

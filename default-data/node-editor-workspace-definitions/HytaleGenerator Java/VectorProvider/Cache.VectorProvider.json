@@ -2,6 +2,7 @@
   "Id": "Cache.VectorProvider",
   "Title": "Cache VectorProvider",
   "Color": "Green",
+  "Description" : "Caches the input vector for each position.\nUse this only if the downstream (child) VectorProvider is expensive and the same coordinate is queried more than once.",
   "Content": [
     {
       "Id" : "ExportAs",

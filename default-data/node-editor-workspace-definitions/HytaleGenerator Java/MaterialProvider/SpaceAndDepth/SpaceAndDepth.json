@@ -2,6 +2,7 @@
   "Id": "SpaceAndDepthMaterialProvider",
   "Title": "SpaceAndDepth MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Allows placing layers of blocks on a terrain’s floor or ceiling surfaces. Layers of Material are piled on top of each other inside the surface (floor or ceiling), like a cake. There are multiple Layer types, each providing a unique way to define thickness. Below is an example with two layers in the floor of our terrain.\nConditions let you skip this Material Provider when they’re not met. An example could be a Condition that only places grass if there are at least 5 empty blocks above the surface.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options" : {
         "Label" : "LayerContext",
         "Default" : "DEPTH_INTO_FLOOR",
-        "Width" : 200
+        "Width" : 200,
+        "Description" : "DEPTH_INTO_FLOOR | DEPTH_INTO_CEILING\nContext the layers are applied on."
       }
     },
     {
@@ -27,7 +29,8 @@
       "Options" : {
         "Label" : "MaxExpectedDepth",
         "Default" : 3,
-        "Width" : 50
+        "Width" : 50,
+        "Description" : "Optimization hint. Set to max expected combined layer depth. Too small can cut off layers. Too large can hurt performance."
       }
     }
   ],
@@ -37,14 +40,16 @@
       "Type": "ConditionSADMPConnection",
       "Color": "Orange",
       "Multiple" : false,
-      "Label" : "Condition"
+      "Label" : "Condition",
+      "Description" : "Provider returns no block if the Condition fails."
     },
     {
       "Id": "LayersPin",
       "Type": "LayerSADMPConnection",
       "Color": "Orange",
       "Multiple" : true,
-      "Label" : "Layers"
+      "Label" : "Layers",
+      "Description" : "Stacked top-to-bottom as depth increases into the context."
     }
   ],
   "Inputs": [

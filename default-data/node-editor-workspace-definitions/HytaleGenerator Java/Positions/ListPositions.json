@@ -2,6 +2,7 @@
   "Id": "ListPositions",
   "Title": "List Positions",
   "Color": "Blue",
+  "Description" : "Allows you to manually define a static list of positions in world coordinates.",
   "Content" : [
     {
       "Id" : "ExportAs",

@@ -2,6 +2,7 @@
   "Id": "PowDensityNode",
   "Title": "Pow Density",
   "Color": "Purple",
+  "Description" : "The output is the input taken to the power of the given exponent.\nFor negative inputs, this node uses a modified function to always return values that make sense and are useful.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "Exponent",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "A good starting value would be 2."
       }
     }
   ],
@@ -36,7 +38,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     }
   ],
   "Inputs": [

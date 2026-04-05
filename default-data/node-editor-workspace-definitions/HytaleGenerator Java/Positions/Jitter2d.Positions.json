@@ -1,7 +1,8 @@
 {
-  "Id": "OffsetPositions",
-  "Title": "Offset Positions",
+  "Id": "Jitter2d.Positions",
+  "Title": "Jitter2d Positions",
   "Color": "Blue",
+  "Description" : "Adds jitter along the x/z plane.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -21,30 +22,22 @@
       }
     },
     {
-      "Id" : "OffsetX",
+      "Id" : "Magnitude",
       "Type" : "Float",
       "Options" : {
-        "Label" : "OffsetX",
+        "Label" : "Magnitude",
         "Default" : 0,
-        "Width" : 100
+        "Width" : 50,
+        "Description" : "The maximum distance each position is allowed to travel from its original place when jittered. The actual movement distance is random for each position between 0 and the Magnitude."
       }
     },
     {
-      "Id" : "OffsetY",
-      "Type" : "Float",
+      "Id" : "Seed",
+      "Type" : "SmallString",
       "Options" : {
-        "Label" : "OffsetY",
-        "Default" : 0,
-        "Width" : 100
-      }
-    },
-    {
-      "Id" : "OffsetZ",
-      "Type" : "Float",
-      "Options" : {
-        "Label" : "OffsetZ",
-        "Default" : 0,
-        "Width" : 100
+        "Label" : "Seed",
+        "Default" : "",
+        "Width" : 150
       }
     }
   ],
@@ -54,7 +47,8 @@
       "Type": "PositionsConnection",
       "Color": "Blue",
       "Multiple" : false,
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "Positions to jitter."
     }
   ],
   "Inputs": [
@@ -65,12 +59,11 @@
     }
   ],
   "Schema": {
-    "Type" : "Offset",
+    "Type" : "Jitter2d",
     "ExportAs" : "ExportAs",
     "Skip" : "Skip",
-    "OffsetX" : "OffsetX",
-    "OffsetY" : "OffsetY",
-    "OffsetZ" : "OffsetZ",
+    "Magnitude" : "Magnitude",
+    "Seed" : "Seed",
     "Positions" : {
       "Node" : "PositionsVariants",
       "Pin" : "PositionsConnection"

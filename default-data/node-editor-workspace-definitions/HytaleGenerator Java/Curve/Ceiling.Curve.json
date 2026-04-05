@@ -2,6 +2,7 @@
   "Id": "Ceiling.Curve",
   "Title": "Ceiling Curve",
   "Color": "Orange",
+  "Description" : "This curve puts a ceiling on the output of the child curve asset.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options": {
         "Label": "Ceiling",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The maximum value this curve will output."
       }
     }
   ],

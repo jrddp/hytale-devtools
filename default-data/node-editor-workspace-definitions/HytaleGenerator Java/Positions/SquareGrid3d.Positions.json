@@ -1,0 +1,39 @@
+{
+  "Id": "SquareGrid3d.Positions",
+  "Title": "SquareGrid3d Positions",
+  "Color": "Blue",
+  "Description" : "Generates a 3D infinite square mesh of positions with a distance of 1 block between them.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "SquareGrid3d",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip"
+  }
+}

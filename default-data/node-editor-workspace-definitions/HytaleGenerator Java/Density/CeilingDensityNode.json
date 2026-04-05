@@ -1,7 +1,7 @@
 {
   "Id": "CeilingDensityNode",
-  "Title": "Ceiling Density",
-  "Color": "Purple",
+  "Title": "[DEPRECATED] Ceiling Density",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "ExportAs",

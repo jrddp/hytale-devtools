@@ -1,6 +1,6 @@
 {
   "Id": "Point3D",
-  "Title": "3D Point",
+  "Title": "Decimal 3D Vector",
   "Color": "Orange",
   "Content" : [
     {

@@ -2,6 +2,7 @@
   "Id": "Distance2DivPCNReturnType",
   "Title": "Distance2Div ReturnType",
   "Color": "DarkPink",
+  "Description" : "The Distance2Div ReturnType works like the traditional CellNoise's 'Distance2Div' return type.",
   "Content": [
   ],
   "Outputs": [

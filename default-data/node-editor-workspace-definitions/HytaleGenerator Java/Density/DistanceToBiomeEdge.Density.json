@@ -2,6 +2,7 @@
   "Id": "DistanceToBiomeEdge.Density",
   "Title": "DistanceToBiomeEdge Density",
   "Color": "Purple",
+  "Description" : "Outputs the distance to the nearest biome edge in blocks.",
   "Content": [
     {
       "Id" : "ExportAs",

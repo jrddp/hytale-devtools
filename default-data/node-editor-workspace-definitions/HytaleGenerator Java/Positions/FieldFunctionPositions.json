@@ -2,6 +2,7 @@
   "Id": "FieldFunctionPositions",
   "Title": "FieldFunction Positions",
   "Color": "Blue",
+  "Description" : "Enables masking out positions using a Density field. The delimiters determine the regions of the Density field where positions are kept.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type": "PositionsConnection",
       "Color": "Blue",
       "Multiple" : false,
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "The positions on which the mask is applied."
     },
     {
       "Id": "DensityConnection",
@@ -41,7 +43,8 @@
       "Type": "PositionsDelimiterConnection",
       "Color": "Orange",
       "Multiple" : true,
-      "Label" : "Delimiters"
+      "Label" : "Delimiters",
+      "Description" : "Density value ranges that keep input positions."
     }
   ],
   "Inputs": [

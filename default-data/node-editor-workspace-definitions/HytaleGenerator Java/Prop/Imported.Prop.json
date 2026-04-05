@@ -2,6 +2,7 @@
   "Id": "Imported.Prop",
   "Title": "Imported Prop",
   "Color": "Green",
+  "Description" : "Imports an exported Prop.",
   "Content" : [
     {
       "Id": "Skip",
@@ -17,7 +18,8 @@
       "Options" : {
         "Label" : "Name",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The exported Prop name."
       }
     }
   ],

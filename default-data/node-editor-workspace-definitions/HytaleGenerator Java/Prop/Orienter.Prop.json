@@ -1,0 +1,107 @@
+{
+  "Id": "Orienter.Prop",
+  "Title": "Orienter Prop",
+  "Color": "Green",
+  "Description" : "Locates valid positions and orients the child Prop accordingly.\nAutomatically checks the Pattern in different rotations and rotates the child Prop accordingly.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id" : "SelectionMode",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "SelectionMode",
+        "Default" : "FirstValid",
+        "Width" : 250,
+        "Description" : "FirstValid | AllValid | RandomValid\nDetermines which valid rotation is generated:\n- FirstValid: The first valid rotation in the Rotations list.\n- AllValid: All valid rotations in the Rotations list.\n- RandomValid: Picks one of the valid Rotations at random."
+      }
+    },
+    {
+      "Id" : "Seed",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "Seed",
+        "Default" : "",
+        "Width" : 250,
+        "Description" : "Determines which position is picked if RandomValid."
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Multiple" : false,
+      "Label" : "Prop",
+      "Description" : "Prop to place at valid positions."
+    },
+    {
+      "Id" : "Rotations",
+      "Type" : "OrthogonalRotation.Connection",
+      "Color" : "Orange",
+      "Multiple" : true,
+      "Label" : "Rotations",
+      "Description" : "Possible rotations."
+    },
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern",
+      "Description" : "Defines what valid locations look like."
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner",
+      "Description" : "Scans relative to the anchor for valid locations."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Orienter",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "SelectionMode" : "SelectionMode",
+    "Seed" : "Seed",
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    },
+    "Rotations" : {
+      "Node" : "OrthogonalRotation",
+      "Pin" : "Rotations"
+    },
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    }
+  }
+}

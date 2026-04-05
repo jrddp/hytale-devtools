@@ -1,0 +1,68 @@
+﻿{
+  "Id": "Rotation",
+  "Title": "Rotation",
+  "Description": "Applies a rotation to an operation",
+  "Color": "blue",
+  "Content": [
+    {
+      "Id": "RotationAxis",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Rotation Axis",
+        "Width": 150,
+        "Default": "Y",
+        "Description": "The axis to rotate the operation(s) around.",
+        "Values": [
+          "X",
+          "Y",
+          "Z"
+        ]
+      }
+    },
+    {
+      "Id": "RotationAngle",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Rotation Angle",
+        "Width": 150,
+        "Default": "None",
+        "Description": "The angle to rotate the operation(s) around.",
+        "Values": [
+          "None",
+          "Ninety",
+          "OneEighty",
+          "TwoSeventy"
+        ]
+      }
+    },
+    {
+      "Id": "RotationOrigin",
+      "Type": "Enum",
+      "Options": {
+        "Label": "Origin of Rotation",
+        "Width": 150,
+        "Default": "ClickCenter",
+        "Description": "The origin of rotation.\n\nClickCenter will rotate the operation(s) around where the brush was clicked at (around itself).\n\nOffsetCenter will rotate the operation(s) around where the current offset is at.\n\nPlayer will rotate the operation(s) around the player's position.\n\nExample:\nIf I wanted a cylinder to be rotated based on where I clicked, I would use ClickCenter (rotates around a center point).\nIf I wanted a cylinder to be on its side at an offset I give, I would use Offset Center (rotates around itself).",
+        "Values": [
+          "OffsetCenter",
+          "ClickCenter",
+          "Player"
+        ]
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "OperationPin",
+      "Type": "Operation",
+      "Multiple": false,
+      "Color": "blue"
+    }
+  ],
+  "Schema": {
+    "Id": "rotation",
+    "RotationAxis": "RotationAxis",
+    "RotationAngle": "RotationAngle",
+    "RotationOrigin": "RotationOrigin"
+  }
+}

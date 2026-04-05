@@ -2,6 +2,7 @@
   "Id": "Cube.Density",
   "Title": "Cube Density",
   "Color": "Purple",
+  "Description" : "The Cube outputs a Density value in function of the distance from the origin axis of the field. The provided Curve asset maps the distance to the output Density value.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Id": "Curve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "Curve"
+      "Label" : "Curve",
+      "Description" : "Maps the Distance from the origin to a Density value."
     }
   ],
   "Inputs": [

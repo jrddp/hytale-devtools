@@ -2,6 +2,7 @@
   "Id": "Wall.Pattern",
   "Title": "Wall Pattern",
   "Color": "Pink",
+  "Description" : "Checks if there is a wall next to the world position. For a simple Wall configuration, use BlockType or BlockSet Patterns in those slots. You can specify which directions are valid for the wall using the N, S, E, W string values.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "Directions",
         "Type" : "String",
-        "Width" : 40
+        "Width" : 40,
+        "Direction" : "N | S | E | W\nDirections in which the wall can be facing."
       }
     },
     {
@@ -34,7 +36,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "RequireAllDirections",
-        "Default" : false
+        "Default" : false,
+        "Direction" : "If true then all the directions you put in the list need to validate for the Pattern to validate a position. Otherwise only one of the list directions needs to validate."
       }
     }
   ],
@@ -43,13 +46,15 @@
       "Id": "Wall",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Wall"
+      "Label" : "Wall",
+      "Description" : "Validates the coordinate next to the Origin position."
     },
     {
       "Id": "Origin",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Origin"
+      "Label" : "Origin",
+      "Description" : "Validates the coordinate at the Origin position."
     }
   ],
   "Inputs": [

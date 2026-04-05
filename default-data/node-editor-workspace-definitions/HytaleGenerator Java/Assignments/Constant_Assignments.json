@@ -2,6 +2,7 @@
   "Id": "Constant.Assignments",
   "Title": "Constant Assignments",
   "Color": "Aqua",
+  "Description": "Assigns a Prop to all positions.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -19,7 +20,8 @@
       "Type": "PropConnection",
       "Color": "Green",
       "Label" : "Prop",
-      "Multiple" : false
+      "Multiple" : false,
+      "Description": "The Prop to assign."
     }
   ],
   "Inputs": [

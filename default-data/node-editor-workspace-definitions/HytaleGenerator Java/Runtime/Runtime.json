@@ -25,14 +25,20 @@
     {
       "Id": "Positions",
       "Type": "PositionsConnection",
-      "Color": "Blue",
-      "Label" : "Positions"
+      "Color": "255,00,00",
+      "Label" : "[DEPRECATED] Positions"
     },
     {
       "Id": "Assignments",
       "Type": "AssignmentsConnection",
+      "Color": "255,00,00",
+      "Label" : "[DEPRECATED] Assignments"
+    },
+    {
+      "Id": "PropDistribution",
+      "Type": "PropDistribution.Connection",
       "Color": "Aqua",
-      "Label" : "Assignments"
+      "Label" : "PropDistribution"
     }
   ],
   "Inputs": [
@@ -52,6 +58,10 @@
     "Assignments" : {
       "Node" : "AssignmentsVariants",
       "Pin" : "Assignments"
+    },
+    "PropDistribution" : {
+      "Node" : "PropDistribution.Variants",
+      "Pin" : "PropDistribution"
     }
   }
 }

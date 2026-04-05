@@ -2,6 +2,7 @@
   "Id": "PondFiller.Prop",
   "Title": "PondFiller Prop",
   "Color": "Green",
+  "Description" : "Fills depressions in the terrain with the provided MaterialProvider.\nImportant: The performance impact of this Prop can be relatively high depending on the size of its bounding box. Because of that, I recommend optimizing the size of its bounding box for each use case.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -23,44 +24,54 @@
   ],
   "Outputs": [
     {
-      "Id": "BoundingMin",
-      "Type": "Point3D.Connection",
+      "Id": "Bounds",
+      "Type": "Bounds3i.Connection",
       "Color": "Orange",
-      "Label" : "BoundingMin",
-      "Multiple" : false
-    },
-    {
-      "Id": "BoundingMax",
-      "Type": "Point3D.Connection",
-      "Color": "Orange",
-      "Label" : "BoundingMax",
-      "Multiple" : false
-    },
+      "Label" : "Bounds",
+      "Multiple" : false,
+      "Description" : "The Prop's reach."
+    },   
     {
       "Id": "BarrierBlockSet",
       "Type": "BlockSet.BlockMask.Connection",
       "Color": "Yellow",
       "Label" : "BarrierBlockSet",
-      "Multiple" : false
+      "Multiple" : false,
+      "Description" : "Defines the types of blocks that can make up the solid terrain, through which the pond material cannot seep."
     },
     {
       "Id": "FillMaterial",
       "Type": "MaterialProviderConnection",
       "Color": "110,63,16",
       "Label" : "FillMaterial",
+      "Multiple" : false,
+      "Description" : "Determines the types of blocks used when filling up the ponds (for example, water)."
+    },
+    {
+      "Id": "BoundingMin",
+      "Type": "Point3D.Connection",
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] BoundingMin",
+      "Multiple" : false
+    },
+    {
+      "Id": "BoundingMax",
+      "Type": "Point3D.Connection",
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] BoundingMax",
       "Multiple" : false
     },
     {
       "Id": "Pattern",
       "Type": "Pattern.Connection",
-      "Color": "Pink",
-      "Label" : "Pattern"
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] Pattern"
     },
     {
       "Id": "Scanner",
       "Type": "Scanner.Connection",
-      "Color": "LightPurple",
-      "Label" : "Scanner"
+      "Color": "255,0,0",
+      "Label" : "[DEPRECATED] Scanner"
     }
   ],
   "Inputs": [
@@ -74,13 +85,9 @@
     "Type" : "PondFiller",
     "ExportAs" : "ExportAs",
     "Skip" : "Skip",
-    "BoundingMin" : {
-      "Node" : "Point3D",
-      "Pin" : "BoundingMin"
-    },
-    "BoundingMax" : {
-      "Node" : "Point3D",
-      "Pin" : "BoundingMax"
+    "Bounds" : {
+      "Node" : "Bounds3i",
+      "Pin" : "Bounds"
     },
     "BarrierBlockSet" : {
       "Node" : "BlockSet.BlockMask",
@@ -89,6 +96,14 @@
     "FillMaterial" : {
       "Node" : "MaterialProviderVariants",
       "Pin" : "FillMaterial"
+    },
+    "BoundingMin" : {
+      "Node" : "Point3D",
+      "Pin" : "BoundingMin"
+    },
+    "BoundingMax" : {
+      "Node" : "Point3D",
+      "Pin" : "BoundingMax"
     },
     "Pattern" : {
       "Node" : "Pattern.Variants",

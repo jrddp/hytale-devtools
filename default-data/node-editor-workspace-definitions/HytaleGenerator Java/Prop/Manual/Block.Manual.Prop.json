@@ -1,0 +1,38 @@
+{
+  "Id": "Block.Manual.Prop",
+  "Title": "Block - Manual Prop",
+  "Color": "Orange",
+  "Content" : [
+  ],
+  "Outputs": [
+    {
+      "Id": "Material",
+      "Type": "Material.Connection",
+      "Color": "Yellow",
+      "Label" : "Material"
+    },
+    {
+      "Id": "Position",
+      "Type": "Vector3i.Connection",
+      "Color": "Orange",
+      "Label" : "Position"
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Block.Manual.Prop.Connection",
+      "Color": "Orange"
+    }
+  ],
+  "Schema": {
+    "Material" : {
+      "Node" : "Material",
+      "Pin" : "Material"
+    },
+    "Position" : {
+      "Node" : "Vector3i",
+      "Pin" : "Position"
+    }
+  }
+}

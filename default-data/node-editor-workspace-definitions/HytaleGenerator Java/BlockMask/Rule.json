@@ -9,13 +9,15 @@
       "Id": "Source",
       "Type": "BlockSet.BlockMask.Connection",
       "Color": "Yellow",
-      "Label" : "Source"
+      "Label" : "Source",
+      "Description" : "The Source Materials the rule applies to."
     },
     {
       "Id": "CanReplace",
       "Type": "BlockSet.BlockMask.Connection",
       "Color": "Yellow",
-      "Label" : "CanReplace"
+      "Label" : "CanReplace",
+      "Description" : "The Destination Materials those sources can replace."
     }
   ],
   "Inputs": [

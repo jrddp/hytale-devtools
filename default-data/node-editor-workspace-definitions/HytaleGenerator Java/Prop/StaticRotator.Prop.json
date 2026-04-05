@@ -1,0 +1,62 @@
+{
+  "Id": "StaticRotator.Prop",
+  "Title": "StaticRotator Prop",
+  "Color": "Green",
+  "Description" : "Rotates the child Prop by a static Rotation.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Label" : "Prop",
+      "Multiple" : false
+    },
+    {
+      "Id" : "Rotation",
+      "Type" : "OrthogonalRotation.Connection",
+      "Color" : "Orange",
+      "Multiple" : false,
+      "Label" : "Rotation",
+      "Description" : "Child Prop's rotation relative to this Prop's direction."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "StaticRotator",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    },
+    "Rotation" : {
+      "Node" : "OrthogonalRotation",
+      "Pin" : "Rotation"
+    }
+  }
+}

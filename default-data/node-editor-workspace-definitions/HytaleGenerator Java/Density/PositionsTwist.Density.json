@@ -2,6 +2,7 @@
   "Id": "PositionsTwist.Density",
   "Title": "PositionsTwist Density",
   "Color": "Purple",
+  "Description" : "Twists the first input’s Density field around the Positions.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options" : {
         "Label" : "MaxDistance",
         "Default" : 10,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The value represents how big the area of effect is in block units."
       }
     },
     {
@@ -34,7 +36,8 @@
       "Type" : "Checkbox",
       "Options" : {
         "Label" : "NormalizeDistance",
-        "Default" : true
+        "Default" : true,
+        "Description" : "Default is true. If true then the Curve’s input unit is normalized to the MaxDistance value, otherwise if false the Curve’s input unit is in blocks."
       }
     },
     {
@@ -42,7 +45,8 @@
       "Type" : "Checkbox",
       "Options" : {
         "Label" : "ZeroPositionsY",
-        "Default" : false
+        "Default" : false,
+        "Description" : "Flattens the positions input to y=0."
       }
     }
   ],
@@ -52,25 +56,29 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Input."
     },
     {
       "Id": "Positions",
       "Type": "PositionsConnection",
       "Color": "Blue",
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "The Positions are the anchors that pinch and expand the Density field around them."
     },
     {
       "Id": "TwistCurve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "TwistCurve"
+      "Label" : "TwistCurve",
+      "Description" : "The curve determines how the Density field is twisted depending on how close it is to a position."
     },
     {
       "Id": "TwistAxis",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "TwistAxis"
+      "Label" : "TwistAxis",
+      "Description" : "The axis around which the twisting happens."
     }
   ],
   "Inputs": [

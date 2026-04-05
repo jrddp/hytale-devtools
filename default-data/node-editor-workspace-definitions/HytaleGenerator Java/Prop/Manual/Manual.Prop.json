@@ -1,0 +1,51 @@
+{
+  "Id": "Manual.Prop",
+  "Title": "Manual Prop",
+  "Color": "Green",
+  "Description" : "Places manually configured blocks.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Blocks",
+      "Type": "Block.Manual.Prop.Connection",
+      "Color": "Orange",
+      "Multiple" : true,
+      "Label" : "Blocks",
+      "Description" : "Blocks positioned relative to the Prop's anchor."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Manual",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Blocks" : {
+      "Node" : "Block.Manual.Prop",
+      "Pin" : "Blocks"
+    }
+  }
+}

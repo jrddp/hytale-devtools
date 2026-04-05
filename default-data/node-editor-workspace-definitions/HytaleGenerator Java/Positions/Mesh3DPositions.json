@@ -1,7 +1,7 @@
 {
   "Id": "Mesh3DPositions",
-  "Title": "Mesh3D Positions",
-  "Color": "Blue",
+  "Title": "[DEPRECATED] Mesh3D Positions",
+  "Color": "255,0,0",
   "Content" : [
     {
       "Id" : "ExportAs",

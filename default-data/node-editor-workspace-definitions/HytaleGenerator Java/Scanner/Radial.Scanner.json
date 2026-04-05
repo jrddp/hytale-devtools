@@ -1,0 +1,61 @@
+{
+  "Id": "Radial.Scanner",
+  "Title": "Radial Scanner",
+  "Color": "LightPurple",
+  "Description" : "Starts at the anchor block, then moves outward from closest to farthest.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner",
+      "Description" : "The child Scanner to run for every block scanned by this Scanner. Not used if left empty."
+    },
+    {
+      "Id": "Bounds",
+      "Type": "DecimalBounds3d.Connection",
+      "Color": "Orange",
+      "Label" : "Bounds",
+      "Description" : "The reach of this Scanner around the anchor."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple"
+    }
+  ],
+  "Schema": {
+    "Type" : "Radial",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    },
+    "Bounds" : {
+      "Node" : "DecimalBounds3d",
+      "Pin" : "Bounds"
+    }
+  }
+}

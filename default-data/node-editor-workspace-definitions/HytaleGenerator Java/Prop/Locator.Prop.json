@@ -1,0 +1,83 @@
+{
+  "Id": "Locator.Prop",
+  "Title": "Locator Prop",
+  "Color": "Green",
+  "Description" : "Locates a valid position using a Pattern and a Scanner.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    },
+    {
+      "Id": "PlacementCap",
+      "Type": "Int",
+      "Options": {
+        "Label": "PlacementCap",
+        "Default" : 1,
+        "Description" : "Limits the number of valid locations in which the child Prop is generated."
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Prop",
+      "Type": "PropConnection",
+      "Color": "Green",
+      "Label" : "Prop",
+      "Multiple" : false,
+      "Description" : "Prop to place at valid positions."
+    },
+    {
+      "Id": "Pattern",
+      "Type": "Pattern.Connection",
+      "Color": "Pink",
+      "Label" : "Pattern",
+      "Description" : "Defines what valid locations look like."
+    },
+    {
+      "Id": "Scanner",
+      "Type": "Scanner.Connection",
+      "Color": "LightPurple",
+      "Label" : "Scanner",
+      "Description" : "Scans relative to the anchor for valid locations."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PropConnection",
+      "Color": "Green"
+    }
+  ],
+  "Schema": {
+    "Type" : "Locator",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "PlacementCap" : "PlacementCap",
+    "Prop" : {
+      "Node" : "PropVariants",
+      "Pin" : "Prop"
+    },
+    "Pattern" : {
+      "Node" : "Pattern.Variants",
+      "Pin" : "Pattern"
+    },
+    "Scanner" : {
+      "Node" : "Scanner.Variants",
+      "Pin" : "Scanner"
+    }
+  }
+}

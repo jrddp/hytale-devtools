@@ -2,6 +2,7 @@
   "Id": "PositionsCellNoiseDensityNode",
   "Title": "PositionsCellNoise Density",
   "Color": "Purple",
+  "Description" : "Produces a 2D/3D density field in which the value is determined by each coordinate’s distance from a field of Positions. You can use this asset to generate advanced Cell noise with control over the exact placement of the Cell’s through the Positions asset. You can also configure how the distance is interpreted to produce the output. You can use the traditional Cell noise ReturnTypes or create your own curves. You can also sample the Cell value from another Density field asset.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options" : {
         "Label" : "MaxDistance",
         "Default" : 10,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The maximum distance around each Position that it has an effect on the Density field. A good starting value is putting it a bit over half the distance between two of your Position points. Greater values have a greater impact on performance."
       }
     }
   ],
@@ -35,19 +37,22 @@
       "Id": "Positions",
       "Type": "PositionsConnection",
       "Color": "Blue",
-      "Label" : "Positions"
+      "Label" : "Positions",
+      "Description" : "This provides the Positions of each cell’s core."
     },
     {
       "Id": "DistanceFunction",
       "Type": "DistanceFunctionPCNConnection",
       "Color": "Olive",
-      "Label" : "DistanceFunction"
+      "Label" : "DistanceFunction",
+      "Description" : "This determines how the distance is calculated."
     },
     {
       "Id": "ReturnType",
       "Type": "ReturnTypePCNConnection",
       "Color": "DarkPink",
-      "Label" : "ReturnType"
+      "Label" : "ReturnType",
+      "Description" : "This determines how the distance from each Position point is interpreted to produce the density field."
     }
   ],
   "Inputs": [

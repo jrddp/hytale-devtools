@@ -2,6 +2,7 @@
   "Id": "Ellipsoid.Density",
   "Title": "Ellipsoid Density",
   "Color": "Purple",
+  "Description" : "The Ellipsoid is a deformed Sphere. You can use a Scale vector to stretch and compress the Sphere in different directions. You can spin it by giving it a new Y axis and a spin angle (in degrees).",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -25,7 +26,8 @@
       "Type": "Float",
       "Options": {
         "Label": "Spin",
-        "Default" : 0.0
+        "Default" : 0.0,
+        "Description" : "Determines the angle in degrees by which to spin the Ellipsoid around its Y axis."
       }
     }
   ],
@@ -34,19 +36,22 @@
       "Id": "Curve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "Curve"
+      "Label" : "Curve",
+      "Description" : "Maps the Distance from the origin to a Density value."
     },
     {
       "Id": "Scale",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "Scale"
+      "Label" : "Scale",
+      "Description" : "Determines how much to stretch the Sphere in each direction."
     },
     {
       "Id": "NewYAxis",
       "Type": "Point3D.Connection",
       "Color": "Orange",
-      "Label" : "NewYAxis"
+      "Label" : "NewYAxis",
+      "Description" : "Let’s you rotate the field around its origin."
     }
   ],
   "Inputs": [

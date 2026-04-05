@@ -2,6 +2,7 @@
   "Id": "Distance2PCNReturnType",
   "Title": "Distance2 ReturnType",
   "Color": "DarkPink",
+  "Description" : "The Distance2 ReturnType works like the traditional CellNoise’s “Distance2” return type.",
   "Content": [
   ],
   "Outputs": [

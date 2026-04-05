@@ -2,6 +2,7 @@
   "Id": "DistanceSCurve",
   "Title": "DistanceS Curve",
   "Color": "Orange",
+  "Description" : "The DistanceS Curve combines two DistanceExponential curves to produce a shape similar to the diagram below. As this curve’s input approaches the Range value, it outputs 0.0. At an input of 0.0, this curve outputs 1.0. The asset’s parameters allow you to tweak the shape of the curve.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options": {
         "Label": "ExponentA",
         "Default" : 1,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Affects the curve’s shape in the first half of the range."
       }
     },
     {
@@ -27,7 +29,8 @@
       "Options": {
         "Label": "ExponentB",
         "Default" : 1,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Affects the curve’s shape in the second half of the range."
       }
     },
     {
@@ -36,7 +39,8 @@
       "Options": {
         "Label": "Range",
         "Default" : 10,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The value after which the curve outputs a constant 0.0."
       }
     },
     {
@@ -45,7 +49,8 @@
       "Options": {
         "Label": "Transition",
         "Default" : 1,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Values close to 0.0 create a curve with a faster, more sudden transition between ExponentA and ExponentB. Values of 1.0 transition from ExponentA to ExponentB over the entire curve."
       }
     },
     {
@@ -54,7 +59,8 @@
       "Options": {
         "Label": "TransitionSmooth",
         "Default" : 1,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Affects the shape of the transition. Lower values can result in a sharper curve in some situations. Try different values while you design to get a feel for it."
       }
     }
   ],

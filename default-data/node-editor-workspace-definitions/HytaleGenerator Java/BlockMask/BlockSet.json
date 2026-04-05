@@ -8,7 +8,8 @@
       "Type": "Checkbox",
       "Options": {
         "Label": "Inclusive",
-        "Default": true
+        "Default": true,
+        "Description" : "Whether the set includes the Materials listed or excludes them."
       }
     }
   ],

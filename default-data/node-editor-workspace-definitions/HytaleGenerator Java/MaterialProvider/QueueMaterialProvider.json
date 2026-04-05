@@ -2,6 +2,7 @@
   "Id": "QueueMaterialProvider",
   "Title": "Queue MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Goes through a queue of Material Provider slots from highest to lowest priority. If a Material Provider in the queue doesn’t provide a block type, then the next one in the queue is queried. If no slot provides a block, then the Queue Material Provider will not provide a block. The query stops at the first slot that provides a block.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -19,7 +20,8 @@
       "Type": "MaterialProviderConnection",
       "Color": "110,63,16",
       "Multiple" : true,
-      "Label" : "Queue"
+      "Label" : "Queue",
+      "Description" : "Slots are queried from top to bottom."
     }
   ],
   "Inputs": [

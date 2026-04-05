@@ -2,6 +2,7 @@
   "Id": "CurveMapper.Density",
   "Title": "CurveMapper Density",
   "Color": "Purple",
+  "Description" : "This node maps the input to a Curve.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,13 +28,15 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Density to remap."
     },
     {
       "Id": "Curve",
       "Type": "CurveConnection",
       "Color": "Orange",
-      "Label" : "Curve"
+      "Label" : "Curve",
+      "Description" : "Maps the input Density value."
     }
   ],
   "Inputs": [

@@ -2,6 +2,7 @@
   "Id": "Sum.Curve",
   "Title": "Sum Curve",
   "Color": "Orange",
+  "Description" : "This adds the values of all the provided curves.",
   "Content" : [
     {
       "Id" : "ExportAs",

@@ -24,42 +24,31 @@
       "Material",
       "OrthogonalRotation"
     ],
-    "Density Nodes": [
+    "Density": [
       "ConstantDensityNode",
       "SimplexNoise2DDensityNode",
       "SimplexNoise3DDensityNode",
       "CellNoise2DDensityNode",
       "CellNoise3DDensityNode",
-      "OffsetConstantDensityNode",
-      "OffsetDensityNode",
-      "AmplitudeConstantDensityNode",
-      "AmplitudeDensityNode",
       "MultiplierDensityNode",
       "MaxDensityNode",
       "MinDensityNode",
       "SumDensityNode",
       "SmoothMaxDensityNode",
       "SmoothMinDensityNode",
-      "CeilingDensityNode",
-      "FloorDensityNode",
-      "SmoothCeilingDensityNode",
-      "SmoothFloorDensityNode",
       "ClampDensityNode",
       "SmoothClampDensityNode",
       "AbsDensityNode",
-      "Gradient.Density",
       "SqrtDensityNode",
       "PowDensityNode",
       "NormalizerDensityNode",
-      "Positions3DDensityNode",
       "PositionsCellNoiseDensityNode",
       "InverterDensityNode",
-      "ImportedDensityNode",
       "Scale.Density",
       "Slider.Density",
       "GradientWarp.Density",
+      "FastGradientWarp.Density",
       "VectorWarp.Density",
-      "Cache2D.Density",
       "Rotator.Density",
       "PositionsPinch.Density",
       "PositionsTwist.Density",
@@ -73,12 +62,11 @@
       "Shell.Density",
       "Axis.Density",
       "Plane.Density",
+      "Cylinder.Density",
       "Switch.Density",
       "Case.Switch.Density",
       "SwitchState.Density",
-      "Cylinder.Density",
       "CellWallDistance.Density",
-      "FastGradientWarp.Density",
       "Mix.Density",
       "MultiMix.Density",
       "Key.MultiMix.Density",
@@ -90,68 +78,93 @@
       "ZOverride.Density",
       "Cache.Density",
       "Angle.Density",
-      "Exported.Density",
-      "Terrain.Density",
       "DistanceToBiomeEdge.Density",
-      "YSampled.Density"
+      "YSampled.Density",
+      "Terrain.Density",
+      "ImportedDensityNode",
+      "Exported.Density",
+      "OffsetConstantDensityNode",
+      "OffsetDensityNode",
+      "AmplitudeConstantDensityNode",
+      "AmplitudeDensityNode",
+      "CeilingDensityNode",
+      "FloorDensityNode",
+      "SmoothCeilingDensityNode",
+      "SmoothFloorDensityNode",
+      "Gradient.Density"
     ],
     "VectorProviders" : [
       "Constant.VectorProvider",
       "DensityGradient.VectorProvider",
-      "Imported.VectorProvider",
       "Cache.VectorProvider",
-      "Exported.VectorProvider"
+      "Exported.VectorProvider",
+      "Imported.VectorProvider"
     ],
-    "Points" : [
+    "Prop Distribution" : [
+      "Constant.PropDistribution",
+      "Positions.PropDistribution",
+      "Assigned.PropDistribution",
+      "Union.PropDistribution",
+      "Imported.PropDistribution"
+    ],
+    "Vectors" : [
+      "Vector3i",
       "Point3D"
     ],
     "Bounds" : [
-      "DecimalBounds3d"
+      "DecimalBounds3d",
+      "Bounds3i"
     ],
     "Range" : [
       "Decimal.Range",
       "Integer.Range"
     ],
-    "Curves": [
-      "DistanceExponentialCurve",
-      "DistanceSCurve",
-      "CurvePoint",
+    "Curve": [
+      "Constant.Curve",
       "ManualCurve",
-      "ImportedCurve",
+      "CurvePoint",
+      "Inverter.Curve",
+      "Multiplier.Curve",
+      "Sum.Curve",
       "Ceiling.Curve",
       "Floor.Curve",
       "Clamp.Curve",
-      "Inverter.Curve",
       "Max.Curve",
       "Min.Curve",
-      "Multiplier.Curve",
       "Not.Curve",
       "SmoothCeiling.Curve",
       "SmoothFloor.Curve",
       "SmoothClamp.Curve",
       "SmoothMax.Curve",
       "SmoothMin.Curve",
-      "Sum.Curve",
-      "Constant.Curve"
+      "DistanceExponentialCurve",
+      "DistanceSCurve",
+      "ImportedCurve"
     ],
     "Positions": [
-      "Mesh2DPositions",
-      "Mesh3DPositions",
       "ListPositions",
-      "FieldFunctionPositions",
+      "TriangularGrid2d.Positions",
+      "SquareGrid2d.Positions",
+      "SquareGrid3d.Positions",
+      "Scaler.Positions",
+      "Jitter2d.Positions",
+      "Jitter3d.Positions",
       "Bound.Positions",
+      "FieldFunctionPositions",
       "OccurrencePositions",
       "OffsetPositions",
       "UnionPositions",
       "SimpleHorizontal.Positions",
-      "CachePositions",
+      "Clusters.Positions",
       "BaseHeight.Positions",
       "Anchor.Positions",
+      "Framework",
+      "CachePositions",
       "ImportedPositions",
-      "Delimiter",
-      "Framework"
+      "Mesh2DPositions",
+      "Mesh3DPositions"
     ],
-    "PositionsCellNoise Nodes": [
+    "PositionsCellNoise": [
       "PositionsCellNoiseDensityNode",
       "PCNDistanceFunction",
       "CellValuePCNReturnType",
@@ -209,47 +222,62 @@
       "Weight.Weighted.Assignments",
       "Imported.Assignments"
     ],
-    "Props": [
+    "Prop": [
       "Runtime",
-      "BoxProp",
-      "Union.Prop",
+      "Cuboid.Prop",
+      "Manual.Prop",
+      "Block.Manual.Prop",
+      "Locator.Prop",
       "Queue.Prop",
-      "Cluster.Prop",
-      "Weighted.Cluster.Prop",
-      "Column.Prop",
-      "Block.Column.Prop",
+      "Mask.Prop",
+      "Offset.Prop",
+      "Weighted.Prop",
+      "Entry.Weighted.Prop",
+      "StaticRotator.Prop",
+      "RandomRotator.Prop",
+      "Orienter.Prop",
+      "DensitySelector.Prop",
+      "Delimiter.DensitySelector.Prop",
+      "Union.Prop",
       "Prefab.Prop",
       "WeightedPath.Prefab.Prop",
       "PondFiller.Prop",
       "Density.Prop",
       "Imported.Prop",
-      "Offset.Prop",
-      "Weighted.Prop",
-      "Entry.Weighted.Prop"
+      "Cluster.Prop",
+      "Weighted.Cluster.Prop",
+      "BoxProp",
+      "Column.Prop",
+      "Block.Column.Prop"
     ],
-    "Patterns": [
+    "Pattern": [
       "BlockType.Pattern",
       "BlockSet.Pattern",
       "Offset.Pattern",
+      "Rotator.Pattern",
+      "Cuboid.Pattern",
       "Floor.Pattern",
       "Ceiling.Pattern",
       "Wall.Pattern",
       "Surface.Pattern",
-      "Gap.Pattern",
-      "Cuboid.Pattern",
       "And.Pattern",
       "Or.Pattern",
       "Not.Pattern",
       "FieldFunction.Pattern",
       "Delimiter.FieldFunction.Pattern",
-      "Imported.Pattern"
+      "Imported.Pattern",
+      "Gap.Pattern"
     ],
-    "Scanners": [
+    "Scanner": [
       "Origin.Scanner",
+      "Linear.Scanner",
+      "Random.Scanner",
+      "Radial.Scanner",
+      "Queue.Scanner",
+      "Imported.Scanner",
       "ColumnLinear.Scanner",
       "ColumnRandom.Scanner",
-      "Area.Scanner",
-      "Imported.Scanner"
+      "Area.Scanner"
     ],
     "BlockMask": [
       "BlockMask",
@@ -261,9 +289,6 @@
       "Random.Directionality",
       "Pattern.Directionality",
       "Imported.Directionality"
-    ],
-    "MergingFunctions" : [
-      "MergingFunction"
     ],
     "EnvironmentProvider" : [
       "Constant.EnvironmentProvider",
@@ -314,7 +339,6 @@
         "Slider": "Slider.Density",
         "GradientWarp": "GradientWarp.Density",
         "VectorWarp": "VectorWarp.Density",
-        "Cache2D": "Cache2D.Density",
         "Rotator": "Rotator.Density",
         "PositionsPinch": "PositionsPinch.Density",
         "PositionsTwist": "PositionsTwist.Density",
@@ -359,6 +383,16 @@
         "Exported" : "Exported.VectorProvider"
       }
     },
+    "PropDistribution.Variants": {
+      "VariantFieldName": "Type",
+      "Variants": {
+        "Constant" : "Constant.PropDistribution",
+        "Positions" : "Positions.PropDistribution",
+        "Assigned" : "Assigned.PropDistribution",
+        "Union" : "Union.PropDistribution",
+        "Imported" : "Imported.PropDistribution"
+      }
+    },
     "CurveVariants": {
       "VariantFieldName": "Type",
       "Variants": {
@@ -386,6 +420,13 @@
     "PositionsVariants": {
       "VariantFieldName": "Type",
       "Variants": {
+        "TriangularGrid2d": "TriangularGrid2d.Positions",
+        "SquareGrid2d": "SquareGrid2d.Positions",
+        "SquareGrid3d": "SquareGrid3d.Positions",
+        "Scaler" : "Scaler.Positions",
+        "Jitter2d": "Jitter2d.Positions",
+        "Jitter3d": "Jitter3d.Positions",
+        "Clusters": "Clusters.Positions",
         "Mesh2D": "Mesh2DPositions",
         "Mesh3D": "Mesh3DPositions",
         "List": "ListPositions",
@@ -472,7 +513,6 @@
       "Variants": {
         "Box": "BoxProp",
         "Union": "Union.Prop",
-        "Queue": "Queue.Prop",
         "Cluster": "Cluster.Prop",
         "Column": "Column.Prop",
         "Prefab": "Prefab.Prop",
@@ -480,7 +520,16 @@
         "Density" : "Density.Prop",
         "Imported": "Imported.Prop",
         "Offset" : "Offset.Prop",
-        "Weighted" : "Weighted.Prop"
+        "Weighted" : "Weighted.Prop",
+        "Cuboid" : "Cuboid.Prop",
+        "Manual" : "Manual.Prop",
+        "Locator" : "Locator.Prop",
+        "Queue" : "Queue.Prop",
+        "Mask" : "Mask.Prop",
+        "StaticRotator" : "StaticRotator.Prop",
+        "RandomRotator" : "RandomRotator.Prop",
+        "Orienter" : "Orienter.Prop",
+        "DensitySelector" : "DensitySelector.Prop"
       }
     },
     "Pattern.Variants": {
@@ -499,13 +548,18 @@
         "Or": "Or.Pattern",
         "Not": "Not.Pattern",
         "FieldFunction": "FieldFunction.Pattern",
-        "Imported": "Imported.Pattern"
+        "Imported": "Imported.Pattern",
+        "Rotator" : "Rotator.Pattern"
       }
     },
     "Scanner.Variants": {
       "VariantFieldName": "Type",
       "Variants": {
         "Origin": "Origin.Scanner",
+        "Linear" : "Linear.Scanner",
+        "Random" : "Random.Scanner",
+        "Radial" : "Radial.Scanner",
+        "Queue" : "Queue.Scanner",
         "ColumnLinear": "ColumnLinear.Scanner",
         "ColumnRandom": "ColumnRandom.Scanner",
         "Area": "Area.Scanner",

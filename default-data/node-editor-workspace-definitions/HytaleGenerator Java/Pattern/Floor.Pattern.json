@@ -2,6 +2,7 @@
   "Id": "Floor.Pattern",
   "Title": "Floor Pattern",
   "Color": "Pink",
+  "Description" : "Checks if there is a floor below the position. The Origin validates the position and the Floor validates right under the position. For a simple Floor configuration, use BlockType or BlockSet Patterns in those slots.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,13 +27,15 @@
       "Id": "Origin",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Origin"
+      "Label" : "Origin",
+      "Description" : "Validates the block at the Origin position."
     },
     {
       "Id": "Floor",
       "Type": "Pattern.Connection",
       "Color": "Pink",
-      "Label" : "Floor"
+      "Label" : "Floor",
+      "Description" : "Validates the block under the Origin position."
     }
   ],
   "Inputs": [

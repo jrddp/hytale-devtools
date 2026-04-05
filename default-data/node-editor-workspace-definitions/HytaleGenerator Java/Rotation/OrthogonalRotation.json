@@ -9,7 +9,8 @@
       "Options" : {
         "Label" : "Yaw",
         "Default" : "None",
-        "Width" : 150
+        "Width" : 150,
+        "Description" : "None | Ninety | OneEighty | TwoSeventy"
       }
     },
     {
@@ -18,7 +19,8 @@
       "Options" : {
         "Label" : "Pitch",
         "Default" : "None",
-        "Width" : 150
+        "Width" : 150,
+        "Description" : "None | Ninety | OneEighty | TwoSeventy"
       }
     },
     {
@@ -27,7 +29,8 @@
       "Options" : {
         "Label" : "Roll",
         "Default" : "None",
-        "Width" : 150
+        "Width" : 150,
+        "Description" : "None | Ninety | OneEighty | TwoSeventy"
       }
     }
   ],

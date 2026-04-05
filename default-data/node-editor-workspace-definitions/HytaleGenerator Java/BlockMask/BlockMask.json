@@ -2,6 +2,7 @@
   "Id": "BlockMask",
   "Title": "BlockMask",
   "Color": "Olive",
+  "Description" : "Determines which Materials get to replace which other Materials when placing content in the world.\nIf you're trying to place bricks in water, then bricks are the Source Material, and water is the Destination Material.\n- Source Material: the Material we're trying to place.\n- Destination Material: the Material that exists where we want to place the Source Material.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -27,20 +28,23 @@
       "Id": "DontPlace",
       "Type": "BlockSet.BlockMask.Connection",
       "Color": "Yellow",
-      "Label" : "DontPlace"
+      "Label" : "DontPlace",
+      "Description" : "Source Materials in this set will not be placed."
     },
     {
       "Id": "DontReplace",
       "Type": "BlockSet.BlockMask.Connection",
       "Color": "Yellow",
-      "Label" : "DontReplace"
+      "Label" : "DontReplace",
+      "Description" : "By default, Source Materials cannot replace Destination Materials in this BlockSet. This rule is overridden by the Advanced rules below."
     },
     {
       "Id": "Advanced",
       "Type": "Rule.BlockMask.Connection",
       "Color": "Orange",
       "Label" : "Advanced",
-      "Multiple" : true
+      "Multiple" : true,
+      "Description" : "Per-BlockSet overrides. Each rule contains a Source BlockSet and a CanReplace BlockSet."
     }
   ],
   "Inputs": [

@@ -16,6 +16,8 @@
     ],
     "Basic Operations": [
       "Set",
+      "Rotation",
+      "ClearRotation",
       "Shape",
       "BlockPattern",
       "Dimensions",
@@ -81,6 +83,8 @@
     "OperationVariants": {
       "VariantFieldName": "Id",
       "Variants": {
+        "clearrotation": "ClearRotation",
+        "rotation": "Rotation",
         "loadmaterial": "LoadMaterial",
         "set": "Set",
         "shape": "Shape",

@@ -2,6 +2,7 @@
   "Id": "ImportedDensityNode",
   "Title": "Imported Density",
   "Color": "Purple",
+  "Description" : "Imports an exported Density asset.",
   "Content" : [
     {
       "Id": "Name",
@@ -9,7 +10,8 @@
       "Options": {
         "Label": "Name",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The exported Density."
       }
     },
     {

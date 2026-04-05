@@ -2,6 +2,7 @@
   "Id": "BaseHeight.Positions",
   "Title": "BaseHeight Positions",
   "Color": "Blue",
+  "Description" : "Vertically offsets the Positions inside the configured vertical region by the number of blocks determined by the referenced DecimalConstant.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -24,27 +25,10 @@
       "Id" : "BedName",
       "Type" : "SmallString",
       "Options" : {
-        "Label" : "BedName",
+        "Label" : "BaseHeightName",
         "Default" : "",
-        "Width" : 250
-      }
-    },
-    {
-      "Id" : "MaxYRead",
-      "Type" : "Float",
-      "Options" : {
-        "Label" : "MaxYRead",
-        "Default" : 1,
-        "Width" : 100
-      }
-    },
-    {
-      "Id" : "MinYRead",
-      "Type" : "Float",
-      "Options" : {
-        "Label" : "MinYRead",
-        "Default" : -1,
-        "Width" : 100
+        "Width" : 250,
+        "Description" : "Name of the DecimalConstant to reference."
       }
     }
   ],
@@ -69,8 +53,6 @@
     "ExportAs" : "ExportAs",
     "Skip" : "Skip",
     "BedName" : "BedName",
-    "MinYRead" : "MinYRead",
-    "MaxYRead" : "MaxYRead",
     "Positions" : {
       "Node" : "PositionsVariants",
       "Pin" : "PositionsConnection"

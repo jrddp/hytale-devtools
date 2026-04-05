@@ -2,6 +2,7 @@
   "Id": "Clamp.Curve",
   "Title": "Clamp Curve",
   "Color": "Orange",
+  "Description" : "This clamps the curve between the two wall values provided. The output of this curve will never reach outside the walls.",
   "Content" : [
     {
       "Id" : "ExportAs",

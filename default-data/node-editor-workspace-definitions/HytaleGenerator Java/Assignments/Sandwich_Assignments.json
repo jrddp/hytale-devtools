@@ -2,6 +2,7 @@
   "Id": "Sandwich.Assignments",
   "Title": "Sandwich Assignments",
   "Color": "Aqua",
+  "Description" : "Allows you to select which Props to assign based on their vertical (world Y) position and your configured delimiters. Depending on each position’s world height, the matching delimiter’s Prop is assigned.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -19,7 +20,8 @@
       "Multiple": true,
       "Type": "Delimiter.Sandwich.Assignments.Connection",
       "Color": "Orange",
-      "Label" : "Delimiters"
+      "Label" : "Delimiters",
+      "Description" : "Each delimiter defines a world height range and its Assignments."
     }
   ],
   "Inputs": [

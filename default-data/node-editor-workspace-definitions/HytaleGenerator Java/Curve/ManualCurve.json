@@ -2,6 +2,7 @@
   "Id": "ManualCurve",
   "Title": "Manual Curve",
   "Color": "Orange",
+  "Description" : "You can plot points that connect with lines to create the curve. The points are connected with straight lines. The function is constant before the first point and after the last point.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -19,7 +20,8 @@
       "Type" : "CurvePointConnection",
       "Color" : "Yellow",
       "Label" : "Points",
-      "Multiple" : true
+      "Multiple" : true,
+      "Description" : "Curve points."
     }
   ],
   "Inputs": [

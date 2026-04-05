@@ -2,6 +2,7 @@
   "Id": "Queue.Prop",
   "Title": "Queue Prop",
   "Color": "Green",
+  "Description" : "Places the first Prop in the list that generates, and skips the rest.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -23,11 +24,11 @@
   ],
   "Outputs": [
     {
-      "Id": "Queue",
+      "Id": "Props",
       "Type": "PropConnection",
       "Color": "Green",
       "Multiple" : true,
-      "Label" : "Queue"
+      "Label" : "Props"
     }
   ],
   "Inputs": [
@@ -41,9 +42,9 @@
     "Type" : "Queue",
     "ExportAs" : "ExportAs",
     "Skip" : "Skip",
-    "Queue" : {
+    "Props" : {
       "Node" : "PropVariants",
-      "Pin" : "Queue"
+      "Pin" : "Props"
     }
   }
 }

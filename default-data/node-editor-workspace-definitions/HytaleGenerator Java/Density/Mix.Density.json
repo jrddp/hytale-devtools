@@ -2,6 +2,7 @@
   "Id": "Mix.Density",
   "Title": "Mix Density",
   "Color": "Purple",
+  "Description" : "Mixes two inputs. How much of each input to use in the mix is gauged by a third input called the gauge:\nWhere the Gauge is less or equal to 0.0: only Density A is used.\nWhere the Gauge is more or equal to 1.0: only Density B is used.\nWhere the Gauge is between 0.0 and 1.0: Density A and B are mixed proportional to the Gauge.",
   "Content": [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type": "DensityConnection",
       "Color": "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "0: Density A.\n1: Density B.\n2: Gauge."
     }
   ],
   "Inputs": [

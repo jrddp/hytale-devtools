@@ -2,6 +2,7 @@
   "Id": "Min.Curve",
   "Title": "Min Curve",
   "Color": "Orange",
+  "Description" : "This outputs the minimum value of all the child curves.",
   "Content" : [
     {
       "Id" : "ExportAs",

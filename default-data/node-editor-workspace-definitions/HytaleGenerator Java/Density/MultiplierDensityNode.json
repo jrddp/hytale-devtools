@@ -2,6 +2,7 @@
   "Id": "MultiplierDensityNode",
   "Title": "Multiplier Density",
   "Color": "Purple",
+  "Description" : "The output is the multiplication of all the inputs.\nThe Multiplier node skips the remaining inputs after an input provides a Density value of 0. This can help you optimize your Density performance by ordering the Multiplier inputs with the cheapest mask first.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "[0, infinite): Inputs."
     }
   ],
   "Inputs": [

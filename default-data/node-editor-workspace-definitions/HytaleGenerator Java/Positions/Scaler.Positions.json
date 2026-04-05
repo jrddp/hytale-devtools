@@ -1,0 +1,62 @@
+{
+  "Id": "Scaler.Positions",
+  "Title": "Scaler Positions",
+  "Color": "Blue",
+  "Description" : "Scales the child Positions.",
+  "Content" : [
+    {
+      "Id" : "ExportAs",
+      "Type" : "SmallString",
+      "Options" : {
+        "Label" : "ExportAs",
+        "Default" : "",
+        "Width" : 250
+      }
+    },
+    {
+      "Id": "Skip",
+      "Type": "Checkbox",
+      "Options": {
+        "Label": "Skip",
+        "Default" : false
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Positions",
+      "Type": "PositionsConnection",
+      "Color": "Blue",
+      "Label" : "Positions",
+      "Description" : "Positions to scale."
+    },
+    {
+      "Id": "Scale",
+      "Type": "Point3D.Connection",
+      "Color": "Orange",
+      "Multiple" : false,
+      "Label" : "Scale",
+      "Description" : "Determines the scale."
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionsConnection",
+      "Color": "Blue"
+    }
+  ],
+  "Schema": {
+    "Type" : "Scaler",
+    "ExportAs" : "ExportAs",
+    "Skip" : "Skip",
+    "Scale" : {
+      "Node" : "Point3D",
+      "Pin" : "Scale"
+    },
+    "Positions" : {
+      "Node" : "PositionsVariants",
+      "Pin" : "Positions"
+    }
+  }
+}

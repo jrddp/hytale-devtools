@@ -2,6 +2,7 @@
   "Id": "MinDensityNode",
   "Title": "Min Density",
   "Color": "Purple",
+  "Description" : "The output is the smallest value of all the inputs. If no inputs are provided it is 0.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -27,7 +28,8 @@
       "Type" : "DensityConnection",
       "Color" : "Purple",
       "Multiple" : true,
-      "Label" : "Inputs"
+      "Label" : "Inputs",
+      "Description" : "[0, infinite): Inputs."
     }
   ],
   "Inputs": [

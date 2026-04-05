@@ -2,6 +2,7 @@
   "Id": "SmoothClampDensityNode",
   "Title": "SmoothClamp Density",
   "Color": "Purple",
+  "Description" : "This node ensures that the output is within the provided range which is defined by the two wall parameters. The concept is similar to the Clamp node documented above, but the output is smoothed to the limits by the provided range value.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -26,7 +27,8 @@
       "Options": {
         "Label": "WallA",
         "Default" : -1.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Limit."
       }
     },
     {
@@ -35,7 +37,8 @@
       "Options": {
         "Label": "WallB",
         "Default" : 1.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Limit."
       }
     },
     {
@@ -44,7 +47,8 @@
       "Options": {
         "Label": "Range",
         "Default" : 0.2,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "Larger values result in smoother transition when the input approaches or exceeds the walls."
       }
     }
   ],

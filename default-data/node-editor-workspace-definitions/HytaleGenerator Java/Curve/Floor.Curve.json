@@ -2,6 +2,7 @@
   "Id": "Floor.Curve",
   "Title": "Floor Curve",
   "Color": "Orange",
+  "Description" : "This curve puts a floor on the output of the child curve asset.",
   "Content" : [
     {
       "Id" : "ExportAs",
@@ -18,7 +19,8 @@
       "Options": {
         "Label": "Floor",
         "Default" : 0.0,
-        "Width" : 100
+        "Width" : 100,
+        "Description" : "The minimum value this curve will output."
       }
     }
   ],

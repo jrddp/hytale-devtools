@@ -2,6 +2,7 @@
   "Id": "ImportedMaterialProvider",
   "Title": "Imported MaterialProvider",
   "Color": "110,63,16",
+  "Description" : "Imports an exported Material Provider.",
   "Content": [
     {
       "Id" : "Name",
@@ -9,7 +10,8 @@
       "Options" : {
         "Label" : "Name",
         "Default" : "",
-        "Width" : 250
+        "Width" : 250,
+        "Description" : "The exported Material Provider."
       }
     }
   ],
