@@ -22,6 +22,10 @@ suite("Asset Path Matcher Test Suite", () => {
       matcher.getAssetDefinition("/tmp/mod/Server/Particles/fire_burst.particlespawner")?.title,
       "ParticleSpawner",
     );
+    assert.strictEqual(
+      matcher.getAssetDefinition("C:\\tmp\\mod\\Server\\Particles\\fire_burst.particlesystem")?.title,
+      "ParticleSystem",
+    );
   });
 
   test("returns undefined for unsupported paths", () => {

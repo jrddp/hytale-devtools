@@ -1,5 +1,6 @@
 import path from "path";
 import { type AssetDefinition } from "../shared/fieldTypes";
+import { normalizePosixPath } from "../shared/pathUtils";
 
 type AssetPathMatcherNode = {
   children: Map<string, AssetPathMatcherNode>;
@@ -99,7 +100,7 @@ function splitAssetPath(assetPath: string): string[] | undefined {
 }
 
 function getPathSegments(inputPath: string): string[] {
-  return inputPath.replaceAll("\\", "/").split("/").filter(Boolean);
+  return normalizePosixPath(inputPath).split("/").filter(Boolean);
 }
 
 function describeAssetDefinition(assetDefinition: AssetDefinition): string {

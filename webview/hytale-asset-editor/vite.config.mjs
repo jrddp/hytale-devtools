@@ -99,10 +99,14 @@ function loadIndexes() {
 }
 
 function getCommonAssetPathValues(shard, reference) {
+  const requestedFolders = reference.folders
+    .map(normalizeCommonAssetFolder)
+    .filter(folder => folder.length > 0);
   const values = [];
 
   for (const [directParentFolder, filesByFileType] of Object.entries(shard.values)) {
-    if (!reference.folders.some(folder => directParentFolder.startsWith(folder))) {
+    const normalizedParentFolder = normalizeCommonAssetFolder(directParentFolder);
+    if (!requestedFolders.some(folder => folderMatches(folder, normalizedParentFolder))) {
       continue;
     }
 
@@ -111,11 +115,26 @@ function getCommonAssetPathValues(shard, reference) {
       : Object.values(filesByFileType).flat();
 
     values.push(
-      ...fileNames.map(fileName => path.normalize(path.join(directParentFolder, fileName))),
+      ...fileNames.map(fileName => path.posix.join(normalizedParentFolder, fileName)),
     );
   }
 
   return values;
+}
+
+function normalizeCommonAssetFolder(folder) {
+  let normalizedFolder = path.posix.normalize(folder.replaceAll("\\", "/"));
+  if (normalizedFolder.startsWith("Common/")) {
+    normalizedFolder = normalizedFolder.slice("Common/".length);
+  }
+
+  return normalizedFolder.replace(/^\/+/, "").replace(/\/+$/, "");
+}
+
+function folderMatches(requestedFolder, directParentFolder) {
+  return (
+    directParentFolder === requestedFolder || directParentFolder.startsWith(`${requestedFolder}/`)
+  );
 }
 
 function getAutocompleteValues(reference) {

@@ -60,4 +60,27 @@ suite("Symbol Resolver Test Suite", () => {
 
     assert.deepStrictEqual(values, ["Items/Expected.png"]);
   });
+
+  test("normalizes Windows-style folder separators to slash-delimited internal paths", () => {
+    const shard: CommonAssetPathsIndexShard = {
+      hytaleVersion: "test",
+      generatedAt: "test",
+      indexKind: "commonAssetPaths",
+      key: "all",
+      values: {
+        "Common\\BlockTextures\\Decor": {
+          png: ["NestedTexture.png"],
+        },
+      },
+    };
+
+    const values = getCommonAssetPathValues(shard, {
+      indexKind: "commonAssetPaths",
+      key: "all",
+      folders: ["BlockTextures\\"],
+      extension: "png",
+    });
+
+    assert.deepStrictEqual(values, ["BlockTextures/Decor/NestedTexture.png"]);
+  });
 });

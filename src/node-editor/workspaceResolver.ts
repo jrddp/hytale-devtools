@@ -5,6 +5,7 @@ import { type BasicLogger } from "../shared/commonTypes";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
+import { toPosixPath } from "../shared/pathUtils";
 import {
   type FieldComponentType,
   type NodeEditorWorkspace,
@@ -79,9 +80,9 @@ export class WorkspaceRuntime {
   }
 
   resolveWorkspaceContext(assetPath: string): NodeEditorWorkspaceContext | null {
-    assetPath = path.normalize(assetPath);
+    const normalizedRuleMatchPath = toPosixPath(assetPath);
     const subpathMatch = Object.keys(NODE_EDITOR_WORKSPACE_PATH_RULES).find(subpath =>
-      assetPath.includes(subpath),
+      normalizedRuleMatchPath.includes(subpath),
     );
     if (!subpathMatch) {
       return null;

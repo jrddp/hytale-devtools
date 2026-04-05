@@ -6,6 +6,7 @@ import * as yauzl from "yauzl";
 import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
 import { type CachedAssetInstance, type JsonAssetInstance } from "../shared/fieldTypes";
+import { normalizePosixPath } from "../shared/pathUtils";
 import { isObject } from "../shared/typeUtils";
 
 export type AssetInstance = CachedAssetInstance;
@@ -490,7 +491,7 @@ function getFileNameWithoutExtension(entryPath: string): string {
 
 /** Converts any path to its Common/ or Server/ based relative path. */
 function normalizeAssetLookupPath(inputPath: string): string {
-  const normalizedPath = inputPath.replaceAll("\\", "/").replace(/^\/+/, "");
+  const normalizedPath = normalizePosixPath(inputPath).replace(/^\/+/, "");
   const rootIndices = [normalizedPath.indexOf("Common/"), normalizedPath.indexOf("Server/")].filter(
     index => index >= 0,
   );

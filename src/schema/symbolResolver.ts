@@ -14,6 +14,7 @@ import {
   type SymbolIndex,
   type UIDataSetIndexShard,
 } from "../shared/indexTypes";
+import { normalizePosixPath } from "../shared/pathUtils";
 import { INDEXES_DIRECTORY_NAME, resolveDataRootDirFromContext } from "../utils/hytalePaths";
 
 export function loadIndexes(context: vscode.ExtensionContext): Map<IndexKind, SymbolIndex> {
@@ -105,7 +106,7 @@ export function getCommonAssetPathValues(
 }
 
 function normalizeCommonAssetFolder(folder: string): string {
-  let normalizedFolder = path.posix.normalize(folder.replaceAll("\\", "/"));
+  let normalizedFolder = normalizePosixPath(folder);
   if (normalizedFolder.startsWith("Common/")) {
     normalizedFolder = normalizedFolder.slice("Common/".length);
   }
