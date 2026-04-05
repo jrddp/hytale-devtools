@@ -5,7 +5,7 @@
   "icon": "media/icon.png",
   "description": "Built-in Worldgen v2 Node Editor, easily create mods+assets, and more",
   "repository": "https://github.com/jrddp/hytale-devtools",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "packageManager": "pnpm@9.7.1",
   "engines": {
     "vscode": "^1.104.0"
