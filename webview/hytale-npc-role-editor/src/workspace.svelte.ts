@@ -9,13 +9,18 @@ import type {
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { VSCodeApi } from "./common";
 import { buildNpcPropertySections, type NpcPropertySection } from "./propertyModel";
-import type { NpcDocument, NpcStandardParameterValue } from "./parsing/documentTypes";
+import type {
+  NpcDocument,
+  NpcStandardParameterEditorType,
+  NpcStandardParameterValue,
+} from "./parsing/documentTypes";
 import { parseNpcDocumentText } from "./parsing/parseNpcDocument";
 import {
   addStandardParameter,
   removeStandardParameter,
   renameStandardParameter,
   reorderStandardParameters,
+  updateStandardParameterEditorType,
 } from "./parsing/parameterMutations";
 import { serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
 
@@ -34,6 +39,8 @@ export class Workspace {
   documentParseError = $state<string | null>(null);
   parameterRenameRequestName = $state<string | null>(null);
   parameterRenameRequestVersion = $state(0);
+  parameterTypeChangeRequestName = $state<string | null>(null);
+  parameterTypeChangeRequestVersion = $state(0);
 
   setDescriptors({
     descriptors,
@@ -167,11 +174,37 @@ export class Workspace {
     return true;
   }
 
+  updateStandardParameterEditorType(
+    parameterName: string,
+    editorType: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">,
+  ) {
+    if (!this.documentModel?.parameters) {
+      return false;
+    }
+
+    const updated = updateStandardParameterEditorType(
+      this.documentModel.parameters,
+      parameterName,
+      editorType,
+    );
+    if (!updated) {
+      return false;
+    }
+
+    this.refreshPropertySections();
+    this.applyDocumentState();
+    return true;
+  }
+
   handleContextAction(message: NpcRoleEditorContextActionMessage) {
     switch (message.action) {
       case "renameParameter":
         this.parameterRenameRequestName = message.parameterName;
         this.parameterRenameRequestVersion += 1;
+        return;
+      case "changeParameterType":
+        this.parameterTypeChangeRequestName = message.parameterName;
+        this.parameterTypeChangeRequestVersion += 1;
         return;
       case "deleteParameter":
         this.removeStandardParameter(message.parameterName);
@@ -183,6 +216,10 @@ export class Workspace {
 
   clearParameterRenameRequest() {
     this.parameterRenameRequestName = null;
+  }
+
+  clearParameterTypeChangeRequest() {
+    this.parameterTypeChangeRequestName = null;
   }
 
   reparseDocument() {

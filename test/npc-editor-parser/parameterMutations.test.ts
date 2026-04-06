@@ -6,6 +6,7 @@ import {
   removeStandardParameter,
   renameStandardParameter,
   reorderStandardParameters,
+  updateStandardParameterEditorType,
 } from "../../webview/hytale-npc-role-editor/src/parsing/parameterMutations";
 import { serializeNpcDocumentText } from "../../webview/hytale-npc-role-editor/src/parsing/serializeNpcDocument";
 import { parseJsonText, readFixtureText } from "./helpers";
@@ -103,5 +104,37 @@ describe("npc editor parameter mutations", () => {
       "_ImportStates",
       ...orderedNames,
     ]);
+  });
+
+  test("switches parameter type and writes matching value/type hint", () => {
+    const document = expectReadyDocument(
+      "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
+    );
+    const parameters = document.parameters;
+    expect(parameters).not.toBeNull();
+    if (!parameters) {
+      throw new Error("Expected parameters to exist");
+    }
+
+    expect(updateStandardParameterEditorType(parameters, "Invulnerable", "numberList")).toBe(true);
+
+    let serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    let invulnerable = (serialized.Parameters as Record<string, unknown>)
+      .Invulnerable as Record<string, unknown>;
+
+    expect(invulnerable).toEqual({
+      Value: [0],
+      Description: "Whether this NPC is invulnerable.",
+      TypeHint: "Number",
+    });
+
+    expect(updateStandardParameterEditorType(parameters, "Invulnerable", "range")).toBe(true);
+
+    serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    invulnerable = (serialized.Parameters as Record<string, unknown>)
+      .Invulnerable as Record<string, unknown>;
+
+    expect(invulnerable.TypeHint).toBe("Number");
+    expect(invulnerable.Value).toEqual([0, 0]);
   });
 });

@@ -116,6 +116,14 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(deleteNpcParameterCommand);
 
+  const changeNpcParameterTypeCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.changeParameterType",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("changeParameterType", menuContext);
+    },
+  );
+  context.subscriptions.push(changeNpcParameterTypeCommand);
+
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));

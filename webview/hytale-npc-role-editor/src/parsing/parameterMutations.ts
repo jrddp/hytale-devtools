@@ -1,9 +1,14 @@
 import type {
   NpcDocument,
   NpcParameters,
+  NpcStandardParameterEditorType,
   NpcStandardParameterEntry,
   NpcStandardParameterValue,
 } from "./documentTypes";
+import {
+  coerceStandardParameterValueForEditorType,
+  getTypeHintForEditorType,
+} from "./parameterEditorTypes";
 
 const DEFAULT_NEW_PARAMETER_NAME = "Parameter";
 
@@ -92,6 +97,21 @@ export function reorderStandardParameters(
     return orderedParameterNames[nextStandardIndex++] ?? key;
   });
 
+  return true;
+}
+
+export function updateStandardParameterEditorType(
+  parameters: NpcParameters,
+  parameterName: string,
+  nextType: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">,
+): boolean {
+  const entry = parameters.entries.find(candidate => candidate.name === parameterName);
+  if (!entry) {
+    return false;
+  }
+
+  entry.value = coerceStandardParameterValueForEditorType(entry.value, nextType);
+  entry.typeHint = getTypeHintForEditorType(nextType);
   return true;
 }
 

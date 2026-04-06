@@ -51,6 +51,11 @@
         "category": "Hytale NPC Role Editor"
       },
       {
+        "command": "hytale-devtools.npcRoleEditor.context.changeParameterType",
+        "title": "Change Parameter Type...",
+        "category": "Hytale NPC Role Editor"
+      },
+      {
         "command": "hytale-devtools.nodeEditor.quickAction.go-to-root",
         "title": "Go to Root",
         "category": "Hytale Node Editor",
@@ -104,6 +109,11 @@
           "command": "hytale-devtools.npcRoleEditor.context.deleteParameter",
           "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
           "group": "2_modification"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.changeParameterType",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
+          "group": "2_modification@2"
         }
       ],
       "commandPalette": [
@@ -113,6 +123,10 @@
         },
         {
           "command": "hytale-devtools.npcRoleEditor.context.deleteParameter",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.changeParameterType",
           "when": "false"
         }
       ]

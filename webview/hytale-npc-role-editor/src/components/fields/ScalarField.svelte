@@ -30,6 +30,7 @@
 
 <FieldPanel
   title={field.label}
+  typeLabel={field.typeLabel}
   description={panelDescription}
   infoItems={field.infoItems}
 >

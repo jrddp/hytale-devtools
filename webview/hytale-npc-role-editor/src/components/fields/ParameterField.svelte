@@ -22,6 +22,7 @@
     handle,
     onunset,
     vscodeContext,
+    onContextMenu,
     hideInfoButton = false,
   }: {
     field: NpcPropertyParameterField;
@@ -29,18 +30,30 @@
     handle?: Snippet;
     onunset?: () => void;
     vscodeContext?: string;
+    onContextMenu?: (event: MouseEvent) => void;
     hideInfoButton?: boolean;
   } = $props();
 
   let scalarDraftValue = $state("");
   let rawJsonDraftValue = $state("");
+  let rangeStartDraftValue = $state("");
+  let rangeEndDraftValue = $state("");
   let itemViews = $state<ListItemView[]>([]);
   let draftItemViews = $state<ListItemView[] | null>(null);
   let nextItemId = 0;
 
-  const isInline = $derived(field.valueMode === "compute" || field.literalKind === "string" || field.literalKind === "number" || field.literalKind === "boolean");
+  const isInline = $derived(
+    field.valueMode === "compute" ||
+      field.literalKind === "string" ||
+      field.literalKind === "number" ||
+      field.literalKind === "boolean" ||
+      field.editorType === "range",
+  );
   const summary = $derived(
-    field.valueMode === "literal" && field.literalKind === "list" && Array.isArray(field.literalValue)
+    field.valueMode === "literal" &&
+      field.literalKind === "list" &&
+      field.editorType !== "range" &&
+      Array.isArray(field.literalValue)
       ? `${field.literalValue.length} list items`
       : undefined,
   );
@@ -61,6 +74,18 @@
     if (field.literalKind === "number") {
       scalarDraftValue =
         typeof field.literalValue === "number" ? String(field.literalValue) : "";
+      return;
+    }
+
+    if (
+      field.editorType === "range" &&
+      Array.isArray(field.literalValue) &&
+      field.literalValue.length >= 2
+    ) {
+      rangeStartDraftValue =
+        typeof field.literalValue[0] === "number" ? String(field.literalValue[0]) : "0";
+      rangeEndDraftValue =
+        typeof field.literalValue[1] === "number" ? String(field.literalValue[1]) : "0";
       return;
     }
 
@@ -130,6 +155,41 @@
     } catch {
       rawJsonDraftValue = JSON.stringify(field.literalValue, null, 2);
     }
+  }
+
+  function commitRangeValue(index: 0 | 1) {
+    const sanitized =
+      index === 0 ? sanitizeNumber(rangeStartDraftValue) : sanitizeNumber(rangeEndDraftValue);
+    if (index === 0) {
+      rangeStartDraftValue = sanitized;
+    } else {
+      rangeEndDraftValue = sanitized;
+    }
+
+    const currentRange = Array.isArray(field.literalValue) ? field.literalValue : [0, 0];
+    const nextRange: [number, number] = [
+      typeof currentRange[0] === "number" ? currentRange[0] : 0,
+      typeof currentRange[1] === "number" ? currentRange[1] : 0,
+    ];
+
+    if (sanitized === "") {
+      nextRange[index] = 0;
+      commitValue(nextRange);
+      return;
+    }
+
+    const nextValue = Number(sanitized);
+    if (Number.isNaN(nextValue)) {
+      if (index === 0) {
+        rangeStartDraftValue = String(nextRange[0]);
+      } else {
+        rangeEndDraftValue = String(nextRange[1]);
+      }
+      return;
+    }
+
+    nextRange[index] = nextValue;
+    commitValue(nextRange);
   }
 
   function commitListItemViews(nextItemViews: ListItemView[]) {
@@ -202,6 +262,7 @@
 
 <FieldPanel
   title={field.label}
+  typeLabel={field.typeLabel}
   description={field.description}
   infoItems={field.infoItems}
   inline={isInline}
@@ -210,6 +271,7 @@
   {handle}
   {onunset}
   {vscodeContext}
+  {onContextMenu}
   {hideInfoButton}
 >
   {#if field.valueMode === "compute"}
@@ -274,6 +336,47 @@
       }}
       afterEnterPressed={input => input.blur()}
     />
+  {:else if field.editorType === "range"}
+    <div class="grid grid-cols-2 gap-3">
+      <input
+        type="text"
+        data-vscode-context={"{}"}
+        class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
+        bind:value={rangeStartDraftValue}
+        placeholder="Min"
+        inputmode="decimal"
+        oninput={event => {
+          rangeStartDraftValue = sanitizeNumber(event.currentTarget.value);
+        }}
+        onblur={() => commitRangeValue(0)}
+        onkeydown={event => {
+          if (event.key === "Enter" || event.key === "Escape") {
+            event.preventDefault();
+            commitRangeValue(0);
+            event.currentTarget.blur();
+          }
+        }}
+      />
+      <input
+        type="text"
+        data-vscode-context={"{}"}
+        class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
+        bind:value={rangeEndDraftValue}
+        placeholder="Max"
+        inputmode="decimal"
+        oninput={event => {
+          rangeEndDraftValue = sanitizeNumber(event.currentTarget.value);
+        }}
+        onblur={() => commitRangeValue(1)}
+        onkeydown={event => {
+          if (event.key === "Enter" || event.key === "Escape") {
+            event.preventDefault();
+            commitRangeValue(1);
+            event.currentTarget.blur();
+          }
+        }}
+      />
+    </div>
   {:else if field.literalKind === "list"}
     {#if renderedItemViews.length > 0}
       <div class="relative">

@@ -4,7 +4,12 @@
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import type { NpcPropertyParameterField, NpcPropertySection } from "../propertyModel";
+  import {
+    STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS,
+    type StandardParameterEditableTypeOption,
+  } from "../parsing/parameterEditorTypes";
   import { workspace } from "../workspace.svelte";
+  import ParameterTypePicker from "./ParameterTypePicker.svelte";
   import ParameterField from "./fields/ParameterField.svelte";
 
   type ParameterRowView = {
@@ -19,6 +24,12 @@
   let draftRowViews = $state<ParameterRowView[] | null>(null);
   let parameterNameInputs = $state<Record<string, HTMLInputElement | undefined>>({});
   let editingParameterName = $state<string | null>(null);
+  let parameterContextAnchors = $state<Record<string, { x: number; y: number }>>({});
+  let typePickerState = $state<{
+    parameterName: string;
+    x: number;
+    y: number;
+  } | null>(null);
 
   const parameterFields = $derived(
     section.fields.filter(field => field.type === "parameter") as NpcPropertyParameterField[],
@@ -31,6 +42,11 @@
   );
   const renderedRowViews = $derived(draftRowViews ?? visibleRowViews);
   const activeFlipDurationMs = $derived(draftRowViews ? FLIP_DURATION_MS : 0);
+  const typePickerField = $derived(
+    typePickerState
+      ? parameterFields.find(field => field.parameterName === typePickerState.parameterName) ?? null
+      : null,
+  );
 
   $effect(() => {
     const requestVersion = workspace.parameterRenameRequestVersion;
@@ -43,6 +59,25 @@
       workspace.clearParameterRenameRequest();
       void enterEditMode(parameterName);
     }
+  });
+
+  $effect(() => {
+    const requestVersion = workspace.parameterTypeChangeRequestVersion;
+    const parameterName = workspace.parameterTypeChangeRequestName;
+    if (requestVersion === 0 || !parameterName) {
+      return;
+    }
+
+    workspace.clearParameterTypeChangeRequest();
+    const anchor = parameterContextAnchors[parameterName];
+    if (!anchor) {
+      return;
+    }
+
+    typePickerState = {
+      parameterName,
+      ...anchor,
+    };
   });
 
   function handleConsider(event: CustomEvent<DndEvent<ParameterRowView>>) {
@@ -84,6 +119,33 @@
 
     input.focus();
     input.select();
+  }
+
+  function handleRowContextMenu(parameterName: string, event: MouseEvent) {
+    const target = event.target;
+    if (
+      target instanceof Element &&
+      target.closest("input, textarea, [contenteditable='true']")
+    ) {
+      return;
+    }
+
+    parameterContextAnchors[parameterName] = {
+      x: event.clientX,
+      y: event.clientY,
+    };
+  }
+
+  function getPickerTypeForField(
+    field: NpcPropertyParameterField,
+  ): StandardParameterEditableTypeOption["value"] {
+    return STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS.some(option => option.value === field.editorType)
+      ? (field.editorType as StandardParameterEditableTypeOption["value"])
+      : "string";
+  }
+
+  function closeTypePicker() {
+    typePickerState = null;
   }
 </script>
 
@@ -181,6 +243,7 @@
                     >
                       {rowView.field.parameterName}
                     </div>
+
                   {/if}
                 </div>
               {/snippet}
@@ -189,6 +252,7 @@
                 field={rowView.field}
                 titleContent={rowTitle}
                 handle={rowHandle}
+                onContextMenu={event => handleRowContextMenu(rowView.field.parameterName, event)}
                 hideInfoButton={editingParameterName === rowView.field.parameterName}
                 vscodeContext={editingParameterName !== rowView.field.parameterName
                   ? JSON.stringify({
@@ -212,4 +276,17 @@
       Add Parameter
     </button>
   </div>
+
+  {#if typePickerState && typePickerField}
+      <ParameterTypePicker
+        x={typePickerState.x}
+        y={typePickerState.y}
+        currentType={getPickerTypeForField(typePickerField)}
+        onclose={closeTypePicker}
+        onselect={value => {
+          workspace.updateStandardParameterEditorType(typePickerState.parameterName, value);
+          closeTypePicker();
+        }}
+      />
+  {/if}
 </section>

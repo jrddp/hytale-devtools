@@ -7,6 +7,7 @@
 
   let {
     title,
+    typeLabel,
     description,
     infoItems = [],
     inline = true,
@@ -16,11 +17,13 @@
     titleContent,
     onunset,
     vscodeContext,
+    onContextMenu,
     hideInfoButton = false,
     collapsed = $bindable(false),
     children,
   }: {
     title: string;
+    typeLabel?: string;
     description?: string;
     infoItems?: NpcPropertyInfoItem[];
     inline?: boolean;
@@ -30,6 +33,7 @@
     titleContent?: Snippet;
     onunset?: () => void;
     vscodeContext?: string;
+    onContextMenu?: (event: MouseEvent) => void;
     hideInfoButton?: boolean;
     collapsed?: boolean;
     children: Snippet;
@@ -53,12 +57,14 @@
 
 {#snippet tooltipContent()}
   <div class="space-y-2">
-    {#if description}
-      <div class="space-y-1">
-        <div class="font-semibold">{title}</div>
-        <div class="whitespace-pre-line">{description}</div>
+    <div class="space-y-1">
+      <div class="font-semibold">
+        {title}{#if typeLabel}&nbsp;({typeLabel}){/if}
       </div>
-    {/if}
+      {#if description}
+        <div class="whitespace-pre-line">{description}</div>
+      {/if}
+    </div>
 
     {#if infoItems.length > 0}
       <dl class="space-y-1">
@@ -77,6 +83,8 @@
   <section
     class="rounded-md border border-vsc-border bg-vsc-panel"
     data-vscode-context={vscodeContext}
+    role="presentation"
+    oncontextmenu={onContextMenu}
   >
     <div class="group/inline-field flex min-h-12 items-center gap-1 px-4 py-2">
       <div class="relative flex w-56 min-w-0 shrink-0 items-center justify-between gap-1">
@@ -142,6 +150,8 @@
   <section
     class="rounded-md border border-vsc-border bg-vsc-panel"
     data-vscode-context={vscodeContext}
+    role="presentation"
+    oncontextmenu={onContextMenu}
   >
     <div
       class="group/collapsible-field relative flex min-h-11 w-full items-center gap-3 rounded-t-md border-vsc-border px-3 py-2.5 transition-[background-color,box-shadow]"

@@ -4,6 +4,11 @@ import type {
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { NpcDocument, NpcStandardParameterEntry } from "./parsing/documentTypes";
+import {
+  getStandardParameterEditorType,
+  getStandardParameterEditorTypeLabel,
+} from "./parsing/parameterEditorTypes";
+import type { NpcStandardParameterEditorType } from "./parsing/documentTypes";
 
 export type NpcPropertyInfoItem = {
   label: string;
@@ -15,6 +20,7 @@ export type NpcPropertyFieldBase = {
   fieldPath: string;
   key: string;
   label: string;
+  typeLabel: string;
   description?: string;
   infoItems?: NpcPropertyInfoItem[];
 };
@@ -39,6 +45,8 @@ export type NpcPropertyParameterField = NpcPropertyFieldBase & {
   type: "parameter";
   parameterName: string;
   valueMode: "literal" | "compute";
+  editorType: NpcStandardParameterEditorType;
+  typeHint?: string;
   literalKind: "string" | "number" | "boolean" | "list" | "rawJson";
   literalValue?: unknown;
   computeExpression?: string;
@@ -133,11 +141,12 @@ function buildVariantReferenceSection(
   }
 
   if (modify !== undefined) {
-    fields.push({
+  fields.push({
       id: "variant-reference-modify",
       fieldPath: "Modify",
       key: "Modify",
       label: "Modify",
+      typeLabel: "Raw JSON",
       description: "Override values applied on top of the referenced NPC role.",
       type: "rawJson",
       value: modify,
@@ -173,6 +182,7 @@ function buildParameterSection(document: NpcDocument): NpcPropertySection | null
 
 function createParameterField(entry: NpcStandardParameterEntry): NpcPropertyParameterField {
   const infoItems: NpcPropertyInfoItem[] = [];
+  const editorType = getStandardParameterEditorType(entry);
 
   if (entry.private === true) {
     infoItems.push({ label: "Private", value: "Yes" });
@@ -190,11 +200,14 @@ function createParameterField(entry: NpcStandardParameterEntry): NpcPropertyPara
     fieldPath: `Parameters.${entry.name}.Value`,
     key: entry.name,
     label: entry.name,
+    typeLabel: getStandardParameterEditorTypeLabel(editorType),
     description: toOptionalDisplayString(entry.description),
     infoItems,
     type: "parameter",
     parameterName: entry.name,
     valueMode: entry.value.kind,
+    editorType,
+    typeHint: entry.typeHint,
     literalKind: getLiteralKind(literalValue),
     literalValue,
     computeExpression: entry.value.kind === "compute" ? entry.value.expression : undefined,
@@ -296,6 +309,7 @@ function createPropertyField({
   fieldPath,
   key,
   label,
+  typeLabel,
   description,
   value,
   infoItems = [],
@@ -305,6 +319,7 @@ function createPropertyField({
   fieldPath: string;
   key: string;
   label: string;
+  typeLabel?: string;
   description?: string;
   value: unknown;
   infoItems?: NpcPropertyInfoItem[];
@@ -316,6 +331,7 @@ function createPropertyField({
       fieldPath,
       key,
       label,
+      typeLabel: typeLabel ?? "String",
       description,
       infoItems: [...infoItems, { label: "Value Source", value: "Compute expression" }],
       type: "string",
@@ -329,6 +345,7 @@ function createPropertyField({
       fieldPath,
       key,
       label,
+      typeLabel: typeLabel ?? "Boolean",
       description,
       infoItems,
       type: "boolean",
@@ -342,6 +359,7 @@ function createPropertyField({
       fieldPath,
       key,
       label,
+      typeLabel: typeLabel ?? "Number",
       description,
       infoItems,
       type: "number",
@@ -357,6 +375,7 @@ function createPropertyField({
         fieldPath,
         key,
         label,
+        typeLabel: typeLabel ?? "Enum",
         description,
         infoItems,
         type: "enum",
@@ -370,6 +389,7 @@ function createPropertyField({
       fieldPath,
       key,
       label,
+      typeLabel: typeLabel ?? "String",
       description,
       infoItems,
       type: "string",
@@ -383,6 +403,7 @@ function createPropertyField({
       fieldPath,
       key,
       label,
+      typeLabel: typeLabel ?? "List",
       description,
       infoItems,
       type: "list",
@@ -395,6 +416,7 @@ function createPropertyField({
     fieldPath,
     key,
     label,
+    typeLabel: typeLabel ?? "Raw JSON",
     description,
     infoItems,
     type: "rawJson",

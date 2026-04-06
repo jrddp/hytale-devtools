@@ -94,6 +94,7 @@
 
 <FieldPanel
   title={field.label}
+  typeLabel={field.typeLabel}
   description={field.description}
   infoItems={field.infoItems}
   inline={false}

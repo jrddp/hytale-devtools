@@ -21,7 +21,7 @@ export type NpcRoleEditorErrorMessage = {
 
 export type NpcRoleEditorContextActionMessage = {
   type: "contextAction";
-  action: "renameParameter" | "deleteParameter";
+  action: "renameParameter" | "deleteParameter" | "changeParameterType";
   parameterName: string;
 };
 

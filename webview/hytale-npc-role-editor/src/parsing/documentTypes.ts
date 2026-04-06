@@ -1,3 +1,14 @@
+export type NpcStandardParameterEditorType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "range"
+  | "stringList"
+  | "numberList"
+  | "booleanList"
+  | "compute"
+  | "rawJson";
+
 export type NpcStandardParameterValue =
   | {
       kind: "literal";
