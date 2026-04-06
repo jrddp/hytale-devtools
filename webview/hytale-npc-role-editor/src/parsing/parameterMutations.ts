@@ -103,7 +103,7 @@ export function reorderStandardParameters(
 export function updateStandardParameterEditorType(
   parameters: NpcParameters,
   parameterName: string,
-  nextType: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">,
+  nextType: Exclude<NpcStandardParameterEditorType, "rawJson">,
 ): boolean {
   const entry = parameters.entries.find(candidate => candidate.name === parameterName);
   if (!entry) {

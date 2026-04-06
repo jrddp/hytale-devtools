@@ -137,4 +137,28 @@ describe("npc editor parameter mutations", () => {
     expect(invulnerable.TypeHint).toBe("Number");
     expect(invulnerable.Value).toEqual([0, 0]);
   });
+
+  test("switches a parameter to compute mode", () => {
+    const document = expectReadyDocument(
+      "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
+    );
+    const parameters = document.parameters;
+    expect(parameters).not.toBeNull();
+    if (!parameters) {
+      throw new Error("Expected parameters to exist");
+    }
+
+    expect(updateStandardParameterEditorType(parameters, "Invulnerable", "compute")).toBe(true);
+
+    const serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    const invulnerable = (serialized.Parameters as Record<string, unknown>)
+      .Invulnerable as Record<string, unknown>;
+
+    expect(invulnerable).toEqual({
+      Value: {
+        Compute: "false",
+      },
+      Description: "Whether this NPC is invulnerable.",
+    });
+  });
 });

@@ -204,6 +204,9 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.7.6
         version: 1.7.6
+      lucide-svelte:
+        specifier: ^0.564.0
+        version: 0.564.0(svelte@5.53.6)
       marked:
         specifier: ^16.3.0
         version: 16.4.2

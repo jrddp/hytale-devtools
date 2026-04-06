@@ -176,7 +176,7 @@ export class Workspace {
 
   updateStandardParameterEditorType(
     parameterName: string,
-    editorType: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">,
+    editorType: Exclude<NpcStandardParameterEditorType, "rawJson">,
   ) {
     if (!this.documentModel?.parameters) {
       return false;

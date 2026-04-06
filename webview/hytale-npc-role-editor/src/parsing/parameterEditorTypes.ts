@@ -5,7 +5,7 @@ import type {
 } from "./documentTypes";
 
 export type StandardParameterEditableTypeOption = {
-  value: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">;
+  value: Exclude<NpcStandardParameterEditorType, "rawJson">;
   label: string;
 };
 
@@ -16,6 +16,7 @@ export const STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS: StandardParameterEditableTy
   { value: "range", label: "Range [min,max]" },
   { value: "stringList", label: "String List" },
   { value: "numberList", label: "Number List" },
+  { value: "compute", label: "Compute" },
 ];
 
 export function getStandardParameterEditorType(
@@ -100,9 +101,10 @@ export function getStandardParameterEditorTypeLabel(
 
 export function coerceStandardParameterValueForEditorType(
   previousValue: NpcStandardParameterValue,
-  nextType: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">,
+  nextType: Exclude<NpcStandardParameterEditorType, "rawJson">,
 ): NpcStandardParameterValue {
-  const literalValue = previousValue.kind === "literal" ? previousValue.value : undefined;
+  const literalValue =
+    previousValue.kind === "literal" ? previousValue.value : previousValue.expression;
 
   switch (nextType) {
     case "string":
@@ -119,6 +121,11 @@ export function coerceStandardParameterValueForEditorType(
       return {
         kind: "literal",
         value: coerceScalarBoolean(literalValue),
+      };
+    case "compute":
+      return {
+        kind: "compute",
+        expression: coerceComputeExpression(literalValue),
       };
     case "range":
       return {
@@ -144,9 +151,11 @@ export function coerceStandardParameterValueForEditorType(
 }
 
 export function getTypeHintForEditorType(
-  type: Exclude<NpcStandardParameterEditorType, "compute" | "rawJson">,
+  type: Exclude<NpcStandardParameterEditorType, "rawJson">,
 ): string | undefined {
   switch (type) {
+    case "compute":
+      return undefined;
     case "stringList":
       return "String";
     case "numberList":
@@ -188,6 +197,22 @@ function coerceScalarString(value: unknown): string {
   if (typeof value === "number" || typeof value === "boolean") {
     return String(value);
   }
+  return "";
+}
+
+function coerceComputeExpression(value: unknown): string {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value) && value.every(isPrimitiveListItem)) {
+    return JSON.stringify(value);
+  }
+
   return "";
 }
 

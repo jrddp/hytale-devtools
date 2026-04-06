@@ -2,8 +2,10 @@
   import { flip } from "svelte/animate";
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
+  import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
+  import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
   import type { NpcPropertyParameterField } from "../../propertyModel";
   import FieldPanel from "../FieldPanel.svelte";
   import { workspace } from "../../workspace.svelte";
@@ -59,6 +61,12 @@
   );
   const renderedItemViews = $derived(draftItemViews ?? itemViews);
   const activeFlipDurationMs = $derived(draftItemViews ? FLIP_DURATION_MS : 0);
+  const computeAutocompleteOptions = $derived(
+    buildNpcComputeAutocompleteOptions({
+      parameters: workspace.documentModel?.parameters?.entries,
+      scope: "standard",
+    }),
+  );
 
   $effect(() => {
     if (field.valueMode === "compute") {
@@ -275,20 +283,19 @@
   {hideInfoButton}
 >
   {#if field.valueMode === "compute"}
-    <SingleLineAutocompleteInput
+    <ComputeAutocompleteInput
       inputId={`npc-parameter-${field.id}`}
       initialValue={scalarDraftValue}
       data-vscode-context={"{}"}
-      placeholder="Compute expression"
+      placeholder="Type for suggestions"
+      autocompleteOptions={computeAutocompleteOptions}
       inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
-      listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
-      optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
-      previewClass="z-[160]"
+      listClass="absolute left-0 right-0 top-full z-[160] max-h-56 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
+      optionClass="block w-full cursor-pointer border border-transparent px-3 py-2 text-left text-vsc-input-fg hover:bg-vsc-list-hover"
       oncommit={value => {
         scalarDraftValue = value;
         commitComputeExpression(value);
       }}
-      afterEnterPressed={input => input.blur()}
     />
   {:else if field.literalKind === "boolean"}
     <div class="inline-flex">

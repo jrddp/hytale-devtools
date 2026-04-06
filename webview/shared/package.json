@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "^1.7.6",
+    "lucide-svelte": "^0.564.0",
     "marked": "^16.3.0",
     "three": "^0.180.0"
   },

@@ -16,6 +16,9 @@
   --color-vsc-list-hover: var(--vscode-list-hoverBackground);
   --color-vsc-list-active-bg: var(--vscode-list-activeSelectionBackground);
   --color-vsc-list-active-fg: var(--vscode-list-activeSelectionForeground);
+  --color-vsc-symbol-variable: var(--vscode-symbolIcon-variableForeground, var(--color-vsc-input-fg));
+  --color-vsc-symbol-function: var(--vscode-symbolIcon-functionForeground, var(--color-vsc-input-fg));
+  --color-vsc-symbol-constant: var(--vscode-symbolIcon-constantForeground, var(--color-vsc-input-fg));
   --color-vsc-button-secondary-bg: var(--vscode-button-secondaryBackground);
   --color-vsc-button-secondary-fg: var(--vscode-button-secondaryForeground);
   --color-vsc-button-secondary-hover: var(--vscode-button-secondaryHoverBackground);
