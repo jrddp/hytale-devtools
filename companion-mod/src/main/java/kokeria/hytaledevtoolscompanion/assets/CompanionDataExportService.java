@@ -53,6 +53,7 @@ public final class CompanionDataExportService {
                     runtimePackages);
 
             ExportArtifactsWriter.write(outputDirectory, schemaExportData, indexShards, manifestSnapshot);
+            NpcDescriptorExportService.write(plugin, outputDirectory);
             plugin.getLogger().at(Level.INFO).log("Exported companion snapshot artifacts to %s", outputDirectory);
         } catch (Throwable throwable) {
             plugin.getLogger().at(Level.SEVERE).withCause(throwable).log("Failed to export companion snapshot");

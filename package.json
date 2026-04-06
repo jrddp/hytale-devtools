@@ -175,6 +175,16 @@
         "priority": "default"
       },
       {
+        "viewType": "hytale-devtools.hytaleNpcRoleEditor",
+        "displayName": "Hytale NPC Role Editor",
+        "selector": [
+          {
+            "filenamePattern": "**/Server/NPC/Roles/**/*.json"
+          }
+        ],
+        "priority": "default"
+      },
+      {
         "viewType": "hytale-devtools.hytaleAssetEditor",
         "displayName": "Hytale Asset Editor",
         "selector": [
@@ -450,10 +460,13 @@
     "watch:check:webview": "npm-run-all -p watch:check:webview:*",
     "watch:check:webview:node-editor": "pnpm --dir webview/hytale-node-editor exec svelte-check --tsconfig ./tsconfig.json --diagnostic-sources \"js\" --watch --preserveWatchOutput --output machine",
     "watch:check:webview:asset-editor": "pnpm --dir webview/hytale-asset-editor exec svelte-check --tsconfig ./tsconfig.json --diagnostic-sources \"js\" --watch --preserveWatchOutput --output machine",
+    "watch:check:webview:npc-role-editor": "pnpm --dir webview/hytale-npc-role-editor exec svelte-check --tsconfig ./tsconfig.json --diagnostic-sources \"js\" --watch --preserveWatchOutput --output machine",
     "watch:webview:node-editor": "pnpm --dir webview/hytale-node-editor run watch",
     "watch:webview:asset-editor": "pnpm --dir webview/hytale-asset-editor run watch",
+    "watch:webview:npc-role-editor": "pnpm --dir webview/hytale-npc-role-editor run watch",
     "dev:webview:node-editor": "pnpm --dir webview/hytale-node-editor run dev",
     "dev:webview:asset-editor": "pnpm --dir webview/hytale-asset-editor run dev",
+    "dev:webview:npc-role-editor": "pnpm --dir webview/hytale-npc-role-editor run dev",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "build:companion": "cd companion-mod && ./gradlew build",
     "package": "pnpm run check-types && pnpm run lint && pnpm run build:webview && node esbuild.js --production && pnpm run build:companion",
@@ -462,6 +475,7 @@
     "build:webview": "npm-run-all build:webview:*",
     "build:webview:node-editor": "pnpm --dir webview/hytale-node-editor run build",
     "build:webview:asset-editor": "pnpm --dir webview/hytale-asset-editor run build",
+    "build:webview:npc-role-editor": "pnpm --dir webview/hytale-npc-role-editor run build",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
@@ -476,6 +490,7 @@
     "check-types:extension": "tsc --noEmit",
     "check-types:webview:asset-editor": "pnpm --dir webview/hytale-asset-editor run check",
     "check-types:webview:node-editor": "pnpm --dir webview/hytale-node-editor run check",
+    "check-types:webview:npc-role-editor": "pnpm --dir webview/hytale-npc-role-editor run check",
     "lint": "eslint \"src/**/*.ts\" \"webview/**/*.svelte\" \"webview/**/*.ts\"",
     "update:asset-editor-selectors": "node scripts/updateAssetEditorSelectors.js",
     "test": "vscode-test"

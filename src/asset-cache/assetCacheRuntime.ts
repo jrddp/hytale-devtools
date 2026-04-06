@@ -1,6 +1,8 @@
-import { existsSync } from "fs";
+import { createWriteStream, existsSync } from "fs";
+import { mkdir } from "fs/promises";
 import path from "path";
 import { type Readable } from "stream";
+import { pipeline } from "stream/promises";
 import { serialize as v8Serialize } from "v8";
 import * as yauzl from "yauzl";
 import { type SchemaRuntime } from "../schema/schemaLoader";
@@ -41,6 +43,7 @@ export class AssetCacheRuntime {
 
   private readonly logger: BasicLogger;
   private readonly schemaRuntime: SchemaRuntime;
+  private readonly entryLocatorsByPath = new Map<string, yauzl.Entry>();
   private readonly recordsByPath = new Map<string, IndexedAssetRecord>();
   private readonly recordsByType = new Map<string, Map<string, IndexedAssetRecord>>();
   private zipFile: yauzl.ZipFile | undefined;
@@ -89,10 +92,24 @@ export class AssetCacheRuntime {
   async readAssetBytesByPath(assetPath: string): Promise<Buffer | undefined> {
     await this.ready;
     const record = this.getRecordByPath(assetPath);
-    if (!record) {
-      return undefined;
+    if (record) {
+      return await this.readRecordBytes(record);
     }
-    return await this.readRecordBytes(record);
+    const entry = this.getEntryByPath(assetPath);
+    return entry ? await this.readEntryBytesByLocator(entry, assetPath) : undefined;
+  }
+
+  async copyAssetByPath(assetPath: string, destinationPath: string): Promise<boolean> {
+    await this.ready;
+    const entry = this.getEntryByPath(assetPath);
+    if (!entry) {
+      return false;
+    }
+
+    await mkdir(path.dirname(destinationPath), { recursive: true });
+    const readStream = await this.openEntryReadStream(entry);
+    await pipeline(readStream, createWriteStream(destinationPath));
+    return true;
   }
 
   private getRecordByPath(assetPath: string): IndexedAssetRecord | undefined {
@@ -101,6 +118,16 @@ export class AssetCacheRuntime {
       this.recordsByPath.get(normalizedPath) ??
       (!normalizedPath.startsWith("Common/") && !normalizedPath.startsWith("Server/")
         ? this.recordsByPath.get(`Common/${normalizedPath}`)
+        : undefined)
+    );
+  }
+
+  private getEntryByPath(assetPath: string): yauzl.Entry | undefined {
+    const normalizedPath = normalizeAssetLookupPath(assetPath);
+    return (
+      this.entryLocatorsByPath.get(normalizedPath) ??
+      (!normalizedPath.startsWith("Common/") && !normalizedPath.startsWith("Server/")
+        ? this.entryLocatorsByPath.get(`Common/${normalizedPath}`)
         : undefined)
     );
   }
@@ -115,7 +142,7 @@ export class AssetCacheRuntime {
     const cacheSizeBytes = v8Serialize(this.assetInstances).byteLength;
 
     this.logger.info(
-      `Indexed base-game asset zip ${this.assetsZipPath}: ${this.indexedAssetCount} supported assets across ${this.recordsByType.size} asset types. Eagerly cached ${this.loadedAssetCount} assets across ${this.assetInstances.size} asset types (${this.failedAssetCount} failed). Cache size: ${formatMegabytes(cacheSizeBytes)}.`,
+      `Indexed base-game asset zip ${this.assetsZipPath}: ${this.entryLocatorsByPath.size} file paths, ${this.indexedAssetCount} supported assets across ${this.recordsByType.size} asset types. Eagerly cached ${this.loadedAssetCount} assets across ${this.assetInstances.size} asset types (${this.failedAssetCount} failed). Cache size: ${formatMegabytes(cacheSizeBytes)}.`,
     );
   }
 
@@ -180,6 +207,7 @@ export class AssetCacheRuntime {
               return;
             }
 
+            this.indexZipEntry(entry.fileName, entry);
             const assetDescriptor = resolveCachedZipAsset(entry.fileName, this.schemaRuntime);
             if (!assetDescriptor) {
               zipFile.readEntry();
@@ -236,6 +264,14 @@ export class AssetCacheRuntime {
         },
       );
     });
+  }
+
+  private indexZipEntry(entryPath: string, locator: yauzl.Entry): void {
+    const normalizedPath = normalizeAssetLookupPath(entryPath);
+    if (this.entryLocatorsByPath.has(normalizedPath)) {
+      this.logger.warn(`Duplicate asset cache zip path for ${normalizedPath}. Overwriting previous entry.`);
+    }
+    this.entryLocatorsByPath.set(normalizedPath, locator);
   }
 
   private indexZipRecord(
@@ -331,13 +367,35 @@ export class AssetCacheRuntime {
     }
   }
 
+  private async readEntryBytesByLocator(
+    entry: yauzl.Entry,
+    assetPathForLogging: string,
+  ): Promise<Buffer | undefined> {
+    try {
+      return await this.openEntryBytes(entry);
+    } catch (error) {
+      if (!this.disposed) {
+        this.failedAssetCount += 1;
+        this.logger.warn(
+          `Failed to read asset cache entry ${assetPathForLogging}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+      return undefined;
+    }
+  }
+
   private async openEntryBytes(entry: yauzl.Entry): Promise<Buffer> {
+    const readStream = await this.openEntryReadStream(entry);
+    return await this.readEntryBytes(readStream);
+  }
+
+  private async openEntryReadStream(entry: yauzl.Entry): Promise<Readable> {
     const zipFile = this.zipFile;
     if (!zipFile || this.disposed) {
       throw new Error("Asset cache zip is unavailable.");
     }
 
-    const readStream = await new Promise<Readable>((resolve, reject) => {
+    return await new Promise<Readable>((resolve, reject) => {
       zipFile.openReadStream(entry, (readError, stream) => {
         if (readError) {
           reject(readError);
@@ -350,8 +408,6 @@ export class AssetCacheRuntime {
         resolve(stream);
       });
     });
-
-    return await this.readEntryBytes(readStream);
   }
 
   private async readEntryBytes(readStream: Readable): Promise<Buffer> {

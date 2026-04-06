@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../../src/shared/*"],
+      "@webview-shared/*": ["../shared/*"],
+      "src/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.svelte",
+    "../../src/shared/**/*.ts",
+    "../shared/**/*.ts",
+    "../shared/**/*.svelte"
+  ],
+  "exclude": ["node_modules", "../../node_modules", "../../dist", "../../out", "../../media"]
+}

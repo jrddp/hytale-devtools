@@ -153,10 +153,8 @@ async function copyAsset(
   assetPath: string,
   destinationPath: string,
 ): Promise<void> {
-  await fs.promises.mkdir(path.dirname(destinationPath), { recursive: true });
-  const assetBytes = await assetCacheRuntime.readAssetBytesByPath(assetPath);
-  if (!assetBytes) {
+  const didCopy = await assetCacheRuntime.copyAssetByPath(assetPath, destinationPath);
+  if (!didCopy) {
     throw new Error(`Asset not found in indexed Assets.zip: ${assetPath}`);
   }
-  await fs.promises.writeFile(destinationPath, assetBytes);
 }

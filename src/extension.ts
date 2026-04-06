@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { AssetCacheRuntime } from "./asset-cache/assetCacheRuntime";
 import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
+import { registerHytaleNpcRoleEditorProvider } from "./npc-role-editor/hytaleNpcRoleEditorProvider";
 import { WorkspaceRuntime } from "./node-editor/workspaceResolver";
 import { SchemaRuntime } from "./schema/schemaLoader";
 import { createSchemaWatcherRuntime } from "./schema/schemaWatcher";
@@ -98,6 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
+  context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));
 
   if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {
     void ensureHytaleHomeConfiguredOnStartup();

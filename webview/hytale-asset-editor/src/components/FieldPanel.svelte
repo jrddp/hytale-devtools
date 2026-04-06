@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { createTooltip } from "@webview-shared/components/tooltip/createTooltip.svelte";
+  import TooltipContent from "@webview-shared/components/tooltip/TooltipContent.svelte";
   import { ChevronDown, ChevronRight, CircleX, Info } from "lucide-svelte";
   import { marked } from "marked";
   import type { RenderFieldProps } from "src/common";
   import { workspace } from "src/workspace.svelte";
-  import { createTooltip } from "../../../shared/components/tooltip/createTooltip.svelte";
-  import TooltipContent from "../../../shared/components/tooltip/TooltipContent.svelte";
   import { createStickyHeader } from "./createStickyHeader.svelte";
   import { getFieldPanelId } from "./fieldEditorIds";
   import { getFieldLabel, humanize } from "./fieldHelpers";
@@ -155,6 +155,14 @@
   </button>
 
   {@render glyphs?.()}
+{/snippet}
+
+{#snippet infoTooltipContent()}
+  <div class="space-y-1">
+    <div class="font-semibold">{field.schemaKey} ({humanize(field.type)})</div>
+    {@html descriptionHtml}
+    <div>Can inherit? {field.inheritsValue}</div>
+  </div>
 {/snippet}
 
 {#snippet summaryContent()}
