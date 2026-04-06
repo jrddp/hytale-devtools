@@ -12,6 +12,7 @@
     inline = true,
     summary,
     handle,
+    actions,
     collapsed = $bindable(false),
     children,
   }: {
@@ -21,6 +22,7 @@
     inline?: boolean;
     summary?: string;
     handle?: Snippet;
+    actions?: Snippet;
     collapsed?: boolean;
     children: Snippet;
   } = $props();
@@ -61,7 +63,7 @@
           {/if}
 
           <div class="flex min-w-0 items-center gap-1 truncate">
-          <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+            <h2 class="relative truncate text-sm font-semibold">{title}</h2>
 
             {#if hasTooltipContent}
               <button
@@ -74,6 +76,10 @@
                 <Info size={12} />
               </button>
             {/if}
+
+            {#if summary}
+              <div class="truncate text-xs text-vsc-muted">{summary}</div>
+            {/if}
           </div>
         </div>
       </div>
@@ -82,9 +88,9 @@
         {@render children()}
       </div>
 
-      {#if summary}
+      {#if actions}
         <div class="relative flex items-center gap-2">
-          <div class="truncate text-xs text-vsc-muted">{summary}</div>
+          {@render actions()}
         </div>
       {/if}
     </div>
@@ -134,9 +140,14 @@
         {/if}
       </div>
 
-      {#if summary}
+      {#if summary || actions}
         <div class="relative z-10 flex min-w-0 shrink-0 items-center justify-end gap-3">
-          <div class="truncate text-xs text-vsc-muted">{summary}</div>
+          {#if summary}
+            <div class="truncate text-xs text-vsc-muted">{summary}</div>
+          {/if}
+          {#if actions}
+            {@render actions()}
+          {/if}
         </div>
       {/if}
     </div>

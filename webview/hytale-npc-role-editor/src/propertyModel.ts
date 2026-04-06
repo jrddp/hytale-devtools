@@ -3,13 +3,7 @@ import type {
   NpcDescriptorAttribute,
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
-
-export type NpcPropertyBadgeTone = "muted" | "accent" | "warning";
-
-export type NpcPropertyBadge = {
-  label: string;
-  tone?: NpcPropertyBadgeTone;
-};
+import type { NpcDocument, NpcStandardParameterEntry } from "./parsing/documentTypes";
 
 export type NpcPropertyInfoItem = {
   label: string;
@@ -23,7 +17,6 @@ export type NpcPropertyFieldBase = {
   label: string;
   description?: string;
   infoItems?: NpcPropertyInfoItem[];
-  badges?: NpcPropertyBadge[];
 };
 
 export type NpcPropertyScalarField = NpcPropertyFieldBase & {
@@ -42,23 +35,26 @@ export type NpcPropertyRawJsonField = NpcPropertyFieldBase & {
   value: unknown;
 };
 
+export type NpcPropertyParameterField = NpcPropertyFieldBase & {
+  type: "parameter";
+  parameterName: string;
+  valueMode: "literal" | "compute";
+  literalKind: "string" | "number" | "boolean" | "list" | "rawJson";
+  literalValue?: unknown;
+  computeExpression?: string;
+};
+
 export type NpcPropertyField =
   | NpcPropertyScalarField
   | NpcPropertyListField
-  | NpcPropertyRawJsonField;
+  | NpcPropertyRawJsonField
+  | NpcPropertyParameterField;
 
 export type NpcPropertySection = {
   id: string;
   name: string;
   description?: string;
   fields: NpcPropertyField[];
-};
-
-export type NpcPropertyDocumentParseResult = {
-  rawData: Record<string, unknown> | null;
-  roleType: string | null;
-  sections: NpcPropertySection[];
-  parseError: string | null;
 };
 
 const ROLE_ATTRIBUTE_SKIP_KEYS = new Set([
@@ -88,53 +84,28 @@ const ROLE_ATTRIBUTE_SKIP_KEYS = new Set([
   "$WorkspaceID",
 ]);
 
-export function parseNpcPropertyDocument(
-  text: string,
+export function buildNpcPropertySections(
+  document: NpcDocument,
   descriptors: NpcDescriptorDocument,
-): NpcPropertyDocumentParseResult {
-  try {
-    const parsed = JSON.parse(text);
-    if (!isRecord(parsed)) {
-      return {
-        rawData: null,
-        roleType: null,
-        sections: [],
-        parseError: "NPC role document root must be a JSON object.",
-      };
-    }
+): NpcPropertySection[] {
+  const sections: NpcPropertySection[] = [];
 
-    const roleType = typeof parsed.Type === "string" ? parsed.Type : null;
-    const sections: NpcPropertySection[] = [];
-
-    const variantReferenceSection = buildVariantReferenceSection(parsed);
-    if (variantReferenceSection) {
-      sections.push(variantReferenceSection);
-    }
-
-    const parameterSection = buildParameterSection(parsed);
-    if (parameterSection) {
-      sections.push(parameterSection);
-    }
-
-    const roleAttributeSection = buildRoleAttributeSection(parsed, roleType, descriptors);
-    if (roleAttributeSection) {
-      sections.push(roleAttributeSection);
-    }
-
-    return {
-      rawData: parsed,
-      roleType,
-      sections,
-      parseError: null,
-    };
-  } catch (error) {
-    return {
-      rawData: null,
-      roleType: null,
-      sections: [],
-      parseError: error instanceof Error ? error.message : String(error),
-    };
+  const variantReferenceSection = buildVariantReferenceSection(document.rawRoot);
+  if (variantReferenceSection) {
+    sections.push(variantReferenceSection);
   }
+
+  const parameterSection = buildParameterSection(document);
+  if (parameterSection) {
+    sections.push(parameterSection);
+  }
+
+  const roleAttributeSection = buildRoleAttributeSection(document.rawRoot, document.roleType, descriptors);
+  if (roleAttributeSection) {
+    sections.push(roleAttributeSection);
+  }
+
+  return sections;
 }
 
 function buildVariantReferenceSection(
@@ -186,65 +157,68 @@ function buildVariantReferenceSection(
   };
 }
 
-function buildParameterSection(documentData: Record<string, unknown>): NpcPropertySection | null {
-  const parametersValue = documentData.Parameters;
-  if (!isRecord(parametersValue)) {
-    return null;
-  }
-
-  const fields: NpcPropertyField[] = [];
-  const importStates = parametersValue._ImportStates;
-
-  if (Array.isArray(importStates) && importStates.every(item => isPrimitiveListItem(item))) {
-    fields.push({
-      id: "parameter-import-states",
-      fieldPath: "Parameters._ImportStates",
-      key: "_ImportStates",
-      label: "_ImportStates",
-      description: "Imported component state slots.",
-      type: "list",
-      items: importStates,
-      infoItems: [{ label: "System Field", value: "Yes" }],
-    });
-  }
-
-  for (const [parameterName, parameterValue] of Object.entries(parametersValue)) {
-    if (parameterName === "_ImportStates" || !isRecord(parameterValue) || !("Value" in parameterValue)) {
-      continue;
-    }
-
-    const infoItems: NpcPropertyInfoItem[] = [];
-    if (parameterValue.Private === true) {
-      infoItems.push({ label: "Private", value: "Yes" });
-    }
-
-    if (typeof parameterValue.TypeHint === "string" && parameterValue.TypeHint.trim()) {
-      infoItems.push({ label: "Type Hint", value: parameterValue.TypeHint });
-    }
-
-    const field = createPropertyField({
-      id: `parameter-${parameterName}`,
-      fieldPath: `Parameters.${parameterName}.Value`,
-      key: parameterName,
-      label: parameterName,
-      description: toOptionalString(parameterValue.Description),
-      value: parameterValue.Value,
-      infoItems,
-    });
-
-    fields.push(field);
-  }
-
-  if (fields.length === 0) {
+function buildParameterSection(document: NpcDocument): NpcPropertySection | null {
+  const parameters = document.parameters;
+  if (!parameters || parameters.entries.length === 0) {
     return null;
   }
 
   return {
     id: "npc-section-parameters",
     name: "Parameters",
-    description: "Template parameter values and component import state slots.",
-    fields,
+    description: "Template parameter values.",
+    fields: parameters.entries.map(entry => createParameterField(entry)),
   };
+}
+
+function createParameterField(entry: NpcStandardParameterEntry): NpcPropertyParameterField {
+  const infoItems: NpcPropertyInfoItem[] = [];
+
+  if (entry.private === true) {
+    infoItems.push({ label: "Private", value: "Yes" });
+  }
+
+  if (typeof entry.typeHint === "string" && entry.typeHint.trim()) {
+    infoItems.push({ label: "Type Hint", value: entry.typeHint });
+  }
+
+  const literalValue =
+    entry.value.kind === "literal" ? entry.value.value : undefined;
+
+  return {
+    id: `parameter-${entry.name}`,
+    fieldPath: `Parameters.${entry.name}.Value`,
+    key: entry.name,
+    label: entry.name,
+    description: toOptionalDisplayString(entry.description),
+    infoItems,
+    type: "parameter",
+    parameterName: entry.name,
+    valueMode: entry.value.kind,
+    literalKind: getLiteralKind(literalValue),
+    literalValue,
+    computeExpression: entry.value.kind === "compute" ? entry.value.expression : undefined,
+  };
+}
+
+function getLiteralKind(value: unknown): NpcPropertyParameterField["literalKind"] {
+  if (typeof value === "boolean") {
+    return "boolean";
+  }
+
+  if (typeof value === "number") {
+    return "number";
+  }
+
+  if (typeof value === "string") {
+    return "string";
+  }
+
+  if (Array.isArray(value) && value.every(item => isPrimitiveListItem(item))) {
+    return "list";
+  }
+
+  return "rawJson";
 }
 
 function buildRoleAttributeSection(
@@ -275,20 +249,20 @@ function buildRoleAttributeSection(
       infoItems.push({ label: "Computable", value: "Yes" });
     }
 
-    const field = createPropertyField({
-      id: `role-attribute-${key}`,
-      fieldPath: key,
-      key,
-      label: humanize(key) ?? key,
-      description:
-        toOptionalString(descriptorAttribute?.ShortDescription) ??
-        toOptionalString(descriptorAttribute?.LongDescription),
-      value,
-      infoItems,
-      descriptorAttribute,
-    });
-
-    fields.push(field);
+    fields.push(
+      createPropertyField({
+        id: `role-attribute-${key}`,
+        fieldPath: key,
+        key,
+        label: humanize(key) ?? key,
+        description:
+          toOptionalDisplayString(descriptorAttribute?.ShortDescription) ??
+          toOptionalDisplayString(descriptorAttribute?.LongDescription),
+        value,
+        infoItems,
+        descriptorAttribute,
+      }),
+    );
   }
 
   if (fields.length === 0) {
@@ -325,7 +299,6 @@ function createPropertyField({
   description,
   value,
   infoItems = [],
-  badges = [],
   descriptorAttribute,
 }: {
   id: string;
@@ -335,7 +308,6 @@ function createPropertyField({
   description?: string;
   value: unknown;
   infoItems?: NpcPropertyInfoItem[];
-  badges?: NpcPropertyBadge[];
   descriptorAttribute?: NpcDescriptorAttribute;
 }): NpcPropertyField {
   if (isComputeExpression(value)) {
@@ -348,7 +320,6 @@ function createPropertyField({
       infoItems: [...infoItems, { label: "Value Source", value: "Compute expression" }],
       type: "string",
       value: value.Compute,
-      badges,
     };
   }
 
@@ -362,7 +333,6 @@ function createPropertyField({
       infoItems,
       type: "boolean",
       value,
-      badges,
     };
   }
 
@@ -376,7 +346,6 @@ function createPropertyField({
       infoItems,
       type: "number",
       value,
-      badges,
     };
   }
 
@@ -393,7 +362,6 @@ function createPropertyField({
         type: "enum",
         value,
         options,
-        badges,
       };
     }
 
@@ -406,7 +374,6 @@ function createPropertyField({
       infoItems,
       type: "string",
       value,
-      badges,
     };
   }
 
@@ -420,7 +387,6 @@ function createPropertyField({
       infoItems,
       type: "list",
       items: value,
-      badges,
     };
   }
 
@@ -433,7 +399,6 @@ function createPropertyField({
     infoItems,
     type: "rawJson",
     value,
-    badges,
   };
 }
 
@@ -481,11 +446,7 @@ function humanize(value: string | null | undefined): string | null {
 }
 
 function isComputeExpression(value: unknown): value is { Compute: string } {
-  return (
-    isRecord(value) &&
-    Object.keys(value).length === 1 &&
-    typeof value.Compute === "string"
-  );
+  return isRecord(value) && Object.keys(value).length === 1 && typeof value.Compute === "string";
 }
 
 function isPrimitiveListItem(value: unknown): value is string | number | boolean {
@@ -496,6 +457,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function toOptionalString(value: unknown): string | undefined {
+function toOptionalDisplayString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value : undefined;
 }

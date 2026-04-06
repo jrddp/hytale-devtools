@@ -7,6 +7,7 @@ import type {
   NpcDescriptorSource,
 } from "../shared/npc-role-editor/descriptorTypes";
 import type {
+  NpcRoleEditorApplyMessage,
   NpcRoleEditorBootstrapMessage,
   NpcRoleEditorExtensionToWebviewMessage,
   NpcRoleEditorWebviewToExtensionMessage,
@@ -101,6 +102,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
           case "openRawJson":
             void this.openRawJsonInTextEditor(document, webviewPanel);
             return;
+          case "apply":
+            void this.applyWebviewEdits(document, message, webviewPanel.webview);
+            return;
           default:
             return;
         }
@@ -171,6 +175,26 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
       preview: true,
     });
   }
+
+  private async applyWebviewEdits(
+    document: vscode.TextDocument,
+    message: NpcRoleEditorApplyMessage,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    if (typeof message.text !== "string") {
+      LOGGER.error("Unable to apply edit from NPC role editor. Message text was not a string.");
+      return;
+    }
+
+    const edit = new vscode.WorkspaceEdit();
+    const normalizedText = normalizeTextEol(message.text, document.eol);
+    edit.replace(document.uri, getDocumentRange(document), normalizedText);
+    const applied = await vscode.workspace.applyEdit(edit);
+
+    if (!applied) {
+      await this.postError(webview, "VS Code rejected the edit request.");
+    }
+  }
 }
 
 function escapeHtml(value: string): string {
@@ -180,4 +204,16 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getDocumentRange(document: vscode.TextDocument): vscode.Range {
+  const start = new vscode.Position(0, 0);
+  const lastLine = document.lineAt(document.lineCount - 1);
+  const end = new vscode.Position(document.lineCount - 1, lastLine.text.length);
+  return new vscode.Range(start, end);
+}
+
+function normalizeTextEol(text: string, eol: vscode.EndOfLine): string {
+  const targetEol = eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
+  return text.replace(/\r\n|\r|\n/g, targetEol);
 }

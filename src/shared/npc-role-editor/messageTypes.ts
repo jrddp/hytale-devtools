@@ -19,6 +19,12 @@ export type NpcRoleEditorErrorMessage = {
   message: string;
 };
 
+export type NpcRoleEditorApplyMessage = {
+  type: "apply";
+  text: string;
+  sourceVersion?: number;
+};
+
 export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorBootstrapMessage
   | NpcRoleEditorDocumentUpdateMessage
@@ -26,4 +32,5 @@ export type NpcRoleEditorExtensionToWebviewMessage =
 
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }
-  | { type: "openRawJson" };
+  | { type: "openRawJson" }
+  | NpcRoleEditorApplyMessage;
