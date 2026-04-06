@@ -1,6 +1,7 @@
 import type {
   NpcRoleEditorWebviewToExtensionMessage,
   NpcRoleEditorApplyMessage,
+  NpcRoleEditorContextActionMessage,
 } from "@shared/npc-role-editor/messageTypes";
 import type {
   NpcDescriptorDocument,
@@ -10,6 +11,12 @@ import type { VSCodeApi } from "./common";
 import { buildNpcPropertySections, type NpcPropertySection } from "./propertyModel";
 import type { NpcDocument, NpcStandardParameterValue } from "./parsing/documentTypes";
 import { parseNpcDocumentText } from "./parsing/parseNpcDocument";
+import {
+  addStandardParameter,
+  removeStandardParameter,
+  renameStandardParameter,
+  reorderStandardParameters,
+} from "./parsing/parameterMutations";
 import { serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
 
 export class Workspace {
@@ -25,6 +32,8 @@ export class Workspace {
   documentModel = $state<NpcDocument | null>(null);
   propertySections = $state<NpcPropertySection[]>([]);
   documentParseError = $state<string | null>(null);
+  parameterRenameRequestName = $state<string | null>(null);
+  parameterRenameRequestVersion = $state(0);
 
   setDescriptors({
     descriptors,
@@ -100,6 +109,80 @@ export class Workspace {
 
     this.refreshPropertySections();
     this.applyDocumentState();
+  }
+
+  addStandardParameter() {
+    if (!this.documentModel) {
+      return null;
+    }
+
+    const nextName = addStandardParameter(this.documentModel);
+    this.refreshPropertySections();
+    this.applyDocumentState();
+    return nextName;
+  }
+
+  renameStandardParameter(currentName: string, nextName: string) {
+    if (!this.documentModel?.parameters) {
+      return false;
+    }
+
+    const renamed = renameStandardParameter(this.documentModel.parameters, currentName, nextName);
+    if (!renamed) {
+      return false;
+    }
+
+    this.refreshPropertySections();
+    this.applyDocumentState();
+    return true;
+  }
+
+  removeStandardParameter(parameterName: string) {
+    if (!this.documentModel?.parameters) {
+      return false;
+    }
+
+    const removed = removeStandardParameter(this.documentModel.parameters, parameterName);
+    if (!removed) {
+      return false;
+    }
+
+    this.refreshPropertySections();
+    this.applyDocumentState();
+    return true;
+  }
+
+  reorderStandardParameters(parameterNames: string[]) {
+    if (!this.documentModel?.parameters) {
+      return false;
+    }
+
+    const reordered = reorderStandardParameters(this.documentModel.parameters, parameterNames);
+    if (!reordered) {
+      return false;
+    }
+
+    this.refreshPropertySections();
+    this.applyDocumentState();
+    return true;
+  }
+
+  handleContextAction(message: NpcRoleEditorContextActionMessage) {
+    switch (message.action) {
+      case "renameParameter":
+        this.parameterRenameRequestName = message.parameterName;
+        this.parameterRenameRequestVersion += 1;
+        return;
+      case "deleteParameter":
+        this.removeStandardParameter(message.parameterName);
+        return;
+      default:
+        return;
+    }
+  }
+
+  clearParameterRenameRequest() {
+    this.parameterRenameRequestName = null;
   }
 
   reparseDocument() {

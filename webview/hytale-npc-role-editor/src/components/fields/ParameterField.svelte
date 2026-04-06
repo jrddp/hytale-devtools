@@ -1,8 +1,9 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
-  import { GripVertical, Plus, SquareFunction } from "lucide-svelte";
+  import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
+  import type { Snippet } from "svelte";
   import type { NpcPropertyParameterField } from "../../propertyModel";
   import FieldPanel from "../FieldPanel.svelte";
   import { workspace } from "../../workspace.svelte";
@@ -15,7 +16,21 @@
 
   const FLIP_DURATION_MS = 100;
 
-  let { field }: { field: NpcPropertyParameterField } = $props();
+  let {
+    field,
+    titleContent,
+    handle,
+    onunset,
+    vscodeContext,
+    hideInfoButton = false,
+  }: {
+    field: NpcPropertyParameterField;
+    titleContent?: Snippet;
+    handle?: Snippet;
+    onunset?: () => void;
+    vscodeContext?: string;
+    hideInfoButton?: boolean;
+  } = $props();
 
   let scalarDraftValue = $state("");
   let rawJsonDraftValue = $state("");
@@ -157,10 +172,6 @@
     commitListItemViews(event.detail.items);
   }
 
-  function toggleComputeMode() {
-    workspace.toggleStandardParameterComputeMode(field.parameterName);
-  }
-
   function isListItemValue(value: unknown): value is ListItemValue {
     return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
   }
@@ -170,22 +181,6 @@
     return () => result?.destroy?.();
   };
 </script>
-
-{#snippet actions()}
-  <button
-    type="button"
-    class="inline-flex size-7 items-center justify-center rounded-md border border-vsc-border bg-vsc-button-bg text-vsc-button-fg transition-[background-color,color,border-color] hover:bg-vsc-button-hover"
-    class:bg-vsc-list-active-bg={field.valueMode === "compute"}
-    class:text-vsc-list-active-fg={field.valueMode === "compute"}
-    aria-label={field.valueMode === "compute"
-      ? `Use literal value for ${field.label}`
-      : `Use compute expression for ${field.label}`}
-    title={field.valueMode === "compute" ? "Use literal value" : "Use compute expression"}
-    onclick={toggleComputeMode}
-  >
-    <SquareFunction size={14} />
-  </button>
-{/snippet}
 
 {#snippet renderHandle()}
   <div
@@ -211,12 +206,17 @@
   infoItems={field.infoItems}
   inline={isInline}
   {summary}
-  {actions}
+  {titleContent}
+  {handle}
+  {onunset}
+  {vscodeContext}
+  {hideInfoButton}
 >
   {#if field.valueMode === "compute"}
     <SingleLineAutocompleteInput
       inputId={`npc-parameter-${field.id}`}
       initialValue={scalarDraftValue}
+      data-vscode-context={"{}"}
       placeholder="Compute expression"
       inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
       listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
@@ -233,6 +233,7 @@
       <input
         class="size-6 accent-vsc-activity-bar-badge-bg"
         type="checkbox"
+        data-vscode-context={"{}"}
         checked={field.literalValue === true}
         onchange={event => commitValue(event.currentTarget.checked)}
       />
@@ -240,6 +241,7 @@
   {:else if field.literalKind === "number"}
     <input
       type="text"
+      data-vscode-context={"{}"}
       class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
       bind:value={scalarDraftValue}
       placeholder="Unset"
@@ -260,6 +262,7 @@
     <SingleLineAutocompleteInput
       inputId={`npc-parameter-${field.id}`}
       initialValue={scalarDraftValue}
+      data-vscode-context={"{}"}
       placeholder="Unset"
       inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
       listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
@@ -289,12 +292,19 @@
         >
           {#each renderedItemViews as itemView, index (itemView.id)}
             <div animate:flip={{ duration: activeFlipDurationMs }}>
-              <FieldPanel title={`${index}`} inline handle={renderHandle}>
+              <FieldPanel
+                title={`${index}`}
+                inline
+                handle={renderHandle}
+                onunset={() =>
+                  commitListItemViews(itemViews.filter(item => item.id !== itemView.id))}
+              >
                 {#if typeof itemView.value === "boolean"}
                   <div class="inline-flex">
                     <input
                       class="size-6 accent-vsc-activity-bar-badge-bg"
                       type="checkbox"
+                      data-vscode-context={"{}"}
                       checked={itemView.value}
                       onchange={event => {
                         commitListItemViews(
@@ -313,6 +323,7 @@
                 {:else if typeof itemView.value === "number"}
                   <input
                     type="text"
+                    data-vscode-context={"{}"}
                     class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
                     value={String(itemView.value)}
                     inputmode="decimal"
@@ -343,6 +354,7 @@
                   <SingleLineAutocompleteInput
                     inputId={`npc-parameter-${field.id}-${itemView.id}`}
                     initialValue={String(itemView.value)}
+                    data-vscode-context={"{}"}
                     placeholder="Unset"
                     inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
                     listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
@@ -383,6 +395,7 @@
     </button>
   {:else}
     <textarea
+      data-vscode-context={"{}"}
       class="min-h-32 w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 font-mono text-sm text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
       bind:value={rawJsonDraftValue}
       placeholder="JSON value"

@@ -159,7 +159,7 @@ function buildVariantReferenceSection(
 
 function buildParameterSection(document: NpcDocument): NpcPropertySection | null {
   const parameters = document.parameters;
-  if (!parameters || parameters.entries.length === 0) {
+  if (!parameters && !document.roleType) {
     return null;
   }
 
@@ -167,7 +167,7 @@ function buildParameterSection(document: NpcDocument): NpcPropertySection | null
     id: "npc-section-parameters",
     name: "Parameters",
     description: "Template parameter values.",
-    fields: parameters.entries.map(entry => createParameterField(entry)),
+    fields: parameters?.entries.map(entry => createParameterField(entry)) ?? [],
   };
 }
 

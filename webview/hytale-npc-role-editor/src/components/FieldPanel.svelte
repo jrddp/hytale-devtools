@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createTooltip } from "@webview-shared/components/tooltip/createTooltip.svelte";
   import TooltipContent from "@webview-shared/components/tooltip/TooltipContent.svelte";
-  import { ChevronDown, ChevronRight, Info } from "lucide-svelte";
+  import { ChevronDown, ChevronRight, CircleX, Info } from "lucide-svelte";
   import type { Snippet } from "svelte";
   import type { NpcPropertyInfoItem } from "../propertyModel";
 
@@ -13,6 +13,10 @@
     summary,
     handle,
     actions,
+    titleContent,
+    onunset,
+    vscodeContext,
+    hideInfoButton = false,
     collapsed = $bindable(false),
     children,
   }: {
@@ -23,12 +27,28 @@
     summary?: string;
     handle?: Snippet;
     actions?: Snippet;
+    titleContent?: Snippet;
+    onunset?: () => void;
+    vscodeContext?: string;
+    hideInfoButton?: boolean;
     collapsed?: boolean;
     children: Snippet;
   } = $props();
 
   const hasTooltipContent = $derived(Boolean(description) || infoItems.length > 0);
   const infoTooltip = createTooltip();
+
+  function stopHeaderInteraction(event: Event) {
+    event.stopPropagation();
+  }
+
+  function stopHeaderKeydown(event: KeyboardEvent) {
+    if (event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+
+    event.stopPropagation();
+  }
 </script>
 
 {#snippet tooltipContent()}
@@ -54,7 +74,10 @@
 {/snippet}
 
 {#if inline}
-  <section class="rounded-md border border-vsc-border bg-vsc-panel">
+  <section
+    class="rounded-md border border-vsc-border bg-vsc-panel"
+    data-vscode-context={vscodeContext}
+  >
     <div class="group/inline-field flex min-h-12 items-center gap-1 px-4 py-2">
       <div class="relative flex w-56 min-w-0 shrink-0 items-center justify-between gap-1">
         <div class="flex min-w-0 items-center gap-1">
@@ -63,9 +86,15 @@
           {/if}
 
           <div class="flex min-w-0 items-center gap-1 truncate">
-            <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+            {#if titleContent}
+              <div class="relative min-w-0 max-w-full" role="presentation">
+                {@render titleContent()}
+              </div>
+            {:else}
+              <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+            {/if}
 
-            {#if hasTooltipContent}
+            {#if hasTooltipContent && !hideInfoButton}
               <button
                 {@attach infoTooltip.trigger}
                 class="relative inline-flex size-4 items-center justify-center rounded-sm opacity-70"
@@ -82,6 +111,20 @@
             {/if}
           </div>
         </div>
+
+        {#if onunset}
+          <button
+            type="button"
+            class="pointer-events-none inline-flex size-0 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/inline-field:size-6 group-hover/inline-field:pointer-events-auto group-hover/inline-field:opacity-100 group-focus-within/inline-field:pointer-events-auto group-focus-within/inline-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+            aria-label={`Delete ${title}`}
+            onclick={event => {
+              event.stopPropagation();
+              onunset();
+            }}
+          >
+            <CircleX size={14} />
+          </button>
+        {/if}
       </div>
 
       <div class="min-w-0 flex-1">
@@ -96,7 +139,10 @@
     </div>
   </section>
 {:else}
-  <section class="rounded-md border border-vsc-border bg-vsc-panel">
+  <section
+    class="rounded-md border border-vsc-border bg-vsc-panel"
+    data-vscode-context={vscodeContext}
+  >
     <div
       class="group/collapsible-field relative flex min-h-11 w-full items-center gap-3 rounded-t-md border-vsc-border px-3 py-2.5 transition-[background-color,box-shadow]"
       class:border-b={!collapsed}
@@ -125,9 +171,20 @@
           {/if}
         </span>
 
-        <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+        {#if titleContent}
+          <div
+            class="relative min-w-0 max-w-full"
+            role="presentation"
+            onkeydown={stopHeaderKeydown}
+            onclick={stopHeaderInteraction}
+          >
+            {@render titleContent()}
+          </div>
+        {:else}
+          <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+        {/if}
 
-        {#if hasTooltipContent}
+        {#if hasTooltipContent && !hideInfoButton}
           <button
             {@attach infoTooltip.trigger}
             class="relative inline-flex size-4 items-center justify-center rounded-sm opacity-70"
@@ -160,7 +217,7 @@
   </section>
 {/if}
 
-{#if hasTooltipContent}
+{#if hasTooltipContent && !hideInfoButton}
   <TooltipContent
     tooltip={infoTooltip}
     placement="right"

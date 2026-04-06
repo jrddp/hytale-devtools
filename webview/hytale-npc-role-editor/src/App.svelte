@@ -111,6 +111,9 @@
       case "error":
         extensionError = message.message;
         return;
+      case "contextAction":
+        workspace.handleContextAction(message);
+        return;
       default:
         return;
     }

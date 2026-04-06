@@ -3,7 +3,10 @@ import * as vscode from "vscode";
 import { AssetCacheRuntime } from "./asset-cache/assetCacheRuntime";
 import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
-import { registerHytaleNpcRoleEditorProvider } from "./npc-role-editor/hytaleNpcRoleEditorProvider";
+import {
+  registerHytaleNpcRoleEditorProvider,
+  triggerNpcRoleEditorContextAction,
+} from "./npc-role-editor/hytaleNpcRoleEditorProvider";
 import { WorkspaceRuntime } from "./node-editor/workspaceResolver";
 import { SchemaRuntime } from "./schema/schemaLoader";
 import { createSchemaWatcherRuntime } from "./schema/schemaWatcher";
@@ -96,6 +99,22 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   );
   context.subscriptions.push(changeModPatchlineCommand);
+
+  const renameNpcParameterCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.renameParameter",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("renameParameter", menuContext);
+    },
+  );
+  context.subscriptions.push(renameNpcParameterCommand);
+
+  const deleteNpcParameterCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.deleteParameter",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("deleteParameter", menuContext);
+    },
+  );
+  context.subscriptions.push(deleteNpcParameterCommand);
 
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));

@@ -9,6 +9,7 @@ import type {
 import type {
   NpcRoleEditorApplyMessage,
   NpcRoleEditorBootstrapMessage,
+  NpcRoleEditorContextActionMessage,
   NpcRoleEditorExtensionToWebviewMessage,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
@@ -17,16 +18,46 @@ import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../
 
 const VIEW_TYPE = "hytale-devtools.hytaleNpcRoleEditor";
 const NPC_DESCRIPTOR_FILE_NAME = "npc_descriptors.json";
+let activeProvider: HytaleNpcRoleEditorProvider | null = null;
 
 export function registerHytaleNpcRoleEditorProvider(
   context: vscode.ExtensionContext,
 ): vscode.Disposable {
   const provider = new HytaleNpcRoleEditorProvider(context);
-  return vscode.window.registerCustomEditorProvider(VIEW_TYPE, provider, {
+  activeProvider = provider;
+
+  const registration = vscode.window.registerCustomEditorProvider(VIEW_TYPE, provider, {
     webviewOptions: {
       enableFindWidget: true,
     },
     supportsMultipleEditorsPerDocument: true,
+  });
+
+  return vscode.Disposable.from(
+    registration,
+    new vscode.Disposable(() => {
+      if (activeProvider === provider) {
+        activeProvider = null;
+      }
+    }),
+  );
+}
+
+export async function triggerNpcRoleEditorContextAction(
+  action: NpcRoleEditorContextActionMessage["action"],
+  context: unknown,
+): Promise<void> {
+  const parameterName =
+    isRecord(context) && typeof context.parameterName === "string" ? context.parameterName : null;
+
+  if (!activeProvider || !parameterName) {
+    return;
+  }
+
+  await activeProvider.postContextAction({
+    type: "contextAction",
+    action,
+    parameterName,
   });
 }
 
@@ -37,6 +68,8 @@ type LoadedNpcDescriptors = {
 };
 
 class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
+  private activeWebviewPanel: vscode.WebviewPanel | null = null;
+
   constructor(private readonly context: vscode.ExtensionContext) {}
 
   public resolveCustomTextEditor(
@@ -88,8 +121,22 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
         }
       });
 
+      const viewStateSubscription = webviewPanel.onDidChangeViewState(event => {
+        if (event.webviewPanel.active) {
+          this.activeWebviewPanel = event.webviewPanel;
+        }
+      });
+
+      if (webviewPanel.active) {
+        this.activeWebviewPanel = webviewPanel;
+      }
+
       webviewPanel.onDidDispose(() => {
         documentChangeSubscription.dispose();
+        viewStateSubscription.dispose();
+        if (this.activeWebviewPanel === webviewPanel) {
+          this.activeWebviewPanel = null;
+        }
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: NpcRoleEditorWebviewToExtensionMessage) => {
@@ -164,6 +211,14 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
     await webview.postMessage(payload);
   }
 
+  public async postContextAction(message: NpcRoleEditorContextActionMessage): Promise<void> {
+    if (!this.activeWebviewPanel) {
+      return;
+    }
+
+    await this.activeWebviewPanel.webview.postMessage(message);
+  }
+
   private async openRawJsonInTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
@@ -204,6 +259,10 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 function getDocumentRange(document: vscode.TextDocument): vscode.Range {

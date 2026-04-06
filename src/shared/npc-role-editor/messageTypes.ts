@@ -19,6 +19,12 @@ export type NpcRoleEditorErrorMessage = {
   message: string;
 };
 
+export type NpcRoleEditorContextActionMessage = {
+  type: "contextAction";
+  action: "renameParameter" | "deleteParameter";
+  parameterName: string;
+};
+
 export type NpcRoleEditorApplyMessage = {
   type: "apply";
   text: string;
@@ -28,7 +34,8 @@ export type NpcRoleEditorApplyMessage = {
 export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorBootstrapMessage
   | NpcRoleEditorDocumentUpdateMessage
-  | NpcRoleEditorErrorMessage;
+  | NpcRoleEditorErrorMessage
+  | NpcRoleEditorContextActionMessage;
 
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }

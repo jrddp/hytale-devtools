@@ -113,11 +113,18 @@
           },
         }}
         onconsider={handleConsider}
-        onfinalize={handleFinalize}
+              onfinalize={handleFinalize}
       >
         {#each renderedItemViews as itemView, index (itemView.id)}
           <div animate:flip={{ duration: activeFlipDurationMs }}>
-            <FieldPanel title={`${index}`} inline handle={renderHandle}>
+            <FieldPanel
+              title={`${index}`}
+              inline
+              handle={renderHandle}
+              onunset={() => {
+                itemViews = itemViews.filter(item => item.id !== itemView.id);
+              }}
+            >
               {#if typeof itemView.value === "boolean"}
                 <div class="inline-flex">
                   <input
