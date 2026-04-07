@@ -1,4 +1,5 @@
 import type { NpcDescriptorDocument, NpcDescriptorSource } from "./descriptorTypes";
+import type { IndexReference } from "../indexTypes";
 
 export type NpcRoleEditorBootstrapMessage = {
   type: "bootstrap";
@@ -19,6 +20,12 @@ export type NpcRoleEditorErrorMessage = {
   message: string;
 };
 
+export type NpcRoleEditorAutocompletionValuesMessage = {
+  type: "autocompletionValues";
+  fieldId: string;
+  values: string[];
+};
+
 export type NpcRoleEditorContextActionMessage = {
   type: "contextAction";
   action: "renameParameter" | "deleteParameter" | "changeParameterType";
@@ -35,9 +42,11 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorBootstrapMessage
   | NpcRoleEditorDocumentUpdateMessage
   | NpcRoleEditorErrorMessage
+  | NpcRoleEditorAutocompletionValuesMessage
   | NpcRoleEditorContextActionMessage;
 
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
+  | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorApplyMessage;

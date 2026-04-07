@@ -19,7 +19,6 @@
     inputClass = "",
     listClass = "",
     optionClass = "",
-    commitDebounceMs = 200,
     oncommit,
     onfocus,
     ...inputAttributes
@@ -33,7 +32,6 @@
     inputClass?: string;
     listClass?: string;
     optionClass?: string;
-    commitDebounceMs?: number;
     oncommit?: (value: string) => boolean | void;
     onfocus?: () => void;
   } & Omit<HTMLInputAttributes, "id" | "type" | "value" | "class" | "placeholder" | "disabled"> =
@@ -47,7 +45,6 @@
   let autocompleteListElement = $state<HTMLDivElement>();
   let cursorPos = $state(0);
   let forcedOpen = $state(false);
-  let commitTimeout: ReturnType<typeof setTimeout> | undefined;
   let closeSuggestionsTimeout: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
@@ -59,7 +56,6 @@
 
   $effect(() => {
     return () => {
-      clearTimeout(commitTimeout);
       clearTimeout(closeSuggestionsTimeout);
     };
   });
@@ -100,15 +96,7 @@
     queueMicrotask(scrollActiveAutocompleteIntoView);
   });
 
-  function scheduleCommit(nextValue: string) {
-    clearTimeout(commitTimeout);
-    commitTimeout = setTimeout(() => {
-      commitNow(nextValue);
-    }, commitDebounceMs);
-  }
-
   function commitNow(nextValue = value) {
-    clearTimeout(commitTimeout);
     if (nextValue === lastCommittedValue) {
       return true;
     }
@@ -138,7 +126,6 @@
     const nextState = applyComputeAutocompleteOption(value, cursorPos, option);
     value = nextState.value;
     cursorPos = nextState.cursorPos;
-    commitNow(nextState.value);
     forcedOpen = false;
     isSuggestionsOpen = false;
     queueMicrotask(() => {
@@ -167,7 +154,6 @@
   function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
     value = event.currentTarget.value;
     syncSuggestionState(event.currentTarget);
-    scheduleCommit(value);
   }
 
   function handleBlur(event: FocusEvent & { currentTarget: HTMLInputElement }) {

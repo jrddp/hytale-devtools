@@ -1,8 +1,9 @@
 <script lang="ts">
   import { createTooltip } from "@webview-shared/components/tooltip/createTooltip.svelte";
   import TooltipContent from "@webview-shared/components/tooltip/TooltipContent.svelte";
-  import { ChevronDown, ChevronRight, CircleX, Info } from "lucide-svelte";
+  import { ChevronDown, ChevronRight, CircleX, Info, TriangleAlert } from "lucide-svelte";
   import type { Snippet } from "svelte";
+  import type { NpcEditorIssue } from "../issues";
   import type { NpcPropertyInfoItem } from "../propertyModel";
 
   let {
@@ -10,6 +11,7 @@
     typeLabel,
     description,
     infoItems = [],
+    issues = [],
     inline = true,
     summary,
     handle,
@@ -26,6 +28,7 @@
     typeLabel?: string;
     description?: string;
     infoItems?: NpcPropertyInfoItem[];
+    issues?: NpcEditorIssue[];
     inline?: boolean;
     summary?: string;
     handle?: Snippet;
@@ -41,6 +44,8 @@
 
   const hasTooltipContent = $derived(Boolean(description) || infoItems.length > 0);
   const infoTooltip = createTooltip();
+  const hasWarningIssues = $derived(issues.length > 0);
+  const warningTooltip = createTooltip();
 
   function stopHeaderInteraction(event: Event) {
     event.stopPropagation();
@@ -79,33 +84,44 @@
   </div>
 {/snippet}
 
+{#snippet warningTooltipContent()}
+  <div class="space-y-1">
+    <div class="font-semibold">Warning</div>
+    <ul class="pl-0 list-none">
+      {#each issues as issue (`${issue.code}-${issue.message}`)}
+        <li>- {issue.message}</li>
+      {/each}
+    </ul>
+  </div>
+{/snippet}
+
 {#if inline}
   <section
-    class="rounded-md border border-vsc-border bg-vsc-panel"
+    class="border rounded-md border-vsc-border bg-vsc-panel"
     data-vscode-context={vscodeContext}
     role="presentation"
     oncontextmenu={onContextMenu}
   >
-    <div class="group/inline-field flex min-h-12 items-center gap-1 px-4 py-2">
-      <div class="relative flex w-56 min-w-0 shrink-0 items-center justify-between gap-1">
-        <div class="flex min-w-0 items-center gap-1">
+    <div class="flex items-center gap-1 px-4 py-2 group/inline-field min-h-12">
+      <div class="relative flex items-center justify-between w-56 min-w-0 gap-1 shrink-0">
+        <div class="flex items-center min-w-0 gap-1">
           {#if handle}
             {@render handle()}
           {/if}
 
-          <div class="flex min-w-0 items-center gap-1 truncate">
+          <div class="flex items-center min-w-0 gap-1 truncate">
             {#if titleContent}
-              <div class="relative min-w-0 max-w-full" role="presentation">
+              <div class="relative max-w-full min-w-0" role="presentation">
                 {@render titleContent()}
               </div>
             {:else}
-              <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+              <h2 class="relative text-sm font-semibold truncate">{title}</h2>
             {/if}
 
             {#if hasTooltipContent && !hideInfoButton}
               <button
                 {@attach infoTooltip.trigger}
-                class="relative inline-flex size-4 items-center justify-center rounded-sm opacity-70"
+                class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-70"
                 aria-label={`Info about ${title}`}
                 tabindex={-1}
                 onclick={event => event.stopPropagation()}
@@ -114,8 +130,20 @@
               </button>
             {/if}
 
+            {#if hasWarningIssues}
+              <button
+                {@attach warningTooltip.trigger}
+                class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-80"
+                aria-label={`Warnings for ${title}`}
+                tabindex={-1}
+                onclick={event => event.stopPropagation()}
+                style:color={"var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
+              >
+                <TriangleAlert size={14} strokeWidth={2.5} />
+              </button>
+            {/if}
             {#if summary}
-              <div class="truncate text-xs text-vsc-muted">{summary}</div>
+              <div class="text-xs truncate text-vsc-muted">{summary}</div>
             {/if}
           </div>
         </div>
@@ -135,7 +163,7 @@
         {/if}
       </div>
 
-      <div class="min-w-0 flex-1">
+      <div class="flex-1 min-w-0">
         {@render children()}
       </div>
 
@@ -148,7 +176,7 @@
   </section>
 {:else}
   <section
-    class="rounded-md border border-vsc-border bg-vsc-panel"
+    class="border rounded-md border-vsc-border bg-vsc-panel"
     data-vscode-context={vscodeContext}
     role="presentation"
     oncontextmenu={onContextMenu}
@@ -172,8 +200,8 @@
         }
       }}
     >
-      <div class="relative flex min-w-0 flex-1 items-center gap-1">
-        <span class="inline-flex h-4 w-4 items-center opacity-75">
+      <div class="relative flex items-center flex-1 min-w-0 gap-1">
+        <span class="inline-flex items-center w-4 h-4 opacity-75">
           {#if collapsed}
             <ChevronRight size={16} />
           {:else}
@@ -183,7 +211,7 @@
 
         {#if titleContent}
           <div
-            class="relative min-w-0 max-w-full"
+            class="relative max-w-full min-w-0"
             role="presentation"
             onkeydown={stopHeaderKeydown}
             onclick={stopHeaderInteraction}
@@ -191,13 +219,26 @@
             {@render titleContent()}
           </div>
         {:else}
-          <h2 class="relative truncate text-sm font-semibold">{title}</h2>
+          <h2 class="relative text-sm font-semibold truncate">{title}</h2>
+        {/if}
+
+        {#if hasWarningIssues}
+          <button
+            {@attach warningTooltip.trigger}
+            class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-80"
+            aria-label={`Warnings for ${title}`}
+            tabindex={-1}
+            onclick={event => event.stopPropagation()}
+            style:color={"var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
+          >
+            <TriangleAlert size={12} />
+          </button>
         {/if}
 
         {#if hasTooltipContent && !hideInfoButton}
           <button
             {@attach infoTooltip.trigger}
-            class="relative inline-flex size-4 items-center justify-center rounded-sm opacity-70"
+            class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-70"
             aria-label={`Info about ${title}`}
             tabindex={-1}
             onclick={event => event.stopPropagation()}
@@ -208,9 +249,9 @@
       </div>
 
       {#if summary || actions}
-        <div class="relative z-10 flex min-w-0 shrink-0 items-center justify-end gap-3">
+        <div class="relative z-10 flex items-center justify-end min-w-0 gap-3 shrink-0">
           {#if summary}
-            <div class="truncate text-xs text-vsc-muted">{summary}</div>
+            <div class="text-xs truncate text-vsc-muted">{summary}</div>
           {/if}
           {#if actions}
             {@render actions()}
@@ -220,18 +261,28 @@
     </div>
 
     {#if !collapsed}
-      <div class="space-y-3 p-3">
+      <div class="p-3 space-y-3">
         {@render children()}
       </div>
     {/if}
   </section>
 {/if}
 
+{#if hasWarningIssues}
+  <TooltipContent
+    tooltip={warningTooltip}
+    placement="right"
+    class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-tooltip-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
+  >
+    {@render warningTooltipContent()}
+  </TooltipContent>
+{/if}
+
 {#if hasTooltipContent && !hideInfoButton}
   <TooltipContent
     tooltip={infoTooltip}
     placement="right"
-    class="z-50 max-w-lg rounded-md border border-vsc-tooltip-border bg-vsc-tooltip-bg p-2 text-xs text-left text-vsc-tooltip-fg shadow-lg"
+    class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-tooltip-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
   >
     {@render tooltipContent()}
   </TooltipContent>

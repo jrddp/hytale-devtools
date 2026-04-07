@@ -7,6 +7,7 @@ import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
 } from "@shared/npc-role-editor/descriptorTypes";
+import type { IndexReference } from "@shared/indexTypes";
 import type { VSCodeApi } from "./common";
 import { buildNpcPropertySections, type NpcPropertySection } from "./propertyModel";
 import type {
@@ -22,7 +23,16 @@ import {
   reorderStandardParameters,
   updateStandardParameterEditorType,
 } from "./parsing/parameterMutations";
-import { serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
+import { serializeNpcDocument, serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
+import {
+  buildParameterUsageIndex,
+  type ParameterUsageIndex,
+} from "./compute/parameterUsageIndex";
+import {
+  buildIssuesByFieldPath,
+  buildNpcIssues,
+  type NpcEditorIssue,
+} from "./issues";
 
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
@@ -36,7 +46,15 @@ export class Workspace {
   roleType = $state<string | null>(null);
   documentModel = $state<NpcDocument | null>(null);
   propertySections = $state<NpcPropertySection[]>([]);
+  parameterUsageIndex = $state<ParameterUsageIndex>({
+    usagesByParameter: new Map(),
+    directTranslationByFieldPath: new Map(),
+  });
+  issues = $state<NpcEditorIssue[]>([]);
+  issuesByFieldPath = $state<Map<string, NpcEditorIssue[]>>(new Map());
   documentParseError = $state<string | null>(null);
+  autocompleteField = $state<string>();
+  autocompleteValues = $state<string[]>([]);
   parameterRenameRequestName = $state<string | null>(null);
   parameterRenameRequestVersion = $state(0);
   parameterTypeChangeRequestName = $state<string | null>(null);
@@ -54,7 +72,22 @@ export class Workspace {
     this.descriptors = descriptors;
     this.descriptorPath = descriptorPath;
     this.descriptorSource = descriptorSource;
-    this.refreshPropertySections();
+    this.refreshDerivedState();
+  }
+
+  requestAutocomplete(fieldId: string, symbolLookup: IndexReference) {
+    const clonedSymbolLookup = $state.snapshot(symbolLookup) as IndexReference;
+    console.log("Posting autocomplete request: ", fieldId, clonedSymbolLookup);
+    this.vscode.postMessage({
+      type: "autocompleteRequest",
+      fieldId,
+      symbolLookup: clonedSymbolLookup,
+    } satisfies NpcRoleEditorWebviewToExtensionMessage);
+  }
+
+  setAutocompleteValues(fieldId: string, values: string[]) {
+    this.autocompleteField = fieldId;
+    this.autocompleteValues = [...values].sort((left, right) => left.localeCompare(right));
   }
 
   setDocument({
@@ -92,7 +125,7 @@ export class Workspace {
     }
 
     entry.value = value;
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
   }
 
@@ -114,7 +147,7 @@ export class Workspace {
       };
     }
 
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
   }
 
@@ -124,7 +157,7 @@ export class Workspace {
     }
 
     const nextName = addStandardParameter(this.documentModel);
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
     return nextName;
   }
@@ -139,7 +172,7 @@ export class Workspace {
       return false;
     }
 
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
     return true;
   }
@@ -154,7 +187,7 @@ export class Workspace {
       return false;
     }
 
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
     return true;
   }
@@ -169,7 +202,7 @@ export class Workspace {
       return false;
     }
 
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
     return true;
   }
@@ -191,9 +224,30 @@ export class Workspace {
       return false;
     }
 
-    this.refreshPropertySections();
+    this.refreshDerivedState();
     this.applyDocumentState();
     return true;
+  }
+
+  updateFieldValue(fieldPath: string, value: unknown) {
+    if (!this.documentModel) {
+      return false;
+    }
+
+    const updated = setValueAtFieldPath(this.documentModel.rawRoot, fieldPath, structuredClone(value));
+    if (!updated) {
+      return false;
+    }
+
+    this.refreshDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  updateFieldComputeExpression(fieldPath: string, expression: string) {
+    return this.updateFieldValue(fieldPath, {
+      Compute: expression,
+    });
   }
 
   handleContextAction(message: NpcRoleEditorContextActionMessage) {
@@ -227,6 +281,12 @@ export class Workspace {
       this.roleType = null;
       this.documentModel = null;
       this.propertySections = [];
+      this.parameterUsageIndex = {
+        usagesByParameter: new Map(),
+        directTranslationByFieldPath: new Map(),
+      };
+      this.issues = [];
+      this.issuesByFieldPath = new Map();
       this.documentParseError = null;
       return;
     }
@@ -236,6 +296,12 @@ export class Workspace {
     if (result.status === "error") {
       this.roleType = null;
       this.propertySections = [];
+      this.parameterUsageIndex = {
+        usagesByParameter: new Map(),
+        directTranslationByFieldPath: new Map(),
+      };
+      this.issues = [];
+      this.issuesByFieldPath = new Map();
       this.documentParseError = result.error;
       if (!this.documentModel) {
         this.documentModel = null;
@@ -246,22 +312,72 @@ export class Workspace {
     this.documentModel = result.document;
     this.roleType = result.document.roleType;
     this.documentParseError = null;
-    this.refreshPropertySections();
+    this.refreshDerivedState();
   }
 
-  private refreshPropertySections() {
+  private refreshDerivedState() {
     if (!this.documentModel) {
       this.roleType = null;
       this.propertySections = [];
+      this.parameterUsageIndex = {
+        usagesByParameter: new Map(),
+        directTranslationByFieldPath: new Map(),
+      };
+      this.issues = [];
+      this.issuesByFieldPath = new Map();
       return;
     }
 
+    const serializedDocument = serializeNpcDocument(
+      $state.snapshot(this.documentModel) as NpcDocument,
+    );
+    const parameterUsageIndex = buildParameterUsageIndex(serializedDocument);
+    const issues = buildNpcIssues(
+      $state.snapshot(this.documentModel) as NpcDocument,
+      parameterUsageIndex,
+    );
+    const issuesByFieldPath = buildIssuesByFieldPath(issues);
     this.roleType = this.documentModel.roleType;
     this.propertySections = buildNpcPropertySections(
       $state.snapshot(this.documentModel) as NpcDocument,
       $state.snapshot(this.descriptors),
+      parameterUsageIndex,
+      issuesByFieldPath,
     );
+    this.parameterUsageIndex = parameterUsageIndex;
+    this.issues = issues;
+    this.issuesByFieldPath = issuesByFieldPath;
   }
 }
 
 export const workspace = new Workspace();
+
+function setValueAtFieldPath(root: Record<string, unknown>, fieldPath: string, value: unknown): boolean {
+  const segments = fieldPath.split(".").filter(Boolean);
+  if (segments.length === 0) {
+    return false;
+  }
+
+  let current: unknown = root;
+
+  for (let index = 0; index < segments.length - 1; index += 1) {
+    const segment = segments[index];
+    if (!isRecord(current) || !(segment in current)) {
+      return false;
+    }
+
+    current = current[segment];
+  }
+
+  const lastSegment = segments.at(-1);
+  if (!lastSegment || !isRecord(current)) {
+    return false;
+  }
+
+  current[lastSegment] = value;
+  return true;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}

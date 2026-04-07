@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vscode from "vscode";
 import { LOGGER } from "../extension";
+import { getValuesByIndexReference } from "../schema/symbolResolver";
 import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
@@ -149,6 +150,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
           case "openRawJson":
             void this.openRawJsonInTextEditor(document, webviewPanel);
             return;
+          case "autocompleteRequest":
+            void this.autocompleteRequest(message, webviewPanel.webview);
+            return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
             return;
@@ -217,6 +221,17 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     await this.activeWebviewPanel.webview.postMessage(message);
+  }
+
+  private async autocompleteRequest(
+    message: Extract<NpcRoleEditorWebviewToExtensionMessage, { type: "autocompleteRequest" }>,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    await webview.postMessage({
+      type: "autocompletionValues",
+      fieldId: message.fieldId,
+      values: getValuesByIndexReference(message.symbolLookup),
+    } satisfies NpcRoleEditorExtensionToWebviewMessage);
   }
 
   private async openRawJsonInTextEditor(

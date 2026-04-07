@@ -3,12 +3,15 @@ import type {
   NpcDescriptorAttribute,
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
+import type { IndexReference } from "@shared/indexTypes";
 import type { NpcDocument, NpcStandardParameterEntry } from "./parsing/documentTypes";
+import type { NpcEditorIssue } from "./issues";
 import {
   getStandardParameterEditorType,
   getStandardParameterEditorTypeLabel,
 } from "./parsing/parameterEditorTypes";
 import type { NpcStandardParameterEditorType } from "./parsing/documentTypes";
+import type { ParameterUsageIndex } from "./compute/parameterUsageIndex";
 
 export type NpcPropertyInfoItem = {
   label: string;
@@ -23,17 +26,22 @@ export type NpcPropertyFieldBase = {
   typeLabel: string;
   description?: string;
   infoItems?: NpcPropertyInfoItem[];
+  issues?: NpcEditorIssue[];
 };
 
 export type NpcPropertyScalarField = NpcPropertyFieldBase & {
   type: "string" | "number" | "boolean" | "enum";
   value: string | number | boolean;
+  valueMode?: "literal" | "compute";
   options?: Array<{ value: string; description?: string }>;
+  symbolRef?: IndexReference;
+  itemSymbolRef?: IndexReference;
 };
 
 export type NpcPropertyListField = NpcPropertyFieldBase & {
   type: "list";
   items: Array<string | number | boolean>;
+  itemSymbolRef?: IndexReference;
 };
 
 export type NpcPropertyRawJsonField = NpcPropertyFieldBase & {
@@ -50,6 +58,8 @@ export type NpcPropertyParameterField = NpcPropertyFieldBase & {
   literalKind: "string" | "number" | "boolean" | "list" | "rawJson";
   literalValue?: unknown;
   computeExpression?: string;
+  symbolRef?: IndexReference;
+  itemSymbolRef?: IndexReference;
 };
 
 export type NpcPropertyField =
@@ -92,9 +102,27 @@ const ROLE_ATTRIBUTE_SKIP_KEYS = new Set([
   "$WorkspaceID",
 ]);
 
+const DOMAIN_TO_REGISTERED_ASSET_KEY: Record<string, string> = {
+  Model: "ModelAsset",
+  Item: "Item",
+  Role: "NPCRole",
+  Interaction: "RootInteraction",
+  BlockSet: "BlockSet",
+  ItemDropList: "ItemDropList",
+  AttitudeGroup: "AttitudeGroup",
+  ItemAttitudeGroup: "ItemAttitudeGroup",
+};
+
+type NpcFieldSymbolMetadata = {
+  symbolRef?: IndexReference;
+  itemSymbolRef?: IndexReference;
+};
+
 export function buildNpcPropertySections(
   document: NpcDocument,
   descriptors: NpcDescriptorDocument,
+  parameterUsageIndex: ParameterUsageIndex,
+  issuesByFieldPath: Map<string, NpcEditorIssue[]> = new Map(),
 ): NpcPropertySection[] {
   const sections: NpcPropertySection[] = [];
 
@@ -103,12 +131,29 @@ export function buildNpcPropertySections(
     sections.push(variantReferenceSection);
   }
 
-  const parameterSection = buildParameterSection(document);
+  const roleAttributeFields = buildRoleAttributeFields(
+    document.rawRoot,
+    document.roleType,
+    descriptors,
+    issuesByFieldPath,
+  );
+  const roleAttributeSymbolMetadataByFieldPath = new Map(
+    roleAttributeFields
+      .map(field => [field.fieldPath, extractFieldSymbolMetadata(field)] as const)
+      .filter(([, metadata]) => metadata.symbolRef || metadata.itemSymbolRef),
+  );
+
+  const parameterSection = buildParameterSection(
+    document,
+    roleAttributeSymbolMetadataByFieldPath,
+    parameterUsageIndex,
+    issuesByFieldPath,
+  );
   if (parameterSection) {
     sections.push(parameterSection);
   }
 
-  const roleAttributeSection = buildRoleAttributeSection(document.rawRoot, document.roleType, descriptors);
+  const roleAttributeSection = buildRoleAttributeSection(roleAttributeFields);
   if (roleAttributeSection) {
     sections.push(roleAttributeSection);
   }
@@ -166,7 +211,12 @@ function buildVariantReferenceSection(
   };
 }
 
-function buildParameterSection(document: NpcDocument): NpcPropertySection | null {
+function buildParameterSection(
+  document: NpcDocument,
+  roleAttributeSymbolMetadataByFieldPath: Map<string, NpcFieldSymbolMetadata>,
+  parameterUsageIndex: ParameterUsageIndex,
+  issuesByFieldPath: Map<string, NpcEditorIssue[]>,
+): NpcPropertySection | null {
   const parameters = document.parameters;
   if (!parameters && !document.roleType) {
     return null;
@@ -176,13 +226,31 @@ function buildParameterSection(document: NpcDocument): NpcPropertySection | null
     id: "npc-section-parameters",
     name: "Parameters",
     description: "Template parameter values.",
-    fields: parameters?.entries.map(entry => createParameterField(entry)) ?? [],
+    fields:
+      parameters?.entries.map(entry =>
+        createParameterField(
+          entry,
+          roleAttributeSymbolMetadataByFieldPath,
+          parameterUsageIndex,
+          issuesByFieldPath.get(`Parameters.${entry.name}.Value`) ?? [],
+        ),
+      ) ?? [],
   };
 }
 
-function createParameterField(entry: NpcStandardParameterEntry): NpcPropertyParameterField {
+function createParameterField(
+  entry: NpcStandardParameterEntry,
+  roleAttributeSymbolMetadataByFieldPath: Map<string, NpcFieldSymbolMetadata>,
+  parameterUsageIndex: ParameterUsageIndex,
+  issues: NpcEditorIssue[],
+): NpcPropertyParameterField {
   const infoItems: NpcPropertyInfoItem[] = [];
   const editorType = getStandardParameterEditorType(entry);
+  const symbolMetadata = resolveParameterSymbolMetadata(
+    entry.name,
+    roleAttributeSymbolMetadataByFieldPath,
+    parameterUsageIndex,
+  );
 
   if (entry.private === true) {
     infoItems.push({ label: "Private", value: "Yes" });
@@ -203,6 +271,7 @@ function createParameterField(entry: NpcStandardParameterEntry): NpcPropertyPara
     typeLabel: getStandardParameterEditorTypeLabel(editorType),
     description: toOptionalDisplayString(entry.description),
     infoItems,
+    issues,
     type: "parameter",
     parameterName: entry.name,
     valueMode: entry.value.kind,
@@ -211,6 +280,8 @@ function createParameterField(entry: NpcStandardParameterEntry): NpcPropertyPara
     literalKind: getLiteralKind(literalValue),
     literalValue,
     computeExpression: entry.value.kind === "compute" ? entry.value.expression : undefined,
+    symbolRef: symbolMetadata.symbolRef,
+    itemSymbolRef: symbolMetadata.itemSymbolRef,
   };
 }
 
@@ -235,12 +306,28 @@ function getLiteralKind(value: unknown): NpcPropertyParameterField["literalKind"
 }
 
 function buildRoleAttributeSection(
+  fields: NpcPropertyField[],
+): NpcPropertySection | null {
+  if (fields.length === 0) {
+    return null;
+  }
+
+  return {
+    id: "npc-section-role-attributes",
+    name: "Role Attributes",
+    description: "Top-level role settings surfaced from the current NPC role document.",
+    fields,
+  };
+}
+
+function buildRoleAttributeFields(
   documentData: Record<string, unknown>,
   roleType: string | null,
   descriptors: NpcDescriptorDocument,
-): NpcPropertySection | null {
+  issuesByFieldPath: Map<string, NpcEditorIssue[]>,
+): NpcPropertyField[] {
   if (roleType === "Variant") {
-    return null;
+    return [];
   }
 
   const roleDescriptor = resolveRoleDescriptor(roleType, descriptors);
@@ -274,20 +361,12 @@ function buildRoleAttributeSection(
         value,
         infoItems,
         descriptorAttribute,
+        issuesByFieldPath,
       }),
     );
   }
 
-  if (fields.length === 0) {
-    return null;
-  }
-
-  return {
-    id: "npc-section-role-attributes",
-    name: "Role Attributes",
-    description: "Top-level role settings surfaced from the current NPC role document.",
-    fields,
-  };
+  return fields;
 }
 
 function resolveRoleDescriptor(
@@ -314,6 +393,7 @@ function createPropertyField({
   value,
   infoItems = [],
   descriptorAttribute,
+  issuesByFieldPath = new Map(),
 }: {
   id: string;
   fieldPath: string;
@@ -324,7 +404,11 @@ function createPropertyField({
   value: unknown;
   infoItems?: NpcPropertyInfoItem[];
   descriptorAttribute?: NpcDescriptorAttribute;
+  issuesByFieldPath?: Map<string, NpcEditorIssue[]>;
 }): NpcPropertyField {
+  const symbolMetadata = resolveFieldSymbolMetadata(descriptorAttribute);
+  const issues = issuesByFieldPath.get(fieldPath) ?? [];
+
   if (isComputeExpression(value)) {
     return {
       id,
@@ -334,8 +418,12 @@ function createPropertyField({
       typeLabel: typeLabel ?? "String",
       description,
       infoItems: [...infoItems, { label: "Value Source", value: "Compute expression" }],
+      issues,
       type: "string",
       value: value.Compute,
+      valueMode: "compute",
+      symbolRef: symbolMetadata.symbolRef,
+      itemSymbolRef: symbolMetadata.itemSymbolRef,
     };
   }
 
@@ -348,6 +436,7 @@ function createPropertyField({
       typeLabel: typeLabel ?? "Boolean",
       description,
       infoItems,
+      issues,
       type: "boolean",
       value,
     };
@@ -362,6 +451,7 @@ function createPropertyField({
       typeLabel: typeLabel ?? "Number",
       description,
       infoItems,
+      issues,
       type: "number",
       value,
     };
@@ -378,6 +468,7 @@ function createPropertyField({
         typeLabel: typeLabel ?? "Enum",
         description,
         infoItems,
+        issues,
         type: "enum",
         value,
         options,
@@ -392,8 +483,12 @@ function createPropertyField({
       typeLabel: typeLabel ?? "String",
       description,
       infoItems,
+      issues,
       type: "string",
       value,
+      valueMode: "literal",
+      symbolRef: symbolMetadata.symbolRef,
+      itemSymbolRef: symbolMetadata.itemSymbolRef,
     };
   }
 
@@ -406,8 +501,10 @@ function createPropertyField({
       typeLabel: typeLabel ?? "List",
       description,
       infoItems,
+      issues,
       type: "list",
       items: value,
+      itemSymbolRef: symbolMetadata.itemSymbolRef,
     };
   }
 
@@ -419,9 +516,83 @@ function createPropertyField({
     typeLabel: typeLabel ?? "Raw JSON",
     description,
     infoItems,
+    issues,
     type: "rawJson",
     value,
   };
+}
+
+function resolveFieldSymbolMetadata(
+  descriptorAttribute?: NpcDescriptorAttribute,
+): NpcFieldSymbolMetadata {
+  if (!descriptorAttribute || typeof descriptorAttribute.Domain !== "string") {
+    return {};
+  }
+
+  const registeredAssetsKey = DOMAIN_TO_REGISTERED_ASSET_KEY[descriptorAttribute.Domain];
+  if (!registeredAssetsKey) {
+    return {};
+  }
+
+  if (descriptorAttribute.Type === "Asset") {
+    return {
+      symbolRef: {
+        indexKind: "registeredAssets",
+        key: registeredAssetsKey,
+      },
+    };
+  }
+
+  if (descriptorAttribute.Type === "AssetArray") {
+    return {
+      itemSymbolRef: {
+        indexKind: "registeredAssets",
+        key: registeredAssetsKey,
+      },
+    };
+  }
+
+  return {};
+}
+
+function extractFieldSymbolMetadata(field: NpcPropertyField): NpcFieldSymbolMetadata {
+  if (field.type === "list") {
+    return {
+      itemSymbolRef: field.itemSymbolRef,
+    };
+  }
+
+  if (field.type === "parameter") {
+    return {
+      symbolRef: field.symbolRef,
+      itemSymbolRef: field.itemSymbolRef,
+    };
+  }
+
+  if (field.type === "string" || field.type === "enum") {
+    return {
+      symbolRef: field.symbolRef,
+      itemSymbolRef: field.itemSymbolRef,
+    };
+  }
+
+  return {};
+}
+
+function resolveParameterSymbolMetadata(
+  parameterName: string,
+  roleAttributeSymbolMetadataByFieldPath: Map<string, NpcFieldSymbolMetadata>,
+  parameterUsageIndex: ParameterUsageIndex,
+): NpcFieldSymbolMetadata {
+  const directTranslationPaths = [...parameterUsageIndex.directTranslationByFieldPath.entries()]
+    .filter(([, directTranslationParameter]) => directTranslationParameter === parameterName)
+    .map(([fieldPath]) => fieldPath);
+
+  if (directTranslationPaths.length !== 1) {
+    return {};
+  }
+
+  return roleAttributeSymbolMetadataByFieldPath.get(directTranslationPaths[0]) ?? {};
 }
 
 function parseEnumOptions(

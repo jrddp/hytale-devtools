@@ -67,6 +67,11 @@
       scope: "standard",
     }),
   );
+  const stringAutocompleteOptions = $derived(
+    field.symbolRef && workspace.autocompleteField === `npc-parameter-${field.id}`
+      ? workspace.autocompleteValues.map(value => ({ value }))
+      : [],
+  );
 
   $effect(() => {
     if (field.valueMode === "compute") {
@@ -244,6 +249,30 @@
     return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
   }
 
+  function requestScalarAutocomplete() {
+    if (!field.symbolRef) {
+      return;
+    }
+
+    workspace.requestAutocomplete(`npc-parameter-${field.id}`, field.symbolRef);
+  }
+
+  function getListItemAutocompleteOptions(inputId: string) {
+    if (!field.itemSymbolRef || workspace.autocompleteField !== inputId) {
+      return [];
+    }
+
+    return workspace.autocompleteValues.map(value => ({ value }));
+  }
+
+  function requestListItemAutocomplete(inputId: string) {
+    if (!field.itemSymbolRef) {
+      return;
+    }
+
+    workspace.requestAutocomplete(inputId, field.itemSymbolRef);
+  }
+
   const gripHandle = (node: HTMLElement) => {
     const result = dragHandle(node);
     return () => result?.destroy?.();
@@ -273,6 +302,7 @@
   typeLabel={field.typeLabel}
   description={field.description}
   infoItems={field.infoItems}
+  issues={field.issues}
   inline={isInline}
   {summary}
   {titleContent}
@@ -333,10 +363,12 @@
       initialValue={scalarDraftValue}
       data-vscode-context={"{}"}
       placeholder="Unset"
+      autocompleteOptions={stringAutocompleteOptions}
       inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
       listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
       optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
       previewClass="z-[160]"
+      onfocus={requestScalarAutocomplete}
       oncommit={value => {
         scalarDraftValue = value;
         commitValue(value);
@@ -461,15 +493,18 @@
                     }}
                   />
                 {:else}
+                  {@const inputId = `npc-parameter-${field.id}-${itemView.id}`}
                   <SingleLineAutocompleteInput
-                    inputId={`npc-parameter-${field.id}-${itemView.id}`}
+                    {inputId}
                     initialValue={String(itemView.value)}
                     data-vscode-context={"{}"}
                     placeholder="Unset"
+                    autocompleteOptions={getListItemAutocompleteOptions(inputId)}
                     inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
                     listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
                     optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
                     previewClass="z-[160]"
+                    onfocus={() => requestListItemAutocomplete(inputId)}
                     oncommit={value => {
                       commitListItemViews(
                         itemViews.map(item =>

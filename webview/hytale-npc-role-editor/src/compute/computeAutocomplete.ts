@@ -76,6 +76,16 @@ const SENSOR_EVAL_IDENTIFIERS = [
   },
 ] as const;
 
+const BUILTIN_IDENTIFIER_NAMES = new Set<string>([
+  ...BUILTIN_FUNCTIONS.map(fn => fn.name),
+  ...BUILTIN_CONSTANTS.map(constant => constant.name),
+  ...SENSOR_EVAL_IDENTIFIERS.map(identifier => identifier.name),
+]);
+
+export function isNpcComputeNonParameterIdentifier(identifier: string): boolean {
+  return BUILTIN_IDENTIFIER_NAMES.has(identifier);
+}
+
 export function buildNpcComputeAutocompleteOptions({
   parameters,
   scope = "standard",

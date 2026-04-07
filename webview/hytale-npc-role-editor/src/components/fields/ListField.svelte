@@ -3,8 +3,8 @@
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
-  import { onMount } from "svelte";
   import type { NpcPropertyListField } from "../../propertyModel";
+  import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
   type ListItemView = {
@@ -21,11 +21,12 @@
   let draftItemViews = $state<ListItemView[] | null>(null);
   let nextItemId = 0;
 
-  onMount(() => {
+  $effect(() => {
     itemViews = field.items.map(value => ({
       id: getNextItemId(),
       value,
     }));
+    draftItemViews = null;
   });
 
   const renderedItemViews = $derived(draftItemViews ?? itemViews);
@@ -55,13 +56,13 @@
   }
 
   function addItem() {
-    itemViews = [
+    commitItemViews([
       ...itemViews,
       {
         id: getNextItemId(),
         value: getDefaultNewItemValue(),
       },
-    ];
+    ]);
   }
 
   function handleConsider(event: CustomEvent<DndEvent<ListItemView>>) {
@@ -70,7 +71,31 @@
 
   function handleFinalize(event: CustomEvent<DndEvent<ListItemView>>) {
     draftItemViews = null;
-    itemViews = event.detail.items;
+    commitItemViews(event.detail.items);
+  }
+
+  function commitItemViews(nextItemViews: ListItemView[]) {
+    itemViews = nextItemViews;
+    workspace.updateFieldValue(
+      field.fieldPath,
+      nextItemViews.map(item => item.value),
+    );
+  }
+
+  function getAutocompleteOptions(inputId: string) {
+    if (!field.itemSymbolRef || workspace.autocompleteField !== inputId) {
+      return [];
+    }
+
+    return workspace.autocompleteValues.map(value => ({ value }));
+  }
+
+  function requestAutocomplete(inputId: string) {
+    if (!field.itemSymbolRef) {
+      return;
+    }
+
+    workspace.requestAutocomplete(inputId, field.itemSymbolRef);
   }
 </script>
 
@@ -97,6 +122,7 @@
   typeLabel={field.typeLabel}
   description={field.description}
   infoItems={field.infoItems}
+  issues={field.issues}
   inline={false}
   {summary}
   bind:collapsed
@@ -123,7 +149,7 @@
               inline
               handle={renderHandle}
               onunset={() => {
-                itemViews = itemViews.filter(item => item.id !== itemView.id);
+                commitItemViews(itemViews.filter(item => item.id !== itemView.id));
               }}
             >
               {#if typeof itemView.value === "boolean"}
@@ -133,13 +159,15 @@
                     type="checkbox"
                     checked={itemView.value}
                     onchange={event => {
-                      itemViews = itemViews.map(item =>
-                        item.id === itemView.id
-                          ? {
-                              ...item,
-                              value: event.currentTarget.checked,
-                            }
-                          : item,
+                      commitItemViews(
+                        itemViews.map(item =>
+                          item.id === itemView.id
+                            ? {
+                                ...item,
+                                value: event.currentTarget.checked,
+                              }
+                            : item,
+                        ),
                       );
                     }}
                   />
@@ -151,36 +179,57 @@
                   value={String(itemView.value)}
                   inputmode="decimal"
                   oninput={event => {
-                    const nextValue = event.currentTarget.value;
-                    itemViews = itemViews.map(item =>
-                      item.id === itemView.id
-                        ? {
-                            ...item,
-                            value: nextValue === "" ? "" : Number(nextValue),
-                          }
-                        : item,
+                    const nextValue = event.currentTarget.value
+                      .trim()
+                      .replace(/[^\d.-]/g, "")
+                      .replace(/(?!^)-/g, "")
+                      .replace(/(\..*)\./g, "$1");
+                    event.currentTarget.value = nextValue;
+                  }}
+                  onblur={event => {
+                    const nextValue = Number(event.currentTarget.value);
+                    if (Number.isNaN(nextValue)) {
+                      event.currentTarget.value = String(itemView.value);
+                      return;
+                    }
+
+                    commitItemViews(
+                      itemViews.map(item =>
+                        item.id === itemView.id
+                          ? {
+                              ...item,
+                              value: nextValue,
+                            }
+                          : item,
+                      ),
                     );
                   }}
                 />
               {:else}
+                {@const inputId = `npc-property-${field.id}-${itemView.id}`}
                 <SingleLineAutocompleteInput
-                  inputId={`npc-property-${field.id}-${itemView.id}`}
+                  {inputId}
                   initialValue={String(itemView.value)}
                   placeholder="Unset"
+                  autocompleteOptions={getAutocompleteOptions(inputId)}
                   inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
                   listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
                   optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
                   previewClass="z-[160]"
+                  onfocus={() => requestAutocomplete(inputId)}
                   oncommit={value => {
-                    itemViews = itemViews.map(item =>
-                      item.id === itemView.id
-                        ? {
-                            ...item,
-                            value,
-                          }
-                        : item,
+                    commitItemViews(
+                      itemViews.map(item =>
+                        item.id === itemView.id
+                          ? {
+                              ...item,
+                              value,
+                            }
+                          : item,
+                      ),
                     );
                   }}
+                  afterEnterPressed={input => input.blur()}
                 />
               {/if}
             </FieldPanel>
