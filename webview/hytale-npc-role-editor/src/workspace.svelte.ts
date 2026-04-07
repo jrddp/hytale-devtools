@@ -104,8 +104,12 @@ export class Workspace {
     version: number;
   }) {
     this.documentPath = documentPath;
-    this.documentText = text;
     this.documentVersion = version;
+    if (this.documentText === text) {
+      return;
+    }
+
+    this.documentText = text;
     this.reparseDocument();
   }
 
@@ -114,9 +118,11 @@ export class Workspace {
       return;
     }
 
+    const text = serializeNpcDocumentText($state.snapshot(this.documentModel) as NpcDocument);
+    this.documentText = text;
     const payload: NpcRoleEditorApplyMessage = {
       type: "apply",
-      text: serializeNpcDocumentText($state.snapshot(this.documentModel) as NpcDocument),
+      text,
       sourceVersion: this.documentVersion,
     };
     this.vscode.postMessage(payload satisfies NpcRoleEditorWebviewToExtensionMessage);

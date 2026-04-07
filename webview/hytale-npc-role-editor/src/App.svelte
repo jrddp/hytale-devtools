@@ -231,7 +231,11 @@
       </div>
     </header>
 
-    <div bind:this={scrollRootElement} class="flex-1 min-h-0 overflow-auto">
+    <div
+      bind:this={scrollRootElement}
+      class="flex-1 min-h-0 overflow-auto"
+      style="overflow-anchor: none;"
+    >
       <div class="p-4">
         <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <aside class="space-y-4 lg:sticky lg:top-4">

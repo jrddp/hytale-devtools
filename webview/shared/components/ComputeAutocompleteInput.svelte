@@ -40,24 +40,16 @@
   let value = $state("");
   let lastCommittedValue = $state("");
   let isFocused = $state(false);
-  let isSuggestionsOpen = $state(false);
-  let activeAutocompleteIndex = $state(0);
+  let activeAutocompleteIndex = $state(-1);
   let autocompleteListElement = $state<HTMLDivElement>();
   let cursorPos = $state(0);
   let forcedOpen = $state(false);
-  let closeSuggestionsTimeout: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
-    if (!isFocused && initialValue !== lastCommittedValue) {
+    if (initialValue !== lastCommittedValue) {
       value = initialValue ?? "";
       lastCommittedValue = initialValue ?? "";
     }
-  });
-
-  $effect(() => {
-    return () => {
-      clearTimeout(closeSuggestionsTimeout);
-    };
   });
 
   const functionNames = $derived(
@@ -73,30 +65,34 @@
       context.activeFunctionName,
     ),
   );
+  const shouldAutocomplete = $derived(
+    isFocused && filteredAutocompleteOptions.length > 0 && (forcedOpen || context.shouldShow),
+  );
   const visibleAutocompleteOptions = $derived(
-    isSuggestionsOpen ? filteredAutocompleteOptions : [],
+    shouldAutocomplete ? filteredAutocompleteOptions : [],
   );
 
   $effect(() => {
-    if (visibleAutocompleteOptions.length === 0) {
-      activeAutocompleteIndex = 0;
-      return;
-    }
-
-    if (activeAutocompleteIndex >= visibleAutocompleteOptions.length) {
-      activeAutocompleteIndex = 0;
+    void value;
+    void cursorPos;
+    activeAutocompleteIndex = -1;
+    if (shouldAutocomplete) {
+      queueMicrotask(scrollActiveAutocompleteIntoView);
     }
   });
 
   $effect(() => {
-    if (!autocompleteListElement || visibleAutocompleteOptions.length === 0) {
+    if (!shouldAutocomplete || !autocompleteListElement) {
       return;
     }
 
     queueMicrotask(scrollActiveAutocompleteIntoView);
   });
 
-  function commitNow(nextValue = value) {
+  function confirmValue(nextValue = value) {
+    isFocused = false;
+    forcedOpen = false;
+    activeAutocompleteIndex = -1;
     if (nextValue === lastCommittedValue) {
       return true;
     }
@@ -111,15 +107,8 @@
     return true;
   }
 
-  function updateCursorState(target: HTMLInputElement | null) {
+  function updateCursorState(target: HTMLInputElement | null = inputElement ?? null) {
     cursorPos = target?.selectionStart ?? value.length;
-  }
-
-  function closeSuggestionsSoon() {
-    clearTimeout(closeSuggestionsTimeout);
-    closeSuggestionsTimeout = setTimeout(() => {
-      isSuggestionsOpen = false;
-    }, 150);
   }
 
   function applyAutocomplete(option: ComputeAutocompleteOption) {
@@ -127,7 +116,6 @@
     value = nextState.value;
     cursorPos = nextState.cursorPos;
     forcedOpen = false;
-    isSuggestionsOpen = false;
     queueMicrotask(() => {
       inputElement?.focus();
       inputElement?.setSelectionRange(nextState.cursorPos, nextState.cursorPos);
@@ -139,89 +127,99 @@
       return;
     }
 
-    const activeItem = autocompleteListElement.querySelector<HTMLElement>(
-      `[data-autocomplete-index="${activeAutocompleteIndex}"]`,
-    );
+    if (activeAutocompleteIndex === -1) {
+      const firstButton = autocompleteListElement.querySelector("button");
+      firstButton?.scrollIntoView({ block: "nearest" });
+      return;
+    }
+
+    const activeItem = autocompleteListElement.querySelector<HTMLElement>('[data-active="true"]');
     activeItem?.scrollIntoView({ block: "nearest" });
   }
 
-  function handleFocus(event: FocusEvent & { currentTarget: HTMLInputElement }) {
+  function handleFocus() {
     isFocused = true;
-    syncSuggestionState(event.currentTarget, true);
+    queueMicrotask(() => updateCursorState());
     onfocus?.();
   }
 
   function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
-    value = event.currentTarget.value;
-    syncSuggestionState(event.currentTarget);
+    updateCursorState(event.currentTarget);
   }
 
-  function handleBlur(event: FocusEvent & { currentTarget: HTMLInputElement }) {
-    isFocused = false;
+  function handleKeyup(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
     updateCursorState(event.currentTarget);
-    forcedOpen = false;
-    commitNow();
-    closeSuggestionsSoon();
   }
 
   function handleSelectionChange(event: Event & { currentTarget: HTMLInputElement }) {
-    syncSuggestionState(event.currentTarget);
+    const input = event.currentTarget;
+    queueMicrotask(() => updateCursorState(input));
   }
 
   function handleMouseup(event: MouseEvent & { currentTarget: HTMLInputElement }) {
-    syncSuggestionState(event.currentTarget);
+    const input = event.currentTarget;
+    queueMicrotask(() => updateCursorState(input));
   }
 
-  function handleKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
+  function handleClick(event: MouseEvent & { currentTarget: HTMLInputElement }) {
+    const input = event.currentTarget;
+    queueMicrotask(() => updateCursorState(input));
+  }
+
+  function handleBlur(event: FocusEvent & { currentTarget: HTMLInputElement }) {
+    confirmValue();
+  }
+
+  function handleInputKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
     if (event.key === " " && event.ctrlKey) {
       event.preventDefault();
-      syncSuggestionState(event.currentTarget, true);
-      return;
-    }
-
-    if (event.key === "Escape") {
-      event.preventDefault();
-      forcedOpen = false;
-      isSuggestionsOpen = false;
-      return;
-    }
-
-    if (!isSuggestionsOpen || visibleAutocompleteOptions.length === 0) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        commitNow();
-      }
+      event.stopPropagation();
+      forcedOpen = true;
+      activeAutocompleteIndex = -1;
       return;
     }
 
     switch (event.key) {
       case "ArrowDown":
+        if (!shouldAutocomplete) return;
         event.preventDefault();
+        event.stopPropagation();
         activeAutocompleteIndex = (activeAutocompleteIndex + 1) % visibleAutocompleteOptions.length;
         queueMicrotask(scrollActiveAutocompleteIntoView);
         return;
       case "ArrowUp":
+        if (!shouldAutocomplete) return;
         event.preventDefault();
+        event.stopPropagation();
         activeAutocompleteIndex =
-          (activeAutocompleteIndex - 1 + visibleAutocompleteOptions.length) %
-          visibleAutocompleteOptions.length;
+          activeAutocompleteIndex === -1
+            ? 0
+            : (activeAutocompleteIndex - 1 + visibleAutocompleteOptions.length) %
+              visibleAutocompleteOptions.length;
         queueMicrotask(scrollActiveAutocompleteIntoView);
         return;
-      case "Tab":
-      case "Enter":
+      case "Escape":
         event.preventDefault();
-        const selectedOption = visibleAutocompleteOptions[activeAutocompleteIndex];
-        const satisfiedResult = selectedOption
-          ? resolveSatisfiedComputeAutocomplete(
-              value,
-              cursorPos,
-              selectedOption,
-              functionNames,
-            )
-          : null;
+        event.stopPropagation();
+        event.currentTarget.blur();
+        return;
+      case "Tab":
+        if (!shouldAutocomplete) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const tabSelectedOption = visibleAutocompleteOptions[activeAutocompleteIndex];
+        if (!tabSelectedOption) {
+          return;
+        }
+
+        const satisfiedResult = resolveSatisfiedComputeAutocomplete(
+          value,
+          cursorPos,
+          tabSelectedOption,
+          functionNames,
+        );
         if (satisfiedResult) {
           forcedOpen = false;
-          isSuggestionsOpen = false;
           queueMicrotask(() => {
             inputElement?.focus();
             inputElement?.setSelectionRange(
@@ -232,55 +230,34 @@
           return;
         }
 
-        if (selectedOption) {
-          applyAutocomplete(selectedOption);
+        applyAutocomplete(tabSelectedOption);
+        return;
+      case "Enter":
+        event.preventDefault();
+        event.stopPropagation();
+        if (shouldAutocomplete) {
+          const selectedOption = visibleAutocompleteOptions[activeAutocompleteIndex];
+          if (selectedOption) {
+            const satisfiedEnterResult = resolveSatisfiedComputeAutocomplete(
+              value,
+              cursorPos,
+              selectedOption,
+              functionNames,
+            );
+            if (!satisfiedEnterResult) {
+              const nextState = applyComputeAutocompleteOption(value, cursorPos, selectedOption);
+              value = nextState.value;
+              cursorPos = nextState.cursorPos;
+            }
+          }
         }
+        confirmValue();
+        event.currentTarget.blur();
         return;
       default:
-        queueMicrotask(() => {
-          syncSuggestionState(event.currentTarget);
-        });
         return;
     }
   }
-
-  function syncSuggestionState(target: HTMLInputElement | null, forceOpen = false) {
-    updateCursorState(target);
-    if (!target) {
-      isSuggestionsOpen = false;
-      return;
-    }
-
-    if (forceOpen) {
-      forcedOpen = true;
-    }
-
-    const nextContext = getComputeAutocompleteContext(
-      target.value,
-      target.selectionStart ?? target.value.length,
-      functionNames,
-    );
-    isSuggestionsOpen = forcedOpen || nextContext.shouldShow;
-  }
-
-  $effect(() => {
-    if (typeof document === "undefined") {
-      return;
-    }
-
-    function handleDocumentSelectionChange() {
-      if (!inputElement || document.activeElement !== inputElement) {
-        return;
-      }
-
-      syncSuggestionState(inputElement);
-    }
-
-    document.addEventListener("selectionchange", handleDocumentSelectionChange);
-    return () => {
-      document.removeEventListener("selectionchange", handleDocumentSelectionChange);
-    };
-  });
 
   function getKindIcon(kind: ComputeAutocompleteOption["kind"]) {
     switch (kind) {
@@ -311,22 +288,22 @@
     id={inputId}
     type="text"
     class={inputClass}
-    class:rounded-b-none={isSuggestionsOpen && visibleAutocompleteOptions.length > 0}
+    class:rounded-b-none={shouldAutocomplete}
     bind:value
     {placeholder}
     {disabled}
     {...inputAttributes}
     onfocus={handleFocus}
     oninput={handleInput}
-    onkeydown={handleKeydown}
-    onblur={handleBlur}
-    onkeyup={handleSelectionChange}
+    onkeydown={handleInputKeydown}
+    onkeyup={handleKeyup}
     onselect={handleSelectionChange}
+    onblur={handleBlur}
     onmouseup={handleMouseup}
-    onclick={event => updateCursorState(event.currentTarget)}
+    onclick={handleClick}
   />
 
-  {#if isSuggestionsOpen && visibleAutocompleteOptions.length > 0}
+  {#if shouldAutocomplete}
     <div
       bind:this={autocompleteListElement}
       role="listbox"
@@ -342,15 +319,14 @@
           role="option"
           aria-selected={index === activeAutocompleteIndex}
           data-autocomplete-index={index}
+          data-active={index === activeAutocompleteIndex}
           class={optionClass}
           class:border-vsc-focus={index === activeAutocompleteIndex}
           class:bg-vsc-list-active-bg={index === activeAutocompleteIndex}
           class:text-vsc-list-active-fg={index === activeAutocompleteIndex}
           onpointermove={() => (activeAutocompleteIndex = index)}
-          onmousedown={event => {
-            event.preventDefault();
-            applyAutocomplete(option);
-          }}
+          onpointerdown={event => event.preventDefault()}
+          onclick={() => applyAutocomplete(option)}
         >
           <div class="flex items-stretch gap-2">
             <div
