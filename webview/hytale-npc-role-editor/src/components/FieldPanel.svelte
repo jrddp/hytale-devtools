@@ -54,8 +54,9 @@
     Boolean(tooltipContent) || Boolean(description) || infoItems.length > 0,
   );
   const infoTooltip = createTooltip({ interactive: true });
-  const hasWarningIssues = $derived(issues.length > 0);
-  const warningTooltip = createTooltip();
+  const hasIssues = $derived(issues.length > 0);
+  const hasErrorIssues = $derived(issues.some(issue => issue.severity === "error"));
+  const issueTooltip = createTooltip();
 
   $effect(() => {
     if (infoTooltipPinned) {
@@ -106,9 +107,9 @@
   {/if}
 {/snippet}
 
-{#snippet warningTooltipContent()}
+{#snippet issueTooltipContent()}
   <div class="space-y-1">
-    <div class="font-semibold">Warning</div>
+    <div class="font-semibold">{issues.length === 1 ? "Issue" : "Issues"}</div>
     <ul class="pl-0 list-none">
       {#each issues as issue (`${issue.code}-${issue.message}`)}
         <li>- {issue.message}</li>
@@ -156,14 +157,16 @@
               </button>
             {/if}
 
-            {#if hasWarningIssues}
+            {#if hasIssues}
               <button
-                {@attach warningTooltip.trigger}
+                {@attach issueTooltip.trigger}
                 class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-80"
-                aria-label={`Warnings for ${title}`}
+                aria-label={`Issues for ${title}`}
                 tabindex={-1}
                 onclick={event => event.stopPropagation()}
-                style:color={"var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
+                style:color={hasErrorIssues
+                  ? "var(--vscode-errorForeground)"
+                  : "var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
               >
                 <TriangleAlert size={14} strokeWidth={2.5} />
               </button>
@@ -248,14 +251,16 @@
           <h2 class="relative text-sm font-semibold truncate">{title}</h2>
         {/if}
 
-        {#if hasWarningIssues}
+        {#if hasIssues}
           <button
-            {@attach warningTooltip.trigger}
+            {@attach issueTooltip.trigger}
             class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-80"
-            aria-label={`Warnings for ${title}`}
+            aria-label={`Issues for ${title}`}
             tabindex={-1}
             onclick={event => event.stopPropagation()}
-            style:color={"var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
+            style:color={hasErrorIssues
+              ? "var(--vscode-errorForeground)"
+              : "var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
           >
             <TriangleAlert size={12} />
           </button>
@@ -298,13 +303,13 @@
   </section>
 {/if}
 
-{#if hasWarningIssues}
+{#if hasIssues}
   <TooltipContent
-    tooltip={warningTooltip}
+    tooltip={issueTooltip}
     placement="right"
     class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-tooltip-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
   >
-    {@render warningTooltipContent()}
+    {@render issueTooltipContent()}
   </TooltipContent>
 {/if}
 

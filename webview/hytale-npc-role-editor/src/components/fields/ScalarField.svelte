@@ -41,6 +41,14 @@
       scope: "standard",
     }),
   );
+  const hasComputeIssues = $derived(
+    field.issues?.some(issue => issue.code.startsWith("compute-")) ?? false,
+  );
+  const computeInputStyle = $derived(
+    hasComputeIssues
+      ? "border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));"
+      : undefined,
+  );
 
   function sanitizeNumber(value: string) {
     return value
@@ -88,6 +96,7 @@
       inputId={inputId}
       initialValue={draftValue}
       data-vscode-context={"{}"}
+      style={computeInputStyle}
       placeholder="Type for suggestions"
       autocompleteOptions={computeAutocompleteOptions}
       inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"

@@ -6,6 +6,7 @@ import type {
 import type { IndexReference } from "@shared/indexTypes";
 import type { NpcDocument, NpcStandardParameterEntry } from "./parsing/documentTypes";
 import type { NpcEditorIssue } from "./issues";
+import { isNpcRoleAttributeKey } from "./roleAttributes";
 import {
   getStandardParameterEditorType,
   getStandardParameterEditorTypeLabel,
@@ -75,33 +76,6 @@ export type NpcPropertySection = {
   description?: string;
   fields: NpcPropertyField[];
 };
-
-const ROLE_ATTRIBUTE_SKIP_KEYS = new Set([
-  "Type",
-  "Parameters",
-  "Instructions",
-  "InteractionInstruction",
-  "DeathInstruction",
-  "StateTransitions",
-  "MotionControllerList",
-  "Content",
-  "Class",
-  "Interface",
-  "Reference",
-  "Modify",
-  "TestType",
-  "FailReason",
-  "$Comment",
-  "$Title",
-  "$TODO",
-  "$Author",
-  "$NodeEditorMetadata",
-  "$Position",
-  "$NodeId",
-  "$FloatingFunctionNodes",
-  "$Groups",
-  "$WorkspaceID",
-]);
 
 const DOMAIN_TO_REGISTERED_ASSET_KEY: Record<string, string> = {
   Model: "ModelAsset",
@@ -372,7 +346,7 @@ function buildRoleAttributeFields(
   const fields: NpcPropertyField[] = [];
 
   const sortedEntries = Object.entries(documentData)
-    .filter(([key]) => !ROLE_ATTRIBUTE_SKIP_KEYS.has(key) && !key.startsWith("$"))
+    .filter(([key]) => isNpcRoleAttributeKey(key))
     .sort(([left], [right]) => left.localeCompare(right));
 
   for (const [key, value] of sortedEntries) {
