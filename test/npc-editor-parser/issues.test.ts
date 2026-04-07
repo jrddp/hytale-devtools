@@ -38,6 +38,7 @@ describe("npc editor issues", () => {
           createParameterEntry("Appearance", { kind: "literal", value: "" }),
           createParameterEntry("UsedParameter", { kind: "literal", value: 10 }),
         ],
+        importStates: null,
         excludedEntries: {},
         keyOrder: ["Appearance", "UsedParameter"],
       },

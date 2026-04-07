@@ -42,10 +42,21 @@ function parseParameters(value: unknown): NpcParameters | null {
   }
 
   const entries: NpcStandardParameterEntry[] = [];
+  let importStates: string[] | null = null;
   const excludedEntries: Record<string, unknown> = {};
   const keyOrder = Object.keys(value);
 
   for (const [parameterName, parameterValue] of Object.entries(value)) {
+    if (parameterName === "_ImportStates") {
+      if (isStringArray(parameterValue)) {
+        importStates = structuredClone(parameterValue);
+        continue;
+      }
+
+      excludedEntries[parameterName] = structuredClone(parameterValue);
+      continue;
+    }
+
     if (parameterName.startsWith("_") || !isRecord(parameterValue) || !("Value" in parameterValue)) {
       excludedEntries[parameterName] = structuredClone(parameterValue);
       continue;
@@ -73,6 +84,7 @@ function parseParameters(value: unknown): NpcParameters | null {
 
   return {
     entries,
+    importStates,
     excludedEntries,
     keyOrder,
   };
@@ -98,4 +110,8 @@ function isComputeExpression(value: unknown): value is { Compute: string } {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(item => typeof item === "string");
 }

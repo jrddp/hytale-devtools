@@ -34,6 +34,7 @@ import {
   buildNpcIssues,
   type NpcEditorIssue,
 } from "./issues";
+import { discoverNpcMainStates } from "./states/discoverStates";
 
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
@@ -53,6 +54,7 @@ export class Workspace {
   });
   issues = $state<NpcEditorIssue[]>([]);
   issuesByFieldPath = $state<Map<string, NpcEditorIssue[]>>(new Map());
+  discoveredStates = $state<string[]>([]);
   documentParseError = $state<string | null>(null);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
@@ -80,7 +82,6 @@ export class Workspace {
 
   requestAutocomplete(fieldId: string, symbolLookup: IndexReference) {
     const clonedSymbolLookup = $state.snapshot(symbolLookup) as IndexReference;
-    console.log("Posting autocomplete request: ", fieldId, clonedSymbolLookup);
     this.vscode.postMessage({
       type: "autocompleteRequest",
       fieldId,
@@ -256,6 +257,10 @@ export class Workspace {
       return false;
     }
 
+    if (fieldPath === "Parameters._ImportStates") {
+      return this.updateImportStates(value);
+    }
+
     const updated = setValueAtFieldPath(this.documentModel.rawRoot, fieldPath, structuredClone(value));
     if (!updated) {
       return false;
@@ -317,6 +322,7 @@ export class Workspace {
       };
       this.issues = [];
       this.issuesByFieldPath = new Map();
+      this.discoveredStates = [];
       this.documentParseError = null;
       return;
     }
@@ -332,6 +338,7 @@ export class Workspace {
       };
       this.issues = [];
       this.issuesByFieldPath = new Map();
+      this.discoveredStates = [];
       this.documentParseError = result.error;
       if (!this.documentModel) {
         this.documentModel = null;
@@ -355,6 +362,7 @@ export class Workspace {
       };
       this.issues = [];
       this.issuesByFieldPath = new Map();
+      this.discoveredStates = [];
       return;
     }
 
@@ -367,16 +375,59 @@ export class Workspace {
       parameterUsageIndex,
     );
     const issuesByFieldPath = buildIssuesByFieldPath(issues);
+    const discoveredStates = discoverNpcMainStates(serializedDocument);
     this.roleType = this.documentModel.roleType;
     this.propertySections = buildNpcPropertySections(
       $state.snapshot(this.documentModel) as NpcDocument,
       $state.snapshot(this.descriptors),
       parameterUsageIndex,
+      discoveredStates,
       issuesByFieldPath,
     );
     this.parameterUsageIndex = parameterUsageIndex;
     this.issues = issues;
     this.issuesByFieldPath = issuesByFieldPath;
+    this.discoveredStates = discoveredStates;
+  }
+
+  private updateImportStates(value: unknown) {
+    if (!Array.isArray(value) || !value.every(item => typeof item === "string")) {
+      return false;
+    }
+
+    if (!this.documentModel) {
+      return false;
+    }
+
+    if (!this.documentModel.parameters) {
+      this.documentModel.parameters = {
+        entries: [],
+        importStates: [],
+        excludedEntries: {},
+        keyOrder: [],
+      };
+    }
+
+    this.documentModel.parameters.importStates = [...value];
+    delete this.documentModel.parameters.excludedEntries._ImportStates;
+
+    if (!this.documentModel.parameters.keyOrder.includes("_ImportStates")) {
+      this.documentModel.parameters.keyOrder = [
+        "_ImportStates",
+        ...this.documentModel.parameters.keyOrder,
+      ];
+    }
+
+    if (!isRecord(this.documentModel.rawRoot.Parameters)) {
+      this.documentModel.rawRoot.Parameters = {};
+    }
+
+    (this.documentModel.rawRoot.Parameters as Record<string, unknown>)._ImportStates =
+      structuredClone(value);
+
+    this.refreshDerivedState();
+    this.applyDocumentState();
+    return true;
   }
 }
 

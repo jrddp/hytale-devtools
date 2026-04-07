@@ -63,7 +63,24 @@ describe("npc editor parseNpcDocumentText", () => {
     );
 
     expect(document.roleType).toBe("Component");
-    expect(document.parameters?.excludedEntries._ImportStates).toBeDefined();
+    expect(document.parameters?.importStates).toEqual(["Alerted", "Search", "Chase"]);
+    expect(document.parameters?.excludedEntries._ImportStates).toBeUndefined();
     expect(document.parameters?.entries.every(entry => entry.name !== "_ImportStates")).toBe(true);
+  });
+
+  test("preserves malformed _ImportStates as an excluded special entry", () => {
+    const document = expectReady(
+      parseNpcDocumentText(
+        JSON.stringify({
+          Type: "Component",
+          Parameters: {
+            _ImportStates: ["Idle", 2],
+          },
+        }),
+      ),
+    );
+
+    expect(document.parameters?.importStates).toBeNull();
+    expect(document.parameters?.excludedEntries._ImportStates).toEqual(["Idle", 2]);
   });
 });

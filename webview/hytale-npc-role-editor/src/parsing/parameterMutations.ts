@@ -19,6 +19,7 @@ export function ensureNpcParameters(document: NpcDocument): NpcParameters {
 
   document.parameters = {
     entries: [],
+    importStates: null,
     excludedEntries: {},
     keyOrder: [],
   };

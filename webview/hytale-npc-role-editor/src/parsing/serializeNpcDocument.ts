@@ -39,6 +39,11 @@ function serializeParameters(document: NpcDocument): Record<string, unknown> {
   const serializedEntries = new Map<string, unknown>();
 
   for (const key of parameters.keyOrder) {
+    if (key === "_ImportStates" && parameters.importStates !== null) {
+      serializedEntries.set(key, structuredClone(parameters.importStates));
+      continue;
+    }
+
     if (standardEntriesByName.has(key)) {
       serializedEntries.set(key, standardEntriesByName.get(key));
       continue;
@@ -53,6 +58,10 @@ function serializeParameters(document: NpcDocument): Record<string, unknown> {
     if (!serializedEntries.has(entry.name)) {
       serializedEntries.set(entry.name, serializeStandardParameterEntry(entry));
     }
+  }
+
+  if (parameters.importStates !== null && !serializedEntries.has("_ImportStates")) {
+    serializedEntries.set("_ImportStates", structuredClone(parameters.importStates));
   }
 
   for (const [key, value] of Object.entries(parameters.excludedEntries)) {

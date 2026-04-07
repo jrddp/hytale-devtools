@@ -45,6 +45,7 @@ describe("npc property model symbol enrichment", () => {
           createParameterEntry("Appearance", { kind: "literal", value: "" }),
           createParameterEntry("HotbarItems", { kind: "literal", value: [] }),
         ],
+        importStates: null,
         excludedEntries: {},
         keyOrder: ["Appearance", "HotbarItems"],
       },
@@ -75,6 +76,7 @@ describe("npc property model symbol enrichment", () => {
       document,
       descriptors,
       buildParameterUsageIndex(document.rawRoot),
+      [],
     );
 
     const parameterSection = sections.find(section => section.id === "npc-section-parameters");
@@ -118,6 +120,7 @@ describe("npc property model symbol enrichment", () => {
       },
       parameters: {
         entries: [createParameterEntry("Appearance", { kind: "literal", value: "" })],
+        importStates: null,
         excludedEntries: {},
         keyOrder: ["Appearance"],
       },
@@ -148,6 +151,7 @@ describe("npc property model symbol enrichment", () => {
       document,
       descriptors,
       buildParameterUsageIndex(document.rawRoot),
+      [],
     );
     const parameterSection = sections.find(section => section.id === "npc-section-parameters");
     const appearanceField = parameterSection?.fields.find(field => field.key === "Appearance");
@@ -172,6 +176,7 @@ describe("npc property model symbol enrichment", () => {
       },
       parameters: {
         entries: [createParameterEntry("Appearance", { kind: "literal", value: "" })],
+        importStates: null,
         excludedEntries: {},
         keyOrder: ["Appearance"],
       },
@@ -181,6 +186,7 @@ describe("npc property model symbol enrichment", () => {
       document,
       [],
       buildParameterUsageIndex(document.rawRoot),
+      [],
       buildIssuesByFieldPath(
         buildNpcIssues(document, buildParameterUsageIndex(document.rawRoot)),
       ),
@@ -195,6 +201,44 @@ describe("npc property model symbol enrichment", () => {
           code: "unused-parameter",
         },
       ],
+    });
+  });
+
+  test("adds a dedicated import states field for components", () => {
+    const document: NpcDocument = {
+      roleType: "Component",
+      rawRoot: {
+        Type: "Component",
+        Parameters: {
+          _ImportStates: ["Idle"],
+          AlertedRange: {
+            Value: 10,
+          },
+        },
+      },
+      parameters: {
+        entries: [createParameterEntry("AlertedRange", { kind: "literal", value: 10 })],
+        importStates: ["Idle"],
+        excludedEntries: {},
+        keyOrder: ["_ImportStates", "AlertedRange"],
+      },
+    };
+
+    const sections = buildNpcPropertySections(
+      document,
+      [],
+      buildParameterUsageIndex(document.rawRoot),
+      ["Alerted", "Idle", "Search"],
+    );
+    const parameterSection = sections.find(section => section.id === "npc-section-parameters");
+    const importStatesField = parameterSection?.fields[0];
+
+    expect(importStatesField).toMatchObject({
+      type: "list",
+      fieldPath: "Parameters._ImportStates",
+      label: "Import States",
+      items: ["Idle"],
+      itemAutocompleteValues: ["Alerted", "Idle", "Search"],
     });
   });
 });

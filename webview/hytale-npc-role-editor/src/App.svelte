@@ -109,8 +109,6 @@
         workspace.setDocument(message);
         return;
       case "autocompletionValues":
-        // ! TEMP
-        console.log("Autocomplete values received.", message);
         workspace.setAutocompleteValues(message.fieldId, message.values);
         return;
       case "error":

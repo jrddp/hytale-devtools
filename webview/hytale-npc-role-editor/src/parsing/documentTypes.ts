@@ -31,6 +31,7 @@ export type NpcStandardParameterEntry = {
 
 export type NpcParameters = {
   entries: NpcStandardParameterEntry[];
+  importStates: string[] | null;
   excludedEntries: Record<string, unknown>;
   keyOrder: string[];
 };

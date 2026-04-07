@@ -82,7 +82,22 @@
     );
   }
 
-  function getAutocompleteOptions(inputId: string) {
+  function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
+    if (field.itemAutocompleteValues) {
+      const currentValue =
+        typeof itemView?.value === "string" ? itemView.value.trim() : "";
+      const usedValues = new Set(
+        renderedItemViews
+          .filter(candidate => candidate.id !== itemView?.id)
+          .map(candidate => (typeof candidate.value === "string" ? candidate.value.trim() : ""))
+          .filter(Boolean),
+      );
+
+      return field.itemAutocompleteValues
+        .filter(value => value === currentValue || !usedValues.has(value))
+        .map(value => ({ value }));
+    }
+
     if (!field.itemSymbolRef || workspace.autocompleteField !== inputId) {
       return [];
     }
@@ -91,6 +106,10 @@
   }
 
   function requestAutocomplete(inputId: string) {
+    if (field.itemAutocompleteValues) {
+      return;
+    }
+
     if (!field.itemSymbolRef) {
       return;
     }
@@ -211,7 +230,7 @@
                   {inputId}
                   initialValue={String(itemView.value)}
                   placeholder="Unset"
-                  autocompleteOptions={getAutocompleteOptions(inputId)}
+                  autocompleteOptions={getAutocompleteOptions(inputId, itemView)}
                   inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
                   listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
                   optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"

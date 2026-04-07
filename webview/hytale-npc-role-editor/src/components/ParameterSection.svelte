@@ -9,6 +9,7 @@
     type StandardParameterEditableTypeOption,
   } from "../parsing/parameterEditorTypes";
   import { workspace } from "../workspace.svelte";
+  import FieldRenderer from "./FieldRenderer.svelte";
   import ParameterTypePicker from "./ParameterTypePicker.svelte";
   import ParameterField from "./fields/ParameterField.svelte";
 
@@ -37,6 +38,7 @@
   const parameterFields = $derived(
     section.fields.filter(field => field.type === "parameter") as NpcPropertyParameterField[],
   );
+  const specialFields = $derived(section.fields.filter(field => field.type !== "parameter"));
   const visibleRowViews = $derived(
     parameterFields.map(field => ({
       id: field.parameterName,
@@ -226,6 +228,10 @@
   </div>
 
   <div class="space-y-3">
+    {#each specialFields as field (field.id)}
+      <FieldRenderer {field} />
+    {/each}
+
     {#if renderedRowViews.length > 0}
       <div class="relative">
         <div

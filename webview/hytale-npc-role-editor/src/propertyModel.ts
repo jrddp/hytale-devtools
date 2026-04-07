@@ -42,6 +42,7 @@ export type NpcPropertyListField = NpcPropertyFieldBase & {
   type: "list";
   items: Array<string | number | boolean>;
   itemSymbolRef?: IndexReference;
+  itemAutocompleteValues?: string[];
 };
 
 export type NpcPropertyRawJsonField = NpcPropertyFieldBase & {
@@ -122,6 +123,7 @@ export function buildNpcPropertySections(
   document: NpcDocument,
   descriptors: NpcDescriptorDocument,
   parameterUsageIndex: ParameterUsageIndex,
+  discoveredStates: string[],
   issuesByFieldPath: Map<string, NpcEditorIssue[]> = new Map(),
 ): NpcPropertySection[] {
   const sections: NpcPropertySection[] = [];
@@ -147,6 +149,7 @@ export function buildNpcPropertySections(
     document,
     roleAttributeSymbolMetadataByFieldPath,
     parameterUsageIndex,
+    discoveredStates,
     issuesByFieldPath,
   );
   if (parameterSection) {
@@ -215,6 +218,7 @@ function buildParameterSection(
   document: NpcDocument,
   roleAttributeSymbolMetadataByFieldPath: Map<string, NpcFieldSymbolMetadata>,
   parameterUsageIndex: ParameterUsageIndex,
+  discoveredStates: string[],
   issuesByFieldPath: Map<string, NpcEditorIssue[]>,
 ): NpcPropertySection | null {
   const parameters = document.parameters;
@@ -222,11 +226,14 @@ function buildParameterSection(
     return null;
   }
 
-  return {
-    id: "npc-section-parameters",
-    name: "Parameters",
-    description: "Template parameter values.",
-    fields:
+  const fields: NpcPropertyField[] = [];
+
+  if (document.roleType === "Component") {
+    fields.push(createImportStatesField(parameters, discoveredStates, issuesByFieldPath));
+  }
+
+  fields.push(
+    ...(
       parameters?.entries.map(entry =>
         createParameterField(
           entry,
@@ -234,7 +241,38 @@ function buildParameterSection(
           parameterUsageIndex,
           issuesByFieldPath.get(`Parameters.${entry.name}.Value`) ?? [],
         ),
-      ) ?? [],
+      ) ?? []
+    ),
+  );
+
+  return {
+    id: "npc-section-parameters",
+    name: "Parameters",
+    description:
+      document.roleType === "Component"
+        ? "Template parameter values and imported parent-state slots."
+        : "Template parameter values.",
+    fields,
+  };
+}
+
+function createImportStatesField(
+  parameters: NpcDocument["parameters"],
+  discoveredStates: string[],
+  issuesByFieldPath: Map<string, NpcEditorIssue[]>,
+): NpcPropertyListField {
+  return {
+    id: "parameter-import-states",
+    fieldPath: "Parameters._ImportStates",
+    key: "_ImportStates",
+    label: "Import States",
+    typeLabel: "String List",
+    description:
+      "Ordered aliases for parent NPC states this component imports. These map by index to a reference's _ExportStates.",
+    issues: issuesByFieldPath.get("Parameters._ImportStates") ?? [],
+    type: "list",
+    items: parameters?.importStates ?? [],
+    itemAutocompleteValues: discoveredStates,
   };
 }
 
