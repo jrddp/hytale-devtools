@@ -17,9 +17,13 @@
     handle,
     actions,
     titleContent,
+    tooltipContent,
     onunset,
     vscodeContext,
     onContextMenu,
+    onInfoClick,
+    interactiveInfoTooltip = false,
+    infoTooltipPinned = false,
     hideInfoButton = false,
     collapsed = $bindable(false),
     children,
@@ -34,18 +38,32 @@
     handle?: Snippet;
     actions?: Snippet;
     titleContent?: Snippet;
+    tooltipContent?: Snippet;
     onunset?: () => void;
     vscodeContext?: string;
     onContextMenu?: (event: MouseEvent) => void;
+    onInfoClick?: () => void;
+    interactiveInfoTooltip?: boolean;
+    infoTooltipPinned?: boolean;
     hideInfoButton?: boolean;
     collapsed?: boolean;
     children: Snippet;
   } = $props();
 
-  const hasTooltipContent = $derived(Boolean(description) || infoItems.length > 0);
-  const infoTooltip = createTooltip();
+  const hasTooltipContent = $derived(
+    Boolean(tooltipContent) || Boolean(description) || infoItems.length > 0,
+  );
+  const infoTooltip = createTooltip({ interactive: true });
   const hasWarningIssues = $derived(issues.length > 0);
   const warningTooltip = createTooltip();
+
+  $effect(() => {
+    if (infoTooltipPinned) {
+      infoTooltip.pin();
+    } else {
+      infoTooltip.unpin();
+    }
+  });
 
   function stopHeaderInteraction(event: Event) {
     event.stopPropagation();
@@ -60,28 +78,32 @@
   }
 </script>
 
-{#snippet tooltipContent()}
-  <div class="space-y-2">
-    <div class="space-y-1">
-      <div class="font-semibold">
-        {title}{#if typeLabel}&nbsp;({typeLabel}){/if}
+{#snippet renderTooltipContent()}
+  {#if tooltipContent}
+    {@render tooltipContent()}
+  {:else}
+    <div class="space-y-2">
+      <div class="space-y-1">
+        <div class="font-semibold">
+          {title}{#if typeLabel}&nbsp;({typeLabel}){/if}
+        </div>
+        {#if description}
+          <div class="whitespace-pre-line">{description}</div>
+        {/if}
       </div>
-      {#if description}
-        <div class="whitespace-pre-line">{description}</div>
+
+      {#if infoItems.length > 0}
+        <dl class="space-y-1">
+          {#each infoItems as item (`${item.label}-${item.value}`)}
+            <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
+              <dt class="text-vsc-muted">{item.label}</dt>
+              <dd class="break-words">{item.value}</dd>
+            </div>
+          {/each}
+        </dl>
       {/if}
     </div>
-
-    {#if infoItems.length > 0}
-      <dl class="space-y-1">
-        {#each infoItems as item (`${item.label}-${item.value}`)}
-          <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
-            <dt class="text-vsc-muted">{item.label}</dt>
-            <dd class="break-words">{item.value}</dd>
-          </div>
-        {/each}
-      </dl>
-    {/if}
-  </div>
+  {/if}
 {/snippet}
 
 {#snippet warningTooltipContent()}
@@ -124,7 +146,11 @@
                 class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-70"
                 aria-label={`Info about ${title}`}
                 tabindex={-1}
-                onclick={event => event.stopPropagation()}
+                onclick={event => {
+                  event.stopPropagation();
+                  infoTooltip.open();
+                  onInfoClick?.();
+                }}
               >
                 <Info size={12} />
               </button>
@@ -241,7 +267,11 @@
             class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-70"
             aria-label={`Info about ${title}`}
             tabindex={-1}
-            onclick={event => event.stopPropagation()}
+            onclick={event => {
+              event.stopPropagation();
+              infoTooltip.open();
+              onInfoClick?.();
+            }}
           >
             <Info size={12} />
           </button>
@@ -284,6 +314,6 @@
     placement="right"
     class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-tooltip-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
   >
-    {@render tooltipContent()}
+    {@render renderTooltipContent()}
   </TooltipContent>
 {/if}

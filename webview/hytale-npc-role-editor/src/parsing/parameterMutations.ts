@@ -115,6 +115,45 @@ export function updateStandardParameterEditorType(
   return true;
 }
 
+export function updateStandardParameterDescription(
+  parameters: NpcParameters,
+  parameterName: string,
+  nextDescription: string,
+): boolean {
+  const entry = parameters.entries.find(candidate => candidate.name === parameterName);
+  if (!entry) {
+    return false;
+  }
+
+  const trimmedDescription = nextDescription.trim();
+  const normalizedDescription = trimmedDescription === "" ? undefined : trimmedDescription;
+  if (entry.description === normalizedDescription) {
+    return false;
+  }
+
+  entry.description = normalizedDescription;
+
+  if (normalizedDescription === undefined) {
+    entry.keyOrder = entry.keyOrder.filter(key => key !== "Description");
+    return true;
+  }
+
+  if (!entry.keyOrder.includes("Description")) {
+    const valueIndex = entry.keyOrder.indexOf("Value");
+    if (valueIndex === -1) {
+      entry.keyOrder = [...entry.keyOrder, "Description"];
+    } else {
+      entry.keyOrder = [
+        ...entry.keyOrder.slice(0, valueIndex + 1),
+        "Description",
+        ...entry.keyOrder.slice(valueIndex + 1),
+      ];
+    }
+  }
+
+  return true;
+}
+
 export function createDefaultStandardParameterEntry(
   name: string,
   value: NpcStandardParameterValue = {

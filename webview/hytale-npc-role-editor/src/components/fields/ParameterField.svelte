@@ -21,18 +21,26 @@
   let {
     field,
     titleContent,
+    tooltipContent,
     handle,
     onunset,
     vscodeContext,
     onContextMenu,
+    onInfoClick,
+    interactiveInfoTooltip = false,
+    infoTooltipPinned = false,
     hideInfoButton = false,
   }: {
     field: NpcPropertyParameterField;
     titleContent?: Snippet;
+    tooltipContent?: Snippet;
     handle?: Snippet;
     onunset?: () => void;
     vscodeContext?: string;
     onContextMenu?: (event: MouseEvent) => void;
+    onInfoClick?: () => void;
+    interactiveInfoTooltip?: boolean;
+    infoTooltipPinned?: boolean;
     hideInfoButton?: boolean;
   } = $props();
 
@@ -306,10 +314,14 @@
   inline={isInline}
   {summary}
   {titleContent}
+  {tooltipContent}
   {handle}
   {onunset}
   {vscodeContext}
   {onContextMenu}
+  {onInfoClick}
+  {interactiveInfoTooltip}
+  {infoTooltipPinned}
   {hideInfoButton}
 >
   {#if field.valueMode === "compute"}

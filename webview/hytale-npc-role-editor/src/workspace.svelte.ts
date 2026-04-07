@@ -21,6 +21,7 @@ import {
   removeStandardParameter,
   renameStandardParameter,
   reorderStandardParameters,
+  updateStandardParameterDescription,
   updateStandardParameterEditorType,
 } from "./parsing/parameterMutations";
 import { serializeNpcDocument, serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
@@ -57,6 +58,8 @@ export class Workspace {
   autocompleteValues = $state<string[]>([]);
   parameterRenameRequestName = $state<string | null>(null);
   parameterRenameRequestVersion = $state(0);
+  parameterDescriptionRequestName = $state<string | null>(null);
+  parameterDescriptionRequestVersion = $state(0);
   parameterTypeChangeRequestName = $state<string | null>(null);
   parameterTypeChangeRequestVersion = $state(0);
 
@@ -177,6 +180,25 @@ export class Workspace {
     return true;
   }
 
+  updateStandardParameterDescription(parameterName: string, description: string) {
+    if (!this.documentModel?.parameters) {
+      return false;
+    }
+
+    const updated = updateStandardParameterDescription(
+      this.documentModel.parameters,
+      parameterName,
+      description,
+    );
+    if (!updated) {
+      return false;
+    }
+
+    this.refreshDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
   removeStandardParameter(parameterName: string) {
     if (!this.documentModel?.parameters) {
       return false;
@@ -256,6 +278,10 @@ export class Workspace {
         this.parameterRenameRequestName = message.parameterName;
         this.parameterRenameRequestVersion += 1;
         return;
+      case "editParameterDescription":
+        this.parameterDescriptionRequestName = message.parameterName;
+        this.parameterDescriptionRequestVersion += 1;
+        return;
       case "changeParameterType":
         this.parameterTypeChangeRequestName = message.parameterName;
         this.parameterTypeChangeRequestVersion += 1;
@@ -270,6 +296,10 @@ export class Workspace {
 
   clearParameterRenameRequest() {
     this.parameterRenameRequestName = null;
+  }
+
+  clearParameterDescriptionRequest() {
+    this.parameterDescriptionRequestName = null;
   }
 
   clearParameterTypeChangeRequest() {

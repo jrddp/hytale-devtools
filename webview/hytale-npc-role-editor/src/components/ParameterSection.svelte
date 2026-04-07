@@ -23,7 +23,10 @@
 
   let draftRowViews = $state<ParameterRowView[] | null>(null);
   let parameterNameInputs = $state<Record<string, HTMLInputElement | undefined>>({});
+  let parameterDescriptionInputs = $state<Record<string, HTMLTextAreaElement | undefined>>({});
+  let parameterDescriptionDrafts = $state<Record<string, string>>({});
   let editingParameterName = $state<string | null>(null);
+  let editingParameterDescription = $state<string | null>(null);
   let parameterContextAnchors = $state<Record<string, { x: number; y: number }>>({});
   let typePickerState = $state<{
     parameterName: string;
@@ -80,6 +83,19 @@
     };
   });
 
+  $effect(() => {
+    const requestVersion = workspace.parameterDescriptionRequestVersion;
+    const parameterName = workspace.parameterDescriptionRequestName;
+    if (requestVersion === 0 || !parameterName) {
+      return;
+    }
+
+    if (parameterFields.some(field => field.parameterName === parameterName)) {
+      workspace.clearParameterDescriptionRequest();
+      void enterDescriptionEditMode(parameterName);
+    }
+  });
+
   function handleConsider(event: CustomEvent<DndEvent<ParameterRowView>>) {
     draftRowViews = event.detail.items;
   }
@@ -106,6 +122,7 @@
   }
 
   async function enterEditMode(parameterName: string) {
+    editingParameterDescription = null;
     editingParameterName = parameterName;
     await tick();
     focusParameterNameInput(parameterName);
@@ -119,6 +136,40 @@
 
     input.focus();
     input.select();
+  }
+
+  function syncDescriptionTextareaHeight(parameterName: string) {
+    const textarea = parameterDescriptionInputs[parameterName];
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = "0px";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
+  async function enterDescriptionEditMode(parameterName: string) {
+    editingParameterName = null;
+    editingParameterDescription = parameterName;
+    parameterDescriptionDrafts[parameterName] =
+      parameterFields.find(field => field.parameterName === parameterName)?.description ?? "";
+    await tick();
+    const textarea = parameterDescriptionInputs[parameterName];
+    if (!textarea) {
+      return;
+    }
+
+    syncDescriptionTextareaHeight(parameterName);
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+  }
+
+  function commitDescription(parameterName: string) {
+    workspace.updateStandardParameterDescription(
+      parameterName,
+      parameterDescriptionDrafts[parameterName] ?? "",
+    );
+    editingParameterDescription = null;
   }
 
   function handleRowContextMenu(parameterName: string, event: MouseEvent) {
@@ -154,6 +205,9 @@
     if (event.key === "Escape") {
       if (editingParameterName) {
         editingParameterName = null;
+      }
+      if (editingParameterDescription) {
+        commitDescription(editingParameterDescription);
       }
     }
   }}
@@ -248,16 +302,85 @@
                 </div>
               {/snippet}
 
+              {#snippet rowTooltipContent()}
+                <div class="space-y-2">
+                  <div class="space-y-1">
+                    <div class="font-semibold">
+                      {rowView.field.label}{#if rowView.field.typeLabel}&nbsp;({rowView.field.typeLabel}){/if}
+                    </div>
+
+                    {#if editingParameterDescription === rowView.field.parameterName}
+                    <textarea
+                      bind:this={parameterDescriptionInputs[rowView.field.parameterName]}
+                      class="w-80 resize-none overflow-hidden rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-sm leading-5 text-vsc-input-fg outline-none"
+                      data-vscode-context={"{}"}
+                      value={parameterDescriptionDrafts[rowView.field.parameterName] ??
+                        rowView.field.description ??
+                        ""}
+                      rows={1}
+                      spellcheck={false}
+                        aria-label="Parameter description"
+                        placeholder="Add description"
+                      oninput={event => {
+                        parameterDescriptionDrafts[rowView.field.parameterName] =
+                          event.currentTarget.value;
+                        syncDescriptionTextareaHeight(rowView.field.parameterName);
+                      }}
+                        onkeydown={event => {
+                          if (event.key === "Enter" && !event.shiftKey) {
+                            event.preventDefault();
+                            commitDescription(rowView.field.parameterName);
+                            return;
+                          }
+
+                          if (event.key === "Escape") {
+                            event.preventDefault();
+                            commitDescription(rowView.field.parameterName);
+                          }
+                        }}
+                        onblur={() => {
+                          if (editingParameterDescription === rowView.field.parameterName) {
+                            commitDescription(rowView.field.parameterName);
+                          }
+                        }}
+                      ></textarea>
+                    {:else}
+                      <div class="whitespace-pre-line">
+                        {rowView.field.description || "No description."}
+                      </div>
+                    {/if}
+                  </div>
+
+                  {#if (rowView.field.infoItems?.length ?? 0) > 0}
+                    <dl class="space-y-1">
+                      {#each rowView.field.infoItems ?? [] as item (`${item.label}-${item.value}`)}
+                        <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
+                          <dt class="text-vsc-muted">{item.label}</dt>
+                          <dd class="break-words">{item.value}</dd>
+                        </div>
+                      {/each}
+                    </dl>
+                  {/if}
+                </div>
+              {/snippet}
+
               <ParameterField
                 field={rowView.field}
                 titleContent={rowTitle}
+                tooltipContent={rowTooltipContent}
                 handle={rowHandle}
                 onContextMenu={event => handleRowContextMenu(rowView.field.parameterName, event)}
+                onInfoClick={() => {
+                  void enterDescriptionEditMode(rowView.field.parameterName);
+                }}
+                interactiveInfoTooltip={true}
+                infoTooltipPinned={editingParameterDescription === rowView.field.parameterName}
                 hideInfoButton={editingParameterName === rowView.field.parameterName}
                 vscodeContext={editingParameterName !== rowView.field.parameterName
                   ? JSON.stringify({
                       webviewSection: "npcParameterRow",
                       parameterName: rowView.field.parameterName,
+                      parameterHasDescription: Boolean(rowView.field.description),
                     })
                   : undefined}
               />

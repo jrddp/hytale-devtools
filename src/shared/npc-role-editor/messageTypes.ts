@@ -28,7 +28,11 @@ export type NpcRoleEditorAutocompletionValuesMessage = {
 
 export type NpcRoleEditorContextActionMessage = {
   type: "contextAction";
-  action: "renameParameter" | "deleteParameter" | "changeParameterType";
+  action:
+    | "renameParameter"
+    | "deleteParameter"
+    | "changeParameterType"
+    | "editParameterDescription";
   parameterName: string;
 };
 

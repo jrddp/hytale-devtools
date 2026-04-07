@@ -51,6 +51,16 @@
         "category": "Hytale NPC Role Editor"
       },
       {
+        "command": "hytale-devtools.npcRoleEditor.context.editParameterDescription",
+        "title": "Edit Description...",
+        "category": "Hytale NPC Role Editor"
+      },
+      {
+        "command": "hytale-devtools.npcRoleEditor.context.addParameterDescription",
+        "title": "Add Description...",
+        "category": "Hytale NPC Role Editor"
+      },
+      {
         "command": "hytale-devtools.npcRoleEditor.context.changeParameterType",
         "title": "Change Parameter Type...",
         "category": "Hytale NPC Role Editor"
@@ -103,17 +113,27 @@
         {
           "command": "hytale-devtools.npcRoleEditor.context.renameParameter",
           "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
-          "group": "2_modification"
+          "group": "2_modification@1"
         },
         {
-          "command": "hytale-devtools.npcRoleEditor.context.deleteParameter",
-          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
-          "group": "2_modification"
+          "command": "hytale-devtools.npcRoleEditor.context.editParameterDescription",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow' && parameterHasDescription",
+          "group": "2_modification@2"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.addParameterDescription",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow' && !parameterHasDescription",
+          "group": "2_modification@2"
         },
         {
           "command": "hytale-devtools.npcRoleEditor.context.changeParameterType",
           "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
-          "group": "2_modification@2"
+          "group": "2_modification@3"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.deleteParameter",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
+          "group": "2_modification@4"
         }
       ],
       "commandPalette": [
@@ -123,6 +143,14 @@
         },
         {
           "command": "hytale-devtools.npcRoleEditor.context.deleteParameter",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.editParameterDescription",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.addParameterDescription",
           "when": "false"
         },
         {

@@ -116,6 +116,22 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(deleteNpcParameterCommand);
 
+  const editNpcParameterDescriptionCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.editParameterDescription",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("editParameterDescription", menuContext);
+    },
+  );
+  context.subscriptions.push(editNpcParameterDescriptionCommand);
+
+  const addNpcParameterDescriptionCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.addParameterDescription",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("editParameterDescription", menuContext);
+    },
+  );
+  context.subscriptions.push(addNpcParameterDescriptionCommand);
+
   const changeNpcParameterTypeCommand = vscode.commands.registerCommand(
     "hytale-devtools.npcRoleEditor.context.changeParameterType",
     (menuContext: unknown) => {
