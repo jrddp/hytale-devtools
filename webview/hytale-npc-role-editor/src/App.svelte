@@ -113,6 +113,9 @@
       case "autocompletionValues":
         workspace.setAutocompleteValues(message.fieldId, message.values);
         return;
+      case "referenceUpdate":
+        workspace.setVariantReferenceState(message.reference);
+        return;
       case "error":
         extensionError = message.message;
         return;

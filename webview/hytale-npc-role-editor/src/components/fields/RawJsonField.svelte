@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
+  import FieldComputeToggleButton from "../FieldComputeToggleButton.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
   let { field }: { field: NpcPropertyField } = $props();
@@ -31,11 +32,22 @@
   }
 </script>
 
+{#snippet computeToggle()}
+  {#if field.computable && field.canChangeType === false}
+    <FieldComputeToggleButton
+      enabled
+      active={field.value.kind === "compute"}
+      ontoggle={() => workspace.toggleFieldComputeMode(field.fieldPath)}
+    />
+  {/if}
+{/snippet}
+
 <FieldPanel
   title={field.label}
   typeLabel={getNpcFieldTypeLabel(field)}
   description={field.description}
   issues={issues}
+  titleActions={computeToggle}
   vscodeContext={fieldVscodeContext}
   onunset={field.canUnset !== false && field.isSet !== false
     ? () => {

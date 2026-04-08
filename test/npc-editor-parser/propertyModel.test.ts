@@ -37,6 +37,23 @@ function createComponentDocument({
   };
 }
 
+function createVariantDocument({
+  reference = "Template_Base",
+  modify = {},
+  parameters = {},
+}: {
+  reference?: unknown;
+  modify?: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
+}): NpcRoleJson {
+  return {
+    Type: "Variant",
+    Reference: reference as never,
+    Modify: modify,
+    Parameters: parameters,
+  };
+}
+
 describe("npc property model symbol enrichment", () => {
   test("enriches parameters from direct-translation role attributes", () => {
     const document = createGenericDocument({
@@ -305,6 +322,165 @@ describe("npc property model symbol enrichment", () => {
       },
     });
     expect(field?.staticSuggestions).toEqual(expect.arrayContaining(["Friendly", "Hostile"]));
+  });
+
+  test("builds and serializes variant modify overrides using immediate parent parameter fields", () => {
+    const parentDocument = createVariantDocument({
+      reference: "Template_Grandparent",
+      parameters: {
+        ParentSpeed: {
+          Value: 12,
+        },
+      },
+    });
+    const parentState = buildNpcPropertyState({
+      document: parentDocument,
+      topLevelKeyOrder: Object.keys(parentDocument),
+      descriptors: [],
+    });
+    const parentParameterFields =
+      parentState.sections.find(section => section.id === "parameters")?.fields ?? [];
+
+    const document = createVariantDocument({
+      reference: "Template_Parent",
+      modify: {
+        ParentSpeed: {
+          Compute: "LocalSpeed",
+        },
+        _CombatConfig: {
+          Reference: "Balance/Passive",
+        },
+        _InteractionVars: {
+          Greet: {
+            Text: "Hello",
+          },
+        },
+      },
+      parameters: {
+        LocalSpeed: {
+          Value: 10,
+        },
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+      variantReferenceParameters: parentParameterFields,
+    });
+
+    const referenceSection = state.sections.find(section => section.id === "variantReference");
+    const modifySection = state.sections.find(section => section.id === "modify");
+
+    expect(referenceSection?.fields).toMatchObject([
+      {
+        key: "Reference",
+        fieldPath: "Reference",
+        symbolRef: {
+          indexKind: "registeredAssets",
+          key: "NPCRole",
+          filter: {
+            npcRoleTypes: ["Generic", "Abstract", "Variant"],
+          },
+        },
+      },
+    ]);
+    expect(modifySection?.fields).toMatchObject([
+      {
+        key: "ParentSpeed",
+        kind: "number",
+        fieldPath: "Modify.ParentSpeed",
+        value: {
+          kind: "compute",
+          expression: "LocalSpeed",
+        },
+        canChangeType: false,
+        computable: true,
+      },
+      {
+        key: "_CombatConfig",
+        kind: "rawJson",
+      },
+      {
+        key: "_InteractionVars",
+        kind: "rawJson",
+      },
+    ]);
+
+    const serialized = serializeNpcPropertyState(state);
+    expect(serialized.Modify).toEqual({
+      ParentSpeed: {
+        Compute: "LocalSpeed",
+      },
+      _CombatConfig: {
+        Reference: "Balance/Passive",
+      },
+      _InteractionVars: {
+        Greet: {
+          Text: "Hello",
+        },
+      },
+    });
+    expect(Object.keys(serialized.Modify ?? {})).toEqual([
+      "ParentSpeed",
+      "_CombatConfig",
+      "_InteractionVars",
+    ]);
+  });
+
+  test("uses only the immediate parent parameters for variant modify field shaping", () => {
+    const immediateParent = createVariantDocument({
+      reference: "Template_Grandparent",
+      parameters: {
+        ImmediateOnly: {
+          Value: false,
+        },
+      },
+    });
+    const immediateParentState = buildNpcPropertyState({
+      document: immediateParent,
+      topLevelKeyOrder: Object.keys(immediateParent),
+      descriptors: [],
+    });
+    const immediateParentParameters =
+      immediateParentState.sections.find(section => section.id === "parameters")?.fields ?? [];
+
+    const document = createVariantDocument({
+      reference: "Template_Parent",
+      modify: {
+        ImmediateOnly: {
+          Compute: "ImmediateOnly",
+        },
+        GrandparentOnly: 10,
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+      variantReferenceParameters: immediateParentParameters,
+    });
+
+    const modifySection = state.sections.find(section => section.id === "modify");
+    const immediateField = modifySection?.fields.find(field => field.key === "ImmediateOnly");
+    const grandparentField = modifySection?.fields.find(field => field.key === "GrandparentOnly");
+
+    expect(immediateField).toMatchObject({
+      kind: "boolean",
+      value: {
+        kind: "compute",
+        expression: "ImmediateOnly",
+      },
+    });
+    expect(grandparentField).toMatchObject({
+      kind: "number",
+      value: {
+        kind: "literal",
+        value: 10,
+      },
+    });
   });
 
   test("serializes proxied section values without structuredClone errors", () => {

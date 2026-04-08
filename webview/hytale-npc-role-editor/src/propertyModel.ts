@@ -111,10 +111,12 @@ export function buildNpcPropertyState({
   document,
   topLevelKeyOrder,
   descriptors,
+  variantReferenceParameters = [],
 }: {
   document: NpcRoleJson;
   topLevelKeyOrder: string[];
   descriptors: NpcDescriptorDocument;
+  variantReferenceParameters?: NpcPropertyField[];
 }): NpcPropertyState {
   const roleType = document.Type;
   const componentClass =
@@ -126,6 +128,11 @@ export function buildNpcPropertyState({
   const variantReferenceSection = buildVariantReferenceSection(document);
   if (variantReferenceSection) {
     sections.push(variantReferenceSection);
+  }
+
+  const modifySection = buildModifySection(document, variantReferenceParameters);
+  if (modifySection) {
+    sections.push(modifySection);
   }
 
   if (shouldIncludeParametersSection(roleType)) {
@@ -151,11 +158,13 @@ export function buildNpcPropertySections(
   descriptors: NpcDescriptorDocument,
   parameterUsageIndex: ParameterUsageIndex,
   discoveredStates: string[],
+  variantReferenceParameters: NpcPropertyField[] = [],
 ): NpcPropertySection[] {
   const state = buildNpcPropertyState({
     document,
     topLevelKeyOrder: Object.keys(document),
     descriptors,
+    variantReferenceParameters,
   });
 
   applyNpcPropertySectionDerivedState(state.sections, parameterUsageIndex, discoveredStates);
@@ -232,6 +241,13 @@ export function serializeNpcPropertyState(state: NpcPropertyState): NpcRoleJson 
         }
         break;
       }
+      case "modify": {
+        const serializedModify = serializeModifySection(section);
+        if (serializedModify) {
+          root.set("Modify", serializedModify);
+        }
+        break;
+      }
       default:
         break;
     }
@@ -300,6 +316,24 @@ export function createDefaultParameterField(parameterName: string): NpcPropertyF
     canUnset: true,
     isDescriptionEditable: true,
     computable: true,
+    isSet: true,
+    ui: {},
+  };
+}
+
+export function createVariantModifyOverrideFieldFromParent(
+  inheritedField: NpcPropertyField,
+): NpcPropertyField {
+  return {
+    ...cloneNpcPropertyField(inheritedField),
+    id: `modify-${inheritedField.key}`,
+    label: humanize(inheritedField.key) ?? inheritedField.key,
+    fieldPath: `Modify.${inheritedField.key}`,
+    computable: true,
+    canRename: false,
+    canChangeType: false,
+    canUnset: true,
+    isDescriptionEditable: false,
     isSet: true,
     ui: {},
   };
@@ -713,51 +747,169 @@ function buildVariantReferenceSection(document: NpcRoleJson): NpcPropertySection
 
   const fields: NpcPropertyField[] = [];
   const referenceValue = document.Reference;
-  if (typeof referenceValue === "string" || isNpcComputeJson(referenceValue) || referenceValue === undefined) {
-    fields.push({
-      id: "variant-reference-reference",
-      key: "Reference",
-      label: "Reference",
-      fieldPath: "Reference",
-      kind: "string",
-      value:
-        typeof referenceValue === "string"
-          ? { kind: "literal", value: referenceValue }
-          : isNpcComputeJson(referenceValue)
-            ? { kind: "compute", expression: referenceValue.Compute }
-            : { kind: "literal", value: "" },
-      description: "The parent NPC role or template this variant extends.",
-      canUnset: typeof referenceValue !== "undefined",
-      isSet: typeof referenceValue !== "undefined",
-      ui: {},
-    });
-  }
-
-  if (isRecord(document.Modify)) {
-    fields.push({
-      id: "variant-reference-modify",
-      key: "Modify",
-      label: "Modify",
-      fieldPath: "Modify",
-      kind: "rawJson",
-      value: {
-        kind: "literal",
-        value: structuredClone(document.Modify),
+  fields.push({
+    id: "variant-reference-reference",
+    key: "Reference",
+    label: "Reference",
+    fieldPath: "Reference",
+    kind: "string",
+    value:
+      typeof referenceValue === "string"
+        ? { kind: "literal", value: referenceValue }
+        : isNpcComputeJson(referenceValue)
+          ? { kind: "compute", expression: referenceValue.Compute }
+          : { kind: "literal", value: "" },
+    description: "The parent NPC role or template this variant extends.",
+    canRename: false,
+    canChangeType: false,
+    canUnset: typeof referenceValue !== "undefined",
+    isDescriptionEditable: false,
+    computable: false,
+    isSet: typeof referenceValue !== "undefined",
+    symbolRef: {
+      indexKind: "registeredAssets",
+      key: "NPCRole",
+      filter: {
+        npcRoleTypes: ["Generic", "Abstract", "Variant"],
       },
-      description: "Override values applied on top of the referenced NPC role.",
-      canUnset: true,
-      isSet: true,
-      ui: {},
-    });
-  }
+    },
+    ui: {},
+  });
 
   return {
     id: "variantReference",
     name: SECTION_NAMES.variantReference,
-    description: "Reference metadata and override payloads for variant NPC roles.",
+    description: "The parent NPC role or template this variant extends.",
     fields,
     ui: {},
   };
+}
+
+function buildModifySection(
+  document: NpcRoleJson,
+  variantReferenceParameters: NpcPropertyField[],
+): NpcPropertySection | null {
+  if (document.Type !== "Variant") {
+    return null;
+  }
+
+  const modify = isRecord(document.Modify) ? (document.Modify as NpcModifyJson) : undefined;
+  const inheritedFieldsByKey = new Map(
+    variantReferenceParameters.map(field => [field.key, field] as const),
+  );
+  const fields: NpcPropertyField[] = [];
+  const preservedFields: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(modify ?? {})) {
+    if (key.startsWith("_")) {
+      if (key === "_CombatConfig" || key === "_InteractionVars") {
+        fields.push(createSpecialVariantModifierField(key, value));
+        continue;
+      }
+
+      preservedFields[key] = cloneJsonLike(value);
+      continue;
+    }
+
+    fields.push(
+      createVariantModifyField({
+        key,
+        value,
+        inheritedField: inheritedFieldsByKey.get(key),
+      }),
+    );
+  }
+
+  return {
+    id: "modify",
+    name: SECTION_NAMES.modify,
+    description: "Override values applied on top of the referenced NPC role.",
+    fields,
+    preservedFields,
+    keyOrder: modify ? Object.keys(modify) : [],
+    ui: {},
+  };
+}
+
+function createVariantModifyField({
+  key,
+  value,
+  inheritedField,
+}: {
+  key: string;
+  value: unknown;
+  inheritedField?: NpcPropertyField;
+}): NpcPropertyField {
+  const inheritedShape = inheritedField
+    ? {
+        kind: inheritedField.kind,
+        itemType: inheritedField.itemType,
+      }
+    : undefined;
+  const parsedShape = parseVariantModifyFieldShape(value, inheritedField);
+
+  return {
+    id: `modify-${key}`,
+    key,
+    label: humanize(key) ?? key,
+    fieldPath: `Modify.${key}`,
+    kind: parsedShape.kind,
+    value: parsedShape.value,
+    description: inheritedField?.description,
+    computable: true,
+    canRename: false,
+    canChangeType: false,
+    canUnset: true,
+    isDescriptionEditable: false,
+    isSet: true,
+    itemType: parsedShape.itemType ?? inheritedShape?.itemType,
+    staticSuggestions: inheritedField?.staticSuggestions
+      ? [...inheritedField.staticSuggestions]
+      : undefined,
+    symbolRef: inheritedField?.symbolRef
+      ? { ...inheritedField.symbolRef }
+      : undefined,
+    ui: {},
+  };
+}
+
+function createSpecialVariantModifierField(key: string, value: unknown): NpcPropertyField {
+  return {
+    id: `modify-${key}`,
+    key,
+    label: humanize(key.replace(/^_+/, "")) ?? key,
+    fieldPath: `Modify.${key}`,
+    kind: "rawJson",
+    value: {
+      kind: "literal",
+      value: cloneJsonLike(value),
+    },
+    canRename: false,
+    canChangeType: false,
+    canUnset: true,
+    isDescriptionEditable: false,
+    computable: false,
+    isSet: true,
+    ui: {},
+  };
+}
+
+function parseVariantModifyFieldShape(
+  value: unknown,
+  inheritedField?: NpcPropertyField,
+): Pick<NpcPropertyField, "kind" | "value" | "itemType"> {
+  if (isNpcComputeJson(value)) {
+    return {
+      kind: inheritedField?.kind ?? "string",
+      value: {
+        kind: "compute",
+        expression: value.Compute,
+      },
+      itemType: inheritedField?.itemType,
+    };
+  }
+
+  return inferLiteralFieldShape(value, inheritedField?.itemType);
 }
 
 function buildPreservedTopLevelFields(document: NpcRoleJson): Record<string, unknown> {
@@ -834,6 +986,48 @@ function serializeParametersSection(section: NpcPropertySection): NpcParametersJ
   return Object.fromEntries(parameters) as NpcParametersJson;
 }
 
+function serializeModifySection(section: NpcPropertySection): NpcModifyJson | null {
+  const serializedFieldsByKey = new Map<string, unknown>();
+
+  for (const field of section.fields) {
+    if (field.isSet === false) {
+      continue;
+    }
+
+    serializedFieldsByKey.set(field.key, serializeFieldValue(field.value));
+  }
+
+  const orderedKeys = [
+    ...(section.keyOrder ?? []).filter(
+      key => serializedFieldsByKey.has(key) || key in (section.preservedFields ?? {}),
+    ),
+    ...Array.from(serializedFieldsByKey.keys()).filter(
+      key => !(section.keyOrder ?? []).includes(key),
+    ),
+    ...Object.keys(section.preservedFields ?? {}).filter(
+      key => !(section.keyOrder ?? []).includes(key),
+    ),
+  ];
+
+  if (orderedKeys.length === 0) {
+    return null;
+  }
+
+  const modify = new Map<string, unknown>();
+  for (const key of orderedKeys) {
+    if (serializedFieldsByKey.has(key)) {
+      modify.set(key, serializedFieldsByKey.get(key));
+      continue;
+    }
+
+    if (section.preservedFields && key in section.preservedFields) {
+      modify.set(key, cloneJsonLike(section.preservedFields[key]));
+    }
+  }
+
+  return Object.fromEntries(modify) as NpcModifyJson;
+}
+
 function serializeParameterField(field: NpcPropertyField): NpcParameterDefinitionJson {
   const parameterDefinition = new Map<string, unknown>();
   parameterDefinition.set("Value", serializeFieldValue(field.value));
@@ -869,6 +1063,26 @@ function serializeFieldValue(value: NpcFieldValue): unknown {
   }
 
   return cloneJsonLike(value.value);
+}
+
+function cloneNpcPropertyField(field: NpcPropertyField): NpcPropertyField {
+  return {
+    ...field,
+    value:
+      field.value.kind === "compute"
+        ? {
+            kind: "compute",
+            expression: field.value.expression,
+          }
+        : {
+            kind: "literal",
+            value: cloneJsonLike(field.value.value),
+          },
+    staticSuggestions: field.staticSuggestions ? [...field.staticSuggestions] : undefined,
+    symbolRef: field.symbolRef ? { ...field.symbolRef } : undefined,
+    preservedData: field.preservedData ? cloneJsonLike(field.preservedData) : undefined,
+    ui: field.ui ? { ...field.ui } : undefined,
+  };
 }
 
 function cloneJsonLike<T>(value: T): T {

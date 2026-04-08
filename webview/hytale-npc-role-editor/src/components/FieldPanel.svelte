@@ -20,6 +20,7 @@
     summary,
     handle,
     actions,
+    titleActions,
     titleContent,
     tooltipContent,
     onunset,
@@ -41,6 +42,7 @@
     summary?: string;
     handle?: Snippet;
     actions?: Snippet;
+    titleActions?: Snippet;
     titleContent?: Snippet;
     tooltipContent?: Snippet;
     onunset?: () => void;
@@ -161,6 +163,12 @@
               </button>
             {/if}
 
+            {#if titleActions}
+              <div class="relative inline-flex items-center">
+                {@render titleActions()}
+              </div>
+            {/if}
+
             {#if hasIssues}
               <button
                 {@attach issueTooltip.trigger}
@@ -265,21 +273,6 @@
           <h2 class="relative text-sm font-semibold truncate">{title}</h2>
         {/if}
 
-        {#if hasIssues}
-          <button
-            {@attach issueTooltip.trigger}
-            class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-80"
-            aria-label={`Issues for ${title}`}
-            tabindex={-1}
-            onclick={event => event.stopPropagation()}
-            style:color={hasErrorIssues
-              ? "var(--vscode-errorForeground)"
-              : "var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
-          >
-            <TriangleAlert size={12} />
-          </button>
-        {/if}
-
         {#if hasTooltipContent && !hideInfoButton}
           <button
             {@attach infoTooltip.trigger}
@@ -293,6 +286,32 @@
             }}
           >
             <Info size={12} />
+          </button>
+        {/if}
+
+        {#if titleActions}
+          <div
+            class="relative inline-flex items-center"
+            role="presentation"
+            onkeydown={stopHeaderKeydown}
+            onclick={stopHeaderInteraction}
+          >
+            {@render titleActions()}
+          </div>
+        {/if}
+
+        {#if hasIssues}
+          <button
+            {@attach issueTooltip.trigger}
+            class="relative inline-flex items-center justify-center rounded-sm size-4 opacity-80"
+            aria-label={`Issues for ${title}`}
+            tabindex={-1}
+            onclick={event => event.stopPropagation()}
+            style:color={hasErrorIssues
+              ? "var(--vscode-errorForeground)"
+              : "var(--vscode-editorWarning-foreground, var(--vscode-list-warningForeground, var(--vscode-errorForeground)))"}
+          >
+            <TriangleAlert size={12} />
           </button>
         {/if}
       </div>

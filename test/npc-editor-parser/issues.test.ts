@@ -22,6 +22,23 @@ function createGenericDocument({
   };
 }
 
+function createVariantDocument({
+  reference = "Template_Base",
+  modify = {},
+  parameters = {},
+}: {
+  reference?: unknown;
+  modify?: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
+}): NpcRoleJson {
+  return {
+    Type: "Variant",
+    Reference: reference as never,
+    Modify: modify,
+    Parameters: parameters,
+  };
+}
+
 function buildSections(document: NpcRoleJson): NpcPropertySection[] {
   return buildNpcPropertyState({
     document,
@@ -99,6 +116,96 @@ describe("npc editor issues", () => {
           code: "compute-parse-error",
           message: "Invalid expression.",
           fieldPath: "MaxHealth",
+        }),
+      ]),
+    );
+  });
+
+  test("builds variant reference and modify warnings", () => {
+    const parentDocument = createGenericDocument({
+      parameters: {
+        PublicParameter: {
+          Value: 10,
+        },
+        PrivateParameter: {
+          Value: false,
+          Private: true,
+        },
+      },
+    });
+    const parentSections = buildNpcPropertyState({
+      document: parentDocument,
+      topLevelKeyOrder: Object.keys(parentDocument),
+      descriptors: [],
+    }).sections;
+    const parentParameterFields =
+      parentSections.find(section => section.id === "parameters")?.fields ?? [];
+
+    const document = createVariantDocument({
+      reference: "Template_Missing",
+      modify: {
+        MissingParameter: 1,
+        PrivateParameter: {
+          Compute: "LocalValue",
+        },
+      },
+      parameters: {
+        LocalValue: {
+          Value: 2,
+        },
+      },
+    });
+
+    const sections = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+      variantReferenceParameters: parentParameterFields,
+    }).sections;
+
+    const issues = buildNpcIssues({
+      roleType: "Variant",
+      sections,
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+      variantReferenceState: {
+        status: "loaded",
+        referenceName: "Template_Missing",
+      },
+      variantReferenceParameters: parentParameterFields,
+    });
+
+    expect(issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          severity: "warning",
+          code: "variant-modify-missing-parameter",
+          fieldPath: "Modify.MissingParameter",
+        }),
+        expect.objectContaining({
+          severity: "warning",
+          code: "variant-modify-private-parameter",
+          fieldPath: "Modify.PrivateParameter",
+        }),
+      ]),
+    );
+
+    const unresolvedReferenceIssues = buildNpcIssues({
+      roleType: "Variant",
+      sections,
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+      variantReferenceState: {
+        status: "missing",
+        referenceName: "Template_Missing",
+      },
+      variantReferenceParameters: [],
+    });
+
+    expect(unresolvedReferenceIssues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          severity: "warning",
+          code: "variant-reference-missing",
+          fieldPath: "Reference",
         }),
       ]),
     );

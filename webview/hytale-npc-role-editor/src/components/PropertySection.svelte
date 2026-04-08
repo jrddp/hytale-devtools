@@ -2,12 +2,15 @@
   import type { NpcPropertySection } from "../propertyModel";
   import FieldRenderer from "./FieldRenderer.svelte";
   import ParameterSection from "./ParameterSection.svelte";
+  import VariantModifySection from "./VariantModifySection.svelte";
 
   let { section }: { section: NpcPropertySection } = $props();
 </script>
 
 {#if section.id === "parameters"}
   <ParameterSection {section} />
+{:else if section.id === "modify"}
+  <VariantModifySection {section} />
 {:else}
   <section
     class="space-y-2 scroll-m-4"

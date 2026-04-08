@@ -40,8 +40,8 @@ export type NpcParametersJson = {
 
 export type NpcModifyJson = {
   _ExportStates?: string[];
-  _CombatConfig?: string;
-  _InteractionVars?: Record<string, string>;
+  _CombatConfig?: unknown;
+  _InteractionVars?: unknown;
   [key: string]: unknown;
 };
 

@@ -5,16 +5,22 @@ export type IndexKind =
   | "exportFamily"
   | "referenceBundle";
 
+export type IndexReferenceFilter = {
+  npcRoleTypes?: string[];
+};
+
 export type IndexReference =
   | {
       indexKind: Exclude<IndexKind, "commonAssetPaths">;
       key: string;
+      filter?: IndexReferenceFilter;
     }
   | {
       indexKind: "commonAssetPaths";
       key: "all";
       folders: string[];
       extension?: string;
+      filter?: IndexReferenceFilter;
     };
 
 type IndexShardBase = {

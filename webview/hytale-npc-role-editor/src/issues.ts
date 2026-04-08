@@ -1,3 +1,4 @@
+import type { NpcRoleEditorVariantReferenceState } from "@shared/npc-role-editor/messageTypes";
 import type { ParameterUsageIndex } from "./compute/parameterUsageIndex";
 import { validateNpcComputeExpression } from "./compute/computeValidation";
 import type { NpcPropertyField, NpcPropertySection } from "./propertyModel";
@@ -13,16 +14,25 @@ export function buildNpcIssues({
   roleType,
   sections,
   parameterUsageIndex,
+  variantReferenceState,
+  variantReferenceParameters,
 }: {
   roleType: string | null;
   sections: NpcPropertySection[];
   parameterUsageIndex: ParameterUsageIndex;
+  variantReferenceState?: NpcRoleEditorVariantReferenceState;
+  variantReferenceParameters?: NpcPropertyField[];
 }): NpcEditorIssue[] {
   const issues: NpcEditorIssue[] = [];
   const parameterSection = sections.find(section => section.id === "parameters");
   const roleAttributesSection = sections.find(section => section.id === "roleAttributes");
+  const variantReferenceSection = sections.find(section => section.id === "variantReference");
+  const modifySection = sections.find(section => section.id === "modify");
   const parameterFields = (parameterSection?.fields ?? []).filter(isStandardParameterField);
   const availableParameters = new Set(parameterFields.map(field => field.key));
+  const variantReferenceParametersByName = new Map(
+    (variantReferenceParameters ?? []).map(field => [field.key, field] as const),
+  );
 
   for (const field of parameterFields) {
     if (field.value.kind !== "compute") {
@@ -44,6 +54,15 @@ export function buildNpcIssues({
     }
   }
 
+  for (const field of modifySection?.fields ?? []) {
+    if (field.key.startsWith("_") || field.value.kind !== "compute") {
+      continue;
+    }
+
+    const validation = validateNpcComputeExpression(field.value.expression, availableParameters);
+    issues.push(...buildComputeIssues(validation, field.fieldPath));
+  }
+
   for (const field of parameterFields) {
     const usages = parameterUsageIndex.usagesByParameter.get(field.key);
     if (usages && usages.size > 0) {
@@ -56,6 +75,56 @@ export function buildNpcIssues({
       message: `Parameter "${field.key}" is currently unused.`,
       fieldPath: field.fieldPath,
     });
+  }
+
+  const referenceField = variantReferenceSection?.fields.find(field => field.fieldPath === "Reference");
+  if (referenceField) {
+    if (variantReferenceState?.status === "missing") {
+      issues.push({
+        severity: "warning",
+        code: "variant-reference-missing",
+        message: "Reference could not be resolved.",
+        fieldPath: referenceField.fieldPath,
+      });
+    } else if (variantReferenceState?.status === "error") {
+      issues.push({
+        severity: "warning",
+        code: "variant-reference-error",
+        message:
+          referenceField.value.kind === "compute"
+            ? "Reference must be a static role name."
+            : "Reference could not be resolved.",
+        fieldPath: referenceField.fieldPath,
+      });
+    }
+  }
+
+  if (variantReferenceState?.status === "loaded") {
+    for (const field of modifySection?.fields ?? []) {
+      if (field.key.startsWith("_")) {
+        continue;
+      }
+
+      const inheritedField = variantReferenceParametersByName.get(field.key);
+      if (!inheritedField) {
+        issues.push({
+          severity: "warning",
+          code: "variant-modify-missing-parameter",
+          message: "Override does not exist on the referenced role.",
+          fieldPath: field.fieldPath,
+        });
+        continue;
+      }
+
+      if (inheritedField.preservedData?.Private === true) {
+        issues.push({
+          severity: "warning",
+          code: "variant-modify-private-parameter",
+          message: "Override targets a private reference parameter.",
+          fieldPath: field.fieldPath,
+        });
+      }
+    }
   }
 
   return issues;

@@ -27,6 +27,19 @@ export type NpcRoleEditorAutocompletionValuesMessage = {
   values: string[];
 };
 
+export type NpcRoleEditorVariantReferenceState = {
+  status: "none" | "loading" | "loaded" | "missing" | "error";
+  referenceName?: string;
+  resolvedPath?: string;
+  text?: string;
+  message?: string;
+};
+
+export type NpcRoleEditorVariantReferenceUpdateMessage = {
+  type: "referenceUpdate";
+  reference: NpcRoleEditorVariantReferenceState;
+};
+
 export type NpcRoleEditorContextActionMessage = {
   type: "contextAction";
   action:
@@ -50,10 +63,12 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorDocumentUpdateMessage
   | NpcRoleEditorErrorMessage
   | NpcRoleEditorAutocompletionValuesMessage
+  | NpcRoleEditorVariantReferenceUpdateMessage
   | NpcRoleEditorContextActionMessage;
 
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
+  | { type: "resolveVariantReference"; referenceName: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorApplyMessage;

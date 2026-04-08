@@ -7,6 +7,7 @@
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
   import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
+  import FieldComputeToggleButton from "../FieldComputeToggleButton.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
   type ListItemView = {
@@ -142,6 +143,16 @@
   }
 </script>
 
+{#snippet computeToggle()}
+  {#if field.computable && field.canChangeType === false}
+    <FieldComputeToggleButton
+      enabled
+      active={field.value.kind === "compute"}
+      ontoggle={() => workspace.toggleFieldComputeMode(field.fieldPath)}
+    />
+  {/if}
+{/snippet}
+
 {#snippet renderHandle()}
   <div
     use:dragHandle
@@ -167,6 +178,7 @@
   issues={issues}
   inline={false}
   {summary}
+  titleActions={computeToggle}
   vscodeContext={fieldVscodeContext}
   bind:collapsed
   onunset={field.canUnset !== false && field.isSet !== false
