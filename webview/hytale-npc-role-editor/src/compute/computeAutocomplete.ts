@@ -1,9 +1,6 @@
 import type { ComputeAutocompleteOption } from "@webview-shared/components/computeAutocomplete";
-import type { NpcStandardParameterEntry } from "../parsing/documentTypes";
-import {
-  getStandardParameterEditorType,
-  getStandardParameterEditorTypeLabel,
-} from "../parsing/parameterEditorTypes";
+import type { NpcPropertyField } from "../propertyModel";
+import { getNpcFieldTypeLabel } from "../propertyModel";
 
 type NpcComputeScopeKind = "standard" | "sensorEval";
 
@@ -90,19 +87,22 @@ export function buildNpcComputeAutocompleteOptions({
   parameters,
   scope = "standard",
 }: {
-  parameters?: NpcStandardParameterEntry[];
+  parameters?: NpcPropertyField[];
   scope?: NpcComputeScopeKind;
 }): ComputeAutocompleteOption[] {
   const options: ComputeAutocompleteOption[] = [];
 
   for (const parameter of parameters ?? []) {
-    const typeLabel = getStandardParameterEditorTypeLabel(getStandardParameterEditorType(parameter));
+    if (parameter.key === "_ImportStates") {
+      continue;
+    }
+
     options.push({
-      label: parameter.name,
-      insertText: parameter.name,
+      label: parameter.key,
+      insertText: parameter.key,
       kind: "parameter",
       detail: "Parameter",
-      description: parameter.description?.trim() || `${typeLabel} parameter.`,
+      description: parameter.description?.trim() || `${getNpcFieldTypeLabel(parameter)} parameter.`,
     });
   }
 

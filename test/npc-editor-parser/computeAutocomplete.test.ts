@@ -7,18 +7,25 @@ import {
   resolveSatisfiedComputeAutocomplete,
 } from "../../webview/shared/components/computeAutocomplete";
 import { buildNpcComputeAutocompleteOptions } from "../../webview/hytale-npc-role-editor/src/compute/computeAutocomplete";
-import type { NpcStandardParameterEntry } from "../../webview/hytale-npc-role-editor/src/parsing/documentTypes";
+import type { NpcPropertyField } from "../../webview/hytale-npc-role-editor/src/propertyModel";
 
-function createParameterEntry(
-  name: string,
-  value: NpcStandardParameterEntry["value"],
-  overrides: Partial<NpcStandardParameterEntry> = {},
-): NpcStandardParameterEntry {
+function createParameterField(
+  key: string,
+  overrides: Partial<NpcPropertyField> = {},
+): NpcPropertyField {
   return {
-    name,
-    value,
-    keyOrder: ["Value"],
-    extraFields: {},
+    id: `parameter-${key}`,
+    key,
+    label: key,
+    fieldPath: `Parameters.${key}.Value`,
+    kind: "string",
+    value: { kind: "literal", value: "" },
+    canRename: true,
+    canChangeType: true,
+    canUnset: true,
+    isDescriptionEditable: true,
+    computable: true,
+    isSet: true,
     ...overrides,
   };
 }
@@ -27,12 +34,13 @@ describe("npc compute autocomplete", () => {
   test("builds standard suggestions from parameters, functions, and constants", () => {
     const options = buildNpcComputeAutocompleteOptions({
       parameters: [
-        createParameterEntry("ViewRange", { kind: "literal", value: 15 }),
-        createParameterEntry(
-          "DisplayName",
-          { kind: "literal", value: "Wolf" },
-          { description: "Display name for the NPC." },
-        ),
+        createParameterField("ViewRange", {
+          kind: "number",
+          value: { kind: "literal", value: 15 },
+        }),
+        createParameterField("DisplayName", {
+          description: "Display name for the NPC.",
+        }),
       ],
     });
 

@@ -39,17 +39,15 @@ describe("npc editor parseNpcDocumentText", () => {
       ),
     );
 
-    expect(document.roleType).toBe("Generic");
-    expect(document.parameters?.entries).toHaveLength(3);
-    expect(document.parameters?.entries[0]).toMatchObject({
-      name: "Invulnerable",
-      description: "Whether this NPC is invulnerable.",
-      typeHint: undefined,
-      private: undefined,
-      value: {
-        kind: "literal",
-        value: false,
-      },
+    expect(document.Type).toBe("Generic");
+    expect(Object.keys(document.Parameters ?? {})).toEqual([
+      "Invulnerable",
+      "MemoriesNameOverride",
+      "NameTranslationKey",
+    ]);
+    expect(document.Parameters?.Invulnerable).toMatchObject({
+      Value: false,
+      Description: "Whether this NPC is invulnerable.",
     });
   });
 
@@ -62,10 +60,9 @@ describe("npc editor parseNpcDocumentText", () => {
       ),
     );
 
-    expect(document.roleType).toBe("Component");
-    expect(document.parameters?.importStates).toEqual(["Alerted", "Search", "Chase"]);
-    expect(document.parameters?.excludedEntries._ImportStates).toBeUndefined();
-    expect(document.parameters?.entries.every(entry => entry.name !== "_ImportStates")).toBe(true);
+    expect(document.Type).toBe("Component");
+    expect(document.Parameters?._ImportStates).toEqual(["Alerted", "Search", "Chase"]);
+    expect(Object.keys(document.Parameters ?? {})).toContain("_ImportStates");
   });
 
   test("preserves malformed _ImportStates as an excluded special entry", () => {
@@ -80,7 +77,6 @@ describe("npc editor parseNpcDocumentText", () => {
       ),
     );
 
-    expect(document.parameters?.importStates).toBeNull();
-    expect(document.parameters?.excludedEntries._ImportStates).toEqual(["Idle", 2]);
+    expect(document.Parameters?._ImportStates).toEqual(["Idle", 2]);
   });
 });

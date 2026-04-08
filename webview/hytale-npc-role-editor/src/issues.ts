@@ -1,7 +1,6 @@
-import type { NpcDocument } from "./parsing/documentTypes";
 import type { ParameterUsageIndex } from "./compute/parameterUsageIndex";
 import { validateNpcComputeExpression } from "./compute/computeValidation";
-import { isNpcRoleAttributeKey } from "./roleAttributes";
+import type { NpcPropertyField, NpcPropertySection } from "./propertyModel";
 
 export type NpcEditorIssue = {
   severity: "warning" | "error";
@@ -10,35 +9,43 @@ export type NpcEditorIssue = {
   fieldPath?: string;
 };
 
-export function buildNpcIssues(
-  document: NpcDocument,
-  parameterUsageIndex: ParameterUsageIndex,
-): NpcEditorIssue[] {
+export function buildNpcIssues({
+  roleType,
+  sections,
+  parameterUsageIndex,
+}: {
+  roleType: string | null;
+  sections: NpcPropertySection[];
+  parameterUsageIndex: ParameterUsageIndex;
+}): NpcEditorIssue[] {
   const issues: NpcEditorIssue[] = [];
-  const availableParameters = new Set(document.parameters?.entries.map(entry => entry.name) ?? []);
+  const parameterSection = sections.find(section => section.id === "parameters");
+  const roleAttributesSection = sections.find(section => section.id === "roleAttributes");
+  const parameterFields = (parameterSection?.fields ?? []).filter(isStandardParameterField);
+  const availableParameters = new Set(parameterFields.map(field => field.key));
 
-  for (const entry of document.parameters?.entries ?? []) {
-    if (entry.value.kind !== "compute") {
+  for (const field of parameterFields) {
+    if (field.value.kind !== "compute") {
       continue;
     }
 
-    const validation = validateNpcComputeExpression(entry.value.expression, availableParameters);
-    issues.push(...buildComputeIssues(validation, `Parameters.${entry.name}.Value`));
+    const validation = validateNpcComputeExpression(field.value.expression, availableParameters);
+    issues.push(...buildComputeIssues(validation, field.fieldPath));
   }
 
-  if (document.roleType !== "Variant") {
-    for (const [key, value] of Object.entries(document.rawRoot)) {
-      if (!isNpcRoleAttributeKey(key) || !isComputeExpression(value)) {
+  if (roleType === "Generic" || roleType === "Abstract") {
+    for (const field of roleAttributesSection?.fields ?? []) {
+      if (field.value.kind !== "compute") {
         continue;
       }
 
-      const validation = validateNpcComputeExpression(value.Compute, availableParameters);
-      issues.push(...buildComputeIssues(validation, key));
+      const validation = validateNpcComputeExpression(field.value.expression, availableParameters);
+      issues.push(...buildComputeIssues(validation, field.fieldPath));
     }
   }
 
-  for (const entry of document.parameters?.entries ?? []) {
-    const usages = parameterUsageIndex.usagesByParameter.get(entry.name);
+  for (const field of parameterFields) {
+    const usages = parameterUsageIndex.usagesByParameter.get(field.key);
     if (usages && usages.size > 0) {
       continue;
     }
@@ -46,8 +53,8 @@ export function buildNpcIssues(
     issues.push({
       severity: "warning",
       code: "unused-parameter",
-      message: `Parameter "${entry.name}" is currently unused.`,
-      fieldPath: `Parameters.${entry.name}.Value`,
+      message: `Parameter "${field.key}" is currently unused.`,
+      fieldPath: field.fieldPath,
     });
   }
 
@@ -76,14 +83,8 @@ export function buildIssuesByFieldPath(
   return issuesByFieldPath;
 }
 
-function isComputeExpression(value: unknown): value is { Compute: string } {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    !Array.isArray(value) &&
-    Object.keys(value).length === 1 &&
-    typeof (value as { Compute?: unknown }).Compute === "string"
-  );
+function isStandardParameterField(field: NpcPropertyField): boolean {
+  return field.fieldPath.startsWith("Parameters.") && field.key !== "_ImportStates";
 }
 
 function buildComputeIssues(

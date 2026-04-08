@@ -4,7 +4,11 @@
   import { ChevronDown, ChevronRight, CircleX, Info, TriangleAlert } from "lucide-svelte";
   import type { Snippet } from "svelte";
   import type { NpcEditorIssue } from "../issues";
-  import type { NpcPropertyInfoItem } from "../propertyModel";
+
+  type NpcFieldInfoItem = {
+    label: string;
+    value: string;
+  };
 
   let {
     title,
@@ -31,7 +35,7 @@
     title: string;
     typeLabel?: string;
     description?: string;
-    infoItems?: NpcPropertyInfoItem[];
+    infoItems?: NpcFieldInfoItem[];
     issues?: NpcEditorIssue[];
     inline?: boolean;
     summary?: string;
@@ -230,6 +234,16 @@
       }}
     >
       <div class="relative flex items-center flex-1 min-w-0 gap-1">
+        {#if handle}
+          <div
+            role="presentation"
+            onkeydown={stopHeaderKeydown}
+            onclick={stopHeaderInteraction}
+          >
+            {@render handle()}
+          </div>
+        {/if}
+
         <span class="inline-flex items-center w-4 h-4 opacity-75">
           {#if collapsed}
             <ChevronRight size={16} />

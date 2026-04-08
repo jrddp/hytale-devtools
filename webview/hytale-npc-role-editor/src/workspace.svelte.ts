@@ -9,22 +9,29 @@ import type {
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { IndexReference } from "@shared/indexTypes";
 import type { VSCodeApi } from "./common";
-import { buildNpcPropertySections, type NpcPropertySection } from "./propertyModel";
-import type {
-  NpcDocument,
-  NpcStandardParameterEditorType,
-  NpcStandardParameterValue,
-} from "./parsing/documentTypes";
+import {
+  applyNpcPropertySectionDerivedState,
+  coerceFieldValueToEmptyLiteral,
+  coerceLiteralValueToComputeExpression,
+  buildNpcPropertyState,
+  serializeNpcPropertyState,
+  type NpcPropertyField,
+  type NpcPropertySection,
+  type NpcPropertyState,
+} from "./propertyModel";
+import type { NpcComponentClass, NpcRoleJson, NpcRoleType } from "./parsing/documentTypes";
 import { parseNpcDocumentText } from "./parsing/parseNpcDocument";
+import { serializeNpcDocument, serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
 import {
   addStandardParameter,
+  isStandardParameterField,
   removeStandardParameter,
   renameStandardParameter,
   reorderStandardParameters,
   updateStandardParameterDescription,
   updateStandardParameterEditorType,
 } from "./parsing/parameterMutations";
-import { serializeNpcDocument, serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
+import type { NpcStandardParameterEditorType } from "./parsing/parameterEditorTypes";
 import {
   buildParameterUsageIndex,
   type ParameterUsageIndex,
@@ -36,6 +43,13 @@ import {
 } from "./issues";
 import { discoverNpcMainStates } from "./states/discoverStates";
 
+function emptyParameterUsageIndex(): ParameterUsageIndex {
+  return {
+    usagesByParameter: new Map(),
+    directTranslationByFieldPath: new Map(),
+  };
+}
+
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
   descriptors = $state<NpcDescriptorDocument>([]);
@@ -45,13 +59,12 @@ export class Workspace {
   documentPath = $state("");
   documentText = $state<string | null>(null);
   documentVersion = $state(0);
-  roleType = $state<string | null>(null);
-  documentModel = $state<NpcDocument | null>(null);
+  roleType = $state<NpcRoleType | null>(null);
+  componentClass = $state<NpcComponentClass | null>(null);
   propertySections = $state<NpcPropertySection[]>([]);
-  parameterUsageIndex = $state<ParameterUsageIndex>({
-    usagesByParameter: new Map(),
-    directTranslationByFieldPath: new Map(),
-  });
+  preservedTopLevelFields = $state<Record<string, unknown>>({});
+  topLevelKeyOrder = $state<string[]>([]);
+  parameterUsageIndex = $state<ParameterUsageIndex>(emptyParameterUsageIndex());
   issues = $state<NpcEditorIssue[]>([]);
   issuesByFieldPath = $state<Map<string, NpcEditorIssue[]>>(new Map());
   discoveredStates = $state<string[]>([]);
@@ -77,7 +90,13 @@ export class Workspace {
     this.descriptors = descriptors;
     this.descriptorPath = descriptorPath;
     this.descriptorSource = descriptorSource;
-    this.refreshDerivedState();
+
+    if (this.documentText !== null) {
+      this.reparseDocument();
+      return;
+    }
+
+    this.recomputeDerivedState();
   }
 
   requestAutocomplete(fieldId: string, symbolLookup: IndexReference) {
@@ -114,11 +133,12 @@ export class Workspace {
   }
 
   applyDocumentState() {
-    if (!this.documentModel) {
+    const document = this.getCurrentDocument();
+    if (!document) {
       return;
     }
 
-    const text = serializeNpcDocumentText($state.snapshot(this.documentModel) as NpcDocument);
+    const text = serializeNpcDocumentText(document, this.topLevelKeyOrder);
     this.documentText = text;
     const payload: NpcRoleEditorApplyMessage = {
       type: "apply",
@@ -128,159 +148,173 @@ export class Workspace {
     this.vscode.postMessage(payload satisfies NpcRoleEditorWebviewToExtensionMessage);
   }
 
-  updateStandardParameterValue(parameterName: string, value: NpcStandardParameterValue) {
-    const entry = this.documentModel?.parameters?.entries.find(current => current.name === parameterName);
-    if (!entry) {
-      return;
+  updateFieldValue(fieldPath: string, value: unknown) {
+    const field = this.findField(fieldPath);
+    if (!field) {
+      return false;
     }
 
-    entry.value = value;
-    this.refreshDerivedState();
+    field.value = {
+      kind: "literal",
+      value: structuredClone(value),
+    };
+    field.isSet = true;
+    this.recomputeDerivedState();
     this.applyDocumentState();
+    return true;
   }
 
-  toggleStandardParameterComputeMode(parameterName: string) {
-    const entry = this.documentModel?.parameters?.entries.find(current => current.name === parameterName);
-    if (!entry) {
-      return;
+  updateFieldComputeExpression(fieldPath: string, expression: string) {
+    const field = this.findField(fieldPath);
+    if (!field) {
+      return false;
     }
 
-    if (entry.value.kind === "compute") {
-      entry.value = {
-        kind: "literal",
-        value: entry.value.expression,
-      };
-    } else {
-      entry.value = {
-        kind: "compute",
-        expression: typeof entry.value.value === "string" ? entry.value.value : "",
-      };
-    }
-
-    this.refreshDerivedState();
+    field.value = {
+      kind: "compute",
+      expression,
+    };
+    field.isSet = true;
+    this.recomputeDerivedState();
     this.applyDocumentState();
+    return true;
+  }
+
+  toggleFieldComputeMode(fieldPath: string) {
+    const field = this.findField(fieldPath);
+    if (!field || field.computable !== true) {
+      return false;
+    }
+
+    field.value =
+      field.value.kind === "compute"
+        ? coerceFieldValueToEmptyLiteral(field)
+        : {
+            kind: "compute",
+            expression: coerceLiteralValueToComputeExpression(field),
+          };
+    field.isSet = true;
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  unsetField(fieldPath: string) {
+    const field = this.findField(fieldPath);
+    if (!field || field.canUnset === false) {
+      return false;
+    }
+
+    const parametersSection = this.findSection("parameters");
+    if (parametersSection && isStandardParameterField(field)) {
+      const removed = removeStandardParameter(parametersSection, field.key);
+      if (!removed) {
+        return false;
+      }
+      this.recomputeDerivedState();
+      this.applyDocumentState();
+      return true;
+    }
+
+    field.isSet = false;
+    field.value = coerceFieldValueToEmptyLiteral(field);
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
   }
 
   addStandardParameter() {
-    if (!this.documentModel) {
+    const section = this.findSection("parameters");
+    if (!section) {
       return null;
     }
 
-    const nextName = addStandardParameter(this.documentModel);
-    this.refreshDerivedState();
+    const nextName = addStandardParameter(section);
+    this.recomputeDerivedState();
     this.applyDocumentState();
     return nextName;
   }
 
   renameStandardParameter(currentName: string, nextName: string) {
-    if (!this.documentModel?.parameters) {
+    const section = this.findSection("parameters");
+    if (!section) {
       return false;
     }
 
-    const renamed = renameStandardParameter(this.documentModel.parameters, currentName, nextName);
+    const renamed = renameStandardParameter(section, currentName, nextName);
     if (!renamed) {
       return false;
     }
 
-    this.refreshDerivedState();
+    this.recomputeDerivedState();
     this.applyDocumentState();
     return true;
   }
 
   updateStandardParameterDescription(parameterName: string, description: string) {
-    if (!this.documentModel?.parameters) {
+    const section = this.findSection("parameters");
+    if (!section) {
       return false;
     }
 
-    const updated = updateStandardParameterDescription(
-      this.documentModel.parameters,
-      parameterName,
-      description,
-    );
+    const updated = updateStandardParameterDescription(section, parameterName, description);
     if (!updated) {
       return false;
     }
 
-    this.refreshDerivedState();
     this.applyDocumentState();
     return true;
   }
 
   removeStandardParameter(parameterName: string) {
-    if (!this.documentModel?.parameters) {
+    const section = this.findSection("parameters");
+    if (!section) {
       return false;
     }
 
-    const removed = removeStandardParameter(this.documentModel.parameters, parameterName);
+    const removed = removeStandardParameter(section, parameterName);
     if (!removed) {
       return false;
     }
 
-    this.refreshDerivedState();
+    this.recomputeDerivedState();
     this.applyDocumentState();
     return true;
   }
 
   reorderStandardParameters(parameterNames: string[]) {
-    if (!this.documentModel?.parameters) {
+    const section = this.findSection("parameters");
+    if (!section) {
       return false;
     }
 
-    const reordered = reorderStandardParameters(this.documentModel.parameters, parameterNames);
+    const reordered = reorderStandardParameters(section, parameterNames);
     if (!reordered) {
       return false;
     }
 
-    this.refreshDerivedState();
+    this.recomputeDerivedState();
     this.applyDocumentState();
     return true;
   }
 
   updateStandardParameterEditorType(
     parameterName: string,
-    editorType: Exclude<NpcStandardParameterEditorType, "rawJson">,
+    editorType: NpcStandardParameterEditorType,
   ) {
-    if (!this.documentModel?.parameters) {
+    const section = this.findSection("parameters");
+    if (!section) {
       return false;
     }
 
-    const updated = updateStandardParameterEditorType(
-      this.documentModel.parameters,
-      parameterName,
-      editorType,
-    );
+    const updated = updateStandardParameterEditorType(section, parameterName, editorType);
     if (!updated) {
       return false;
     }
 
-    this.refreshDerivedState();
+    this.recomputeDerivedState();
     this.applyDocumentState();
     return true;
-  }
-
-  updateFieldValue(fieldPath: string, value: unknown) {
-    if (!this.documentModel) {
-      return false;
-    }
-
-    if (fieldPath === "Parameters._ImportStates") {
-      return this.updateImportStates(value);
-    }
-
-    const updated = setValueAtFieldPath(this.documentModel.rawRoot, fieldPath, structuredClone(value));
-    if (!updated) {
-      return false;
-    }
-
-    this.refreshDerivedState();
-    this.applyDocumentState();
-    return true;
-  }
-
-  updateFieldComputeExpression(fieldPath: string, expression: string) {
-    return this.updateFieldValue(fieldPath, {
-      Compute: expression,
-    });
   }
 
   handleContextAction(message: NpcRoleEditorContextActionMessage) {
@@ -317,154 +351,119 @@ export class Workspace {
     this.parameterTypeChangeRequestName = null;
   }
 
+  getFieldIssues(fieldPath: string): NpcEditorIssue[] {
+    return this.issuesByFieldPath.get(fieldPath) ?? [];
+  }
+
+  getStandardParameterFields(): NpcPropertyField[] {
+    return (this.findSection("parameters")?.fields ?? []).filter(isStandardParameterField);
+  }
+
   reparseDocument() {
     if (this.documentText === null) {
-      this.roleType = null;
-      this.documentModel = null;
-      this.propertySections = [];
-      this.parameterUsageIndex = {
-        usagesByParameter: new Map(),
-        directTranslationByFieldPath: new Map(),
-      };
-      this.issues = [];
-      this.issuesByFieldPath = new Map();
-      this.discoveredStates = [];
-      this.documentParseError = null;
+      this.clearDocumentState();
       return;
     }
 
     const result = parseNpcDocumentText(this.documentText);
-
     if (result.status === "error") {
-      this.roleType = null;
-      this.propertySections = [];
-      this.parameterUsageIndex = {
-        usagesByParameter: new Map(),
-        directTranslationByFieldPath: new Map(),
-      };
-      this.issues = [];
-      this.issuesByFieldPath = new Map();
-      this.discoveredStates = [];
+      this.clearDocumentState();
       this.documentParseError = result.error;
-      if (!this.documentModel) {
-        this.documentModel = null;
-      }
       return;
     }
 
-    this.documentModel = result.document;
-    this.roleType = result.document.roleType;
+    const propertyState = buildNpcPropertyState({
+      document: result.document,
+      topLevelKeyOrder: result.topLevelKeyOrder,
+      descriptors: $state.snapshot(this.descriptors),
+    });
+    this.applyPropertyState(propertyState);
     this.documentParseError = null;
-    this.refreshDerivedState();
+    this.recomputeDerivedState();
   }
 
-  private refreshDerivedState() {
-    if (!this.documentModel) {
-      this.roleType = null;
-      this.propertySections = [];
-      this.parameterUsageIndex = {
-        usagesByParameter: new Map(),
-        directTranslationByFieldPath: new Map(),
-      };
+  private clearDocumentState() {
+    this.roleType = null;
+    this.componentClass = null;
+    this.propertySections = [];
+    this.preservedTopLevelFields = {};
+    this.topLevelKeyOrder = [];
+    this.parameterUsageIndex = emptyParameterUsageIndex();
+    this.issues = [];
+    this.issuesByFieldPath = new Map();
+    this.discoveredStates = [];
+    this.documentParseError = null;
+  }
+
+  private applyPropertyState(state: NpcPropertyState) {
+    this.roleType = state.roleType;
+    this.componentClass = state.componentClass;
+    this.propertySections = state.sections;
+    this.preservedTopLevelFields = state.preservedTopLevelFields;
+    this.topLevelKeyOrder = [...state.topLevelKeyOrder];
+  }
+
+  private recomputeDerivedState() {
+    const document = this.getCurrentDocument();
+    if (!document || !this.roleType) {
+      this.parameterUsageIndex = emptyParameterUsageIndex();
       this.issues = [];
       this.issuesByFieldPath = new Map();
       this.discoveredStates = [];
       return;
     }
 
-    const serializedDocument = serializeNpcDocument(
-      $state.snapshot(this.documentModel) as NpcDocument,
-    );
+    const serializedDocument = serializeNpcDocument(document, this.topLevelKeyOrder);
     const parameterUsageIndex = buildParameterUsageIndex(serializedDocument);
-    const issues = buildNpcIssues(
-      $state.snapshot(this.documentModel) as NpcDocument,
+    const issues = buildNpcIssues({
+      roleType: this.roleType,
+      sections: this.propertySections,
       parameterUsageIndex,
-    );
+    });
     const issuesByFieldPath = buildIssuesByFieldPath(issues);
     const discoveredStates = discoverNpcMainStates(serializedDocument);
-    this.roleType = this.documentModel.roleType;
-    this.propertySections = buildNpcPropertySections(
-      $state.snapshot(this.documentModel) as NpcDocument,
-      $state.snapshot(this.descriptors),
+
+    applyNpcPropertySectionDerivedState(
+      this.propertySections,
       parameterUsageIndex,
       discoveredStates,
-      issuesByFieldPath,
     );
+
     this.parameterUsageIndex = parameterUsageIndex;
     this.issues = issues;
     this.issuesByFieldPath = issuesByFieldPath;
     this.discoveredStates = discoveredStates;
   }
 
-  private updateImportStates(value: unknown) {
-    if (!Array.isArray(value) || !value.every(item => typeof item === "string")) {
-      return false;
+  private getCurrentDocument(): NpcRoleJson | null {
+    if (!this.roleType) {
+      return null;
     }
 
-    if (!this.documentModel) {
-      return false;
+    return serializeNpcPropertyState({
+      roleType: this.roleType,
+      componentClass: this.componentClass,
+      sections: this.propertySections,
+      preservedTopLevelFields: this.preservedTopLevelFields,
+      topLevelKeyOrder: this.topLevelKeyOrder,
+    });
+  }
+
+  private findSection(sectionId: NpcPropertySection["id"]): NpcPropertySection | null {
+    return this.propertySections.find(section => section.id === sectionId) ?? null;
+  }
+
+  private findField(fieldPath: string): NpcPropertyField | null {
+    for (const section of this.propertySections) {
+      for (const field of section.fields) {
+        if (field.fieldPath === fieldPath) {
+          return field;
+        }
+      }
     }
 
-    if (!this.documentModel.parameters) {
-      this.documentModel.parameters = {
-        entries: [],
-        importStates: [],
-        excludedEntries: {},
-        keyOrder: [],
-      };
-    }
-
-    this.documentModel.parameters.importStates = [...value];
-    delete this.documentModel.parameters.excludedEntries._ImportStates;
-
-    if (!this.documentModel.parameters.keyOrder.includes("_ImportStates")) {
-      this.documentModel.parameters.keyOrder = [
-        "_ImportStates",
-        ...this.documentModel.parameters.keyOrder,
-      ];
-    }
-
-    if (!isRecord(this.documentModel.rawRoot.Parameters)) {
-      this.documentModel.rawRoot.Parameters = {};
-    }
-
-    (this.documentModel.rawRoot.Parameters as Record<string, unknown>)._ImportStates =
-      structuredClone(value);
-
-    this.refreshDerivedState();
-    this.applyDocumentState();
-    return true;
+    return null;
   }
 }
 
 export const workspace = new Workspace();
-
-function setValueAtFieldPath(root: Record<string, unknown>, fieldPath: string, value: unknown): boolean {
-  const segments = fieldPath.split(".").filter(Boolean);
-  if (segments.length === 0) {
-    return false;
-  }
-
-  let current: unknown = root;
-
-  for (let index = 0; index < segments.length - 1; index += 1) {
-    const segment = segments[index];
-    if (!isRecord(current) || !(segment in current)) {
-      return false;
-    }
-
-    current = current[segment];
-  }
-
-  const lastSegment = segments.at(-1);
-  if (!lastSegment || !isRecord(current)) {
-    return false;
-  }
-
-  current[lastSegment] = value;
-  return true;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}

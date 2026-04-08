@@ -6,7 +6,7 @@
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
-  import type { NpcPropertyParameterField } from "../../propertyModel";
+  import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import FieldPanel from "../FieldPanel.svelte";
   import { workspace } from "../../workspace.svelte";
 
@@ -31,7 +31,7 @@
     infoTooltipPinned = false,
     hideInfoButton = false,
   }: {
-    field: NpcPropertyParameterField;
+    field: NpcPropertyField;
     titleContent?: Snippet;
     tooltipContent?: Snippet;
     handle?: Snippet;
@@ -44,6 +44,7 @@
     hideInfoButton?: boolean;
   } = $props();
 
+  let collapsed = $state(false);
   let scalarDraftValue = $state("");
   let rawJsonDraftValue = $state("");
   let rangeStartDraftValue = $state("");
@@ -52,31 +53,52 @@
   let draftItemViews = $state<ListItemView[] | null>(null);
   let nextItemId = 0;
 
+  $effect(() => {
+    collapsed = field.ui?.collapsed ?? false;
+  });
+
+  $effect(() => {
+    if (!field.ui) {
+      field.ui = {};
+    }
+
+    field.ui.collapsed = collapsed;
+  });
+
+  const isRange = $derived(
+    field.kind === "list" &&
+      field.itemType === "number" &&
+      field.value.kind === "literal" &&
+      Array.isArray(field.value.value) &&
+      field.value.value.length === 2 &&
+      field.value.value.every(item => typeof item === "number"),
+  );
   const isInline = $derived(
-    field.valueMode === "compute" ||
-      field.literalKind === "string" ||
-      field.literalKind === "number" ||
-      field.literalKind === "boolean" ||
-      field.editorType === "range",
+    field.value.kind === "compute" ||
+      field.kind === "string" ||
+      field.kind === "number" ||
+      field.kind === "boolean" ||
+      isRange,
   );
   const summary = $derived(
-    field.valueMode === "literal" &&
-      field.literalKind === "list" &&
-      field.editorType !== "range" &&
-      Array.isArray(field.literalValue)
-      ? `${field.literalValue.length} list items`
+    field.kind === "list" &&
+      field.value.kind === "literal" &&
+      Array.isArray(field.value.value) &&
+      !isRange
+      ? `${field.value.value.length} list items`
       : undefined,
   );
   const renderedItemViews = $derived(draftItemViews ?? itemViews);
   const activeFlipDurationMs = $derived(draftItemViews ? FLIP_DURATION_MS : 0);
   const computeAutocompleteOptions = $derived(
     buildNpcComputeAutocompleteOptions({
-      parameters: workspace.documentModel?.parameters?.entries,
+      parameters: workspace.getStandardParameterFields(),
       scope: "standard",
     }),
   );
+  const issues = $derived(workspace.getFieldIssues(field.fieldPath));
   const hasComputeIssues = $derived(
-    field.issues?.some(issue => issue.code.startsWith("compute-")) ?? false,
+    issues.some(issue => issue.code.startsWith("compute-")),
   );
   const computeInputStyle = $derived(
     hasComputeIssues
@@ -84,47 +106,53 @@
       : undefined,
   );
   const stringAutocompleteOptions = $derived(
-    field.symbolRef && workspace.autocompleteField === `npc-parameter-${field.id}`
-      ? workspace.autocompleteValues.map(value => ({ value }))
-      : [],
+    field.staticSuggestions?.length
+      ? field.staticSuggestions.map(value => ({ value }))
+      : field.symbolRef && workspace.autocompleteField === `npc-parameter-${field.id}`
+        ? workspace.autocompleteValues.map(value => ({ value }))
+        : [],
   );
 
   $effect(() => {
-    if (field.valueMode === "compute") {
-      scalarDraftValue = field.computeExpression ?? "";
+    if (field.value.kind === "compute") {
+      scalarDraftValue = field.value.expression;
       return;
     }
 
-    if (field.literalKind === "string") {
-      scalarDraftValue = typeof field.literalValue === "string" ? field.literalValue : "";
+    if (field.kind === "string") {
+      scalarDraftValue = typeof field.value.value === "string" ? field.value.value : "";
       return;
     }
 
-    if (field.literalKind === "number") {
+    if (field.kind === "number") {
       scalarDraftValue =
-        typeof field.literalValue === "number" ? String(field.literalValue) : "";
+        typeof field.value.value === "number" ? String(field.value.value) : "";
       return;
     }
 
     if (
-      field.editorType === "range" &&
-      Array.isArray(field.literalValue) &&
-      field.literalValue.length >= 2
+      isRange &&
+      Array.isArray(field.value.value) &&
+      field.value.value.length >= 2
     ) {
       rangeStartDraftValue =
-        typeof field.literalValue[0] === "number" ? String(field.literalValue[0]) : "0";
+        typeof field.value.value[0] === "number" ? String(field.value.value[0]) : "0";
       rangeEndDraftValue =
-        typeof field.literalValue[1] === "number" ? String(field.literalValue[1]) : "0";
+        typeof field.value.value[1] === "number" ? String(field.value.value[1]) : "0";
       return;
     }
 
-    if (field.literalKind === "rawJson") {
-      rawJsonDraftValue = JSON.stringify(field.literalValue, null, 2);
+    if (field.kind === "rawJson" || field.kind === "graph") {
+      rawJsonDraftValue = JSON.stringify(field.value.value, null, 2);
       return;
     }
 
-    if (field.literalKind === "list" && Array.isArray(field.literalValue)) {
-      itemViews = field.literalValue
+    if (
+      field.kind === "list" &&
+      field.value.kind === "literal" &&
+      Array.isArray(field.value.value)
+    ) {
+      itemViews = field.value.value
         .filter(isListItemValue)
         .map(value => ({
           id: getNextItemId(),
@@ -134,22 +162,20 @@
     }
   });
 
+  function isListItemValue(value: unknown): value is ListItemValue {
+    return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
+  }
+
   function getNextItemId() {
     return `npc-parameter-list-item-${field.id}-${nextItemId++}`;
   }
 
   function commitValue(value: unknown) {
-    workspace.updateStandardParameterValue(field.parameterName, {
-      kind: "literal",
-      value,
-    });
+    workspace.updateFieldValue(field.fieldPath, value);
   }
 
   function commitComputeExpression(expression: string) {
-    workspace.updateStandardParameterValue(field.parameterName, {
-      kind: "compute",
-      expression,
-    });
+    workspace.updateFieldComputeExpression(field.fieldPath, expression);
   }
 
   function sanitizeNumber(value: string) {
@@ -164,14 +190,16 @@
     const sanitized = sanitizeNumber(scalarDraftValue);
     scalarDraftValue = sanitized;
     if (sanitized === "") {
-      commitValue("");
+      commitValue(0);
       return;
     }
 
     const nextValue = Number(sanitized);
     if (Number.isNaN(nextValue)) {
       scalarDraftValue =
-        typeof field.literalValue === "number" ? String(field.literalValue) : "";
+        field.value.kind === "literal" && typeof field.value.value === "number"
+          ? String(field.value.value)
+          : "";
       return;
     }
 
@@ -182,7 +210,7 @@
     try {
       commitValue(JSON.parse(rawJsonDraftValue));
     } catch {
-      rawJsonDraftValue = JSON.stringify(field.literalValue, null, 2);
+      rawJsonDraftValue = JSON.stringify(field.value.kind === "literal" ? field.value.value : {}, null, 2);
     }
   }
 
@@ -195,7 +223,10 @@
       rangeEndDraftValue = sanitized;
     }
 
-    const currentRange = Array.isArray(field.literalValue) ? field.literalValue : [0, 0];
+    const currentRange =
+      field.value.kind === "literal" && Array.isArray(field.value.value)
+        ? field.value.value
+        : [0, 0];
     const nextRange: [number, number] = [
       typeof currentRange[0] === "number" ? currentRange[0] : 0,
       typeof currentRange[1] === "number" ? currentRange[1] : 0,
@@ -223,10 +254,10 @@
 
   function commitListItemViews(nextItemViews: ListItemView[]) {
     itemViews = nextItemViews;
-    workspace.updateStandardParameterValue(field.parameterName, {
-      kind: "literal",
-      value: nextItemViews.map(item => item.value),
-    });
+    workspace.updateFieldValue(
+      field.fieldPath,
+      nextItemViews.map(item => item.value),
+    );
   }
 
   function addListItem() {
@@ -241,14 +272,12 @@
   }
 
   function getDefaultNewListItemValue(): ListItemValue {
-    if (itemViews.every(item => typeof item.value === "boolean") && itemViews.length > 0) {
-      return false;
-    }
-
-    if (itemViews.every(item => typeof item.value === "number") && itemViews.length > 0) {
+    if (field.itemType === "number") {
       return 0;
     }
-
+    if (field.itemType === "boolean") {
+      return false;
+    }
     return "";
   }
 
@@ -261,41 +290,28 @@
     commitListItemViews(event.detail.items);
   }
 
-  function isListItemValue(value: unknown): value is ListItemValue {
-    return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
-  }
-
-  function requestScalarAutocomplete() {
-    if (!field.symbolRef) {
-      return;
+  function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
+    if (field.staticSuggestions?.length) {
+      return field.staticSuggestions.map(value => ({ value }));
     }
 
-    workspace.requestAutocomplete(`npc-parameter-${field.id}`, field.symbolRef);
-  }
-
-  function getListItemAutocompleteOptions(inputId: string) {
-    if (!field.itemSymbolRef || workspace.autocompleteField !== inputId) {
+    if (!field.symbolRef || workspace.autocompleteField !== inputId) {
       return [];
     }
 
     return workspace.autocompleteValues.map(value => ({ value }));
   }
 
-  function requestListItemAutocomplete(inputId: string) {
-    if (!field.itemSymbolRef) {
+  function requestListAutocomplete(inputId: string) {
+    if (field.staticSuggestions?.length || !field.symbolRef) {
       return;
     }
 
-    workspace.requestAutocomplete(inputId, field.itemSymbolRef);
+    workspace.requestAutocomplete(inputId, field.symbolRef);
   }
-
-  const gripHandle = (node: HTMLElement) => {
-    const result = dragHandle(node);
-    return () => result?.destroy?.();
-  };
 </script>
 
-{#snippet renderHandle()}
+{#snippet renderListHandle()}
   <div
     use:dragHandle
     class="relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-80 outline-none transition-[color,opacity] hover:text-vsc-input-fg"
@@ -315,15 +331,14 @@
 
 <FieldPanel
   title={field.label}
-  typeLabel={field.typeLabel}
+  typeLabel={getNpcFieldTypeLabel(field)}
   description={field.description}
-  infoItems={field.infoItems}
-  issues={field.issues}
+  issues={issues}
   inline={isInline}
   {summary}
+  {handle}
   {titleContent}
   {tooltipContent}
-  {handle}
   {onunset}
   {vscodeContext}
   {onContextMenu}
@@ -331,8 +346,9 @@
   {interactiveInfoTooltip}
   {infoTooltipPinned}
   {hideInfoButton}
+  bind:collapsed
 >
-  {#if field.valueMode === "compute"}
+  {#if field.value.kind === "compute"}
     <ComputeAutocompleteInput
       inputId={`npc-parameter-${field.id}`}
       initialValue={scalarDraftValue}
@@ -348,17 +364,16 @@
         commitComputeExpression(value);
       }}
     />
-  {:else if field.literalKind === "boolean"}
+  {:else if field.kind === "boolean"}
     <div class="inline-flex">
       <input
         class="size-6 accent-vsc-activity-bar-badge-bg"
         type="checkbox"
-        data-vscode-context={"{}"}
-        checked={field.literalValue === true}
+        checked={field.value.value === true}
         onchange={event => commitValue(event.currentTarget.checked)}
       />
     </div>
-  {:else if field.literalKind === "number"}
+  {:else if field.kind === "number"}
     <input
       type="text"
       data-vscode-context={"{}"}
@@ -378,7 +393,7 @@
         }
       }}
     />
-  {:else if field.literalKind === "string"}
+  {:else if field.kind === "string"}
     <SingleLineAutocompleteInput
       inputId={`npc-parameter-${field.id}`}
       initialValue={scalarDraftValue}
@@ -389,21 +404,26 @@
       listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
       optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
       previewClass="z-[160]"
-      onfocus={requestScalarAutocomplete}
+      onfocus={() => {
+        if (field.staticSuggestions?.length || !field.symbolRef) {
+          return;
+        }
+        workspace.requestAutocomplete(`npc-parameter-${field.id}`, field.symbolRef);
+      }}
       oncommit={value => {
         scalarDraftValue = value;
         commitValue(value);
       }}
       afterEnterPressed={input => input.blur()}
     />
-  {:else if field.editorType === "range"}
-    <div class="grid grid-cols-2 gap-3">
+  {:else if isRange}
+    <div class="grid gap-2 md:grid-cols-2">
       <input
         type="text"
         data-vscode-context={"{}"}
         class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
         bind:value={rangeStartDraftValue}
-        placeholder="Min"
+        placeholder="Start"
         inputmode="decimal"
         oninput={event => {
           rangeStartDraftValue = sanitizeNumber(event.currentTarget.value);
@@ -422,7 +442,7 @@
         data-vscode-context={"{}"}
         class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
         bind:value={rangeEndDraftValue}
-        placeholder="Max"
+        placeholder="End"
         inputmode="decimal"
         oninput={event => {
           rangeEndDraftValue = sanitizeNumber(event.currentTarget.value);
@@ -437,11 +457,11 @@
         }}
       />
     </div>
-  {:else if field.literalKind === "list"}
+  {:else if field.kind === "list"}
     {#if renderedItemViews.length > 0}
-      <div class="relative">
+      <div class="space-y-3">
         <div
-          class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
+          class="space-y-3"
           use:dragHandleZone={{
             items: renderedItemViews,
             flipDurationMs: activeFlipDurationMs,
@@ -458,16 +478,16 @@
               <FieldPanel
                 title={`${index}`}
                 inline
-                handle={renderHandle}
-                onunset={() =>
-                  commitListItemViews(itemViews.filter(item => item.id !== itemView.id))}
+                handle={renderListHandle}
+                onunset={() => {
+                  commitListItemViews(itemViews.filter(item => item.id !== itemView.id));
+                }}
               >
                 {#if typeof itemView.value === "boolean"}
                   <div class="inline-flex">
                     <input
                       class="size-6 accent-vsc-activity-bar-badge-bg"
                       type="checkbox"
-                      data-vscode-context={"{}"}
                       checked={itemView.value}
                       onchange={event => {
                         commitListItemViews(
@@ -486,12 +506,15 @@
                 {:else if typeof itemView.value === "number"}
                   <input
                     type="text"
-                    data-vscode-context={"{}"}
                     class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
                     value={String(itemView.value)}
                     inputmode="decimal"
                     oninput={event => {
-                      const nextValue = sanitizeNumber(event.currentTarget.value);
+                      const nextValue = event.currentTarget.value
+                        .trim()
+                        .replace(/[^\d.-]/g, "")
+                        .replace(/(?!^)-/g, "")
+                        .replace(/(\..*)\./g, "$1");
                       event.currentTarget.value = nextValue;
                     }}
                     onblur={event => {
@@ -514,18 +537,17 @@
                     }}
                   />
                 {:else}
-                  {@const inputId = `npc-parameter-${field.id}-${itemView.id}`}
+                  {@const inputId = `npc-property-${field.id}-${itemView.id}`}
                   <SingleLineAutocompleteInput
                     {inputId}
                     initialValue={String(itemView.value)}
-                    data-vscode-context={"{}"}
                     placeholder="Unset"
-                    autocompleteOptions={getListItemAutocompleteOptions(inputId)}
+                    autocompleteOptions={getAutocompleteOptions(inputId, itemView)}
                     inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
                     listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
                     optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
                     previewClass="z-[160]"
-                    onfocus={() => requestListItemAutocomplete(inputId)}
+                    onfocus={() => requestListAutocomplete(inputId)}
                     oncommit={value => {
                       commitListItemViews(
                         itemViews.map(item =>
@@ -538,34 +560,53 @@
                         ),
                       );
                     }}
+                    afterEnterPressed={input => input.blur()}
                   />
                 {/if}
               </FieldPanel>
             </div>
           {/each}
         </div>
+
+        <button
+          type="button"
+          class="flex w-full items-center gap-1 rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg opacity-80 hover:bg-vsc-button-hover"
+          onclick={addListItem}
+        >
+          <Plus size={14} />
+          Add Item
+        </button>
       </div>
     {:else}
-      <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 text-sm text-vsc-muted">
-        Empty list
+      <div class="space-y-3">
+        <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 text-sm text-vsc-muted">
+          No items yet.
+        </div>
+
+        <button
+          type="button"
+          class="flex w-full items-center gap-1 rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg opacity-80 hover:bg-vsc-button-hover"
+          onclick={addListItem}
+        >
+          <Plus size={14} />
+          Add Item
+        </button>
       </div>
     {/if}
-
-    <button
-      type="button"
-      class="flex w-full items-center gap-1 rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg opacity-80 hover:bg-vsc-button-hover"
-      onclick={addListItem}
-    >
-      <Plus size={14} />
-      Add Item
-    </button>
   {:else}
     <textarea
       data-vscode-context={"{}"}
-      class="min-h-32 w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 font-mono text-sm text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
+      class="min-h-28 w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg"
       bind:value={rawJsonDraftValue}
-      placeholder="JSON value"
+      placeholder={"{ ... }"}
       onblur={commitRawJsonValue}
+      onkeydown={event => {
+        if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+          event.preventDefault();
+          commitRawJsonValue();
+          event.currentTarget.blur();
+        }
+      }}
     ></textarea>
   {/if}
 </FieldPanel>

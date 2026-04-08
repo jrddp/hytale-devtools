@@ -1,23 +1,29 @@
 <script lang="ts">
-  import type { NpcPropertyScalarField } from "../../propertyModel";
+  import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
-  let { field }: { field: NpcPropertyScalarField } = $props();
+  let { field }: { field: NpcPropertyField } = $props();
 
   let checked = $state(false);
 
   $effect(() => {
-    checked = Boolean(field.value);
+    checked = field.value.kind === "literal" && field.value.value === true;
   });
+
+  const issues = $derived(workspace.getFieldIssues(field.fieldPath));
 </script>
 
 <FieldPanel
   title={field.label}
-  typeLabel={field.typeLabel}
+  typeLabel={getNpcFieldTypeLabel(field)}
   description={field.description}
-  infoItems={field.infoItems}
-  issues={field.issues}
+  issues={issues}
+  onunset={field.canUnset !== false && field.isSet !== false
+    ? () => {
+        workspace.unsetField(field.fieldPath);
+      }
+    : undefined}
 >
   <div class="inline-flex">
     <input

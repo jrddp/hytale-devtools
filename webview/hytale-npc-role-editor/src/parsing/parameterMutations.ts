@@ -1,58 +1,40 @@
-import type {
-  NpcDocument,
-  NpcParameters,
-  NpcStandardParameterEditorType,
-  NpcStandardParameterEntry,
-  NpcStandardParameterValue,
-} from "./documentTypes";
 import {
-  coerceStandardParameterValueForEditorType,
-  getTypeHintForEditorType,
+  coerceFieldStateForStandardParameterEditorType,
+  type NpcStandardParameterEditorType,
 } from "./parameterEditorTypes";
+import {
+  createDefaultParameterField,
+  type NpcPropertyField,
+  type NpcPropertySection,
+} from "../propertyModel";
 
 const DEFAULT_NEW_PARAMETER_NAME = "Parameter";
 
-export function ensureNpcParameters(document: NpcDocument): NpcParameters {
-  if (document.parameters) {
-    return document.parameters;
-  }
-
-  document.parameters = {
-    entries: [],
-    importStates: null,
-    excludedEntries: {},
-    keyOrder: [],
-  };
-
-  return document.parameters;
+export function addStandardParameter(section: NpcPropertySection): string {
+  const nextName = getNextStandardParameterName(section);
+  section.fields = [...section.fields, createDefaultParameterField(nextName)];
+  section.keyOrder = [...(section.keyOrder ?? []), nextName];
+  return nextName;
 }
 
-export function addStandardParameter(document: NpcDocument): string {
-  const parameters = ensureNpcParameters(document);
-  const name = getNextStandardParameterName(parameters);
-
-  parameters.entries = [
-    ...parameters.entries,
-    createDefaultStandardParameterEntry(name),
-  ];
-  parameters.keyOrder = [...parameters.keyOrder, name];
-
-  return name;
-}
-
-export function removeStandardParameter(parameters: NpcParameters, parameterName: string): boolean {
-  const nextEntries = parameters.entries.filter(entry => entry.name !== parameterName);
-  if (nextEntries.length === parameters.entries.length) {
+export function removeStandardParameter(
+  section: NpcPropertySection,
+  parameterName: string,
+): boolean {
+  const nextFields = section.fields.filter(
+    field => !(isStandardParameterField(field) && field.key === parameterName),
+  );
+  if (nextFields.length === section.fields.length) {
     return false;
   }
 
-  parameters.entries = nextEntries;
-  parameters.keyOrder = parameters.keyOrder.filter(key => key !== parameterName);
+  section.fields = nextFields;
+  section.keyOrder = (section.keyOrder ?? []).filter(key => key !== parameterName);
   return true;
 }
 
 export function renameStandardParameter(
-  parameters: NpcParameters,
+  section: NpcPropertySection,
   currentName: string,
   nextName: string,
 ): boolean {
@@ -61,119 +43,107 @@ export function renameStandardParameter(
     return false;
   }
 
-  const entry = parameters.entries.find(candidate => candidate.name === currentName);
-  if (!entry || hasParameterNameCollision(parameters, trimmedName, currentName)) {
+  if (hasParameterNameCollision(section, trimmedName, currentName)) {
     return false;
   }
 
-  entry.name = trimmedName;
-  parameters.keyOrder = parameters.keyOrder.map(key => (key === currentName ? trimmedName : key));
+  const field = section.fields.find(
+    candidate => isStandardParameterField(candidate) && candidate.key === currentName,
+  );
+  if (!field) {
+    return false;
+  }
+
+  field.key = trimmedName;
+  field.label = trimmedName;
+  field.fieldPath = `Parameters.${trimmedName}.Value`;
+  section.keyOrder = (section.keyOrder ?? []).map(key =>
+    key === currentName ? trimmedName : key,
+  );
   return true;
 }
 
 export function reorderStandardParameters(
-  parameters: NpcParameters,
+  section: NpcPropertySection,
   orderedParameterNames: string[],
 ): boolean {
-  if (orderedParameterNames.length !== parameters.entries.length) {
+  const standardFields = section.fields.filter(isStandardParameterField);
+  if (orderedParameterNames.length !== standardFields.length) {
     return false;
   }
 
-  const entriesByName = new Map(parameters.entries.map(entry => [entry.name, entry]));
+  const fieldsByName = new Map(standardFields.map(field => [field.key, field]));
   if (
-    orderedParameterNames.some(name => !entriesByName.has(name)) ||
+    orderedParameterNames.some(name => !fieldsByName.has(name)) ||
     new Set(orderedParameterNames).size !== orderedParameterNames.length
   ) {
     return false;
   }
 
-  parameters.entries = orderedParameterNames.map(name => entriesByName.get(name)!);
+  const specialFields = section.fields.filter(field => !isStandardParameterField(field));
+  section.fields = [
+    ...specialFields,
+    ...orderedParameterNames.map(name => fieldsByName.get(name)!),
+  ];
 
   let nextStandardIndex = 0;
-  parameters.keyOrder = parameters.keyOrder.map(key => {
-    if (!entriesByName.has(key)) {
-      return key;
-    }
-
-    return orderedParameterNames[nextStandardIndex++] ?? key;
-  });
+  section.keyOrder = (section.keyOrder ?? []).map(key =>
+    fieldsByName.has(key) ? (orderedParameterNames[nextStandardIndex++] ?? key) : key,
+  );
 
   return true;
 }
 
 export function updateStandardParameterEditorType(
-  parameters: NpcParameters,
+  section: NpcPropertySection,
   parameterName: string,
-  nextType: Exclude<NpcStandardParameterEditorType, "rawJson">,
+  nextType: NpcStandardParameterEditorType,
 ): boolean {
-  const entry = parameters.entries.find(candidate => candidate.name === parameterName);
-  if (!entry) {
+  const field = section.fields.find(
+    candidate => isStandardParameterField(candidate) && candidate.key === parameterName,
+  );
+  if (!field) {
     return false;
   }
 
-  entry.value = coerceStandardParameterValueForEditorType(entry.value, nextType);
-  entry.typeHint = getTypeHintForEditorType(nextType);
+  const nextState = coerceFieldStateForStandardParameterEditorType(field.value, nextType);
+  field.kind = nextState.kind;
+  field.value = nextState.value;
+  field.itemType = nextState.itemType;
+  field.isSet = true;
   return true;
 }
 
 export function updateStandardParameterDescription(
-  parameters: NpcParameters,
+  section: NpcPropertySection,
   parameterName: string,
   nextDescription: string,
 ): boolean {
-  const entry = parameters.entries.find(candidate => candidate.name === parameterName);
-  if (!entry) {
+  const field = section.fields.find(
+    candidate => isStandardParameterField(candidate) && candidate.key === parameterName,
+  );
+  if (!field) {
     return false;
   }
 
   const trimmedDescription = nextDescription.trim();
-  const normalizedDescription = trimmedDescription === "" ? undefined : trimmedDescription;
-  if (entry.description === normalizedDescription) {
+  const normalizedDescription = trimmedDescription || undefined;
+  if (field.description === normalizedDescription) {
     return false;
   }
 
-  entry.description = normalizedDescription;
-
-  if (normalizedDescription === undefined) {
-    entry.keyOrder = entry.keyOrder.filter(key => key !== "Description");
-    return true;
-  }
-
-  if (!entry.keyOrder.includes("Description")) {
-    const valueIndex = entry.keyOrder.indexOf("Value");
-    if (valueIndex === -1) {
-      entry.keyOrder = [...entry.keyOrder, "Description"];
-    } else {
-      entry.keyOrder = [
-        ...entry.keyOrder.slice(0, valueIndex + 1),
-        "Description",
-        ...entry.keyOrder.slice(valueIndex + 1),
-      ];
-    }
-  }
-
+  field.description = normalizedDescription;
   return true;
 }
 
-export function createDefaultStandardParameterEntry(
-  name: string,
-  value: NpcStandardParameterValue = {
-    kind: "literal",
-    value: "",
-  },
-): NpcStandardParameterEntry {
-  return {
-    name,
-    value,
-    keyOrder: ["Value"],
-    extraFields: {},
-  };
+export function isStandardParameterField(field: NpcPropertyField): boolean {
+  return field.fieldPath.startsWith("Parameters.") && field.key !== "_ImportStates";
 }
 
-function getNextStandardParameterName(parameters: NpcParameters): string {
+function getNextStandardParameterName(section: NpcPropertySection): string {
   const usedNames = new Set([
-    ...parameters.entries.map(entry => entry.name),
-    ...Object.keys(parameters.excludedEntries),
+    ...section.fields.filter(isStandardParameterField).map(field => field.key),
+    ...Object.keys(section.preservedFields ?? {}),
   ]);
 
   if (!usedNames.has(DEFAULT_NEW_PARAMETER_NAME)) {
@@ -189,7 +159,7 @@ function getNextStandardParameterName(parameters: NpcParameters): string {
 }
 
 function hasParameterNameCollision(
-  parameters: NpcParameters,
+  section: NpcPropertySection,
   candidateName: string,
   currentName: string,
 ): boolean {
@@ -197,9 +167,11 @@ function hasParameterNameCollision(
     return false;
   }
 
-  if (candidateName in parameters.excludedEntries) {
+  if (candidateName in (section.preservedFields ?? {})) {
     return true;
   }
 
-  return parameters.entries.some(entry => entry.name === candidateName && entry.name !== currentName);
+  return section.fields.some(
+    field => isStandardParameterField(field) && field.key === candidateName,
+  );
 }

@@ -1,11 +1,20 @@
 import type {
-  NpcStandardParameterEditorType,
-  NpcStandardParameterEntry,
-  NpcStandardParameterValue,
-} from "./documentTypes";
+  NpcFieldKind,
+  NpcFieldValue,
+  NpcPropertyField,
+} from "../propertyModel";
+
+export type NpcStandardParameterEditorType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "range"
+  | "stringList"
+  | "numberList"
+  | "compute";
 
 export type StandardParameterEditableTypeOption = {
-  value: Exclude<NpcStandardParameterEditorType, "rawJson">;
+  value: NpcStandardParameterEditorType;
   label: string;
 };
 
@@ -20,167 +29,126 @@ export const STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS: StandardParameterEditableTy
 ];
 
 export function getStandardParameterEditorType(
-  entry: Pick<NpcStandardParameterEntry, "value" | "typeHint">,
+  field: Pick<NpcPropertyField, "kind" | "value" | "itemType">,
 ): NpcStandardParameterEditorType {
-  if (entry.value.kind === "compute") {
+  if (field.value.kind === "compute") {
     return "compute";
   }
 
-  const literalValue = entry.value.value;
+  switch (field.kind) {
+    case "string":
+      return "string";
+    case "number":
+      return "number";
+    case "boolean":
+      return "boolean";
+    case "list": {
+      const literalValue = field.value.value;
+      if (
+        field.itemType === "number" &&
+        Array.isArray(literalValue) &&
+        literalValue.length === 2 &&
+        literalValue.every(item => typeof item === "number")
+      ) {
+        return "range";
+      }
 
-  if (typeof literalValue === "string") {
-    return "string";
-  }
-
-  if (typeof literalValue === "number") {
-    return "number";
-  }
-
-  if (typeof literalValue === "boolean") {
-    return "boolean";
-  }
-
-  if (Array.isArray(literalValue) && literalValue.every(isPrimitiveListItem)) {
-    if (literalValue.every(item => typeof item === "number") && literalValue.length === 2) {
-      return "range";
+      return field.itemType === "number" ? "numberList" : "stringList";
     }
-
-    if (literalValue.every(item => typeof item === "string")) {
-      return "stringList";
-    }
-
-    if (literalValue.every(item => typeof item === "number")) {
-      return "numberList";
-    }
-
-    if (literalValue.every(item => typeof item === "boolean")) {
-      return "booleanList";
-    }
+    case "rawJson":
+    case "graph":
+      return "string";
   }
-
-  if (Array.isArray(literalValue) && literalValue.length === 0) {
-    switch (normalizeTypeHint(entry.typeHint)) {
-      case "String":
-        return "stringList";
-      case "Number":
-        return "numberList";
-      case "Boolean":
-        return "booleanList";
-      default:
-        return "stringList";
-    }
-  }
-
-  return "rawJson";
 }
 
 export function getStandardParameterEditorTypeLabel(
   type: NpcStandardParameterEditorType,
 ): string {
-  switch (type) {
-    case "string":
-      return "String";
-    case "number":
-      return "Number";
-    case "boolean":
-      return "Boolean";
-    case "range":
-      return "Range [min,max]";
-    case "stringList":
-      return "String List";
-    case "numberList":
-      return "Number List";
-    case "booleanList":
-      return "Boolean List";
-    case "compute":
-      return "Compute";
-    case "rawJson":
-      return "Raw JSON";
-  }
+  return (
+    STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS.find(option => option.value === type)?.label ?? "String"
+  );
 }
 
-export function coerceStandardParameterValueForEditorType(
-  previousValue: NpcStandardParameterValue,
-  nextType: Exclude<NpcStandardParameterEditorType, "rawJson">,
-): NpcStandardParameterValue {
-  const literalValue =
-    previousValue.kind === "literal" ? previousValue.value : previousValue.expression;
+export function coerceFieldStateForStandardParameterEditorType(
+  previousValue: NpcFieldValue,
+  nextType: NpcStandardParameterEditorType,
+): Pick<NpcPropertyField, "kind" | "value" | "itemType"> {
+  const currentValue =
+    previousValue.kind === "compute" ? previousValue.expression : previousValue.value;
 
   switch (nextType) {
     case "string":
       return {
-        kind: "literal",
-        value: coerceScalarString(literalValue),
+        kind: "string",
+        value: {
+          kind: "literal",
+          value: coerceScalarString(currentValue),
+        },
       };
     case "number":
       return {
-        kind: "literal",
-        value: coerceScalarNumber(literalValue),
+        kind: "number",
+        value: {
+          kind: "literal",
+          value: coerceScalarNumber(currentValue),
+        },
       };
     case "boolean":
       return {
-        kind: "literal",
-        value: coerceScalarBoolean(literalValue),
+        kind: "boolean",
+        value: {
+          kind: "literal",
+          value: coerceScalarBoolean(currentValue),
+        },
       };
     case "compute":
       return {
-        kind: "compute",
-        expression: coerceComputeExpression(literalValue),
+        kind: "string",
+        value: {
+          kind: "compute",
+          expression: coerceComputeExpression(currentValue),
+        },
       };
     case "range":
       return {
-        kind: "literal",
-        value: coerceRange(literalValue),
+        kind: "list",
+        itemType: "number",
+        value: {
+          kind: "literal",
+          value: coerceRange(currentValue),
+        },
       };
     case "stringList":
       return {
-        kind: "literal",
-        value: coercePrimitiveList(literalValue, "string"),
+        kind: "list",
+        itemType: "string",
+        value: {
+          kind: "literal",
+          value: coercePrimitiveList(currentValue, "string"),
+        },
       };
     case "numberList":
       return {
-        kind: "literal",
-        value: coercePrimitiveList(literalValue, "number"),
-      };
-    case "booleanList":
-      return {
-        kind: "literal",
-        value: coercePrimitiveList(literalValue, "boolean"),
+        kind: "list",
+        itemType: "number",
+        value: {
+          kind: "literal",
+          value: coercePrimitiveList(currentValue, "number"),
+        },
       };
   }
 }
 
-export function getTypeHintForEditorType(
-  type: Exclude<NpcStandardParameterEditorType, "rawJson">,
+export function getTypeHintForItemType(
+  itemType: NpcPropertyField["itemType"],
 ): string | undefined {
-  switch (type) {
-    case "compute":
-      return undefined;
-    case "stringList":
-      return "String";
-    case "numberList":
-    case "range":
-      return "Number";
-    case "booleanList":
-      return "Boolean";
-    default:
-      return undefined;
-  }
-}
-
-function normalizeTypeHint(typeHint: string | undefined): string | undefined {
-  if (!typeHint?.trim()) {
-    return undefined;
-  }
-
-  const normalized = typeHint.trim().toLowerCase();
-  if (normalized === "string") {
+  if (itemType === "string") {
     return "String";
   }
-  if (normalized === "number") {
+  if (itemType === "number") {
     return "Number";
   }
-  if (normalized === "boolean") {
+  if (itemType === "boolean") {
     return "Boolean";
   }
   return undefined;
@@ -222,10 +190,8 @@ function coerceScalarNumber(value: unknown): number {
   }
 
   if (typeof value === "string") {
-    const parsed = Number(value);
-    if (!Number.isNaN(parsed)) {
-      return parsed;
-    }
+    const parsed = Number(value.trim());
+    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   if (typeof value === "boolean") {
@@ -240,67 +206,65 @@ function coerceScalarBoolean(value: unknown): boolean {
     return value;
   }
 
-  if (typeof value === "number") {
-    return value !== 0;
-  }
-
   if (typeof value === "string") {
-    const normalized = value.trim().toLowerCase();
-    if (normalized === "true") {
+    const trimmed = value.trim().toLowerCase();
+    if (trimmed === "true") {
       return true;
     }
-    if (normalized === "false") {
+    if (trimmed === "false") {
       return false;
     }
+  }
+
+  if (typeof value === "number") {
+    return value !== 0;
   }
 
   return false;
 }
 
 function coerceRange(value: unknown): [number, number] {
-  if (
-    Array.isArray(value) &&
-    value.length >= 2 &&
-    typeof value[0] === "number" &&
-    typeof value[1] === "number"
-  ) {
-    return [value[0], value[1]];
+  if (Array.isArray(value) && value.length >= 2) {
+    return [coerceScalarNumber(value[0]), coerceScalarNumber(value[1])];
   }
 
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return [value, value];
-  }
-
-  return [0, 0];
+  const numericValue = coerceScalarNumber(value);
+  return [numericValue, numericValue];
 }
 
 function coercePrimitiveList(
   value: unknown,
-  itemType: "string" | "number" | "boolean",
+  itemType: Exclude<NpcFieldKind, "rawJson" | "graph" | "list">,
 ): Array<string | number | boolean> {
-  const sourceValues = Array.isArray(value)
-    ? value.filter(isPrimitiveListItem)
-    : isPrimitiveListItem(value)
-      ? [value]
-      : [];
+  if (Array.isArray(value) && value.every(isPrimitiveListItem)) {
+    return value.map(item => coerceListItem(item, itemType));
+  }
 
+  if (typeof value === "string") {
+    if (!value.trim()) {
+      return [];
+    }
+
+    return [coerceListItem(value, itemType)];
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return [coerceListItem(value, itemType)];
+  }
+
+  return [];
+}
+
+function coerceListItem(
+  value: string | number | boolean,
+  itemType: Exclude<NpcFieldKind, "rawJson" | "graph" | "list">,
+): string | number | boolean {
   switch (itemType) {
     case "string":
-      return sourceValues.map(item => String(item));
+      return coerceScalarString(value);
     case "number":
-      return sourceValues
-        .map(item => (typeof item === "number" ? item : Number(item)))
-        .filter(item => !Number.isNaN(item));
+      return coerceScalarNumber(value);
     case "boolean":
-      return sourceValues.map(item => {
-        if (typeof item === "boolean") {
-          return item;
-        }
-        if (typeof item === "number") {
-          return item !== 0;
-        }
-        const normalized = item.trim().toLowerCase();
-        return normalized === "true";
-      });
+      return coerceScalarBoolean(value);
   }
 }

@@ -57,11 +57,16 @@ describe("npc editor standard parameter round-trip", () => {
       throw new Error(result.error);
     }
 
-    result.document.parameters?.entries[0] &&
-      (result.document.parameters.entries[0].value = {
-        kind: "compute",
-        expression: "InvulnerableOverride",
-      });
+    const sourceParameters = result.document.Parameters as Record<string, unknown> | undefined;
+    if (
+      sourceParameters &&
+      typeof sourceParameters.Invulnerable === "object" &&
+      sourceParameters.Invulnerable !== null
+    ) {
+      (sourceParameters.Invulnerable as Record<string, unknown>).Value = {
+        Compute: "InvulnerableOverride",
+      };
+    }
 
     const serialized = parseJsonText(serializeNpcDocumentText(result.document)) as Record<
       string,
@@ -70,10 +75,12 @@ describe("npc editor standard parameter round-trip", () => {
     const parameters = serialized.Parameters as Record<string, unknown>;
     const invulnerable = parameters.Invulnerable as Record<string, unknown>;
 
-    expect(invulnerable.Value).toEqual(serializeStandardParameterValue({
-      kind: "compute",
-      expression: "InvulnerableOverride",
-    }));
+    expect(invulnerable.Value).toEqual(
+      serializeStandardParameterValue({
+        kind: "compute",
+        expression: "InvulnerableOverride",
+      }),
+    );
   });
 
   test("preserves excluded special parameter entries while editing standard ones", () => {
@@ -86,10 +93,11 @@ describe("npc editor standard parameter round-trip", () => {
       throw new Error(result.error);
     }
 
-    const alertRadius = result.document.parameters?.entries.find(entry => entry.name === "AlertedRange");
+    const parametersObject = result.document.Parameters as Record<string, unknown> | undefined;
+    const alertRadius = parametersObject?.AlertedRange;
     expect(alertRadius).toBeDefined();
-    if (alertRadius) {
-      alertRadius.value = { kind: "literal", value: 42 };
+    if (alertRadius && typeof alertRadius === "object" && alertRadius !== null) {
+      (alertRadius as Record<string, unknown>).Value = 42;
     }
 
     const serialized = parseJsonText(serializeNpcDocumentText(result.document)) as Record<

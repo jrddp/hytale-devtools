@@ -1,50 +1,58 @@
 import { describe, expect, test } from "vitest";
-import { buildNpcIssues, buildIssuesByFieldPath } from "../../webview/hytale-npc-role-editor/src/issues";
-import type { NpcDocument, NpcStandardParameterEntry } from "../../webview/hytale-npc-role-editor/src/parsing/documentTypes";
+import { buildIssuesByFieldPath, buildNpcIssues } from "../../webview/hytale-npc-role-editor/src/issues";
 import { buildParameterUsageIndex } from "../../webview/hytale-npc-role-editor/src/compute/parameterUsageIndex";
+import {
+  buildNpcPropertyState,
+  type NpcPropertySection,
+} from "../../webview/hytale-npc-role-editor/src/propertyModel";
+import { serializeNpcDocument } from "../../webview/hytale-npc-role-editor/src/parsing/serializeNpcDocument";
+import type { NpcRoleJson } from "../../webview/hytale-npc-role-editor/src/parsing/documentTypes";
 
-function createParameterEntry(
-  name: string,
-  value: NpcStandardParameterEntry["value"],
-): NpcStandardParameterEntry {
+function createGenericDocument({
+  roleAttributes = {},
+  parameters = {},
+}: {
+  roleAttributes?: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
+}): NpcRoleJson {
   return {
-    name,
-    value,
-    keyOrder: ["Value"],
-    extraFields: {},
+    Type: "Generic",
+    Parameters: parameters,
+    ...roleAttributes,
   };
+}
+
+function buildSections(document: NpcRoleJson): NpcPropertySection[] {
+  return buildNpcPropertyState({
+    document,
+    topLevelKeyOrder: Object.keys(document),
+    descriptors: [],
+  }).sections;
 }
 
 describe("npc editor issues", () => {
   test("builds unused-parameter warnings", () => {
-    const document: NpcDocument = {
-      roleType: "Generic",
-      rawRoot: {
-        Type: "Generic",
-        Parameters: {
-          Appearance: {
-            Value: "",
-          },
-          UsedParameter: {
-            Value: 10,
-          },
-        },
+    const document = createGenericDocument({
+      roleAttributes: {
         MaxHealth: {
           Compute: "UsedParameter",
         },
       },
       parameters: {
-        entries: [
-          createParameterEntry("Appearance", { kind: "literal", value: "" }),
-          createParameterEntry("UsedParameter", { kind: "literal", value: 10 }),
-        ],
-        importStates: null,
-        excludedEntries: {},
-        keyOrder: ["Appearance", "UsedParameter"],
+        Appearance: {
+          Value: "",
+        },
+        UsedParameter: {
+          Value: 10,
+        },
       },
-    };
+    });
 
-    const issues = buildNpcIssues(document, buildParameterUsageIndex(document.rawRoot));
+    const issues = buildNpcIssues({
+      roleType: "Generic",
+      sections: buildSections(document),
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+    });
 
     expect(issues).toEqual([
       {
@@ -57,35 +65,26 @@ describe("npc editor issues", () => {
   });
 
   test("builds compute validation errors for parameters and role attributes", () => {
-    const document: NpcDocument = {
-      roleType: "Generic",
-      rawRoot: {
-        Type: "Generic",
+    const document = createGenericDocument({
+      roleAttributes: {
         MaxHealth: {
           Compute: "max(",
         },
-        Parameters: {
-          ViewRange: {
-            Value: {
-              Compute: "MissingParameter + 1",
-            },
+      },
+      parameters: {
+        ViewRange: {
+          Value: {
+            Compute: "MissingParameter + 1",
           },
         },
       },
-      parameters: {
-        entries: [
-          createParameterEntry("ViewRange", {
-            kind: "compute",
-            expression: "MissingParameter + 1",
-          }),
-        ],
-        importStates: null,
-        excludedEntries: {},
-        keyOrder: ["ViewRange"],
-      },
-    };
+    });
 
-    const issues = buildNpcIssues(document, buildParameterUsageIndex(document.rawRoot));
+    const issues = buildNpcIssues({
+      roleType: "Generic",
+      sections: buildSections(document),
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+    });
 
     expect(issues).toEqual(
       expect.arrayContaining([

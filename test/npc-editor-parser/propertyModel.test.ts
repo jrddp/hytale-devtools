@@ -1,55 +1,62 @@
 import { describe, expect, test } from "vitest";
-import { buildNpcPropertySections } from "../../webview/hytale-npc-role-editor/src/propertyModel";
+import {
+  applyNpcPropertySectionDerivedState,
+  buildNpcPropertyState,
+} from "../../webview/hytale-npc-role-editor/src/propertyModel";
 import { buildParameterUsageIndex } from "../../webview/hytale-npc-role-editor/src/compute/parameterUsageIndex";
-import { buildIssuesByFieldPath, buildNpcIssues } from "../../webview/hytale-npc-role-editor/src/issues";
-import type {
-  NpcDescriptorDocument,
-} from "../../src/shared/npc-role-editor/descriptorTypes";
-import type { NpcDocument, NpcStandardParameterEntry } from "../../webview/hytale-npc-role-editor/src/parsing/documentTypes";
+import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
+import type { NpcRoleJson } from "../../webview/hytale-npc-role-editor/src/parsing/documentTypes";
+import { serializeNpcDocument } from "../../webview/hytale-npc-role-editor/src/parsing/serializeNpcDocument";
 
-function createParameterEntry(
-  name: string,
-  value: NpcStandardParameterEntry["value"],
-): NpcStandardParameterEntry {
+function createGenericDocument({
+  roleAttributes = {},
+  parameters = {},
+}: {
+  roleAttributes?: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
+}): NpcRoleJson {
   return {
-    name,
-    value,
-    keyOrder: ["Value"],
-    extraFields: {},
+    Type: "Generic",
+    Parameters: parameters,
+    ...roleAttributes,
+  };
+}
+
+function createComponentDocument({
+  componentClass = "Instruction",
+  parameters = {},
+}: {
+  componentClass?: string;
+  parameters?: Record<string, unknown>;
+}): NpcRoleJson {
+  return {
+    Type: "Component",
+    Class: componentClass,
+    Parameters: parameters,
   };
 }
 
 describe("npc property model symbol enrichment", () => {
   test("enriches parameters from direct-translation role attributes", () => {
-    const document: NpcDocument = {
-      roleType: "Generic",
-      rawRoot: {
-        Type: "Generic",
+    const document = createGenericDocument({
+      roleAttributes: {
         Appearance: {
           Compute: "Appearance",
         },
         HotbarItems: {
           Compute: "HotbarItems",
         },
-        Parameters: {
-          Appearance: {
-            Value: "",
-          },
-          HotbarItems: {
-            Value: [],
-          },
-        },
       },
       parameters: {
-        entries: [
-          createParameterEntry("Appearance", { kind: "literal", value: "" }),
-          createParameterEntry("HotbarItems", { kind: "literal", value: [] }),
-        ],
-        importStates: null,
-        excludedEntries: {},
-        keyOrder: ["Appearance", "HotbarItems"],
+        Appearance: {
+          Value: "",
+        },
+        HotbarItems: {
+          Value: [],
+          TypeHint: "String",
+        },
       },
-    };
+    });
 
     const descriptors: NpcDescriptorDocument = [
       {
@@ -72,59 +79,49 @@ describe("npc property model symbol enrichment", () => {
       },
     ];
 
-    const sections = buildNpcPropertySections(
+    const state = buildNpcPropertyState({
       document,
+      topLevelKeyOrder: Object.keys(document),
       descriptors,
-      buildParameterUsageIndex(document.rawRoot),
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
       [],
     );
 
-    const parameterSection = sections.find(section => section.id === "npc-section-parameters");
+    const parameterSection = state.sections.find(section => section.id === "parameters");
     expect(parameterSection).toBeDefined();
 
     const appearanceField = parameterSection?.fields.find(field => field.key === "Appearance");
-    expect(appearanceField).toMatchObject({
-      type: "parameter",
-      symbolRef: {
-        indexKind: "registeredAssets",
-        key: "ModelAsset",
-      },
+    expect(appearanceField?.symbolRef).toEqual({
+      indexKind: "registeredAssets",
+      key: "ModelAsset",
     });
 
     const hotbarItemsField = parameterSection?.fields.find(field => field.key === "HotbarItems");
-    expect(hotbarItemsField).toMatchObject({
-      type: "parameter",
-      itemSymbolRef: {
-        indexKind: "registeredAssets",
-        key: "Item",
-      },
+    expect(hotbarItemsField?.symbolRef).toEqual({
+      indexKind: "registeredAssets",
+      key: "Item",
     });
   });
 
   test("does not enrich a parameter when direct translations are ambiguous", () => {
-    const document: NpcDocument = {
-      roleType: "Generic",
-      rawRoot: {
-        Type: "Generic",
+    const document = createGenericDocument({
+      roleAttributes: {
         Appearance: {
           Compute: "Appearance",
         },
         Model: {
           Compute: "Appearance",
         },
-        Parameters: {
-          Appearance: {
-            Value: "",
-          },
-        },
       },
       parameters: {
-        entries: [createParameterEntry("Appearance", { kind: "literal", value: "" })],
-        importStates: null,
-        excludedEntries: {},
-        keyOrder: ["Appearance"],
+        Appearance: {
+          Value: "",
+        },
       },
-    };
+    });
 
     const descriptors: NpcDescriptorDocument = [
       {
@@ -147,98 +144,165 @@ describe("npc property model symbol enrichment", () => {
       },
     ];
 
-    const sections = buildNpcPropertySections(
+    const state = buildNpcPropertyState({
       document,
+      topLevelKeyOrder: Object.keys(document),
       descriptors,
-      buildParameterUsageIndex(document.rawRoot),
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
       [],
     );
-    const parameterSection = sections.find(section => section.id === "npc-section-parameters");
+
+    const parameterSection = state.sections.find(section => section.id === "parameters");
     const appearanceField = parameterSection?.fields.find(field => field.key === "Appearance");
 
-    expect(appearanceField).toMatchObject({
-      type: "parameter",
-    });
-    expect("symbolRef" in (appearanceField ?? {})).toBe(true);
-    expect((appearanceField as { symbolRef?: unknown } | undefined)?.symbolRef).toBeUndefined();
-  });
-
-  test("attaches field issues from the issues map", () => {
-    const document: NpcDocument = {
-      roleType: "Generic",
-      rawRoot: {
-        Type: "Generic",
-        Parameters: {
-          Appearance: {
-            Value: "",
-          },
-        },
-      },
-      parameters: {
-        entries: [createParameterEntry("Appearance", { kind: "literal", value: "" })],
-        importStates: null,
-        excludedEntries: {},
-        keyOrder: ["Appearance"],
-      },
-    };
-
-    const sections = buildNpcPropertySections(
-      document,
-      [],
-      buildParameterUsageIndex(document.rawRoot),
-      [],
-      buildIssuesByFieldPath(
-        buildNpcIssues(document, buildParameterUsageIndex(document.rawRoot)),
-      ),
-    );
-    const parameterSection = sections.find(section => section.id === "npc-section-parameters");
-    const appearanceField = parameterSection?.fields.find(field => field.key === "Appearance");
-
-    expect(appearanceField).toMatchObject({
-      issues: [
-        {
-          severity: "warning",
-          code: "unused-parameter",
-        },
-      ],
-    });
+    expect(appearanceField?.symbolRef).toBeUndefined();
   });
 
   test("adds a dedicated import states field for components", () => {
-    const document: NpcDocument = {
-      roleType: "Component",
-      rawRoot: {
-        Type: "Component",
-        Parameters: {
-          _ImportStates: ["Idle"],
-          AlertedRange: {
-            Value: 10,
-          },
+    const document = createComponentDocument({
+      parameters: {
+        _ImportStates: ["Idle"],
+        AlertedRange: {
+          Value: 10,
         },
       },
-      parameters: {
-        entries: [createParameterEntry("AlertedRange", { kind: "literal", value: 10 })],
-        importStates: ["Idle"],
-        excludedEntries: {},
-        keyOrder: ["_ImportStates", "AlertedRange"],
-      },
-    };
+    });
 
-    const sections = buildNpcPropertySections(
+    const state = buildNpcPropertyState({
       document,
-      [],
-      buildParameterUsageIndex(document.rawRoot),
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
       ["Alerted", "Idle", "Search"],
     );
-    const parameterSection = sections.find(section => section.id === "npc-section-parameters");
+
+    const parameterSection = state.sections.find(section => section.id === "parameters");
     const importStatesField = parameterSection?.fields[0];
 
     expect(importStatesField).toMatchObject({
-      type: "list",
+      kind: "list",
       fieldPath: "Parameters._ImportStates",
       label: "Import States",
-      items: ["Idle"],
-      itemAutocompleteValues: ["Alerted", "Idle", "Search"],
+      value: {
+        kind: "literal",
+        value: ["Idle"],
+      },
+      staticSuggestions: ["Alerted", "Idle", "Search"],
     });
+  });
+
+  test("infers compute-backed role attribute field types from array descriptors and matching parameters", () => {
+    const document = createGenericDocument({
+      roleAttributes: {
+        FlockSpawnTypes: {
+          Compute: "FlockArray",
+        },
+        DropDeathItemsInstantly: {
+          Compute: "DropDeathItemsInstantly",
+        },
+      },
+      parameters: {
+        DropDeathItemsInstantly: {
+          Value: false,
+        },
+      },
+    });
+
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "FlockSpawnTypes",
+            Type: "Array",
+            Domain: "String",
+            Computable: true,
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+    const roleAttributesSection = state.sections.find(section => section.id === "roleAttributes");
+    const flockSpawnTypesField = roleAttributesSection?.fields.find(
+      field => field.key === "FlockSpawnTypes",
+    );
+    const dropDeathItemsInstantlyField = roleAttributesSection?.fields.find(
+      field => field.key === "DropDeathItemsInstantly",
+    );
+
+    expect(flockSpawnTypesField).toMatchObject({
+      kind: "list",
+      itemType: "string",
+      value: {
+        kind: "compute",
+        expression: "FlockArray",
+      },
+    });
+    expect(dropDeathItemsInstantlyField).toMatchObject({
+      kind: "boolean",
+      value: {
+        kind: "compute",
+        expression: "DropDeathItemsInstantly",
+      },
+    });
+  });
+
+  test("treats compute-backed flag role attributes as string fields", () => {
+    const document = createGenericDocument({
+      roleAttributes: {
+        DefaultPlayerAttitude: {
+          Compute: "PlayerDefaultAttitude",
+        },
+      },
+    });
+
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "DefaultPlayerAttitude",
+            Type: "Flag",
+            Computable: true,
+            FlagDescriptions: {
+              HOSTILE: "is hostile",
+              FRIENDLY: "is friendly",
+            },
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+    const roleAttributesSection = state.sections.find(section => section.id === "roleAttributes");
+    const field = roleAttributesSection?.fields.find(
+      candidate => candidate.key === "DefaultPlayerAttitude",
+    );
+
+    expect(field).toMatchObject({
+      kind: "string",
+      value: {
+        kind: "compute",
+        expression: "PlayerDefaultAttitude",
+      },
+    });
+    expect(field?.staticSuggestions).toEqual(expect.arrayContaining(["Friendly", "Hostile"]));
   });
 });

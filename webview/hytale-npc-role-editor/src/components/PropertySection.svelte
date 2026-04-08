@@ -6,7 +6,7 @@
   let { section }: { section: NpcPropertySection } = $props();
 </script>
 
-{#if section.id === "npc-section-parameters"}
+{#if section.id === "parameters"}
   <ParameterSection {section} />
 {:else}
   <section

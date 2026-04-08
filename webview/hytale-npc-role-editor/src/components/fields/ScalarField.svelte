@@ -2,52 +2,43 @@
   import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
-  import type { NpcPropertyScalarField } from "../../propertyModel";
+  import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
-  let { field }: { field: NpcPropertyScalarField } = $props();
+  let { field }: { field: NpcPropertyField } = $props();
 
   let draftValue = $state("");
 
   $effect(() => {
-    draftValue = String(field.value ?? "");
+    const currentValue =
+      field.value.kind === "compute" ? field.value.expression : String(field.value.value ?? "");
+    draftValue = currentValue;
   });
 
-  const panelDescription = $derived(
-    field.type === "enum" && field.options?.some(option => option.value === field.value)
-      ? [field.description, field.options.find(option => option.value === field.value)?.description]
-          .filter(Boolean)
-          .join("\n\n") || undefined
-      : field.description,
-  );
   const inputId = $derived(`npc-property-${field.id}`);
-  const autocompleteOptions = $derived(
-    (field.options?.length
-      ? field.options.map(option => ({
-          value: option.value,
-          markdownDescription: option.description,
-        }))
-      : field.symbolRef && workspace.autocompleteField === inputId
-        ? workspace.autocompleteValues.map(value => ({
-            value,
-          }))
-        : []
-    ),
-  );
-  const computeAutocompleteOptions = $derived(
-    buildNpcComputeAutocompleteOptions({
-      parameters: workspace.documentModel?.parameters?.entries,
-      scope: "standard",
-    }),
-  );
+  const issues = $derived(workspace.getFieldIssues(field.fieldPath));
   const hasComputeIssues = $derived(
-    field.issues?.some(issue => issue.code.startsWith("compute-")) ?? false,
+    issues.some(issue => issue.code.startsWith("compute-")),
   );
   const computeInputStyle = $derived(
     hasComputeIssues
       ? "border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));"
       : undefined,
+  );
+  const autocompleteOptions = $derived(
+    (field.staticSuggestions?.length
+      ? field.staticSuggestions.map(value => ({ value }))
+      : field.symbolRef && workspace.autocompleteField === inputId
+        ? workspace.autocompleteValues.map(value => ({ value }))
+        : []
+    ),
+  );
+  const computeAutocompleteOptions = $derived(
+    buildNpcComputeAutocompleteOptions({
+      parameters: workspace.getStandardParameterFields(),
+      scope: "standard",
+    }),
   );
 
   function sanitizeNumber(value: string) {
@@ -62,13 +53,16 @@
     const sanitized = sanitizeNumber(draftValue);
     draftValue = sanitized;
     if (sanitized === "") {
-      workspace.updateFieldValue(field.fieldPath, "");
+      workspace.updateFieldValue(field.fieldPath, 0);
       return;
     }
 
     const nextValue = Number(sanitized);
     if (Number.isNaN(nextValue)) {
-      draftValue = typeof field.value === "number" ? String(field.value) : "";
+      draftValue =
+        field.value.kind === "literal" && typeof field.value.value === "number"
+          ? String(field.value.value)
+          : "";
       return;
     }
 
@@ -76,7 +70,7 @@
   }
 
   function requestAutocomplete() {
-    if (field.options?.length || !field.symbolRef) {
+    if (field.staticSuggestions?.length || !field.symbolRef) {
       return;
     }
 
@@ -86,12 +80,16 @@
 
 <FieldPanel
   title={field.label}
-  typeLabel={field.typeLabel}
-  description={panelDescription}
-  infoItems={field.infoItems}
-  issues={field.issues}
+  typeLabel={getNpcFieldTypeLabel(field)}
+  description={field.description}
+  issues={issues}
+  onunset={field.canUnset !== false && field.isSet !== false
+    ? () => {
+        workspace.unsetField(field.fieldPath);
+      }
+    : undefined}
 >
-  {#if field.valueMode === "compute"}
+  {#if field.value.kind === "compute"}
     <ComputeAutocompleteInput
       inputId={inputId}
       initialValue={draftValue}
@@ -107,7 +105,7 @@
         workspace.updateFieldComputeExpression(field.fieldPath, value);
       }}
     />
-  {:else if field.type === "number"}
+  {:else if field.kind === "number"}
     <input
       id={inputId}
       type="text"

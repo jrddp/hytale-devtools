@@ -9,26 +9,63 @@ import {
   updateStandardParameterDescription,
   updateStandardParameterEditorType,
 } from "../../webview/hytale-npc-role-editor/src/parsing/parameterMutations";
+import {
+  buildNpcPropertyState,
+  serializeNpcPropertyState,
+  type NpcPropertySection,
+} from "../../webview/hytale-npc-role-editor/src/propertyModel";
 import { serializeNpcDocumentText } from "../../webview/hytale-npc-role-editor/src/parsing/serializeNpcDocument";
 import { parseJsonText, readFixtureText } from "./helpers";
 
-function expectReadyDocument(relativePath: string) {
+function expectReadyParametersSection(relativePath: string): {
+  section: NpcPropertySection;
+  topLevelKeyOrder: string[];
+} {
   const result = parseNpcDocumentText(readFixtureText(relativePath));
   expect(result.status).toBe("ready");
   if (result.status !== "ready") {
     throw new Error(result.error);
   }
-  return result.document;
+
+  const state = buildNpcPropertyState({
+    document: result.document,
+    topLevelKeyOrder: result.topLevelKeyOrder,
+    descriptors: [],
+  });
+  const section = state.sections.find(section => section.id === "parameters");
+  if (!section) {
+    throw new Error("Expected parameters section");
+  }
+
+  return {
+    section,
+    topLevelKeyOrder: state.topLevelKeyOrder,
+  };
+}
+
+function serializeSection(section: NpcPropertySection, topLevelKeyOrder: string[]) {
+  return parseJsonText(
+    serializeNpcDocumentText(
+      serializeNpcPropertyState({
+        roleType: "Generic",
+        componentClass: null,
+        sections: [section],
+        preservedTopLevelFields: {},
+        topLevelKeyOrder,
+      }),
+      topLevelKeyOrder,
+    ),
+  ) as Record<string, unknown>;
 }
 
 describe("npc editor parameter mutations", () => {
   test("adds a new standard parameter with a unique default name", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
     );
 
-    const nextName = addStandardParameter(document);
-    const serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    const nextName = addStandardParameter(section);
+    const serialized = serializeSection(section, topLevelKeyOrder);
     const parameters = serialized.Parameters as Record<string, unknown>;
 
     expect(nextName).toBe("Parameter");
@@ -38,17 +75,12 @@ describe("npc editor parameter mutations", () => {
   });
 
   test("renames a standard parameter while preserving its serialized payload", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
     );
-    const parameters = document.parameters;
-    expect(parameters).not.toBeNull();
-    if (!parameters) {
-      throw new Error("Expected parameters to exist");
-    }
 
-    const renamed = renameStandardParameter(parameters, "Invulnerable", "Immortal");
-    const serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    const renamed = renameStandardParameter(section, "Invulnerable", "Immortal");
+    const serialized = serializeSection(section, topLevelKeyOrder);
     const serializedParameters = serialized.Parameters as Record<string, unknown>;
 
     expect(renamed).toBe(true);
@@ -60,17 +92,12 @@ describe("npc editor parameter mutations", () => {
   });
 
   test("removes a standard parameter", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
     );
-    const parameters = document.parameters;
-    expect(parameters).not.toBeNull();
-    if (!parameters) {
-      throw new Error("Expected parameters to exist");
-    }
 
-    const removed = removeStandardParameter(parameters, "Invulnerable");
-    const serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    const removed = removeStandardParameter(section, "Invulnerable");
+    const serialized = serializeSection(section, topLevelKeyOrder);
     const serializedParameters = serialized.Parameters as Record<string, unknown>;
 
     expect(removed).toBe(true);
@@ -78,14 +105,9 @@ describe("npc editor parameter mutations", () => {
   });
 
   test("reorders standard parameters while preserving excluded entry positions", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/_Core/Components/Selectors/Component_Instruction_Generic_Idle.json",
     );
-    const parameters = document.parameters;
-    expect(parameters).not.toBeNull();
-    if (!parameters) {
-      throw new Error("Expected parameters to exist");
-    }
 
     const orderedNames = [
       "MotionComponent",
@@ -96,62 +118,59 @@ describe("npc editor parameter mutations", () => {
       "SearchedForAttitudes",
     ];
 
-    const reordered = reorderStandardParameters(parameters, orderedNames);
-    const serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    const reordered = reorderStandardParameters(section, orderedNames);
+    const serialized = parseJsonText(
+      serializeNpcDocumentText(
+        serializeNpcPropertyState({
+          roleType: "Component",
+          componentClass: "Instruction",
+          sections: [section],
+          preservedTopLevelFields: {},
+          topLevelKeyOrder,
+        }),
+        topLevelKeyOrder,
+      ),
+    ) as Record<string, unknown>;
     const parameterKeys = Object.keys(serialized.Parameters as Record<string, unknown>);
 
     expect(reordered).toBe(true);
-    expect(parameterKeys).toEqual([
-      "_ImportStates",
-      ...orderedNames,
-    ]);
+    expect(parameterKeys).toEqual(["_ImportStates", ...orderedNames]);
   });
 
   test("switches parameter type and writes matching value/type hint", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
     );
-    const parameters = document.parameters;
-    expect(parameters).not.toBeNull();
-    if (!parameters) {
-      throw new Error("Expected parameters to exist");
-    }
 
-    expect(updateStandardParameterEditorType(parameters, "Invulnerable", "numberList")).toBe(true);
+    expect(updateStandardParameterEditorType(section, "Invulnerable", "numberList")).toBe(true);
 
-    let serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    let serialized = serializeSection(section, topLevelKeyOrder);
     let invulnerable = (serialized.Parameters as Record<string, unknown>)
       .Invulnerable as Record<string, unknown>;
 
     expect(invulnerable).toEqual({
       Value: [0],
       Description: "Whether this NPC is invulnerable.",
-      TypeHint: "Number",
     });
 
-    expect(updateStandardParameterEditorType(parameters, "Invulnerable", "range")).toBe(true);
+    expect(updateStandardParameterEditorType(section, "Invulnerable", "range")).toBe(true);
 
-    serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    serialized = serializeSection(section, topLevelKeyOrder);
     invulnerable = (serialized.Parameters as Record<string, unknown>)
       .Invulnerable as Record<string, unknown>;
 
-    expect(invulnerable.TypeHint).toBe("Number");
+    expect(invulnerable.TypeHint).toBeUndefined();
     expect(invulnerable.Value).toEqual([0, 0]);
   });
 
   test("switches a parameter to compute mode", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
     );
-    const parameters = document.parameters;
-    expect(parameters).not.toBeNull();
-    if (!parameters) {
-      throw new Error("Expected parameters to exist");
-    }
 
-    expect(updateStandardParameterEditorType(parameters, "Invulnerable", "compute")).toBe(true);
+    expect(updateStandardParameterEditorType(section, "Invulnerable", "compute")).toBe(true);
 
-    const serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    const serialized = serializeSection(section, topLevelKeyOrder);
     const invulnerable = (serialized.Parameters as Record<string, unknown>)
       .Invulnerable as Record<string, unknown>;
 
@@ -164,28 +183,23 @@ describe("npc editor parameter mutations", () => {
   });
 
   test("updates and clears a parameter description", () => {
-    const document = expectReadyDocument(
+    const { section, topLevelKeyOrder } = expectReadyParametersSection(
       "Server/NPC/Roles/Intelligent/Neutral/Kweebec/Kweebec_Merchant.json",
     );
-    const parameters = document.parameters;
-    expect(parameters).not.toBeNull();
-    if (!parameters) {
-      throw new Error("Expected parameters to exist");
-    }
 
-    expect(updateStandardParameterDescription(parameters, "Invulnerable", "Cannot take damage.")).toBe(
+    expect(updateStandardParameterDescription(section, "Invulnerable", "Cannot take damage.")).toBe(
       true,
     );
 
-    let serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    let serialized = serializeSection(section, topLevelKeyOrder);
     let invulnerable = (serialized.Parameters as Record<string, unknown>)
       .Invulnerable as Record<string, unknown>;
 
     expect(invulnerable.Description).toBe("Cannot take damage.");
 
-    expect(updateStandardParameterDescription(parameters, "Invulnerable", "")).toBe(true);
+    expect(updateStandardParameterDescription(section, "Invulnerable", "")).toBe(true);
 
-    serialized = parseJsonText(serializeNpcDocumentText(document)) as Record<string, unknown>;
+    serialized = serializeSection(section, topLevelKeyOrder);
     invulnerable = (serialized.Parameters as Record<string, unknown>)
       .Invulnerable as Record<string, unknown>;
 

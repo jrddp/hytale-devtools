@@ -2,8 +2,10 @@
   import { flip } from "svelte/animate";
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
+  import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
-  import type { NpcPropertyListField } from "../../propertyModel";
+  import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
+  import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
@@ -14,7 +16,7 @@
 
   const FLIP_DURATION_MS = 100;
 
-  let { field }: { field: NpcPropertyListField } = $props();
+  let { field }: { field: NpcPropertyField } = $props();
 
   let collapsed = $state(false);
   let itemViews = $state<ListItemView[]>([]);
@@ -22,34 +24,59 @@
   let nextItemId = 0;
 
   $effect(() => {
-    itemViews = field.items.map(value => ({
-      id: getNextItemId(),
-      value,
-    }));
+    collapsed = field.ui?.collapsed ?? false;
+  });
+
+  $effect(() => {
+    if (!field.ui) {
+      field.ui = {};
+    }
+
+    field.ui.collapsed = collapsed;
+  });
+
+  $effect(() => {
+    itemViews =
+      field.value.kind === "literal" &&
+      Array.isArray(field.value.value) &&
+      field.value.value.every(isPrimitiveListItem)
+        ? field.value.value.map(value => ({
+            id: getNextItemId(),
+            value,
+          }))
+        : [];
     draftItemViews = null;
   });
 
+  const issues = $derived(workspace.getFieldIssues(field.fieldPath));
   const renderedItemViews = $derived(draftItemViews ?? itemViews);
   const activeFlipDurationMs = $derived(draftItemViews ? FLIP_DURATION_MS : 0);
   const hasVisibleItems = $derived(renderedItemViews.length > 0);
-  const summary = $derived(`${itemViews.length} list items`);
+  const summary = $derived(
+    field.value.kind === "compute" ? undefined : `${itemViews.length} list items`,
+  );
+  const computeAutocompleteOptions = $derived(
+    buildNpcComputeAutocompleteOptions({
+      parameters: workspace.getStandardParameterFields(),
+      scope: "standard",
+    }),
+  );
 
-  const gripHandle = (node: HTMLElement) => {
-    const result = dragHandle(node);
-    return () => result?.destroy?.();
-  };
+  function isPrimitiveListItem(value: unknown): value is string | number | boolean {
+    return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
+  }
 
   function getNextItemId() {
     return `npc-list-item-${field.id}-${nextItemId++}`;
   }
 
   function getDefaultNewItemValue() {
-    if (itemViews.every(item => typeof item.value === "boolean") && itemViews.length > 0) {
-      return false;
+    if (field.itemType === "number") {
+      return 0;
     }
 
-    if (itemViews.every(item => typeof item.value === "number") && itemViews.length > 0) {
-      return 0;
+    if (field.itemType === "boolean") {
+      return false;
     }
 
     return "";
@@ -83,7 +110,7 @@
   }
 
   function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
-    if (field.itemAutocompleteValues) {
+    if (field.staticSuggestions?.length) {
       const currentValue =
         typeof itemView?.value === "string" ? itemView.value.trim() : "";
       const usedValues = new Set(
@@ -93,12 +120,12 @@
           .filter(Boolean),
       );
 
-      return field.itemAutocompleteValues
+      return field.staticSuggestions
         .filter(value => value === currentValue || !usedValues.has(value))
         .map(value => ({ value }));
     }
 
-    if (!field.itemSymbolRef || workspace.autocompleteField !== inputId) {
+    if (!field.symbolRef || workspace.autocompleteField !== inputId) {
       return [];
     }
 
@@ -106,15 +133,11 @@
   }
 
   function requestAutocomplete(inputId: string) {
-    if (field.itemAutocompleteValues) {
+    if (field.staticSuggestions?.length || !field.symbolRef) {
       return;
     }
 
-    if (!field.itemSymbolRef) {
-      return;
-    }
-
-    workspace.requestAutocomplete(inputId, field.itemSymbolRef);
+    workspace.requestAutocomplete(inputId, field.symbolRef);
   }
 </script>
 
@@ -138,15 +161,31 @@
 
 <FieldPanel
   title={field.label}
-  typeLabel={field.typeLabel}
+  typeLabel={getNpcFieldTypeLabel(field)}
   description={field.description}
-  infoItems={field.infoItems}
-  issues={field.issues}
+  issues={issues}
   inline={false}
   {summary}
   bind:collapsed
+  onunset={field.canUnset !== false && field.isSet !== false
+    ? () => {
+        workspace.unsetField(field.fieldPath);
+      }
+    : undefined}
 >
-  {#if hasVisibleItems}
+  {#if field.value.kind === "compute"}
+    <ComputeAutocompleteInput
+      inputId={`npc-property-${field.id}`}
+      initialValue={field.value.expression}
+      data-vscode-context={"{}"}
+      placeholder="Type for suggestions"
+      autocompleteOptions={computeAutocompleteOptions}
+      inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
+      listClass="absolute left-0 right-0 top-full z-[160] max-h-56 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
+      optionClass="block w-full cursor-pointer border border-transparent px-3 py-2 text-left text-vsc-input-fg hover:bg-vsc-list-hover"
+      oncommit={value => workspace.updateFieldComputeExpression(field.fieldPath, value)}
+    />
+  {:else if hasVisibleItems}
     <div class="relative">
       <div
         class="-mx-3 -my-6 space-y-3 rounded-lg px-3 py-6"
@@ -159,7 +198,7 @@
           },
         }}
         onconsider={handleConsider}
-              onfinalize={handleFinalize}
+        onfinalize={handleFinalize}
       >
         {#each renderedItemViews as itemView, index (itemView.id)}
           <div animate:flip={{ duration: activeFlipDurationMs }}>
@@ -258,16 +297,18 @@
     </div>
   {:else}
     <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 text-sm text-vsc-muted">
-      Empty list
+      No items yet.
     </div>
   {/if}
 
-  <button
-    type="button"
-    class="flex w-full items-center gap-1 rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg opacity-80 hover:bg-vsc-button-hover"
-    onclick={addItem}
-  >
-    <Plus size={14} />
-    Add Item
-  </button>
+  {#if field.value.kind !== "compute"}
+    <button
+      type="button"
+      class="flex w-full items-center gap-1 rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg opacity-80 hover:bg-vsc-button-hover"
+      onclick={addItem}
+    >
+      <Plus size={14} />
+      Add Item
+    </button>
+  {/if}
 </FieldPanel>

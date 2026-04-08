@@ -1,43 +1,103 @@
-export type NpcStandardParameterEditorType =
-  | "string"
-  | "number"
-  | "boolean"
-  | "range"
-  | "stringList"
-  | "numberList"
-  | "booleanList"
-  | "compute"
-  | "rawJson";
+export type NpcRoleType = "Generic" | "Abstract" | "Variant" | "Component";
 
-export type NpcStandardParameterValue =
-  | {
-      kind: "literal";
-      value: unknown;
-    }
-  | {
-      kind: "compute";
-      expression: string;
-    };
+export type NpcComponentClass =
+  | "Action"
+  | "ActionList"
+  | "BodyMotion"
+  | "Instruction"
+  | "Path"
+  | "Sensor"
+  | (string & {});
 
-export type NpcStandardParameterEntry = {
-  name: string;
-  value: NpcStandardParameterValue;
-  description?: string;
-  typeHint?: string;
-  private?: boolean;
-  keyOrder: string[];
-  extraFields: Record<string, unknown>;
+export type NpcJsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | NpcJsonValue[]
+  | { [key: string]: NpcJsonValue };
+
+export type NpcComputeJson = {
+  Compute: string;
 };
 
-export type NpcParameters = {
-  entries: NpcStandardParameterEntry[];
-  importStates: string[] | null;
-  excludedEntries: Record<string, unknown>;
-  keyOrder: string[];
+export type NpcParameterValueJson = NpcJsonValue | NpcComputeJson;
+
+export type NpcParameterDefinitionJson = {
+  Value: NpcParameterValueJson;
+  Description?: string;
+  TypeHint?: string;
+  Validate?: string;
+  Confine?: string;
+  Private?: boolean;
+  [key: string]: unknown;
 };
 
-export type NpcDocument = {
-  roleType: string | null;
-  rawRoot: Record<string, unknown>;
-  parameters: NpcParameters | null;
+export type NpcParametersJson = {
+  _ImportStates?: string[];
+  [parameterName: string]: NpcParameterDefinitionJson | unknown;
 };
+
+export type NpcModifyJson = {
+  _ExportStates?: string[];
+  _CombatConfig?: string;
+  _InteractionVars?: Record<string, string>;
+  [key: string]: unknown;
+};
+
+export type NpcGenericRoleJson = {
+  Type: "Generic" | "Abstract";
+  Parameters?: NpcParametersJson;
+  TestType?: string;
+  FailReason?: string;
+  [key: string]: unknown;
+};
+
+export type NpcVariantRoleJson = {
+  Type: "Variant";
+  Reference?: string | NpcComputeJson;
+  Modify?: NpcModifyJson;
+  Parameters?: NpcParametersJson;
+  TestType?: string;
+  FailReason?: string;
+  [key: string]: unknown;
+};
+
+export type NpcComponentRoleJson = {
+  Type: "Component";
+  Class?: string;
+  Interface?: string;
+  DefaultState?: string;
+  ResetOnStateChange?: boolean;
+  Content?: unknown;
+  Parameters?: NpcParametersJson;
+  TestType?: string;
+  FailReason?: string;
+  [key: string]: unknown;
+};
+
+export type NpcRoleJson =
+  | NpcGenericRoleJson
+  | NpcVariantRoleJson
+  | NpcComponentRoleJson;
+
+export function isNpcRoleType(value: unknown): value is NpcRoleType {
+  return (
+    value === "Generic" ||
+    value === "Abstract" ||
+    value === "Variant" ||
+    value === "Component"
+  );
+}
+
+export function isNpcComputeJson(value: unknown): value is NpcComputeJson {
+  return isRecord(value) && Object.keys(value).length === 1 && typeof value.Compute === "string";
+}
+
+export function isNpcRoleJson(value: unknown): value is NpcRoleJson {
+  return isRecord(value) && isNpcRoleType(value.Type);
+}
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}

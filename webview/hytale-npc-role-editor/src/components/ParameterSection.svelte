@@ -3,11 +3,13 @@
   import { tick } from "svelte";
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
-  import type { NpcPropertyParameterField, NpcPropertySection } from "../propertyModel";
+  import type { NpcPropertyField, NpcPropertySection } from "../propertyModel";
+  import { getNpcFieldTypeLabel } from "../propertyModel";
   import {
-    STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS,
+    getStandardParameterEditorType,
     type StandardParameterEditableTypeOption,
   } from "../parsing/parameterEditorTypes";
+  import { isStandardParameterField } from "../parsing/parameterMutations";
   import { workspace } from "../workspace.svelte";
   import FieldRenderer from "./FieldRenderer.svelte";
   import ParameterTypePicker from "./ParameterTypePicker.svelte";
@@ -15,7 +17,7 @@
 
   type ParameterRowView = {
     id: string;
-    field: NpcPropertyParameterField;
+    field: NpcPropertyField;
   };
 
   const FLIP_DURATION_MS = 100;
@@ -35,13 +37,11 @@
     y: number;
   } | null>(null);
 
-  const parameterFields = $derived(
-    section.fields.filter(field => field.type === "parameter") as NpcPropertyParameterField[],
-  );
-  const specialFields = $derived(section.fields.filter(field => field.type !== "parameter"));
+  const parameterFields = $derived(section.fields.filter(isStandardParameterField));
+  const specialFields = $derived(section.fields.filter(field => !isStandardParameterField(field)));
   const visibleRowViews = $derived(
     parameterFields.map(field => ({
-      id: field.parameterName,
+      id: field.key,
       field,
     })),
   );
@@ -49,7 +49,7 @@
   const activeFlipDurationMs = $derived(draftRowViews ? FLIP_DURATION_MS : 0);
   const typePickerField = $derived(
     typePickerState
-      ? parameterFields.find(field => field.parameterName === typePickerState.parameterName) ?? null
+      ? parameterFields.find(field => field.key === typePickerState.parameterName) ?? null
       : null,
   );
 
@@ -60,7 +60,7 @@
       return;
     }
 
-    if (parameterFields.some(field => field.parameterName === parameterName)) {
+    if (parameterFields.some(field => field.key === parameterName)) {
       workspace.clearParameterRenameRequest();
       void enterEditMode(parameterName);
     }
@@ -92,7 +92,7 @@
       return;
     }
 
-    if (parameterFields.some(field => field.parameterName === parameterName)) {
+    if (parameterFields.some(field => field.key === parameterName)) {
       workspace.clearParameterDescriptionRequest();
       void enterDescriptionEditMode(parameterName);
     }
@@ -104,7 +104,7 @@
 
   function handleFinalize(event: CustomEvent<DndEvent<ParameterRowView>>) {
     draftRowViews = null;
-    workspace.reorderStandardParameters(event.detail.items.map(item => item.field.parameterName));
+    workspace.reorderStandardParameters(event.detail.items.map(item => item.field.key));
   }
 
   async function addParameter() {
@@ -154,7 +154,7 @@
     editingParameterName = null;
     editingParameterDescription = parameterName;
     parameterDescriptionDrafts[parameterName] =
-      parameterFields.find(field => field.parameterName === parameterName)?.description ?? "";
+      parameterFields.find(field => field.key === parameterName)?.description ?? "";
     await tick();
     const textarea = parameterDescriptionInputs[parameterName];
     if (!textarea) {
@@ -190,11 +190,9 @@
   }
 
   function getPickerTypeForField(
-    field: NpcPropertyParameterField,
+    field: NpcPropertyField,
   ): StandardParameterEditableTypeOption["value"] {
-    return STANDARD_PARAMETER_EDITOR_TYPE_OPTIONS.some(option => option.value === field.editorType)
-      ? (field.editorType as StandardParameterEditableTypeOption["value"])
-      : "string";
+    return getStandardParameterEditorType(field);
   }
 
   function closeTypePicker() {
@@ -253,7 +251,7 @@
                 <div
                   use:dragHandle
                   class="relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-80 outline-none transition-[color,opacity] hover:text-vsc-input-fg"
-                  aria-label={`Reorder ${rowView.field.parameterName} parameter ${index + 1}`}
+                  aria-label={`Reorder ${rowView.field.key} parameter ${index + 1}`}
                   role="button"
                   tabindex={-1}
                   onclick={event => event.stopPropagation()}
@@ -269,12 +267,12 @@
 
               {#snippet rowTitle()}
                 <div class="flex min-w-0 items-center gap-1">
-                  {#if editingParameterName === rowView.field.parameterName}
+                  {#if editingParameterName === rowView.field.key}
                     <input
-                      bind:this={parameterNameInputs[rowView.field.parameterName]}
+                      bind:this={parameterNameInputs[rowView.field.key]}
                       class="min-w-0 flex-1 bg-transparent text-sm font-semibold text-vsc-input-fg outline-none"
                       data-vscode-context={"{}"}
-                      value={rowView.field.parameterName}
+                      value={rowView.field.key}
                       spellcheck={false}
                       aria-label="Parameter name"
                       placeholder="Parameter name"
@@ -282,7 +280,7 @@
                       onkeydown={event => {
                         if (event.key === "Enter") {
                           event.preventDefault();
-                          commitRename(rowView.field.parameterName, event.currentTarget.value);
+                          commitRename(rowView.field.key, event.currentTarget.value);
                           return;
                         }
 
@@ -292,18 +290,17 @@
                         }
                       }}
                       onblur={event =>
-                        editingParameterName === rowView.field.parameterName &&
-                        commitRename(rowView.field.parameterName, event.currentTarget.value)}
+                        editingParameterName === rowView.field.key &&
+                        commitRename(rowView.field.key, event.currentTarget.value)}
                     />
                   {:else}
                     <div
                       class="truncate text-sm font-semibold select-none"
                       role="presentation"
-                      ondblclick={() => enterEditMode(rowView.field.parameterName)}
+                      ondblclick={() => enterEditMode(rowView.field.key)}
                     >
-                      {rowView.field.parameterName}
+                      {rowView.field.key}
                     </div>
-
                   {/if}
                 </div>
               {/snippet}
@@ -312,41 +309,38 @@
                 <div class="space-y-2">
                   <div class="space-y-1">
                     <div class="font-semibold">
-                      {rowView.field.label}{#if rowView.field.typeLabel}&nbsp;({rowView.field.typeLabel}){/if}
+                      {rowView.field.label}&nbsp;({getNpcFieldTypeLabel(rowView.field)})
                     </div>
 
-                    {#if editingParameterDescription === rowView.field.parameterName}
-                    <textarea
-                      bind:this={parameterDescriptionInputs[rowView.field.parameterName]}
-                      class="w-80 resize-none overflow-hidden rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-sm leading-5 text-vsc-input-fg outline-none"
-                      data-vscode-context={"{}"}
-                      value={parameterDescriptionDrafts[rowView.field.parameterName] ??
-                        rowView.field.description ??
-                        ""}
-                      rows={1}
-                      spellcheck={false}
+                    {#if editingParameterDescription === rowView.field.key}
+                      <textarea
+                        bind:this={parameterDescriptionInputs[rowView.field.key]}
+                        class="w-80 resize-none overflow-hidden rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-sm leading-5 text-vsc-input-fg outline-none"
+                        data-vscode-context={"{}"}
+                        value={parameterDescriptionDrafts[rowView.field.key] ?? rowView.field.description ?? ""}
+                        rows={1}
+                        spellcheck={false}
                         aria-label="Parameter description"
                         placeholder="Add description"
-                      oninput={event => {
-                        parameterDescriptionDrafts[rowView.field.parameterName] =
-                          event.currentTarget.value;
-                        syncDescriptionTextareaHeight(rowView.field.parameterName);
-                      }}
+                        oninput={event => {
+                          parameterDescriptionDrafts[rowView.field.key] = event.currentTarget.value;
+                          syncDescriptionTextareaHeight(rowView.field.key);
+                        }}
                         onkeydown={event => {
                           if (event.key === "Enter" && !event.shiftKey) {
                             event.preventDefault();
-                            commitDescription(rowView.field.parameterName);
+                            commitDescription(rowView.field.key);
                             return;
                           }
 
                           if (event.key === "Escape") {
                             event.preventDefault();
-                            commitDescription(rowView.field.parameterName);
+                            commitDescription(rowView.field.key);
                           }
                         }}
                         onblur={() => {
-                          if (editingParameterDescription === rowView.field.parameterName) {
-                            commitDescription(rowView.field.parameterName);
+                          if (editingParameterDescription === rowView.field.key) {
+                            commitDescription(rowView.field.key);
                           }
                         }}
                       ></textarea>
@@ -356,17 +350,6 @@
                       </div>
                     {/if}
                   </div>
-
-                  {#if (rowView.field.infoItems?.length ?? 0) > 0}
-                    <dl class="space-y-1">
-                      {#each rowView.field.infoItems ?? [] as item (`${item.label}-${item.value}`)}
-                        <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1">
-                          <dt class="text-vsc-muted">{item.label}</dt>
-                          <dd class="break-words">{item.value}</dd>
-                        </div>
-                      {/each}
-                    </dl>
-                  {/if}
                 </div>
               {/snippet}
 
@@ -375,20 +358,21 @@
                 titleContent={rowTitle}
                 tooltipContent={rowTooltipContent}
                 handle={rowHandle}
-                onContextMenu={event => handleRowContextMenu(rowView.field.parameterName, event)}
+                onContextMenu={event => handleRowContextMenu(rowView.field.key, event)}
                 onInfoClick={() => {
-                  void enterDescriptionEditMode(rowView.field.parameterName);
+                  void enterDescriptionEditMode(rowView.field.key);
                 }}
                 interactiveInfoTooltip={true}
-                infoTooltipPinned={editingParameterDescription === rowView.field.parameterName}
-                hideInfoButton={editingParameterName === rowView.field.parameterName}
-                vscodeContext={editingParameterName !== rowView.field.parameterName
+                infoTooltipPinned={editingParameterDescription === rowView.field.key}
+                hideInfoButton={editingParameterName === rowView.field.key}
+                vscodeContext={editingParameterName !== rowView.field.key
                   ? JSON.stringify({
                       webviewSection: "npcParameterRow",
-                      parameterName: rowView.field.parameterName,
+                      parameterName: rowView.field.key,
                       parameterHasDescription: Boolean(rowView.field.description),
                     })
                   : undefined}
+                onunset={() => workspace.unsetField(rowView.field.fieldPath)}
               />
             </div>
           {/each}
@@ -407,15 +391,15 @@
   </div>
 
   {#if typePickerState && typePickerField}
-      <ParameterTypePicker
-        x={typePickerState.x}
-        y={typePickerState.y}
-        currentType={getPickerTypeForField(typePickerField)}
-        onclose={closeTypePicker}
-        onselect={value => {
-          workspace.updateStandardParameterEditorType(typePickerState.parameterName, value);
-          closeTypePicker();
-        }}
-      />
+    <ParameterTypePicker
+      x={typePickerState.x}
+      y={typePickerState.y}
+      currentType={getPickerTypeForField(typePickerField)}
+      onclose={closeTypePicker}
+      onselect={value => {
+        workspace.updateStandardParameterEditorType(typePickerState.parameterName, value);
+        closeTypePicker();
+      }}
+    />
   {/if}
 </section>

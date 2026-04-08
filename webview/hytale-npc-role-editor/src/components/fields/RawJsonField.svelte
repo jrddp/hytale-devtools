@@ -1,31 +1,45 @@
 <script lang="ts">
-  import type { NpcPropertyRawJsonField } from "../../propertyModel";
+  import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
   import FieldPanel from "../FieldPanel.svelte";
 
-  let { field }: { field: NpcPropertyRawJsonField } = $props();
+  let { field }: { field: NpcPropertyField } = $props();
 
   let draftValue = $state("");
 
   $effect(() => {
-    draftValue = JSON.stringify(field.value, null, 2);
+    draftValue = JSON.stringify(
+      field.value.kind === "literal" ? field.value.value : { Compute: field.value.expression },
+      null,
+      2,
+    );
   });
+
+  const issues = $derived(workspace.getFieldIssues(field.fieldPath));
 
   function commitRawJsonValue() {
     try {
       workspace.updateFieldValue(field.fieldPath, JSON.parse(draftValue));
     } catch {
-      draftValue = JSON.stringify(field.value, null, 2);
+      draftValue = JSON.stringify(
+        field.value.kind === "literal" ? field.value.value : { Compute: field.value.expression },
+        null,
+        2,
+      );
     }
   }
 </script>
 
 <FieldPanel
   title={field.label}
-  typeLabel={field.typeLabel}
+  typeLabel={getNpcFieldTypeLabel(field)}
   description={field.description}
-  infoItems={field.infoItems}
-  issues={field.issues}
+  issues={issues}
+  onunset={field.canUnset !== false && field.isSet !== false
+    ? () => {
+        workspace.unsetField(field.fieldPath);
+      }
+    : undefined}
 >
   <textarea
     data-vscode-context={"{}"}
