@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   applyNpcPropertySectionDerivedState,
   buildNpcPropertyState,
+  serializeNpcPropertyState,
 } from "../../webview/hytale-npc-role-editor/src/propertyModel";
 import { buildParameterUsageIndex } from "../../webview/hytale-npc-role-editor/src/compute/parameterUsageIndex";
 import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
@@ -304,5 +305,59 @@ describe("npc property model symbol enrichment", () => {
       },
     });
     expect(field?.staticSuggestions).toEqual(expect.arrayContaining(["Friendly", "Hostile"]));
+  });
+
+  test("serializes proxied section values without structuredClone errors", () => {
+    const proxiedList = new Proxy(["Wolf", "Sheep"], {});
+    const proxiedObject = new Proxy({ Nested: ["A", "B"] }, {});
+
+    const serialized = serializeNpcPropertyState({
+      roleType: "Generic",
+      componentClass: null,
+      sections: [
+        {
+          id: "parameters",
+          name: "Parameters",
+          fields: [
+            {
+              id: "parameter-flock-array",
+              key: "FlockArray",
+              label: "FlockArray",
+              fieldPath: "Parameters.FlockArray.Value",
+              kind: "list",
+              value: {
+                kind: "literal",
+                value: proxiedList,
+              },
+              itemType: "string",
+              isSet: true,
+            },
+          ],
+          preservedFields: {
+            _Extra: proxiedObject,
+          },
+          keyOrder: ["FlockArray", "_Extra"],
+        },
+      ],
+      preservedTopLevelFields: {
+        ExtraTopLevel: proxiedObject,
+      },
+      topLevelKeyOrder: ["Type", "Parameters", "ExtraTopLevel"],
+    });
+
+    expect(serialized).toEqual({
+      Type: "Generic",
+      Parameters: {
+        FlockArray: {
+          Value: ["Wolf", "Sheep"],
+        },
+        _Extra: {
+          Nested: ["A", "B"],
+        },
+      },
+      ExtraTopLevel: {
+        Nested: ["A", "B"],
+      },
+    });
   });
 });

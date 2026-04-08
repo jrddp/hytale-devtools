@@ -140,6 +140,14 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(changeNpcParameterTypeCommand);
 
+  const logNpcFieldInstanceCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.logFieldInstance",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("logFieldInstance", menuContext);
+    },
+  );
+  context.subscriptions.push(logNpcFieldInstanceCommand);
+
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));

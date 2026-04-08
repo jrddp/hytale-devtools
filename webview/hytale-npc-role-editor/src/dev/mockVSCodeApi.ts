@@ -79,6 +79,7 @@ export class MockVSCodeApi implements VSCodeApi {
       descriptors: payload.descriptors as never,
       descriptorPath: payload.descriptorPath,
       descriptorSource: payload.descriptorSource,
+      isDevelopment: true,
     });
     this.send({
       type: "update",

@@ -95,9 +95,11 @@
 
   function handleMessage(event: MessageEvent<NpcRoleEditorExtensionToWebviewMessage>) {
     const message = event.data;
+    console.log("[NPC Role Editor: webview received]", summarizeExtensionMessageForLog(message));
 
     switch (message.type) {
       case "bootstrap":
+        workspace.setDevelopment(message.isDevelopment);
         workspace.setDescriptors({
           descriptors: message.descriptors,
           descriptorPath: message.descriptorPath,
@@ -174,6 +176,19 @@
 
   function openRawJson() {
     vscode.postMessage({ type: "openRawJson" });
+  }
+
+  function summarizeExtensionMessageForLog(message: NpcRoleEditorExtensionToWebviewMessage) {
+    switch (message.type) {
+      case "update":
+        return {
+          ...message,
+          textLength: message.text.length,
+          textPreview: message.text.slice(0, 200),
+        };
+      default:
+        return message;
+    }
   }
 
   function getDocumentTitle() {

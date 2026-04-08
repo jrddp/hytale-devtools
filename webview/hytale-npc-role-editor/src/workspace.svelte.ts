@@ -52,6 +52,7 @@ function emptyParameterUsageIndex(): ParameterUsageIndex {
 
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
+  isDevelopment = $state(false);
   descriptors = $state<NpcDescriptorDocument>([]);
   descriptorPath = $state("");
   descriptorSource = $state<NpcDescriptorSource>("default-data");
@@ -97,6 +98,19 @@ export class Workspace {
     }
 
     this.recomputeDerivedState();
+  }
+
+  setDevelopment(isDevelopment: boolean) {
+    this.isDevelopment = isDevelopment;
+  }
+
+  buildFieldVscodeContext(fieldPath: string, extraContext: Record<string, unknown> = {}) {
+    return JSON.stringify({
+      webviewSection: "npcFieldRow",
+      fieldPath,
+      npcRoleEditorDevelopment: this.isDevelopment,
+      ...extraContext,
+    });
   }
 
   requestAutocomplete(fieldId: string, symbolLookup: IndexReference) {
@@ -332,7 +346,14 @@ export class Workspace {
         this.parameterTypeChangeRequestVersion += 1;
         return;
       case "deleteParameter":
-        this.removeStandardParameter(message.parameterName);
+        if (message.parameterName) {
+          this.removeStandardParameter(message.parameterName);
+        }
+        return;
+      case "logFieldInstance":
+        if (message.fieldPath) {
+          this.logFieldInstance(message.fieldPath);
+        }
         return;
       default:
         return;
@@ -463,6 +484,41 @@ export class Workspace {
     }
 
     return null;
+  }
+
+  private logFieldInstance(fieldPath: string) {
+    const field = this.findField(fieldPath);
+    if (!field) {
+      console.warn("[NPC Field Debug] Field not found.", { fieldPath });
+      return;
+    }
+
+    const referencedParameters = Array.from(this.parameterUsageIndex.usagesByParameter.entries())
+      .filter(([, fieldPaths]) => fieldPaths.has(field.fieldPath))
+      .map(([parameterName]) => parameterName)
+      .sort((left, right) => left.localeCompare(right));
+    const directTranslationParameter =
+      this.parameterUsageIndex.directTranslationByFieldPath.get(field.fieldPath) ?? null;
+    const isParameterField = isStandardParameterField(field);
+    const parameterUsages = isParameterField
+      ? Array.from(this.parameterUsageIndex.usagesByParameter.get(field.key) ?? []).sort((left, right) =>
+          left.localeCompare(right),
+        )
+      : [];
+    const parameterDirectTranslations = isParameterField
+      ? Array.from(this.parameterUsageIndex.directTranslationByFieldPath.entries())
+          .filter(([, parameterName]) => parameterName === field.key)
+          .map(([directTranslationFieldPath]) => directTranslationFieldPath)
+          .sort((left, right) => left.localeCompare(right))
+      : [];
+
+    console.log("[NPC Field Debug]", {
+      field: $state.snapshot(field) as NpcPropertyField,
+      referencedParameters,
+      directTranslationParameter,
+      parameterUsages,
+      parameterDirectTranslations,
+    });
   }
 }
 

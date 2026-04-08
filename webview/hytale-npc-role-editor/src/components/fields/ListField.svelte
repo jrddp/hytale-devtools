@@ -49,6 +49,7 @@
   });
 
   const issues = $derived(workspace.getFieldIssues(field.fieldPath));
+  const fieldVscodeContext = $derived(workspace.buildFieldVscodeContext(field.fieldPath));
   const renderedItemViews = $derived(draftItemViews ?? itemViews);
   const activeFlipDurationMs = $derived(draftItemViews ? FLIP_DURATION_MS : 0);
   const hasVisibleItems = $derived(renderedItemViews.length > 0);
@@ -166,6 +167,7 @@
   issues={issues}
   inline={false}
   {summary}
+  vscodeContext={fieldVscodeContext}
   bind:collapsed
   onunset={field.canUnset !== false && field.isSet !== false
     ? () => {

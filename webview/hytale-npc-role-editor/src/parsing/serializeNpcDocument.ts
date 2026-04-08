@@ -33,5 +33,5 @@ export function serializeStandardParameterValue(
     ? {
         Compute: value.expression,
       }
-    : structuredClone(value.value);
+    : JSON.parse(JSON.stringify(value.value));
 }

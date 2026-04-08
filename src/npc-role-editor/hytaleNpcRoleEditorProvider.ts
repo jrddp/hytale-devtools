@@ -50,15 +50,25 @@ export async function triggerNpcRoleEditorContextAction(
 ): Promise<void> {
   const parameterName =
     isRecord(context) && typeof context.parameterName === "string" ? context.parameterName : null;
+  const fieldPath = isRecord(context) && typeof context.fieldPath === "string" ? context.fieldPath : null;
 
-  if (!activeProvider || !parameterName) {
+  if (!activeProvider) {
+    return;
+  }
+
+  if (action !== "logFieldInstance" && !parameterName) {
+    return;
+  }
+
+  if (action === "logFieldInstance" && !fieldPath) {
     return;
   }
 
   await activeProvider.postContextAction({
     type: "contextAction",
     action,
-    parameterName,
+    parameterName: parameterName ?? undefined,
+    fieldPath: fieldPath ?? undefined,
   });
 }
 
@@ -98,6 +108,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
           const payload: NpcRoleEditorBootstrapMessage = {
             type: "bootstrap",
             ...loadedDescriptors,
+            isDevelopment: this.context.extensionMode === vscode.ExtensionMode.Development,
           };
           await webviewPanel.webview.postMessage(payload);
         } catch (error) {
@@ -141,6 +152,10 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: NpcRoleEditorWebviewToExtensionMessage) => {
+        console.log(
+          "[NPC Role Editor: extension received]",
+          summarizeWebviewMessageForLog(message),
+        );
         switch (message.type) {
           case "ready":
             void sendBootstrap().finally(() => {
@@ -264,6 +279,19 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
     if (!applied) {
       await this.postError(webview, "VS Code rejected the edit request.");
     }
+  }
+}
+
+function summarizeWebviewMessageForLog(message: NpcRoleEditorWebviewToExtensionMessage) {
+  switch (message.type) {
+    case "apply":
+      return {
+        ...message,
+        textLength: message.text.length,
+        textPreview: message.text.slice(0, 200),
+      };
+    default:
+      return message;
   }
 }
 

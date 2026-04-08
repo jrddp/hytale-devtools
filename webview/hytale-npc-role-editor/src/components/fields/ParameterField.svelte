@@ -96,6 +96,9 @@
       scope: "standard",
     }),
   );
+  const resolvedVscodeContext = $derived(
+    vscodeContext ?? workspace.buildFieldVscodeContext(field.fieldPath),
+  );
   const issues = $derived(workspace.getFieldIssues(field.fieldPath));
   const hasComputeIssues = $derived(
     issues.some(issue => issue.code.startsWith("compute-")),
@@ -340,7 +343,7 @@
   {titleContent}
   {tooltipContent}
   {onunset}
-  {vscodeContext}
+  vscodeContext={resolvedVscodeContext}
   {onContextMenu}
   {onInfoClick}
   {interactiveInfoTooltip}

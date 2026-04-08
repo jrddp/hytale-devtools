@@ -366,7 +366,7 @@
                 infoTooltipPinned={editingParameterDescription === rowView.field.key}
                 hideInfoButton={editingParameterName === rowView.field.key}
                 vscodeContext={editingParameterName !== rowView.field.key
-                  ? JSON.stringify({
+                  ? workspace.buildFieldVscodeContext(rowView.field.fieldPath, {
                       webviewSection: "npcParameterRow",
                       parameterName: rowView.field.key,
                       parameterHasDescription: Boolean(rowView.field.description),

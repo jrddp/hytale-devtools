@@ -239,7 +239,7 @@ export function serializeNpcPropertyState(state: NpcPropertyState): NpcRoleJson 
 
   for (const [key, value] of Object.entries(state.preservedTopLevelFields)) {
     if (!root.has(key)) {
-      root.set(key, structuredClone(value));
+      root.set(key, cloneJsonLike(value));
     }
   }
 
@@ -827,7 +827,7 @@ function serializeParametersSection(section: NpcPropertySection): NpcParametersJ
     }
 
     if (section.preservedFields && key in section.preservedFields) {
-      parameters.set(key, structuredClone(section.preservedFields[key]));
+      parameters.set(key, cloneJsonLike(section.preservedFields[key]));
     }
   }
 
@@ -855,7 +855,7 @@ function serializeParameterField(field: NpcPropertyField): NpcParameterDefinitio
   }
 
   for (const [key, value] of Object.entries(field.preservedData ?? {})) {
-    parameterDefinition.set(key, structuredClone(value));
+    parameterDefinition.set(key, cloneJsonLike(value));
   }
 
   return Object.fromEntries(parameterDefinition) as NpcParameterDefinitionJson;
@@ -868,7 +868,31 @@ function serializeFieldValue(value: NpcFieldValue): unknown {
     } satisfies NpcComputeJson;
   }
 
-  return structuredClone(value.value);
+  return cloneJsonLike(value.value);
+}
+
+function cloneJsonLike<T>(value: T): T {
+  if (
+    value === null ||
+    value === undefined ||
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(item => cloneJsonLike(item)) as T;
+  }
+
+  if (isRecord(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, childValue]) => [key, cloneJsonLike(childValue)]),
+    ) as T;
+  }
+
+  return value;
 }
 
 function resolveRoleDescriptor(

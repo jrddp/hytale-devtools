@@ -15,6 +15,7 @@
     );
   });
 
+  const fieldVscodeContext = $derived(workspace.buildFieldVscodeContext(field.fieldPath));
   const issues = $derived(workspace.getFieldIssues(field.fieldPath));
 
   function commitRawJsonValue() {
@@ -35,6 +36,7 @@
   typeLabel={getNpcFieldTypeLabel(field)}
   description={field.description}
   issues={issues}
+  vscodeContext={fieldVscodeContext}
   onunset={field.canUnset !== false && field.isSet !== false
     ? () => {
         workspace.unsetField(field.fieldPath);

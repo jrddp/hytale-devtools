@@ -6,6 +6,7 @@ export type NpcRoleEditorBootstrapMessage = {
   descriptors: NpcDescriptorDocument;
   descriptorPath: string;
   descriptorSource: NpcDescriptorSource;
+  isDevelopment: boolean;
 };
 
 export type NpcRoleEditorDocumentUpdateMessage = {
@@ -32,8 +33,10 @@ export type NpcRoleEditorContextActionMessage = {
     | "renameParameter"
     | "deleteParameter"
     | "changeParameterType"
-    | "editParameterDescription";
-  parameterName: string;
+    | "editParameterDescription"
+    | "logFieldInstance";
+  parameterName?: string;
+  fieldPath?: string;
 };
 
 export type NpcRoleEditorApplyMessage = {
