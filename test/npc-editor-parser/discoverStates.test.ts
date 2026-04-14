@@ -7,14 +7,17 @@ describe("npc state discovery", () => {
       Type: "Generic",
       StartState: "Idle",
       BusyStates: ["Idle.Patrol", "Search"],
-      StateTransitions: {
-        States: [
-          {
-            From: ["Idle", "Alerted.Chase"],
-            To: ["Search"],
-          },
-        ],
-      },
+      StateTransitions: [
+        {
+          States: [
+            {
+              From: ["Idle", "Alerted.Chase"],
+              To: ["Search"],
+            },
+          ],
+          Actions: [],
+        },
+      ],
     });
 
     expect(states).toEqual(["Alerted", "Idle", "Search"]);

@@ -45,6 +45,7 @@ export type NpcRoleEditorContextActionMessage = {
   action:
     | "renameParameter"
     | "deleteParameter"
+    | "deleteField"
     | "changeParameterType"
     | "editParameterDescription"
     | "logFieldInstance";

@@ -57,6 +57,7 @@ export function getStandardParameterEditorType(
     }
     case "rawJson":
     case "graph":
+    case "richObject":
       return "string";
   }
 }
@@ -234,7 +235,7 @@ function coerceRange(value: unknown): [number, number] {
 
 function coercePrimitiveList(
   value: unknown,
-  itemType: Exclude<NpcFieldKind, "rawJson" | "graph" | "list">,
+  itemType: Exclude<NpcFieldKind, "rawJson" | "graph" | "richObject" | "list">,
 ): Array<string | number | boolean> {
   if (Array.isArray(value) && value.every(isPrimitiveListItem)) {
     return value.map(item => coerceListItem(item, itemType));
@@ -257,7 +258,7 @@ function coercePrimitiveList(
 
 function coerceListItem(
   value: string | number | boolean,
-  itemType: Exclude<NpcFieldKind, "rawJson" | "graph" | "list">,
+  itemType: Exclude<NpcFieldKind, "rawJson" | "graph" | "richObject" | "list">,
 ): string | number | boolean {
   switch (itemType) {
     case "string":

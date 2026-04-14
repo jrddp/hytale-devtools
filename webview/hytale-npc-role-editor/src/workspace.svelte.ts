@@ -11,12 +11,31 @@ import type {
 import type { IndexReference } from "@shared/indexTypes";
 import type { VSCodeApi } from "./common";
 import {
+  addRichObjectArrayItem,
+  addRichObjectProperty,
+  addStateTransition,
+  addStateTransitionEdge,
   applyNpcPropertySectionDerivedState,
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
   buildNpcPropertyState,
   createVariantModifyOverrideFieldFromParent,
+  isRichObjectField,
+  isStateTransitionsField,
+  reorderStateTransitionEdges,
+  reorderStateTransitions,
+  removeStateTransition,
+  removeStateTransitionEdge,
   serializeNpcPropertyState,
+  setRichObjectVariantType,
+  syncStateTransitionsFieldPaths,
+  syncStructuredFieldPaths,
+  updateStateTransitionComment,
+  updateStateTransitionEdgeEnabled,
+  updateStateTransitionEdgePriority,
+  updateStateTransitionEdgeStates,
+  updateStateTransitionEnabled,
+  type NpcFieldValue,
   type NpcPropertyField,
   type NpcPropertySection,
   type NpcPropertyState,
@@ -263,7 +282,8 @@ export class Workspace {
   }
 
   unsetField(fieldPath: string) {
-    const field = this.findField(fieldPath);
+    const fieldLocation = this.findFieldLocation(fieldPath);
+    const field = fieldLocation?.field;
     if (!field || field.canUnset === false) {
       return false;
     }
@@ -293,8 +313,28 @@ export class Workspace {
       return true;
     }
 
+    if (fieldLocation.arrayParentField && fieldLocation.arrayIndex !== null) {
+      fieldLocation.arrayParentField.childFields = (fieldLocation.arrayParentField.childFields ?? []).filter(
+        (_, index) => index !== fieldLocation.arrayIndex,
+      );
+      syncStructuredFieldPaths(fieldLocation.arrayParentField);
+      this.recomputeDerivedState();
+      this.applyDocumentState();
+      return true;
+    }
+
     field.isSet = false;
     field.value = coerceFieldValueToEmptyLiteral(field);
+    if (field.fieldPath === "MotionControllerList" && isRichObjectField(field)) {
+      field.childFields = [];
+      field.keyOrder = [];
+      field.preservedData = undefined;
+      field.variantType = null;
+    }
+    if (field.fieldPath === "StateTransitions" && isStateTransitionsField(field)) {
+      field.transitions = [];
+      syncStateTransitionsFieldPaths(field);
+    }
     this.recomputeDerivedState();
     this.applyDocumentState();
     if (fieldPath === "Reference") {
@@ -435,6 +475,281 @@ export class Workspace {
     return true;
   }
 
+  setRichObjectVariantType(fieldPath: string, nextType: string) {
+    const field = this.findField(fieldPath);
+    if (!field) {
+      return false;
+    }
+
+    const updated = setRichObjectVariantType(field, nextType, $state.snapshot(this.descriptors));
+    if (!updated) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  addRichObjectProperty(fieldPath: string, propertyKey: string) {
+    const field = this.findField(fieldPath);
+    if (!field) {
+      return false;
+    }
+
+    const added = addRichObjectProperty(field, propertyKey, $state.snapshot(this.descriptors));
+    if (!added) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  addRichObjectArrayItem(fieldPath: string) {
+    const field = this.findField(fieldPath);
+    if (!field) {
+      return false;
+    }
+
+    const added = addRichObjectArrayItem(field, $state.snapshot(this.descriptors));
+    if (!added) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  reorderRichObjectArray(fieldPath: string, childFieldIds: string[]) {
+    const field = this.findField(fieldPath);
+    if (!field || !isRichObjectField(field) || field.structureKind !== "array") {
+      return false;
+    }
+
+    const childFields = field.childFields ?? [];
+    const reorderedFields = childFieldIds
+      .map(childFieldId => childFields.find(childField => childField.id === childFieldId))
+      .filter((childField): childField is NpcPropertyField => Boolean(childField));
+
+    if (reorderedFields.length !== childFields.length) {
+      return false;
+    }
+
+    field.childFields = reorderedFields;
+    syncStructuredFieldPaths(field);
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  addTopLevelInstructionRoot(fieldPath: "InteractionInstruction" | "DeathInstruction") {
+    return this.updateFieldValue(fieldPath, {
+      Sensor: {
+        Type: "Any",
+      },
+      Actions: [
+        {
+          Type: "Nothing",
+        },
+      ],
+    });
+  }
+
+  addStateTransition(fieldPath: string) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const added = addStateTransition(field, $state.snapshot(this.descriptors));
+    if (!added) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  removeStateTransition(fieldPath: string, transitionId: string) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const removed = removeStateTransition(field, transitionId);
+    if (!removed) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  reorderStateTransitions(fieldPath: string, transitionIds: string[]) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const reordered = reorderStateTransitions(field, transitionIds);
+    if (!reordered) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  updateStateTransitionComment(fieldPath: string, transitionId: string, comment: string) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const updated = updateStateTransitionComment(field, transitionId, comment);
+    if (!updated) {
+      return false;
+    }
+
+    this.applyDocumentState();
+    return true;
+  }
+
+  updateStateTransitionEnabled(
+    fieldPath: string,
+    transitionId: string,
+    value: NpcFieldValue | undefined,
+  ) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const updated = updateStateTransitionEnabled(field, transitionId, value);
+    if (!updated) {
+      return false;
+    }
+
+    this.applyDocumentState();
+    return true;
+  }
+
+  addStateTransitionEdge(fieldPath: string, transitionId: string) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const added = addStateTransitionEdge(field, transitionId);
+    if (!added) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  removeStateTransitionEdge(fieldPath: string, transitionId: string, edgeId: string) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const removed = removeStateTransitionEdge(field, transitionId, edgeId);
+    if (!removed) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  reorderStateTransitionEdges(fieldPath: string, transitionId: string, edgeIds: string[]) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const reordered = reorderStateTransitionEdges(field, transitionId, edgeIds);
+    if (!reordered) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  updateStateTransitionEdgeStates(
+    fieldPath: string,
+    transitionId: string,
+    edgeId: string,
+    direction: "from" | "to",
+    values: string[],
+  ) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const updated = updateStateTransitionEdgeStates(field, transitionId, edgeId, direction, values);
+    if (!updated) {
+      return false;
+    }
+
+    this.recomputeDerivedState();
+    this.applyDocumentState();
+    return true;
+  }
+
+  updateStateTransitionEdgePriority(
+    fieldPath: string,
+    transitionId: string,
+    edgeId: string,
+    priority: number | undefined,
+  ) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const updated = updateStateTransitionEdgePriority(field, transitionId, edgeId, priority);
+    if (!updated) {
+      return false;
+    }
+
+    this.applyDocumentState();
+    return true;
+  }
+
+  updateStateTransitionEdgeEnabled(
+    fieldPath: string,
+    transitionId: string,
+    edgeId: string,
+    value: NpcFieldValue | undefined,
+  ) {
+    const field = this.findField(fieldPath);
+    if (!field || !isStateTransitionsField(field)) {
+      return false;
+    }
+
+    const updated = updateStateTransitionEdgeEnabled(field, transitionId, edgeId, value);
+    if (!updated) {
+      return false;
+    }
+
+    this.applyDocumentState();
+    return true;
+  }
+
   getAvailableVariantModifyOverrideFields(): NpcPropertyField[] {
     const modifySection = this.findSection("modify");
     const overriddenKeys = new Set(
@@ -465,6 +780,11 @@ export class Workspace {
       case "deleteParameter":
         if (message.parameterName) {
           this.removeStandardParameter(message.parameterName);
+        }
+        return;
+      case "deleteField":
+        if (message.fieldPath) {
+          this.unsetField(message.fieldPath);
         }
         return;
       case "logFieldInstance":
@@ -640,11 +960,102 @@ export class Workspace {
   }
 
   private findField(fieldPath: string): NpcPropertyField | null {
+    return this.findFieldLocation(fieldPath)?.field ?? null;
+  }
+
+  private findFieldLocation(fieldPath: string): {
+    field: NpcPropertyField;
+    section: NpcPropertySection;
+    parentField: NpcPropertyField | null;
+    arrayParentField: NpcPropertyField | null;
+    arrayIndex: number | null;
+  } | null {
     for (const section of this.propertySections) {
       for (const field of section.fields) {
-        if (field.fieldPath === fieldPath) {
-          return field;
+        const location = this.findFieldLocationInField(field, fieldPath, section, null, null, null);
+        if (location) {
+          return location;
         }
+      }
+    }
+
+    return null;
+  }
+
+  private findFieldLocationInField(
+    field: NpcPropertyField,
+    targetFieldPath: string,
+    section: NpcPropertySection,
+    parentField: NpcPropertyField | null,
+    arrayParentField: NpcPropertyField | null,
+    arrayIndex: number | null,
+  ): {
+    field: NpcPropertyField;
+    section: NpcPropertySection;
+    parentField: NpcPropertyField | null;
+    arrayParentField: NpcPropertyField | null;
+    arrayIndex: number | null;
+  } | null {
+    if (field.fieldPath === targetFieldPath) {
+      return {
+        field,
+        section,
+        parentField,
+        arrayParentField,
+        arrayIndex,
+      };
+    }
+
+    if (isStateTransitionsField(field)) {
+      for (const transition of field.transitions ?? []) {
+        const location = this.findFieldLocationInField(
+          transition.actionsField,
+          targetFieldPath,
+          section,
+          field,
+          null,
+          null,
+        );
+        if (location) {
+          return location;
+        }
+      }
+      return null;
+    }
+
+    if (!isRichObjectField(field)) {
+      return null;
+    }
+
+    const childFields = field.childFields ?? [];
+    if (field.structureKind === "array") {
+      for (const [index, childField] of childFields.entries()) {
+        const location = this.findFieldLocationInField(
+          childField,
+          targetFieldPath,
+          section,
+          field,
+          field,
+          index,
+        );
+        if (location) {
+          return location;
+        }
+      }
+      return null;
+    }
+
+    for (const childField of childFields) {
+      const location = this.findFieldLocationInField(
+        childField,
+        targetFieldPath,
+        section,
+        field,
+        null,
+        null,
+      );
+      if (location) {
+        return location;
       }
     }
 

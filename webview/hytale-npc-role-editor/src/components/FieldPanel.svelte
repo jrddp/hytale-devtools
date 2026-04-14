@@ -30,7 +30,7 @@
     interactiveInfoTooltip = false,
     infoTooltipPinned = false,
     hideInfoButton = false,
-    collapsed = $bindable(false),
+    collapsed = $bindable(),
     children,
   }: {
     title: string;

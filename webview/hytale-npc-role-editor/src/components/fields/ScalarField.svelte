@@ -18,7 +18,11 @@
   });
 
   const inputId = $derived(`npc-property-${field.id}`);
-  const fieldVscodeContext = $derived(workspace.buildFieldVscodeContext(field.fieldPath));
+  const fieldVscodeContext = $derived(
+    workspace.buildFieldVscodeContext(field.fieldPath, {
+      canDeleteField: field.canUnset !== false && field.isSet !== false,
+    }),
+  );
   const issues = $derived(workspace.getFieldIssues(field.fieldPath));
   const hasComputeIssues = $derived(
     issues.some(issue => issue.code.startsWith("compute-")),

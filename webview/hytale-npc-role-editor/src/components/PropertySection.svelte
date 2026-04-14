@@ -1,8 +1,11 @@
 <script lang="ts">
   import type { NpcPropertySection } from "../propertyModel";
+  import ContentSection from "./ContentSection.svelte";
   import FieldRenderer from "./FieldRenderer.svelte";
   import ParameterSection from "./ParameterSection.svelte";
+  import SingleRootSection from "./SingleRootSection.svelte";
   import VariantModifySection from "./VariantModifySection.svelte";
+  import { workspace } from "../workspace.svelte";
 
   let { section }: { section: NpcPropertySection } = $props();
 </script>
@@ -11,6 +14,40 @@
   <ParameterSection {section} />
 {:else if section.id === "modify"}
   <VariantModifySection {section} />
+{:else if section.id === "content"}
+  <ContentSection {section} />
+{:else if section.id === "interactionInstruction"}
+  <SingleRootSection
+    {section}
+    addButtonLabel="Add Interaction Instruction"
+    onadd={() => {
+      workspace.addTopLevelInstructionRoot("InteractionInstruction");
+    }}
+  />
+{:else if section.id === "deathInstruction"}
+  <SingleRootSection
+    {section}
+    addButtonLabel="Add Death Instruction"
+    onadd={() => {
+      workspace.addTopLevelInstructionRoot("DeathInstruction");
+    }}
+  />
+{:else if section.id === "motionControllerList"}
+  <SingleRootSection
+    {section}
+    addButtonLabel="Add Motion Controller"
+    onadd={() => {
+      workspace.addRichObjectArrayItem("MotionControllerList");
+    }}
+  />
+{:else if section.id === "stateTransitions"}
+  <SingleRootSection
+    {section}
+    addButtonLabel="Add State Transition"
+    onadd={() => {
+      workspace.addStateTransition("StateTransitions");
+    }}
+  />
 {:else}
   <section
     class="space-y-2 scroll-m-4"

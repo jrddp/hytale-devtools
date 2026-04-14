@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 import {
+  addRichObjectArrayItem,
+  addStateTransition,
   applyNpcPropertySectionDerivedState,
   buildNpcPropertyState,
+  setRichObjectVariantType,
   serializeNpcPropertyState,
 } from "../../webview/hytale-npc-role-editor/src/propertyModel";
 import { buildParameterUsageIndex } from "../../webview/hytale-npc-role-editor/src/compute/parameterUsageIndex";
@@ -12,13 +15,16 @@ import { serializeNpcDocument } from "../../webview/hytale-npc-role-editor/src/p
 function createGenericDocument({
   roleAttributes = {},
   parameters = {},
+  structured = {},
 }: {
   roleAttributes?: Record<string, unknown>;
   parameters?: Record<string, unknown>;
-}): NpcRoleJson {
+  structured?: Record<string, unknown>;
+} = {}): NpcRoleJson {
   return {
     Type: "Generic",
     Parameters: parameters,
+    ...structured,
     ...roleAttributes,
   };
 }
@@ -55,6 +61,201 @@ function createVariantDocument({
 }
 
 describe("npc property model symbol enrichment", () => {
+  const componentContentDescriptors: NpcDescriptorDocument = [
+    {
+      Name: "Path",
+      Category: "Path",
+      ShortDescription: "Path content",
+      Attributes: [
+        {
+          Name: "Waypoints",
+          Type: "Array",
+          Required: "REQUIRED",
+          Domain: "RelativeWaypointDefinition",
+          Computable: false,
+        },
+        {
+          Name: "Scale",
+          Type: "Double",
+          Computable: true,
+          DefaultValue: "1.0",
+        },
+      ],
+    },
+    {
+      Name: "RelativeWaypointDefinition",
+      Category: "RelativeWaypointDefinition",
+      Attributes: [
+        {
+          Name: "Rotation",
+          Type: "Double",
+          DefaultValue: "0.0",
+        },
+        {
+          Name: "Distance",
+          Type: "Double",
+          Required: "REQUIRED",
+        },
+      ],
+    },
+    {
+      Name: "Timeout",
+      Category: "Action",
+      Attributes: [
+        {
+          Name: "Once",
+          Type: "Boolean",
+          DefaultValue: "false",
+        },
+        {
+          Name: "Delay",
+          Type: "Array",
+          Domain: "Double",
+          Computable: true,
+          DefaultValue: "[1.0, 1.0]",
+        },
+        {
+          Name: "Action",
+          Type: "ObjectRef",
+          Domain: "Action",
+        },
+      ],
+    },
+    {
+      Name: "State",
+      Category: "Action",
+      Attributes: [
+        {
+          Name: "State",
+          Type: "String",
+          Required: "REQUIRED",
+        },
+      ],
+    },
+    {
+      Name: "Sequence",
+      Category: "Action",
+      Attributes: [
+        {
+          Name: "Once",
+          Type: "Boolean",
+          DefaultValue: "false",
+        },
+        {
+          Name: "Actions",
+          Type: "ObjectRef",
+          Domain: "ActionList",
+          Required: "REQUIRED",
+        },
+      ],
+    },
+    {
+      Name: "Random",
+      Category: "Action",
+      Attributes: [
+        {
+          Name: "Once",
+          Type: "Boolean",
+          DefaultValue: "false",
+        },
+        {
+          Name: "Actions",
+          Type: "Array",
+          Domain: "WeightedAction",
+          Required: "REQUIRED",
+        },
+      ],
+    },
+    {
+      Name: "WeightedAction",
+      Category: "WeightedAction",
+      Attributes: [
+        {
+          Name: "Action",
+          Type: "ObjectRef",
+          Domain: "Action",
+          Required: "REQUIRED",
+        },
+        {
+          Name: "Weight",
+          Type: "Double",
+          DefaultValue: "1.0",
+        },
+      ],
+    },
+    {
+      Name: "Wander",
+      Category: "BodyMotion",
+      Attributes: [
+        {
+          Name: "Radius",
+          Type: "Double",
+          DefaultValue: "10.0",
+        },
+      ],
+    },
+    {
+      Name: "Observe",
+      Category: "HeadMotion",
+      Attributes: [
+        {
+          Name: "YawRange",
+          Type: "Array",
+          Domain: "Double",
+          DefaultValue: "[30.0, 30.0]",
+        },
+      ],
+    },
+    {
+      Name: "Walk",
+      Category: "MotionController",
+      Attributes: [
+        {
+          Name: "Type",
+          Type: "String",
+          Required: "REQUIRED",
+        },
+        {
+          Name: "MaxWalkSpeed",
+          Type: "Double",
+          DefaultValue: "3.0",
+          Computable: true,
+        },
+        {
+          Name: "Gravity",
+          Type: "Double",
+          DefaultValue: "10.0",
+        },
+        {
+          Name: "MaxFallSpeed",
+          Type: "Double",
+          DefaultValue: "8.0",
+        },
+        {
+          Name: "Acceleration",
+          Type: "Double",
+          DefaultValue: "10.0",
+        },
+      ],
+    },
+    {
+      Name: "Fly",
+      Category: "MotionController",
+      Attributes: [
+        {
+          Name: "Type",
+          Type: "String",
+          Required: "REQUIRED",
+        },
+        {
+          Name: "RunThreshold",
+          Type: "Double",
+          DefaultValue: "0.5",
+        },
+      ],
+    },
+  ];
+
   test("enriches parameters from direct-translation role attributes", () => {
     const document = createGenericDocument({
       roleAttributes: {
@@ -535,5 +736,553 @@ describe("npc property model symbol enrichment", () => {
         Nested: ["A", "B"],
       },
     });
+  });
+
+  test("builds graph content fields for instruction and sensor components", () => {
+    const instructionDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "Instruction",
+      Content: {
+        Type: "Instruction",
+      },
+    };
+    const sensorDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "Sensor",
+      Content: {
+        Type: "Time",
+      },
+    };
+
+    const instructionState = buildNpcPropertyState({
+      document: instructionDocument,
+      topLevelKeyOrder: Object.keys(instructionDocument),
+      descriptors: componentContentDescriptors,
+    });
+    const sensorState = buildNpcPropertyState({
+      document: sensorDocument,
+      topLevelKeyOrder: Object.keys(sensorDocument),
+      descriptors: componentContentDescriptors,
+    });
+
+    expect(instructionState.sections.find(section => section.id === "content")?.fields[0]).toMatchObject({
+      kind: "graph",
+      rootType: "Instruction",
+      fieldPath: "Content",
+    });
+    expect(sensorState.sections.find(section => section.id === "content")?.fields[0]).toMatchObject({
+      kind: "graph",
+      rootType: "Sensor",
+      fieldPath: "Content",
+    });
+  });
+
+  test("builds rich object content fields for supported component classes", () => {
+    const actionDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "Action",
+      Content: {
+        Type: "Timeout",
+        Delay: [2, 3],
+        Action: {
+          Type: "State",
+          State: "Idle",
+        },
+      },
+    };
+    const actionListDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "ActionList",
+      Content: [
+        {
+          Type: "Timeout",
+          Delay: [1, 1],
+        },
+      ],
+    };
+    const bodyMotionDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "BodyMotion",
+      Content: {
+        Type: "Wander",
+        Radius: 5,
+      },
+    };
+    const pathDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "Path",
+      Content: {
+        Scale: {
+          Compute: "Scale",
+        },
+        Waypoints: [
+          {
+            Distance: 5,
+          },
+        ],
+      },
+      Parameters: {
+        Scale: {
+          Value: 1,
+        },
+      },
+    };
+
+    const actionState = buildNpcPropertyState({
+      document: actionDocument,
+      topLevelKeyOrder: Object.keys(actionDocument),
+      descriptors: componentContentDescriptors,
+    });
+    const actionField = actionState.sections.find(section => section.id === "content")?.fields[0];
+    expect(actionField).toMatchObject({
+      kind: "richObject",
+      shapeKey: "Action",
+      structureKind: "object",
+      variantType: "Timeout",
+    });
+    expect(actionField?.childFields?.find(field => field.key === "Action")).toMatchObject({
+      kind: "richObject",
+      label: "Inline Action",
+      shapeKey: "Action",
+    });
+    expect(serializeNpcPropertyState(actionState)).toEqual(actionDocument);
+
+    const actionListState = buildNpcPropertyState({
+      document: actionListDocument,
+      topLevelKeyOrder: Object.keys(actionListDocument),
+      descriptors: componentContentDescriptors,
+    });
+    expect(actionListState.sections.find(section => section.id === "content")?.fields[0]).toMatchObject({
+      kind: "richObject",
+      shapeKey: "ActionList",
+      structureKind: "array",
+      itemShapeKey: "Action",
+    });
+    expect(serializeNpcPropertyState(actionListState)).toEqual(actionListDocument);
+
+    const bodyMotionState = buildNpcPropertyState({
+      document: bodyMotionDocument,
+      topLevelKeyOrder: Object.keys(bodyMotionDocument),
+      descriptors: componentContentDescriptors,
+    });
+    expect(bodyMotionState.sections.find(section => section.id === "content")?.fields[0]).toMatchObject({
+      kind: "richObject",
+      shapeKey: "BodyMotion",
+      structureKind: "object",
+      variantType: "Wander",
+    });
+    expect(serializeNpcPropertyState(bodyMotionState)).toEqual(bodyMotionDocument);
+
+    const pathState = buildNpcPropertyState({
+      document: pathDocument,
+      topLevelKeyOrder: Object.keys(pathDocument),
+      descriptors: componentContentDescriptors,
+    });
+    const pathField = pathState.sections.find(section => section.id === "content")?.fields[0];
+    expect(pathField).toMatchObject({
+      kind: "richObject",
+      shapeKey: "Path",
+      structureKind: "object",
+    });
+    expect(pathField?.childFields?.find(field => field.key === "Waypoints")).toMatchObject({
+      kind: "richObject",
+      structureKind: "array",
+      itemShapeKey: "RelativeWaypointDefinition",
+    });
+    expect(pathField?.childFields?.find(field => field.key === "Scale")).toMatchObject({
+      kind: "number",
+      value: {
+        kind: "compute",
+        expression: "Scale",
+      },
+    });
+    expect(serializeNpcPropertyState(pathState)).toEqual(pathDocument);
+  });
+
+  test("falls back to raw json content for unknown component classes and wrapper content", () => {
+    const unknownDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "UnknownThing",
+      Content: {
+        Anything: true,
+      },
+    };
+    const wrappedDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "Action",
+      Content: {
+        Reference: "Component_ActionList_Sleep",
+        Modify: {
+          Extra: true,
+        },
+      },
+    };
+
+    const unknownState = buildNpcPropertyState({
+      document: unknownDocument,
+      topLevelKeyOrder: Object.keys(unknownDocument),
+      descriptors: componentContentDescriptors,
+    });
+    const wrappedState = buildNpcPropertyState({
+      document: wrappedDocument,
+      topLevelKeyOrder: Object.keys(wrappedDocument),
+      descriptors: componentContentDescriptors,
+    });
+
+    expect(unknownState.sections.find(section => section.id === "content")?.fields[0]?.kind).toBe("rawJson");
+    expect(wrappedState.sections.find(section => section.id === "content")?.fields[0]?.kind).toBe("rawJson");
+    expect(serializeNpcPropertyState(wrappedState)).toEqual(wrappedDocument);
+  });
+
+  test("does not emit a role attributes section for components", () => {
+    const document = createComponentDocument({
+      componentClass: "Path",
+      parameters: {
+        _ImportStates: ["Idle"],
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: componentContentDescriptors,
+    });
+
+    expect(state.sections.some(section => section.id === "roleAttributes")).toBe(false);
+  });
+
+  test("seeds structured defaults for sequence and random action type changes", () => {
+    const document: NpcRoleJson = {
+      Type: "Component",
+      Class: "Action",
+    };
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: componentContentDescriptors,
+    });
+    const field = state.sections.find(section => section.id === "content")?.fields[0];
+    expect(field).toBeDefined();
+
+    expect(setRichObjectVariantType(field!, "Sequence", componentContentDescriptors)).toBe(true);
+    expect(field).toMatchObject({
+      variantType: "Sequence",
+    });
+    expect(field?.childFields?.find(childField => childField.key === "Actions")).toMatchObject({
+      kind: "richObject",
+      structureKind: "array",
+      isSet: true,
+    });
+
+    expect(setRichObjectVariantType(field!, "Random", componentContentDescriptors)).toBe(true);
+    const actionsField = field?.childFields?.find(childField => childField.key === "Actions");
+    expect(actionsField).toMatchObject({
+      kind: "richObject",
+      structureKind: "array",
+      itemShapeKey: "WeightedAction",
+    });
+    const weightedActionItem = actionsField?.childFields?.[0];
+    expect(weightedActionItem).toBeDefined();
+    expect(weightedActionItem?.childFields?.find(childField => childField.key === "Weight")).toMatchObject({
+      value: {
+        kind: "literal",
+        value: 1,
+      },
+    });
+    const inlineActionField = weightedActionItem?.childFields?.find(
+      childField => childField.key === "Action",
+    );
+    expect(inlineActionField).toMatchObject({
+      kind: "richObject",
+      variantType: "State",
+      isSet: true,
+    });
+    expect(inlineActionField?.childFields?.find(childField => childField.key === "State")).toMatchObject({
+      value: {
+        kind: "literal",
+        value: "Idle",
+      },
+    });
+  });
+
+  test("builds generic structured top-level sections even when unset", () => {
+    const document = createGenericDocument({
+      roleAttributes: {
+        Appearance: "NPCs/Test",
+      },
+    });
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+
+    expect(state.sections.map(section => section.id)).toEqual([
+      "parameters",
+      "interactionInstruction",
+      "deathInstruction",
+      "stateTransitions",
+      "motionControllerList",
+      "roleAttributes",
+    ]);
+
+    expect(state.sections.find(section => section.id === "interactionInstruction")?.fields[0]).toMatchObject({
+      kind: "graph",
+      fieldPath: "InteractionInstruction",
+      isSet: false,
+    });
+    expect(state.sections.find(section => section.id === "deathInstruction")?.fields[0]).toMatchObject({
+      kind: "graph",
+      fieldPath: "DeathInstruction",
+      isSet: false,
+    });
+    expect(state.sections.find(section => section.id === "stateTransitions")?.fields[0]).toMatchObject({
+      kind: "stateTransitions",
+      fieldPath: "StateTransitions",
+      isSet: false,
+    });
+    expect(state.sections.find(section => section.id === "motionControllerList")?.fields[0]).toMatchObject({
+      kind: "richObject",
+      structureKind: "array",
+      itemShapeKey: "MotionController",
+      fieldPath: "MotionControllerList",
+      isSet: false,
+    });
+
+    const serialized = serializeNpcPropertyState(state);
+    expect(serialized).toEqual({
+      Type: "Generic",
+      Appearance: "NPCs/Test",
+    });
+  });
+
+  test("builds the same structured top-level sections for abstract roles", () => {
+    const document: NpcRoleJson = {
+      Type: "Abstract",
+      Parameters: {},
+    };
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+
+    expect(state.sections.map(section => section.id)).toEqual([
+      "parameters",
+      "interactionInstruction",
+      "deathInstruction",
+      "stateTransitions",
+      "motionControllerList",
+    ]);
+    expect(serializeNpcPropertyState(state)).toEqual({
+      Type: "Abstract",
+    });
+  });
+
+  test("round-trips motion controller lists as structured richObject arrays", () => {
+    const document = createGenericDocument({
+      structured: {
+        MotionControllerList: [
+          {
+            Type: "Walk",
+            MaxWalkSpeed: {
+              Compute: "WalkSpeed",
+            },
+            Gravity: 10,
+            MaxFallSpeed: 8,
+            Acceleration: 10,
+          },
+        ],
+      },
+      parameters: {
+        WalkSpeed: {
+          Value: 3,
+        },
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: componentContentDescriptors,
+    });
+    const motionControllersField = state.sections.find(
+      section => section.id === "motionControllerList",
+    )?.fields[0];
+
+    expect(motionControllersField).toMatchObject({
+      kind: "richObject",
+      structureKind: "array",
+      itemShapeKey: "MotionController",
+      isSet: true,
+    });
+    expect(motionControllersField?.childFields?.[0]).toMatchObject({
+      variantType: "Walk",
+      label: "Walk 1",
+    });
+
+    const serialized = serializeNpcPropertyState(state);
+    expect(serialized.MotionControllerList).toEqual(document.MotionControllerList);
+  });
+
+  test("seeds walk as the default motion controller when adding the first controller", () => {
+    const document = createGenericDocument();
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: componentContentDescriptors,
+    });
+    const field = state.sections.find(section => section.id === "motionControllerList")?.fields[0];
+
+    expect(field).toBeDefined();
+    expect(addRichObjectArrayItem(field!, componentContentDescriptors)).toBe(true);
+
+    expect(field?.childFields?.[0]).toMatchObject({
+      variantType: "Walk",
+      label: "Walk 1",
+    });
+    expect(serializeNpcPropertyState(state).MotionControllerList).toEqual([
+      {
+        Type: "Walk",
+        MaxWalkSpeed: 3,
+        Gravity: 10,
+        MaxFallSpeed: 8,
+        Acceleration: 10,
+      },
+    ]);
+  });
+
+  test("round-trips custom state transitions with nested action lists", () => {
+    const document = createGenericDocument({
+      structured: {
+        StateTransitions: [
+          {
+            $Comment: "Alert transition",
+            Enabled: {
+              Compute: "CanAlert",
+            },
+            States: [
+              {
+                From: ["Idle"],
+                To: ["Alerted"],
+                Priority: 2,
+                Enabled: true,
+              },
+              {
+                From: ["Search"],
+                To: ["Idle"],
+              },
+            ],
+            Actions: [
+              {
+                Type: "Timeout",
+                Delay: [1, 1],
+              },
+            ],
+            UnknownKey: "keep-me",
+          },
+        ],
+      },
+      parameters: {
+        CanAlert: {
+          Value: true,
+        },
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: componentContentDescriptors,
+    });
+    const field = state.sections.find(section => section.id === "stateTransitions")?.fields[0];
+
+    expect(field).toMatchObject({
+      kind: "stateTransitions",
+      isSet: true,
+    });
+    expect(field?.transitions?.[0]).toMatchObject({
+      comment: "Alert transition",
+      enabled: {
+        kind: "compute",
+        expression: "CanAlert",
+      },
+      preservedData: {
+        UnknownKey: "keep-me",
+      },
+    });
+    expect(field?.transitions?.[0]?.edges).toMatchObject([
+      {
+        from: ["Idle"],
+        to: ["Alerted"],
+        priority: 2,
+        enabled: {
+          kind: "literal",
+          value: true,
+        },
+      },
+      {
+        from: ["Search"],
+        to: ["Idle"],
+      },
+    ]);
+    expect(field?.transitions?.[0]?.actionsField).toMatchObject({
+      kind: "richObject",
+      structureKind: "array",
+      itemShapeKey: "Action",
+    });
+
+    const serialized = serializeNpcPropertyState(state);
+    expect(serialized.StateTransitions).toEqual(document.StateTransitions);
+  });
+
+  test("adds default state transitions through the custom field kind", () => {
+    const document = createGenericDocument();
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: componentContentDescriptors,
+    });
+    const field = state.sections.find(section => section.id === "stateTransitions")?.fields[0];
+
+    expect(field).toBeDefined();
+    expect(addStateTransition(field!, componentContentDescriptors)).toBe(true);
+    expect(field?.transitions).toHaveLength(1);
+    expect(field?.transitions?.[0]?.edges).toEqual([
+      {
+        id: "state-transition-edge-0",
+        from: [],
+        to: [],
+      },
+    ]);
+    expect(serializeNpcPropertyState(state).StateTransitions).toEqual([
+      {
+        States: [
+          {
+            From: [],
+            To: [],
+          },
+        ],
+        Actions: [],
+      },
+    ]);
   });
 });

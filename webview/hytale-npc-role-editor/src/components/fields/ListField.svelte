@@ -50,7 +50,11 @@
   });
 
   const issues = $derived(workspace.getFieldIssues(field.fieldPath));
-  const fieldVscodeContext = $derived(workspace.buildFieldVscodeContext(field.fieldPath));
+  const fieldVscodeContext = $derived(
+    workspace.buildFieldVscodeContext(field.fieldPath, {
+      canDeleteField: field.canUnset !== false && field.isSet !== false,
+    }),
+  );
   const renderedItemViews = $derived(draftItemViews ?? itemViews);
   const activeFlipDurationMs = $derived(draftItemViews ? FLIP_DURATION_MS : 0);
   const hasVisibleItems = $derived(renderedItemViews.length > 0);

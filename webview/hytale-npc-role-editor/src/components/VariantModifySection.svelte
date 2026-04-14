@@ -1,28 +1,12 @@
 <script lang="ts">
-  import { tick } from "svelte";
-  import { Plus } from "lucide-svelte";
   import type { NpcPropertyField, NpcPropertySection } from "../propertyModel";
   import { workspace } from "../workspace.svelte";
+  import AddSearchMenu from "./AddSearchMenu.svelte";
   import FieldRenderer from "./FieldRenderer.svelte";
 
   let { section }: { section: NpcPropertySection } = $props();
 
-  let pickerOpen = $state(false);
-  let searchValue = $state("");
-  let searchInput = $state<HTMLInputElement>();
-
   const availableOverrideFields = $derived(workspace.getAvailableVariantModifyOverrideFields());
-  const filteredOverrideFields = $derived.by(() => {
-    const trimmedSearch = searchValue.trim().toLowerCase();
-    if (!trimmedSearch) {
-      return availableOverrideFields;
-    }
-
-    return availableOverrideFields.filter(field =>
-      field.key.toLowerCase().includes(trimmedSearch) ||
-      field.label.toLowerCase().includes(trimmedSearch),
-    );
-  });
   const canAddOverride = $derived(
     workspace.variantReferenceState.status === "loaded" && availableOverrideFields.length > 0,
   );
@@ -47,31 +31,6 @@
     }
   });
 
-  async function openOverridePicker() {
-    if (!canAddOverride) {
-      return;
-    }
-
-    pickerOpen = true;
-    searchValue = "";
-    await tick();
-    searchInput?.focus();
-  }
-
-  function closeOverridePicker() {
-    pickerOpen = false;
-    searchValue = "";
-  }
-
-  function selectOverride(field: NpcPropertyField) {
-    const added = workspace.addVariantModifyOverride(field.key);
-    if (!added) {
-      return;
-    }
-
-    closeOverridePicker();
-  }
-
   function summarizeFieldValue(field: NpcPropertyField): string {
     if (field.value.kind === "compute") {
       return `Compute: ${field.value.expression}`;
@@ -89,14 +48,6 @@
     return String(literalValue ?? "");
   }
 </script>
-
-<svelte:window
-  onkeydown={event => {
-    if (event.key === "Escape" && pickerOpen) {
-      closeOverridePicker();
-    }
-  }}
-/>
 
 <section
   class="space-y-2 scroll-m-4"
@@ -116,57 +67,21 @@
     {/each}
 
     <div class="space-y-2">
-      <button
-        type="button"
-        class="flex w-full items-center gap-1 rounded-md border border-vsc-border bg-vsc-button-bg px-4 py-1.5 text-left text-xs font-medium text-vsc-button-fg opacity-80 hover:bg-vsc-button-hover disabled:cursor-not-allowed disabled:opacity-50"
+      <AddSearchMenu
+        buttonLabel="Override Reference Parameter"
         disabled={!canAddOverride}
-        onclick={openOverridePicker}
-      >
-        <Plus size={14} />
-        Override Reference Parameter
-      </button>
-
-      {#if referenceStatusText}
-        <div class="text-xs text-vsc-muted">{referenceStatusText}</div>
-      {/if}
-
-      {#if pickerOpen}
-        <div class="space-y-2 rounded-md border border-vsc-border bg-vsc-panel px-3 py-3">
-          <input
-            bind:this={searchInput}
-            bind:value={searchValue}
-            class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-            data-vscode-context={"{}"}
-            placeholder="Search inherited parameters"
-            onkeydown={event => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                const firstField = filteredOverrideFields[0];
-                if (firstField) {
-                  selectOverride(firstField);
-                }
-              }
-            }}
-          />
-
-          <div class="max-h-64 space-y-1 overflow-auto">
-            {#if filteredOverrideFields.length > 0}
-              {#each filteredOverrideFields as field (field.key)}
-                <button
-                  type="button"
-                  class="flex w-full flex-col rounded-md border border-transparent px-3 py-2 text-left hover:bg-vsc-list-hover"
-                  onclick={() => selectOverride(field)}
-                >
-                  <div class="text-sm font-medium text-vsc-input-fg">{field.key}</div>
-                  <div class="truncate text-xs text-vsc-muted">{summarizeFieldValue(field)}</div>
-                </button>
-              {/each}
-            {:else}
-              <div class="px-1 py-2 text-xs text-vsc-muted">No matching inherited parameters.</div>
-            {/if}
-          </div>
-        </div>
-      {/if}
+        helperText={referenceStatusText}
+        searchPlaceholder="Search inherited parameters"
+        emptyText="No matching inherited parameters."
+        items={availableOverrideFields.map(field => ({
+          id: field.key,
+          label: field.key,
+          summary: summarizeFieldValue(field),
+        }))}
+        onselect={item => {
+          workspace.addVariantModifyOverride(item.id);
+        }}
+      />
     </div>
   </div>
 </section>

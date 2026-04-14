@@ -47,7 +47,31 @@ function scanForMainStates(
     addMainState(states, value.State, parentMainState);
   }
 
-  if (isRecord(value.StateTransitions) && Array.isArray(value.StateTransitions.States)) {
+  if (Array.isArray(value.StateTransitions)) {
+    for (const transition of value.StateTransitions) {
+      if (!isRecord(transition) || !Array.isArray(transition.States)) {
+        continue;
+      }
+
+      for (const entry of transition.States) {
+        if (!isRecord(entry)) {
+          continue;
+        }
+
+        if (Array.isArray(entry.From)) {
+          for (const state of entry.From) {
+            addMainState(states, state, parentMainState);
+          }
+        }
+
+        if (Array.isArray(entry.To)) {
+          for (const state of entry.To) {
+            addMainState(states, state, parentMainState);
+          }
+        }
+      }
+    }
+  } else if (isRecord(value.StateTransitions) && Array.isArray(value.StateTransitions.States)) {
     for (const entry of value.StateTransitions.States) {
       if (!isRecord(entry)) {
         continue;

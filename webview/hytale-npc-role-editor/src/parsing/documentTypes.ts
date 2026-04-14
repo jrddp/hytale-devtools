@@ -4,6 +4,7 @@ export type NpcComponentClass =
   | "Action"
   | "ActionList"
   | "BodyMotion"
+  | "HeadMotion"
   | "Instruction"
   | "Path"
   | "Sensor"
@@ -48,6 +49,10 @@ export type NpcModifyJson = {
 export type NpcGenericRoleJson = {
   Type: "Generic" | "Abstract";
   Parameters?: NpcParametersJson;
+  InteractionInstruction?: unknown;
+  DeathInstruction?: unknown;
+  MotionControllerList?: unknown;
+  StateTransitions?: unknown;
   TestType?: string;
   FailReason?: string;
   [key: string]: unknown;

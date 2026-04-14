@@ -51,6 +51,11 @@
         "category": "Hytale NPC Role Editor"
       },
       {
+        "command": "hytale-devtools.npcRoleEditor.context.deleteField",
+        "title": "Delete Field",
+        "category": "Hytale NPC Role Editor"
+      },
+      {
         "command": "hytale-devtools.npcRoleEditor.context.editParameterDescription",
         "title": "Edit Description...",
         "category": "Hytale NPC Role Editor"
@@ -141,6 +146,11 @@
           "group": "2_modification@4"
         },
         {
+          "command": "hytale-devtools.npcRoleEditor.context.deleteField",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcFieldRow' && canDeleteField",
+          "group": "2_modification@4"
+        },
+        {
           "command": "hytale-devtools.npcRoleEditor.context.logFieldInstance",
           "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && npcRoleEditorDevelopment && (webviewSection == 'npcParameterRow' || webviewSection == 'npcFieldRow')",
           "group": "9_debug@1"
@@ -153,6 +163,10 @@
         },
         {
           "command": "hytale-devtools.npcRoleEditor.context.deleteParameter",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.deleteField",
           "when": "false"
         },
         {

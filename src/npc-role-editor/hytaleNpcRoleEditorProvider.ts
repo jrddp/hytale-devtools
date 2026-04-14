@@ -67,11 +67,15 @@ export async function triggerNpcRoleEditorContextAction(
     return;
   }
 
-  if (action !== "logFieldInstance" && !parameterName) {
+  if (
+    action !== "logFieldInstance" &&
+    action !== "deleteField" &&
+    !parameterName
+  ) {
     return;
   }
 
-  if (action === "logFieldInstance" && !fieldPath) {
+  if ((action === "logFieldInstance" || action === "deleteField") && !fieldPath) {
     return;
   }
 
