@@ -5,7 +5,7 @@
     type WebviewToExtensionMessage,
   } from "@shared/node-editor/messageTypes";
   import { type NodeEditorGraphEdit } from "@shared/node-editor/graphTypes";
-  import { SvelteFlowProvider, type Viewport } from "@xyflow/svelte";
+  import { type Viewport } from "@xyflow/svelte";
   import { type VSCodeApi } from "src/common";
   import {
     applyGraphEditToWorkspaceState,
@@ -17,17 +17,24 @@
     EDITABLE_SELECTOR,
     selectAllActiveEditableText,
   } from "src/node-editor/utils/flowKeyboard";
-  import { workspace } from "src/workspace.svelte";
+  import NodeEditorHost from "src/NodeEditorHost.svelte";
+  import { createNodeEditorSession, setActiveNodeEditorSession } from "src/workspace.svelte";
   import { onMount } from "svelte";
-  import Flow from "./Flow.svelte";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
   type NodeEditorWebviewState = {
     viewport?: Viewport;
   };
 
+  const session = createNodeEditorSession();
+  setActiveNodeEditorSession(session);
+
   $effect(() => {
-    workspace.vscode = vscode;
+    session.hostBridge = {
+      postMessage(message) {
+        return vscode.postMessage(message);
+      },
+    };
   });
 
   let localWebviewState = $state<NodeEditorWebviewState>({});
@@ -44,13 +51,13 @@
     switch (message.type) {
       // should be called before initial update
       case "bootstrap":
-        workspace.context = message.workspaceContext;
-        workspace.controlScheme = message.controlScheme;
-        workspace.platform = message.platform;
-        workspace.copiedSelection = message.clipboard;
-        workspace.isDevelopment = message.isDevelopment;
+        session.context = message.workspaceContext;
+        session.controlScheme = message.controlScheme;
+        session.platform = message.platform;
+        session.copiedSelection = message.clipboard;
+        session.isDevelopment = message.isDevelopment;
         if (!localWebviewState.viewport) {
-          workspace.actionRequests.push({
+          session.actionRequests.push({
             type: "fit-view",
             duration: 0,
             maxDistanceToRoot: 10_000,
@@ -59,16 +66,16 @@
         return;
       case "update":
         if (handleDocumentUpdateMessage(message)) {
-          workspace.actionRequests.push({ type: "document-refresh" });
+          session.actionRequests.push({ type: "document-refresh" });
         }
         return;
       case "autocompletionValues":
-        workspace.autocompleteField = message.fieldId;
+        session.autocompleteField = message.fieldId;
         // * values sorted at bottom
-        workspace.autocompleteValues = sortVariantsToBottom(message.values);
+        session.autocompleteValues = sortVariantsToBottom(message.values);
         return;
       case "clipboard":
-        workspace.copiedSelection = message.clipboard;
+        session.copiedSelection = message.clipboard;
         return;
       case "error":
         extensionError =
@@ -76,7 +83,7 @@
         return;
       case "action": {
         if (message.allowEditableTarget || !document.activeElement?.matches(EDITABLE_SELECTOR)) {
-          workspace.actionRequests.push(message.request);
+          session.actionRequests.push(message.request);
         } else if (message.request.type === "select-all") {
           selectAllActiveEditableText();
         }
@@ -90,38 +97,38 @@
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage): boolean {
     if (
       typeof message.acknowledgedClientEditId === "number" &&
-      message.acknowledgedClientEditId === workspace.pendingLocalEditId
+      message.acknowledgedClientEditId === session.pendingLocalEditId
     ) {
-      workspace.sourceVersion = message.version;
-      workspace.committedGraphDocument = message.graphDocument;
-      workspace.pendingLocalEditId = undefined;
+      session.sourceVersion = message.version;
+      session.committedGraphDocument = message.graphDocument;
+      session.pendingLocalEditId = undefined;
       extensionError = "";
       return false;
     }
 
-    if (message.version === workspace.sourceVersion) return false;
+    if (message.version === session.sourceVersion) return false;
     try {
       if (message.appliedEdit && applyIncomingGraphEdit(message.appliedEdit)) {
-        workspace.sourceVersion = message.version;
-        workspace.committedGraphDocument = message.graphDocument;
-        workspace.pendingLocalEditId = undefined;
+        session.sourceVersion = message.version;
+        session.committedGraphDocument = message.graphDocument;
+        session.pendingLocalEditId = undefined;
         extensionError = "";
         return false;
       }
 
       const { nodes, edges, rootNodeId } = graphDocumentToWorkspaceState(message.graphDocument);
-      workspace.nodes = nodes;
-      workspace.edges = edges;
-      workspace.rootNodeId = rootNodeId;
-      workspace.resetMeasurementTracking(nodes, true);
-      workspace.sourceVersion = message.version;
-      workspace.committedGraphDocument = message.graphDocument;
-      workspace.pendingLocalEditId = undefined;
-      workspace.isInitialized = true;
+      session.nodes = nodes;
+      session.edges = edges;
+      session.rootNodeId = rootNodeId;
+      session.resetMeasurementTracking(nodes, true);
+      session.sourceVersion = message.version;
+      session.committedGraphDocument = message.graphDocument;
+      session.pendingLocalEditId = undefined;
+      session.isInitialized = true;
 
       // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
       if (nodes.every(node => node.position.x === 0 && node.position.y === 0)) {
-        workspace.actionRequests.push({ type: "auto-position-nodes" });
+        session.actionRequests.push({ type: "auto-position-nodes" });
       }
       extensionError = "";
       return true;
@@ -137,21 +144,21 @@
   function applyIncomingGraphEdit(edit: NodeEditorGraphEdit): boolean {
     const nextState = applyGraphEditToWorkspaceState(
       {
-        nodes: workspace.nodes,
-        edges: workspace.edges,
-        rootNodeId: workspace.rootNodeId,
+        nodes: session.nodes,
+        edges: session.edges,
+        rootNodeId: session.rootNodeId,
       },
       edit,
     );
 
-    workspace.nodes = nextState.nodes;
-    workspace.edges = nextState.edges;
-    workspace.rootNodeId = nextState.rootNodeId;
+    session.nodes = nextState.nodes;
+    session.edges = nextState.edges;
+    session.rootNodeId = nextState.rootNodeId;
     if (edit.kind === "element-list-changed") {
-      workspace.resetMeasurementTracking(nextState.nodes);
+      session.resetMeasurementTracking(nextState.nodes);
     }
     if (graphEditRequiresDocumentRefresh(edit)) {
-      workspace.actionRequests.push({ type: "document-refresh" });
+      session.actionRequests.push({ type: "document-refresh" });
     }
     return true;
   }
@@ -174,17 +181,14 @@
   });
 </script>
 
-<main class="flex flex-col h-screen min-h-0">
+<main class="flex h-full min-h-0 flex-col">
   {#if extensionError}
     <div class="mx-3 mt-3 text-sm text-vsc-error">{extensionError}</div>
-  {:else if workspace.isInitialized}
-    <SvelteFlowProvider>
-      <Flow
-        bind:nodes={workspace.nodes}
-        bind:edges={workspace.edges}
-        initialViewport={localWebviewState.viewport}
-        onviewportchange={viewport => persistWebviewState({ ...localWebviewState, viewport })}
-      />
-    </SvelteFlowProvider>
+  {:else if session.isInitialized}
+    <NodeEditorHost
+      {session}
+      initialViewport={localWebviewState.viewport}
+      onviewportchange={viewport => persistWebviewState({ ...localWebviewState, viewport })}
+    />
   {/if}
 </main>

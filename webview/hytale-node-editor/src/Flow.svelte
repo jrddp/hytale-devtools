@@ -51,9 +51,11 @@
     recalculateGroupParents,
     resolveFitViewNodeIds,
   } from "src/node-editor/utils/nodeUtils.svelte";
-  import { applyDocumentState, type NodeRenderDetailMode, workspace } from "src/workspace.svelte";
+  import {
+    type NodeRenderDetailMode,
+    useNodeEditorSession,
+  } from "src/workspace.svelte";
   import { tick, untrack } from "svelte";
-  import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import type { FlowEdge, FlowNode } from "./common";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
@@ -68,12 +70,27 @@
   const liveConnection = useConnection();
   const connectionPreview = createConnectionPreviewController();
   const lowDetail = createLowDetailController();
+  const workspace = useNodeEditorSession();
 
   const viewport = useViewport();
-  const getViewportCenter = (viewport: Viewport) => ({
-    x: ((innerWidth.current ?? 0) / 2 - viewport.x) / viewport.zoom,
-    y: ((innerHeight.current ?? 0) / 2 - viewport.y) / viewport.zoom,
+  const getViewportSize = () => ({
+    width: flowStore.width || flowWrapperElement?.clientWidth || 0,
+    height: flowStore.height || flowWrapperElement?.clientHeight || 0,
   });
+  const getViewportCenter = (viewport: Viewport) => {
+    const { width, height } = getViewportSize();
+    return {
+      x: (width / 2 - viewport.x) / viewport.zoom,
+      y: (height / 2 - viewport.y) / viewport.zoom,
+    };
+  };
+  const toFlowWrapperPosition = (screenPosition: XYPosition): XYPosition => {
+    const rect = flowWrapperElement?.getBoundingClientRect();
+    return {
+      x: screenPosition.x - (rect?.left ?? 0),
+      y: screenPosition.y - (rect?.top ?? 0),
+    };
+  };
 
   let {
     nodes = $bindable([]),
@@ -109,7 +126,7 @@
 
   let addMenuInstance:
     | {
-        screenPosition: XYPosition;
+        viewportPosition: XYPosition;
         spawnPosition: XYPosition;
         connectionFilter?: AddMenuConnectionFilter;
       }
@@ -438,9 +455,10 @@
           const absolutePosition = getAbsolutePosition(node);
           const width = node.measured!.width!;
           const height = node.measured!.height!;
+          const { width: viewportWidth, height: viewportHeight } = getViewportSize();
           const maxZoom = Math.min(
-            ((innerWidth.current ?? width) / width) * 0.8,
-            ((innerHeight.current ?? height) / height) * 0.8,
+            ((viewportWidth || width) / width) * 0.8,
+            ((viewportHeight || height) / height) * 0.8,
           );
           const previewTransitionToken = searchMenuInstance
             ? lowDetail.beginSearchPreviewTransition()
@@ -536,12 +554,12 @@
           if (updates.length > 0) {
             workspace.applyNodeUpdates(updates);
             recalculateGroupParents();
-            applyDocumentState("nodes-moved");
+            workspace.applyDocumentState("nodes-moved");
           }
           break;
 
         case "view-raw-json":
-          workspace.vscode.postMessage({ type: "openRawJson" });
+          workspace.postMessageToHost({ type: "openRawJson" });
           break;
 
         case "help-and-hotkeys":
@@ -549,7 +567,7 @@
           break;
 
         case "customize-keybinds":
-          workspace.vscode.postMessage({ type: "openKeybindings", query: "Hytale Node Editor" });
+          workspace.postMessageToHost({ type: "openKeybindings", query: "Hytale Node Editor" });
           break;
         case "document-refresh":
           if (!workspace.areNodesMeasured) {
@@ -672,7 +690,7 @@
 
   function updateCopiedSelection(copiedSelection: NodeEditorClipboardSelection) {
     workspace.copiedSelection = copiedSelection;
-    workspace.vscode.postMessage({ type: "clipboard", clipboard: copiedSelection });
+    workspace.postMessageToHost({ type: "clipboard", clipboard: copiedSelection });
   }
 
   function handleWindowCopy(event: ClipboardEvent) {
@@ -749,7 +767,7 @@
     workspace.nodes = [...workspace.nodes, ...pastedNodes];
     workspace.trackMeasurementForNodeIds(pastedNodes.map(node => node.id));
     workspace.addEdges(pastedEdges);
-    applyDocumentState("element-list-changed");
+    workspace.applyDocumentState("element-list-changed");
     event.preventDefault();
     event.stopPropagation();
   }
@@ -788,7 +806,7 @@
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
         addMenuInstance = undefined;
         if (connectionPreview.clearPendingConnection("both", false)) {
-          applyDocumentState("element-list-changed");
+          workspace.applyDocumentState("element-list-changed");
         }
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]")) {
@@ -815,7 +833,7 @@
         const nodeTarget = event.target.closest(".svelte-flow__node");
         if (!nodeTarget || groupNodeTarget) {
           addMenuInstance = {
-            screenPosition: { x: event.clientX, y: event.clientY },
+            viewportPosition: toFlowWrapperPosition({ x: event.clientX, y: event.clientY }),
             spawnPosition: screenToFlowPosition({ x: event.clientX, y: event.clientY }),
           };
         }
@@ -928,7 +946,7 @@
     onconnect: connection => {
       pruneConflictingEdges(connection);
       workspace.addEdges([connection]);
-      applyDocumentState("element-list-changed");
+      workspace.applyDocumentState("element-list-changed");
     },
     // ## On Connect Start
     onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
@@ -942,7 +960,7 @@
           connectionPreview.pendingSourceConnection.sourceHandle,
         );
         addMenuInstance = {
-          screenPosition: connectionState.pointer!,
+          viewportPosition: toFlowWrapperPosition(connectionState.pointer!),
           spawnPosition: screenToFlowPosition(connectionState.pointer!),
           connectionFilter: sourcePin
             ? {
@@ -957,7 +975,7 @@
           connectionPreview.pendingTargetConnection.targetHandle,
         );
         addMenuInstance = {
-          screenPosition: connectionState.pointer!,
+          viewportPosition: toFlowWrapperPosition(connectionState.pointer!),
           spawnPosition: screenToFlowPosition(connectionState.pointer!),
           connectionFilter: targetPin
             ? {
@@ -974,7 +992,7 @@
     // ## On Node Drag Stop
     onnodedragstop: event => {
       recalculateGroupParents();
-      applyDocumentState("nodes-moved");
+      workspace.applyDocumentState("nodes-moved");
     },
     // ## On Node Context Menu
     onnodecontextmenu: ({ event: pointerEvent, node }) => {
@@ -991,7 +1009,10 @@
           y: pointerEvent.clientY,
         });
         addMenuInstance = {
-          screenPosition: { x: pointerEvent.clientX, y: pointerEvent.clientY },
+          viewportPosition: toFlowWrapperPosition({
+            x: pointerEvent.clientX,
+            y: pointerEvent.clientY,
+          }),
           spawnPosition: flowPosition,
         };
         pointerEvent.preventDefault();
@@ -1052,7 +1073,7 @@
     onpanecontextmenu: ({ event }) => {
       const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
       addMenuInstance = {
-        screenPosition: { x: event.clientX, y: event.clientY },
+        viewportPosition: toFlowWrapperPosition({ x: event.clientX, y: event.clientY }),
         spawnPosition: flowPosition,
       };
       event.preventDefault();
@@ -1061,7 +1082,7 @@
       if (nodes.some(node => node.id === workspace.rootNodeId)) {
         workspace.rootNodeId = undefined;
       }
-      applyDocumentState("element-list-changed");
+      workspace.applyDocumentState("element-list-changed");
     },
   };
 
@@ -1121,7 +1142,7 @@
       // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
       workspace.actionRequests.push({ type: "document-refresh" });
       addMenuInstance = undefined;
-      applyDocumentState("element-list-changed");
+      workspace.applyDocumentState("element-list-changed");
     },
   };
 </script>
@@ -1224,8 +1245,13 @@
   </SvelteFlow>
 
   {#if addMenuInstance}
-    {@const { screenPosition, connectionFilter } = addMenuInstance}
-    <AddNodeMenu {connectionFilter} {screenPosition} {...addMenuEvents} />
+    {@const { viewportPosition, connectionFilter } = addMenuInstance}
+    <AddNodeMenu
+      {connectionFilter}
+      {viewportPosition}
+      viewportSize={getViewportSize()}
+      {...addMenuEvents}
+    />
   {/if}
 
   {#if helpMenuOpen}

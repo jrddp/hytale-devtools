@@ -2,6 +2,7 @@ import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "@shared/node-editor/clipboardTypes";
+import { createContext } from "svelte";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { applyNodeEditorGraphEdit } from "@shared/node-editor/graphEditUtils";
 import {
@@ -21,7 +22,7 @@ import {
 } from "@shared/node-editor/workspaceTypes";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
-import { type FlowEdge, type FlowNode, type FlowNodeData, type VSCodeApi } from "src/common";
+import { type FlowEdge, type FlowNode, type FlowNodeData } from "src/common";
 import {
   buildElementListChangedEdit,
   buildNodeRenamedEdit,
@@ -56,6 +57,10 @@ export interface NodeEditorDebugState {
   lowDetailCanvasEdgeBaseWidth: number;
 }
 
+export interface NodeEditorHostBridge {
+  postMessage(message: WebviewToExtensionMessage): void | PromiseLike<boolean>;
+}
+
 function hasRenderableNodeSize(node: FlowNode) {
   const width = node.measured?.width ?? node.width;
   const height = node.measured?.height ?? node.height;
@@ -74,11 +79,12 @@ class NodeRBush extends RBush<FlowNode> {
   }
 }
 
-export class Workspace {
+export class NodeEditorSession {
   isInitialized = $state(false);
   controlScheme = $state<NodeEditorControlScheme>("mouse");
   platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
+  hostBridge = $state<NodeEditorHostBridge | undefined>();
 
   actionRequests = $state<ActionRequest[]>([]);
 
@@ -88,7 +94,6 @@ export class Workspace {
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
   rootNodeId = $state<string | undefined>();
-  vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
   committedGraphDocument = $state.raw<NodeEditorGraphDocument | undefined>(undefined);
   pendingLocalEditId = $state<number | undefined>();
@@ -387,6 +392,10 @@ export class Workspace {
     }
   }
 
+  postMessageToHost(message: WebviewToExtensionMessage): void {
+    this.hostBridge?.postMessage(message);
+  }
+
   updateControlSchemeSetting(controlScheme: NodeEditorControlScheme): void {
     if (this.controlScheme === controlScheme) {
       return;
@@ -399,7 +408,7 @@ export class Workspace {
       setting: "controlScheme",
       value: controlScheme,
     };
-    this.vscode.postMessage(payload);
+    this.postMessageToHost(payload);
   }
 
   updateViewportZoom(zoom: number): void {
@@ -407,123 +416,156 @@ export class Workspace {
       this.viewportZoom = zoom;
     }
   }
+  applyGraphEdit(edit: NodeEditorGraphEdit) {
+    const beforeDocument = this.committedGraphDocument;
+    if (!beforeDocument) {
+      throw new Error("Cannot create an undoable edit before the document has been initialized.");
+    }
+
+    const clientEditId = this.nextClientEditId + 1;
+    this.nextClientEditId = clientEditId;
+    this.pendingLocalEditId = clientEditId;
+    const afterDocument = structuredClone(beforeDocument);
+    applyNodeEditorGraphEdit(afterDocument, edit);
+    this.committedGraphDocument = afterDocument;
+    this.queuePostGraphEditActions(edit);
+    this.postGraphEdit(edit, clientEditId);
+  }
+
+  /** Builds an undoable graph edit from current workspace state and posts it to the active host. */
+  applyDocumentState(reason: NodeEditorGraphEdit["kind"]) {
+    const beforeDocument = this.committedGraphDocument;
+    if (!beforeDocument) {
+      throw new Error("Cannot create an undoable edit before the document has been initialized.");
+    }
+
+    const graphEdit = this.buildGraphEdit(reason, beforeDocument);
+    if (!graphEdit) {
+      return;
+    }
+
+    this.applyGraphEdit(graphEdit);
+  }
+
+  private buildGraphEdit(
+    reason: NodeEditorGraphEdit["kind"],
+    beforeDocument: NodeEditorGraphDocument,
+  ): NodeEditorGraphEdit | undefined {
+    switch (reason) {
+      case "element-list-changed":
+        return buildElementListChangedEdit(
+          beforeDocument,
+          {
+            nodes: this.nodes,
+            edges: this.edges,
+            rootNodeId: this.rootNodeId,
+          },
+          this.context.rootMenuName,
+        );
+      case "nodes-moved":
+        return buildNodesMovedEdit(beforeDocument, this.nodes);
+      case "node-renamed":
+        return buildNodeRenamedEdit(beforeDocument, this.nodes);
+      case "node-resized":
+        return buildNodeResizedEdit(beforeDocument, this.nodes);
+    }
+  }
+
+  private postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {
+    switch (edit.kind) {
+      case "element-list-changed":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          addedNodes: edit.addedNodes,
+          removedNodes: edit.removedNodes,
+          addedEdges: edit.addedEdges,
+          removedEdges: edit.removedEdges,
+          beforeRootNodeId: edit.beforeRootNodeId,
+          afterRootNodeId: edit.afterRootNodeId,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "nodes-moved":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          changes: edit.changes,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "node-renamed":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          changes: edit.changes,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "node-resized":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          changes: edit.changes,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "node-properties-updated":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          propertyChanges: edit.propertyChanges,
+          resizeChanges: edit.resizeChanges,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+    }
+  }
+
+  private queuePostGraphEditActions(edit: NodeEditorGraphEdit): void {
+    if (graphEditRequiresDocumentRefresh(edit)) {
+      this.actionRequests.push({ type: "document-refresh" });
+    }
+  }
 }
 
-export const workspace = new Workspace();
+export function createNodeEditorSession(): NodeEditorSession {
+  return new NodeEditorSession();
+}
+
+const [useNodeEditorSession, setNodeEditorSessionContext] = createContext<NodeEditorSession>();
+export { useNodeEditorSession, setNodeEditorSessionContext };
+
+const defaultNodeEditorSession = createNodeEditorSession();
+let activeNodeEditorSession = defaultNodeEditorSession;
+
+export function getActiveNodeEditorSession(): NodeEditorSession {
+  return activeNodeEditorSession;
+}
+
+export function setActiveNodeEditorSession(session: NodeEditorSession): void {
+  activeNodeEditorSession = session;
+}
+
+export const workspace = new Proxy({} as NodeEditorSession, {
+  get(_target, property, _receiver) {
+    const value = Reflect.get(activeNodeEditorSession as object, property);
+    return typeof value === "function" ? value.bind(activeNodeEditorSession) : value;
+  },
+  set(_target, property, value, _receiver) {
+    return Reflect.set(activeNodeEditorSession as object, property, value);
+  },
+}) as NodeEditorSession;
 
 export function applyGraphEdit(edit: NodeEditorGraphEdit) {
-  const beforeDocument = workspace.committedGraphDocument;
-  if (!beforeDocument) {
-    throw new Error("Cannot create an undoable edit before the document has been initialized.");
-  }
-
-  const clientEditId = workspace.nextClientEditId + 1;
-  workspace.nextClientEditId = clientEditId;
-  workspace.pendingLocalEditId = clientEditId;
-  const afterDocument = structuredClone(beforeDocument);
-  applyNodeEditorGraphEdit(afterDocument, edit);
-  workspace.committedGraphDocument = afterDocument;
-  queuePostGraphEditActions(edit);
-  postGraphEdit(edit, clientEditId);
+  activeNodeEditorSession.applyGraphEdit(edit);
 }
 
-/** Builds an undoable graph edit from current workspace state and posts it to VS Code. */
 export function applyDocumentState(reason: NodeEditorGraphEdit["kind"]) {
-  const beforeDocument = workspace.committedGraphDocument;
-  if (!beforeDocument) {
-    throw new Error("Cannot create an undoable edit before the document has been initialized.");
-  }
-
-  const graphEdit = buildGraphEdit(reason, beforeDocument);
-  if (!graphEdit) {
-    return;
-  }
-
-  applyGraphEdit(graphEdit);
-}
-
-function buildGraphEdit(
-  reason: NodeEditorGraphEdit["kind"],
-  beforeDocument: NodeEditorGraphDocument,
-): NodeEditorGraphEdit | undefined {
-  switch (reason) {
-    case "element-list-changed":
-      return buildElementListChangedEdit(
-        beforeDocument,
-        {
-          nodes: workspace.nodes,
-          edges: workspace.edges,
-          rootNodeId: workspace.rootNodeId,
-        },
-        workspace.context.rootMenuName,
-      );
-    case "nodes-moved":
-      return buildNodesMovedEdit(beforeDocument, workspace.nodes);
-    case "node-renamed":
-      return buildNodeRenamedEdit(beforeDocument, workspace.nodes);
-    case "node-resized":
-      return buildNodeResizedEdit(beforeDocument, workspace.nodes);
-  }
-}
-
-function postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {
-  switch (edit.kind) {
-    case "element-list-changed":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        addedNodes: edit.addedNodes,
-        removedNodes: edit.removedNodes,
-        addedEdges: edit.addedEdges,
-        removedEdges: edit.removedEdges,
-        beforeRootNodeId: edit.beforeRootNodeId,
-        afterRootNodeId: edit.afterRootNodeId,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "nodes-moved":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        changes: edit.changes,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "node-renamed":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        changes: edit.changes,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "node-resized":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        changes: edit.changes,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "node-properties-updated":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        propertyChanges: edit.propertyChanges,
-        resizeChanges: edit.resizeChanges,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-  }
-}
-
-function queuePostGraphEditActions(edit: NodeEditorGraphEdit): void {
-  if (graphEditRequiresDocumentRefresh(edit)) {
-    workspace.actionRequests.push({ type: "document-refresh" });
-  }
+  activeNodeEditorSession.applyDocumentState(reason);
 }

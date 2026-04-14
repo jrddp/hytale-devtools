@@ -1,9 +1,10 @@
 <script lang="ts">
   import { CircleQuestionMark } from "lucide-svelte";
-  import { workspace } from "src/workspace.svelte";
+  import { useNodeEditorSession } from "src/workspace.svelte";
   import { onMount } from "svelte";
 
   const { onclose }: { onclose: () => void } = $props();
+  const workspace = useNodeEditorSession();
 
   type KeybindingRow = {
     label: string;
@@ -256,7 +257,7 @@
         type="button"
         class="inline-flex items-center rounded-md border border-vsc-input-border bg-vsc-button-secondary-bg px-2 py-1 text-[0.7rem] font-medium text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
         onclick={() =>
-          workspace.vscode.postMessage({ type: "openKeybindings", query: "Hytale Node Editor" })}
+          workspace.postMessageToHost({ type: "openKeybindings", query: "Hytale Node Editor" })}
       >
         Customize
       </button>

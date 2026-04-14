@@ -2,7 +2,7 @@
   import FieldLayout from "src/fields/FieldLayout.svelte";
   import type { FieldProps } from "src/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { workspace } from "src/workspace.svelte";
+  import { useNodeEditorSession } from "src/workspace.svelte";
   import type { IndexReference } from "@shared/indexTypes";
   import { focusNextEditableInNode } from "src/node-editor/utils/focusNavigation";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
@@ -22,6 +22,7 @@
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
   } = $props();
+  const workspace = useNodeEditorSession();
 
   let value = $state("");
   let lastCommittedValue = $state("");
@@ -58,7 +59,7 @@
 
   function requestAutocomplete() {
     if (!usesOverrideAutocomplete && symbolLookup !== undefined) {
-      workspace.vscode.postMessage({
+      workspace.postMessageToHost({
         type: "autocompleteRequest",
         symbolLookup: symbolLookup,
         fieldId: inputId,

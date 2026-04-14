@@ -8,7 +8,7 @@
   import { asCssColor } from "src/node-editor/utils/colors";
   import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
   import { getAbsoluteCenterPosition } from "src/node-editor/utils/nodeUtils.svelte";
-  import { workspace } from "src/workspace.svelte";
+  import { useNodeEditorSession } from "src/workspace.svelte";
   import { onMount, untrack } from "svelte";
 
   const {
@@ -20,6 +20,7 @@
     onselection: (node: FlowNode, inputId?: string) => void;
     viewportCenter: XYPosition;
   } = $props();
+  const workspace = useNodeEditorSession();
   interface SearchedNode {
     node: FlowNode;
     effectiveTitle: string;
