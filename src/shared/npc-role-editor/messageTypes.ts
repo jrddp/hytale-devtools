@@ -56,7 +56,8 @@ export type NpcRoleEditorContextActionMessage = {
 export type NpcRoleEditorApplyMessage = {
   type: "apply";
   text: string;
-  sourceVersion?: number;
+  sourceVersion: number;
+  label: string;
 };
 
 export type NpcRoleEditorExtensionToWebviewMessage =

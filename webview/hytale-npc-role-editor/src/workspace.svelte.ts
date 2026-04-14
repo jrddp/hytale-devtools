@@ -71,6 +71,8 @@ function emptyParameterUsageIndex(): ParameterUsageIndex {
   };
 }
 
+const DEFAULT_EDIT_LABEL = "Edit NPC Role";
+
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
   isDevelopment = $state(false);
@@ -205,7 +207,7 @@ export class Workspace {
     this.reparseDocument();
   }
 
-  applyDocumentState() {
+  applyDocumentState(label = DEFAULT_EDIT_LABEL) {
     const document = this.getCurrentDocument();
     if (!document) {
       return;
@@ -217,6 +219,7 @@ export class Workspace {
       type: "apply",
       text,
       sourceVersion: this.documentVersion,
+      label,
     };
     this.vscode.postMessage(payload satisfies NpcRoleEditorWebviewToExtensionMessage);
   }

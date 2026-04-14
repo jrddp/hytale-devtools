@@ -139,7 +139,6 @@
       onkeydown={event => {
         if (event.key === "Enter" || event.key === "Escape") {
           event.preventDefault();
-          commitNumberValue();
           event.currentTarget.blur();
         }
       }}

@@ -3,13 +3,6 @@ import * as path from "node:path";
 import * as vscode from "vscode";
 import { assetCacheRuntime, indexes, LOGGER } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
-import {
-  filterNpcRoleReferenceNamesFromPaths,
-  getNpcRoleReferenceName,
-  isVariantReferenceRoleType,
-  parseNpcRoleTypeFromText,
-  VARIANT_REFERENCE_ROLE_TYPES,
-} from "./variantReferenceResolver";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
 import type {
   NpcDescriptorDocument,
@@ -25,11 +18,20 @@ import type {
 } from "../shared/npc-role-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../utils/hytalePaths";
+import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
+import {
+  filterNpcRoleReferenceNamesFromPaths,
+  getNpcRoleReferenceName,
+  isVariantReferenceRoleType,
+  parseNpcRoleTypeFromText,
+} from "./variantReferenceResolver";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNpcRoleEditor";
 const NPC_DESCRIPTOR_FILE_NAME = "npc_descriptors.json";
 const WORKSPACE_NPC_ROLE_GLOB = "**/Server/NPC/Roles/**/*.json";
 const WORKSPACE_NPC_ROLE_EXCLUDE_GLOB = "**/{node_modules,.git,dist,build,.svelte-kit}/**";
+const DEFAULT_EDIT_LABEL = "Edit NPC Role";
+
 let activeProvider: HytaleNpcRoleEditorProvider | null = null;
 
 export function registerHytaleNpcRoleEditorProvider(
@@ -47,6 +49,7 @@ export function registerHytaleNpcRoleEditorProvider(
 
   return vscode.Disposable.from(
     registration,
+    provider,
     new vscode.Disposable(() => {
       if (activeProvider === provider) {
         activeProvider = null;
@@ -93,16 +96,52 @@ type LoadedNpcDescriptors = {
   descriptorSource: NpcDescriptorSource;
 };
 
-class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
-  private activeWebviewPanel: vscode.WebviewPanel | null = null;
+type HytaleNpcRoleReplaceTextEdit = {
+  kind: "replaceText";
+  beforeText: string;
+  afterText: string;
+  beforeRevision: number;
+  afterRevision: number;
+  label: string;
+};
+
+class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleNpcRoleDocument> {
+  private readonly onDidChangeCustomDocumentEmitter =
+    new vscode.EventEmitter<vscode.CustomDocumentEditEvent<HytaleNpcRoleDocument>>();
+  public readonly onDidChangeCustomDocument = this.onDidChangeCustomDocumentEmitter.event;
+
+  private readonly webviewPanelsByDocumentUri = new Map<string, Set<vscode.WebviewPanel>>();
+  private activeDocumentUri: string | undefined;
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
-  public resolveCustomTextEditor(
-    document: vscode.TextDocument,
+  public dispose(): void {
+    this.onDidChangeCustomDocumentEmitter.dispose();
+  }
+
+  public async openCustomDocument(
+    uri: vscode.Uri,
+    openContext: vscode.CustomDocumentOpenContext,
+    _token: vscode.CancellationToken,
+  ): Promise<HytaleNpcRoleDocument> {
+    const sourceUri = openContext.backupId ? vscode.Uri.parse(openContext.backupId) : uri;
+    const { text, eol } = await readNpcRoleTextFromUri(sourceUri);
+    return new HytaleNpcRoleDocument(uri, text, eol);
+  }
+
+  public async resolveCustomEditor(
+    document: HytaleNpcRoleDocument,
     webviewPanel: vscode.WebviewPanel,
-  ): void {
+    _token: vscode.CancellationToken,
+  ): Promise<void> {
     try {
+      const documentUri = document.uri.toString();
+      this.getPanelsForDocument(documentUri).add(webviewPanel);
+
+      if (webviewPanel.active) {
+        this.activeDocumentUri = documentUri;
+      }
+
       webviewPanel.webview.options = {
         enableScripts: true,
         localResourceRoots: [
@@ -133,36 +172,19 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
         }
       };
 
-      const updateWebview = () => {
-        void webviewPanel.webview.postMessage({
-          type: "update",
-          documentPath: document.uri.fsPath,
-          version: document.version,
-          text: document.getText(),
-        } satisfies NpcRoleEditorExtensionToWebviewMessage);
-      };
-
-      const documentChangeSubscription = vscode.workspace.onDidChangeTextDocument(event => {
-        if (event.document.uri.toString() === document.uri.toString()) {
-          updateWebview();
-        }
-      });
-
-      const viewStateSubscription = webviewPanel.onDidChangeViewState(event => {
+      const panelViewStateSubscription = webviewPanel.onDidChangeViewState(event => {
         if (event.webviewPanel.active) {
-          this.activeWebviewPanel = event.webviewPanel;
+          this.activeDocumentUri = documentUri;
+        } else if (this.activeDocumentUri === documentUri) {
+          this.activeDocumentUri = undefined;
         }
       });
-
-      if (webviewPanel.active) {
-        this.activeWebviewPanel = webviewPanel;
-      }
 
       webviewPanel.onDidDispose(() => {
-        documentChangeSubscription.dispose();
-        viewStateSubscription.dispose();
-        if (this.activeWebviewPanel === webviewPanel) {
-          this.activeWebviewPanel = null;
+        panelViewStateSubscription.dispose();
+        this.removePanelForDocument(documentUri, webviewPanel);
+        if (this.activeDocumentUri === documentUri) {
+          this.activeDocumentUri = undefined;
         }
       });
 
@@ -174,17 +196,17 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
         switch (message.type) {
           case "ready":
             void sendBootstrap().finally(() => {
-              updateWebview();
+              void this.postDocumentUpdate(document, webviewPanel.webview);
             });
             return;
           case "openRawJson":
-            void this.openRawJsonInTextEditor(document, webviewPanel);
+            void this.openRawJsonInTextEditor();
             return;
           case "autocompleteRequest":
-            void this.autocompleteRequest(message, document, webviewPanel.webview);
+            void this.autocompleteRequest(message, document.uri, webviewPanel.webview);
             return;
           case "resolveVariantReference":
-            void this.resolveVariantReference(message.referenceName, document, webviewPanel.webview);
+            void this.resolveVariantReference(message.referenceName, document.uri, webviewPanel.webview);
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
@@ -199,6 +221,43 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
       void vscode.window.showErrorMessage(`Hytale NPC Role editor failed to load: ${message}`);
       webviewPanel.webview.html = `<html><body><h3>Hytale NPC Role editor failed to load</h3><pre>${escapeHtml(message)}</pre></body></html>`;
     }
+  }
+
+  public async saveCustomDocument(
+    document: HytaleNpcRoleDocument,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<void> {
+    await writeNpcRoleTextToUri(document.uri, document.text, document.eol);
+  }
+
+  public async saveCustomDocumentAs(
+    document: HytaleNpcRoleDocument,
+    destination: vscode.Uri,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<void> {
+    await writeNpcRoleTextToUri(destination, document.text, document.eol);
+  }
+
+  public async revertCustomDocument(
+    document: HytaleNpcRoleDocument,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<void> {
+    const { text, eol } = await readNpcRoleTextFromUri(document.uri);
+    document.replaceText(text, eol);
+    await this.postDocumentUpdate(document);
+  }
+
+  public async backupCustomDocument(
+    document: HytaleNpcRoleDocument,
+    context: vscode.CustomDocumentBackupContext,
+    _cancellation: vscode.CancellationToken,
+  ): Promise<vscode.CustomDocumentBackup> {
+    await writeNpcRoleTextToUri(context.destination, document.text, document.eol);
+
+    return {
+      id: context.destination.toString(),
+      delete: () => vscode.workspace.fs.delete(context.destination),
+    };
   }
 
   private loadNpcDescriptors(): LoadedNpcDescriptors {
@@ -240,6 +299,74 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
     );
   }
 
+  private getPanelsForDocument(documentUri: string): Set<vscode.WebviewPanel> {
+    let panels = this.webviewPanelsByDocumentUri.get(documentUri);
+    if (!panels) {
+      panels = new Set();
+      this.webviewPanelsByDocumentUri.set(documentUri, panels);
+    }
+    return panels;
+  }
+
+  private removePanelForDocument(documentUri: string, panel: vscode.WebviewPanel): void {
+    const panels = this.webviewPanelsByDocumentUri.get(documentUri);
+    if (!panels) {
+      return;
+    }
+
+    panels.delete(panel);
+    if (panels.size === 0) {
+      this.webviewPanelsByDocumentUri.delete(documentUri);
+    }
+  }
+
+  private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
+    const activePanels = this.activeDocumentUri
+      ? this.webviewPanelsByDocumentUri.get(this.activeDocumentUri)
+      : undefined;
+    if (activePanels) {
+      for (const panel of activePanels) {
+        return panel;
+      }
+    }
+
+    for (const panels of this.webviewPanelsByDocumentUri.values()) {
+      for (const panel of panels) {
+        if (panel.visible) {
+          return panel;
+        }
+      }
+    }
+
+    for (const panels of this.webviewPanelsByDocumentUri.values()) {
+      for (const panel of panels) {
+        return panel;
+      }
+    }
+
+    return undefined;
+  }
+
+  private async postDocumentUpdate(
+    document: HytaleNpcRoleDocument,
+    targetWebview?: vscode.Webview,
+  ): Promise<void> {
+    const payload: NpcRoleEditorExtensionToWebviewMessage = {
+      type: "update",
+      documentPath: document.uri.fsPath,
+      version: document.revision,
+      text: document.text,
+    };
+
+    if (targetWebview) {
+      await targetWebview.postMessage(payload);
+      return;
+    }
+
+    const panels = this.webviewPanelsByDocumentUri.get(document.uri.toString());
+    await Promise.all(Array.from(panels ?? [], panel => panel.webview.postMessage(payload)));
+  }
+
   private async postError(webview: vscode.Webview, message: string): Promise<void> {
     const payload: NpcRoleEditorExtensionToWebviewMessage = {
       type: "error",
@@ -249,28 +376,29 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   public async postContextAction(message: NpcRoleEditorContextActionMessage): Promise<void> {
-    if (!this.activeWebviewPanel) {
+    const targetPanel = this.resolveTargetWebviewPanel();
+    if (!targetPanel) {
       return;
     }
 
-    await this.activeWebviewPanel.webview.postMessage(message);
+    await targetPanel.webview.postMessage(message);
   }
 
   private async autocompleteRequest(
     message: Extract<NpcRoleEditorWebviewToExtensionMessage, { type: "autocompleteRequest" }>,
-    document: vscode.TextDocument,
+    documentUri: vscode.Uri,
     webview: vscode.Webview,
   ): Promise<void> {
     await webview.postMessage({
       type: "autocompletionValues",
       fieldId: message.fieldId,
-      values: await this.getAutocompleteValues(message.symbolLookup, document),
+      values: await this.getAutocompleteValues(message.symbolLookup, documentUri),
     } satisfies NpcRoleEditorExtensionToWebviewMessage);
   }
 
   private async getAutocompleteValues(
     symbolLookup: Extract<NpcRoleEditorWebviewToExtensionMessage, { type: "autocompleteRequest" }>["symbolLookup"],
-    document: vscode.TextDocument,
+    documentUri: vscode.Uri,
   ): Promise<string[]> {
     if (
       symbolLookup.indexKind !== "registeredAssets" ||
@@ -305,7 +433,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
       candidatePaths.add(roleUri.fsPath);
     }
 
-    candidatePaths.add(document.uri.fsPath);
+    candidatePaths.add(documentUri.fsPath);
 
     return filterNpcRoleReferenceNamesFromPaths(
       candidatePaths,
@@ -315,30 +443,22 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
 
   private async resolveVariantReference(
     referenceName: string,
-    document: vscode.TextDocument,
+    documentUri: vscode.Uri,
     webview: vscode.Webview,
   ): Promise<void> {
-    const reference = await resolveVariantReferenceState(referenceName, document);
+    const reference = await resolveVariantReferenceState(referenceName, documentUri);
     await webview.postMessage({
       type: "referenceUpdate",
       reference,
     } satisfies NpcRoleEditorExtensionToWebviewMessage);
   }
 
-  private async openRawJsonInTextEditor(
-    document: vscode.TextDocument,
-    webviewPanel: vscode.WebviewPanel,
-  ): Promise<void> {
-    const targetViewColumn = webviewPanel.viewColumn ?? vscode.ViewColumn.Active;
-    await vscode.window.showTextDocument(document, {
-      viewColumn: targetViewColumn,
-      preserveFocus: false,
-      preview: true,
-    });
+  private async openRawJsonInTextEditor(): Promise<void> {
+    await vscode.commands.executeCommand("workbench.action.reopenTextEditor");
   }
 
   private async applyWebviewEdits(
-    document: vscode.TextDocument,
+    document: HytaleNpcRoleDocument,
     message: NpcRoleEditorApplyMessage,
     webview: vscode.Webview,
   ): Promise<void> {
@@ -347,14 +467,45 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomTextEditorProvider {
       return;
     }
 
-    const edit = new vscode.WorkspaceEdit();
-    const normalizedText = normalizeTextEol(message.text, document.eol);
-    edit.replace(document.uri, getDocumentRange(document), normalizedText);
-    const applied = await vscode.workspace.applyEdit(edit);
-
-    if (!applied) {
-      await this.postError(webview, "VS Code rejected the edit request.");
+    const afterText = normalizeTextEol(message.text, document.eol);
+    if (afterText === document.text) {
+      return;
     }
+
+    if (message.sourceVersion !== document.revision) {
+      LOGGER.error("Version mismatch detected when applying edit from NPC role editor.");
+      await this.postError(webview, "The file changed in another editor. Please retry.");
+      await this.postDocumentUpdate(document);
+      return;
+    }
+
+    const label = message.label.trim() || DEFAULT_EDIT_LABEL;
+    const beforeText = document.text;
+    const beforeRevision = document.revision;
+
+    const edit: HytaleNpcRoleReplaceTextEdit = {
+      kind: "replaceText",
+      label,
+      beforeText,
+      afterText,
+      beforeRevision,
+      afterRevision: beforeRevision + 1,
+    };
+
+    document.replaceText(edit.afterText);
+    this.onDidChangeCustomDocumentEmitter.fire({
+      document,
+      label: edit.label,
+      undo: async () => {
+        document.replaceText(edit.beforeText);
+        await this.postDocumentUpdate(document);
+      },
+      redo: async () => {
+        document.replaceText(edit.afterText);
+        await this.postDocumentUpdate(document);
+      },
+    });
+    await this.postDocumentUpdate(document);
   }
 }
 
@@ -373,14 +524,14 @@ function summarizeWebviewMessageForLog(message: NpcRoleEditorWebviewToExtensionM
 
 async function resolveVariantReferenceState(
   referenceName: string,
-  document: vscode.TextDocument,
+  documentUri: vscode.Uri,
 ): Promise<NpcRoleEditorVariantReferenceState> {
   const trimmedReferenceName = referenceName.trim();
   if (!trimmedReferenceName) {
     return { status: "none" };
   }
 
-  const currentDocumentReferenceName = getNpcRoleReferenceName(document.uri.fsPath);
+  const currentDocumentReferenceName = getNpcRoleReferenceName(documentUri.fsPath);
   if (trimmedReferenceName === currentDocumentReferenceName) {
     return {
       status: "error",
@@ -392,7 +543,7 @@ async function resolveVariantReferenceState(
   const openDocumentMatch = vscode.workspace.textDocuments.find(candidate => {
     return (
       candidate.uri.scheme === "file" &&
-      candidate.uri.fsPath !== document.uri.fsPath &&
+      candidate.uri.fsPath !== documentUri.fsPath &&
       getNpcRoleReferenceName(candidate.uri.fsPath) === trimmedReferenceName
     );
   });
@@ -416,7 +567,7 @@ async function resolveVariantReferenceState(
   );
 
   for (const match of workspaceMatches) {
-    if (match.fsPath === document.uri.fsPath) {
+    if (match.fsPath === documentUri.fsPath) {
       continue;
     }
 
@@ -500,11 +651,31 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-function getDocumentRange(document: vscode.TextDocument): vscode.Range {
-  const start = new vscode.Position(0, 0);
-  const lastLine = document.lineAt(document.lineCount - 1);
-  const end = new vscode.Position(document.lineCount - 1, lastLine.text.length);
-  return new vscode.Range(start, end);
+async function readNpcRoleTextFromUri(
+  uri: vscode.Uri,
+): Promise<{ text: string; eol: vscode.EndOfLine }> {
+  const bytes = await vscode.workspace.fs.readFile(uri);
+  const text = stripBom(Buffer.from(bytes).toString("utf8"));
+  return {
+    text,
+    eol: detectTextEol(text),
+  };
+}
+
+async function writeNpcRoleTextToUri(
+  uri: vscode.Uri,
+  text: string,
+  eol: vscode.EndOfLine,
+): Promise<void> {
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(normalizeTextEol(text, eol), "utf8"));
+}
+
+function stripBom(text: string): string {
+  return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+}
+
+function detectTextEol(text: string): vscode.EndOfLine {
+  return text.includes("\r\n") ? vscode.EndOfLine.CRLF : vscode.EndOfLine.LF;
 }
 
 function normalizeTextEol(text: string, eol: vscode.EndOfLine): string {

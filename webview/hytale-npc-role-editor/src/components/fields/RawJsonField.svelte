@@ -71,7 +71,6 @@
     onkeydown={event => {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
-        commitRawJsonValue();
         event.currentTarget.blur();
       }
     }}

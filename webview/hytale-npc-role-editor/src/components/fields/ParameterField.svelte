@@ -391,7 +391,6 @@
       onkeydown={event => {
         if (event.key === "Enter" || event.key === "Escape") {
           event.preventDefault();
-          commitNumberValue();
           event.currentTarget.blur();
         }
       }}
@@ -435,7 +434,6 @@
         onkeydown={event => {
           if (event.key === "Enter" || event.key === "Escape") {
             event.preventDefault();
-            commitRangeValue(0);
             event.currentTarget.blur();
           }
         }}
@@ -454,7 +452,6 @@
         onkeydown={event => {
           if (event.key === "Enter" || event.key === "Escape") {
             event.preventDefault();
-            commitRangeValue(1);
             event.currentTarget.blur();
           }
         }}
@@ -606,7 +603,6 @@
       onkeydown={event => {
         if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
           event.preventDefault();
-          commitRawJsonValue();
           event.currentTarget.blur();
         }
       }}
