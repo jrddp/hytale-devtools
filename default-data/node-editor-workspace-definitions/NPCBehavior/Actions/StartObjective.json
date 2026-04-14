@@ -1,0 +1,30 @@
+{
+  "Id": "Action.StartObjective",
+  "Title": "StartObjective",
+  "Color": "DeepSkyBlue",
+  "Description": "Start the given objective for the currently iterated player in the interaction instruction",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "StartObjective"
+  }
+}

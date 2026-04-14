@@ -1,0 +1,77 @@
+{
+  "Id": "Sensor.Alarm",
+  "Title": "Alarm",
+  "Color": "LimeGreen",
+  "Description": "Check the state of a named alarm",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the alarm to check",
+      "Options": {
+        "Label": "Name",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "State",
+      "Type": "Enum",
+      "Description": "The state to check for",
+      "Options": {
+        "Label": "State",
+        "Width": 220,
+        "Values": [
+          "SET",
+          "UNSET",
+          "PASSED"
+        ]
+      }
+    },
+    {
+      "Id": "Clear",
+      "Type": "Bool",
+      "Description": "Whether to clear the alarm (unset it) if it has passed",
+      "Options": {
+        "Label": "Clear",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Name": "Name",
+    "State": "State",
+    "Clear": "Clear",
+    "Type": "Alarm"
+  }
+}

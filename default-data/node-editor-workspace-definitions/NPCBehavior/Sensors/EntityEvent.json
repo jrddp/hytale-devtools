@@ -1,0 +1,105 @@
+{
+  "Id": "Sensor.EntityEvent",
+  "Title": "EntityEvent",
+  "Color": "LimeGreen",
+  "Description": "Matches when an entity from a specific NPC group within a certain range is damaged, killed, or interacted with",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Max range to listen in",
+      "Options": {
+        "Label": "Range",
+        "Width": 88
+      }
+    },
+    {
+      "Id": "SearchType",
+      "Type": "Enum",
+      "Description": "Whether to listen for events triggered by players, npcs, or both in a certain order",
+      "Options": {
+        "Label": "SearchType",
+        "Default": "PlayerOnly",
+        "Width": 220,
+        "Values": [
+          "PlayerFirst",
+          "PlayerOnly",
+          "NpcFirst",
+          "NpcOnly"
+        ]
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "A target slot to place the target in. If omitted, no slot will be used",
+      "Options": {
+        "Label": "TargetSlot",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "EventType",
+      "Type": "Enum",
+      "Description": "The event type to listen for",
+      "Options": {
+        "Label": "EventType",
+        "Default": "DAMAGE",
+        "Width": 220,
+        "Values": [
+          "DAMAGE",
+          "DEATH",
+          "INTERACTION"
+        ]
+      }
+    },
+    {
+      "Id": "FlockOnly",
+      "Type": "Bool",
+      "Description": "Whether to only listen for flock events",
+      "Options": {
+        "Label": "FlockOnly",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Range": "Range",
+    "SearchType": "SearchType",
+    "TargetSlot": "TargetSlot",
+    "EventType": "EventType",
+    "FlockOnly": "FlockOnly",
+    "Type": "EntityEvent"
+  }
+}

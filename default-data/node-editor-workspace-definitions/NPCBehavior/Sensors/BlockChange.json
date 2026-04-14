@@ -1,0 +1,94 @@
+{
+  "Id": "Sensor.BlockChange",
+  "Title": "BlockChange",
+  "Color": "LimeGreen",
+  "Description": "Matches when a block from a blockset within a certain range is changed or interacted with",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Max range to listen in",
+      "Options": {
+        "Label": "Range",
+        "Width": 88
+      }
+    },
+    {
+      "Id": "SearchType",
+      "Type": "Enum",
+      "Description": "Whether to listen for events triggered by players, npcs, or both in a certain order",
+      "Options": {
+        "Label": "SearchType",
+        "Default": "PlayerOnly",
+        "Width": 220,
+        "Values": [
+          "PlayerFirst",
+          "PlayerOnly",
+          "NpcFirst",
+          "NpcOnly"
+        ]
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "A target slot to place the target in. If omitted, no slot will be used",
+      "Options": {
+        "Label": "TargetSlot",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "EventType",
+      "Type": "Enum",
+      "Description": "The event type to listen for",
+      "Options": {
+        "Label": "EventType",
+        "Default": "DAMAGE",
+        "Width": 220,
+        "Values": [
+          "DAMAGE",
+          "DESTRUCTION",
+          "INTERACTION"
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Range": "Range",
+    "SearchType": "SearchType",
+    "TargetSlot": "TargetSlot",
+    "EventType": "EventType",
+    "Type": "BlockChange"
+  }
+}

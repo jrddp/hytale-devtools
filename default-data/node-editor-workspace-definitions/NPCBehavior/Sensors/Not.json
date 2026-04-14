@@ -1,0 +1,74 @@
+{
+  "Id": "Sensor.Not",
+  "Title": "Not",
+  "Color": "LimeGreen",
+  "Description": "Invert sensor test",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor",
+      "Description": "Sensor to test"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "UseTargetSlot",
+      "Type": "SmallString",
+      "Description": "A locked target slot to feed to action (if available)",
+      "Options": {
+        "Label": "UseTargetSlot",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "AutoUnlockTargetSlot",
+      "Type": "SmallString",
+      "Description": "A target slot to unlock when sensor doesn't match anymore",
+      "Options": {
+        "Label": "AutoUnlockTargetSlot",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Sensor": {
+      "Pin": "SensorPin",
+      "Node": "SensorVariants"
+    },
+    "UseTargetSlot": "UseTargetSlot",
+    "AutoUnlockTargetSlot": "AutoUnlockTargetSlot",
+    "Type": "Not"
+  }
+}

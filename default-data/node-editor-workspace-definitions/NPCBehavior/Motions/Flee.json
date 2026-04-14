@@ -1,0 +1,432 @@
+{
+  "Id": "BodyMotion.Flee",
+  "Title": "Flee",
+  "Color": "DarkOrange",
+  "Description": "Move away from target",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DarkOrange",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "RelativeSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative speed the NPC should move",
+      "Options": {
+        "Label": "RelativeSpeed",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RelativeSpeedWaypoint",
+      "Type": "Float",
+      "Description": "Maximum relative speed the NPC should move close to waypoints",
+      "Options": {
+        "Label": "RelativeSpeedWaypoint",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "WaypointRadius",
+      "Type": "Float",
+      "Description": "Radius to slow down around waypoints",
+      "Options": {
+        "Label": "WaypointRadius",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "UseBestPath",
+      "Type": "Bool",
+      "Description": "Use best partial path if goal can't be reached",
+      "Options": {
+        "Label": "UseBestPath",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ThrottleDelayRange",
+      "Type": "List",
+      "Description": "Time to delay after no path finding solution found",
+      "Options": {
+        "Label": "ThrottleDelayRange",
+        "Default": [
+          3,
+          5
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "ThrottleIgnoreCount",
+      "Type": "Int",
+      "Description": "How often no valid path solution can be found before throttling delay is applied",
+      "Options": {
+        "Label": "ThrottleIgnoreCount",
+        "Default": 3,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "BuildOptimisedPath",
+      "Type": "Bool",
+      "Description": "Try to reduce number of nodes of generated path",
+      "Options": {
+        "Label": "BuildOptimisedPath",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "AvoidBlockDamage",
+      "Type": "Bool",
+      "Description": "Should avoid environmental damage from blocks",
+      "Options": {
+        "Label": "AvoidBlockDamage",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "RelaxedMoveConstraints",
+      "Type": "Bool",
+      "Description": "NPC can do movements like wading (depends on motion controller type)",
+      "Options": {
+        "Label": "RelaxedMoveConstraints",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "BlendHeading",
+      "Type": "Float",
+      "Description": "Relative rotation angle into next waypoint when arriving at current waypoint",
+      "Options": {
+        "Label": "BlendHeading",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "PathSmoothing",
+      "Type": "Int",
+      "Description": "Try to smooth followed path. Larger values smooth more.",
+      "Options": {
+        "Label": "PathSmoothing",
+        "Default": 2,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RejectionWeight",
+      "Type": "Float",
+      "Description": "Weight of rejection vector pushing entity closer to original path",
+      "Options": {
+        "Label": "RejectionWeight",
+        "Default": 3,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "UseSteering",
+      "Type": "Bool",
+      "Description": "Use simple/cheap steering if available",
+      "Options": {
+        "Label": "UseSteering",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "SkipSteering",
+      "Type": "Bool",
+      "Description": "Skip steering if target not reachable",
+      "Options": {
+        "Label": "SkipSteering",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "UsePathfinder",
+      "Type": "Bool",
+      "Description": "Use path finder",
+      "Options": {
+        "Label": "UsePathfinder",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "MinPathLength",
+      "Type": "Float",
+      "Description": "Minimum length of path required when not able to reach target (should be greater equal 2)",
+      "Options": {
+        "Label": "MinPathLength",
+        "Default": 2,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "DiagonalMoves",
+      "Type": "Bool",
+      "Description": "Allow diagonal moves",
+      "Options": {
+        "Label": "DiagonalMoves",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "StepsPerTick",
+      "Type": "Int",
+      "Description": "Steps per iteration",
+      "Options": {
+        "Label": "StepsPerTick",
+        "Default": 50,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxPathLength",
+      "Type": "Int",
+      "Description": "Max path steps before aborting path finding",
+      "Options": {
+        "Label": "MaxPathLength",
+        "Default": 200,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxOpenNodes",
+      "Type": "Int",
+      "Description": "Max open nodes before aborting path finding",
+      "Options": {
+        "Label": "MaxOpenNodes",
+        "Default": 200,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxTotalNodes",
+      "Type": "Int",
+      "Description": "Max total node before aborting path finding",
+      "Options": {
+        "Label": "MaxTotalNodes",
+        "Default": 900,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Debug",
+      "Type": "SmallString",
+      "Description": "Debugging flags",
+      "Options": {
+        "Label": "Debug",
+        "Default": "",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "DesiredAltitudeWeight",
+      "Type": "Float",
+      "Description": "How much this NPC prefers being within the desired height range",
+      "Options": {
+        "Label": "DesiredAltitudeWeight",
+        "Default": -1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "WaitDistance",
+      "Type": "Float",
+      "Description": "Minimum distance target needs to move before recomputing path when no path can be found",
+      "Options": {
+        "Label": "WaitDistance",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RecomputeDistance",
+      "Type": "Float",
+      "Description": "Maximum distance target can move before path is recomputed or 0 to supress recomputation",
+      "Options": {
+        "Label": "RecomputeDistance",
+        "Default": 10,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "ReprojectDistance",
+      "Type": "Float",
+      "Description": "Maximum distance target can move before position is reprojected",
+      "Options": {
+        "Label": "ReprojectDistance",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "AdjustRangeByHitboxSize",
+      "Type": "Bool",
+      "Description": "Correct range by hitbox sizes of involved entities",
+      "Options": {
+        "Label": "AdjustRangeByHitboxSize",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "RecomputeConeAngle",
+      "Type": "Float",
+      "Description": "Recompute path when target leaves cone from initial position to target",
+      "Options": {
+        "Label": "RecomputeConeAngle",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "SlowDownDistance",
+      "Type": "Float",
+      "Description": "Distance from target when NPC should start to slowdown",
+      "Options": {
+        "Label": "SlowDownDistance",
+        "Default": 8,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "StopDistance",
+      "Type": "Float",
+      "Description": "Distance from target when NPC should halt",
+      "Options": {
+        "Label": "StopDistance",
+        "Default": 10,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Falloff",
+      "Type": "Float",
+      "Description": "Rate how fast the slowdown should happen relative to distance",
+      "Options": {
+        "Label": "Falloff",
+        "Default": 3,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "HoldDirectionTimeRange",
+      "Type": "List",
+      "Description": "How often to change heading",
+      "Options": {
+        "Label": "HoldDirectionTimeRange",
+        "Default": [
+          2,
+          5
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "ChangeDirectionViewSector",
+      "Type": "Float",
+      "Description": "The view sector the NPC uses to decide if it should switch direction",
+      "Options": {
+        "Label": "ChangeDirectionViewSector",
+        "Default": 230,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "DirectionJitter",
+      "Type": "Float",
+      "Description": "How much jitter in degrees to add to the heading the NPC uses",
+      "Options": {
+        "Label": "DirectionJitter",
+        "Default": 45,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "ErraticDistance",
+      "Type": "Float",
+      "Description": "If the player is closer than this distance, the NPC will behave more erratically using the additional jitter parameter",
+      "Options": {
+        "Label": "ErraticDistance",
+        "Default": 4,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "ErraticExtraJitter",
+      "Type": "Float",
+      "Description": "Extra jitter to add to the NPC heading on top of the standard when the target is too close",
+      "Options": {
+        "Label": "ErraticExtraJitter",
+        "Default": 45,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "ErraticChangeDurationMultiplier",
+      "Type": "Float",
+      "Description": "A multiplier to decrease the duration between direction changes when the target is too close",
+      "Options": {
+        "Label": "ErraticChangeDurationMultiplier",
+        "Default": 0.5,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "RelativeSpeed": "RelativeSpeed",
+    "RelativeSpeedWaypoint": "RelativeSpeedWaypoint",
+    "WaypointRadius": "WaypointRadius",
+    "UseBestPath": "UseBestPath",
+    "ThrottleDelayRange": "ThrottleDelayRange",
+    "ThrottleIgnoreCount": "ThrottleIgnoreCount",
+    "BuildOptimisedPath": "BuildOptimisedPath",
+    "AvoidBlockDamage": "AvoidBlockDamage",
+    "RelaxedMoveConstraints": "RelaxedMoveConstraints",
+    "BlendHeading": "BlendHeading",
+    "PathSmoothing": "PathSmoothing",
+    "RejectionWeight": "RejectionWeight",
+    "UseSteering": "UseSteering",
+    "SkipSteering": "SkipSteering",
+    "UsePathfinder": "UsePathfinder",
+    "MinPathLength": "MinPathLength",
+    "DiagonalMoves": "DiagonalMoves",
+    "StepsPerTick": "StepsPerTick",
+    "MaxPathLength": "MaxPathLength",
+    "MaxOpenNodes": "MaxOpenNodes",
+    "MaxTotalNodes": "MaxTotalNodes",
+    "Debug": "Debug",
+    "DesiredAltitudeWeight": "DesiredAltitudeWeight",
+    "WaitDistance": "WaitDistance",
+    "RecomputeDistance": "RecomputeDistance",
+    "ReprojectDistance": "ReprojectDistance",
+    "AdjustRangeByHitboxSize": "AdjustRangeByHitboxSize",
+    "RecomputeConeAngle": "RecomputeConeAngle",
+    "SlowDownDistance": "SlowDownDistance",
+    "StopDistance": "StopDistance",
+    "Falloff": "Falloff",
+    "HoldDirectionTimeRange": "HoldDirectionTimeRange",
+    "ChangeDirectionViewSector": "ChangeDirectionViewSector",
+    "DirectionJitter": "DirectionJitter",
+    "ErraticDistance": "ErraticDistance",
+    "ErraticExtraJitter": "ErraticExtraJitter",
+    "ErraticChangeDurationMultiplier": "ErraticChangeDurationMultiplier",
+    "Type": "Flee"
+  }
+}

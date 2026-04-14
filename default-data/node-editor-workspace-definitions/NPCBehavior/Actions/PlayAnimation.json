@@ -1,0 +1,55 @@
+{
+  "Id": "Action.PlayAnimation",
+  "Title": "PlayAnimation",
+  "Color": "DeepSkyBlue",
+  "Description": "Play an animation",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "Enum",
+      "Description": "The animation slot to play on",
+      "Options": {
+        "Label": "Slot",
+        "Width": 220,
+        "Values": [
+          "Status",
+          "Action",
+          "Face"
+        ]
+      }
+    },
+    {
+      "Id": "Animation",
+      "Type": "SmallString",
+      "Description": "The animation ID to play",
+      "Options": {
+        "Label": "Animation",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Slot": "Slot",
+    "Animation": "Animation",
+    "Type": "PlayAnimation"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "Id": "Sensor.OnGround",
+  "Title": "OnGround",
+  "Color": "LimeGreen",
+  "Description": "Test if NPC is on ground",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Type": "OnGround"
+  }
+}

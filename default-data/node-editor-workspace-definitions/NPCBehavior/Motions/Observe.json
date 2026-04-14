@@ -1,0 +1,76 @@
+{
+  "Id": "HeadMotion.Observe",
+  "Title": "Observe",
+  "Color": "MediumPurple",
+  "Description": "Observe surroundings in various ways.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "MediumPurple",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "AngleRange",
+      "Type": "List",
+      "Description": "The angle range to observe in degrees",
+      "Options": {
+        "Label": "AngleRange",
+        "Width": 240
+      }
+    },
+    {
+      "Id": "PauseTimeRange",
+      "Type": "List",
+      "Description": "How long to continue looking in a given direction",
+      "Options": {
+        "Label": "PauseTimeRange",
+        "Default": [
+          2,
+          2
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "PickRandomAngle",
+      "Type": "Bool",
+      "Description": "Whether to pick random angles within the range",
+      "Options": {
+        "Label": "PickRandomAngle",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ViewSegments",
+      "Type": "Int",
+      "Description": "The number of distinct segments to stop at when sweeping from left to right",
+      "Options": {
+        "Label": "ViewSegments",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RelativeTurnSpeed",
+      "Type": "Float",
+      "Description": "The relative turn speed modifier",
+      "Options": {
+        "Label": "RelativeTurnSpeed",
+        "Default": 1,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "AngleRange": "AngleRange",
+    "PauseTimeRange": "PauseTimeRange",
+    "PickRandomAngle": "PickRandomAngle",
+    "ViewSegments": "ViewSegments",
+    "RelativeTurnSpeed": "RelativeTurnSpeed",
+    "Type": "Observe"
+  }
+}

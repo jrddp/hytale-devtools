@@ -1,0 +1,184 @@
+{
+  "Id": "BodyMotion.WanderInCircle",
+  "Title": "WanderInCircle",
+  "Color": "DarkOrange",
+  "Description": "Random movement in circle around spawn position",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DarkOrange",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "MinWalkTime",
+      "Type": "Float",
+      "Description": "Minimum time to wander for a segment.",
+      "Options": {
+        "Label": "MinWalkTime",
+        "Default": 2,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxWalkTime",
+      "Type": "Float",
+      "Description": "Maximum time to wander for a segment.",
+      "Options": {
+        "Label": "MaxWalkTime",
+        "Default": 4,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MinHeadingChange",
+      "Type": "Float",
+      "Description": "Approximate minimum heading change between segments",
+      "Options": {
+        "Label": "MinHeadingChange",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxHeadingChange",
+      "Type": "Float",
+      "Description": "Approximate maximum heading change between segments",
+      "Options": {
+        "Label": "MaxHeadingChange",
+        "Default": 90,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RelaxHeadingChange",
+      "Type": "Bool",
+      "Description": "Allow other directions when preferred directions blocked",
+      "Options": {
+        "Label": "RelaxHeadingChange",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "RelativeSpeed",
+      "Type": "Float",
+      "Description": "Relative wander speed",
+      "Options": {
+        "Label": "RelativeSpeed",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MinMoveDistance",
+      "Type": "Float",
+      "Description": "Minimum distance to move in a segment",
+      "Options": {
+        "Label": "MinMoveDistance",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "StopDistance",
+      "Type": "Float",
+      "Description": "Distance to stop at target",
+      "Options": {
+        "Label": "StopDistance",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "TestsPerTick",
+      "Type": "Int",
+      "Description": "Direction tests per tick",
+      "Options": {
+        "Label": "TestsPerTick",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "AvoidBlockDamage",
+      "Type": "Bool",
+      "Description": "Should avoid environmental damage from blocks",
+      "Options": {
+        "Label": "AvoidBlockDamage",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "RelaxedMoveConstraints",
+      "Type": "Bool",
+      "Description": "NPC can do movements like wading (depends on motion controller type)",
+      "Options": {
+        "Label": "RelaxedMoveConstraints",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "DesiredAltitudeWeight",
+      "Type": "Float",
+      "Description": "How much this NPC prefers being within the desired height range",
+      "Options": {
+        "Label": "DesiredAltitudeWeight",
+        "Default": -1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Radius",
+      "Type": "Float",
+      "Description": "Radius of circle to wander in",
+      "Options": {
+        "Label": "Radius",
+        "Default": 10,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Flock",
+      "Type": "Bool",
+      "Description": "Do not use",
+      "Options": {
+        "Label": "Flock",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "UseSphere",
+      "Type": "Bool",
+      "Description": "Use sphere",
+      "Options": {
+        "Label": "UseSphere",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "MinWalkTime": "MinWalkTime",
+    "MaxWalkTime": "MaxWalkTime",
+    "MinHeadingChange": "MinHeadingChange",
+    "MaxHeadingChange": "MaxHeadingChange",
+    "RelaxHeadingChange": "RelaxHeadingChange",
+    "RelativeSpeed": "RelativeSpeed",
+    "MinMoveDistance": "MinMoveDistance",
+    "StopDistance": "StopDistance",
+    "TestsPerTick": "TestsPerTick",
+    "AvoidBlockDamage": "AvoidBlockDamage",
+    "RelaxedMoveConstraints": "RelaxedMoveConstraints",
+    "DesiredAltitudeWeight": "DesiredAltitudeWeight",
+    "Radius": "Radius",
+    "Flock": "Flock",
+    "UseSphere": "UseSphere",
+    "Type": "WanderInCircle"
+  }
+}

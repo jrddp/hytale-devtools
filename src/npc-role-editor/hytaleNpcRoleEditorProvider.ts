@@ -473,7 +473,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     }
 
     if (message.sourceVersion !== document.revision) {
-      LOGGER.error("Version mismatch detected when applying edit from NPC role editor.");
+      LOGGER.error(
+        `Version mismatch detected when applying edit from NPC role editor. label="${message.label}", sourceVersion=${message.sourceVersion}, currentRevision=${document.revision}`,
+      );
       await this.postError(webview, "The file changed in another editor. Please retry.");
       await this.postDocumentUpdate(document);
       return;

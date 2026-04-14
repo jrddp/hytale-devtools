@@ -1,0 +1,50 @@
+{
+  "Id": "Action.ModelAttachment",
+  "Title": "ModelAttachment",
+  "Color": "DeepSkyBlue",
+  "Description": "Set an attachment on the current NPC model",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "SmallString",
+      "Description": "The attachment slot to set",
+      "Options": {
+        "Label": "Slot",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "Attachment",
+      "Type": "SmallString",
+      "Description": "The attachment to set, or empty to remove",
+      "Options": {
+        "Label": "Attachment",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Slot": "Slot",
+    "Attachment": "Attachment",
+    "Type": "ModelAttachment"
+  }
+}

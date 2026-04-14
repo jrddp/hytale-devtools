@@ -1,0 +1,106 @@
+{
+  "Id": "Sensor.Damage",
+  "Title": "Damage",
+  "Color": "LimeGreen",
+  "Description": "Test if NPC suffered damage",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Combat",
+      "Type": "Bool",
+      "Description": "Test for combat damage",
+      "Options": {
+        "Label": "Combat",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Friendly",
+      "Type": "Bool",
+      "Description": "Test for damage from usually disabled damage groups",
+      "Options": {
+        "Label": "Friendly",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Drowning",
+      "Type": "Bool",
+      "Description": "Test for damage from drowning",
+      "Options": {
+        "Label": "Drowning",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Environment",
+      "Type": "Bool",
+      "Description": "Test for damage from environment",
+      "Options": {
+        "Label": "Environment",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Other",
+      "Type": "Bool",
+      "Description": "Test for other damage",
+      "Options": {
+        "Label": "Other",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The slot to use for locking on the target if damage is taken. If omitted, target will not be locked",
+      "Options": {
+        "Label": "TargetSlot",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Combat": "Combat",
+    "Friendly": "Friendly",
+    "Drowning": "Drowning",
+    "Environment": "Environment",
+    "Other": "Other",
+    "TargetSlot": "TargetSlot",
+    "Type": "Damage"
+  }
+}

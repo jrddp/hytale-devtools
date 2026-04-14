@@ -1,0 +1,30 @@
+{
+  "Id": "IEntityFilter.NPCGroup",
+  "Title": "NPCGroup",
+  "Color": "YellowGreen",
+  "Description": "Returns whether the entity matches one of the provided NPCGroups",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "YellowGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Type": "NPCGroup"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "Id": "IEntityFilter.Attitude",
+  "Title": "Attitude",
+  "Color": "YellowGreen",
+  "Description": "Matches the attitude towards the locked target",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "YellowGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Attitudes",
+      "Type": "Enum",
+      "Description": "The attitudes to match",
+      "Options": {
+        "Label": "Attitudes",
+        "Width": 220,
+        "Values": [
+          "IGNORE",
+          "HOSTILE",
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Attitudes": "Attitudes",
+    "Type": "Attitude"
+  }
+}

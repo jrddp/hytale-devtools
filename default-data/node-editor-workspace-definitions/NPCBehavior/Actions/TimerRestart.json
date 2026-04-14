@@ -1,0 +1,40 @@
+{
+  "Id": "Action.TimerRestart",
+  "Title": "TimerRestart",
+  "Color": "DeepSkyBlue",
+  "Description": "Restart a timer",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the timer",
+      "Options": {
+        "Label": "Name",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "Type": "TimerRestart"
+  }
+}

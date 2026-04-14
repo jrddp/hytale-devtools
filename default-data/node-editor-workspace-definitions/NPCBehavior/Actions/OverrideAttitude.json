@@ -1,0 +1,58 @@
+{
+  "Id": "Action.OverrideAttitude",
+  "Title": "OverrideAttitude",
+  "Color": "DeepSkyBlue",
+  "Description": "Override this NPCs attitude towards the provided target for a given duration",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Attitude",
+      "Type": "Enum",
+      "Description": "The attitude to set",
+      "Options": {
+        "Label": "Attitude",
+        "Width": 220,
+        "Values": [
+          "IGNORE",
+          "HOSTILE",
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ]
+      }
+    },
+    {
+      "Id": "Duration",
+      "Type": "Float",
+      "Description": "The duration to override for",
+      "Options": {
+        "Label": "Duration",
+        "Default": 10,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Attitude": "Attitude",
+    "Duration": "Duration",
+    "Type": "OverrideAttitude"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "Id": "Action.AddToHostileTargetMemory",
+  "Title": "AddToHostileTargetMemory",
+  "Color": "DeepSkyBlue",
+  "Description": "Adds the passed target from the sensor to the hostile target memory",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "AddToHostileTargetMemory"
+  }
+}

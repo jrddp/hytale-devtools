@@ -1,0 +1,41 @@
+{
+  "Id": "Action.LockOnInteractionTarget",
+  "Title": "LockOnInteractionTarget",
+  "Color": "DeepSkyBlue",
+  "Description": "Locks on to the currently iterated player in the interaction instruction",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to use",
+      "Options": {
+        "Label": "TargetSlot",
+        "Default": "LockedTarget",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "TargetSlot": "TargetSlot",
+    "Type": "LockOnInteractionTarget"
+  }
+}

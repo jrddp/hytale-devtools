@@ -1,0 +1,46 @@
+{
+  "Id": "IEntityFilter.ItemInHand",
+  "Title": "ItemInHand",
+  "Color": "YellowGreen",
+  "Description": "Check if entity is holding an item",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "YellowGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Hand",
+      "Type": "Enum",
+      "Description": "Which hand to check",
+      "Options": {
+        "Label": "Hand",
+        "Default": "Both",
+        "Width": 220,
+        "Values": [
+          "Main",
+          "OffHand",
+          "Both"
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Hand": "Hand",
+    "Type": "ItemInHand"
+  }
+}

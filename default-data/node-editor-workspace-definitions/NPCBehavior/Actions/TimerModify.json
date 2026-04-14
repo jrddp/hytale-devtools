@@ -1,0 +1,98 @@
+{
+  "Id": "Action.TimerModify",
+  "Title": "TimerModify",
+  "Color": "DeepSkyBlue",
+  "Description": "Modify values of a timer",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the timer",
+      "Options": {
+        "Label": "Name",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "AddValue",
+      "Type": "Float",
+      "Description": "Add value to the timer",
+      "Options": {
+        "Label": "AddValue",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxValue",
+      "Type": "List",
+      "Description": "Set the restart value range the timer can have",
+      "Options": {
+        "Label": "MaxValue",
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "Rate",
+      "Type": "Float",
+      "Description": "Set the rate at which the timer will decrease",
+      "Options": {
+        "Label": "Rate",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "SetValue",
+      "Type": "Float",
+      "Description": "Set the value of the timer",
+      "Options": {
+        "Label": "SetValue",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Repeating",
+      "Type": "Bool",
+      "Description": "Whether to repeat the timer when countdown finishes",
+      "Options": {
+        "Label": "Repeating",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "AddValue": "AddValue",
+    "MaxValue": "MaxValue",
+    "Rate": "Rate",
+    "SetValue": "SetValue",
+    "Repeating": "Repeating",
+    "Type": "TimerModify"
+  }
+}

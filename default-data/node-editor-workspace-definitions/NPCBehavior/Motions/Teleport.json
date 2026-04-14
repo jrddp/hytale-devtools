@@ -1,0 +1,71 @@
+{
+  "Id": "BodyMotion.Teleport",
+  "Title": "Teleport",
+  "Color": "DarkOrange",
+  "Description": "Teleport NPC to a position given by a sensor",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DarkOrange",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "OffsetRange",
+      "Type": "List",
+      "Description": "The minimum and maximum offset the NPC can be spawned from the target position",
+      "Options": {
+        "Label": "OffsetRange",
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "MaxYOffset",
+      "Type": "Float",
+      "Description": "Maximum vertical offset from the target position in case of terrain obstacles",
+      "Options": {
+        "Label": "MaxYOffset",
+        "Default": 5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "OffsetSector",
+      "Type": "Float",
+      "Description": "The sector around the target in which to teleport to",
+      "Options": {
+        "Label": "OffsetSector",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Orientation",
+      "Type": "Enum",
+      "Description": "The direction to face after teleporting",
+      "Options": {
+        "Label": "Orientation",
+        "Default": "Unchanged",
+        "Width": 220,
+        "Values": [
+          "Unchanged",
+          "TowardsTarget",
+          "UseTarget"
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "OffsetRange": "OffsetRange",
+    "MaxYOffset": "MaxYOffset",
+    "OffsetSector": "OffsetSector",
+    "Orientation": "Orientation",
+    "Type": "Teleport"
+  }
+}

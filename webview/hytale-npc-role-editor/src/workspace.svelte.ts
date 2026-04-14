@@ -236,7 +236,7 @@ export class Workspace {
     };
     field.isSet = true;
     this.recomputeDerivedState();
-    this.applyDocumentState();
+    this.applyDocumentState(`Edit ${fieldPath}`);
     if (fieldPath === "Reference") {
       this.refreshVariantReferenceResolutionFromCurrentState();
     }
@@ -255,7 +255,7 @@ export class Workspace {
     };
     field.isSet = true;
     this.recomputeDerivedState();
-    this.applyDocumentState();
+    this.applyDocumentState(`Edit ${fieldPath}`);
     if (fieldPath === "Reference") {
       this.refreshVariantReferenceResolutionFromCurrentState();
     }

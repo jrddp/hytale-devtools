@@ -1,0 +1,55 @@
+{
+  "Id": "HeadMotion.Sequence",
+  "Title": "Sequence",
+  "Color": "MediumPurple",
+  "Description": "(Looped)Sequence of motions",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "MediumPurple",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MotionsPin",
+      "Type": "HeadMotion",
+      "Color": "MediumPurple",
+      "Label": "Motions",
+      "Description": "Array of motions",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Looped",
+      "Type": "Bool",
+      "Description": "When true restart after last motion is finished",
+      "Options": {
+        "Label": "Looped",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "RestartOnActivate",
+      "Type": "Bool",
+      "Description": "Restart from first motion when NPC is activated.",
+      "Options": {
+        "Label": "RestartOnActivate",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Looped": "Looped",
+    "RestartOnActivate": "RestartOnActivate",
+    "Motions": {
+      "Pin": "MotionsPin",
+      "Node": "HeadMotionVariants"
+    },
+    "Type": "Sequence"
+  }
+}

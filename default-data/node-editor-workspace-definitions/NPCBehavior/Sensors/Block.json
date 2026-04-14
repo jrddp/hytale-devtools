@@ -1,0 +1,84 @@
+{
+  "Id": "Sensor.Block",
+  "Title": "Block",
+  "Color": "LimeGreen",
+  "Description": "Checks for one of a set of blocks in the nearby area",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The range to search for the blocks in",
+      "Options": {
+        "Label": "Range",
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxHeight",
+      "Type": "Float",
+      "Description": "The vertical range to search for the blocks in",
+      "Options": {
+        "Label": "MaxHeight",
+        "Default": 4,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Random",
+      "Type": "Bool",
+      "Description": "Whether to pick at random from within the matched blocks or pick the closest",
+      "Options": {
+        "Label": "Random",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Reserve",
+      "Type": "Bool",
+      "Description": "Whether to reserve the found block to prevent other NPCs selecting it",
+      "Options": {
+        "Label": "Reserve",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Range": "Range",
+    "MaxHeight": "MaxHeight",
+    "Random": "Random",
+    "Reserve": "Reserve",
+    "Type": "Block"
+  }
+}

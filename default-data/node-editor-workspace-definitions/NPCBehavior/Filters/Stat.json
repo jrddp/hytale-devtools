@@ -1,0 +1,70 @@
+{
+  "Id": "IEntityFilter.Stat",
+  "Title": "Stat",
+  "Color": "YellowGreen",
+  "Description": "Match stat values of the entity",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "YellowGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "StatTarget",
+      "Type": "Enum",
+      "Description": "The stat target",
+      "Options": {
+        "Label": "StatTarget",
+        "Width": 220,
+        "Values": [
+          "Value",
+          "Min",
+          "Max"
+        ]
+      }
+    },
+    {
+      "Id": "RelativeToTarget",
+      "Type": "Enum",
+      "Description": "The stat target",
+      "Options": {
+        "Label": "RelativeToTarget",
+        "Width": 220,
+        "Values": [
+          "Value",
+          "Min",
+          "Max"
+        ]
+      }
+    },
+    {
+      "Id": "ValueRange",
+      "Type": "List",
+      "Description": "The fractional range within which to trigger, with 1 being equal",
+      "Options": {
+        "Label": "ValueRange",
+        "Width": 240
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "StatTarget": "StatTarget",
+    "RelativeToTarget": "RelativeToTarget",
+    "ValueRange": "ValueRange",
+    "Type": "Stat"
+  }
+}

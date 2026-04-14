@@ -1,0 +1,30 @@
+{
+  "Id": "Action.Appearance",
+  "Title": "Appearance",
+  "Color": "DeepSkyBlue",
+  "Description": "Set model displayed for NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "Appearance"
+  }
+}

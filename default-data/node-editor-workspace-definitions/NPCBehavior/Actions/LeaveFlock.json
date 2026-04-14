@@ -1,0 +1,30 @@
+{
+  "Id": "Action.LeaveFlock",
+  "Title": "LeaveFlock",
+  "Color": "DeepSkyBlue",
+  "Description": "Leave flock.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "LeaveFlock"
+  }
+}

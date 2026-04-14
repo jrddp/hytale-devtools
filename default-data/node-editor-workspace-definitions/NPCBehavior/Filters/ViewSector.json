@@ -1,0 +1,41 @@
+{
+  "Id": "IEntityFilter.ViewSector",
+  "Title": "ViewSector",
+  "Color": "YellowGreen",
+  "Description": "Matches entities within the given view sector",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "YellowGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ViewSector",
+      "Type": "Float",
+      "Description": "View sector to test entities in",
+      "Options": {
+        "Label": "ViewSector",
+        "Default": 0,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "ViewSector": "ViewSector",
+    "Type": "ViewSector"
+  }
+}

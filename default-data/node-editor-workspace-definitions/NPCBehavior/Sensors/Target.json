@@ -1,0 +1,88 @@
+{
+  "Id": "Sensor.Target",
+  "Title": "Target",
+  "Color": "LimeGreen",
+  "Description": "Test if given target matches a series of criteria and optional entity filters",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "FiltersPin",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filters",
+      "Description": "A series of entity filter sensors to test",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to check",
+      "Options": {
+        "Label": "TargetSlot",
+        "Default": "LockedTarget",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Maximum range of locked target",
+      "Options": {
+        "Label": "Range",
+        "Default": 1.7976931348623157e+308,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "AutoUnlockTarget",
+      "Type": "Bool",
+      "Description": "Unlock locked target if match fails",
+      "Options": {
+        "Label": "AutoUnlockTarget",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "TargetSlot": "TargetSlot",
+    "Range": "Range",
+    "AutoUnlockTarget": "AutoUnlockTarget",
+    "Filters": {
+      "Pin": "FiltersPin",
+      "Node": "FilterVariants"
+    },
+    "Type": "Target"
+  }
+}

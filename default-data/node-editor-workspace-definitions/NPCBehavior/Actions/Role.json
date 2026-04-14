@@ -1,0 +1,51 @@
+{
+  "Id": "Action.Role",
+  "Title": "Role",
+  "Color": "DeepSkyBlue",
+  "Description": "Change the Role of the NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ChangeAppearance",
+      "Type": "Bool",
+      "Description": "Whether the appearance of the new Role should be used",
+      "Options": {
+        "Label": "ChangeAppearance",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "State",
+      "Type": "SmallString",
+      "Description": "State name to set",
+      "Options": {
+        "Label": "State",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "ChangeAppearance": "ChangeAppearance",
+    "State": "State",
+    "Type": "Role"
+  }
+}

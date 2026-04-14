@@ -1,0 +1,70 @@
+{
+  "Id": "Sensor.CanInteract",
+  "Title": "CanInteract",
+  "Color": "LimeGreen",
+  "Description": "Checks whether or not the player being iterated by the interaction instruction can interact with this NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ViewSector",
+      "Type": "Float",
+      "Description": "View sector to test the player in",
+      "Options": {
+        "Label": "ViewSector",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Attitudes",
+      "Type": "Enum",
+      "Description": "A set of attitudes to match",
+      "Options": {
+        "Label": "Attitudes",
+        "Default": "[NEUTRAL, FRIENDLY, REVERED]",
+        "Width": 220,
+        "Values": [
+          "IGNORE",
+          "HOSTILE",
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "ViewSector": "ViewSector",
+    "Attitudes": "Attitudes",
+    "Type": "CanInteract"
+  }
+}

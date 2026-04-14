@@ -1,0 +1,196 @@
+{
+  "Id": "Sensor.Mob",
+  "Title": "Mob",
+  "Color": "LimeGreen",
+  "Description": "Test if entity matching specific attributes and filters is in range",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "PrioritiserPin",
+      "Type": "ISensorEntityPrioritiser",
+      "Color": "HotPink",
+      "Label": "Prioritiser",
+      "Description": "A prioritiser for selecting results based on additional parameters"
+    },
+    {
+      "Id": "CollectorPin",
+      "Type": "ISensorEntityCollector",
+      "Color": "DarkCyan",
+      "Label": "Collector",
+      "Description": "A collector which can process all checked entities and act on them based on whether they match or not"
+    },
+    {
+      "Id": "FiltersPin",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filters",
+      "Description": "A series of entity filter sensors to test",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "MinRange",
+      "Type": "Float",
+      "Description": "Minimum range to test entities in",
+      "Options": {
+        "Label": "MinRange",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Maximum range to test entities in",
+      "Options": {
+        "Label": "Range",
+        "Width": 88
+      }
+    },
+    {
+      "Id": "LockOnTarget",
+      "Type": "Bool",
+      "Description": "Matched target becomes locked target",
+      "Options": {
+        "Label": "LockOnTarget",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "LockedTargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to use for locking on or unlocking",
+      "Options": {
+        "Label": "LockedTargetSlot",
+        "Default": "LockedTarget",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "AutoUnlockTarget",
+      "Type": "Bool",
+      "Description": "Unlock locked target when sensor not matching it anymore",
+      "Options": {
+        "Label": "AutoUnlockTarget",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "OnlyLockedTarget",
+      "Type": "Bool",
+      "Description": "Test only locked target",
+      "Options": {
+        "Label": "OnlyLockedTarget",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "IgnoredTargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to use for ignoring",
+      "Options": {
+        "Label": "IgnoredTargetSlot",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "UseProjectedDistance",
+      "Type": "Bool",
+      "Description": "Use the projected movement direction vector for distance, rather than the Euclidean distance",
+      "Options": {
+        "Label": "UseProjectedDistance",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "GetPlayers",
+      "Type": "Bool",
+      "Description": "Test players",
+      "Options": {
+        "Label": "GetPlayers",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "GetNPCs",
+      "Type": "Bool",
+      "Description": "Test mobs/NPCs",
+      "Options": {
+        "Label": "GetNPCs",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ExcludeOwnType",
+      "Type": "Bool",
+      "Description": "Exclude NPCs of same type as current NPC",
+      "Options": {
+        "Label": "ExcludeOwnType",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "MinRange": "MinRange",
+    "Range": "Range",
+    "LockOnTarget": "LockOnTarget",
+    "LockedTargetSlot": "LockedTargetSlot",
+    "AutoUnlockTarget": "AutoUnlockTarget",
+    "OnlyLockedTarget": "OnlyLockedTarget",
+    "IgnoredTargetSlot": "IgnoredTargetSlot",
+    "UseProjectedDistance": "UseProjectedDistance",
+    "Prioritiser": {
+      "Pin": "PrioritiserPin",
+      "Node": "PrioritiserVariants"
+    },
+    "Collector": {
+      "Pin": "CollectorPin",
+      "Node": "CollectorVariants"
+    },
+    "Filters": {
+      "Pin": "FiltersPin",
+      "Node": "FilterVariants"
+    },
+    "GetPlayers": "GetPlayers",
+    "GetNPCs": "GetNPCs",
+    "ExcludeOwnType": "ExcludeOwnType",
+    "Type": "Mob"
+  }
+}

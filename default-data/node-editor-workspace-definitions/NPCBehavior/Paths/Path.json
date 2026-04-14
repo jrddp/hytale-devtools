@@ -1,0 +1,43 @@
+{
+  "Id": "Path.Path",
+  "Title": "Path",
+  "Color": "CornflowerBlue",
+  "Description": "List of transient path points",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "CornflowerBlue",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "WaypointsPin",
+      "Type": "RelativeWaypointDefinition",
+      "Color": "SteelBlue",
+      "Label": "Waypoints",
+      "Description": "List of transient path points",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Scale",
+      "Type": "Float",
+      "Description": "Overall path scale",
+      "Options": {
+        "Label": "Scale",
+        "Default": 1,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "Waypoints": {
+      "Pin": "WaypointsPin",
+      "Node": "RelativeWaypointDefinition.RelativeWaypointDefinition"
+    },
+    "Scale": "Scale"
+  }
+}

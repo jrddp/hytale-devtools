@@ -1,0 +1,51 @@
+{
+  "Id": "Sensor.Eval",
+  "Title": "Eval",
+  "Color": "LimeGreen",
+  "Description": "Evaluate javascript expression and test if true",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Expression",
+      "Type": "SmallString",
+      "Description": "Javascript expression",
+      "Options": {
+        "Label": "Expression",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Expression": "Expression",
+    "Type": "Eval"
+  }
+}

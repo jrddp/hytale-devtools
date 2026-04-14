@@ -1,0 +1,46 @@
+{
+  "Id": "HeadMotion.Timer",
+  "Title": "Timer",
+  "Color": "MediumPurple",
+  "Description": "Execute a Motion for a specific maximum time",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "MediumPurple",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MotionPin",
+      "Type": "HeadMotion",
+      "Color": "MediumPurple",
+      "Label": "Motion",
+      "Description": "Motion to execute"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Time",
+      "Type": "List",
+      "Description": "Range of time from which the random timer length can be chosen",
+      "Options": {
+        "Label": "Time",
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240
+      }
+    }
+  ],
+  "Schema": {
+    "Time": "Time",
+    "Motion": {
+      "Pin": "MotionPin",
+      "Node": "HeadMotionVariants"
+    },
+    "Type": "Timer"
+  }
+}

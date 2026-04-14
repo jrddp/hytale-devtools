@@ -1,0 +1,62 @@
+{
+  "Id": "Sensor.Flag",
+  "Title": "Flag",
+  "Color": "LimeGreen",
+  "Description": "Test if a named flag is set or not",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the flag",
+      "Options": {
+        "Label": "Name",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "Set",
+      "Type": "Bool",
+      "Description": "Whether the flag should be set or not",
+      "Options": {
+        "Label": "Set",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Name": "Name",
+    "Set": "Set",
+    "Type": "Flag"
+  }
+}

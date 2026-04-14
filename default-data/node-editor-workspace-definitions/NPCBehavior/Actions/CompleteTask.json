@@ -1,0 +1,66 @@
+{
+  "Id": "Action.CompleteTask",
+  "Title": "CompleteTask",
+  "Color": "DeepSkyBlue",
+  "Description": "Complete a task",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "Enum",
+      "Description": "The animation slot to play on",
+      "Options": {
+        "Label": "Slot",
+        "Width": 220,
+        "Values": [
+          "Status",
+          "Action",
+          "Face"
+        ]
+      }
+    },
+    {
+      "Id": "Animation",
+      "Type": "SmallString",
+      "Description": "The animation ID to play",
+      "Options": {
+        "Label": "Animation",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "PlayAnimation",
+      "Type": "Bool",
+      "Description": "Whether or not to play the animation associated with completing this task",
+      "Options": {
+        "Label": "PlayAnimation",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Slot": "Slot",
+    "Animation": "Animation",
+    "PlayAnimation": "PlayAnimation",
+    "Type": "CompleteTask"
+  }
+}

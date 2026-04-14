@@ -1,0 +1,82 @@
+{
+  "Id": "Action.TimerStart",
+  "Title": "TimerStart",
+  "Color": "DeepSkyBlue",
+  "Description": "Start a timer",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DeepSkyBlue",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the timer",
+      "Options": {
+        "Label": "Name",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "StartValueRange",
+      "Type": "List",
+      "Description": "The range from which to pick an initial value to start at",
+      "Options": {
+        "Label": "StartValueRange",
+        "Width": 240
+      }
+    },
+    {
+      "Id": "RestartValueRange",
+      "Type": "List",
+      "Description": "The range from which to pick a value when the timer is restarted",
+      "Options": {
+        "Label": "RestartValueRange",
+        "Width": 240
+      }
+    },
+    {
+      "Id": "Rate",
+      "Type": "Float",
+      "Description": "The rate at which the timer will decrease",
+      "Options": {
+        "Label": "Rate",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Repeating",
+      "Type": "Bool",
+      "Description": "Whether to repeat the timer when countdown finishes",
+      "Options": {
+        "Label": "Repeating",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "StartValueRange": "StartValueRange",
+    "RestartValueRange": "RestartValueRange",
+    "Rate": "Rate",
+    "Repeating": "Repeating",
+    "Type": "TimerStart"
+  }
+}

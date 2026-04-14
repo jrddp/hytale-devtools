@@ -1,0 +1,43 @@
+{
+  "Id": "IEntityFilter.Not",
+  "Title": "Not",
+  "Color": "YellowGreen",
+  "Description": "Invert filter test",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "YellowGreen",
+      "Label": "Input"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "FilterPin",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filter",
+      "Description": "Filter to test"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Filter": {
+      "Pin": "FilterPin",
+      "Node": "FilterVariants"
+    },
+    "Type": "Not"
+  }
+}

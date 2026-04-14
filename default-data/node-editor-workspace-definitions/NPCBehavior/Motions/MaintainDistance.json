@@ -1,0 +1,112 @@
+{
+  "Id": "BodyMotion.MaintainDistance",
+  "Title": "MaintainDistance",
+  "Color": "DarkOrange",
+  "Description": "Maintain distance from a given position",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "DarkOrange",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "DesiredDistanceRange",
+      "Type": "List",
+      "Description": "The desired distance to remain at.",
+      "Options": {
+        "Label": "DesiredDistanceRange",
+        "Width": 240
+      }
+    },
+    {
+      "Id": "TargetDistanceFactor",
+      "Type": "Float",
+      "Description": "A factor used to decide what distance to move to within the target range.",
+      "Options": {
+        "Label": "TargetDistanceFactor",
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MoveThreshold",
+      "Type": "Float",
+      "Description": "An extra threshold distance on either side of the desired range before the NPC will trigger movement.",
+      "Options": {
+        "Label": "MoveThreshold",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RelativeForwardsSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative speed for the NPC moving forwards",
+      "Options": {
+        "Label": "RelativeForwardsSpeed",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "RelativeBackwardsSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative speed for the NPC moving backwards",
+      "Options": {
+        "Label": "RelativeBackwardsSpeed",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MoveTowardsSlowdownThreshold",
+      "Type": "Float",
+      "Description": "The distance away from the target stopping point at which the NPC will start to slow down while moving towards the target",
+      "Options": {
+        "Label": "MoveTowardsSlowdownThreshold",
+        "Default": 2,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "StrafingDurationRange",
+      "Type": "List",
+      "Description": "How long to strafe for.",
+      "Options": {
+        "Label": "StrafingDurationRange",
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "StrafingFrequencyRange",
+      "Type": "List",
+      "Description": "How frequently to execute strafing",
+      "Options": {
+        "Label": "StrafingFrequencyRange",
+        "Default": [
+          2,
+          2
+        ],
+        "Width": 240
+      }
+    }
+  ],
+  "Schema": {
+    "DesiredDistanceRange": "DesiredDistanceRange",
+    "TargetDistanceFactor": "TargetDistanceFactor",
+    "MoveThreshold": "MoveThreshold",
+    "RelativeForwardsSpeed": "RelativeForwardsSpeed",
+    "RelativeBackwardsSpeed": "RelativeBackwardsSpeed",
+    "MoveTowardsSlowdownThreshold": "MoveTowardsSlowdownThreshold",
+    "StrafingDurationRange": "StrafingDurationRange",
+    "StrafingFrequencyRange": "StrafingFrequencyRange",
+    "Type": "MaintainDistance"
+  }
+}

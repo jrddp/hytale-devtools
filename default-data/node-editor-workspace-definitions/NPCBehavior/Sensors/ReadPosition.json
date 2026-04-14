@@ -1,0 +1,83 @@
+{
+  "Id": "Sensor.ReadPosition",
+  "Title": "ReadPosition",
+  "Color": "LimeGreen",
+  "Description": "Read a stored position with some conditions",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Generic",
+      "Color": "LimeGreen",
+      "Label": "Input"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "SmallString",
+      "Description": "The slot to read the position from",
+      "Options": {
+        "Label": "Slot",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "MinRange",
+      "Type": "Float",
+      "Description": "Minimum range from stored position",
+      "Options": {
+        "Label": "MinRange",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Maximum range from stored position",
+      "Options": {
+        "Label": "Range",
+        "Width": 88
+      }
+    },
+    {
+      "Id": "UseMarkedTarget",
+      "Type": "Bool",
+      "Description": "Whether to read from a marked target slot instead of a position slot",
+      "Options": {
+        "Label": "UseMarkedTarget",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Slot": "Slot",
+    "MinRange": "MinRange",
+    "Range": "Range",
+    "UseMarkedTarget": "UseMarkedTarget",
+    "Type": "ReadPosition"
+  }
+}
