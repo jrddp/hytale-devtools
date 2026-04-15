@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Boolean",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -39,7 +40,8 @@
       "Options": {
         "Label": "Double",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -49,7 +51,8 @@
       "Options": {
         "Label": "Float",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -59,7 +62,8 @@
       "Options": {
         "Label": "Int",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -69,7 +73,8 @@
       "Options": {
         "Label": "String",
         "Default": "Test",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -117,7 +122,8 @@
           "VisLeashPosition",
           "VisFlock",
           "BeaconMessages"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -165,7 +171,8 @@
           "VisLeashPosition",
           "VisFlock",
           "BeaconMessages"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -178,7 +185,8 @@
           1,
           2
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -187,7 +195,8 @@
       "Description": "StringArray [a,b] 0-10",
       "Options": {
         "Label": "StringArray",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

@@ -20,6 +20,7 @@ import {
   type NodeEditorWorkspaceContext,
   type NodeTemplate,
 } from "@shared/node-editor/workspaceTypes";
+import type { ComputeAutocompleteOption } from "../../shared/components/computeAutocomplete";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
 import { type FlowEdge, type FlowNode, type FlowNodeData } from "@node-editor/common";
@@ -95,6 +96,7 @@ export class NodeEditorSession {
 
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
+  computeAutocompleteOptions = $state<ComputeAutocompleteOption[]>([]);
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);

@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "Completable tasks to match by name",
       "Options": {
         "Label": "TasksById",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

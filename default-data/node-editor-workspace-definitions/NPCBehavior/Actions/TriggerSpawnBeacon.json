@@ -28,7 +28,8 @@
       "Description": "The distance to search for a beacon to trigger",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {

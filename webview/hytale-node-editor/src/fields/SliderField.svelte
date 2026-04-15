@@ -2,6 +2,7 @@
   import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import type { Snippet } from "svelte";
 
   let {
     inputId,
@@ -9,8 +10,11 @@
     description,
     initialValue,
     inputWidth,
+    titleActions,
     onconfirm,
-  }: FieldProps<number> = $props();
+  }: FieldProps<number> & {
+    titleActions?: Snippet;
+  } = $props();
 
   const min = 0;
   const max = 100;
@@ -39,7 +43,13 @@
   }
 </script>
 
-<FieldLayout inputId={inputId} label={fieldLabel} description={description} align="center">
+<FieldLayout
+  inputId={inputId}
+  label={fieldLabel}
+  description={description}
+  align="center"
+  {titleActions}
+>
   <input
     id={inputId}
     class="nodrag"

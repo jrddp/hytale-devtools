@@ -29,7 +29,8 @@
       "Options": {
         "Label": "SpawnDirection",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -39,7 +40,8 @@
       "Options": {
         "Label": "SpawnAngle",
         "Default": 360,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -49,7 +51,8 @@
       "Options": {
         "Label": "FanOut",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -62,7 +65,8 @@
           1,
           1
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -75,7 +79,8 @@
           5,
           5
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -88,7 +93,8 @@
           0.25,
           0.25
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -97,7 +103,8 @@
       "Description": "NPC role to spawn",
       "Options": {
         "Label": "Kind",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -107,7 +114,8 @@
       "Options": {
         "Label": "LaunchAtTarget",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -117,7 +125,8 @@
       "Options": {
         "Label": "PitchHigh",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -127,7 +136,8 @@
       "Options": {
         "Label": "LaunchSpread",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -137,7 +147,8 @@
       "Options": {
         "Label": "JoinFlock",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -146,7 +157,8 @@
       "Description": "An optional state to set on the spawned NPC if it exists",
       "Options": {
         "Label": "SpawnState",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -155,7 +167,8 @@
       "Description": "An optional substate to set on the spawned NPC if it exists",
       "Options": {
         "Label": "SpawnSubState",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

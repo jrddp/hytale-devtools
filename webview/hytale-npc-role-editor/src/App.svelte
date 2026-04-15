@@ -16,6 +16,7 @@
   import { fade } from "svelte/transition";
   import type { VSCodeApi } from "./common";
   import type { NpcPropertyField, NpcPropertySection, NpcSectionId } from "./propertyModel";
+  import { buildNpcComputeAutocompleteOptions } from "./compute/computeAutocomplete";
   import PropertySection from "./components/PropertySection.svelte";
   import NpcGraphPage from "./components/NpcGraphPage.svelte";
   import { workspace } from "./workspace.svelte";
@@ -115,6 +116,12 @@
   );
   const activeGraphViewport = $derived.by(() =>
     activeGraphSectionId ? localWebviewState.graphViewports?.[activeGraphSectionId] : undefined,
+  );
+  const standardParameterFields = $derived.by(() => workspace.getStandardParameterFields());
+  const computeAutocompleteOptions = $derived(
+    buildNpcComputeAutocompleteOptions({
+      parameters: standardParameterFields,
+    }),
   );
 
   $effect(() => {
@@ -487,6 +494,7 @@
                 clipboard={nodeEditorClipboard}
                 autocompleteField={workspace.autocompleteField}
                 autocompleteValues={workspace.autocompleteValues}
+                {computeAutocompleteOptions}
                 initialViewport={activeGraphViewport}
                 onviewportchange={viewport => {
                   if (activeGraphSectionId) {

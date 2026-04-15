@@ -25,7 +25,8 @@
           "NEUTRAL",
           "FRIENDLY",
           "REVERED"
-        ]
+        ],
+        "Computable": true
       }
     }
   ],

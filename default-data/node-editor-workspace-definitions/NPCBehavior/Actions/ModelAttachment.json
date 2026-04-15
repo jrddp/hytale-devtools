@@ -28,7 +28,8 @@
       "Description": "The attachment slot to set",
       "Options": {
         "Label": "Slot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -37,7 +38,8 @@
       "Description": "The attachment to set, or empty to remove",
       "Options": {
         "Label": "Attachment",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

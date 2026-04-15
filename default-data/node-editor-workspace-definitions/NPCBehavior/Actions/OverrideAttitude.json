@@ -35,7 +35,8 @@
           "NEUTRAL",
           "FRIENDLY",
           "REVERED"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -45,7 +46,8 @@
       "Options": {
         "Label": "Duration",
         "Default": 10,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

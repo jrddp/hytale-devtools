@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "The id of this search ray sensor so the position can be cached",
       "Options": {
         "Label": "Name",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -47,7 +49,8 @@
       "Description": "Angle to fire the ray",
       "Options": {
         "Label": "Angle",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -56,7 +59,8 @@
       "Description": "How far to search",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -66,7 +70,8 @@
       "Options": {
         "Label": "MinRetestAngle",
         "Default": 5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -76,7 +81,8 @@
       "Options": {
         "Label": "MinRetestMove",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -86,7 +92,8 @@
       "Options": {
         "Label": "ThrottleTime",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

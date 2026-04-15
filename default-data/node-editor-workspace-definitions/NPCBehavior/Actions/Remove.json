@@ -29,7 +29,8 @@
       "Options": {
         "Label": "UseTarget",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

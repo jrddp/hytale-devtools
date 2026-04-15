@@ -32,6 +32,7 @@ export interface NodeField {
   label?: string;
   description?: string;
   value?: unknown;
+  computable?: boolean;
   /** Represents whether a field is implied from an absent value when initially parsed. Used to preserve explicitly empty values. */
   isImplicit?: boolean;
   inputWidth?: number;

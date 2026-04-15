@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -45,7 +46,8 @@
           "Backward",
           "Left",
           "Right"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -60,7 +62,8 @@
           "HeadPosition",
           "BodyPosition",
           "FootPosition"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -70,7 +73,8 @@
       "Options": {
         "Label": "RetryDelay",
         "Default": 5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -80,7 +84,8 @@
       "Options": {
         "Label": "AllowEmptyMaterials",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

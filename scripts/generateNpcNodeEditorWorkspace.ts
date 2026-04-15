@@ -529,6 +529,9 @@ function buildContentField(attribute: NpcDescriptorAttribute): NodeContentDefini
   if (enumValues?.length) {
     options.Values = enumValues;
   }
+  if (attribute.Computable === true) {
+    options.Computable = true;
+  }
 
   return {
     Id: attribute.Name,

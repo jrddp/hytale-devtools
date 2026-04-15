@@ -2,14 +2,18 @@
   import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import type { Snippet } from "svelte";
 
   let {
     inputId,
     label,
     description,
     initialValue,
+    titleActions,
     onconfirm,
-  }: FieldProps<boolean> = $props();
+  }: FieldProps<boolean> & {
+    titleActions?: Snippet;
+  } = $props();
 
   let value = $state(false);
   let lastCommittedValue = false;
@@ -31,7 +35,7 @@
   }
 </script>
 
-<FieldLayout {inputId} {label} {description} align="center">
+<FieldLayout {inputId} {label} {description} align="center" {titleActions}>
   <input
     id={inputId}
     class="h-4 w-4 nodrag"

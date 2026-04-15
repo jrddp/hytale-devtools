@@ -99,6 +99,7 @@ export interface NodeContentDefinition {
     ArrayElementType?: "DataSettingFlags";
     UseUUID?: boolean;
     DefaultValue?: string | number | boolean;
+    Computable?: boolean;
   };
 }
 

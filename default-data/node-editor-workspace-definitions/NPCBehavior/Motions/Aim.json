@@ -19,7 +19,8 @@
       "Options": {
         "Label": "Spread",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -29,7 +30,8 @@
       "Options": {
         "Label": "HitProbability",
         "Default": 0.33,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -39,7 +41,8 @@
       "Options": {
         "Label": "Deflection",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -49,7 +52,8 @@
       "Options": {
         "Label": "RelativeTurnSpeed",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

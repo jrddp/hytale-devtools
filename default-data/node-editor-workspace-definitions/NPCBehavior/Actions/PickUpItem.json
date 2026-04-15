@@ -32,7 +32,8 @@
           1,
           1
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -42,7 +43,8 @@
       "Options": {
         "Label": "Range",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -57,7 +59,8 @@
           "Hotbar",
           "Inventory",
           "Destroy"
-        ]
+        ],
+        "Computable": true
       }
     },
     {

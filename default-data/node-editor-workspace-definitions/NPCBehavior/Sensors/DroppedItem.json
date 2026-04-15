@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "The range within which to look",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -48,7 +50,8 @@
       "Options": {
         "Label": "ViewSector",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -58,7 +61,8 @@
       "Options": {
         "Label": "LineOfSight",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -75,7 +79,8 @@
           "Neutral",
           "Like",
           "Love"
-        ]
+        ],
+        "Computable": true
       }
     }
   ],

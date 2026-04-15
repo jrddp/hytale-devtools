@@ -3,12 +3,22 @@
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import type { Snippet } from "svelte";
 
   // TODO support rgb format
   type ColorStringFormat = "hex" | "rgb";
 
-  let { inputId, label, description, initialValue, inputWidth, onconfirm }: FieldProps<string> =
-    $props();
+  let {
+    inputId,
+    label,
+    description,
+    initialValue,
+    inputWidth,
+    titleActions,
+    onconfirm,
+  }: FieldProps<string> & {
+    titleActions?: Snippet;
+  } = $props();
 
   let value = $state("");
   let lastCommittedValue = "";
@@ -42,7 +52,7 @@
   }
 </script>
 
-<FieldLayout {inputId} {label} {description} align="center">
+<FieldLayout {inputId} {label} {description} align="center" {titleActions}>
   <div class="flex w-full min-w-0 items-center gap-2">
     <input
       id={inputId}

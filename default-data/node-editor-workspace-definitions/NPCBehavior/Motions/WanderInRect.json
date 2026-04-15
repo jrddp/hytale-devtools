@@ -19,7 +19,8 @@
       "Options": {
         "Label": "MinWalkTime",
         "Default": 2,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -29,7 +30,8 @@
       "Options": {
         "Label": "MaxWalkTime",
         "Default": 4,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -39,7 +41,8 @@
       "Options": {
         "Label": "MinHeadingChange",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -49,7 +52,8 @@
       "Options": {
         "Label": "MaxHeadingChange",
         "Default": 90,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -59,7 +63,8 @@
       "Options": {
         "Label": "RelaxHeadingChange",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -69,7 +74,8 @@
       "Options": {
         "Label": "RelativeSpeed",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -79,7 +85,8 @@
       "Options": {
         "Label": "MinMoveDistance",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -89,7 +96,8 @@
       "Options": {
         "Label": "StopDistance",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -99,7 +107,8 @@
       "Options": {
         "Label": "TestsPerTick",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -109,7 +118,8 @@
       "Options": {
         "Label": "AvoidBlockDamage",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -119,7 +129,8 @@
       "Options": {
         "Label": "RelaxedMoveConstraints",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -129,7 +140,8 @@
       "Options": {
         "Label": "DesiredAltitudeWeight",
         "Default": -1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {

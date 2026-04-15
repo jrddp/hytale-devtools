@@ -27,7 +27,8 @@
       "Description": "The weight representing how likely this action is to run",
       "Options": {
         "Label": "Weight",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

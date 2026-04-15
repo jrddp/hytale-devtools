@@ -29,7 +29,8 @@
       "Options": {
         "Label": "TargetSlot",
         "Default": "LockedTarget",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

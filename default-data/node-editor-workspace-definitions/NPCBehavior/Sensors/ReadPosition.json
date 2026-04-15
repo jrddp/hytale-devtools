@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "The slot to read the position from",
       "Options": {
         "Label": "Slot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -48,7 +50,8 @@
       "Options": {
         "Label": "MinRange",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -57,7 +60,8 @@
       "Description": "Maximum range from stored position",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -67,7 +71,8 @@
       "Options": {
         "Label": "UseMarkedTarget",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

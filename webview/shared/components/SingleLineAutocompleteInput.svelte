@@ -272,6 +272,10 @@
         return;
     }
   }
+
+  function handleAutocompleteWheel(event: WheelEvent) {
+    event.stopPropagation();
+  }
 </script>
 
 <div class="relative min-w-0">
@@ -321,6 +325,7 @@
       class={listClass}
       onpointerdown={stopPointerEvent}
       onmousedown={stopPointerEvent}
+      onwheel={handleAutocompleteWheel}
     >
       {#each visibleAutocompleteOptions as option, index (option.value)}
         <button

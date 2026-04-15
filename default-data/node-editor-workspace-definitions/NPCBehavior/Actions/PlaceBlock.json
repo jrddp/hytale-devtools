@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Range",
         "Default": 3,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -39,7 +40,8 @@
       "Options": {
         "Label": "AllowEmptyMaterials",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

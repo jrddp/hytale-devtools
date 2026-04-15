@@ -36,7 +36,8 @@
           "Ability1",
           "Ability2",
           "Ability3"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -46,7 +47,8 @@
       "Options": {
         "Label": "ChargeFor",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -59,7 +61,8 @@
           0,
           0
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -72,7 +75,8 @@
           0,
           0
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -148,7 +152,8 @@
       "Options": {
         "Label": "ChargeDistance",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

@@ -28,7 +28,8 @@
       "Description": "The name of the timer",
       "Options": {
         "Label": "Name",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -37,7 +38,8 @@
       "Description": "The range from which to pick an initial value to start at",
       "Options": {
         "Label": "StartValueRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -46,7 +48,8 @@
       "Description": "The range from which to pick a value when the timer is restarted",
       "Options": {
         "Label": "RestartValueRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -56,7 +59,8 @@
       "Options": {
         "Label": "Rate",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -66,7 +70,8 @@
       "Options": {
         "Label": "Repeating",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

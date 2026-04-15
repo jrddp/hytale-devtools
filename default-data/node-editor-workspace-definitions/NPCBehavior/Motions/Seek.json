@@ -19,7 +19,8 @@
       "Options": {
         "Label": "RelativeSpeed",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -29,7 +30,8 @@
       "Options": {
         "Label": "RelativeSpeedWaypoint",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -39,7 +41,8 @@
       "Options": {
         "Label": "WaypointRadius",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -49,7 +52,8 @@
       "Options": {
         "Label": "UseBestPath",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -62,7 +66,8 @@
           3,
           5
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -72,7 +77,8 @@
       "Options": {
         "Label": "ThrottleIgnoreCount",
         "Default": 3,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -82,7 +88,8 @@
       "Options": {
         "Label": "BuildOptimisedPath",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -92,7 +99,8 @@
       "Options": {
         "Label": "AvoidBlockDamage",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -102,7 +110,8 @@
       "Options": {
         "Label": "RelaxedMoveConstraints",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -112,7 +121,8 @@
       "Options": {
         "Label": "BlendHeading",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -122,7 +132,8 @@
       "Options": {
         "Label": "PathSmoothing",
         "Default": 2,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -132,7 +143,8 @@
       "Options": {
         "Label": "RejectionWeight",
         "Default": 3,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -142,7 +154,8 @@
       "Options": {
         "Label": "UseSteering",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -152,7 +165,8 @@
       "Options": {
         "Label": "SkipSteering",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -162,7 +176,8 @@
       "Options": {
         "Label": "UsePathfinder",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -172,7 +187,8 @@
       "Options": {
         "Label": "MinPathLength",
         "Default": 2,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -182,7 +198,8 @@
       "Options": {
         "Label": "DiagonalMoves",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -192,7 +209,8 @@
       "Options": {
         "Label": "StepsPerTick",
         "Default": 50,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -202,7 +220,8 @@
       "Options": {
         "Label": "MaxPathLength",
         "Default": 200,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -212,7 +231,8 @@
       "Options": {
         "Label": "MaxOpenNodes",
         "Default": 200,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -222,7 +242,8 @@
       "Options": {
         "Label": "MaxTotalNodes",
         "Default": 900,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -242,7 +263,8 @@
       "Options": {
         "Label": "DesiredAltitudeWeight",
         "Default": -1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -252,7 +274,8 @@
       "Options": {
         "Label": "WaitDistance",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -262,7 +285,8 @@
       "Options": {
         "Label": "RecomputeDistance",
         "Default": 10,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -272,7 +296,8 @@
       "Options": {
         "Label": "ReprojectDistance",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -282,7 +307,8 @@
       "Options": {
         "Label": "AdjustRangeByHitboxSize",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -292,7 +318,8 @@
       "Options": {
         "Label": "RecomputeConeAngle",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -302,7 +329,8 @@
       "Options": {
         "Label": "Reachable",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -315,7 +343,8 @@
           -1,
           1
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -325,7 +354,8 @@
       "Options": {
         "Label": "SlowDownDistance",
         "Default": 8,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -335,7 +365,8 @@
       "Options": {
         "Label": "StopDistance",
         "Default": 10,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -345,7 +376,8 @@
       "Options": {
         "Label": "AbortDistance",
         "Default": 96,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -355,7 +387,8 @@
       "Options": {
         "Label": "Falloff",
         "Default": 3,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -365,7 +398,8 @@
       "Options": {
         "Label": "SwitchToSteeringDistance",
         "Default": 20,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

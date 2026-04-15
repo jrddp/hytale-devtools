@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "Max range to listen in",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -54,7 +56,8 @@
           "PlayerOnly",
           "NpcFirst",
           "NpcOnly"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -63,7 +66,8 @@
       "Description": "A target slot to place the target in. If omitted, no slot will be used",
       "Options": {
         "Label": "TargetSlot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -78,7 +82,8 @@
           "DAMAGE",
           "DEATH",
           "INTERACTION"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -88,7 +93,8 @@
       "Options": {
         "Label": "FlockOnly",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

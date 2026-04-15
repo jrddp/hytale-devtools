@@ -7,12 +7,14 @@
     label,
     description,
     align = "start",
+    titleActions,
     children,
   }: {
     inputId: string;
     label: string;
     description?: string;
     align?: "start" | "center";
+    titleActions?: Snippet;
     children?: Snippet;
   } = $props();
 
@@ -30,8 +32,13 @@
 </script>
 
 <HoverTooltip text={description} placement="right" wrapperClass={labelWrapperClass}>
-  <div class="block select-none text-right text-xs leading-4 text-vsc-muted">
-    {label}
+  <div class="flex items-center justify-end gap-1 select-none text-right text-xs leading-4 text-vsc-muted">
+    <span>{label}</span>
+    {#if titleActions}
+      <span class="inline-flex items-center">
+        {@render titleActions()}
+      </span>
+    {/if}
   </div>
 </HoverTooltip>
 

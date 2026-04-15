@@ -3,6 +3,7 @@
   import FieldEditor from "@node-editor/fields/FieldEditor.svelte";
   import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
   import { type FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import type { Snippet } from "svelte";
 
   let {
     nodeId,
@@ -15,11 +16,13 @@
     schemaKey,
     subfields,
     parentSchemaKey,
+    titleActions,
   }: FieldProps<object> & {
     subfields: NodeField[];
     nodeId: string;
     schemaKey: string;
     parentSchemaKey?: string;
+    titleActions?: Snippet;
   } = $props();
 
   let value = $derived<object>(initialValue ? structuredClone($state.snapshot(initialValue)) : {});
@@ -40,7 +43,7 @@
   );
 </script>
 
-<FieldLayout {inputId} {label} {description} align="start">
+<FieldLayout {inputId} {label} {description} align="start" {titleActions}>
   <div
     id={inputId}
     class="flex flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"

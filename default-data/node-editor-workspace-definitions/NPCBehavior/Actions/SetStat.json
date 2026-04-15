@@ -28,7 +28,8 @@
       "Description": "The value to set the stat to.",
       "Options": {
         "Label": "Value",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Options": {
         "Label": "Add",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

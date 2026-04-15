@@ -85,6 +85,10 @@ describe("NPC Behavior workspace generation", () => {
       workspace.nodeTemplatesById["Structural.InstructionListRoot"].childSchemas.Instructions
         ?.serializationType,
     ).toBe("root");
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].fieldsBySchemaKey.Enabled?.computable).toBe(true);
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].fieldsBySchemaKey.Weight?.computable).toBe(true);
+    expect(workspace.nodeTemplatesById["Sensor.Target"].fieldsBySchemaKey.Range?.computable).toBe(true);
+    expect(workspace.nodeTemplatesById["Sensor.Target"].fieldsBySchemaKey.TargetSlot?.computable).toBe(true);
     expect(workspace.nodeTemplatesById["Action.Timeout"]).toBeDefined();
     expect(workspace.nodeTemplatesById["WeightedAction.WeightedAction"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Path.Path"]).toBeDefined();
@@ -176,6 +180,33 @@ describe("NPC Behavior workspace generation", () => {
         .Action as Record<string, unknown>).Path,
     ).toBeTruthy();
     expect(serialized.Instructions).toBeInstanceOf(Array);
+  });
+
+  test("round-trips compute-shaped field values for computable generated fields", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const serialized = expectSemanticRoundTrip(
+      {
+        $NodeId: "Instruction-1",
+        Enabled: { Compute: "isEmpty(TargetSlot)" },
+        Weight: { Compute: "randomInRange(1, 3)" },
+        Sensor: {
+          $NodeId: "Sensor-1",
+          Type: "Target",
+          TargetSlot: { Compute: "TargetParameter" },
+          Range: { Compute: "randomInRange(5, 10)" },
+        },
+      },
+      context,
+    );
+
+    expect(serialized.Enabled).toEqual({ Compute: "isEmpty(TargetSlot)" });
+    expect(serialized.Weight).toEqual({ Compute: "randomInRange(1, 3)" });
+    expect((serialized.Sensor as Record<string, unknown>).TargetSlot).toEqual({
+      Compute: "TargetParameter",
+    });
+    expect((serialized.Sensor as Record<string, unknown>).Range).toEqual({
+      Compute: "randomInRange(5, 10)",
+    });
   });
 
   test("round-trips the Sensor root with nested mappings and wrapped sensors", () => {

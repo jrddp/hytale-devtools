@@ -39,7 +39,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -48,7 +49,8 @@
       "Description": "A target slot to unlock when sensor doesn't match anymore",
       "Options": {
         "Label": "AutoUnlockTargetSlot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

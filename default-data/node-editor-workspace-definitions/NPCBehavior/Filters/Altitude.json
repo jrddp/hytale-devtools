@@ -19,7 +19,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -28,7 +29,8 @@
       "Description": "The range above the ground to match",
       "Options": {
         "Label": "AltitudeRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

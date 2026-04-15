@@ -18,7 +18,8 @@
       "Description": "The desired distance to remain at.",
       "Options": {
         "Label": "DesiredDistanceRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -28,7 +29,8 @@
       "Options": {
         "Label": "TargetDistanceFactor",
         "Default": 0.5,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -38,7 +40,8 @@
       "Options": {
         "Label": "MoveThreshold",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -48,7 +51,8 @@
       "Options": {
         "Label": "RelativeForwardsSpeed",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -58,7 +62,8 @@
       "Options": {
         "Label": "RelativeBackwardsSpeed",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -68,7 +73,8 @@
       "Options": {
         "Label": "MoveTowardsSlowdownThreshold",
         "Default": 2,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -81,7 +87,8 @@
           0,
           0
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -94,7 +101,8 @@
           2,
           2
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

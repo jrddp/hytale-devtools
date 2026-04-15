@@ -28,7 +28,8 @@
       "Description": "The name of the flag",
       "Options": {
         "Label": "Name",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Options": {
         "Label": "SetTo",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

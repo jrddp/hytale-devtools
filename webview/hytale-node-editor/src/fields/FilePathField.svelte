@@ -3,6 +3,7 @@
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import type { Snippet } from "svelte";
 
   let {
     inputId,
@@ -10,8 +11,11 @@
     description,
     initialValue,
     inputWidth,
+    titleActions,
     onconfirm,
-  }: FieldProps<string> = $props();
+  }: FieldProps<string> & {
+    titleActions?: Snippet;
+  } = $props();
 
   let value = $state("");
   let lastCommittedValue = "";
@@ -45,7 +49,7 @@
   }
 </script>
 
-<FieldLayout {inputId} {label} {description} align="center">
+<FieldLayout {inputId} {label} {description} align="center" {titleActions}>
   <input
     id={inputId}
     class="nodrag rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"

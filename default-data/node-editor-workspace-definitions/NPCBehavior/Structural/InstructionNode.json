@@ -89,7 +89,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -129,7 +130,8 @@
       "Options": {
         "Label": "Weight",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -149,7 +151,8 @@
       "Options": {
         "Label": "InvertTreeModeResult",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -159,7 +162,8 @@
       "Options": {
         "Label": "ResetOnStateChange",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -172,7 +176,8 @@
           1.7976931348623157e+308,
           1.7976931348623157e+308
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

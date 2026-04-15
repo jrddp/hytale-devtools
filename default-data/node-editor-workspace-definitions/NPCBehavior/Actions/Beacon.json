@@ -28,7 +28,8 @@
       "Description": "Message to send to targets",
       "Options": {
         "Label": "Message",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -47,7 +48,8 @@
       "Description": "The target slot of the marked entity to send. Omit to send own position",
       "Options": {
         "Label": "SendTargetSlot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {

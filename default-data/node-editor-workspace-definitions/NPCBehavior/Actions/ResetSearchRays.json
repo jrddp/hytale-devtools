@@ -28,7 +28,8 @@
       "Description": "The search ray sensor ids",
       "Options": {
         "Label": "Names",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

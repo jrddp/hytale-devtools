@@ -28,7 +28,8 @@
       "Description": "Text to print to console.",
       "Options": {
         "Label": "Message",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

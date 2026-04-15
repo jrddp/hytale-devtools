@@ -28,7 +28,8 @@
       "Description": "The range within which to trigger spawn markers",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Options": {
         "Label": "Count",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

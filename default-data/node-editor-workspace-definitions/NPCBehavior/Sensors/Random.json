@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "The duration range to pick a random period to return true",
       "Options": {
         "Label": "TrueDurationRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -47,7 +49,8 @@
       "Description": "The duration range to pick a random period to return false",
       "Options": {
         "Label": "FalseDurationRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

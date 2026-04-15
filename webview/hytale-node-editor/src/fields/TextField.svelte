@@ -6,6 +6,7 @@
   import type { IndexReference } from "@shared/indexTypes";
   import { focusNextEditableInNode } from "@node-editor/node-editor/utils/focusNavigation";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
+  import type { Snippet } from "svelte";
 
   let {
     inputId,
@@ -16,11 +17,13 @@
     multiline = false,
     overrideAutocompleteValues,
     symbolLookup,
+    titleActions,
     onconfirm,
   }: FieldProps<string> & {
     multiline?: boolean;
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
+    titleActions?: Snippet;
   } = $props();
   const workspace = useNodeEditorSession();
 
@@ -74,7 +77,13 @@
   }
 </script>
 
-<FieldLayout {inputId} {label} {description} align={multiline ? "start" : "center"}>
+<FieldLayout
+  {inputId}
+  {label}
+  {description}
+  align={multiline ? "start" : "center"}
+  {titleActions}
+>
   <div
     class="relative min-w-0"
     class:w-full={inputWidth === undefined}
@@ -95,7 +104,7 @@
         initialValue={value}
         autocompleteOptions={autocompleteOptions}
         inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
-        listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
+        listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
         optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
         stopPointerPropagation
         onfocus={requestAutocomplete}

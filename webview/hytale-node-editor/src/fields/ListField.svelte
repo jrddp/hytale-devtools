@@ -4,6 +4,7 @@
   import { isObject } from "@node-editor/node-editor/utils/valueUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import type { Snippet } from "svelte";
 
   // TODO lists can technically be types other than string. definition requires investigation.
   let {
@@ -12,8 +13,11 @@
     description,
     initialValue,
     inputWidth,
+    titleActions,
     onconfirm,
-  }: FieldProps<unknown[]> = $props();
+  }: FieldProps<unknown[]> & {
+    titleActions?: Snippet;
+  } = $props();
 
   const DEFAULT_ITEM_WIDTH = 160;
 
@@ -96,7 +100,7 @@
   }
 </script>
 
-<FieldLayout {inputId} {label} {description} align="start">
+<FieldLayout {inputId} {label} {description} align="start" {titleActions}>
   <div
     id={inputId}
     class="flex min-w-0 flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"

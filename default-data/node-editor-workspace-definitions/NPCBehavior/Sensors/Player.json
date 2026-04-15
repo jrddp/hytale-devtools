@@ -53,7 +53,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -63,7 +64,8 @@
       "Options": {
         "Label": "MinRange",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -72,7 +74,8 @@
       "Description": "Maximum range to test entities in",
       "Options": {
         "Label": "Range",
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -82,7 +85,8 @@
       "Options": {
         "Label": "LockOnTarget",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -92,7 +96,8 @@
       "Options": {
         "Label": "LockedTargetSlot",
         "Default": "LockedTarget",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -102,7 +107,8 @@
       "Options": {
         "Label": "AutoUnlockTarget",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -112,7 +118,8 @@
       "Options": {
         "Label": "OnlyLockedTarget",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -121,7 +128,8 @@
       "Description": "The target slot to use for ignoring",
       "Options": {
         "Label": "IgnoredTargetSlot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -131,7 +139,8 @@
       "Options": {
         "Label": "UseProjectedDistance",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

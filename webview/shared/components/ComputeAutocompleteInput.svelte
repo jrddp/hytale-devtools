@@ -19,6 +19,8 @@
     inputClass = "",
     listClass = "",
     optionClass = "",
+    menuMinWidth,
+    menuMaxWidth,
     oncommit,
     onfocus,
     ...inputAttributes
@@ -32,6 +34,8 @@
     inputClass?: string;
     listClass?: string;
     optionClass?: string;
+    menuMinWidth?: string;
+    menuMaxWidth?: string;
     oncommit?: (value: string) => boolean | void;
     onfocus?: () => void;
   } & Omit<HTMLInputAttributes, "id" | "type" | "value" | "class" | "placeholder" | "disabled"> =
@@ -168,6 +172,10 @@
 
   function handleBlur(event: FocusEvent & { currentTarget: HTMLInputElement }) {
     confirmValue();
+  }
+
+  function handleAutocompleteWheel(event: WheelEvent) {
+    event.stopPropagation();
   }
 
   function handleInputKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
@@ -309,7 +317,10 @@
       role="listbox"
       tabindex="-1"
       class={listClass}
+      style:min-width={menuMinWidth}
+      style:max-width={menuMaxWidth}
       onmousedown={event => event.preventDefault()}
+      onwheel={handleAutocompleteWheel}
     >
       {#each visibleAutocompleteOptions as option, index (`${option.kind}:${option.label}:${index}`)}
         {@const KindIcon = getKindIcon(option.kind)}
@@ -333,18 +344,18 @@
               class="flex w-5 shrink-0 items-center justify-center self-stretch"
               style:color={getKindIconColor(option.kind)}
             >
-              <KindIcon size={16} strokeWidth={2} />
+              <KindIcon size={14} strokeWidth={2} />
             </div>
             <div class="min-w-0 flex-1">
-              <div class="text-sm font-medium leading-5">{option.label}</div>
+              <div class="text-xs font-medium leading-4">{option.label}</div>
               {#if option.description}
-                <div class="mt-0.5 text-xs leading-4 opacity-80">
+                <div class="mt-0.5 text-[11px] leading-[1.3] opacity-80">
                   {option.description}
                 </div>
               {/if}
             </div>
             <div class="flex shrink-0 items-center">
-              <span class="text-[11px] font-medium uppercase tracking-[0.08em] opacity-70">
+              <span class="text-[11px] italic opacity-65">
                 {option.detail}
               </span>
             </div>

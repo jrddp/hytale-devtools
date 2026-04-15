@@ -18,7 +18,8 @@
       "Description": "The angle range to observe in degrees",
       "Options": {
         "Label": "AngleRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -31,7 +32,8 @@
           2,
           2
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -41,7 +43,8 @@
       "Options": {
         "Label": "PickRandomAngle",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -51,7 +54,8 @@
       "Options": {
         "Label": "ViewSegments",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -61,7 +65,8 @@
       "Options": {
         "Label": "RelativeTurnSpeed",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

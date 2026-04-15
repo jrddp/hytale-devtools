@@ -111,7 +111,8 @@
           "LOOP",
           "POINTS",
           "CHAIN"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -154,7 +155,8 @@
           0.2,
           0.4
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -167,7 +169,8 @@
           0,
           0.2
         ],
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     },
     {
@@ -187,7 +190,8 @@
       "Options": {
         "Label": "ViewSegments",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

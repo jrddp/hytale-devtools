@@ -29,7 +29,8 @@
       "Options": {
         "Label": "ChangeAppearance",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "State name to set",
       "Options": {
         "Label": "State",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

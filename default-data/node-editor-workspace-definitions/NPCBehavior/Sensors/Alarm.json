@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "The name of the alarm to check",
       "Options": {
         "Label": "Name",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -52,7 +54,8 @@
           "SET",
           "UNSET",
           "PASSED"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -62,7 +65,8 @@
       "Options": {
         "Label": "Clear",
         "Default": false,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

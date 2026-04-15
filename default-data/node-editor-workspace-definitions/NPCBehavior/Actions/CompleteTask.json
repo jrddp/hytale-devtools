@@ -42,7 +42,8 @@
       "Description": "The animation ID to play",
       "Options": {
         "Label": "Animation",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -52,7 +53,8 @@
       "Options": {
         "Label": "PlayAnimation",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     }
   ],

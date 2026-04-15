@@ -5,6 +5,7 @@
   } from "@shared/node-editor/messageTypes";
   import type { NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
+  import type { ComputeAutocompleteOption } from "@webview-shared/components/computeAutocomplete";
   import {
     adaptGraphDocumentRootToHostValue,
     adaptGraphHostValueToDocumentRoot,
@@ -35,6 +36,7 @@
     clipboard,
     autocompleteField,
     autocompleteValues,
+    computeAutocompleteOptions,
     initialViewport,
     onviewportchange,
     documentVersion,
@@ -47,6 +49,7 @@
     clipboard: NodeEditorClipboardSelection;
     autocompleteField?: string;
     autocompleteValues: string[];
+    computeAutocompleteOptions: ComputeAutocompleteOption[];
     initialViewport?: GraphViewport;
     onviewportchange?: (viewport: GraphViewport) => void;
     documentVersion: number;
@@ -79,6 +82,10 @@
   $effect(() => {
     session.autocompleteField = autocompleteField;
     session.autocompleteValues = sortVariantsToBottom(autocompleteValues);
+  });
+
+  $effect(() => {
+    session.computeAutocompleteOptions = computeAutocompleteOptions;
   });
 
   $effect(() => {

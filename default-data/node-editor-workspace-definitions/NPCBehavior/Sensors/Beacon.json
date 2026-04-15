@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -38,7 +39,8 @@
       "Description": "The message to listen for",
       "Options": {
         "Label": "Message",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     },
     {
@@ -48,7 +50,8 @@
       "Options": {
         "Label": "Range",
         "Default": 64,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {

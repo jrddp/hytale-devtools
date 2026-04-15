@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Scale",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

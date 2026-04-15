@@ -28,7 +28,8 @@
       "Description": "The desired altitude range",
       "Options": {
         "Label": "DesiredAltitudeRange",
-        "Width": 240
+        "Width": 240,
+        "Computable": true
       }
     }
   ],

@@ -40,7 +40,8 @@
           "EquipHotbar",
           "SetOffHand",
           "EquipOffHand"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -50,7 +51,8 @@
       "Options": {
         "Label": "Count",
         "Default": 1,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -60,7 +62,8 @@
       "Options": {
         "Label": "UseTarget",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -70,7 +73,8 @@
       "Options": {
         "Label": "Slot",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],

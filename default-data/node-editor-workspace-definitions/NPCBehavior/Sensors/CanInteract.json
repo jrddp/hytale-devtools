@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -39,7 +40,8 @@
       "Options": {
         "Label": "ViewSector",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -56,7 +58,8 @@
           "NEUTRAL",
           "FRIENDLY",
           "REVERED"
-        ]
+        ],
+        "Computable": true
       }
     }
   ],

@@ -28,7 +28,8 @@
       "Description": "The target slot containing the entity to be ignored",
       "Options": {
         "Label": "TargetSlot",
-        "Width": 220
+        "Width": 220,
+        "Computable": true
       }
     }
   ],

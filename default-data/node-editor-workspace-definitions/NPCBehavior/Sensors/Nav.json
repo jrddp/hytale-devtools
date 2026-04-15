@@ -29,7 +29,8 @@
       "Options": {
         "Label": "Enabled",
         "Default": true,
-        "Width": 18
+        "Width": 18,
+        "Computable": true
       }
     },
     {
@@ -47,7 +48,8 @@
           "DEFER",
           "AT_GOAL",
           "ABORTED"
-        ]
+        ],
+        "Computable": true
       }
     },
     {
@@ -57,7 +59,8 @@
       "Options": {
         "Label": "ThrottleDuration",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     },
     {
@@ -67,7 +70,8 @@
       "Options": {
         "Label": "TargetDelta",
         "Default": 0,
-        "Width": 88
+        "Width": 88,
+        "Computable": true
       }
     }
   ],
