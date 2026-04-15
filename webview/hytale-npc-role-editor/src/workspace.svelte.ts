@@ -19,7 +19,6 @@ import {
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
   buildNpcPropertyState,
-  cloneJsonLike,
   createVariantModifyOverrideFieldFromParent,
   isRichObjectField,
   isStateTransitionsField,
@@ -84,6 +83,8 @@ export class Workspace {
   documentPath = $state("");
   documentText = $state<string | null>(null);
   documentVersion = $state(0);
+  parsedDocumentVersion = $state(0);
+  hasDeferredDocumentRefresh = $state(false);
   roleType = $state<NpcRoleType | null>(null);
   componentClass = $state<NpcComponentClass | null>(null);
   propertySections = $state<NpcPropertySection[]>([]);
@@ -208,6 +209,34 @@ export class Workspace {
     this.reparseDocument();
   }
 
+  setDeferredDocument({
+    documentPath,
+    text,
+    version,
+  }: {
+    documentPath: string;
+    text: string;
+    version: number;
+  }) {
+    this.documentPath = documentPath;
+    this.documentVersion = version;
+    if (this.documentText === text) {
+      return;
+    }
+
+    this.documentText = text;
+    this.hasDeferredDocumentRefresh = true;
+  }
+
+  flushDeferredDocumentState() {
+    if (!this.hasDeferredDocumentRefresh || this.parsedDocumentVersion === this.documentVersion) {
+      this.hasDeferredDocumentRefresh = false;
+      return;
+    }
+
+    this.reparseDocument();
+  }
+
   applyDocumentState(label = DEFAULT_EDIT_LABEL) {
     const document = this.getCurrentDocument();
     if (!document) {
@@ -241,23 +270,6 @@ export class Workspace {
     if (fieldPath === "Reference") {
       this.refreshVariantReferenceResolutionFromCurrentState();
     }
-    return true;
-  }
-
-  updateGraphFieldValue(fieldPath: string, value: unknown, preservedData?: Record<string, unknown>) {
-    const field = this.findField(fieldPath);
-    if (!field || field.kind !== "graph") {
-      return false;
-    }
-
-    field.value = {
-      kind: "literal",
-      value: cloneJsonLike(value),
-    };
-    field.isSet = true;
-    field.preservedData = preservedData ? cloneJsonLike(preservedData) : undefined;
-    this.recomputeDerivedState();
-    this.applyDocumentState(`Edit ${fieldPath}`);
     return true;
   }
 
@@ -860,6 +872,8 @@ export class Workspace {
 
     this.rebuildPropertyStateFromParsedDocument(result.document, result.topLevelKeyOrder);
     this.documentParseError = null;
+    this.parsedDocumentVersion = this.documentVersion;
+    this.hasDeferredDocumentRefresh = false;
     this.recomputeDerivedState();
     this.refreshVariantReferenceResolution(result.document);
   }
@@ -870,6 +884,8 @@ export class Workspace {
     this.propertySections = [];
     this.preservedTopLevelFields = {};
     this.topLevelKeyOrder = [];
+    this.parsedDocumentVersion = this.documentVersion;
+    this.hasDeferredDocumentRefresh = false;
     this.variantReferenceState = { status: "none" };
     this.variantReferenceParameters = [];
     this.parameterUsageIndex = emptyParameterUsageIndex();
@@ -915,6 +931,8 @@ export class Workspace {
 
     this.rebuildPropertyStateFromParsedDocument(result.document, result.topLevelKeyOrder);
     this.documentParseError = null;
+    this.parsedDocumentVersion = this.documentVersion;
+    this.hasDeferredDocumentRefresh = false;
     this.recomputeDerivedState();
   }
 

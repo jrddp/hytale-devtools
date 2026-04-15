@@ -14,6 +14,10 @@ export type FieldComponentType =
   | "color";
 
 export type NodeSchemaSerializationType = "child" | "root";
+export type GraphRootAdaptationResult = {
+  value: unknown;
+  preservedData?: Record<string, unknown>;
+};
 export interface NodeEditorWorkspaceRootDefinition {
   RootNodeType: string;
   MenuName: string;

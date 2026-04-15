@@ -7,6 +7,7 @@ import {
 } from "../shared/node-editor/clipboardTypes";
 import type { AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { parseAssetDocumentToGraphDocument, serializeGraphDocument } from "../shared/node-editor/graphDocument";
+import { graphEditMessageToGraphEdit } from "../shared/node-editor/graphEditMessages";
 import {
   invertNodeEditorGraphEdit,
 } from "../shared/node-editor/graphEditUtils";
@@ -527,42 +528,6 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
   }
 
   return undefined;
-}
-
-function graphEditMessageToGraphEdit(message: NodeEditorGraphEditMessage): NodeEditorGraphEdit {
-  switch (message.kind) {
-    case "element-list-changed":
-      return {
-        kind: message.kind,
-        addedNodes: message.addedNodes,
-        removedNodes: message.removedNodes,
-        addedEdges: message.addedEdges,
-        removedEdges: message.removedEdges,
-        beforeRootNodeId: message.beforeRootNodeId,
-        afterRootNodeId: message.afterRootNodeId,
-      };
-    case "nodes-moved":
-      return {
-        kind: message.kind,
-        changes: message.changes,
-      };
-    case "node-renamed":
-      return {
-        kind: message.kind,
-        changes: message.changes,
-      };
-    case "node-resized":
-      return {
-        kind: message.kind,
-        changes: message.changes,
-      };
-    case "node-properties-updated":
-      return {
-        kind: message.kind,
-        propertyChanges: message.propertyChanges,
-        resizeChanges: message.resizeChanges,
-      };
-  }
 }
 
 function escapeHtml(value: string): string {

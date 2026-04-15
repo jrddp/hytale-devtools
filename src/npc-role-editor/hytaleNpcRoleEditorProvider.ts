@@ -8,15 +8,34 @@ import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "../shared/node-editor/clipboardTypes";
+import { graphEditMessageToGraphEdit } from "../shared/node-editor/graphEditMessages";
+import {
+  adaptGraphDocumentRootToHostValue,
+  adaptGraphHostValueToDocumentRoot,
+  parseAssetDocumentToGraphDocument,
+  serializeGraphDocument,
+} from "../shared/node-editor/graphDocument";
+import { invertNodeEditorGraphEdit, applyNodeEditorGraphEdit } from "../shared/node-editor/graphEditUtils";
+import type { NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
 } from "../shared/npc-role-editor/descriptorTypes";
+import {
+  parseNpcDocumentText,
+  serializeNpcDocumentText,
+  type ParsedNpcRoleDocument,
+} from "../shared/npc-role-editor/documentParsing";
+import {
+  patchNpcGraphTarget,
+  resolveNpcGraphTarget,
+} from "../shared/npc-role-editor/graphTargets";
 import type {
   NpcRoleEditorApplyMessage,
   NpcRoleEditorBootstrapMessage,
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorExtensionToWebviewMessage,
+  NpcRoleEditorGraphEditMessage,
   NpcRoleEditorVariantReferenceState,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
@@ -114,6 +133,17 @@ type HytaleNpcRoleReplaceTextEdit = {
   beforeRevision: number;
   afterRevision: number;
   label: string;
+};
+
+type HytaleNpcRoleGraphEdit = {
+  kind: "graphSectionEdit";
+  fieldPath: string;
+  label: string;
+  edit: NodeEditorGraphEdit;
+  undoEdit: NodeEditorGraphEdit;
+  beforeRevision: number;
+  afterRevision: number;
+  acknowledgedClientEditId: number;
 };
 
 class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleNpcRoleDocument> {
@@ -244,6 +274,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);
+            return;
+          case "edit":
+            void this.applyGraphWebviewEdit(document, message, webviewPanel.webview);
             return;
           default:
             return;
@@ -390,6 +423,39 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
       documentPath: document.uri.fsPath,
       version: document.revision,
       text: document.text,
+    };
+
+    if (targetWebview) {
+      await targetWebview.postMessage(payload);
+      return;
+    }
+
+    const panels = this.webviewPanelsByDocumentUri.get(document.uri.toString());
+    await Promise.all(Array.from(panels ?? [], panel => panel.webview.postMessage(payload)));
+  }
+
+  private async postGraphUpdate(
+    document: HytaleNpcRoleDocument,
+    {
+      fieldPath,
+      acknowledgedClientEditId,
+      appliedEdit,
+      targetWebview,
+    }: {
+      fieldPath: string;
+      acknowledgedClientEditId?: number;
+      appliedEdit?: NodeEditorGraphEdit;
+      targetWebview?: vscode.Webview;
+    },
+  ): Promise<void> {
+    const payload: NpcRoleEditorExtensionToWebviewMessage = {
+      type: "graphUpdate",
+      documentPath: document.uri.fsPath,
+      version: document.revision,
+      text: document.text,
+      fieldPath,
+      acknowledgedClientEditId,
+      appliedEdit,
     };
 
     if (targetWebview) {
@@ -587,6 +653,135 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     });
     await this.postDocumentUpdate(document);
   }
+
+  private async applyGraphWebviewEdit(
+    document: HytaleNpcRoleDocument,
+    message: NpcRoleEditorGraphEditMessage,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    if (
+      typeof message.sourceVersion === "number" &&
+      message.sourceVersion !== document.revision
+    ) {
+      LOGGER.error(
+        `Version mismatch detected when applying NPC graph edit for "${message.fieldPath}". sourceVersion=${message.sourceVersion}, currentRevision=${document.revision}`,
+      );
+      await this.postError(webview, "The file changed in another editor. Please retry.");
+      await this.postDocumentUpdate(document);
+      return;
+    }
+
+    let edit: NodeEditorGraphEdit;
+    let undoEdit: NodeEditorGraphEdit;
+    try {
+      edit = graphEditMessageToGraphEdit(message);
+      undoEdit = invertNodeEditorGraphEdit(edit);
+      this.applyGraphEditToDocument(document, message.fieldPath, edit);
+    } catch (error) {
+      const details = error instanceof Error ? error.message : String(error);
+      LOGGER.error(`Unable to apply NPC graph edit for "${message.fieldPath}": ${details}`);
+      await this.postError(webview, details);
+      await this.postDocumentUpdate(document);
+      return;
+    }
+
+    const graphEdit: HytaleNpcRoleGraphEdit = {
+      kind: "graphSectionEdit",
+      fieldPath: message.fieldPath,
+      label: `Edit ${message.fieldPath}`,
+      edit,
+      undoEdit,
+      beforeRevision: document.revision - 1,
+      afterRevision: document.revision,
+      acknowledgedClientEditId: message.clientEditId,
+    };
+
+    this.onDidChangeCustomDocumentEmitter.fire({
+      document,
+      label: graphEdit.label,
+      undo: async () => {
+        this.applyGraphEditToDocument(document, graphEdit.fieldPath, graphEdit.undoEdit);
+        await this.postGraphUpdate(document, {
+          fieldPath: graphEdit.fieldPath,
+          appliedEdit: graphEdit.undoEdit,
+        });
+        await this.postDocumentUpdate(document);
+      },
+      redo: async () => {
+        this.applyGraphEditToDocument(document, graphEdit.fieldPath, graphEdit.edit);
+        await this.postGraphUpdate(document, {
+          fieldPath: graphEdit.fieldPath,
+          appliedEdit: graphEdit.edit,
+        });
+        await this.postDocumentUpdate(document);
+      },
+    });
+    await this.postGraphUpdate(document, {
+      fieldPath: graphEdit.fieldPath,
+      acknowledgedClientEditId: graphEdit.acknowledgedClientEditId,
+      appliedEdit: graphEdit.edit,
+    });
+    await this.postDocumentUpdate(document);
+  }
+
+  private applyGraphEditToDocument(
+    document: HytaleNpcRoleDocument,
+    fieldPath: string,
+    edit: NodeEditorGraphEdit,
+  ): void {
+    const parsed = document.getParsedDocument(text => parseNpcRoleDocumentOrThrow(text));
+    const target = resolveNpcGraphTarget(parsed.document, fieldPath);
+    if (!target) {
+      throw new Error(`Graph target "${fieldPath}" could not be resolved from the NPC role.`);
+    }
+
+    const workspaceContext = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+      "NPC Behavior",
+      target.workspaceRoot,
+    );
+    if (!workspaceContext) {
+      throw new Error(
+        `NPC Behavior workspace root "${target.workspaceRoot}" could not be resolved.`,
+      );
+    }
+
+    const cachedGraphDocument = document.getCachedGraphDocument(fieldPath);
+    const graphDocument =
+      cachedGraphDocument?.workspaceRoot === target.workspaceRoot
+        ? cachedGraphDocument.graphDocument
+        : parseAssetDocumentToGraphDocument(
+            adaptGraphHostValueToDocumentRoot(target.value, workspaceContext, target.preservedData),
+            workspaceContext,
+          );
+
+    applyNodeEditorGraphEdit(graphDocument, edit);
+    document.setCachedGraphDocument(fieldPath, {
+      workspaceRoot: target.workspaceRoot,
+      graphDocument,
+    });
+
+    const patchedWorkspaceRoot = patchNpcGraphTarget(
+      parsed.document,
+      fieldPath,
+      adaptGraphDocumentRootToHostValue(
+        serializeGraphDocument(graphDocument),
+        workspaceContext,
+      ),
+    );
+    if (!patchedWorkspaceRoot) {
+      throw new Error(`Graph target "${fieldPath}" could not be patched back into the NPC role.`);
+    }
+
+    const nextText = normalizeTextEol(
+      serializeNpcDocumentText(parsed.document, parsed.topLevelKeyOrder),
+      document.eol,
+    );
+    document.commitParsedDocument({
+      text: nextText,
+      parsedDocument: parsed.document,
+      topLevelKeyOrder: parsed.topLevelKeyOrder,
+    });
+  }
 }
 
 function readNodeEditorControlScheme(): NodeEditorControlScheme {
@@ -739,6 +934,18 @@ function escapeHtml(value: string): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function parseNpcRoleDocumentOrThrow(text: string): ParsedNpcRoleDocument {
+  const result = parseNpcDocumentText(text);
+  if (result.status === "error") {
+    throw new Error(result.error);
+  }
+
+  return {
+    document: result.document,
+    topLevelKeyOrder: result.topLevelKeyOrder,
+  };
 }
 
 async function readNpcRoleTextFromUri(

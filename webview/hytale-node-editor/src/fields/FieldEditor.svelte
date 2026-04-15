@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { cloneJsonLike } from "@shared/jsonClone";
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import type { ComputeAutocompleteOption } from "../../../shared/components/computeAutocomplete";
   import ComputeToggleButton from "../../../shared/components/ComputeToggleButton.svelte";
@@ -55,7 +56,7 @@
 
   $effect(() => {
     if (!isComputeValue(value)) {
-      lastLiteralValue = cloneJsonLike(value);
+      lastLiteralValue = cloneJsonLike($state.snapshot(value));
     }
   });
 
@@ -65,20 +66,6 @@
       value !== null &&
       typeof (value as { Compute?: unknown }).Compute === "string"
     );
-  }
-
-  function cloneJsonLike<T>(value: T): T {
-    if (
-      value === null ||
-      value === undefined ||
-      typeof value === "string" ||
-      typeof value === "number" ||
-      typeof value === "boolean"
-    ) {
-      return value;
-    }
-
-    return structuredClone($state.snapshot(value)) as T;
   }
 
   function getDefaultLiteralValue(fieldType: NodeField["type"]): unknown {
@@ -123,7 +110,7 @@
     }
 
     if (isComputeValue(value)) {
-      onconfirm(cloneJsonLike(fallbackLiteralValue));
+      onconfirm(cloneJsonLike($state.snapshot(fallbackLiteralValue)));
       return;
     }
 

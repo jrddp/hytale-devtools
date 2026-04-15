@@ -17,11 +17,13 @@ import type {
 } from "./graphTypes";
 import { INPUT_HANDLE_ID } from "./sharedConstants";
 import {
+  type GraphRootAdaptationResult,
   type NodeChildSchema,
   type NodeEditorWorkspaceContext,
   type NodePin,
   type NodeTemplate,
 } from "./workspaceTypes";
+import { cloneJsonLike } from "../jsonClone";
 
 const DEFAULT_COMMENT_WIDTH = 200;
 const DEFAULT_COMMENT_HEIGHT = 100;
@@ -42,30 +44,6 @@ const LINK_TEMPLATE_ID = "$Link";
 const GENERIC_CATEGORY = "Generic";
 const UUID_SUFFIX_RE =
   /^(.*)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
-
-function cloneJsonLike<T>(value: T): T {
-  if (
-    value === null ||
-    value === undefined ||
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean"
-  ) {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(item => cloneJsonLike(item)) as T;
-  }
-
-  if (typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, childValue]) => [key, cloneJsonLike(childValue)]),
-    ) as T;
-  }
-
-  return value;
-}
 
 function createNodeId(templateId: string): string {
   return `${templateId}-${crypto.randomUUID()}`;
@@ -343,7 +321,7 @@ export function adaptGraphHostValueToDocumentRoot(
 export function adaptGraphDocumentRootToHostValue(
   documentRoot: AssetDocumentShape,
   workspaceContext: NodeEditorWorkspaceContext,
-): { value: unknown; preservedData?: Record<string, unknown> } {
+): GraphRootAdaptationResult {
   const rootChildSchema = getRootSerializationChildSchema(workspaceContext);
   if (!rootChildSchema) {
     return {

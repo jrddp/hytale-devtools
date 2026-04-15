@@ -2,6 +2,7 @@
   import type {
     NpcRoleEditorExtensionToWebviewMessage,
     NpcRoleEditorBootstrapMessage,
+    NpcRoleEditorGraphUpdateMessage,
   } from "@shared/npc-role-editor/messageTypes";
   import type {
     NodeEditorControlScheme,
@@ -45,9 +46,11 @@
     createEmptyNodeEditorClipboardSelection(),
   );
   let localWebviewState = $state<NpcRoleEditorWebviewState>({});
+  let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
     Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
   >({});
+  let previousActiveGraphSectionId: NpcSectionId | null = null;
 
   $effect(() => {
     workspace.vscode = vscode;
@@ -131,6 +134,15 @@
   });
 
   $effect(() => {
+    if (previousActiveGraphSectionId && !activeGraphSectionId) {
+      latestGraphUpdate = null;
+      workspace.flushDeferredDocumentState();
+    }
+
+    previousActiveGraphSectionId = activeGraphSectionId;
+  });
+
+  $effect(() => {
     if (!scrollRootElement || activeGraphSectionId) {
       scrollRootHeight = 0;
       lastOutlineSectionHeight = 0;
@@ -205,7 +217,21 @@
         extensionError = "";
         return;
       case "update":
-        workspace.setDocument(message);
+        if (activeGraphSectionId) {
+          if (latestGraphUpdate?.version !== message.version) {
+            latestGraphUpdate = null;
+          }
+          workspace.setDeferredDocument(message);
+        } else {
+          workspace.setDocument(message);
+          latestGraphUpdate = null;
+        }
+        return;
+      case "graphUpdate":
+        if (activeGraphSectionId) {
+          latestGraphUpdate = message;
+          workspace.setDeferredDocument(message);
+        }
         return;
       case "clipboard":
         nodeEditorClipboard = message.clipboard;
@@ -494,7 +520,8 @@
                 clipboard={nodeEditorClipboard}
                 autocompleteField={workspace.autocompleteField}
                 autocompleteValues={workspace.autocompleteValues}
-                {computeAutocompleteOptions}
+              {computeAutocompleteOptions}
+                documentText={workspace.documentText}
                 initialViewport={activeGraphViewport}
                 onviewportchange={viewport => {
                   if (activeGraphSectionId) {
@@ -502,6 +529,7 @@
                   }
                 }}
                 documentVersion={workspace.documentVersion}
+                graphUpdate={latestGraphUpdate}
                 {vscode}
               />
             {/key}

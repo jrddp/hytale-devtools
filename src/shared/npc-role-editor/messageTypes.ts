@@ -1,7 +1,9 @@
 import type { NpcDescriptorDocument, NpcDescriptorSource } from "./descriptorTypes";
 import type { IndexReference } from "../indexTypes";
 import type { NodeEditorClipboardSelection } from "../node-editor/clipboardTypes";
+import type { NodeEditorGraphEdit } from "../node-editor/graphTypes";
 import type {
+  NodeEditorGraphEditMessage,
   NodeEditorControlScheme,
   NodeEditorPlatform,
 } from "../node-editor/messageTypes";
@@ -24,6 +26,16 @@ export type NpcRoleEditorDocumentUpdateMessage = {
   documentPath: string;
   version: number;
   text: string;
+};
+
+export type NpcRoleEditorGraphUpdateMessage = {
+  type: "graphUpdate";
+  documentPath: string;
+  version: number;
+  text: string;
+  fieldPath: string;
+  acknowledgedClientEditId?: number;
+  appliedEdit?: NodeEditorGraphEdit;
 };
 
 export type NpcRoleEditorErrorMessage = {
@@ -70,9 +82,14 @@ export type NpcRoleEditorApplyMessage = {
   label: string;
 };
 
+export type NpcRoleEditorGraphEditMessage = NodeEditorGraphEditMessage & {
+  fieldPath: string;
+};
+
 export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorBootstrapMessage
   | NpcRoleEditorDocumentUpdateMessage
+  | NpcRoleEditorGraphUpdateMessage
   | NpcRoleEditorErrorMessage
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | NpcRoleEditorAutocompletionValuesMessage
@@ -87,4 +104,5 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
+  | NpcRoleEditorGraphEditMessage
   | NpcRoleEditorApplyMessage;

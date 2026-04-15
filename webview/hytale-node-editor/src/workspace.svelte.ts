@@ -9,6 +9,7 @@ import {
   type NodeEditorGraphDocument,
   type NodeEditorGraphEdit,
 } from "@shared/node-editor/graphTypes";
+import { cloneJsonLike } from "@shared/jsonClone";
 import {
   type ActionRequest,
   type NodeEditorControlScheme,
@@ -432,8 +433,8 @@ export class NodeEditorSession {
     const clientEditId = this.nextClientEditId + 1;
     this.nextClientEditId = clientEditId;
     this.pendingLocalEditId = clientEditId;
-    const afterDocument = structuredClone(beforeDocument);
-    applyNodeEditorGraphEdit(afterDocument, edit);
+    const afterDocument = cloneJsonLike($state.snapshot(beforeDocument));
+    applyNodeEditorGraphEdit(afterDocument, cloneJsonLike($state.snapshot(edit)));
     this.committedGraphDocument = afterDocument;
     this.queuePostGraphEditActions(edit);
     this.postGraphEdit(edit, clientEditId);

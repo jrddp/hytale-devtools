@@ -4,14 +4,9 @@
     type NodeEditorDocumentUpdateMessage,
     type WebviewToExtensionMessage,
   } from "@shared/node-editor/messageTypes";
-  import { type NodeEditorGraphEdit } from "@shared/node-editor/graphTypes";
   import { type Viewport } from "@xyflow/svelte";
   import { type VSCodeApi } from "@node-editor/common";
-  import {
-    applyGraphEditToWorkspaceState,
-    graphDocumentToWorkspaceState,
-    graphEditRequiresDocumentRefresh,
-  } from "@node-editor/node-editor/utils/graphDocument";
+  import { reconcileSessionWithGraphUpdate } from "@node-editor/node-editor/utils/documentUpdates";
   import { syncSessionFromGraphDocument } from "@node-editor/node-editor/utils/sessionSync";
   import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
   import {
@@ -88,36 +83,18 @@
   }
 
   function handleDocumentUpdateMessage(message: NodeEditorDocumentUpdateMessage): boolean {
-    if (
-      typeof message.acknowledgedClientEditId === "number" &&
-      message.acknowledgedClientEditId === session.pendingLocalEditId
-    ) {
-      session.sourceVersion = message.version;
-      session.committedGraphDocument = message.graphDocument;
-      session.pendingLocalEditId = undefined;
-      extensionError = "";
-      return false;
-    }
-
-    if (message.version === session.sourceVersion) return false;
     try {
-      if (message.appliedEdit && applyIncomingGraphEdit(message.appliedEdit)) {
-        session.sourceVersion = message.version;
-        session.committedGraphDocument = message.graphDocument;
-        session.pendingLocalEditId = undefined;
-        extensionError = "";
-        return false;
-      }
-
-      syncSessionFromGraphDocument({
+      const didFullSync = reconcileSessionWithGraphUpdate({
         session,
         workspaceContext: session.context,
-        graphDocument: message.graphDocument,
-        sourceVersion: message.version,
+        getFallbackGraphDocument: () => message.graphDocument,
+        version: message.version,
+        acknowledgedClientEditId: message.acknowledgedClientEditId,
+        appliedEdit: message.appliedEdit,
         shouldQueueInitialFitView: !localWebviewState.viewport,
       });
       extensionError = "";
-      return true;
+      return didFullSync;
     } catch (error) {
       console.error(error);
       if (!extensionError) {
@@ -125,28 +102,6 @@
       }
       return false;
     }
-  }
-
-  function applyIncomingGraphEdit(edit: NodeEditorGraphEdit): boolean {
-    const nextState = applyGraphEditToWorkspaceState(
-      {
-        nodes: session.nodes,
-        edges: session.edges,
-        rootNodeId: session.rootNodeId,
-      },
-      edit,
-    );
-
-    session.nodes = nextState.nodes;
-    session.edges = nextState.edges;
-    session.rootNodeId = nextState.rootNodeId;
-    if (edit.kind === "element-list-changed") {
-      session.resetMeasurementTracking(nextState.nodes);
-    }
-    if (graphEditRequiresDocumentRefresh(edit)) {
-      session.actionRequests.push({ type: "document-refresh" });
-    }
-    return true;
   }
 
   onMount(() => {
