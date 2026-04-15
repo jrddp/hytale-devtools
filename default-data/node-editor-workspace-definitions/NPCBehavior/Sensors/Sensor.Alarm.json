@@ -3,14 +3,7 @@
   "Title": "Alarm",
   "Color": "LimeGreen",
   "Description": "Check the state of a named alarm",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

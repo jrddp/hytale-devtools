@@ -3,20 +3,13 @@
   "Title": "SearchRay",
   "Color": "LimeGreen",
   "Description": "Fire a ray at a specific angle to see if what it hits matches a given sought block",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
-      "Type": "Sensor",
+      "Type": "PositionSensor",
       "Color": "LimeGreen",
-      "Label": "Sensor"
+      "Label": "Position Sensor"
     }
   ],
   "Content": [

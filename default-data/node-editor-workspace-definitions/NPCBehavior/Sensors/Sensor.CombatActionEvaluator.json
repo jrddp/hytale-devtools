@@ -3,14 +3,7 @@
   "Title": "CombatActionEvaluator",
   "Color": "LimeGreen",
   "Description": "A sensor which handles funnelling information to actions and motions from the combat action evaluator.",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

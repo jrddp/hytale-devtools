@@ -3,14 +3,7 @@
   "Title": "InteractionContext",
   "Color": "LimeGreen",
   "Description": "Checks whether the currently iterated player in the interaction instruction has interacted with this NPC in the given context",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

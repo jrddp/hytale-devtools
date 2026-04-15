@@ -69,7 +69,11 @@ export function isValidConnection(
   const sourcePin = sourceNode.data.outputPins?.find(pin => pin.schemaKey === connection.sourceHandle);
   const targetPin = targetNode.data.inputPins?.find(pin => pin.schemaKey === connection.targetHandle);
   if (!sourcePin || !targetPin) return false;
-  return areConnectionTypesCompatible(sourcePin.connectionType, targetPin.connectionType);
+  return areConnectionTypesCompatible(
+    sourcePin.connectionType,
+    targetPin.connectionType,
+    session.context.connectionTypesById,
+  );
 }
 
 function getSerializedChildIdsByHandle(

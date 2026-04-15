@@ -3,20 +3,13 @@
   "Title": "Leash",
   "Color": "LimeGreen",
   "Description": "Triggers when the NPC is outside a specified range from the leash point",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
-      "Type": "Sensor",
+      "Type": "PositionSensor",
       "Color": "LimeGreen",
-      "Label": "Sensor"
+      "Label": "Position Sensor"
     }
   ],
   "Content": [

@@ -72,6 +72,7 @@ function hasRenderableNodeSize(node: FlowNode) {
 class NodeRBush extends RBush<FlowNode> {
   constructor(private readonly session: NodeEditorSession) {
     super();
+    this.toBBox = this.toBBox.bind(this);
   }
 
   toBBox(node: FlowNode) {

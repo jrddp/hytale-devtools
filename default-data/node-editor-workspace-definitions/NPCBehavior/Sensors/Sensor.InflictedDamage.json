@@ -3,14 +3,7 @@
   "Title": "InflictedDamage",
   "Color": "LimeGreen",
   "Description": "Test if an individual or the flock it belongs to inflicted combat damage",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

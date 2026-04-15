@@ -3,20 +3,13 @@
   "Title": "DroppedItem",
   "Color": "LimeGreen",
   "Description": "Triggers if a given item is within a certain range of the NPC.",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
-      "Type": "Sensor",
+      "Type": "PositionSensor",
       "Color": "LimeGreen",
-      "Label": "Sensor"
+      "Label": "Position Sensor"
     }
   ],
   "Content": [

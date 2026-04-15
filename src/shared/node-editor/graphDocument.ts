@@ -510,7 +510,11 @@ export function parseAssetDocumentToGraphDocument(
               slot.pin.schemaKey,
               childId,
               childNode?.type === "datanode"
-                ? (getCompatibleInputHandleId(childNode.data, slot.pin.connectionType) ?? INPUT_HANDLE_ID)
+                ? (getCompatibleInputHandleId(
+                    childNode.data,
+                    slot.pin.connectionType,
+                    workspaceContext.connectionTypesById,
+                  ) ?? INPUT_HANDLE_ID)
                 : INPUT_HANDLE_ID,
             );
             return;
@@ -519,7 +523,11 @@ export function parseAssetDocumentToGraphDocument(
           addEdge(
             childId,
             childNode?.type === "datanode"
-              ? (getCompatibleOutputHandleId(childNode.data, slot.pin.connectionType) ?? INPUT_HANDLE_ID)
+              ? (getCompatibleOutputHandleId(
+                  childNode.data,
+                  slot.pin.connectionType,
+                  workspaceContext.connectionTypesById,
+                ) ?? INPUT_HANDLE_ID)
               : INPUT_HANDLE_ID,
             nodeId,
             slot.pin.schemaKey,
@@ -693,6 +701,7 @@ export function parseAssetDocumentToGraphDocument(
               ? (getCompatibleInputHandleId(
                   targetNode.data,
                   LINK_TEMPLATE.outputPins[0].connectionType,
+                  workspaceContext.connectionTypesById,
                 ) ?? INPUT_HANDLE_ID)
               : INPUT_HANDLE_ID;
           for (const edge of outgoingConnections.get(sourceNodeId)?.get(sourceHandleId) ?? []) {

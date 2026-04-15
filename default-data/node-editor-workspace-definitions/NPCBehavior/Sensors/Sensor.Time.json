@@ -3,14 +3,7 @@
   "Title": "Time",
   "Color": "LimeGreen",
   "Description": "Check if the day/year time is within some specified time.",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

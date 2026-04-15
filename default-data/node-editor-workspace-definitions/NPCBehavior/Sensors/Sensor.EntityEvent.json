@@ -3,20 +3,13 @@
   "Title": "EntityEvent",
   "Color": "LimeGreen",
   "Description": "Matches when an entity from a specific NPC group within a certain range is damaged, killed, or interacted with",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
-      "Type": "Sensor",
+      "Type": "PositionSensor",
       "Color": "LimeGreen",
-      "Label": "Sensor"
+      "Label": "Position Sensor"
     }
   ],
   "Content": [

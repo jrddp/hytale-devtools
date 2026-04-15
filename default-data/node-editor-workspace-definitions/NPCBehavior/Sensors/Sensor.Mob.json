@@ -5,12 +5,6 @@
   "Description": "Test if entity matching specific attributes and filters is in range",
   "Inputs": [
     {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    },
-    {
       "Id": "PrioritiserPin",
       "Type": "ISensorEntityPrioritiser",
       "Color": "HotPink",
@@ -29,9 +23,9 @@
   "Outputs": [
     {
       "Id": "Output",
-      "Type": "Sensor",
+      "Type": "PositionSensor",
       "Color": "LimeGreen",
-      "Label": "Sensor"
+      "Label": "Position Sensor"
     },
     {
       "Id": "CollectorPin",

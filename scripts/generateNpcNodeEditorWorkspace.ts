@@ -6,6 +6,7 @@ import type {
   NpcDescriptorDocument,
 } from "../src/shared/npc-role-editor/descriptorTypes";
 import {
+  NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE,
   type NpcBehaviorConnectionType,
   type NpcBehaviorSupportedDescriptorCategory,
   getNpcBehaviorChildDomain,
@@ -221,6 +222,7 @@ function buildWorkspaceDefinition(
 
   return {
     WorkspaceName: WORKSPACE_NAME,
+    ConnectionTypes: NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE,
     Roots: {
       Instructions: {
         RootNodeType: "Structural.InstructionListRoot",
@@ -288,8 +290,11 @@ function buildDescriptorTemplate(
   const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {};
   const content: NodeContentDefinition[] = [];
 
-  const selfConnectionType = getNpcBehaviorDescriptorSelfConnectionType(descriptor.Category);
-  if (shouldEmitSelfOutputPin(descriptor.Category) && selfConnectionType) {
+  const selfConnectionType = getNpcBehaviorDescriptorSelfConnectionType(
+    descriptor.Category,
+    descriptor.Name,
+  );
+  if (shouldEmitSelfOutputPin(descriptor.Category, descriptor.Name) && selfConnectionType) {
     outputs.push(createSelfOutputPin(selfConnectionType));
   }
 
@@ -499,8 +504,11 @@ function createSelfOutputPin(connectionType: NpcBehaviorConnectionType): NodePin
   };
 }
 
-function shouldEmitSelfOutputPin(category: SupportedDescriptorCategory): boolean {
-  const selfConnectionType = getNpcBehaviorDescriptorSelfConnectionType(category);
+function shouldEmitSelfOutputPin(
+  category: SupportedDescriptorCategory,
+  descriptorName: string,
+): boolean {
+  const selfConnectionType = getNpcBehaviorDescriptorSelfConnectionType(category, descriptorName);
   return getNpcBehaviorConnectionAuthoringSide(selfConnectionType) === "input";
 }
 

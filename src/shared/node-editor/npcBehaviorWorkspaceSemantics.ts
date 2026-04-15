@@ -12,8 +12,36 @@ export const NPC_BEHAVIOR_SUPPORTED_DESCRIPTOR_CATEGORIES = [
   "WeightedAction",
 ] as const;
 
+export const NPC_BEHAVIOR_POSITION_SENSOR_DESCRIPTOR_NAMES = new Set([
+  "AdjustPosition",
+  "Beacon",
+  "Block",
+  "BlockChange",
+  "BlockType",
+  "CanPlaceBlock",
+  "Damage",
+  "DroppedItem",
+  "EntityEvent",
+  "Kill",
+  "Leash",
+  "Mob",
+  "Not",
+  "Path",
+  "Player",
+  "ReadPosition",
+  "SearchRay",
+  "Self",
+  "Target",
+]);
+
 export type NpcBehaviorSupportedDescriptorCategory =
   (typeof NPC_BEHAVIOR_SUPPORTED_DESCRIPTOR_CATEGORIES)[number];
+
+export const NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE = {
+  PositionSensor: {
+    Extends: ["Sensor"],
+  },
+} as const;
 
 export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
   Action: {
@@ -66,10 +94,10 @@ export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
     color: "LimeGreen",
     label: "Sensor",
   },
-  WrappedSensor: {
-    authoringSide: "output",
-    color: "SeaGreen",
-    label: "Wrapped Sensor",
+  PositionSensor: {
+    authoringSide: "input",
+    color: "LimeGreen",
+    label: "Position Sensor",
   },
   ValueToParameterMapping: {
     authoringSide: "input",
@@ -158,6 +186,7 @@ export function getNpcBehaviorConnectionAuthoringSide(
 
 export function getNpcBehaviorDescriptorSelfConnectionType(
   category: NpcBehaviorSupportedDescriptorCategory,
+  descriptorName: string,
 ): NpcBehaviorConnectionType {
   switch (category) {
     case "Action":
@@ -168,10 +197,13 @@ export function getNpcBehaviorDescriptorSelfConnectionType(
     case "ISensorEntityPrioritiser":
     case "Path":
     case "RelativeWaypointDefinition":
-    case "Sensor":
     case "ValueToParameterMapping":
     case "WeightedAction":
       return category;
+    case "Sensor":
+      return NPC_BEHAVIOR_POSITION_SENSOR_DESCRIPTOR_NAMES.has(descriptorName)
+        ? "PositionSensor"
+        : "Sensor";
   }
 }
 
@@ -200,12 +232,10 @@ export function getNpcBehaviorChildConnectionType(
   if (
     domain === "Sensor" &&
     descriptorCategory === "Sensor" &&
-    (descriptorName === "AdjustPosition" ||
-      descriptorName === "BlockType" ||
-      descriptorName === "ValueProviderWrapper") &&
+    (descriptorName === "AdjustPosition" || descriptorName === "BlockType") &&
     attributeName === "Sensor"
   ) {
-    return "WrappedSensor";
+    return "PositionSensor";
   }
 
   return getNpcBehaviorChildDomainDefinition(domain)?.connectionType;

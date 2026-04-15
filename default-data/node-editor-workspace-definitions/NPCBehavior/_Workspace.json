@@ -1,5 +1,12 @@
 {
   "WorkspaceName": "NPC Behavior",
+  "ConnectionTypes": {
+    "PositionSensor": {
+      "Extends": [
+        "Sensor"
+      ]
+    }
+  },
   "Roots": {
     "Instructions": {
       "RootNodeType": "Structural.InstructionListRoot",

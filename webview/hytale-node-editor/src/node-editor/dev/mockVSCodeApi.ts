@@ -16,6 +16,7 @@ function normalizeMockedWorkspaceContext(
 ): NodeEditorWorkspaceContext {
   return {
     ...context,
+    connectionTypesById: context.connectionTypesById ?? {},
     nodeTemplatesById: Object.fromEntries(
       Object.entries(context.nodeTemplatesById ?? {}).map(([templateId, template]) => [
         templateId,

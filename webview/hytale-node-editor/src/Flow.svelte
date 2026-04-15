@@ -1116,7 +1116,11 @@
         workspace.rootNodeId = newNode.id;
       } else if (connectionPreview.pendingSourceConnection) {
         const targetHandle = menuInstance.connectionFilter
-          ? getCompatibleInputHandleId(newNode.data, menuInstance.connectionFilter.pinType)
+          ? getCompatibleInputHandleId(
+              newNode.data,
+              menuInstance.connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            )
           : undefined;
         if (targetHandle) {
           workspace.addEdges([
@@ -1129,7 +1133,11 @@
         }
       } else if (connectionPreview.pendingTargetConnection) {
         const sourceHandle = menuInstance.connectionFilter
-          ? getCompatibleOutputHandleId(newNode.data, menuInstance.connectionFilter.pinType)
+          ? getCompatibleOutputHandleId(
+              newNode.data,
+              menuInstance.connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            )
           : undefined;
         if (sourceHandle) {
           workspace.addEdges([

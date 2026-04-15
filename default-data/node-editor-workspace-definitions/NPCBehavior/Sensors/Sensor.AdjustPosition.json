@@ -5,25 +5,19 @@
   "Description": "Perform adjustments to the wrapped sensor's returned position",
   "Inputs": [
     {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
+      "Id": "SensorPin",
+      "Type": "PositionSensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor",
+      "Description": "Sensor to wrap"
     }
   ],
   "Outputs": [
     {
       "Id": "Output",
-      "Type": "Sensor",
+      "Type": "PositionSensor",
       "Color": "LimeGreen",
-      "Label": "Sensor"
-    },
-    {
-      "Id": "SensorPin",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Sensor",
-      "Description": "Sensor to wrap"
+      "Label": "Position Sensor"
     }
   ],
   "Content": [

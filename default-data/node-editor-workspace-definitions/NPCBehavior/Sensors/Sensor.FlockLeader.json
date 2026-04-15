@@ -3,14 +3,7 @@
   "Title": "FlockLeader",
   "Color": "LimeGreen",
   "Description": "Test for the presence and provide position of the flock leader",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

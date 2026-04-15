@@ -14,6 +14,13 @@ export type FieldComponentType =
   | "color";
 
 export type NodeSchemaSerializationType = "child" | "root";
+export interface NodeConnectionTypeDefinition {
+  Extends?: string[];
+}
+export interface NodeConnectionType {
+  extends: string[];
+  ancestors: string[];
+}
 export type GraphRootAdaptationResult = {
   value: unknown;
   preservedData?: Record<string, unknown>;
@@ -86,6 +93,7 @@ export interface NodeEditorWorkspace {
   templateCategories: Record<string, string[]>;
   nodeTemplatesById: Record<string, NodeTemplate>;
   variantKindsById: Record<string, VariantKindDefinition>;
+  connectionTypesById: Record<string, NodeConnectionType>;
 }
 
 export interface NodeEditorWorkspaceContext {
@@ -96,4 +104,5 @@ export interface NodeEditorWorkspaceContext {
   // category name -> list of template IDs
   templateCategories: Record<string, string[]>;
   variantKindsById: Record<string, VariantKindDefinition>;
+  connectionTypesById: Record<string, NodeConnectionType>;
 }

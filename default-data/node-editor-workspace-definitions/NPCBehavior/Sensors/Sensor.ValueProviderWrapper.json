@@ -5,10 +5,11 @@
   "Description": "Wraps a sensor and passes down some additional parameter overrides pulled from the value store",
   "Inputs": [
     {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor",
+      "Description": "Sensor to wrap"
     },
     {
       "Id": "ValueToParameterMappingsPin",
@@ -25,13 +26,6 @@
       "Type": "Sensor",
       "Color": "LimeGreen",
       "Label": "Sensor"
-    },
-    {
-      "Id": "SensorPin",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Sensor",
-      "Description": "Sensor to wrap"
     }
   ],
   "Content": [

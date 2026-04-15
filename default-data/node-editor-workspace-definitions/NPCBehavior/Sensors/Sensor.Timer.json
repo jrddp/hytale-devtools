@@ -3,14 +3,7 @@
   "Title": "Timer",
   "Color": "LimeGreen",
   "Description": "Tests if a timer exists and the value is within a certain range",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

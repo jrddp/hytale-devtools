@@ -3,14 +3,7 @@
   "Title": "InWater",
   "Color": "LimeGreen",
   "Description": "Check if NPC is currently in water",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

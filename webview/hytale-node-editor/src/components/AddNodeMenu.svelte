@@ -76,8 +76,16 @@
       const templates = [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];
       return templates.filter(template =>
         connectionFilter.draggedFrom === "source"
-          ? templateHasCompatibleInput(template, connectionFilter.pinType)
-          : templateHasCompatibleOutput(template, connectionFilter.pinType),
+          ? templateHasCompatibleInput(
+              template,
+              connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            )
+          : templateHasCompatibleOutput(
+              template,
+              connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            ),
       );
     } else {
       return [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];

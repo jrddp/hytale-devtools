@@ -12,6 +12,7 @@ import {
   adaptGraphHostValueToDocumentRoot,
 } from "../../src/shared/node-editor/graphDocument";
 import {
+  NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE,
   NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS,
   NPC_BEHAVIOR_CONNECTION_DEFINITIONS,
   getNpcBehaviorChildDomain,
@@ -75,6 +76,7 @@ function getNpcBehaviorContext(rootId: "Instructions" | "Instruction" | "Sensor"
     templateCategories: workspace.templateCategories,
     rootTemplateOrVariantId: root.RootNodeType,
     rootMenuName: root.MenuName,
+    connectionTypesById: workspace.connectionTypesById,
   };
 }
 
@@ -109,6 +111,7 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace.roots.Sensor.RootNodeType).toBe("SensorVariants");
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"]).toBeDefined();
+    expect(workspace.connectionTypesById.PositionSensor.extends).toEqual(["Sensor"]);
     expect(
       workspace.nodeTemplatesById["Structural.InstructionListRoot"].childSchemas.Instructions
         ?.serializationType,
@@ -121,6 +124,11 @@ describe("NPC Behavior workspace generation", () => {
     expect(
       workspace.nodeTemplatesById["Sensor.Any"].outputPins.some(
         pin => pin.localId === "Output" && pin.connectionType === "Sensor",
+      ),
+    ).toBe(true);
+    expect(
+      workspace.nodeTemplatesById["Sensor.Target"].outputPins.some(
+        pin => pin.localId === "Output" && pin.connectionType === "PositionSensor",
       ),
     ).toBe(true);
     expect(
@@ -279,21 +287,27 @@ describe("NPC Behavior workspace generation", () => {
     ).toBe(true);
 
     const targetSensor = workspace.nodeTemplatesById["Sensor.Target"];
-    expect(
-      targetSensor.inputPins.some(
-        pin => pin.connectionType === "WrappedSensor" && pin.label === "Wrapped Sensor",
-      ),
-    ).toBe(true);
+    expect(targetSensor.inputPins.some(pin => pin.connectionType === "Sensor")).toBe(false);
     expect(
       targetSensor.inputPins.some(pin => pin.schemaKey === "Filters" && pin.connectionType === "IEntityFilter"),
     ).toBe(true);
     expect(
-      targetSensor.outputPins.some(pin => pin.localId === "Output" && pin.connectionType === "Sensor"),
+      targetSensor.outputPins.some(
+        pin => pin.localId === "Output" && pin.connectionType === "PositionSensor",
+      ),
     ).toBe(true);
 
     const anySensor = workspace.nodeTemplatesById["Sensor.Any"];
-    expect(anySensor.inputPins.some(pin => pin.connectionType === "WrappedSensor")).toBe(true);
+    expect(anySensor.inputPins.length).toBe(0);
     expect(anySensor.outputPins.some(pin => pin.localId === "Output" && pin.connectionType === "Sensor")).toBe(true);
+
+    const blockSensor = workspace.nodeTemplatesById["Sensor.Block"];
+    expect(blockSensor.inputPins.length).toBe(0);
+    expect(
+      blockSensor.outputPins.some(
+        pin => pin.localId === "Output" && pin.connectionType === "PositionSensor",
+      ),
+    ).toBe(true);
 
     const lineOfSightFilter = workspace.nodeTemplatesById["IEntityFilter.LineOfSight"];
     expect(lineOfSightFilter.inputPins.length).toBe(0);
@@ -317,8 +331,42 @@ describe("NPC Behavior workspace generation", () => {
 
     const valueProviderWrapper = workspace.nodeTemplatesById["Sensor.ValueProviderWrapper"];
     expect(
+      valueProviderWrapper.inputPins.some(
+        pin => pin.schemaKey === "Sensor" && pin.connectionType === "Sensor",
+      ),
+    ).toBe(true);
+    expect(
       valueProviderWrapper.outputPins.some(
-        pin => pin.schemaKey === "Sensor" && pin.connectionType === "WrappedSensor",
+        pin => pin.localId === "Output" && pin.connectionType === "Sensor",
+      ),
+    ).toBe(true);
+    expect(
+      valueProviderWrapper.outputPins.some(
+        pin => pin.schemaKey === "Sensor" && pin.connectionType === "Sensor",
+      ),
+    ).toBe(false);
+
+    const adjustPosition = workspace.nodeTemplatesById["Sensor.AdjustPosition"];
+    expect(
+      adjustPosition.inputPins.some(
+        pin => pin.schemaKey === "Sensor" && pin.connectionType === "PositionSensor",
+      ),
+    ).toBe(true);
+    expect(
+      adjustPosition.outputPins.some(
+        pin => pin.localId === "Output" && pin.connectionType === "PositionSensor",
+      ),
+    ).toBe(true);
+
+    const blockType = workspace.nodeTemplatesById["Sensor.BlockType"];
+    expect(
+      blockType.inputPins.some(
+        pin => pin.schemaKey === "Sensor" && pin.connectionType === "PositionSensor",
+      ),
+    ).toBe(true);
+    expect(
+      blockType.outputPins.some(
+        pin => pin.localId === "Output" && pin.connectionType === "PositionSensor",
       ),
     ).toBe(true);
     expect(
@@ -354,6 +402,9 @@ describe("NPC Behavior workspace generation", () => {
 
     const instructionsRoot = workspace.nodeTemplatesById["Structural.InstructionListRoot"];
     expect(instructionsRoot.inputPins.length).toBe(0);
+    expect(
+      Object.keys(workspace.connectionTypesById).sort(),
+    ).toEqual(Object.keys(NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE).sort());
   });
 
   test("round-trips the Instruction root with nested actions, weighted actions, paths, and child instructions", () => {
@@ -609,6 +660,53 @@ describe("NPC Behavior workspace generation", () => {
           $WorkspaceID: "NPC Behavior",
         },
       },
+    });
+  });
+
+  test("round-trips position sensor wrapper chains through reverse-authored wrapper inputs", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const serialized = expectSemanticRoundTrip(
+      {
+        $NodeId: "Instruction-1",
+        Name: "Land",
+        Sensor: {
+          $NodeId: "Sensor-1",
+          Type: "And",
+          Sensors: [
+            {
+              $NodeId: "Sensor-2",
+              Type: "BlockType",
+              BlockSet: "Empty",
+              Sensor: {
+                $NodeId: "Sensor-3",
+                Type: "AdjustPosition",
+                Offsets: [0, -1, 0],
+                Sensor: {
+                  $NodeId: "Sensor-4",
+                  Type: "Block",
+                  RelativeTo: "Self",
+                },
+              },
+            },
+          ],
+        },
+      },
+      context,
+    );
+
+    expect(serialized.Sensor).toMatchObject({
+      Type: "And",
+      Sensors: [
+        {
+          Type: "BlockType",
+          Sensor: {
+            Type: "AdjustPosition",
+            Sensor: {
+              Type: "Block",
+            },
+          },
+        },
+      ],
     });
   });
 });

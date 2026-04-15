@@ -63,6 +63,43 @@ function readJsonFile(filePath) {
   return JSON.parse(readFileSync(filePath, "utf8"));
 }
 
+function resolveConnectionTypes(definitions = {}) {
+  const resolvedConnectionTypes = {};
+
+  const collectAncestors = (connectionTypeId, stack = []) => {
+    if (stack.includes(connectionTypeId)) {
+      return [];
+    }
+
+    const definition = definitions?.[connectionTypeId];
+    const directParents = Array.isArray(definition?.Extends)
+      ? definition.Extends.filter(parent => typeof parent === "string")
+      : [];
+    const ancestors = new Set();
+
+    for (const parent of directParents) {
+      ancestors.add(parent);
+      for (const ancestor of collectAncestors(parent, [...stack, connectionTypeId])) {
+        ancestors.add(ancestor);
+      }
+    }
+
+    return [...ancestors];
+  };
+
+  for (const [connectionTypeId, definition] of Object.entries(definitions ?? {})) {
+    const directParents = Array.isArray(definition?.Extends)
+      ? definition.Extends.filter(parent => typeof parent === "string")
+      : [];
+    resolvedConnectionTypes[connectionTypeId] = {
+      extends: directParents,
+      ancestors: collectAncestors(connectionTypeId),
+    };
+  }
+
+  return resolvedConnectionTypes;
+}
+
 function resolveDevDocument() {
   const resolvedPath = devDocumentCandidatePaths.find(candidate => existsSync(candidate));
   if (resolvedPath) {
@@ -274,6 +311,7 @@ function buildNpcBehaviorGraphContexts() {
       templateCategories: workspaceDefinition.NodeCategories ?? {},
       rootTemplateOrVariantId: root.RootNodeType,
       rootMenuName: root.MenuName,
+      connectionTypesById: resolveConnectionTypes(workspaceDefinition.ConnectionTypes),
     };
   };
 

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  areConnectionTypesCompatible,
   isDefaultInputHandleSchemaKey,
   isSchemaBoundInputPin,
   shouldShowInputPinLabels,
@@ -8,6 +9,28 @@ import {
 import { inputPin } from "./helpers";
 
 describe("node editor pin utilities", () => {
+  test("supports workspace-defined connection type ancestry", () => {
+    const connectionTypesById = {
+      PositionSensor: {
+        extends: ["Sensor"],
+        ancestors: ["Sensor"],
+      },
+    };
+
+    expect(
+      areConnectionTypesCompatible("PositionSensor", "Sensor", connectionTypesById),
+    ).toBe(true);
+    expect(
+      areConnectionTypesCompatible("Sensor", "PositionSensor", connectionTypesById),
+    ).toBe(false);
+    expect(
+      areConnectionTypesCompatible("Generic", "PositionSensor", connectionTypesById),
+    ).toBe(true);
+    expect(
+      areConnectionTypesCompatible("PositionSensor", "Generic", connectionTypesById),
+    ).toBe(true);
+  });
+
   test("recognizes default parent input handles", () => {
     expect(isDefaultInputHandleSchemaKey("input")).toBe(true);
     expect(isDefaultInputHandleSchemaKey("input1")).toBe(true);

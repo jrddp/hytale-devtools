@@ -3,14 +3,7 @@
   "Title": "IsBusy",
   "Color": "LimeGreen",
   "Description": "Tests if an NPC is in one of the defined Busy States.",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

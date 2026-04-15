@@ -1,5 +1,6 @@
 import type { AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import type {
+  NodeConnectionType,
   FieldComponentType,
   NodeEditorWorkspaceContext,
   NodeField,
@@ -105,12 +106,14 @@ export function workspaceContext({
   templates,
   templateCategories,
   variantKindsById = {},
+  connectionTypesById = {},
 }: {
   rootTemplateOrVariantId?: string;
   rootMenuName?: string;
   templates: NodeTemplate[];
   templateCategories?: Record<string, string[]>;
   variantKindsById?: Record<string, VariantKindDefinition>;
+  connectionTypesById?: Record<string, NodeConnectionType>;
 }): NodeEditorWorkspaceContext {
   const nodeTemplatesById = Object.fromEntries(templates.map(template => [template.templateId, template]));
   return {
@@ -122,6 +125,7 @@ export function workspaceContext({
         General: templates.map(template => template.templateId),
       },
     variantKindsById,
+    connectionTypesById,
   };
 }
 

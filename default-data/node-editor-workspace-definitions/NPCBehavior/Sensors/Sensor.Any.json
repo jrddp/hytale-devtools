@@ -3,14 +3,7 @@
   "Title": "Any",
   "Color": "LimeGreen",
   "Description": "Return always true",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

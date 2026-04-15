@@ -3,14 +3,7 @@
   "Title": "FlockCombatDamage",
   "Color": "LimeGreen",
   "Description": "Test if flock with NPC received combat damage",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

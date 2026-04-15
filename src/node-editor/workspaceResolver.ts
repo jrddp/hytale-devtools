@@ -4,6 +4,7 @@ import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
+import { resolveConnectionTypes } from "../shared/node-editor/connectionTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 import { toPosixPath } from "../shared/pathUtils";
 import {
@@ -134,6 +135,7 @@ export class WorkspaceRuntime {
       templateCategories: workspace.templateCategories,
       rootTemplateOrVariantId: rootDefinition.RootNodeType,
       rootMenuName: rootDefinition.MenuName,
+      connectionTypesById: workspace.connectionTypesById,
     };
   }
 
@@ -160,6 +162,7 @@ export class WorkspaceRuntime {
       templateCategories: workspace.templateCategories,
       rootTemplateOrVariantId: rootDefinition.RootNodeType,
       rootMenuName: rootDefinition.MenuName,
+      connectionTypesById: workspace.connectionTypesById,
     };
   }
 
@@ -218,6 +221,14 @@ export class WorkspaceRuntime {
         roots: workspaceDefinition.Roots ?? {},
         nodeTemplatesById: templatesById,
         variantKindsById: workspaceDefinition.Variants ?? {},
+        connectionTypesById: resolveConnectionTypes(
+          workspaceDefinition.ConnectionTypes,
+          connectionPath => {
+            this.logger.warn(
+              `Circular node-editor connection type hierarchy detected: ${connectionPath.join(" -> ")}.`,
+            );
+          },
+        ),
       };
     }
 

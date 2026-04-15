@@ -3,14 +3,7 @@
   "Title": "Animation",
   "Color": "LimeGreen",
   "Description": "Check if a given animation is being played",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

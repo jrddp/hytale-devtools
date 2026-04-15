@@ -1,4 +1,5 @@
 import {
+  type NodeConnectionTypeDefinition,
   type NodeSchemaSerializationType,
   type NodeEditorWorkspaceRootDefinition,
   type VariantKindDefinition,
@@ -50,6 +51,7 @@ export interface NodeEditorWorkspaceDefinition {
   WorkspaceName: string;
   // unsure what this does
   ExportDefaults?: boolean;
+  ConnectionTypes?: Record<string, NodeConnectionTypeDefinition>;
   // roots depend on the asset type, resolved by resource path
   Roots?: Record<string, NodeEditorWorkspaceRootDefinition>;
   // categories for add menu, category -> TemplateIds

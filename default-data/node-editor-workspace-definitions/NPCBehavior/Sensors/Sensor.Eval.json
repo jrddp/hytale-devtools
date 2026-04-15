@@ -3,14 +3,7 @@
   "Title": "Eval",
   "Color": "LimeGreen",
   "Description": "Evaluate javascript expression and test if true",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",

@@ -3,14 +3,7 @@
   "Title": "Count",
   "Color": "LimeGreen",
   "Description": "Check if there is a certain number of NPCs or players within a specific range",
-  "Inputs": [
-    {
-      "Id": "Input",
-      "Type": "WrappedSensor",
-      "Color": "SeaGreen",
-      "Label": "Wrapped Sensor"
-    }
-  ],
+  "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
