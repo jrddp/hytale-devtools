@@ -1,12 +1,7 @@
 <script lang="ts">
   import type { NpcRoleEditorGraphUpdateMessage } from "@shared/npc-role-editor/messageTypes";
-  import { parseNpcDocumentText } from "@shared/npc-role-editor/documentParsing";
-  import { resolveNpcGraphTarget } from "@shared/npc-role-editor/graphTargets";
+  import { resolveNpcGraphDocumentFromText } from "@shared/npc-role-editor/graphDocumentRuntime";
   import type { NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
-  import {
-    adaptGraphHostValueToDocumentRoot,
-    parseAssetDocumentToGraphDocument,
-  } from "@shared/node-editor/graphDocument";
   import type {
     NodeEditorControlScheme,
     NodeEditorPlatform,
@@ -222,28 +217,11 @@
       throw new Error("The NPC Behavior workspace context was not available.");
     }
 
-    if (typeof text !== "string") {
-      throw new Error("The NPC role document text was not available.");
-    }
-
-    const result = parseNpcDocumentText(text);
-    if (result.status === "error") {
-      throw new Error(result.error);
-    }
-
-    const target = resolveNpcGraphTarget(result.document, field.fieldPath);
-    if (!target) {
-      throw new Error(`Graph target "${field.fieldPath}" could not be resolved.`);
-    }
-
-    return parseAssetDocumentToGraphDocument(
-      adaptGraphHostValueToDocumentRoot(
-        target.value,
-        workspaceContext,
-        target.preservedData,
-      ),
+    return resolveNpcGraphDocumentFromText({
+      text,
+      fieldPath: field.fieldPath,
       workspaceContext,
-    );
+    });
   }
 </script>
 

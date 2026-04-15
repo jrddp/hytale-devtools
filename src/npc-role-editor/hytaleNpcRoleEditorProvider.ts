@@ -9,27 +9,13 @@ import {
   type NodeEditorClipboardSelection,
 } from "../shared/node-editor/clipboardTypes";
 import { graphEditMessageToGraphEdit } from "../shared/node-editor/graphEditMessages";
-import {
-  adaptGraphDocumentRootToHostValue,
-  adaptGraphHostValueToDocumentRoot,
-  parseAssetDocumentToGraphDocument,
-  serializeGraphDocument,
-} from "../shared/node-editor/graphDocument";
-import { invertNodeEditorGraphEdit, applyNodeEditorGraphEdit } from "../shared/node-editor/graphEditUtils";
+import { invertNodeEditorGraphEdit } from "../shared/node-editor/graphEditUtils";
 import type { NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
 } from "../shared/npc-role-editor/descriptorTypes";
-import {
-  parseNpcDocumentText,
-  serializeNpcDocumentText,
-  type ParsedNpcRoleDocument,
-} from "../shared/npc-role-editor/documentParsing";
-import {
-  patchNpcGraphTarget,
-  resolveNpcGraphTarget,
-} from "../shared/npc-role-editor/graphTargets";
+import { parseNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import type {
   NpcRoleEditorApplyMessage,
   NpcRoleEditorBootstrapMessage,
@@ -46,6 +32,7 @@ import type {
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../utils/hytalePaths";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
+import { applyNpcGraphEditToDocument } from "./graphEditRuntime";
 import {
   filterNpcRoleReferenceNamesFromPaths,
   getNpcRoleReferenceName,
@@ -729,57 +716,14 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     fieldPath: string,
     edit: NodeEditorGraphEdit,
   ): void {
-    const parsed = document.getParsedDocument(text => parseNpcRoleDocumentOrThrow(text));
-    const target = resolveNpcGraphTarget(parsed.document, fieldPath);
-    if (!target) {
-      throw new Error(`Graph target "${fieldPath}" could not be resolved from the NPC role.`);
-    }
-
-    const workspaceContext = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
-      "NPC Behavior",
-      target.workspaceRoot,
-    );
-    if (!workspaceContext) {
-      throw new Error(
-        `NPC Behavior workspace root "${target.workspaceRoot}" could not be resolved.`,
-      );
-    }
-
-    const cachedGraphDocument = document.getCachedGraphDocument(fieldPath);
-    const graphDocument =
-      cachedGraphDocument?.workspaceRoot === target.workspaceRoot
-        ? cachedGraphDocument.graphDocument
-        : parseAssetDocumentToGraphDocument(
-            adaptGraphHostValueToDocumentRoot(target.value, workspaceContext, target.preservedData),
-            workspaceContext,
-          );
-
-    applyNodeEditorGraphEdit(graphDocument, edit);
-    document.setCachedGraphDocument(fieldPath, {
-      workspaceRoot: target.workspaceRoot,
-      graphDocument,
-    });
-
-    const patchedWorkspaceRoot = patchNpcGraphTarget(
-      parsed.document,
+    applyNpcGraphEditToDocument(document, {
       fieldPath,
-      adaptGraphDocumentRootToHostValue(
-        serializeGraphDocument(graphDocument),
-        workspaceContext,
-      ),
-    );
-    if (!patchedWorkspaceRoot) {
-      throw new Error(`Graph target "${fieldPath}" could not be patched back into the NPC role.`);
-    }
-
-    const nextText = normalizeTextEol(
-      serializeNpcDocumentText(parsed.document, parsed.topLevelKeyOrder),
-      document.eol,
-    );
-    document.commitParsedDocument({
-      text: nextText,
-      parsedDocument: parsed.document,
-      topLevelKeyOrder: parsed.topLevelKeyOrder,
+      edit,
+      resolveWorkspaceContext: workspaceRoot =>
+        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+          "NPC Behavior",
+          workspaceRoot,
+        ),
     });
   }
 }
@@ -934,18 +878,6 @@ function escapeHtml(value: string): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function parseNpcRoleDocumentOrThrow(text: string): ParsedNpcRoleDocument {
-  const result = parseNpcDocumentText(text);
-  if (result.status === "error") {
-    throw new Error(result.error);
-  }
-
-  return {
-    document: result.document,
-    topLevelKeyOrder: result.topLevelKeyOrder,
-  };
 }
 
 async function readNpcRoleTextFromUri(
