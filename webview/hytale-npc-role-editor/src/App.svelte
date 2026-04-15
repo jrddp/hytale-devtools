@@ -22,6 +22,14 @@
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
   const { vscode }: { vscode: VSCodeApi } = $props();
+  type GraphViewport = {
+    x: number;
+    y: number;
+    zoom: number;
+  };
+  type NpcRoleEditorWebviewState = {
+    graphViewports?: Partial<Record<NpcSectionId, GraphViewport>>;
+  };
 
   let extensionError = $state("");
   let scrollRootElement = $state<HTMLDivElement>();
@@ -35,6 +43,7 @@
   let nodeEditorClipboard = $state.raw<NodeEditorClipboardSelection>(
     createEmptyNodeEditorClipboardSelection(),
   );
+  let localWebviewState = $state<NpcRoleEditorWebviewState>({});
   let npcBehaviorGraphContexts = $state.raw<
     Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
   >({});
@@ -103,6 +112,9 @@
   const activeGraphField = $derived(activeGraphSection?.fields[0] ?? null);
   const activeGraphWorkspaceContext = $derived.by(() =>
     activeGraphSection ? getGraphWorkspaceContextForSection(activeGraphSection) : undefined,
+  );
+  const activeGraphViewport = $derived.by(() =>
+    activeGraphSectionId ? localWebviewState.graphViewports?.[activeGraphSectionId] : undefined,
   );
 
   $effect(() => {
@@ -323,12 +335,31 @@
     vscode.postMessage({ type: "openRawJson" });
   }
 
+  function persistWebviewState(nextState: NpcRoleEditorWebviewState) {
+    localWebviewState = nextState;
+    vscode.setState?.(nextState);
+  }
+
+  function persistGraphViewport(sectionId: NpcSectionId, viewport: GraphViewport) {
+    persistWebviewState({
+      ...localWebviewState,
+      graphViewports: {
+        ...(localWebviewState.graphViewports ?? {}),
+        [sectionId]: viewport,
+      },
+    });
+  }
+
   function getDocumentTitle() {
     const fileName = workspace.documentPath.split("/").pop();
     return fileName ? fileName.replace(/\.json$/i, "") : "NPC Role";
   }
 
   onMount(() => {
+    if (typeof vscode.getState === "function") {
+      localWebviewState = (vscode.getState() as NpcRoleEditorWebviewState | undefined) ?? {};
+    }
+
     window.addEventListener("message", handleMessage);
     vscode.postMessage({ type: "ready" });
 
@@ -447,17 +478,25 @@
               {workspace.documentParseError}
             </div>
           {:else if activeGraphSection && activeGraphField && activeGraphWorkspaceContext}
-            <NpcGraphPage
-              field={activeGraphField}
-              workspaceContext={activeGraphWorkspaceContext}
-              controlScheme={nodeEditorControlScheme}
-              platform={nodeEditorPlatform}
-              clipboard={nodeEditorClipboard}
-              autocompleteField={workspace.autocompleteField}
-              autocompleteValues={workspace.autocompleteValues}
-              documentVersion={workspace.documentVersion}
-              {vscode}
-            />
+            {#key activeGraphSectionId}
+              <NpcGraphPage
+                field={activeGraphField}
+                workspaceContext={activeGraphWorkspaceContext}
+                controlScheme={nodeEditorControlScheme}
+                platform={nodeEditorPlatform}
+                clipboard={nodeEditorClipboard}
+                autocompleteField={workspace.autocompleteField}
+                autocompleteValues={workspace.autocompleteValues}
+                initialViewport={activeGraphViewport}
+                onviewportchange={viewport => {
+                  if (activeGraphSectionId) {
+                    persistGraphViewport(activeGraphSectionId, viewport);
+                  }
+                }}
+                documentVersion={workspace.documentVersion}
+                {vscode}
+              />
+            {/key}
           {:else if activeGraphSection}
             <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
               Graph editing is unavailable for this section.

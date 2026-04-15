@@ -23,6 +23,12 @@
   import { workspace } from "../workspace.svelte";
   import type { VSCodeApi } from "../common";
 
+  type GraphViewport = {
+    x: number;
+    y: number;
+    zoom: number;
+  };
+
   const {
     field,
     workspaceContext,
@@ -31,6 +37,8 @@
     clipboard,
     autocompleteField,
     autocompleteValues,
+    initialViewport,
+    onviewportchange,
     documentVersion,
     vscode,
   }: {
@@ -41,6 +49,8 @@
     clipboard: NodeEditorClipboardSelection;
     autocompleteField?: string;
     autocompleteValues: string[];
+    initialViewport?: GraphViewport;
+    onviewportchange?: (viewport: GraphViewport) => void;
     documentVersion: number;
     vscode: VSCodeApi;
   } = $props();
@@ -49,6 +59,7 @@
   let graphError = $state("");
   let lastSyncedDocumentVersion = $state<number | null>(null);
   let lastSyncedGraphFieldPath = $state<string | null>(null);
+  let lastAutoFitFieldPath = $state<string | null>(null);
   let isApplyingDocumentUpdate = $state(false);
 
   $effect(() => {
@@ -171,6 +182,14 @@
       session.committedGraphDocument = graphDocument;
       session.pendingLocalEditId = undefined;
       session.isInitialized = true;
+      if (!initialViewport && lastAutoFitFieldPath !== field.fieldPath) {
+        session.actionRequests.push({
+          type: "fit-view",
+          duration: 0,
+          maxDistanceToRoot: 10_000,
+        });
+        lastAutoFitFieldPath = field.fieldPath;
+      }
       if (workspaceStateNeedsAutoLayout(nodes)) {
         session.actionRequests.push({ type: "auto-position-nodes" });
       }
@@ -240,7 +259,7 @@
     </div>
   {:else if session.isInitialized}
     <div class="min-h-0 flex-1 overflow-hidden rounded-xl border border-vsc-border bg-vsc-panel">
-      <NodeEditorHost {session} />
+      <NodeEditorHost {session} {initialViewport} {onviewportchange} />
     </div>
   {/if}
 </div>
