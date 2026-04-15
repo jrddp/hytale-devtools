@@ -11,15 +11,15 @@
     applyGraphEditToWorkspaceState,
     graphDocumentToWorkspaceState,
     graphEditRequiresDocumentRefresh,
-    workspaceStateNeedsAutoLayout,
   } from "@node-editor/node-editor/utils/graphDocument";
+  import { syncSessionFromGraphDocument } from "@node-editor/node-editor/utils/sessionSync";
   import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
   import {
     EDITABLE_SELECTOR,
     selectAllActiveEditableText,
   } from "@node-editor/node-editor/utils/flowKeyboard";
   import NodeEditorHost from "@node-editor/NodeEditorHost.svelte";
-  import { createNodeEditorSession, setActiveNodeEditorSession } from "@node-editor/workspace.svelte";
+  import { createNodeEditorSession } from "@node-editor/workspace.svelte";
   import { onMount } from "svelte";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();
@@ -28,7 +28,6 @@
   };
 
   const session = createNodeEditorSession();
-  setActiveNodeEditorSession(session);
 
   $effect(() => {
     session.hostBridge = {
@@ -57,13 +56,6 @@
         session.platform = message.platform;
         session.copiedSelection = message.clipboard;
         session.isDevelopment = message.isDevelopment;
-        if (!localWebviewState.viewport) {
-          session.actionRequests.push({
-            type: "fit-view",
-            duration: 0,
-            maxDistanceToRoot: 10_000,
-          });
-        }
         return;
       case "update":
         if (handleDocumentUpdateMessage(message)) {
@@ -117,20 +109,13 @@
         return false;
       }
 
-      const { nodes, edges, rootNodeId } = graphDocumentToWorkspaceState(message.graphDocument);
-      session.nodes = nodes;
-      session.edges = edges;
-      session.rootNodeId = rootNodeId;
-      session.resetMeasurementTracking(nodes, true);
-      session.sourceVersion = message.version;
-      session.committedGraphDocument = message.graphDocument;
-      session.pendingLocalEditId = undefined;
-      session.isInitialized = true;
-
-      // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
-      if (workspaceStateNeedsAutoLayout(nodes)) {
-        session.actionRequests.push({ type: "auto-position-nodes" });
-      }
+      syncSessionFromGraphDocument({
+        session,
+        workspaceContext: session.context,
+        graphDocument: message.graphDocument,
+        sourceVersion: message.version,
+        shouldQueueInitialFitView: !localWebviewState.viewport,
+      });
       extensionError = "";
       return true;
     } catch (error) {

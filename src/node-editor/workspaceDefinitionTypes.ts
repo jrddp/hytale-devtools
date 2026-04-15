@@ -1,4 +1,5 @@
 import {
+  type NodeSchemaSerializationType,
   type NodeEditorWorkspaceRootDefinition,
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
@@ -111,9 +112,11 @@ export interface NodeSchemaDefinition {
     | {
         Node?: string;
         Pin?: string;
+        SerializationType?: NodeSchemaSerializationType;
         // they mix casings in workspaces sometimes.. e.g. ScriptableBrushes Root.json
         node?: string;
         pin?: string;
+        serializationType?: NodeSchemaSerializationType;
       }
     | string;
 }

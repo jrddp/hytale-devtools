@@ -2,13 +2,14 @@
   import { useSvelteFlow } from "@xyflow/svelte";
   import { type DataNodeType } from "@node-editor/common";
   import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
-  import { applyGraphEdit } from "@node-editor/workspace.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
 
   const { id, ...props }: DataNodeType = $props();
   const fieldsBySchemaKey = $derived(props.data.fieldsBySchemaKey);
   const { updateNodeData } = useSvelteFlow();
+  const workspace = useNodeEditorSession();
 
   function updateField(schemaKey: string, nextValue: unknown) {
     const previousField = fieldsBySchemaKey[schemaKey];
@@ -36,7 +37,7 @@
       },
     ]);
     if (edit) {
-      applyGraphEdit(edit);
+      workspace.applyGraphEdit(edit);
     }
   }
 </script>

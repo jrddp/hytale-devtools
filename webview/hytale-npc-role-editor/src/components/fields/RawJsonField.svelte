@@ -9,10 +9,12 @@
     field,
     root = false,
     handle,
+    notice,
   }: {
     field: NpcPropertyField;
     root?: boolean;
     handle?: Snippet;
+    notice?: string;
   } = $props();
 
   let draftValue = $state("");
@@ -56,9 +58,9 @@
 {/snippet}
 
 {#snippet editor()}
-  {#if field.kind === "graph" && field.rootType}
+  {#if notice}
     <div class="rounded-md border border-dashed border-vsc-border px-3 py-2 text-sm text-vsc-muted opacity-80">
-      Embedded {field.rootType} graph editing is deferred in this slice. The underlying JSON remains editable here.
+      {notice}
     </div>
   {/if}
 

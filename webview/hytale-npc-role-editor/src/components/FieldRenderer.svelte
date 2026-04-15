@@ -2,6 +2,7 @@
   import type { Snippet } from "svelte";
   import type { NpcPropertyField } from "../propertyModel";
   import BooleanField from "./fields/BooleanField.svelte";
+  import GraphFallbackField from "./fields/GraphFallbackField.svelte";
   import ListField from "./fields/ListField.svelte";
   import RawJsonField from "./fields/RawJsonField.svelte";
   import RichObjectField from "./fields/RichObjectField.svelte";
@@ -23,7 +24,9 @@
   <BooleanField {field} />
 {:else if field.kind === "list"}
   <ListField {field} />
-{:else if field.kind === "rawJson" || field.kind === "graph"}
+{:else if field.kind === "graph"}
+  <GraphFallbackField {field} {root} {handle} />
+{:else if field.kind === "rawJson"}
   <RawJsonField {field} {root} {handle} />
 {:else if field.kind === "richObject"}
   <RichObjectField {field} {root} {handle} />

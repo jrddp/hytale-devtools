@@ -15,7 +15,8 @@
   "Schema": {
     "Instructions": {
       "Pin": "InstructionsPin",
-      "Node": "Structural.InstructionNode"
+      "Node": "Structural.InstructionNode",
+      "SerializationType": "root"
     }
   }
 }

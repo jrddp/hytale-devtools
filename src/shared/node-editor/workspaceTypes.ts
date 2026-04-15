@@ -12,6 +12,8 @@ export type FieldComponentType =
   | "object"
   | "intslider"
   | "color";
+
+export type NodeSchemaSerializationType = "child" | "root";
 export interface NodeEditorWorkspaceRootDefinition {
   RootNodeType: string;
   MenuName: string;
@@ -50,14 +52,20 @@ export interface NodePin {
   fields?: NodeField[];
 }
 
+export interface NodeChildSchema {
+  schemaKey: string;
+  targetTemplateOrVariantId: string;
+  serializationType: NodeSchemaSerializationType;
+}
+
 // processed template for optimized usage. only uses schema keys, Content/Pin local keys are abstracted.
 export interface NodeTemplate {
   templateId: string;
   defaultTitle: string;
   description?: string;
   category?: string;
-  // schema key -> VariantKind or TemplateID for that child
-  childTypes: Record<string, string>;
+  // schema key -> child node schema info
+  childSchemas: Record<string, NodeChildSchema>;
   // schemaKey -> NodeField
   fieldsBySchemaKey: Record<string, NodeField>;
   inputPins: NodePin[];

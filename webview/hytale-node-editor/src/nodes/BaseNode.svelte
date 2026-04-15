@@ -5,7 +5,7 @@
   import { asCssColor } from "@node-editor/node-editor/utils/colors";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
-  import { applyDocumentState, applyGraphEdit } from "@node-editor/workspace.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { Snippet } from "svelte";
   import HoverTooltip from "@node-editor/components/HoverTooltip.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
@@ -13,6 +13,7 @@
   const { updateNodeData } = useSvelteFlow();
   const { id, data, children, selected, dragging, ...props }: FlowNode & { children?: Snippet } =
     $props();
+  const workspace = useNodeEditorSession();
 
   const MIN_WIDTH_PX = 80;
 
@@ -40,7 +41,7 @@
     if (effectiveTitle !== lastComittedTitle) {
       updateNodeData(id, { titleOverride: effectiveTitle });
       lastComittedTitle = effectiveTitle;
-      applyDocumentState("node-renamed");
+      workspace.applyDocumentState("node-renamed");
     }
     isEditingTitle = false;
   };
@@ -74,7 +75,7 @@
         },
       ]);
       if (edit) {
-        applyGraphEdit(edit);
+        workspace.applyGraphEdit(edit);
       }
     }
     isEditingComment = false;

@@ -1,12 +1,14 @@
 import type { ConnectionState } from "@xyflow/system";
 import type { FlowEdge } from "@node-editor/common";
 import { pruneConflictingEdges } from "@node-editor/node-editor/utils/nodeUtils.svelte";
-import { workspace } from "@node-editor/workspace.svelte";
+import type { NodeEditorSession } from "@node-editor/workspace.svelte";
 
 type SourcePendingConnection = { source: string; sourceHandle: string };
 type TargetPendingConnection = { target: string; targetHandle: string };
 
 export class ConnectionPreviewController {
+  constructor(private readonly session: NodeEditorSession) {}
+
   pendingSourceConnection = $state<SourcePendingConnection | undefined>();
   pendingSourceConflictingEdges = $state.raw<FlowEdge[]>([]);
   pendingTargetConnection = $state<TargetPendingConnection | undefined>();
@@ -23,7 +25,7 @@ export class ConnectionPreviewController {
     if (type === "source" || type === "both") {
       this.pendingSourceConnection = undefined;
       if (restoreConflicts) {
-        workspace.addEdges(this.pendingSourceConflictingEdges);
+        this.session.addEdges(this.pendingSourceConflictingEdges);
       }
       hadConflicts = this.pendingSourceConflictingEdges.length > 0;
       this.pendingSourceConflictingEdges = [];
@@ -32,7 +34,7 @@ export class ConnectionPreviewController {
     if (type === "target" || type === "both") {
       this.pendingTargetConnection = undefined;
       if (restoreConflicts) {
-        workspace.addEdges(this.pendingTargetConflictingEdges);
+        this.session.addEdges(this.pendingTargetConflictingEdges);
       }
       hadConflicts = hadConflicts || this.pendingTargetConflictingEdges.length > 0;
       this.pendingTargetConflictingEdges = [];
@@ -104,11 +106,11 @@ export class ConnectionPreviewController {
         ].join(":");
 
     if (this.pendingSourceConflictingEdges.length > 0) {
-      workspace.addEdges(this.pendingSourceConflictingEdges);
+      this.session.addEdges(this.pendingSourceConflictingEdges);
       this.pendingSourceConflictingEdges = [];
     }
     if (this.pendingTargetConflictingEdges.length > 0) {
-      workspace.addEdges(this.pendingTargetConflictingEdges);
+      this.session.addEdges(this.pendingTargetConflictingEdges);
       this.pendingTargetConflictingEdges = [];
     }
 
@@ -123,14 +125,14 @@ export class ConnectionPreviewController {
 
     this.pendingConnectionPreviewKey = nextPreviewKey;
     if (this.pendingSourceConnection) {
-      this.pendingSourceConflictingEdges = pruneConflictingEdges(nextPreviewConnection);
+      this.pendingSourceConflictingEdges = pruneConflictingEdges(nextPreviewConnection, this.session);
       return;
     }
 
-    this.pendingTargetConflictingEdges = pruneConflictingEdges(nextPreviewConnection);
+    this.pendingTargetConflictingEdges = pruneConflictingEdges(nextPreviewConnection, this.session);
   }
 }
 
-export function createConnectionPreviewController() {
-  return new ConnectionPreviewController();
+export function createConnectionPreviewController(session: NodeEditorSession) {
+  return new ConnectionPreviewController(session);
 }

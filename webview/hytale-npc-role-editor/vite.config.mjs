@@ -171,7 +171,7 @@ function templateFromDefinition(definition) {
   }
 
   const fieldsBySchemaKey = {};
-  const childTypes = {};
+  const childSchemas = {};
   const schemaConstants = {};
 
   for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
@@ -200,7 +200,11 @@ function templateFromDefinition(definition) {
     }
 
     outputPin.schemaKey = schemaKey;
-    childTypes[schemaKey] = variantOrTemplateId;
+    childSchemas[schemaKey] = {
+      schemaKey,
+      targetTemplateOrVariantId: variantOrTemplateId,
+      serializationType: entry?.SerializationType ?? entry?.serializationType ?? "child",
+    };
   }
 
   return {
@@ -208,7 +212,7 @@ function templateFromDefinition(definition) {
     defaultTitle: definition.Title,
     description: definition.Description,
     category: undefined,
-    childTypes,
+    childSchemas,
     fieldsBySchemaKey,
     inputPins,
     outputPins: Object.values(outputPinsByLocalId),

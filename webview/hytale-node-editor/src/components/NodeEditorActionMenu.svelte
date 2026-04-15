@@ -9,7 +9,7 @@
     Network,
     Search,
   } from "lucide-svelte";
-  import { workspace } from "@node-editor/workspace.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import HoverTooltip from "./HoverTooltip.svelte";
 
   type MenuItem =
@@ -42,6 +42,7 @@
       icon: CircleQuestionMark,
     },
   ];
+  const workspace = useNodeEditorSession();
 
   const visibleMenuItems = $derived(
     MENU_ITEMS.filter(menuItem => {

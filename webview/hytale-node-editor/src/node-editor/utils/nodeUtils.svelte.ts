@@ -10,7 +10,7 @@ import {
   type GroupNodeType,
 } from "@node-editor/common";
 import { GROUP_NODE_TYPE } from "@node-editor/constants";
-import { workspace } from "@node-editor/workspace.svelte";
+import type { NodeEditorSession } from "@node-editor/workspace.svelte";
 
 export type PendingConnection =
   | {
@@ -83,35 +83,46 @@ export function getCompatibleOutputHandleId(
   );
 }
 
-export function isValidConnection(connection: Connection | FlowEdge): boolean {
+export function isValidConnection(
+  connection: Connection | FlowEdge,
+  session: NodeEditorSession,
+): boolean {
   if (!connection.sourceHandle) return false;
-  const sourceNode = workspace.getNodeById(connection.source) as DataNodeType;
-  const targetNode = workspace.getNodeById(connection.target) as DataNodeType;
+  const sourceNode = session.getNodeById(connection.source) as DataNodeType;
+  const targetNode = session.getNodeById(connection.target) as DataNodeType;
   const sourcePin = sourceNode.data.outputPins?.find(pin => pin.schemaKey === connection.sourceHandle);
   const targetPin = targetNode.data.inputPins?.find(pin => pin.schemaKey === connection.targetHandle);
   if (!sourcePin || !targetPin) return false;
   return areConnectionTypesCompatible(sourcePin.connectionType, targetPin.connectionType);
 }
 
-export function getOutputPin(nodeId: string, handleId: string): NodePin | undefined {
-  const node = workspace.getNodeById(nodeId);
+export function getOutputPin(
+  nodeId: string,
+  handleId: string,
+  session: NodeEditorSession,
+): NodePin | undefined {
+  const node = session.getNodeById(nodeId);
   return node.data.outputPins?.find(pin => pin.schemaKey === handleId);
 }
 
-export function getInputPin(nodeId: string, handleId: string): NodePin | undefined {
-  const node = workspace.getNodeById(nodeId);
+export function getInputPin(
+  nodeId: string,
+  handleId: string,
+  session: NodeEditorSession,
+): NodePin | undefined {
+  const node = session.getNodeById(nodeId);
   return node.data.inputPins?.find(pin => pin.schemaKey === handleId);
 }
 
-export function recalculateGroupParents() {
-  if (!workspace.areNodesMeasured) {
+export function recalculateGroupParents(session: NodeEditorSession) {
+  if (!session.areNodesMeasured) {
     console.error("recalculateGroupParents called before measurements loaded.");
     return;
   }
   let groupNodes: GroupNodeType[] = [];
   // kept separately so that groups are guaranteed to be first in order (parents must be before children in workspace.nodes array)
   let nonGroupNodes: FlowNode[] = [];
-  workspace.nodes.forEach(node => {
+  session.nodes.forEach(node => {
     if (node.type === GROUP_NODE_TYPE) {
       groupNodes.push(node);
     } else {
@@ -128,7 +139,7 @@ export function recalculateGroupParents() {
   const processedGroupIds = new Set<string>();
 
   for (const parentGroup of groupNodes) {
-    for (const child of workspace.searchNodesCollidingWith(getAbsoluteBoundingBox(parentGroup))) {
+    for (const child of session.searchNodesCollidingWith(getAbsoluteBoundingBox(parentGroup, session))) {
       if (child.id === parentGroup.id) continue; // ignore collision with self
       if (parentRemappings.has(child.id)) continue; // already processed
       // we can't guarentee sizing order when searching the spatial index, so we'll only parent groups that are smaller than their parent
@@ -145,7 +156,8 @@ export function recalculateGroupParents() {
       parentId,
       position: getPositionRelativeTo(
         group,
-        parentId ? workspace.getNodeById(parentId) : undefined,
+        parentId ? session.getNodeById(parentId) : undefined,
+        session,
       ),
     };
   });
@@ -155,23 +167,23 @@ export function recalculateGroupParents() {
     return {
       ...node,
       parentId,
-      position: getPositionRelativeTo(node, parentId ? workspace.getNodeById(parentId) : undefined),
+      position: getPositionRelativeTo(node, parentId ? session.getNodeById(parentId) : undefined, session),
     };
   });
 
   // should now save with largest groups first, since they can parent smaller groups
   groupNodes = groupNodes.reverse();
-  workspace.nodes = [...groupNodes, ...nonGroupNodes];
+  session.nodes = [...groupNodes, ...nonGroupNodes];
 }
 
-export function getAbsolutePosition(node: FlowNode): XYPosition {
+export function getAbsolutePosition(node: FlowNode, session: NodeEditorSession): XYPosition {
   if (!node.parentId) return node.position;
-  const { x: parentX, y: parentY } = getAbsolutePosition(workspace.getNodeById(node.parentId));
+  const { x: parentX, y: parentY } = getAbsolutePosition(session.getNodeById(node.parentId), session);
   return { x: parentX + node.position.x, y: parentY + node.position.y };
 }
 
-export function getAbsoluteCenterPosition(node: FlowNode): XYPosition {
-  const { x, y } = getAbsolutePosition(node);
+export function getAbsoluteCenterPosition(node: FlowNode, session: NodeEditorSession): XYPosition {
+  const { x, y } = getAbsolutePosition(node, session);
   return { x: x + node.measured.width / 2, y: y + node.measured.height / 2 };
 }
 
@@ -180,10 +192,12 @@ export function resolveFitViewNodeIds({
   nodes,
   rootNodeId,
   maxDistanceToRoot,
+  session,
 }: {
   nodes: readonly FlowNode[];
   rootNodeId: string | undefined;
   maxDistanceToRoot?: number;
+  session: NodeEditorSession;
 }): Array<{ id: string }> {
   if (nodes.length === 0) {
     return [];
@@ -198,10 +212,10 @@ export function resolveFitViewNodeIds({
     return Array.from(nodes, node => ({ id: node.id }));
   }
 
-  const rootCenter = getAbsoluteCenterPosition(rootNode);
+  const rootCenter = getAbsoluteCenterPosition(rootNode, session);
   const fitNodeIdSet = new Set([rootNodeId]);
   for (const node of nodes) {
-    const nodeCenter = getAbsoluteCenterPosition(node);
+    const nodeCenter = getAbsoluteCenterPosition(node, session);
     const dx = nodeCenter.x - rootCenter.x;
     const dy = nodeCenter.y - rootCenter.y;
     if (Math.hypot(dx, dy) <= maxDistanceToRoot) {
@@ -215,7 +229,10 @@ export function resolveFitViewNodeIds({
 /** Checks handles of edges and removes conflicting edges.
  * @returns edges that were removed
  */
-export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[] {
+export function pruneConflictingEdges(
+  connection: PendingConnection,
+  session: NodeEditorSession,
+): FlowEdge[] {
   const { source, sourceHandle, target, targetHandle } = connection;
   const prunedIds = new Set<string>();
   const prunedEdges: FlowEdge[] = [];
@@ -229,70 +246,78 @@ export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[]
   };
 
   const conflictingInput: FlowEdge | undefined =
-    target && targetHandle ? workspace.getIncomingConnection(target, targetHandle) : undefined;
+    target && targetHandle ? session.getIncomingConnection(target, targetHandle) : undefined;
   pruneEdge(conflictingInput);
 
   if (source && sourceHandle) {
-    const outputPin = (workspace.getNodeById(source) as DataNodeType).data.outputPins?.find(
+    const outputPin = (session.getNodeById(source) as DataNodeType).data.outputPins?.find(
       pin => pin.schemaKey === sourceHandle,
     );
 
     if (outputPin && outputPin.multiplicity === "single") {
-      for (const edge of workspace.getOutgoingConnectionsForHandle(source, sourceHandle) ?? []) {
+      for (const edge of session.getOutgoingConnectionsForHandle(source, sourceHandle) ?? []) {
         pruneEdge(edge);
       }
     }
   }
 
-  workspace.edges = workspace.edges.filter(edge => !prunedIds.has(edge.id));
+  session.edges = session.edges.filter(edge => !prunedIds.has(edge.id));
   return prunedEdges;
 }
 
-export function collectAllDescendentIds(seedNodeIds: string[]): string[] {
+export function collectAllDescendentIds(
+  seedNodeIds: string[],
+  session: NodeEditorSession,
+): string[] {
   const targetNodeIdSet = new Set<string>();
   const recCollectDescendents = (nodeId: string) => {
     if (targetNodeIdSet.has(nodeId)) {
       return;
     }
     targetNodeIdSet.add(nodeId);
-    const directDescendents = Array.from(workspace.getOutgoingConnections(nodeId).values()).flat();
+    const directDescendents = Array.from(session.getOutgoingConnections(nodeId).values()).flat();
     directDescendents.forEach(edge => recCollectDescendents(edge.target));
   };
   seedNodeIds.forEach(nodeId => recCollectDescendents(nodeId));
   return Array.from(targetNodeIdSet);
 }
 
-export function getPositionRelativeTo(nodeA: FlowNode, nodeB?: FlowNode): XYPosition {
-  if (!nodeB) return getAbsolutePosition(nodeA);
-  const { x: xA, y: yA } = getAbsolutePosition(nodeA);
-  const { x: xB, y: yB } = getAbsolutePosition(nodeB);
+export function getPositionRelativeTo(
+  nodeA: FlowNode,
+  nodeB: FlowNode | undefined,
+  session: NodeEditorSession,
+): XYPosition {
+  if (!nodeB) return getAbsolutePosition(nodeA, session);
+  const { x: xA, y: yA } = getAbsolutePosition(nodeA, session);
+  const { x: xB, y: yB } = getAbsolutePosition(nodeB, session);
   return { x: xA - xB, y: yA - yB };
 }
 
-export function getAbsoluteBoundingBox(node: FlowNode): BBox | undefined {
+export function getAbsoluteBoundingBox(node: FlowNode, session: NodeEditorSession): BBox | undefined {
   const { width, height } = node.measured ?? {
     width: node.width,
     height: node.height,
   };
   if (width == undefined || height == undefined) return undefined;
-  const { x, y } = getAbsolutePosition(node);
+  const { x, y } = getAbsolutePosition(node, session);
   return { minX: x, minY: y, maxX: x + width, maxY: y + height };
 }
 
 /** Returns all nodes that are not descendents of other nodes in the provided list. */
-export function getRootIds(nodeIds: string[]): string[] {
+export function getRootIds(nodeIds: string[], session: NodeEditorSession): string[] {
   const idSet = new Set(nodeIds);
-  return nodeIds.filter(nodeId => !idSet.has(getParentId(nodeId)));
+  return nodeIds.filter(nodeId => !idSet.has(getParentId(nodeId, session)));
 }
 
-export function getParentId(nodeId: string): string | undefined {
-  return workspace.getIncomingConnection(nodeId)?.source;
+export function getParentId(nodeId: string, session: NodeEditorSession): string | undefined {
+  return session.getIncomingConnection(nodeId)?.source;
 }
 
 export function getParentIdWithHandle(
   nodeId: string,
+  session: NodeEditorSession,
 ): { parentId: string; parentHandleId: string } | undefined {
-  const incomingConnection = workspace.getIncomingConnection(nodeId);
+  const incomingConnection = session.getIncomingConnection(nodeId);
   if (!incomingConnection) {
     return undefined;
   }
@@ -302,8 +327,8 @@ export function getParentIdWithHandle(
   };
 }
 
-export function getChildIds(nodeId: string): string[] {
-  const connectionMap = workspace.getOutgoingConnections(nodeId);
+export function getChildIds(nodeId: string, session: NodeEditorSession): string[] {
+  const connectionMap = session.getOutgoingConnections(nodeId);
   if (!connectionMap) {
     return [];
   }
@@ -315,47 +340,52 @@ export function getChildIds(nodeId: string): string[] {
 export function getNodeSiblingIds(
   nodeId: string,
   scope: "same-parent-handle" | "same-parent-node",
+  session: NodeEditorSession,
 ): string[] {
-  const parentId = getParentId(nodeId);
+  const parentId = getParentId(nodeId, session);
   if (!parentId) {
     return [];
   }
   if (scope === "same-parent-node") {
-    return getChildIds(parentId);
+    return getChildIds(parentId, session);
   }
   if (scope === "same-parent-handle") {
-    const { parentId, parentHandleId } = getParentIdWithHandle(nodeId);
-    return workspace
+    const { parentId, parentHandleId } = getParentIdWithHandle(nodeId, session);
+    return session
       .getOutgoingConnectionsForHandle(parentId, parentHandleId)
       .map(edge => edge.target);
   }
 }
 
 /* Currently ordered based on y position. Should be updated. **/
-export function getOrderedChildren(parentId: string): FlowNode[] {
-  const parentNode = workspace.getNodeById(parentId);
+export function getOrderedChildren(parentId: string, session: NodeEditorSession): FlowNode[] {
+  const parentNode = session.getNodeById(parentId);
   const children = [];
   for (const handle of (parentNode.data.outputPins as NodePin[]) ?? []) {
-    children.push(...getOrderedChildrenForHandle(parentId, handle.schemaKey));
+    children.push(...getOrderedChildrenForHandle(parentId, handle.schemaKey, session));
   }
   return children;
 }
 
 /* Ordered based on y position (LOWER Y IS HIGHER) **/
-export function getOrderedChildrenForHandle(parentId: string, parentHandleId: string): FlowNode[] {
-  const childIds = workspace
+export function getOrderedChildrenForHandle(
+  parentId: string,
+  parentHandleId: string,
+  session: NodeEditorSession,
+): FlowNode[] {
+  const childIds = session
     .getOutgoingConnectionsForHandle(parentId, parentHandleId)
     .map(edge => edge.target);
   // y position descending to order nodes
   return childIds
-    .map(childId => workspace.getNodeById(childId))
+    .map(childId => session.getNodeById(childId))
     .sort((a, b) => (a.data.inputConnectionIndex ?? -1) - (b.data.inputConnectionIndex ?? -1));
 }
 
-export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
+export function getAllSiblingOrderUpdates(session: NodeEditorSession): NodeDataUpdates[] {
   const childIdsByHandle = new Map<string, string[]>();
 
-  for (const edge of workspace.edges) {
+  for (const edge of session.edges) {
     if (!edge.sourceHandle) {
       continue;
     }
@@ -364,7 +394,7 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
     const childIds = childIdsByHandle.get(key);
     if (childIds) {
       childIds.push(edge.target);
-  } else {
+    } else {
       childIdsByHandle.set(key, [edge.target]);
     }
   }
@@ -376,7 +406,7 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
       return cached;
     }
 
-    const absoluteY = getAbsolutePosition(workspace.getNodeById(nodeId)).y;
+    const absoluteY = getAbsolutePosition(session.getNodeById(nodeId), session).y;
     absoluteYByNodeId.set(nodeId, absoluteY);
     return absoluteY;
   };
@@ -392,7 +422,7 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
     childIds.forEach(childId => nodesWithIncomingOrder.add(childId));
 
     if (childIds.length === 1) {
-      const node = workspace.getNodeById(childIds[0]);
+      const node = session.getNodeById(childIds[0]);
       if (node.data.inputConnectionIndex != undefined) {
         updates.push([node.id, { inputConnectionIndex: undefined }]);
       }
@@ -400,17 +430,17 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
     }
 
     const orderedChildren = childIds
-      .map(childId => workspace.getNodeById(childId))
+      .map(childId => session.getNodeById(childId))
       .sort((nodeA, nodeB) => getAbsoluteY(nodeA.id) - getAbsoluteY(nodeB.id));
 
     orderedChildren.forEach((node, index) => {
       if ((node.data.inputConnectionIndex ?? -1) !== index) {
         updates.push([node.id, { inputConnectionIndex: index }]);
       }
-      });
+    });
   }
 
-  for (const node of workspace.nodes) {
+  for (const node of session.nodes) {
     if (!nodesWithIncomingOrder.has(node.id) && node.data.inputConnectionIndex != undefined) {
       updates.push([node.id, { inputConnectionIndex: undefined }]);
     }
@@ -420,10 +450,10 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
 }
 
 /** Returns list of node ids for the groups that the provided node is a descendent of, in order of parent to child. */
-export function getGroupList(nodeId: string): string[] {
-  const parentId = workspace.getNodeById(nodeId).parentId;
+export function getGroupList(nodeId: string, session: NodeEditorSession): string[] {
+  const parentId = session.getNodeById(nodeId).parentId;
   if (!parentId) {
     return [];
   }
-  return [...getGroupList(parentId), parentId];
+  return [...getGroupList(parentId, session), parentId];
 }

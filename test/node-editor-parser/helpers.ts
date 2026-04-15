@@ -59,12 +59,25 @@ export function inputPin(
 
 export function nodeTemplate(
   templateId: string,
-  overrides: Partial<NodeTemplate> = {},
+  overrides: (Partial<NodeTemplate> & { childTypes?: Record<string, string> }) = {},
 ): NodeTemplate {
+  const childSchemas =
+    overrides.childSchemas ??
+    Object.fromEntries(
+      Object.entries(overrides.childTypes ?? {}).map(([schemaKey, targetTemplateOrVariantId]) => [
+        schemaKey,
+        {
+          schemaKey,
+          targetTemplateOrVariantId,
+          serializationType: "child" as const,
+        },
+      ]),
+    );
+
   return {
     templateId,
     defaultTitle: templateId,
-    childTypes: {},
+    childSchemas,
     fieldsBySchemaKey: {},
     inputPins: [],
     outputPins: [],
@@ -218,7 +231,12 @@ function normalizeNode(node: FlowNode): Record<string, unknown> {
     id: node.id,
     type: node.type,
     templateId: node.data.templateId,
-    childTypes: node.data.childTypes ?? {},
+    childSchemas: Object.fromEntries(
+      Object.entries(node.data.childSchemas ?? {}).map(([schemaKey, childSchema]) => [
+        schemaKey,
+        childSchema.targetTemplateOrVariantId,
+      ]),
+    ),
     schemaConstants: node.data.schemaConstants ?? {},
     unparsedMetadata: node.data.unparsedMetadata ?? {},
     fieldValuesBySchemaKey,

@@ -3,7 +3,7 @@ import type { FlowEdge, FlowNode } from "@node-editor/common";
 import { COMMENT_NODE_TYPE, DEFAULT_COMMENT_FONT_SIZE, GROUP_NODE_TYPE } from "@node-editor/constants";
 import { asCssColor, resolveComputedColor } from "@node-editor/node-editor/utils/colors";
 import { getAbsolutePosition } from "@node-editor/node-editor/utils/nodeUtils.svelte";
-import { workspace, type NodeRenderDetailMode } from "@node-editor/workspace.svelte";
+import { type NodeRenderDetailMode, type NodeEditorSession } from "@node-editor/workspace.svelte";
 
 export type LowDetailRenderItem = {
   id: string;
@@ -54,6 +54,8 @@ function areStringArraysEqual(left: string[], right: string[]) {
 }
 
 export class LowDetailController {
+  constructor(private readonly session: NodeEditorSession) {}
+
   canvasOverlayReady = $state(false);
   canvasOverlayReadyToken = 0;
   renderCache = $state.raw<LowDetailRenderItem[]>([]);
@@ -72,7 +74,9 @@ export class LowDetailController {
   renderDetailTransitionSwitchZoom = $state<number | undefined>();
 
   renderCacheById = $derived(new Map(this.renderCache.map(item => [item.id, item])));
-  activeRenderDetailMode = $derived(this.renderDetailTransitionOverride ?? workspace.renderDetailMode);
+  get activeRenderDetailMode(): NodeRenderDetailMode {
+    return this.renderDetailTransitionOverride ?? this.session.renderDetailMode;
+  }
 
   getRenderableNodeSize(node: FlowNode) {
     const width = node.measured?.width ?? node.width;
@@ -85,12 +89,12 @@ export class LowDetailController {
 
   isNodeHiddenByDebug(node: FlowNode) {
     return node.type === GROUP_NODE_TYPE
-      ? workspace.debugState.hideGroups
-      : workspace.debugState.hideNodes;
+      ? this.session.debugState.hideGroups
+      : this.session.debugState.hideNodes;
   }
 
   isNodePendingMeasurement(node: FlowNode) {
-    return workspace.isNodePendingMeasurement(node.id);
+    return this.session.isNodePendingMeasurement(node.id);
   }
 
   isCanvasSourceNode(node: FlowNode) {
@@ -98,7 +102,7 @@ export class LowDetailController {
   }
 
   isCanvasSourceEdge(edge: Pick<FlowEdge, "id" | "hidden">) {
-    return !workspace.debugState.hideEdges && (this.hiddenEdgeIds.has(edge.id) || !edge.hidden);
+    return !this.session.debugState.hideEdges && (this.hiddenEdgeIds.has(edge.id) || !edge.hidden);
   }
 
   getCanvasSelectableNodeAtPoint(
@@ -106,7 +110,7 @@ export class LowDetailController {
     flowStore: Pick<SvelteFlowStore<FlowNode, FlowEdge>, "elementsSelectable">,
   ) {
     const matchingNodeIds = new Set(
-      workspace
+      this.session
         .searchNodesCollidingWith({
           minX: flowPosition.x,
           minY: flowPosition.y,
@@ -119,8 +123,8 @@ export class LowDetailController {
       return undefined;
     }
 
-    for (let index = workspace.nodes.length - 1; index >= 0; index--) {
-      const node = workspace.nodes[index];
+    for (let index = this.session.nodes.length - 1; index >= 0; index--) {
+      const node = this.session.nodes[index];
       if (
         !matchingNodeIds.has(node.id) ||
         !this.isCanvasSourceNode(node) ||
@@ -134,7 +138,7 @@ export class LowDetailController {
         continue;
       }
 
-      const position = getAbsolutePosition(node);
+      const position = getAbsolutePosition(node, this.session);
       if (
         flowPosition.x >= position.x &&
         flowPosition.x <= position.x + size.width &&
@@ -158,7 +162,7 @@ export class LowDetailController {
 
       const position = node.parentId
         ? (() => {
-            const parent = workspace.getNodeById(node.parentId);
+            const parent = this.session.getNodeById(node.parentId);
             const parentPosition = resolveAbsolutePosition(parent);
             return {
               x: parentPosition.x + node.position.x,
@@ -172,7 +176,7 @@ export class LowDetailController {
     };
 
     const nextCache: LowDetailRenderItem[] = [];
-    for (const node of workspace.nodes) {
+    for (const node of this.session.nodes) {
       if (!this.isCanvasSourceNode(node)) {
         continue;
       }
@@ -218,7 +222,7 @@ export class LowDetailController {
     }
 
     this.renderCache = nextCache;
-    this.updateSelectedNodeIds(workspace.nodes.flatMap(node => (node.selected ? [node.id] : [])));
+    this.updateSelectedNodeIds(this.session.nodes.flatMap(node => (node.selected ? [node.id] : [])));
   }
 
   syncSelectionMode(
@@ -319,7 +323,7 @@ export class LowDetailController {
     this.searchCacheLocked = false;
   }
 
-  beginRenderDetailTransition(mode: NodeRenderDetailMode = workspace.renderDetailMode) {
+  beginRenderDetailTransition(mode: NodeRenderDetailMode = this.session.renderDetailMode) {
     const token = ++this.renderDetailTransitionToken;
     this.renderDetailTransitionOverride = mode;
     this.renderDetailTransitionSwitchTargetMode = undefined;
@@ -385,6 +389,6 @@ export class LowDetailController {
   }
 }
 
-export function createLowDetailController() {
-  return new LowDetailController();
+export function createLowDetailController(session: NodeEditorSession) {
+  return new LowDetailController(session);
 }

@@ -104,7 +104,7 @@
   const enrichedNodes: SearchedNode[] = $derived.by(() => {
     return allNodes
       .map(node => {
-        const postion = getAbsoluteCenterPosition(node);
+        const postion = getAbsoluteCenterPosition(node, workspace);
         return {
           node,
           effectiveTitle: node.data.titleOverride ?? node.data.defaultTitle,

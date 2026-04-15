@@ -59,12 +59,6 @@ const SECTION_NAMES: Record<NpcPropertySection["id"], string> = {
   stateTransitions: "State Transitions",
 };
 
-const TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS = [
-  "$NodeId",
-  "$Comment",
-  "$NodeEditorMetadata",
-] as const;
-
 export function buildNpcPropertyState({
   document,
   topLevelKeyOrder,
@@ -262,8 +256,7 @@ function buildTopLevelInstructionSection(
           kind: "literal",
           value: cloneJsonLike(rawValue ?? (sectionId === "instructions" ? [] : {})),
         },
-        description:
-          "Embedded graph editing is deferred in this slice. The underlying JSON remains editable here.",
+        description: undefined,
         computable: false,
         canRename: false,
         canChangeType: false,
@@ -272,7 +265,7 @@ function buildTopLevelInstructionSection(
         isSet: rawValue !== undefined,
         preservedData:
           sectionId === "instructions"
-            ? buildInstructionsGraphMetadataPreservedData(document)
+            ? buildTopLevelGraphRootMetadata(document)
             : undefined,
         ui: {},
       },
@@ -281,14 +274,12 @@ function buildTopLevelInstructionSection(
   };
 }
 
-function buildInstructionsGraphMetadataPreservedData(
-  document: NpcRoleJson,
-): Record<string, unknown> | undefined {
+function buildTopLevelGraphRootMetadata(document: NpcRoleJson): Record<string, unknown> | undefined {
   const preservedData: Record<string, unknown> = {};
 
-  for (const key of TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS) {
-    if (key in document) {
-      preservedData[key] = cloneJsonLike(document[key]);
+  for (const [key, value] of Object.entries(document)) {
+    if (key.startsWith("$")) {
+      preservedData[key] = cloneJsonLike(value);
     }
   }
 
@@ -848,12 +839,7 @@ function buildPreservedTopLevelFields(document: NpcRoleJson): Record<string, unk
       continue;
     }
 
-    if (
-      (document.Type === "Generic" || document.Type === "Abstract") &&
-      TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS.includes(
-        key as (typeof TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS)[number],
-      )
-    ) {
+    if ((document.Type === "Generic" || document.Type === "Abstract") && key.startsWith("$")) {
       continue;
     }
 

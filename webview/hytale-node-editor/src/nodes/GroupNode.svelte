@@ -4,7 +4,7 @@
   import ZoomCompensatedNodeResizer from "@node-editor/components/ZoomCompensatedNodeResizer.svelte";
   import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "@node-editor/constants";
   import { isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
-  import { applyDocumentState, workspace } from "@node-editor/workspace.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
 
   const GROUP_TITLE_BASE_SIZE_PX = 18;
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 12;
@@ -13,6 +13,7 @@
 
   const { updateNodeData } = useSvelteFlow();
   const flowStore = useStore();
+  const workspace = useNodeEditorSession();
 
   let titleInputElement = $state<HTMLInputElement | undefined>();
   let bodyElement = $state<HTMLDivElement | undefined>();
@@ -34,7 +35,7 @@
     if (effectiveTitle !== lastComittedTitle) {
       updateNodeData(id, { titleOverride: effectiveTitle });
       lastComittedTitle = effectiveTitle;
-      applyDocumentState("node-renamed");
+      workspace.applyDocumentState("node-renamed");
     }
     isEditingTitle = false;
   };
@@ -55,7 +56,7 @@
   }
 
   function handleResizeEnd() {
-    applyDocumentState("node-resized");
+    workspace.applyDocumentState("node-resized");
   }
 
   function clearBodySelectionGesture() {

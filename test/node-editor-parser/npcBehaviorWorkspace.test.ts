@@ -5,6 +5,10 @@ import { describe, expect, test } from "vitest";
 import { WorkspaceRuntime } from "../../src/node-editor/workspaceResolver";
 import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import type { NodeEditorWorkspaceContext } from "../../src/shared/node-editor/workspaceTypes";
+import {
+  adaptGraphDocumentRootToHostValue,
+  adaptGraphHostValueToDocumentRoot,
+} from "../../src/shared/node-editor/graphDocument";
 import { parseDocumentText } from "../../webview/hytale-node-editor/src/node-editor/parsing/parseDocument.svelte";
 import { serializeWorkspaceState } from "../../webview/hytale-node-editor/src/node-editor/parsing/serializeDocument";
 import {
@@ -77,6 +81,10 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace.roots.Sensor.RootNodeType).toBe("SensorVariants");
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"]).toBeDefined();
+    expect(
+      workspace.nodeTemplatesById["Structural.InstructionListRoot"].childSchemas.Instructions
+        ?.serializationType,
+    ).toBe("root");
     expect(workspace.nodeTemplatesById["Action.Timeout"]).toBeDefined();
     expect(workspace.nodeTemplatesById["WeightedAction.WeightedAction"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Path.Path"]).toBeDefined();
@@ -229,5 +237,39 @@ describe("NPC Behavior workspace generation", () => {
 
     expect(serialized.Instructions).toBeInstanceOf(Array);
     expect((serialized.Instructions as unknown[])).toHaveLength(2);
+  });
+
+  test("adapts the Instructions root between host value and graph document root while preserving $ metadata", () => {
+    const context = getNpcBehaviorContext("Instructions");
+
+    const adaptedRoot = adaptGraphHostValueToDocumentRoot(
+      [{ $NodeId: "Instruction-1", Name: "First" }],
+      context,
+      {
+        $NodeId: "InstructionListRoot-1",
+        $NodeEditorMetadata: {
+          $WorkspaceID: "NPC Behavior",
+        },
+        Ignored: "nope",
+      },
+    );
+
+    expect(adaptedRoot).toEqual({
+      $NodeId: "InstructionListRoot-1",
+      $NodeEditorMetadata: {
+        $WorkspaceID: "NPC Behavior",
+      },
+      Instructions: [{ $NodeId: "Instruction-1", Name: "First" }],
+    });
+
+    expect(adaptGraphDocumentRootToHostValue(adaptedRoot, context)).toEqual({
+      value: [{ $NodeId: "Instruction-1", Name: "First" }],
+      preservedData: {
+        $NodeId: "InstructionListRoot-1",
+        $NodeEditorMetadata: {
+          $WorkspaceID: "NPC Behavior",
+        },
+      },
+    });
   });
 });

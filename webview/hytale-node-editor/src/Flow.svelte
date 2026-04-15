@@ -68,9 +68,9 @@
   } = useSvelteFlow();
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
   const liveConnection = useConnection();
-  const connectionPreview = createConnectionPreviewController();
-  const lowDetail = createLowDetailController();
   const workspace = useNodeEditorSession();
+  const connectionPreview = createConnectionPreviewController(workspace);
+  const lowDetail = createLowDetailController(workspace);
 
   const viewport = useViewport();
   const getViewportSize = () => ({
@@ -362,7 +362,7 @@
         continue;
       }
 
-      const position = getAbsolutePosition(node);
+      const position = getAbsolutePosition(node, workspace);
       const nodeRect = {
         x: position.x,
         y: position.y,
@@ -452,7 +452,7 @@
             console.warn(`Attempted to reveal node ${targetNodeId} but it was not found.`);
             continue;
           }
-          const absolutePosition = getAbsolutePosition(node);
+          const absolutePosition = getAbsolutePosition(node, workspace);
           const width = node.measured!.width!;
           const height = node.measured!.height!;
           const { width: viewportWidth, height: viewportHeight } = getViewportSize();
@@ -485,6 +485,7 @@
             nodes: workspace.nodes,
             rootNodeId: workspace.rootNodeId,
             maxDistanceToRoot: action.maxDistanceToRoot,
+            session: workspace,
           });
           const fitNodeIdSet = new Set(fitNodeIds.map(node => node.id));
           const nodesToFit =
@@ -550,10 +551,10 @@
             }
           }
 
-          const updates = getAutoPositionNodeUpdates(targetNodes);
+          const updates = getAutoPositionNodeUpdates(targetNodes, workspace);
           if (updates.length > 0) {
             workspace.applyNodeUpdates(updates);
-            recalculateGroupParents();
+            recalculateGroupParents(workspace);
             workspace.applyDocumentState("nodes-moved");
           }
           break;
@@ -577,11 +578,11 @@
             break;
           }
           workspace.applyNodeUpdates(
-            getAllSiblingOrderUpdates().map(([nodeId, data]) => [nodeId, { data }]),
+            getAllSiblingOrderUpdates(workspace).map(([nodeId, data]) => [nodeId, { data }]),
           );
 
           connectionPreview.clearPendingConnection("both", true);
-          recalculateGroupParents();
+          recalculateGroupParents(workspace);
           break;
         case "reveal-selection":
           break;
@@ -648,7 +649,7 @@
       maxY = Number.NEGATIVE_INFINITY;
 
     for (const node of nodes) {
-      const position = getAbsoluteCenterPosition(node);
+      const position = getAbsoluteCenterPosition(node, workspace);
       minX = Math.min(minX, position.x);
       minY = Math.min(minY, position.y);
       maxX = Math.max(maxX, position.x);
@@ -660,7 +661,7 @@
     return nodes.map(node => {
       // @ts-ignore - the clone will not have infinite depth.
       const copiedNode = structuredClone($state.snapshot(node)) as FlowNode;
-      const absolutePosition = getAbsolutePosition(node);
+      const absolutePosition = getAbsolutePosition(node, workspace);
       return {
         ...copiedNode,
         position: {
@@ -946,7 +947,7 @@
   const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
     // ## On Connect
     onconnect: connection => {
-      pruneConflictingEdges(connection);
+      pruneConflictingEdges(connection, workspace);
       workspace.addEdges([connection]);
       workspace.applyDocumentState("element-list-changed");
     },
@@ -960,6 +961,7 @@
         const sourcePin = getOutputPin(
           connectionPreview.pendingSourceConnection.source,
           connectionPreview.pendingSourceConnection.sourceHandle,
+          workspace,
         );
         addMenuInstance = {
           viewportPosition: toFlowWrapperPosition(connectionState.pointer!),
@@ -975,6 +977,7 @@
         const targetPin = getInputPin(
           connectionPreview.pendingTargetConnection.target,
           connectionPreview.pendingTargetConnection.targetHandle,
+          workspace,
         );
         addMenuInstance = {
           viewportPosition: toFlowWrapperPosition(connectionState.pointer!),
@@ -993,7 +996,7 @@
     },
     // ## On Node Drag Stop
     onnodedragstop: event => {
-      recalculateGroupParents();
+      recalculateGroupParents(workspace);
       workspace.applyDocumentState("nodes-moved");
     },
     // ## On Node Context Menu
@@ -1194,7 +1197,7 @@
     onlyRenderVisibleElements={useVisibleElementCulling}
     connectionRadius={CONNECTION_RADIUS}
     isValidConnection={connection => {
-      return isValidConnection(connection);
+      return isValidConnection(connection, workspace);
     }}
     {...svelteFlowEvents}
   >

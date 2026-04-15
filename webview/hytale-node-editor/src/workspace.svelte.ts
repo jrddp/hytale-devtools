@@ -68,8 +68,12 @@ function hasRenderableNodeSize(node: FlowNode) {
 }
 
 class NodeRBush extends RBush<FlowNode> {
+  constructor(private readonly session: NodeEditorSession) {
+    super();
+  }
+
   toBBox(node: FlowNode) {
-    const { x, y } = getAbsolutePosition(node);
+    const { x, y } = getAbsolutePosition(node, this.session);
     const { width, height } = node.measured ?? {
       width: node.width,
       height: node.height,
@@ -162,7 +166,7 @@ export class NodeEditorSession {
   });
   /** Spatially indexed nodes for collision searching (e.g. setting group inheritence) */
   private spatialIndex: NodeRBush = $derived.by(() => {
-    const spatialIndex = new NodeRBush();
+    const spatialIndex = new NodeRBush(this);
     spatialIndex.load(this.nodes.filter(node => hasRenderableNodeSize(node)));
     return spatialIndex;
   });
@@ -541,32 +545,3 @@ export function createNodeEditorSession(): NodeEditorSession {
 
 const [useNodeEditorSession, setNodeEditorSessionContext] = createContext<NodeEditorSession>();
 export { useNodeEditorSession, setNodeEditorSessionContext };
-
-const defaultNodeEditorSession = createNodeEditorSession();
-let activeNodeEditorSession = defaultNodeEditorSession;
-
-export function getActiveNodeEditorSession(): NodeEditorSession {
-  return activeNodeEditorSession;
-}
-
-export function setActiveNodeEditorSession(session: NodeEditorSession): void {
-  activeNodeEditorSession = session;
-}
-
-export const workspace = new Proxy({} as NodeEditorSession, {
-  get(_target, property, _receiver) {
-    const value = Reflect.get(activeNodeEditorSession as object, property);
-    return typeof value === "function" ? value.bind(activeNodeEditorSession) : value;
-  },
-  set(_target, property, value, _receiver) {
-    return Reflect.set(activeNodeEditorSession as object, property, value);
-  },
-}) as NodeEditorSession;
-
-export function applyGraphEdit(edit: NodeEditorGraphEdit) {
-  activeNodeEditorSession.applyGraphEdit(edit);
-}
-
-export function applyDocumentState(reason: NodeEditorGraphEdit["kind"]) {
-  activeNodeEditorSession.applyDocumentState(reason);
-}

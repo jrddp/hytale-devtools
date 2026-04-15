@@ -234,7 +234,7 @@
   }
 
   function isGraphPageSection(section: NpcPropertySection): boolean {
-    return !!getGraphWorkspaceContextForSection(section);
+    return getGraphRootField(section) !== null;
   }
 
   function getGraphWorkspaceContextForSection(
@@ -477,7 +477,7 @@
             <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
               {workspace.documentParseError}
             </div>
-          {:else if activeGraphSection && activeGraphField && activeGraphWorkspaceContext}
+          {:else if activeGraphSection && activeGraphField}
             {#key activeGraphSectionId}
               <NpcGraphPage
                 field={activeGraphField}
@@ -497,10 +497,6 @@
                 {vscode}
               />
             {/key}
-          {:else if activeGraphSection}
-            <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
-              Graph editing is unavailable for this section.
-            </div>
           {:else if visiblePropertySections.length === 0}
             <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
               No property sections are available for this NPC role yet.

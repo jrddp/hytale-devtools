@@ -1243,6 +1243,55 @@ describe("npc property model symbol enrichment", () => {
     expect(serialized.$NodeEditorMetadata).toEqual(metadata);
   });
 
+  test("preserves top-level instructions graph metadata even when the instructions array is unset", () => {
+    const metadata = {
+      $Nodes: {
+        "Structural.InstructionListRoot-root": {
+          $Position: {
+            $x: 10,
+            $y: 20,
+          },
+        },
+      },
+      $FloatingNodes: [],
+      $Links: {},
+      $Groups: [],
+      $Comments: [],
+      $WorkspaceID: "NPC Behavior",
+    };
+    const document = createGenericDocument({
+      structured: {
+        $NodeId: "Structural.InstructionListRoot-root",
+        $Comment: "top-level graph comment",
+        $NodeEditorMetadata: metadata,
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+
+    const instructionsField = state.sections.find(section => section.id === "instructions")?.fields[0];
+    expect(instructionsField).toMatchObject({
+      isSet: false,
+      preservedData: {
+        $NodeId: "Structural.InstructionListRoot-root",
+        $Comment: "top-level graph comment",
+        $NodeEditorMetadata: metadata,
+      },
+    });
+
+    const serialized = serializeNpcPropertyState(state);
+    expect(serialized).toEqual({
+      Type: "Generic",
+      $NodeId: "Structural.InstructionListRoot-root",
+      $Comment: "top-level graph comment",
+      $NodeEditorMetadata: metadata,
+    });
+  });
+
   test("seeds walk as the default motion controller when adding the first controller", () => {
     const document = createGenericDocument();
 

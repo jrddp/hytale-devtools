@@ -19,6 +19,7 @@ import {
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
   buildNpcPropertyState,
+  cloneJsonLike,
   createVariantModifyOverrideFieldFromParent,
   isRichObjectField,
   isStateTransitionsField,
@@ -251,10 +252,10 @@ export class Workspace {
 
     field.value = {
       kind: "literal",
-      value: structuredClone(value),
+      value: cloneJsonLike(value),
     };
     field.isSet = true;
-    field.preservedData = preservedData ? structuredClone(preservedData) : undefined;
+    field.preservedData = preservedData ? cloneJsonLike(preservedData) : undefined;
     this.recomputeDerivedState();
     this.applyDocumentState(`Edit ${fieldPath}`);
     return true;

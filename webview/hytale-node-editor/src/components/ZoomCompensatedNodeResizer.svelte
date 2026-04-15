@@ -1,6 +1,6 @@
 <script lang="ts">
   import { NodeResizer, type OnResizeEnd } from "@xyflow/svelte";
-  import { workspace } from "@node-editor/workspace.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
 
   const RESIZER_HANDLE_BASE_SIZE_PX = 10;
   const RESIZER_HANDLE_MAX_COMPENSATION_SCALE = 5.5;
@@ -28,6 +28,7 @@
     lineClass = "border-vsc-focus",
     onResizeEnd = undefined,
   }: Props = $props();
+  const workspace = useNodeEditorSession();
 
   let handleCompensationScale = $derived(
     Math.min(RESIZER_HANDLE_MAX_COMPENSATION_SCALE, workspace.zoomCompensationScale),

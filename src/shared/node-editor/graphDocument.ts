@@ -16,7 +16,12 @@ import type {
   RawJsonGraphNode,
 } from "./graphTypes";
 import { INPUT_HANDLE_ID } from "./sharedConstants";
-import { type NodeEditorWorkspaceContext, type NodePin, type NodeTemplate } from "./workspaceTypes";
+import {
+  type NodeChildSchema,
+  type NodeEditorWorkspaceContext,
+  type NodePin,
+  type NodeTemplate,
+} from "./workspaceTypes";
 
 const DEFAULT_COMMENT_WIDTH = 200;
 const DEFAULT_COMMENT_HEIGHT = 100;
@@ -37,6 +42,30 @@ const LINK_TEMPLATE_ID = "$Link";
 const GENERIC_CATEGORY = "Generic";
 const UUID_SUFFIX_RE =
   /^(.*)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
+
+function cloneJsonLike<T>(value: T): T {
+  if (
+    value === null ||
+    value === undefined ||
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(item => cloneJsonLike(item)) as T;
+  }
+
+  if (typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, childValue]) => [key, cloneJsonLike(childValue)]),
+    ) as T;
+  }
+
+  return value;
+}
 
 function createNodeId(templateId: string): string {
   return `${templateId}-${crypto.randomUUID()}`;
@@ -71,7 +100,7 @@ function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
 const GROUP_TEMPLATE: NodeTemplate = {
   templateId: GROUP_TEMPLATE_ID,
   defaultTitle: "Add Group",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [],
   outputPins: [],
@@ -82,7 +111,7 @@ const GROUP_TEMPLATE: NodeTemplate = {
 const COMMENT_TEMPLATE: NodeTemplate = {
   templateId: COMMENT_TEMPLATE_ID,
   defaultTitle: "Add Comment",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [],
   outputPins: [],
@@ -93,7 +122,7 @@ const COMMENT_TEMPLATE: NodeTemplate = {
 const LINK_TEMPLATE: NodeTemplate = {
   templateId: LINK_TEMPLATE_ID,
   defaultTitle: "Add Link",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [getDefaultInputPin()],
   outputPins: [
@@ -112,7 +141,7 @@ const LINK_TEMPLATE: NodeTemplate = {
 const RAW_JSON_TEMPLATE: NodeTemplate = {
   templateId: RAW_JSON_TEMPLATE_ID,
   defaultTitle: "Raw JSON Node",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [getDefaultInputPin({ color: RAW_JSON_NODE_COLOR })],
   outputPins: [],
@@ -232,6 +261,107 @@ function getCompatibleInputHandleId(template: NodeTemplate, outputPin: NodePin):
     )?.schemaKey ??
     INPUT_HANDLE_ID
   );
+}
+
+function getRootTemplate(workspaceContext: NodeEditorWorkspaceContext): NodeTemplate | undefined {
+  return workspaceContext.nodeTemplatesById[workspaceContext.rootTemplateOrVariantId];
+}
+
+function getRootSerializationChildSchema(
+  workspaceContext: NodeEditorWorkspaceContext,
+): NodeChildSchema | undefined {
+  const rootTemplate = getRootTemplate(workspaceContext);
+  if (!rootTemplate) {
+    return undefined;
+  }
+
+  const rootChildSchemas = Object.values(rootTemplate.childSchemas).filter(
+    childSchema => childSchema.serializationType === "root",
+  );
+  if (rootChildSchemas.length <= 1) {
+    return rootChildSchemas[0];
+  }
+
+  throw new Error(
+    `Root template ${rootTemplate.templateId} defines multiple root-serialized schema entries.`,
+  );
+}
+
+function getRootSerializationDefaultValue(workspaceContext: NodeEditorWorkspaceContext): unknown {
+  const rootTemplate = getRootTemplate(workspaceContext);
+  const rootChildSchema = getRootSerializationChildSchema(workspaceContext);
+  if (!rootTemplate || !rootChildSchema) {
+    return {};
+  }
+
+  const outputPin = rootTemplate.outputPins.find(pin => pin.schemaKey === rootChildSchema.schemaKey);
+  switch (outputPin?.multiplicity) {
+    case "multiple":
+      return [];
+    case "map":
+      return {};
+    default:
+      return {};
+  }
+}
+
+function cloneRootMetadata(
+  preservedData: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+  if (!preservedData) {
+    return undefined;
+  }
+
+  const clonedEntries = Object.entries(preservedData)
+    .filter(([key]) => key.startsWith("$"))
+    .map(([key, value]) => [key, cloneJsonLike(value)]);
+  return clonedEntries.length > 0 ? Object.fromEntries(clonedEntries) : undefined;
+}
+
+export function adaptGraphHostValueToDocumentRoot(
+  value: unknown,
+  workspaceContext: NodeEditorWorkspaceContext,
+  preservedData?: Record<string, unknown>,
+): AssetDocumentShape {
+  const rootChildSchema = getRootSerializationChildSchema(workspaceContext);
+  if (!rootChildSchema) {
+    if (!isObject(value)) {
+      return {};
+    }
+    return cloneJsonLike(value) as AssetDocumentShape;
+  }
+
+  const rootValue = cloneJsonLike(
+    value === undefined ? getRootSerializationDefaultValue(workspaceContext) : value,
+  );
+  return {
+    ...(cloneRootMetadata(preservedData) ?? {}),
+    [rootChildSchema.schemaKey]: rootValue,
+  } as AssetDocumentShape;
+}
+
+export function adaptGraphDocumentRootToHostValue(
+  documentRoot: AssetDocumentShape,
+  workspaceContext: NodeEditorWorkspaceContext,
+): { value: unknown; preservedData?: Record<string, unknown> } {
+  const rootChildSchema = getRootSerializationChildSchema(workspaceContext);
+  if (!rootChildSchema) {
+    return {
+      value: cloneJsonLike(documentRoot),
+    };
+  }
+
+  const preservedDataEntries = Object.entries(documentRoot)
+    .filter(([key]) => key.startsWith("$"))
+    .map(([key, value]) => [key, cloneJsonLike(value)]);
+
+  return {
+    value: cloneJsonLike(
+      documentRoot[rootChildSchema.schemaKey] ?? getRootSerializationDefaultValue(workspaceContext),
+    ),
+    preservedData:
+      preservedDataEntries.length > 0 ? Object.fromEntries(preservedDataEntries) : undefined,
+  };
 }
 
 export function parseAssetDocumentToGraphDocument(
@@ -386,7 +516,7 @@ export function parseAssetDocumentToGraphDocument(
             if (localRoot[schemaKey] !== undefined) {
               const childId = recursiveParseNodes(
                 localRoot[schemaKey] as NodeAssetJson,
-                template.childTypes[schemaKey],
+                template.childSchemas[schemaKey]?.targetTemplateOrVariantId,
               );
               const childNode = nodesById.get(childId);
               addEdge(
@@ -402,7 +532,7 @@ export function parseAssetDocumentToGraphDocument(
               for (let index = 0; index < localRoot[schemaKey].length; index++) {
                 const childId = recursiveParseNodes(
                   localRoot[schemaKey][index] as NodeAssetJson,
-                  template.childTypes[schemaKey],
+                  template.childSchemas[schemaKey]?.targetTemplateOrVariantId,
                 );
                 const childNode = nodesById.get(childId)!;
                 childNode.data.inputConnectionIndex = index;
@@ -421,7 +551,7 @@ export function parseAssetDocumentToGraphDocument(
               for (const value of Object.values(localRoot[schemaKey] as Record<string, unknown>)) {
                 const childId = recursiveParseNodes(
                   value as NodeAssetJson,
-                  template.childTypes[schemaKey],
+                  template.childSchemas[schemaKey]?.targetTemplateOrVariantId,
                 );
                 const childNode = nodesById.get(childId)!;
                 childNode.data.inputConnectionIndex = index;

@@ -11,6 +11,36 @@ import { mockedThemeVars } from "@node-editor/node-editor/dev/mockVSCodeTheme";
 import basicBiomeAsset from "./Basic.json";
 import mockedWorkspaceContext from "./mockedWorkspaceContext.json";
 
+function normalizeMockedWorkspaceContext(
+  context: NodeEditorWorkspaceContext,
+): NodeEditorWorkspaceContext {
+  return {
+    ...context,
+    nodeTemplatesById: Object.fromEntries(
+      Object.entries(context.nodeTemplatesById ?? {}).map(([templateId, template]) => [
+        templateId,
+        {
+          ...template,
+          childSchemas:
+            template.childSchemas ??
+            Object.fromEntries(
+              Object.entries((template as { childTypes?: Record<string, string> }).childTypes ?? {}).map(
+                ([schemaKey, targetTemplateOrVariantId]) => [
+                  schemaKey,
+                  {
+                    schemaKey,
+                    targetTemplateOrVariantId,
+                    serializationType: "child",
+                  },
+                ],
+              ),
+            ),
+        },
+      ]),
+    ),
+  };
+}
+
 export class MockVSCodeApi implements VSCodeApi {
   constructor() {
     Object.entries(mockedThemeVars).forEach(([key, value]) => {
@@ -25,7 +55,9 @@ export class MockVSCodeApi implements VSCodeApi {
   postMessage(message: WebviewToExtensionMessage) {
     switch (message.type) {
       case "ready":
-        const workspaceContext = mockedWorkspaceContext as unknown as NodeEditorWorkspaceContext;
+        const workspaceContext = normalizeMockedWorkspaceContext(
+          mockedWorkspaceContext as unknown as NodeEditorWorkspaceContext,
+        );
         const graphDocument = parseAssetDocumentToGraphDocument(
           basicBiomeAsset as AssetDocumentShape,
           workspaceContext,

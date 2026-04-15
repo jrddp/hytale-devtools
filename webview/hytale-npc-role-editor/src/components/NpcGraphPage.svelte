@@ -5,23 +5,21 @@
   } from "@shared/node-editor/messageTypes";
   import type { NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
-  import { isObject } from "@shared/typeUtils";
-  import type { AssetDocumentShape } from "@shared/node-editor/assetTypes";
   import {
-    graphDocumentToWorkspaceState,
-    workspaceStateNeedsAutoLayout,
-  } from "@node-editor/node-editor/utils/graphDocument";
-  import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
-  import NodeEditorHost from "@node-editor/NodeEditorHost.svelte";
-  import { createNodeEditorSession } from "@node-editor/workspace.svelte";
-  import {
+    adaptGraphDocumentRootToHostValue,
+    adaptGraphHostValueToDocumentRoot,
     parseAssetDocumentToGraphDocument,
     serializeGraphDocument,
   } from "@shared/node-editor/graphDocument";
+  import { syncSessionFromGraphDocument } from "@node-editor/node-editor/utils/sessionSync";
+  import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
+  import NodeEditorHost from "@node-editor/NodeEditorHost.svelte";
+  import { createNodeEditorSession } from "@node-editor/workspace.svelte";
   import { untrack } from "svelte";
   import type { NpcPropertyField } from "../propertyModel";
   import { workspace } from "../workspace.svelte";
   import type { VSCodeApi } from "../common";
+  import GraphFallbackField from "./fields/GraphFallbackField.svelte";
 
   type GraphViewport = {
     x: number;
@@ -93,14 +91,15 @@
               return;
             }
 
-            const serializedRoot = extractFieldValueFromSerializedGraph(
-              field,
+            const serializedRoot = adaptGraphDocumentRootToHostValue(
               serializeGraphDocument(session.committedGraphDocument),
+              workspaceContext,
             );
             if (
-              JSON.stringify(serializedRoot.value) === JSON.stringify(getGraphDocumentRoot(field)) &&
+              JSON.stringify(serializedRoot.value) ===
+                JSON.stringify(getFieldGraphHostValue(field)) &&
               JSON.stringify(serializedRoot.preservedData ?? {}) ===
-                JSON.stringify(field.preservedData ?? {})
+                JSON.stringify(getFieldGraphPreservedData(field) ?? {})
             ) {
               return;
             }
@@ -149,7 +148,11 @@
 
     try {
       isApplyingDocumentUpdate = true;
-      const documentRoot = getGraphDocumentRoot(field);
+      const documentRoot = adaptGraphHostValueToDocumentRoot(
+        getFieldGraphHostValue(field),
+        workspaceContext,
+        getFieldGraphPreservedData(field),
+      );
       const currentCommittedGraphDocument = untrack(() => session.committedGraphDocument);
       const currentContext = untrack(() => session.context);
       const committedRoot =
@@ -171,27 +174,17 @@
       }
 
       const graphDocument = parseAssetDocumentToGraphDocument(documentRoot, workspaceContext);
-      const { nodes, edges, rootNodeId } = graphDocumentToWorkspaceState(graphDocument);
-
-      session.context = workspaceContext;
-      session.nodes = nodes;
-      session.edges = edges;
-      session.rootNodeId = rootNodeId;
-      session.resetMeasurementTracking(nodes, true);
-      session.sourceVersion = documentVersion;
-      session.committedGraphDocument = graphDocument;
-      session.pendingLocalEditId = undefined;
-      session.isInitialized = true;
-      if (!initialViewport && lastAutoFitFieldPath !== field.fieldPath) {
-        session.actionRequests.push({
-          type: "fit-view",
-          duration: 0,
-          maxDistanceToRoot: 10_000,
-        });
+      const shouldQueueInitialFitView =
+        !initialViewport && lastAutoFitFieldPath !== field.fieldPath;
+      syncSessionFromGraphDocument({
+        session,
+        workspaceContext,
+        graphDocument,
+        sourceVersion: documentVersion,
+        shouldQueueInitialFitView,
+      });
+      if (shouldQueueInitialFitView) {
         lastAutoFitFieldPath = field.fieldPath;
-      }
-      if (workspaceStateNeedsAutoLayout(nodes)) {
-        session.actionRequests.push({ type: "auto-position-nodes" });
       }
       graphError = "";
       lastSyncedDocumentVersion = documentVersion;
@@ -204,59 +197,27 @@
     }
   });
 
-  function getGraphDocumentRoot(field: NpcPropertyField): AssetDocumentShape {
-    const literalValue =
-      field.isSet !== false && field.value.kind === "literal"
-        ? $state.snapshot(field.value.value)
-        : undefined;
-
-    switch (field.rootType) {
-      case "Instructions":
-        return {
-          Instructions: Array.isArray(literalValue) ? literalValue : [],
-          ...(field.preservedData ? $state.snapshot(field.preservedData) : {}),
-        } as AssetDocumentShape;
-      default:
-        if (!isObject(literalValue)) {
-          return {};
-        }
-
-        return literalValue as AssetDocumentShape;
-    }
+  function getFieldGraphHostValue(field: NpcPropertyField): unknown {
+    return field.isSet !== false && field.value.kind === "literal"
+      ? $state.snapshot(field.value.value)
+      : undefined;
   }
 
-  function extractFieldValueFromSerializedGraph(
+  function getFieldGraphPreservedData(
     field: NpcPropertyField,
-    serializedRoot: AssetDocumentShape,
-  ): { value: unknown; preservedData?: Record<string, unknown> } {
-    switch (field.rootType) {
-      case "Instructions": {
-        const preservedData: Record<string, unknown> = {};
-        for (const key of ["$NodeId", "$Comment", "$NodeEditorMetadata"] as const) {
-          if (key in serializedRoot) {
-            preservedData[key] = $state.snapshot(serializedRoot[key]);
-          }
-        }
-        return {
-          value: Array.isArray(serializedRoot.Instructions) ? serializedRoot.Instructions : [],
-          preservedData: Object.keys(preservedData).length > 0 ? preservedData : undefined,
-        };
-      }
-      default:
-        return { value: serializedRoot };
-    }
+  ): Record<string, unknown> | undefined {
+    return field.preservedData ? $state.snapshot(field.preservedData) : undefined;
   }
 </script>
 
 <div class="flex h-full min-h-0 flex-1 flex-col">
-  {#if graphError}
-    <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
-      {graphError}
-    </div>
-  {:else if !workspaceContext}
-    <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
-      Graph editing is unavailable because the NPC Behavior workspace context could not be loaded.
-    </div>
+  {#if graphError || !workspaceContext}
+    <GraphFallbackField
+      root
+      {field}
+      notice={graphError ||
+        "Graph editing is unavailable because the NPC Behavior workspace context could not be loaded."}
+    />
   {:else if session.isInitialized}
     <div class="min-h-0 flex-1 overflow-hidden rounded-xl border border-vsc-border bg-vsc-panel">
       <NodeEditorHost {session} {initialViewport} {onviewportchange} />

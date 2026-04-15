@@ -8,11 +8,13 @@ import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 import { toPosixPath } from "../shared/pathUtils";
 import {
   type FieldComponentType,
+  type NodeChildSchema,
   type NodeEditorWorkspace,
   type NodeEditorWorkspaceContext,
   type NodeEditorWorkspaceRootDefinition,
   type NodeField,
   type NodePin,
+  type NodeSchemaSerializationType,
   type NodeTemplate,
 } from "../shared/node-editor/workspaceTypes";
 import { isObject } from "../shared/typeUtils";
@@ -371,7 +373,7 @@ export class WorkspaceRuntime {
     }
 
     const fieldsBySchemaKey: Record<string, NodeField> = {};
-    const childTypes: Record<string, string> = {};
+    const childSchemas: Record<string, NodeChildSchema> = {};
     const schemaConstants: Record<string, string> = {};
 
     for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
@@ -420,7 +422,11 @@ export class WorkspaceRuntime {
 
         const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
         outputPin.description = outputPin.description ?? schemaField?.markdownDescription;
-        childTypes[schemaKey] = variantOrTemplateId;
+        childSchemas[schemaKey] = {
+          schemaKey,
+          targetTemplateOrVariantId: variantOrTemplateId,
+          serializationType: this.parseSchemaSerializationType(entry),
+        };
       }
     }
 
@@ -429,7 +435,7 @@ export class WorkspaceRuntime {
       defaultTitle: definition.Title,
       description:
         supplement?.Description ?? definition.Description ?? assetFieldDefinition?.markdownDescription,
-      childTypes: childTypes,
+      childSchemas,
       fieldsBySchemaKey: fieldsBySchemaKey,
       inputPins: inputPins,
       outputPins: Object.values(outputPinsByLocalId),
@@ -452,6 +458,13 @@ export class WorkspaceRuntime {
         {} as Record<string, string>,
       ) ?? {}
     );
+  }
+
+  private parseSchemaSerializationType(
+    entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
+  ): NodeSchemaSerializationType {
+    const serializationType = entry.SerializationType ?? entry.serializationType;
+    return serializationType === "root" ? "root" : "child";
   }
 
   private fieldsFromContentDefinitions(

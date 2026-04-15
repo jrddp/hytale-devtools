@@ -394,6 +394,7 @@ function buildInstructionListRootTemplate(): TemplateOutput {
         Instructions: {
           Pin: "InstructionsPin",
           Node: "Structural.InstructionNode",
+          SerializationType: "root",
         },
       },
     },
