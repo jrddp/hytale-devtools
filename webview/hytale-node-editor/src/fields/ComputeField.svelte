@@ -64,6 +64,7 @@
       initialValue={value}
       autocompleteOptions={autocompleteOptions}
       inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1 text-[11px] leading-4 font-mono text-vsc-input-fg nodrag"
+      overlayClass="block w-full px-2 py-1 text-[11px] leading-4 font-mono whitespace-pre"
       listClass="nodrag nowheel absolute left-0 top-full z-40 w-max min-w-full max-w-[30rem] max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
       optionClass="block w-full cursor-pointer px-2 py-1 text-left text-vsc-input-fg hover:bg-vsc-list-hover"
       menuMinWidth={MIN_COMPUTE_MENU_WIDTH}

@@ -60,7 +60,8 @@
       data-vscode-context={"{}"}
       placeholder="Type for suggestions"
       autocompleteOptions={computeAutocompleteOptions}
-      inputClass="w-full rounded-md border border-vsc-border px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
+      inputClass="w-full rounded-md border border-vsc-border px-3 py-2 font-mono text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 bg-vsc-input-bg"
+      overlayClass="block w-full px-3 py-2 font-mono whitespace-pre"
       listClass="absolute left-0 right-0 top-full z-[160] max-h-56 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
       optionClass="block w-full cursor-pointer border border-transparent px-3 py-2 text-left text-vsc-input-fg hover:bg-vsc-list-hover"
       oncommit={value => workspace.updateFieldComputeExpression(field.fieldPath, value)}

@@ -12,9 +12,15 @@ export type ComputeAutocompleteSatisfiedResult = {
   cursorPos: number;
 };
 
+export type ComputeHighlightSegment = {
+  text: string;
+  kind: "plain" | "parameter";
+};
+
 const IDENTIFIER_AT_END_PATTERN = /([a-zA-Z_][a-zA-Z0-9_]*)$/;
 const IDENTIFIER_PATTERN = /([a-zA-Z_][a-zA-Z0-9_]*)$/;
 const IDENTIFIER_CHAR_PATTERN = /[a-zA-Z0-9_]/;
+const IDENTIFIER_GLOBAL_PATTERN = /[a-zA-Z_][a-zA-Z0-9_]*/g;
 
 export type ComputeAutocompleteContext = {
   query: string;
@@ -129,6 +135,53 @@ export function resolveSatisfiedComputeAutocomplete(
   return {
     cursorPos: identifierSpan.end,
   };
+}
+
+export function buildComputeHighlightSegments(
+  value: string,
+  options: readonly Pick<ComputeAutocompleteOption, "kind" | "insertText">[],
+): ComputeHighlightSegment[] {
+  if (value.length === 0) {
+    return [];
+  }
+
+  const parameterNames = new Set(
+    options
+      .filter(option => option.kind === "parameter")
+      .map(option => option.insertText),
+  );
+  if (parameterNames.size === 0) {
+    return [{ text: value, kind: "plain" }];
+  }
+
+  const segments: ComputeHighlightSegment[] = [];
+  let lastIndex = 0;
+
+  for (const match of value.matchAll(IDENTIFIER_GLOBAL_PATTERN)) {
+    const text = match[0];
+    const start = match.index ?? 0;
+    if (start > lastIndex) {
+      segments.push({
+        text: value.slice(lastIndex, start),
+        kind: "plain",
+      });
+    }
+
+    segments.push({
+      text,
+      kind: parameterNames.has(text) ? "parameter" : "plain",
+    });
+    lastIndex = start + text.length;
+  }
+
+  if (lastIndex < value.length) {
+    segments.push({
+      text: value.slice(lastIndex),
+      kind: "plain",
+    });
+  }
+
+  return segments;
 }
 
 function findOpenFunctionContext(

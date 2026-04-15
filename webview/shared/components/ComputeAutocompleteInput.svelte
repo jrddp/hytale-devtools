@@ -3,6 +3,7 @@
   import type { HTMLInputAttributes } from "svelte/elements";
   import {
     applyComputeAutocompleteOption,
+    buildComputeHighlightSegments,
     filterComputeAutocompleteOptions,
     getComputeAutocompleteContext,
     resolveSatisfiedComputeAutocomplete,
@@ -17,6 +18,7 @@
     disabled = false,
     autocompleteOptions = [],
     inputClass = "",
+    overlayClass = "",
     listClass = "",
     optionClass = "",
     menuMinWidth,
@@ -32,6 +34,7 @@
     disabled?: boolean;
     autocompleteOptions?: ComputeAutocompleteOption[];
     inputClass?: string;
+    overlayClass?: string;
     listClass?: string;
     optionClass?: string;
     menuMinWidth?: string;
@@ -48,6 +51,7 @@
   let autocompleteListElement = $state<HTMLDivElement>();
   let cursorPos = $state(0);
   let forcedOpen = $state(false);
+  let inputScrollLeft = $state(0);
 
   $effect(() => {
     if (initialValue !== lastCommittedValue) {
@@ -74,6 +78,12 @@
   );
   const visibleAutocompleteOptions = $derived(
     shouldAutocomplete ? filteredAutocompleteOptions : [],
+  );
+  const highlightSegments = $derived(
+    buildComputeHighlightSegments(value, autocompleteOptions),
+  );
+  const hasParameterHighlights = $derived(
+    highlightSegments.some(segment => segment.kind === "parameter"),
   );
 
   $effect(() => {
@@ -113,6 +123,7 @@
 
   function updateCursorState(target: HTMLInputElement | null = inputElement ?? null) {
     cursorPos = target?.selectionStart ?? value.length;
+    inputScrollLeft = target?.scrollLeft ?? 0;
   }
 
   function applyAutocomplete(option: ComputeAutocompleteOption) {
@@ -176,6 +187,14 @@
 
   function handleAutocompleteWheel(event: WheelEvent) {
     event.stopPropagation();
+  }
+
+  function handleInputScroll(event: Event & { currentTarget: HTMLInputElement }) {
+    inputScrollLeft = event.currentTarget.scrollLeft;
+  }
+
+  function toPlaceholderMask(text: string) {
+    return text.replace(/./g, "\u00A0");
   }
 
   function handleInputKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
@@ -291,6 +310,36 @@
 </script>
 
 <div class="relative min-w-0">
+  {#if hasParameterHighlights}
+    <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-md" aria-hidden="true">
+      <div
+        class={overlayClass}
+        style:transform={`translateX(${-inputScrollLeft}px)`}
+      >
+        {#each highlightSegments as segment, index (`${segment.kind}:${index}`)}
+          <span
+            style:display={segment.kind === "parameter" ? "inline-block" : undefined}
+            style:border-radius={segment.kind === "parameter" ? "0.125rem" : undefined}
+            style:padding-left={segment.kind === "parameter" ? "1px" : undefined}
+            style:padding-right={segment.kind === "parameter" ? "1px" : undefined}
+            style:padding-top={segment.kind === "parameter" ? "1px" : undefined}
+            style:padding-bottom={segment.kind === "parameter" ? "1px" : undefined}
+            style:margin-left={segment.kind === "parameter" ? "-1px" : undefined}
+            style:margin-right={segment.kind === "parameter" ? "-1px" : undefined}
+            style:background-color={segment.kind === "parameter"
+              ? "color-mix(in srgb, var(--vscode-focusBorder) 18%, transparent)"
+              : undefined}
+            style:box-shadow={segment.kind === "parameter"
+              ? "0 0 0 1px color-mix(in srgb, var(--vscode-focusBorder) 14%, transparent)"
+              : undefined}
+          >
+            {toPlaceholderMask(segment.text)}
+          </span>
+        {/each}
+      </div>
+    </div>
+  {/if}
+
   <input
     bind:this={inputElement}
     id={inputId}
@@ -307,6 +356,7 @@
     onkeyup={handleKeyup}
     onselect={handleSelectionChange}
     onblur={handleBlur}
+    onscroll={handleInputScroll}
     onmouseup={handleMouseup}
     onclick={handleClick}
   />
