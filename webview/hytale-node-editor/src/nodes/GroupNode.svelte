@@ -1,10 +1,10 @@
 <script lang="ts">
   import { useStore, useSvelteFlow } from "@xyflow/svelte";
-  import { type GroupNodeType } from "src/common";
-  import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
-  import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "src/constants";
-  import { isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
-  import { applyDocumentState, workspace } from "src/workspace.svelte";
+  import { type GroupNodeType } from "@node-editor/common";
+  import ZoomCompensatedNodeResizer from "@node-editor/components/ZoomCompensatedNodeResizer.svelte";
+  import { MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "@node-editor/constants";
+  import { isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import { applyDocumentState, workspace } from "@node-editor/workspace.svelte";
 
   const GROUP_TITLE_BASE_SIZE_PX = 18;
   const GROUP_TITLE_MAX_COMPENSATION_SCALE = 12;

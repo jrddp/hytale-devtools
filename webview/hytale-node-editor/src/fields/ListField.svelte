@@ -1,9 +1,9 @@
 <script lang="ts">
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
-  import { isObject } from "src/node-editor/utils/valueUtils";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import { isObject } from "@node-editor/node-editor/utils/valueUtils";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
 
   // TODO lists can technically be types other than string. definition requires investigation.
   let {
@@ -20,9 +20,17 @@
   let value = $state<unknown[]>([]);
 
   $effect(() => {
-    if (initialValue) {
+    if (Array.isArray(initialValue)) {
       value = initialValue.slice();
+      return;
     }
+
+    if (initialValue === undefined || initialValue === null) {
+      value = [];
+      return;
+    }
+
+    value = [initialValue];
   });
 
   function confirmValue(nextValue: unknown[]) {

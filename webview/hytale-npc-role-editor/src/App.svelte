@@ -1,10 +1,23 @@
 <script lang="ts">
-  import type { NpcRoleEditorExtensionToWebviewMessage } from "@shared/npc-role-editor/messageTypes";
-  import { onMount } from "svelte";
+  import type {
+    NpcRoleEditorExtensionToWebviewMessage,
+    NpcRoleEditorBootstrapMessage,
+  } from "@shared/npc-role-editor/messageTypes";
+  import type {
+    NodeEditorControlScheme,
+    NodeEditorPlatform,
+  } from "@shared/node-editor/messageTypes";
+  import {
+    createEmptyNodeEditorClipboardSelection,
+    type NodeEditorClipboardSelection,
+  } from "@shared/node-editor/clipboardTypes";
+  import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
+  import { onMount, tick } from "svelte";
   import { fade } from "svelte/transition";
   import type { VSCodeApi } from "./common";
-  import type { NpcPropertySection } from "./propertyModel";
+  import type { NpcPropertyField, NpcPropertySection, NpcSectionId } from "./propertyModel";
   import PropertySection from "./components/PropertySection.svelte";
+  import NpcGraphPage from "./components/NpcGraphPage.svelte";
   import { workspace } from "./workspace.svelte";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
@@ -14,43 +27,112 @@
   let scrollRootElement = $state<HTMLDivElement>();
   let scrollRootHeight = $state(0);
   let lastOutlineSectionHeight = $state(0);
-  let activeOutlineSectionId = $state<string | null>(null);
-  let pendingOutlineSectionId = $state<string | null>(null);
+  let activePropertySectionId = $state<string | null>(null);
+  let pendingPropertySectionId = $state<string | null>(null);
+  let activeGraphSectionId = $state<NpcSectionId | null>(null);
+  let nodeEditorControlScheme = $state<NodeEditorControlScheme>("mouse");
+  let nodeEditorPlatform = $state<NodeEditorPlatform>("win");
+  let nodeEditorClipboard = $state.raw<NodeEditorClipboardSelection>(
+    createEmptyNodeEditorClipboardSelection(),
+  );
+  let npcBehaviorGraphContexts = $state.raw<
+    Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
+  >({});
 
   $effect(() => {
     workspace.vscode = vscode;
   });
 
-  const outlineSections = $derived.by(() =>
-    workspace.propertySections.map(section => ({
+  const visiblePropertySections = $derived.by(() =>
+    workspace.propertySections.filter(section => !isGraphPageSection(section)),
+  );
+
+  const propertyNavigationEntries = $derived.by(() =>
+    visiblePropertySections.map(section => ({
       id: section.id,
       name: section.name,
       fieldCount: section.fields.length,
+      kind: "properties" as const,
     })),
   );
 
+  const graphNavigationEntries = $derived.by(() =>
+    workspace.propertySections
+      .filter(section => isGraphPageSection(section))
+      .map(section => ({
+        id: section.id,
+        name: section.name,
+        fieldCount: section.fields.length,
+        kind: "graph" as const,
+        section,
+      })),
+  );
+
+  const hasNavigationEntries = $derived(
+    propertyNavigationEntries.length > 0 || graphNavigationEntries.length > 0,
+  );
+
+  const getSectionById = (sectionId: string) =>
+    workspace.propertySections.find(candidate => candidate.id === sectionId) ?? null;
+
+  const renderNavigationButton = (entry: {
+    id: string;
+    name: string;
+    fieldCount: number;
+    kind: "properties" | "graph";
+  }) => ({
+    id: entry.id,
+    name: entry.name,
+    fieldCount: entry.fieldCount,
+    kind: entry.kind,
+    active: entry.id === activeNavigationEntryId,
+    onclick: () => {
+      const section = getSectionById(entry.id);
+      if (section) {
+        void navigateToSection(section);
+      }
+    },
+  });
+
+  const activeNavigationEntryId = $derived(activeGraphSectionId ?? activePropertySectionId);
+  const activeGraphSection = $derived.by(() =>
+    activeGraphSectionId
+      ? (workspace.propertySections.find(section => section.id === activeGraphSectionId) ?? null)
+      : null,
+  );
+  const activeGraphField = $derived(activeGraphSection?.fields[0] ?? null);
+  const activeGraphWorkspaceContext = $derived.by(() =>
+    activeGraphSection ? getGraphWorkspaceContextForSection(activeGraphSection) : undefined,
+  );
+
   $effect(() => {
-    if (!scrollRootElement) {
+    if (activeGraphSectionId && !activeGraphSection) {
+      activeGraphSectionId = null;
+    }
+  });
+
+  $effect(() => {
+    if (!scrollRootElement || activeGraphSectionId) {
       scrollRootHeight = 0;
       lastOutlineSectionHeight = 0;
-      activeOutlineSectionId = outlineSections[0]?.id ?? null;
+      activePropertySectionId = visiblePropertySections[0]?.id ?? null;
       return;
     }
 
     const updateLayoutMetrics = () => {
       scrollRootHeight = scrollRootElement.clientHeight;
       lastOutlineSectionHeight =
-        getOutlineSectionElement(outlineSections.at(-1)?.id ?? "")?.getBoundingClientRect()
+        getOutlineSectionElement(visiblePropertySections.at(-1)?.id ?? "")?.getBoundingClientRect()
           .height ?? 0;
     };
 
     const handleScroll = () => {
       updateLayoutMetrics();
-      updateActiveOutlineSection();
+      updateActivePropertySection();
     };
     const handleScrollEnd = () => {
-      pendingOutlineSectionId = null;
-      updateActiveOutlineSection();
+      pendingPropertySectionId = null;
+      updateActivePropertySection();
     };
 
     const resizeObserver =
@@ -61,8 +143,10 @@
           });
 
     resizeObserver?.observe(scrollRootElement);
-    getOutlineSectionElement(outlineSections.at(-1)?.id ?? "") &&
-      resizeObserver?.observe(getOutlineSectionElement(outlineSections.at(-1)?.id ?? "")!);
+    const lastSectionElement = getOutlineSectionElement(visiblePropertySections.at(-1)?.id ?? "");
+    if (lastSectionElement) {
+      resizeObserver?.observe(lastSectionElement);
+    }
 
     queueMicrotask(handleScroll);
     scrollRootElement.addEventListener("scroll", handleScroll, { passive: true });
@@ -78,37 +162,34 @@
   });
 
   $effect(() => {
-    if (outlineSections.length === 0) {
-      activeOutlineSectionId = null;
-      pendingOutlineSectionId = null;
+    if (visiblePropertySections.length === 0) {
+      activePropertySectionId = null;
+      pendingPropertySectionId = null;
       lastOutlineSectionHeight = 0;
       return;
     }
 
     if (
-      !activeOutlineSectionId ||
-      !outlineSections.some(section => section.id === activeOutlineSectionId)
+      !activePropertySectionId ||
+      !visiblePropertySections.some(section => section.id === activePropertySectionId)
     ) {
-      activeOutlineSectionId = outlineSections[0]?.id ?? null;
+      activePropertySectionId = visiblePropertySections[0]?.id ?? null;
     }
   });
 
   function handleMessage(event: MessageEvent<NpcRoleEditorExtensionToWebviewMessage>) {
     const message = event.data;
-    console.log("[NPC Role Editor: webview received]", summarizeExtensionMessageForLog(message));
 
     switch (message.type) {
       case "bootstrap":
-        workspace.setDevelopment(message.isDevelopment);
-        workspace.setDescriptors({
-          descriptors: message.descriptors,
-          descriptorPath: message.descriptorPath,
-          descriptorSource: message.descriptorSource,
-        });
+        applyBootstrapMessage(message);
         extensionError = "";
         return;
       case "update":
         workspace.setDocument(message);
+        return;
+      case "clipboard":
+        nodeEditorClipboard = message.clipboard;
         return;
       case "autocompletionValues":
         workspace.setAutocompleteValues(message.fieldId, message.values);
@@ -127,18 +208,79 @@
     }
   }
 
+  function applyBootstrapMessage(message: NpcRoleEditorBootstrapMessage) {
+    workspace.setDevelopment(message.isDevelopment);
+    workspace.setDescriptors({
+      descriptors: message.descriptors,
+      descriptorPath: message.descriptorPath,
+      descriptorSource: message.descriptorSource,
+    });
+    nodeEditorControlScheme = message.nodeEditorControlScheme;
+    nodeEditorPlatform = message.nodeEditorPlatform;
+    nodeEditorClipboard = message.nodeEditorClipboard;
+    npcBehaviorGraphContexts = message.npcBehaviorGraphContexts;
+  }
+
+  function isGraphPageSection(section: NpcPropertySection): boolean {
+    return !!getGraphWorkspaceContextForSection(section);
+  }
+
+  function getGraphWorkspaceContextForSection(
+    section: NpcPropertySection,
+  ): NodeEditorWorkspaceContext | undefined {
+    const graphField = getGraphRootField(section);
+    if (!graphField?.rootType) {
+      return undefined;
+    }
+
+    return getGraphWorkspaceContextByRootType(graphField.rootType);
+  }
+
+  function getGraphRootField(section: NpcPropertySection): NpcPropertyField | null {
+    if (section.fields.length !== 1) {
+      return null;
+    }
+
+    const [field] = section.fields;
+    return field.kind === "graph" ? field : null;
+  }
+
+  function getGraphWorkspaceContextByRootType(
+    rootType: string,
+  ): NodeEditorWorkspaceContext | undefined {
+    switch (rootType) {
+      case "Instructions":
+        return npcBehaviorGraphContexts.Instructions;
+      case "Instruction":
+        return npcBehaviorGraphContexts.Instruction;
+      case "Sensor":
+        return npcBehaviorGraphContexts.Sensor;
+      default:
+        return undefined;
+    }
+  }
+
   function getOutlineSectionElement(sectionId: string) {
     return scrollRootElement?.querySelector<HTMLElement>(
       `[data-outline-section-id="${sectionId}"]`,
     );
   }
 
-  function scrollToOutlineSection(sectionId: string) {
-    const sectionElement = getOutlineSectionElement(sectionId);
-    if (!sectionElement || !scrollRootElement) return;
+  async function navigateToSection(section: NpcPropertySection) {
+    if (isGraphPageSection(section)) {
+      activeGraphSectionId = section.id;
+      return;
+    }
 
-    pendingOutlineSectionId = sectionId;
-    activeOutlineSectionId = sectionId;
+    activeGraphSectionId = null;
+    pendingPropertySectionId = section.id;
+    activePropertySectionId = section.id;
+
+    await tick();
+    const sectionElement = getOutlineSectionElement(section.id);
+    if (!sectionElement || !scrollRootElement) {
+      return;
+    }
 
     const rootTop = scrollRootElement.getBoundingClientRect().top;
     const sectionTop = sectionElement.getBoundingClientRect().top;
@@ -149,20 +291,20 @@
     });
   }
 
-  function updateActiveOutlineSection() {
-    if (!scrollRootElement || outlineSections.length === 0) {
-      activeOutlineSectionId = outlineSections[0]?.id ?? null;
+  function updateActivePropertySection() {
+    if (!scrollRootElement || visiblePropertySections.length === 0) {
+      activePropertySectionId = visiblePropertySections[0]?.id ?? null;
       return;
     }
 
-    if (pendingOutlineSectionId) {
+    if (pendingPropertySectionId) {
       return;
     }
 
     const thresholdTop = scrollRootElement.getBoundingClientRect().top + OUTLINE_ACTIVE_OFFSET_PX;
-    let nextActiveSectionId = outlineSections[0]?.id ?? null;
+    let nextActiveSectionId = visiblePropertySections[0]?.id ?? null;
 
-    for (const section of outlineSections) {
+    for (const section of visiblePropertySections) {
       const sectionElement = getOutlineSectionElement(section.id);
       if (!sectionElement) continue;
 
@@ -174,24 +316,11 @@
       break;
     }
 
-    activeOutlineSectionId = nextActiveSectionId;
+    activePropertySectionId = nextActiveSectionId;
   }
 
   function openRawJson() {
     vscode.postMessage({ type: "openRawJson" });
-  }
-
-  function summarizeExtensionMessageForLog(message: NpcRoleEditorExtensionToWebviewMessage) {
-    switch (message.type) {
-      case "update":
-        return {
-          ...message,
-          textLength: message.text.length,
-          textPreview: message.text.slice(0, 200),
-        };
-      default:
-        return message;
-    }
   }
 
   function getDocumentTitle() {
@@ -249,68 +378,108 @@
       </div>
     </header>
 
-    <div
-      bind:this={scrollRootElement}
-      class="flex-1 min-h-0 overflow-auto"
-      style="overflow-anchor: none;"
-    >
-      <div class="p-4">
-        <div class="grid items-start gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
-          <aside class="space-y-4 lg:sticky lg:top-4">
+    <div class="flex-1 min-h-0 p-4">
+      <div class="grid h-full min-h-0 gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
+        <aside class="space-y-4 self-start">
+          {#if !hasNavigationEntries}
             <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
-              {#if outlineSections.length === 0}
-                <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
-              {:else}
+              <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
+            </div>
+          {:else}
+            {#if propertyNavigationEntries.length > 0}
+              <div class="space-y-2">
+                <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+                  <div class="space-y-2">
+                    {#each propertyNavigationEntries as entry (entry.id)}
+                      {@const button = renderNavigationButton(entry)}
+                      <button
+                        type="button"
+                        class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
+                        class:border-vsc-focus={button.active}
+                        class:bg-vsc-list-active-bg={button.active}
+                        class:text-vsc-list-active-fg={button.active}
+                        class:border-vsc-border={!button.active}
+                        class:bg-vsc-button-secondary-bg={!button.active}
+                        class:text-vsc-button-secondary-fg={!button.active}
+                        onclick={button.onclick}
+                      >
+                        <div class="truncate text-sm font-semibold">{button.name}</div>
+                        <div class="text-xs opacity-70">
+                          {button.fieldCount}
+                          {button.fieldCount === 1 ? "property" : "properties"}
+                        </div>
+                      </button>
+                    {/each}
+                  </div>
+                </div>
+              </div>
+            {/if}
+
+            {#if graphNavigationEntries.length > 0}
+              <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
                 <div class="space-y-2">
-                  {#each outlineSections as section (section.id)}
+                  {#each graphNavigationEntries as entry (entry.id)}
+                    {@const button = renderNavigationButton(entry)}
                     <button
                       type="button"
                       class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
-                      class:border-vsc-focus={section.id === activeOutlineSectionId}
-                      class:bg-vsc-list-active-bg={section.id === activeOutlineSectionId}
-                      class:text-vsc-list-active-fg={section.id === activeOutlineSectionId}
-                      class:border-vsc-border={section.id !== activeOutlineSectionId}
-                      class:bg-vsc-button-secondary-bg={section.id !== activeOutlineSectionId}
-                      class:text-vsc-button-secondary-fg={section.id !== activeOutlineSectionId}
-                      onclick={() => scrollToOutlineSection(section.id)}
+                      class:border-vsc-focus={button.active}
+                      class:bg-vsc-list-active-bg={button.active}
+                      class:text-vsc-list-active-fg={button.active}
+                      class:border-vsc-border={!button.active}
+                      class:bg-vsc-button-secondary-bg={!button.active}
+                      class:text-vsc-button-secondary-fg={!button.active}
+                      onclick={button.onclick}
                     >
-                      <div class="truncate text-sm font-semibold">{section.name}</div>
-                      <div class="text-xs opacity-70">
-                        {section.fieldCount}
-                        {section.fieldCount === 1 ? "property" : "properties"}
-                      </div>
+                      <div class="truncate text-sm font-semibold">{button.name}</div>
+                      <div class="text-xs opacity-70">Graph page</div>
                     </button>
                   {/each}
                 </div>
-              {/if}
-            </div>
-          </aside>
+              </div>
+            {/if}
+          {/if}
+        </aside>
 
-          <div class="min-w-0">
-            {#if workspace.documentParseError}
-              <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
-                {workspace.documentParseError}
-              </div>
-            {:else if workspace.propertySections.length === 0}
-              <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
-                No property sections are available for this NPC role yet.
-              </div>
-            {:else}
+        <div class="flex h-full min-h-0 min-w-0 self-stretch overflow-hidden flex-col">
+          {#if workspace.documentParseError}
+            <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
+              {workspace.documentParseError}
+            </div>
+          {:else if activeGraphSection && activeGraphField && activeGraphWorkspaceContext}
+            <NpcGraphPage
+              field={activeGraphField}
+              workspaceContext={activeGraphWorkspaceContext}
+              controlScheme={nodeEditorControlScheme}
+              platform={nodeEditorPlatform}
+              clipboard={nodeEditorClipboard}
+              autocompleteField={workspace.autocompleteField}
+              autocompleteValues={workspace.autocompleteValues}
+              documentVersion={workspace.documentVersion}
+              {vscode}
+            />
+          {:else if activeGraphSection}
+            <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
+              Graph editing is unavailable for this section.
+            </div>
+          {:else if visiblePropertySections.length === 0}
+            <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
+              No property sections are available for this NPC role yet.
+            </div>
+          {:else}
+            <div
+              bind:this={scrollRootElement}
+              class="h-full min-h-0 overflow-auto [overflow-anchor:none]"
+            >
               <div class="space-y-4">
-                {#each workspace.propertySections as section (section.id)}
+                {#each visiblePropertySections as section (section.id)}
                   <PropertySection {section} />
                 {/each}
 
-                <div
-                  aria-hidden="true"
-                  style:height={`${Math.max(
-                    scrollRootHeight - OUTLINE_ACTIVE_OFFSET_PX - lastOutlineSectionHeight,
-                    scrollRootHeight / 2,
-                  )}px`}
-                ></div>
+                <div aria-hidden="true" class="min-h-24 h-[50vh]"></div>
               </div>
-            {/if}
-          </div>
+            </div>
+          {/if}
         </div>
       </div>
     </div>

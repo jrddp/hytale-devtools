@@ -1,9 +1,9 @@
 import type { SvelteFlowStore, XYPosition } from "@xyflow/svelte";
-import type { FlowEdge, FlowNode } from "src/common";
-import { COMMENT_NODE_TYPE, DEFAULT_COMMENT_FONT_SIZE, GROUP_NODE_TYPE } from "src/constants";
-import { asCssColor, resolveComputedColor } from "src/node-editor/utils/colors";
-import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
-import { workspace, type NodeRenderDetailMode } from "src/workspace.svelte";
+import type { FlowEdge, FlowNode } from "@node-editor/common";
+import { COMMENT_NODE_TYPE, DEFAULT_COMMENT_FONT_SIZE, GROUP_NODE_TYPE } from "@node-editor/constants";
+import { asCssColor, resolveComputedColor } from "@node-editor/node-editor/utils/colors";
+import { getAbsolutePosition } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+import { workspace, type NodeRenderDetailMode } from "@node-editor/workspace.svelte";
 
 export type LowDetailRenderItem = {
   id: string;

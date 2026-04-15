@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
-  import ObjectField from "src/fields/ObjectField.svelte";
-  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
+  import ObjectField from "@node-editor/fields/ObjectField.svelte";
+  import { buildFieldInputId } from "@node-editor/node-editor/utils/fieldUtils";
   import BooleanField from "./BooleanField.svelte";
   import ColorField from "./ColorField.svelte";
   import FilePathField from "./FilePathField.svelte";

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
 
   let {
     inputId,
@@ -19,7 +19,7 @@
   const step = $derived(isFloat ? "any" : "1");
 
   let value = $state(0);
-  let lastCommittedValue = $state(0);
+  let lastCommittedValue = 0;
 
   $effect(() => {
     if (initialValue !== lastCommittedValue) {

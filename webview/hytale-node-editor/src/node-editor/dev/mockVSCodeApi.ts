@@ -6,8 +6,8 @@ import {
 } from "@shared/node-editor/messageTypes";
 import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
-import { type VSCodeApi } from "src/common";
-import { mockedThemeVars } from "src/node-editor/dev/mockVSCodeTheme";
+import { type VSCodeApi } from "@node-editor/common";
+import { mockedThemeVars } from "@node-editor/node-editor/dev/mockVSCodeTheme";
 import basicBiomeAsset from "./Basic.json";
 import mockedWorkspaceContext from "./mockedWorkspaceContext.json";
 

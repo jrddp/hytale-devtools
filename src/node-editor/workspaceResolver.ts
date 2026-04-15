@@ -135,6 +135,32 @@ export class WorkspaceRuntime {
     };
   }
 
+  resolveWorkspaceContextByWorkspaceRoot(
+    workspaceName: string,
+    rootId: string,
+  ): NodeEditorWorkspaceContext | null {
+    const workspace = this.nodeEditorWorkspaces[workspaceName];
+    if (!workspace) {
+      return null;
+    }
+
+    const rootDefinition = workspace.roots[rootId];
+    if (!rootDefinition) {
+      this.logger.warn(
+        `Root definition "${rootId}" not found in workspace "${workspaceName}".`,
+      );
+      return null;
+    }
+
+    return {
+      nodeTemplatesById: workspace.nodeTemplatesById,
+      variantKindsById: workspace.variantKindsById,
+      templateCategories: workspace.templateCategories,
+      rootTemplateOrVariantId: rootDefinition.RootNodeType,
+      rootMenuName: rootDefinition.MenuName,
+    };
+  }
+
   private loadNodeEditorWorkspaces(): Record<string, NodeEditorWorkspace> {
     const workspaces: Record<string, NodeEditorWorkspace> = {};
 

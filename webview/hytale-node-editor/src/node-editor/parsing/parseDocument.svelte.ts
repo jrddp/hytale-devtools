@@ -1,7 +1,7 @@
 import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import { parseAssetDocumentToGraphDocument } from "@shared/node-editor/graphDocument";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
-import { workspace } from "src/workspace.svelte";
+import { workspace } from "@node-editor/workspace.svelte";
 import { type WorkspaceState } from "../../workspace.svelte";
 import { graphDocumentToWorkspaceState } from "../utils/graphDocument";
 

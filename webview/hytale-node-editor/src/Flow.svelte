@@ -19,25 +19,25 @@
   import AddNodeMenu, {
     type AddMenuConnectionFilter,
     type AddMenuProps,
-  } from "src/components/AddNodeMenu.svelte";
-  import DebugPanel from "src/components/DebugPanel.svelte";
-  import LowDetailNodeCanvasOverlay from "src/components/LowDetailNodeCanvasOverlay.svelte";
-  import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
-  import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
-  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
-  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
-  import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
-  import { createConnectionPreviewController } from "src/node-editor/utils/connectionPreview.svelte";
+  } from "@node-editor/components/AddNodeMenu.svelte";
+  import DebugPanel from "@node-editor/components/DebugPanel.svelte";
+  import LowDetailNodeCanvasOverlay from "@node-editor/components/LowDetailNodeCanvasOverlay.svelte";
+  import NodeEditorActionMenu from "@node-editor/components/NodeEditorActionMenu.svelte";
+  import NodeHelpPanel from "@node-editor/components/NodeHelpPanel.svelte";
+  import NodeSearchPanel from "@node-editor/components/NodeSearchPanel.svelte";
+  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "@node-editor/constants";
+  import { getAutoPositionNodeUpdates } from "@node-editor/node-editor/layout/autoLayout";
+  import { createConnectionPreviewController } from "@node-editor/node-editor/utils/connectionPreview.svelte";
   import {
     buildIndexedBezierEdgeGeometry,
     createEdgeSelectionBounds,
     edgeGeometryIntersectsRect,
     type IndexedBezierEdgeGeometry,
-  } from "src/node-editor/utils/edgeGeometry";
-  import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
-  import { createHandlePriorityController } from "src/node-editor/utils/handlePriority.svelte";
-  import { createUuidV4 } from "src/node-editor/utils/idUtils";
-  import { createLowDetailController } from "src/node-editor/utils/lowDetailController.svelte";
+  } from "@node-editor/node-editor/utils/edgeGeometry";
+  import { isShortcutBlockedByEditableTarget } from "@node-editor/node-editor/utils/flowKeyboard";
+  import { createHandlePriorityController } from "@node-editor/node-editor/utils/handlePriority.svelte";
+  import { createUuidV4 } from "@node-editor/node-editor/utils/idUtils";
+  import { createLowDetailController } from "@node-editor/node-editor/utils/lowDetailController.svelte";
   import {
     getCompatibleInputHandleId,
     getCompatibleOutputHandleId,
@@ -50,11 +50,11 @@
     pruneConflictingEdges,
     recalculateGroupParents,
     resolveFitViewNodeIds,
-  } from "src/node-editor/utils/nodeUtils.svelte";
+  } from "@node-editor/node-editor/utils/nodeUtils.svelte";
   import {
     type NodeRenderDetailMode,
     useNodeEditorSession,
-  } from "src/workspace.svelte";
+  } from "@node-editor/workspace.svelte";
   import { tick, untrack } from "svelte";
   import type { FlowEdge, FlowNode } from "./common";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
@@ -559,7 +559,9 @@
           break;
 
         case "view-raw-json":
-          workspace.postMessageToHost({ type: "openRawJson" });
+          if (workspace.allowOpenRawJson) {
+            workspace.postMessageToHost({ type: "openRawJson" });
+          }
           break;
 
         case "help-and-hotkeys":

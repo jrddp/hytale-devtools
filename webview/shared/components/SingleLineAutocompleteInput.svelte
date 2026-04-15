@@ -51,7 +51,7 @@
     $props();
 
   let value = $state("");
-  let lastCommittedValue = $state("");
+  let lastCommittedValue = "";
   let isFocused = $state(false);
   let isEntireValueSelected = $state(false);
   let activeAutocompleteIndex = $state(-1);
@@ -69,9 +69,10 @@
   });
 
   $effect(() => {
-    if (initialValue !== lastCommittedValue) {
-      value = initialValue ?? "";
-      lastCommittedValue = initialValue ?? "";
+    const nextInitialValue = initialValue ?? "";
+    if (nextInitialValue !== lastCommittedValue) {
+      value = nextInitialValue;
+      lastCommittedValue = nextInitialValue;
     }
   });
 

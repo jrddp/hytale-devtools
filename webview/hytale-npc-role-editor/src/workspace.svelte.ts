@@ -243,6 +243,23 @@ export class Workspace {
     return true;
   }
 
+  updateGraphFieldValue(fieldPath: string, value: unknown, preservedData?: Record<string, unknown>) {
+    const field = this.findField(fieldPath);
+    if (!field || field.kind !== "graph") {
+      return false;
+    }
+
+    field.value = {
+      kind: "literal",
+      value: structuredClone(value),
+    };
+    field.isSet = true;
+    field.preservedData = preservedData ? structuredClone(preservedData) : undefined;
+    this.recomputeDerivedState();
+    this.applyDocumentState(`Edit ${fieldPath}`);
+    return true;
+  }
+
   updateFieldComputeExpression(fieldPath: string, expression: string) {
     const field = this.findField(fieldPath);
     if (!field) {
@@ -548,8 +565,10 @@ export class Workspace {
     return true;
   }
 
-  addTopLevelInstructionRoot(fieldPath: "InteractionInstruction" | "DeathInstruction") {
-    return this.updateFieldValue(fieldPath, {
+  addTopLevelInstructionRoot(
+    fieldPath: "Instructions" | "InteractionInstruction" | "DeathInstruction",
+  ) {
+    const defaultInstructionRoot = {
       Sensor: {
         Type: "Any",
       },
@@ -558,7 +577,12 @@ export class Workspace {
           Type: "Nothing",
         },
       ],
-    });
+    };
+
+    return this.updateFieldValue(
+      fieldPath,
+      fieldPath === "Instructions" ? [defaultInstructionRoot] : defaultInstructionRoot,
+    );
   }
 
   addStateTransition(fieldPath: string) {

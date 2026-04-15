@@ -5,6 +5,7 @@
     "paths": {
       "@shared/*": ["../../src/shared/*"],
       "@webview-shared/*": ["../shared/*"],
+      "@node-editor/*": ["../hytale-node-editor/src/*"],
       "src/*": ["./src/*"]
     }
   },
@@ -12,6 +13,8 @@
     "src/**/*.ts",
     "src/**/*.svelte",
     "../../src/shared/**/*.ts",
+    "../hytale-node-editor/src/**/*.ts",
+    "../hytale-node-editor/src/**/*.svelte",
     "../shared/**/*.ts",
     "../shared/**/*.svelte"
   ],

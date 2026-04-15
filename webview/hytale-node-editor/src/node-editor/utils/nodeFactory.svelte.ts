@@ -10,7 +10,7 @@ import type {
   LinkNodeType,
   NodeBaseData,
   RawJsonNodeType,
-} from "src/common";
+} from "@node-editor/common";
 import {
   COMMENT_NODE_TYPE,
   DATA_NODE_TYPE,
@@ -25,9 +25,9 @@ import {
   LINK_OUTPUT_HANDLE_ID,
   RAW_JSON_NODE_COLOR,
   RAW_JSON_NODE_TYPE,
-} from "src/constants";
-import { createNodeId, createUuidV4 } from "src/node-editor/utils/idUtils";
-import { getDefaultInputPin } from "src/node-editor/utils/nodeUtils.svelte";
+} from "@node-editor/constants";
+import { createNodeId, createUuidV4 } from "@node-editor/node-editor/utils/idUtils";
+import { getDefaultInputPin } from "@node-editor/node-editor/utils/nodeUtils.svelte";
 
 export const GENERIC_CATEGORY = "Generic";
 export const GROUP_TEMPLATE_ID = "$Group";

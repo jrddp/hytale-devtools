@@ -1,6 +1,6 @@
 import { type SvelteFlowStore } from "@xyflow/svelte";
 import { XYHandle } from "@xyflow/system";
-import type { FlowEdge, FlowNode } from "src/common";
+import type { FlowEdge, FlowNode } from "@node-editor/common";
 
 const HANDLE_PRIORITY_EDGE_TARGET_SELECTOR =
   ".svelte-flow__edge, .svelte-flow__edge-path, .svelte-flow__edge-interaction";

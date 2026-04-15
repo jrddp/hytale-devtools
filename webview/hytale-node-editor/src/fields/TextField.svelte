@@ -1,10 +1,10 @@
 <script lang="ts">
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { useNodeEditorSession } from "src/workspace.svelte";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { IndexReference } from "@shared/indexTypes";
-  import { focusNextEditableInNode } from "src/node-editor/utils/focusNavigation";
+  import { focusNextEditableInNode } from "@node-editor/node-editor/utils/focusNavigation";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
 
   let {
@@ -25,7 +25,7 @@
   const workspace = useNodeEditorSession();
 
   let value = $state("");
-  let lastCommittedValue = $state("");
+  let lastCommittedValue = "";
 
   $effect(() => {
     if (initialValue !== lastCommittedValue) {

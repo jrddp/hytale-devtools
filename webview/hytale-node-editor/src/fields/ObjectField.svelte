@@ -1,8 +1,8 @@
 <script lang="ts">
   import { type NodeField } from "@shared/node-editor/workspaceTypes";
-  import FieldEditor from "src/fields/FieldEditor.svelte";
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import { type FieldProps } from "src/node-editor/utils/fieldUtils";
+  import FieldEditor from "@node-editor/fields/FieldEditor.svelte";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import { type FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
 
   let {
     nodeId,

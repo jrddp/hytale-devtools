@@ -6,19 +6,19 @@
   } from "@shared/node-editor/messageTypes";
   import { type NodeEditorGraphEdit } from "@shared/node-editor/graphTypes";
   import { type Viewport } from "@xyflow/svelte";
-  import { type VSCodeApi } from "src/common";
+  import { type VSCodeApi } from "@node-editor/common";
   import {
     applyGraphEditToWorkspaceState,
     graphDocumentToWorkspaceState,
     graphEditRequiresDocumentRefresh,
-  } from "src/node-editor/utils/graphDocument";
-  import { sortVariantsToBottom } from "src/node-editor/utils/fieldUtils";
+  } from "@node-editor/node-editor/utils/graphDocument";
+  import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
   import {
     EDITABLE_SELECTOR,
     selectAllActiveEditableText,
-  } from "src/node-editor/utils/flowKeyboard";
-  import NodeEditorHost from "src/NodeEditorHost.svelte";
-  import { createNodeEditorSession, setActiveNodeEditorSession } from "src/workspace.svelte";
+  } from "@node-editor/node-editor/utils/flowKeyboard";
+  import NodeEditorHost from "@node-editor/NodeEditorHost.svelte";
+  import { createNodeEditorSession, setActiveNodeEditorSession } from "@node-editor/workspace.svelte";
   import { onMount } from "svelte";
 
   const { vscode } = $props<{ vscode: VSCodeApi }>();

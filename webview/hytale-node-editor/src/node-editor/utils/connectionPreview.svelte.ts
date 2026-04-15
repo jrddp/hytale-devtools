@@ -1,7 +1,7 @@
 import type { ConnectionState } from "@xyflow/system";
-import type { FlowEdge } from "src/common";
-import { pruneConflictingEdges } from "src/node-editor/utils/nodeUtils.svelte";
-import { workspace } from "src/workspace.svelte";
+import type { FlowEdge } from "@node-editor/common";
+import { pruneConflictingEdges } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+import { workspace } from "@node-editor/workspace.svelte";
 
 type SourcePendingConnection = { source: string; sourceHandle: string };
 type TargetPendingConnection = { target: string; targetHandle: string };

@@ -52,11 +52,18 @@ const SECTION_NAMES: Record<NpcPropertySection["id"], string> = {
   modify: "Modify",
   componentMeta: "Component Metadata",
   content: "Content",
+  instructions: "Instructions",
   interactionInstruction: "Interaction Instruction",
   deathInstruction: "Death Instruction",
   motionControllerList: "Motion Controllers",
   stateTransitions: "State Transitions",
 };
+
+const TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS = [
+  "$NodeId",
+  "$Comment",
+  "$NodeEditorMetadata",
+] as const;
 
 export function buildNpcPropertyState({
   document,
@@ -91,6 +98,7 @@ export function buildNpcPropertyState({
   }
 
   if (roleType === "Generic" || roleType === "Abstract") {
+    sections.push(buildTopLevelInstructionSection(document, "instructions"));
     sections.push(buildTopLevelInstructionSection(document, "interactionInstruction"));
     sections.push(buildTopLevelInstructionSection(document, "deathInstruction"));
     sections.push(buildStateTransitionsSection(document, descriptors));
@@ -223,16 +231,23 @@ function buildParametersSection(
 
 function buildTopLevelInstructionSection(
   document: NpcRoleJson,
-  sectionId: "interactionInstruction" | "deathInstruction",
+  sectionId: "instructions" | "interactionInstruction" | "deathInstruction",
 ): NpcPropertySection {
-  const key = sectionId === "interactionInstruction" ? "InteractionInstruction" : "DeathInstruction";
+  const key =
+    sectionId === "instructions"
+      ? "Instructions"
+      : sectionId === "interactionInstruction"
+        ? "InteractionInstruction"
+        : "DeathInstruction";
   const rawValue = document[key];
 
   return {
     id: sectionId,
     name: SECTION_NAMES[sectionId],
     description:
-      sectionId === "interactionInstruction"
+      sectionId === "instructions"
+        ? "Top-level ordered instruction list for the role."
+        : sectionId === "interactionInstruction"
         ? "Single root instruction that controls interaction availability and interaction-side effects."
         : "Single root instruction that runs when the NPC dies.",
     fields: [
@@ -242,10 +257,10 @@ function buildTopLevelInstructionSection(
         label: SECTION_NAMES[sectionId],
         fieldPath: key,
         kind: "graph",
-        rootType: "Instruction",
+        rootType: sectionId === "instructions" ? "Instructions" : "Instruction",
         value: {
           kind: "literal",
-          value: cloneJsonLike(rawValue ?? {}),
+          value: cloneJsonLike(rawValue ?? (sectionId === "instructions" ? [] : {})),
         },
         description:
           "Embedded graph editing is deferred in this slice. The underlying JSON remains editable here.",
@@ -255,11 +270,29 @@ function buildTopLevelInstructionSection(
         canUnset: true,
         isDescriptionEditable: false,
         isSet: rawValue !== undefined,
+        preservedData:
+          sectionId === "instructions"
+            ? buildInstructionsGraphMetadataPreservedData(document)
+            : undefined,
         ui: {},
       },
     ],
     ui: {},
   };
+}
+
+function buildInstructionsGraphMetadataPreservedData(
+  document: NpcRoleJson,
+): Record<string, unknown> | undefined {
+  const preservedData: Record<string, unknown> = {};
+
+  for (const key of TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS) {
+    if (key in document) {
+      preservedData[key] = cloneJsonLike(document[key]);
+    }
+  }
+
+  return Object.keys(preservedData).length > 0 ? preservedData : undefined;
 }
 
 function buildMotionControllerListSection(
@@ -806,10 +839,20 @@ function buildPreservedTopLevelFields(document: NpcRoleJson): Record<string, unk
 
     if (
       (document.Type === "Generic" || document.Type === "Abstract") &&
-      (key === "InteractionInstruction" ||
+      (key === "Instructions" ||
+        key === "InteractionInstruction" ||
         key === "DeathInstruction" ||
         key === "MotionControllerList" ||
         key === "StateTransitions")
+    ) {
+      continue;
+    }
+
+    if (
+      (document.Type === "Generic" || document.Type === "Abstract") &&
+      TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS.includes(
+        key as (typeof TOP_LEVEL_INSTRUCTIONS_GRAPH_METADATA_KEYS)[number],
+      )
     ) {
       continue;
     }

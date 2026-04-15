@@ -1034,6 +1034,7 @@ describe("npc property model symbol enrichment", () => {
 
     expect(state.sections.map(section => section.id)).toEqual([
       "parameters",
+      "instructions",
       "interactionInstruction",
       "deathInstruction",
       "stateTransitions",
@@ -1041,6 +1042,12 @@ describe("npc property model symbol enrichment", () => {
       "roleAttributes",
     ]);
 
+    expect(state.sections.find(section => section.id === "instructions")?.fields[0]).toMatchObject({
+      kind: "graph",
+      rootType: "Instructions",
+      fieldPath: "Instructions",
+      isSet: false,
+    });
     expect(state.sections.find(section => section.id === "interactionInstruction")?.fields[0]).toMatchObject({
       kind: "graph",
       fieldPath: "InteractionInstruction",
@@ -1085,6 +1092,7 @@ describe("npc property model symbol enrichment", () => {
 
     expect(state.sections.map(section => section.id)).toEqual([
       "parameters",
+      "instructions",
       "interactionInstruction",
       "deathInstruction",
       "stateTransitions",
@@ -1139,6 +1147,100 @@ describe("npc property model symbol enrichment", () => {
 
     const serialized = serializeNpcPropertyState(state);
     expect(serialized.MotionControllerList).toEqual(document.MotionControllerList);
+  });
+
+  test("round-trips top-level instructions through the structured section", () => {
+    const document = createGenericDocument({
+      structured: {
+        Instructions: [
+          {
+            Sensor: {
+              Type: "Any",
+            },
+            Actions: [
+              {
+                Type: "Nothing",
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+
+    expect(state.sections.find(section => section.id === "instructions")?.fields[0]).toMatchObject({
+      kind: "graph",
+      rootType: "Instructions",
+      fieldPath: "Instructions",
+      isSet: true,
+      value: {
+        kind: "literal",
+        value: document.Instructions,
+      },
+    });
+
+    expect(serializeNpcPropertyState(state).Instructions).toEqual(document.Instructions);
+  });
+
+  test("preserves top-level instructions graph metadata separately from the array value", () => {
+    const metadata = {
+      $Nodes: {
+        "Structural.InstructionListRoot-root": {
+          $Position: {
+            $x: 10,
+            $y: 20,
+          },
+        },
+      },
+      $FloatingNodes: [],
+      $Links: {},
+      $Groups: [],
+      $Comments: [],
+      $WorkspaceID: "NPC Behavior",
+    };
+    const document = createGenericDocument({
+      structured: {
+        Instructions: [
+          {
+            Sensor: {
+              Type: "Any",
+            },
+            Actions: [
+              {
+                Type: "Nothing",
+              },
+            ],
+          },
+        ],
+        $NodeId: "Structural.InstructionListRoot-root",
+        $Comment: "top-level graph comment",
+        $NodeEditorMetadata: metadata,
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+
+    const instructionsField = state.sections.find(section => section.id === "instructions")?.fields[0];
+    expect(instructionsField?.preservedData).toEqual({
+      $NodeId: "Structural.InstructionListRoot-root",
+      $Comment: "top-level graph comment",
+      $NodeEditorMetadata: metadata,
+    });
+
+    const serialized = serializeNpcPropertyState(state);
+    expect(serialized.Instructions).toEqual(document.Instructions);
+    expect(serialized.$NodeId).toEqual("Structural.InstructionListRoot-root");
+    expect(serialized.$Comment).toEqual("top-level graph comment");
+    expect(serialized.$NodeEditorMetadata).toEqual(metadata);
   });
 
   test("seeds walk as the default motion controller when adding the first controller", () => {

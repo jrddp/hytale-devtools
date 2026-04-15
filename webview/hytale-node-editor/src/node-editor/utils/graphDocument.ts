@@ -19,8 +19,8 @@ import type {
   NodeResizeChange,
 } from "@shared/node-editor/graphTypes";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
-import type { FlowEdge, FlowNode } from "src/common";
-import type { WorkspaceState } from "src/workspace.svelte";
+import type { FlowEdge, FlowNode } from "@node-editor/common";
+import type { WorkspaceState } from "@node-editor/workspace.svelte";
 
 function cloneGraphEdge(edge: NodeEditorGraphEdge): NodeEditorGraphEdge {
   return { ...edge };

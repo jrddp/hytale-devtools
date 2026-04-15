@@ -22,6 +22,7 @@ export type NpcSectionId =
   | "modify"
   | "componentMeta"
   | "content"
+  | "instructions"
   | "interactionInstruction"
   | "deathInstruction"
   | "motionControllerList"

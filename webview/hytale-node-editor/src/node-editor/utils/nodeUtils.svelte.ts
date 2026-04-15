@@ -8,9 +8,9 @@ import {
   type FlowNode,
   type FlowNodeData,
   type GroupNodeType,
-} from "src/common";
-import { GROUP_NODE_TYPE } from "src/constants";
-import { workspace } from "src/workspace.svelte";
+} from "@node-editor/common";
+import { GROUP_NODE_TYPE } from "@node-editor/constants";
+import { workspace } from "@node-editor/workspace.svelte";
 
 export type PendingConnection =
   | {

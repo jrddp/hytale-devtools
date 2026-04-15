@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "../../shared/theme.css";
 
+@source "../../hytale-node-editor/src";
+
 @theme inline {
   --color-vsc-bg: var(--vscode-editor-background);
   --color-vsc-border: var(
@@ -55,6 +57,16 @@
     font-family: var(--vscode-font-family, sans-serif);
     color: var(--vscode-editor-foreground);
     background: var(--color-vsc-bg);
+  }
+
+  .svelte-flow__handle.connecting {
+    cursor: not-allowed !important;
+    background-color: red !important;
+  }
+
+  .svelte-flow__selection-wrapper,
+  .svelte-flow__nodesselection-rect {
+    cursor: grab;
   }
 
   button,

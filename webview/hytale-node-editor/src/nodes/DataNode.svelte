@@ -1,8 +1,8 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
-  import { type DataNodeType } from "src/common";
-  import { createNodePropertiesUpdatedEdit } from "src/node-editor/utils/graphDocument";
-  import { applyGraphEdit } from "src/workspace.svelte";
+  import { type DataNodeType } from "@node-editor/common";
+  import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
+  import { applyGraphEdit } from "@node-editor/workspace.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
 

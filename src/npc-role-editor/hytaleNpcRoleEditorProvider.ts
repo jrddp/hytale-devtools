@@ -1,9 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vscode from "vscode";
-import { assetCacheRuntime, indexes, LOGGER } from "../extension";
+import { assetCacheRuntime, indexes, LOGGER, workspaceRuntime } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
+import {
+  createEmptyNodeEditorClipboardSelection,
+  type NodeEditorClipboardSelection,
+} from "../shared/node-editor/clipboardTypes";
 import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
@@ -16,6 +20,10 @@ import type {
   NpcRoleEditorVariantReferenceState,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
+import type {
+  NodeEditorControlScheme,
+  NodeEditorPlatform,
+} from "../shared/node-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../utils/hytalePaths";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
@@ -31,6 +39,9 @@ const NPC_DESCRIPTOR_FILE_NAME = "npc_descriptors.json";
 const WORKSPACE_NPC_ROLE_GLOB = "**/Server/NPC/Roles/**/*.json";
 const WORKSPACE_NPC_ROLE_EXCLUDE_GLOB = "**/{node_modules,.git,dist,build,.svelte-kit}/**";
 const DEFAULT_EDIT_LABEL = "Edit NPC Role";
+const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
+const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
+const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
 
 let activeProvider: HytaleNpcRoleEditorProvider | null = null;
 
@@ -112,6 +123,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
 
   private readonly webviewPanelsByDocumentUri = new Map<string, Set<vscode.WebviewPanel>>();
   private activeDocumentUri: string | undefined;
+  private copiedSelection: NodeEditorClipboardSelection = createEmptyNodeEditorClipboardSelection();
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
@@ -163,6 +175,23 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
             type: "bootstrap",
             ...loadedDescriptors,
             isDevelopment: this.context.extensionMode === vscode.ExtensionMode.Development,
+            nodeEditorControlScheme: readNodeEditorControlScheme(),
+            nodeEditorPlatform: readNodeEditorPlatform(),
+            nodeEditorClipboard: this.copiedSelection,
+            npcBehaviorGraphContexts: {
+              Instructions: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+                "NPC Behavior",
+                "Instructions",
+              ) ?? undefined,
+              Instruction: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+                "NPC Behavior",
+                "Instruction",
+              ) ?? undefined,
+              Sensor: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+                "NPC Behavior",
+                "Sensor",
+              ) ?? undefined,
+            },
           };
           await webviewPanel.webview.postMessage(payload);
         } catch (error) {
@@ -189,10 +218,6 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
       });
 
       webviewPanel.webview.onDidReceiveMessage((message: NpcRoleEditorWebviewToExtensionMessage) => {
-        console.log(
-          "[NPC Role Editor: extension received]",
-          summarizeWebviewMessageForLog(message),
-        );
         switch (message.type) {
           case "ready":
             void sendBootstrap().finally(() => {
@@ -201,6 +226,15 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
             return;
           case "openRawJson":
             void this.openRawJsonInTextEditor();
+            return;
+          case "clipboard":
+            void this.updateClipboard(message.clipboard);
+            return;
+          case "openKeybindings":
+            void this.openNodeEditorKeybindings(message.query);
+            return;
+          case "update-setting":
+            void this.updateNodeEditorSetting(message, webviewPanel.webview);
             return;
           case "autocompleteRequest":
             void this.autocompleteRequest(message, document.uri, webviewPanel.webview);
@@ -375,6 +409,20 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     await webview.postMessage(payload);
   }
 
+  private async updateClipboard(clipboard: NodeEditorClipboardSelection): Promise<void> {
+    this.copiedSelection = clipboard;
+
+    const payload: NpcRoleEditorExtensionToWebviewMessage = {
+      type: "clipboard",
+      clipboard: this.copiedSelection,
+    };
+
+    const allPanels = Array.from(this.webviewPanelsByDocumentUri.values()).flatMap(panels =>
+      Array.from(panels),
+    );
+    await Promise.all(allPanels.map(panel => panel.webview.postMessage(payload)));
+  }
+
   public async postContextAction(message: NpcRoleEditorContextActionMessage): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
@@ -457,6 +505,36 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     await vscode.commands.executeCommand("workbench.action.reopenTextEditor");
   }
 
+  private async openNodeEditorKeybindings(query: string | undefined): Promise<void> {
+    await vscode.commands.executeCommand(
+      "workbench.action.openGlobalKeybindings",
+      query ?? "Hytale Node Editor",
+    );
+  }
+
+  private async updateNodeEditorSetting(
+    message: Extract<NpcRoleEditorWebviewToExtensionMessage, { type: "update-setting" }>,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    try {
+      switch (message.setting) {
+        case "controlScheme":
+          await vscode.workspace
+            .getConfiguration(EXTENSION_CONFIG_NAMESPACE)
+            .update(
+              NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY,
+              message.value,
+              vscode.ConfigurationTarget.Global,
+            );
+          return;
+      }
+    } catch (error) {
+      const details = error instanceof Error ? error.message : String(error);
+      LOGGER.error(`Failed to update node editor setting "${message.setting}": ${details}`);
+      await this.postError(webview, "Failed to persist node editor setting.");
+    }
+  }
+
   private async applyWebviewEdits(
     document: HytaleNpcRoleDocument,
     message: NpcRoleEditorApplyMessage,
@@ -511,17 +589,27 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
   }
 }
 
-function summarizeWebviewMessageForLog(message: NpcRoleEditorWebviewToExtensionMessage) {
-  switch (message.type) {
-    case "apply":
-      return {
-        ...message,
-        textLength: message.text.length,
-        textPreview: message.text.slice(0, 200),
-      };
-    default:
-      return message;
+function readNodeEditorControlScheme(): NodeEditorControlScheme {
+  const configuredValue = vscode.workspace
+    .getConfiguration(EXTENSION_CONFIG_NAMESPACE)
+    .get<string>(NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY);
+  if (configuredValue === "trackpad") {
+    return "trackpad";
   }
+
+  return DEFAULT_NODE_EDITOR_CONTROL_SCHEME;
+}
+
+function readNodeEditorPlatform(): NodeEditorPlatform {
+  if (process.platform === "darwin") {
+    return "mac";
+  }
+
+  if (process.platform === "linux") {
+    return "linux";
+  }
+
+  return "win";
 }
 
 async function resolveVariantReferenceState(

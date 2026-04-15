@@ -1,5 +1,5 @@
 <script lang="ts">
-  import HoverTooltip from "src/components/HoverTooltip.svelte";
+  import HoverTooltip from "@node-editor/components/HoverTooltip.svelte";
   import type { Snippet } from "svelte";
 
   let {

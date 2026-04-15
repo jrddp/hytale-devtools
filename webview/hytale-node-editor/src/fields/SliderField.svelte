@@ -1,7 +1,7 @@
 <script lang="ts">
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
 
   let {
     inputId,
@@ -17,7 +17,7 @@
   const step = 1;
 
   let value = $state(min);
-  let lastCommittedValue = $state(min);
+  let lastCommittedValue = min;
 
   $effect(() => {
     if (initialValue !== lastCommittedValue) {

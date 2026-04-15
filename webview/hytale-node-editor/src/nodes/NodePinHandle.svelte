@@ -1,7 +1,7 @@
 <script lang="ts">
   import { type NodePin } from "@shared/node-editor/workspaceTypes";
   import { Handle, Position } from "@xyflow/svelte";
-  import { PIN_WIDTH_PX } from "src/constants";
+  import { PIN_WIDTH_PX } from "@node-editor/constants";
   import { asCssColor } from "../node-editor/utils/colors";
 
   const DIAMETER_PX = PIN_WIDTH_PX * 2;

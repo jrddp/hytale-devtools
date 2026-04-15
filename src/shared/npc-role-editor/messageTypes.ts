@@ -1,5 +1,11 @@
 import type { NpcDescriptorDocument, NpcDescriptorSource } from "./descriptorTypes";
 import type { IndexReference } from "../indexTypes";
+import type { NodeEditorClipboardSelection } from "../node-editor/clipboardTypes";
+import type {
+  NodeEditorControlScheme,
+  NodeEditorPlatform,
+} from "../node-editor/messageTypes";
+import type { NodeEditorWorkspaceContext } from "../node-editor/workspaceTypes";
 
 export type NpcRoleEditorBootstrapMessage = {
   type: "bootstrap";
@@ -7,6 +13,10 @@ export type NpcRoleEditorBootstrapMessage = {
   descriptorPath: string;
   descriptorSource: NpcDescriptorSource;
   isDevelopment: boolean;
+  nodeEditorControlScheme: NodeEditorControlScheme;
+  nodeEditorPlatform: NodeEditorPlatform;
+  nodeEditorClipboard: NodeEditorClipboardSelection;
+  npcBehaviorGraphContexts: Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>;
 };
 
 export type NpcRoleEditorDocumentUpdateMessage = {
@@ -64,6 +74,7 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorBootstrapMessage
   | NpcRoleEditorDocumentUpdateMessage
   | NpcRoleEditorErrorMessage
+  | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | NpcRoleEditorAutocompletionValuesMessage
   | NpcRoleEditorVariantReferenceUpdateMessage
   | NpcRoleEditorContextActionMessage;
@@ -71,6 +82,9 @@ export type NpcRoleEditorExtensionToWebviewMessage =
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }
   | { type: "openRawJson" }
+  | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
+  | { type: "openKeybindings"; query?: string }
+  | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorApplyMessage;

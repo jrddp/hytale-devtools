@@ -1,23 +1,23 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
   import { tick } from "svelte";
-  import type { CommentNodeType } from "src/common";
-  import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
+  import type { CommentNodeType } from "@node-editor/common";
+  import ZoomCompensatedNodeResizer from "@node-editor/components/ZoomCompensatedNodeResizer.svelte";
   import {
     DEFAULT_COMMENT_FONT_SIZE,
     DEFAULT_COMMENT_HEIGHT,
     DEFAULT_COMMENT_WIDTH,
-  } from "src/constants";
+  } from "@node-editor/constants";
   import {
     createNodePropertiesUpdatedEdit,
     createNodeResizeChange,
-  } from "src/node-editor/utils/graphDocument";
+  } from "@node-editor/node-editor/utils/graphDocument";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
-  } from "src/node-editor/utils/focusNavigation";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { applyDocumentState, applyGraphEdit } from "src/workspace.svelte";
+  } from "@node-editor/node-editor/utils/focusNavigation";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import { applyDocumentState, applyGraphEdit } from "@node-editor/workspace.svelte";
 
   const MIN_FONT_SIZE = 8;
   const MAX_FONT_SIZE = 128;

@@ -2,7 +2,11 @@
   import { SvelteFlowProvider, type Viewport } from "@xyflow/svelte";
   import { untrack } from "svelte";
   import Flow from "./Flow.svelte";
-  import { type NodeEditorSession, setNodeEditorSessionContext } from "./workspace.svelte";
+  import {
+    type NodeEditorSession,
+    setActiveNodeEditorSession,
+    setNodeEditorSessionContext,
+  } from "./workspace.svelte";
 
   let {
     session,
@@ -14,7 +18,10 @@
     onviewportchange?: (viewport: Viewport) => void;
   } = $props();
 
-  untrack(() => setNodeEditorSessionContext(session));
+  untrack(() => {
+    setActiveNodeEditorSession(session);
+    setNodeEditorSessionContext(session);
+  });
 </script>
 
 <SvelteFlowProvider>

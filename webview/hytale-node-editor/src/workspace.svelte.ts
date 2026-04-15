@@ -22,15 +22,15 @@ import {
 } from "@shared/node-editor/workspaceTypes";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
-import { type FlowEdge, type FlowNode, type FlowNodeData } from "src/common";
+import { type FlowEdge, type FlowNode, type FlowNodeData } from "@node-editor/common";
 import {
   buildElementListChangedEdit,
   buildNodeRenamedEdit,
   buildNodeResizedEdit,
   buildNodesMovedEdit,
   graphEditRequiresDocumentRefresh,
-} from "src/node-editor/utils/graphDocument";
-import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
+} from "@node-editor/node-editor/utils/graphDocument";
+import { getAbsolutePosition } from "@node-editor/node-editor/utils/nodeUtils.svelte";
 
 export type SelectionType = "replace" | "add";
 export type WorkspaceNodeUpdate = [
@@ -85,6 +85,7 @@ export class NodeEditorSession {
   platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
   hostBridge = $state<NodeEditorHostBridge | undefined>();
+  allowOpenRawJson = $state(true);
 
   actionRequests = $state<ActionRequest[]>([]);
 

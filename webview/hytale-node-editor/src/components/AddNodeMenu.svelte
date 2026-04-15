@@ -2,13 +2,13 @@
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import { type XYPosition } from "@xyflow/svelte";
   import { marked } from "marked";
-  import { asCssColor } from "src/node-editor/utils/colors";
-  import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
+  import { asCssColor } from "@node-editor/node-editor/utils/colors";
+  import { GENERIC_TEMPLATES } from "@node-editor/node-editor/utils/nodeFactory.svelte";
   import {
     templateHasCompatibleInput,
     templateHasCompatibleOutput,
-  } from "src/node-editor/utils/nodeUtils.svelte";
-  import { useNodeEditorSession } from "src/workspace.svelte";
+  } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import { onMount } from "svelte";
   import MarkdownPreviewCard from "../../../shared/components/MarkdownPreviewCard.svelte";
 

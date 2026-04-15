@@ -5,6 +5,7 @@
     "paths": {
       "@shared/*": ["../../src/shared/*"],
       "@webview-shared/*": ["../shared/*"],
+      "@node-editor/*": ["./src/*"],
       "src/*": ["./src/*"]
     }
   },

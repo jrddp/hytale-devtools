@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CircleQuestionMark } from "lucide-svelte";
-  import { useNodeEditorSession } from "src/workspace.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import { onMount } from "svelte";
 
   const { onclose }: { onclose: () => void } = $props();

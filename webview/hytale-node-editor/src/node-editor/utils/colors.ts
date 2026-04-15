@@ -34,9 +34,7 @@ export function asCssColor(nodeDefinedColor?: string) {
   if (COLOR_NAME_MAP[nodeDefinedColor]) return COLOR_NAME_MAP[nodeDefinedColor];
   const [r, g, b] = nodeDefinedColor.split(",");
   if (r && g && b) return `rgb(${r}, ${g}, ${b})`;
-
-  console.error(`Could not read node color: ${nodeDefinedColor}`);
-  return DEFAULT_COLOR;
+  return nodeDefinedColor;
 }
 
 function readThemeVariable(variableName: string) {

@@ -16,6 +16,14 @@
   <VariantModifySection {section} />
 {:else if section.id === "content"}
   <ContentSection {section} />
+{:else if section.id === "instructions"}
+  <SingleRootSection
+    {section}
+    addButtonLabel="Add Instructions"
+    onadd={() => {
+      workspace.addTopLevelInstructionRoot("Instructions");
+    }}
+  />
 {:else if section.id === "interactionInstruction"}
   <SingleRootSection
     {section}

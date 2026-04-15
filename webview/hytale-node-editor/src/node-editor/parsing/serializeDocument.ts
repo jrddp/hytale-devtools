@@ -1,7 +1,7 @@
 import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import { serializeGraphDocument } from "@shared/node-editor/graphDocument";
-import { workspaceStateToGraphDocument } from "src/node-editor/utils/graphDocument";
-import { workspace } from "src/workspace.svelte";
+import { workspaceStateToGraphDocument } from "@node-editor/node-editor/utils/graphDocument";
+import { workspace } from "@node-editor/workspace.svelte";
 import type { WorkspaceState } from "../../workspace.svelte";
 
 export function serializeWorkspaceState(

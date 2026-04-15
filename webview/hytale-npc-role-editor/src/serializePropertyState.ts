@@ -60,6 +60,17 @@ export function serializeNpcPropertyState(state: NpcPropertyState): NpcRoleJson 
         }
         break;
       }
+      case "instructions": {
+        const serializedInstructions = serializeSingleSectionField(section);
+        if (serializedInstructions !== undefined) {
+          root.set("Instructions", serializedInstructions);
+        }
+        const instructionsField = section.fields[0];
+        for (const [key, value] of Object.entries(instructionsField?.preservedData ?? {})) {
+          root.set(key, cloneJsonLike(value));
+        }
+        break;
+      }
       case "interactionInstruction": {
         const serializedInstruction = serializeSingleSectionField(section);
         if (serializedInstruction !== undefined) {
