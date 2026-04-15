@@ -9,6 +9,7 @@
   import type { AssetDocumentShape } from "@shared/node-editor/assetTypes";
   import {
     graphDocumentToWorkspaceState,
+    workspaceStateNeedsAutoLayout,
   } from "@node-editor/node-editor/utils/graphDocument";
   import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
   import NodeEditorHost from "@node-editor/NodeEditorHost.svelte";
@@ -170,6 +171,9 @@
       session.committedGraphDocument = graphDocument;
       session.pendingLocalEditId = undefined;
       session.isInitialized = true;
+      if (workspaceStateNeedsAutoLayout(nodes)) {
+        session.actionRequests.push({ type: "auto-position-nodes" });
+      }
       graphError = "";
       lastSyncedDocumentVersion = documentVersion;
       lastSyncedGraphFieldPath = field.fieldPath;

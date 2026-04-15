@@ -178,6 +178,10 @@ export function graphDocumentToWorkspaceState(document: NodeEditorGraphDocument)
   };
 }
 
+export function workspaceStateNeedsAutoLayout(nodes: FlowNode[]): boolean {
+  return nodes.every(node => node.position.x === 0 && node.position.y === 0);
+}
+
 export function workspaceStateToGraphDocument(state: WorkspaceState, workspaceId?: string): NodeEditorGraphDocument {
   return {
     workspaceId,

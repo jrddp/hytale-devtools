@@ -11,6 +11,7 @@
     applyGraphEditToWorkspaceState,
     graphDocumentToWorkspaceState,
     graphEditRequiresDocumentRefresh,
+    workspaceStateNeedsAutoLayout,
   } from "@node-editor/node-editor/utils/graphDocument";
   import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
   import {
@@ -127,7 +128,7 @@
       session.isInitialized = true;
 
       // all nodes at 0,0 -> positions were not set in asset and we should do autolayout
-      if (nodes.every(node => node.position.x === 0 && node.position.y === 0)) {
+      if (workspaceStateNeedsAutoLayout(nodes)) {
         session.actionRequests.push({ type: "auto-position-nodes" });
       }
       extensionError = "";
