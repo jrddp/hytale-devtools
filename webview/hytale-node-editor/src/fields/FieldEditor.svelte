@@ -78,7 +78,7 @@
       return value;
     }
 
-    return structuredClone(value);
+    return structuredClone($state.snapshot(value)) as T;
   }
 
   function getDefaultLiteralValue(fieldType: NodeField["type"]): unknown {
