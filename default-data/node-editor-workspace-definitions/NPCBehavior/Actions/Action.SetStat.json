@@ -1,0 +1,53 @@
+{
+  "Id": "Action.SetStat",
+  "Title": "SetStat",
+  "Color": "DeepSkyBlue",
+  "Description": "Sets (or adds to) an entity stat on the NPC.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Value",
+      "Type": "Float",
+      "Description": "The value to set the stat to.",
+      "Options": {
+        "Label": "Value",
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Add",
+      "Type": "Bool",
+      "Description": "Add the value to the existing value instead of setting it.",
+      "Options": {
+        "Label": "Add",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Value": "Value",
+    "Add": "Add",
+    "Type": "SetStat"
+  }
+}

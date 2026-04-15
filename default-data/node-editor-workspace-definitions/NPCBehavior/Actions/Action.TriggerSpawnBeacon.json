@@ -1,0 +1,51 @@
+{
+  "Id": "Action.TriggerSpawnBeacon",
+  "Title": "TriggerSpawnBeacon",
+  "Color": "DeepSkyBlue",
+  "Description": "Trigger the nearest spawn beacon matching the configuration id",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Int",
+      "Description": "The distance to search for a beacon to trigger",
+      "Options": {
+        "Label": "Range",
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "A slot to use as the target for the spawned NPC. If omitted the NPC itself will be used",
+      "Options": {
+        "Label": "TargetSlot",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Range": "Range",
+    "TargetSlot": "TargetSlot",
+    "Type": "TriggerSpawnBeacon"
+  }
+}

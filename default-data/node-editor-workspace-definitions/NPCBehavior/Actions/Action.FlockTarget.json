@@ -1,0 +1,53 @@
+{
+  "Id": "Action.FlockTarget",
+  "Title": "FlockTarget",
+  "Color": "DeepSkyBlue",
+  "Description": "Set or clear locked target for flock.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Clear",
+      "Type": "Bool",
+      "Description": "Clear locked target if true else set.",
+      "Options": {
+        "Label": "Clear",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to use",
+      "Options": {
+        "Label": "TargetSlot",
+        "Default": "LockedTarget",
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Clear": "Clear",
+    "TargetSlot": "TargetSlot",
+    "Type": "FlockTarget"
+  }
+}

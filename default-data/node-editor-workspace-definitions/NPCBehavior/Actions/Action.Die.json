@@ -1,0 +1,30 @@
+{
+  "Id": "Action.Die",
+  "Title": "Die",
+  "Color": "DeepSkyBlue",
+  "Description": "Kill the NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "Die"
+  }
+}

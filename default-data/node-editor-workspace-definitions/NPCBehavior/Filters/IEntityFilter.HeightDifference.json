@@ -1,0 +1,59 @@
+{
+  "Id": "IEntityFilter.HeightDifference",
+  "Title": "HeightDifference",
+  "Color": "YellowGreen",
+  "Description": "Matches entities within the given height range",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filter"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "HeightDifference",
+      "Type": "List",
+      "Description": "The height range to test entities in",
+      "Options": {
+        "Label": "HeightDifference",
+        "Default": [
+          -1.7976931348623157e+308,
+          1.7976931348623157e+308
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "UseEyePosition",
+      "Type": "Bool",
+      "Description": "Use eye position for height difference checks",
+      "Options": {
+        "Label": "UseEyePosition",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "HeightDifference": "HeightDifference",
+    "UseEyePosition": "UseEyePosition",
+    "Type": "HeightDifference"
+  }
+}

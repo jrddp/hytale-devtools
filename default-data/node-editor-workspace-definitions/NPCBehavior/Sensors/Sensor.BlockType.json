@@ -1,0 +1,61 @@
+{
+  "Id": "Sensor.BlockType",
+  "Title": "BlockType",
+  "Color": "LimeGreen",
+  "Description": "Checks if the block at the given position matches the provided block set",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    },
+    {
+      "Id": "SensorPin",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Sensor",
+      "Description": "Sensor to wrap"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Sensor": {
+      "Pin": "SensorPin",
+      "Node": "SensorVariants"
+    },
+    "Type": "BlockType"
+  }
+}

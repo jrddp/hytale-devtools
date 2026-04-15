@@ -1,0 +1,60 @@
+{
+  "Id": "Sensor.MotionController",
+  "Title": "MotionController",
+  "Color": "LimeGreen",
+  "Description": "Test if specific motion controller is active.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MotionController",
+      "Type": "SmallString",
+      "Description": "Motion controller name to test for",
+      "Options": {
+        "Label": "MotionController",
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "MotionController": "MotionController",
+    "Type": "MotionController"
+  }
+}

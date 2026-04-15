@@ -12,6 +12,7 @@ import {
   normalizeWorkspaceStateForSemanticComparison,
   outputPin,
   parseWorkspaceDocument,
+  selfOutputPin,
   serializeWorkspace,
   workspaceContext,
 } from "./helpers";
@@ -76,6 +77,55 @@ const SHARED_SUBTREE_CONTEXT = workspaceContext({
       inputPins: [inputPin("input", "single", { connectionType: "Gamma", localId: "Input" })],
       fieldsBySchemaKey: {
         Name: nodeField("Name"),
+      },
+    }),
+  ],
+});
+
+const REVERSE_INPUT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Reverse Input Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      inputPins: [
+        inputPin("Sensor", "single", { connectionType: "Sensor", localId: "SensorPin" }),
+        inputPin("Filters", "multiple", {
+          connectionType: "Filter",
+          localId: "FiltersPin",
+        }),
+      ],
+      childSchemas: {
+        Sensor: {
+          schemaKey: "Sensor",
+          targetTemplateOrVariantId: "SensorLeaf",
+          serializationType: "child",
+        },
+        Filters: {
+          schemaKey: "Filters",
+          targetTemplateOrVariantId: "FilterLeaf",
+          serializationType: "child",
+        },
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("SensorLeaf", {
+      outputPins: [selfOutputPin("Sensor")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "SensorLeaf",
+      },
+    }),
+    nodeTemplate("FilterLeaf", {
+      outputPins: [selfOutputPin("Filter")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "FilterLeaf",
       },
     }),
   ],
@@ -313,5 +363,60 @@ describe("node editor serializeDocument", () => {
     expect(right.$NodeId).toBe("SharedLeaf-22222222-2222-4222-8222-222222222222");
     expect(left.Child?.$NodeId).toBe("Grandchild-33333333-3333-4333-8333-333333333333");
     expect(right.Child?.$NodeId).toBe("Grandchild-33333333-3333-4333-8333-333333333333");
+  });
+
+  test("serializes reverse-input child slots back into parent-owned JSON keys", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Sensor: {
+          $NodeId: "Sensor-1",
+          Type: "SensorLeaf",
+          Name: "Condition",
+        },
+        Filters: [
+          {
+            $NodeId: "Filter-1",
+            Type: "FilterLeaf",
+            Name: "First",
+          },
+          {
+            $NodeId: "Filter-2",
+            Type: "FilterLeaf",
+            Name: "Second",
+          },
+        ],
+        $NodeEditorMetadata: {
+          $WorkspaceID: REVERSE_INPUT_CONTEXT.rootMenuName,
+          $Nodes: {
+            "Root-1": {
+              $Position: { $x: 400, $y: 200 },
+            },
+            "Sensor-1": {
+              $Position: { $x: 120, $y: 160 },
+            },
+            "Filter-1": {
+              $Position: { $x: 120, $y: 260 },
+            },
+            "Filter-2": {
+              $Position: { $x: 120, $y: 340 },
+            },
+          },
+        },
+      },
+      REVERSE_INPUT_CONTEXT,
+    );
+
+    const serialized = normalizeRoundTripJson(
+      serializeWorkspace(parsed, REVERSE_INPUT_CONTEXT.rootMenuName),
+    ) as Record<string, unknown>;
+
+    expect((serialized.Sensor as Record<string, unknown>).Name).toBe("Condition");
+    expect(serialized.Filters).toBeInstanceOf(Array);
+    expect((serialized.Filters as Record<string, unknown>[]).map(filter => filter.Name)).toEqual([
+      "First",
+      "Second",
+    ]);
   });
 });

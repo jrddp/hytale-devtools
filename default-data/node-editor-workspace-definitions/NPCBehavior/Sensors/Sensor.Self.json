@@ -1,0 +1,62 @@
+{
+  "Id": "Sensor.Self",
+  "Title": "Self",
+  "Color": "LimeGreen",
+  "Description": "Test if the NPC itself matches a set of entity filters",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    },
+    {
+      "Id": "FiltersPin",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filters",
+      "Description": "A series of entity filter sensors to test",
+      "Multiple": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Filters": {
+      "Pin": "FiltersPin",
+      "Node": "FilterVariants"
+    },
+    "Type": "Self"
+  }
+}

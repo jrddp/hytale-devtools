@@ -1,0 +1,30 @@
+{
+  "Id": "Action.OpenHelloWorld",
+  "Title": "OpenHelloWorld",
+  "Color": "DeepSkyBlue",
+  "Description": "Open the Hello World UI for the current player",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "OpenHelloWorld"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "Id": "IEntityFilter.MovementState",
+  "Title": "MovementState",
+  "Color": "YellowGreen",
+  "Description": "Check if the entity is in the given movement state",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filter"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "State",
+      "Type": "Enum",
+      "Description": "The movement state to check",
+      "Options": {
+        "Label": "State",
+        "Width": 220,
+        "Values": [
+          "JUMPING",
+          "FLYING",
+          "CROUCHING",
+          "RUNNING",
+          "SPRINTING",
+          "FALLING",
+          "CLIMBING",
+          "WALKING",
+          "IDLE",
+          "ANY"
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "State": "State",
+    "Type": "MovementState"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "Id": "Sensor.CanPlaceBlock",
+  "Title": "CanPlaceBlock",
+  "Color": "LimeGreen",
+  "Description": "Test if the currently set block can be placed at the relative position given direction and offset",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Direction",
+      "Type": "Enum",
+      "Description": "The direction to place relative to heading",
+      "Options": {
+        "Label": "Direction",
+        "Default": "Forward",
+        "Width": 220,
+        "Values": [
+          "Forward",
+          "Backward",
+          "Left",
+          "Right"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Offset",
+      "Type": "Enum",
+      "Description": "The offset to place at",
+      "Options": {
+        "Label": "Offset",
+        "Default": "BodyPosition",
+        "Width": 220,
+        "Values": [
+          "HeadPosition",
+          "BodyPosition",
+          "FootPosition"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RetryDelay",
+      "Type": "Float",
+      "Description": "The amount of time to delay if a placement fails before trying to place something again",
+      "Options": {
+        "Label": "RetryDelay",
+        "Default": 5,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AllowEmptyMaterials",
+      "Type": "Bool",
+      "Description": "Whether it should be possible to replace blocks that have empty material",
+      "Options": {
+        "Label": "AllowEmptyMaterials",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Direction": "Direction",
+    "Offset": "Offset",
+    "RetryDelay": "RetryDelay",
+    "AllowEmptyMaterials": "AllowEmptyMaterials",
+    "Type": "CanPlaceBlock"
+  }
+}

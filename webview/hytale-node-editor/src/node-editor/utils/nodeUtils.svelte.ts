@@ -1,4 +1,13 @@
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+import { getResolvedChildSlots } from "@shared/node-editor/childSlotUtils";
+import {
+  areConnectionTypesCompatible,
+  GENERIC_CONNECTION_TYPE,
+  getCompatibleInputHandleId,
+  getCompatibleOutputHandleId,
+  templateHasCompatibleInput,
+  templateHasCompatibleOutput,
+} from "@shared/node-editor/pinUtils";
 import { type NodePin, type NodeTemplate } from "@shared/node-editor/workspaceTypes";
 import { type Connection, type XYPosition } from "@xyflow/svelte";
 import { type BBox } from "rbush";
@@ -11,6 +20,14 @@ import {
 } from "@node-editor/common";
 import { GROUP_NODE_TYPE } from "@node-editor/constants";
 import type { NodeEditorSession } from "@node-editor/workspace.svelte";
+
+export {
+  areConnectionTypesCompatible,
+  getCompatibleInputHandleId,
+  getCompatibleOutputHandleId,
+  templateHasCompatibleInput,
+  templateHasCompatibleOutput,
+} from "@shared/node-editor/pinUtils";
 
 export type PendingConnection =
   | {
@@ -30,7 +47,6 @@ export type PendingConnection =
 /** [nodeId, dataUpdates] */
 export type NodeDataUpdates = [string, Partial<FlowNodeData>];
 export type NodeUpdates = [string, Partial<FlowNode>];
-export const GENERIC_CONNECTION_TYPE = "Generic";
 
 export function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
   return {
@@ -41,46 +57,6 @@ export function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
     label: "Input",
     multiplicity: "single",
   };
-}
-
-export function areConnectionTypesCompatible(sourceType: string, targetType: string): boolean {
-  return (
-    sourceType === GENERIC_CONNECTION_TYPE ||
-    targetType === GENERIC_CONNECTION_TYPE ||
-    sourceType === targetType
-  );
-}
-
-export function templateHasCompatibleInput(template: NodeTemplate, pinType: string): boolean {
-  return template.inputPins.some(pin => areConnectionTypesCompatible(pinType, pin.connectionType));
-}
-
-export function templateHasCompatibleOutput(template: NodeTemplate, pinType: string): boolean {
-  return template.outputPins.some(pin => areConnectionTypesCompatible(pin.connectionType, pinType));
-}
-
-export function getCompatibleInputHandleId(
-  nodeOrTemplate: Pick<DataNodeType["data"], "inputPins"> | NodeTemplate,
-  pinType: string,
-): string | undefined {
-  return (
-    nodeOrTemplate.inputPins.find(pin => pin.connectionType === pinType)?.schemaKey ??
-    nodeOrTemplate.inputPins.find(pin =>
-      areConnectionTypesCompatible(pinType, pin.connectionType),
-    )?.schemaKey
-  );
-}
-
-export function getCompatibleOutputHandleId(
-  nodeOrTemplate: Pick<DataNodeType["data"], "outputPins"> | NodeTemplate,
-  pinType: string,
-): string | undefined {
-  return (
-    nodeOrTemplate.outputPins.find(pin => pin.connectionType === pinType)?.schemaKey ??
-    nodeOrTemplate.outputPins.find(pin =>
-      areConnectionTypesCompatible(pin.connectionType, pinType),
-    )?.schemaKey
-  );
 }
 
 export function isValidConnection(
@@ -94,6 +70,59 @@ export function isValidConnection(
   const targetPin = targetNode.data.inputPins?.find(pin => pin.schemaKey === connection.targetHandle);
   if (!sourcePin || !targetPin) return false;
   return areConnectionTypesCompatible(sourcePin.connectionType, targetPin.connectionType);
+}
+
+function getSerializedChildIdsByHandle(
+  nodeId: string,
+  handleId: string,
+  side: "input" | "output",
+  session: NodeEditorSession,
+): string[] {
+  if (side === "output") {
+    return session.getOutgoingConnectionsForHandle(nodeId, handleId).map(edge => edge.target);
+  }
+
+  return session.getIncomingConnectionsForHandle(nodeId, handleId).map(edge => edge.source);
+}
+
+function getSerializedParentConnectionForHandle(
+  nodeId: string,
+  handleId: string,
+  session: NodeEditorSession,
+): { parentId: string; parentHandleId: string } | undefined {
+  const outgoingEdges = session.getOutgoingConnections(nodeId);
+  if (!outgoingEdges) {
+    return undefined;
+  }
+
+  for (const edges of outgoingEdges.values()) {
+    for (const edge of edges) {
+      if (edge.source === edge.target) {
+        continue;
+      }
+
+      const targetNode = session.getNodeById(edge.target) as DataNodeType | undefined;
+      if (!targetNode || targetNode.type !== "datanode") {
+        continue;
+      }
+
+      const resolvedChildSlot = getResolvedChildSlots(targetNode.data).find(
+        slot => slot.side === "input" && slot.pin.schemaKey === edge.targetHandle,
+      );
+      if (!resolvedChildSlot) {
+        continue;
+      }
+
+      if (edge.source === nodeId && handleId === edge.sourceHandle) {
+        return {
+          parentId: edge.target,
+          parentHandleId: edge.targetHandle,
+        };
+      }
+    }
+  }
+
+  return undefined;
 }
 
 export function getOutputPin(
@@ -245,9 +274,13 @@ export function pruneConflictingEdges(
     prunedEdges.push(edge);
   };
 
-  const conflictingInput: FlowEdge | undefined =
-    target && targetHandle ? session.getIncomingConnection(target, targetHandle) : undefined;
-  pruneEdge(conflictingInput);
+  if (target && targetHandle) {
+    const targetPin = getInputPin(target, targetHandle, session);
+    if (targetPin?.multiplicity === "single") {
+      const conflictingInput: FlowEdge | undefined = session.getIncomingConnection(target, targetHandle);
+      pruneEdge(conflictingInput);
+    }
+  }
 
   if (source && sourceHandle) {
     const outputPin = (session.getNodeById(source) as DataNodeType).data.outputPins?.find(
@@ -275,8 +308,7 @@ export function collectAllDescendentIds(
       return;
     }
     targetNodeIdSet.add(nodeId);
-    const directDescendents = Array.from(session.getOutgoingConnections(nodeId).values()).flat();
-    directDescendents.forEach(edge => recCollectDescendents(edge.target));
+    getChildIds(nodeId, session).forEach(childId => recCollectDescendents(childId));
   };
   seedNodeIds.forEach(nodeId => recCollectDescendents(nodeId));
   return Array.from(targetNodeIdSet);
@@ -310,31 +342,83 @@ export function getRootIds(nodeIds: string[], session: NodeEditorSession): strin
 }
 
 export function getParentId(nodeId: string, session: NodeEditorSession): string | undefined {
-  return session.getIncomingConnection(nodeId)?.source;
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  if (!node || node.type !== "datanode") {
+    return session.getIncomingConnection(nodeId)?.source;
+  }
+
+  for (const pin of node.data.inputPins ?? []) {
+    const directIncoming = session.getIncomingConnection(nodeId, pin.schemaKey);
+    if (
+      directIncoming &&
+      !getResolvedChildSlots(node.data).some(
+        slot => slot.side === "input" && slot.pin.schemaKey === pin.schemaKey,
+      )
+    ) {
+      return directIncoming.source;
+    }
+  }
+
+  for (const pin of node.data.outputPins ?? []) {
+    const parentConnection = getSerializedParentConnectionForHandle(nodeId, pin.schemaKey, session);
+    if (parentConnection) {
+      return parentConnection.parentId;
+    }
+  }
+
+  return undefined;
 }
 
 export function getParentIdWithHandle(
   nodeId: string,
   session: NodeEditorSession,
 ): { parentId: string; parentHandleId: string } | undefined {
-  const incomingConnection = session.getIncomingConnection(nodeId);
-  if (!incomingConnection) {
-    return undefined;
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  if (!node || node.type !== "datanode") {
+    const incomingConnection = session.getIncomingConnection(nodeId);
+    if (!incomingConnection) {
+      return undefined;
+    }
+    return {
+      parentId: incomingConnection.source,
+      parentHandleId: incomingConnection.sourceHandle,
+    };
   }
-  return {
-    parentId: incomingConnection.source,
-    parentHandleId: incomingConnection.sourceHandle,
-  };
+
+  for (const pin of node.data.inputPins ?? []) {
+    const directIncoming = session.getIncomingConnection(nodeId, pin.schemaKey);
+    if (
+      directIncoming &&
+      !getResolvedChildSlots(node.data).some(
+        slot => slot.side === "input" && slot.pin.schemaKey === pin.schemaKey,
+      )
+    ) {
+      return {
+        parentId: directIncoming.source,
+        parentHandleId: directIncoming.sourceHandle,
+      };
+    }
+  }
+
+  for (const pin of node.data.outputPins ?? []) {
+    const parentConnection = getSerializedParentConnectionForHandle(nodeId, pin.schemaKey, session);
+    if (parentConnection) {
+      return parentConnection;
+    }
+  }
+
+  return undefined;
 }
 
 export function getChildIds(nodeId: string, session: NodeEditorSession): string[] {
-  const connectionMap = session.getOutgoingConnections(nodeId);
-  if (!connectionMap) {
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  if (!node || node.type !== "datanode") {
     return [];
   }
-  return Array.from(connectionMap.values())
-    .flat()
-    .map(edge => edge.target);
+
+  return getResolvedChildSlots(node.data).flatMap(slot =>
+    getSerializedChildIdsByHandle(nodeId, slot.pin.schemaKey, slot.side, session),
+  );
 }
 
 export function getNodeSiblingIds(
@@ -350,19 +434,40 @@ export function getNodeSiblingIds(
     return getChildIds(parentId, session);
   }
   if (scope === "same-parent-handle") {
-    const { parentId, parentHandleId } = getParentIdWithHandle(nodeId, session);
-    return session
-      .getOutgoingConnectionsForHandle(parentId, parentHandleId)
-      .map(edge => edge.target);
+    const parentWithHandle = getParentIdWithHandle(nodeId, session);
+    if (!parentWithHandle) {
+      return [];
+    }
+    const parentNode = session.getNodeById(parentWithHandle.parentId) as DataNodeType | undefined;
+    const slot = parentNode?.type === "datanode"
+      ? getResolvedChildSlots(parentNode.data).find(
+          resolvedSlot => resolvedSlot.pin.schemaKey === parentWithHandle.parentHandleId,
+        )
+      : undefined;
+    return slot
+      ? getSerializedChildIdsByHandle(
+          parentWithHandle.parentId,
+          parentWithHandle.parentHandleId,
+          slot.side,
+          session,
+        )
+      : session
+          .getOutgoingConnectionsForHandle(parentWithHandle.parentId, parentWithHandle.parentHandleId)
+          .map(edge => edge.target);
   }
+
+  return [];
 }
 
 /* Currently ordered based on y position. Should be updated. **/
 export function getOrderedChildren(parentId: string, session: NodeEditorSession): FlowNode[] {
-  const parentNode = session.getNodeById(parentId);
+  const parentNode = session.getNodeById(parentId) as DataNodeType | undefined;
+  if (!parentNode || parentNode.type !== "datanode") {
+    return [];
+  }
   const children = [];
-  for (const handle of (parentNode.data.outputPins as NodePin[]) ?? []) {
-    children.push(...getOrderedChildrenForHandle(parentId, handle.schemaKey, session));
+  for (const slot of getResolvedChildSlots(parentNode.data)) {
+    children.push(...getOrderedChildrenForHandle(parentId, slot.pin.schemaKey, session));
   }
   return children;
 }
@@ -373,9 +478,13 @@ export function getOrderedChildrenForHandle(
   parentHandleId: string,
   session: NodeEditorSession,
 ): FlowNode[] {
-  const childIds = session
-    .getOutgoingConnectionsForHandle(parentId, parentHandleId)
-    .map(edge => edge.target);
+  const parentNode = session.getNodeById(parentId) as DataNodeType | undefined;
+  const slot = parentNode?.type === "datanode"
+    ? getResolvedChildSlots(parentNode.data).find(resolvedSlot => resolvedSlot.pin.schemaKey === parentHandleId)
+    : undefined;
+  const childIds = slot
+    ? getSerializedChildIdsByHandle(parentId, parentHandleId, slot.side, session)
+    : session.getOutgoingConnectionsForHandle(parentId, parentHandleId).map(edge => edge.target);
   // y position descending to order nodes
   return childIds
     .map(childId => session.getNodeById(childId))
@@ -384,18 +493,28 @@ export function getOrderedChildrenForHandle(
 
 export function getAllSiblingOrderUpdates(session: NodeEditorSession): NodeDataUpdates[] {
   const childIdsByHandle = new Map<string, string[]>();
+  const processedHandles = new Set<string>();
 
-  for (const edge of session.edges) {
-    if (!edge.sourceHandle) {
+  for (const node of session.nodes) {
+    if (node.type !== "datanode") {
       continue;
     }
 
-    const key = `${edge.source}:${edge.sourceHandle}`;
-    const childIds = childIdsByHandle.get(key);
-    if (childIds) {
-      childIds.push(edge.target);
-    } else {
-      childIdsByHandle.set(key, [edge.target]);
+    for (const slot of getResolvedChildSlots(node.data)) {
+      if (slot.pin.multiplicity === "single") {
+        continue;
+      }
+
+      const key = `${node.id}:${slot.pin.schemaKey}`;
+      if (processedHandles.has(key)) {
+        continue;
+      }
+
+      processedHandles.add(key);
+      childIdsByHandle.set(
+        key,
+        getSerializedChildIdsByHandle(node.id, slot.pin.schemaKey, slot.side, session),
+      );
     }
   }
 

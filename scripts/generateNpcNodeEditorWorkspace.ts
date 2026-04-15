@@ -5,6 +5,19 @@ import type {
   NpcDescriptorAttribute,
   NpcDescriptorDocument,
 } from "../src/shared/npc-role-editor/descriptorTypes";
+import {
+  type NpcBehaviorConnectionType,
+  type NpcBehaviorSupportedDescriptorCategory,
+  getNpcBehaviorChildDomain,
+  getNpcBehaviorChildConnectionType,
+  getNpcBehaviorChildDomainDefinition,
+  getNpcBehaviorChildPinSide,
+  getNpcBehaviorConnectionAuthoringSide,
+  getNpcBehaviorConnectionColor,
+  getNpcBehaviorConnectionLabel,
+  getNpcBehaviorDescriptorSelfConnectionType,
+  isNpcBehaviorSupportedDescriptorCategory,
+} from "../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
 import type {
   NodeContentDefinition,
   NodeEditorWorkspaceDefinition,
@@ -33,7 +46,10 @@ const VARIANT_BACKED_DESCRIPTOR_CATEGORIES = [
   "ISensorEntityPrioritiser",
   "Sensor",
 ] as const;
-type VariantBackedDescriptorCategory = (typeof VARIANT_BACKED_DESCRIPTOR_CATEGORIES)[number];
+type VariantBackedDescriptorCategory = Extract<
+  NpcBehaviorSupportedDescriptorCategory,
+  (typeof VARIANT_BACKED_DESCRIPTOR_CATEGORIES)[number]
+>;
 
 const DIRECT_TEMPLATE_DESCRIPTOR_CATEGORIES = [
   "Path",
@@ -41,42 +57,28 @@ const DIRECT_TEMPLATE_DESCRIPTOR_CATEGORIES = [
   "ValueToParameterMapping",
   "WeightedAction",
 ] as const;
-type DirectTemplateDescriptorCategory = (typeof DIRECT_TEMPLATE_DESCRIPTOR_CATEGORIES)[number];
+type DirectTemplateDescriptorCategory = Extract<
+  NpcBehaviorSupportedDescriptorCategory,
+  (typeof DIRECT_TEMPLATE_DESCRIPTOR_CATEGORIES)[number]
+>;
 
 type SupportedDescriptorCategory =
   | VariantBackedDescriptorCategory
   | DirectTemplateDescriptorCategory;
 
-const SUPPORTED_DESCRIPTOR_CATEGORIES = new Set<SupportedDescriptorCategory>([
-  ...VARIANT_BACKED_DESCRIPTOR_CATEGORIES,
-  ...DIRECT_TEMPLATE_DESCRIPTOR_CATEGORIES,
-]);
-
-const PRIMITIVE_LIST_DOMAINS = new Set([
-  "Boolean",
-  "Double",
-  "Float",
-  "Int",
-  "Integer",
-  "Long",
-  "String",
-  "TemporalAmount",
-  "integer",
-]);
-
 const CATEGORY_COLORS: Record<SupportedDescriptorCategory | "Structural", string> = {
-  Action: "DeepSkyBlue",
-  BodyMotion: "DarkOrange",
-  HeadMotion: "MediumPurple",
-  IEntityFilter: "YellowGreen",
-  ISensorEntityCollector: "DarkCyan",
-  ISensorEntityPrioritiser: "HotPink",
-  Path: "CornflowerBlue",
-  RelativeWaypointDefinition: "SteelBlue",
-  Sensor: "LimeGreen",
+  Action: getNpcBehaviorConnectionColor("Action"),
+  BodyMotion: getNpcBehaviorConnectionColor("BodyMotion"),
+  HeadMotion: getNpcBehaviorConnectionColor("HeadMotion"),
+  IEntityFilter: getNpcBehaviorConnectionColor("IEntityFilter"),
+  ISensorEntityCollector: getNpcBehaviorConnectionColor("ISensorEntityCollector"),
+  ISensorEntityPrioritiser: getNpcBehaviorConnectionColor("ISensorEntityPrioritiser"),
+  Path: getNpcBehaviorConnectionColor("Path"),
+  RelativeWaypointDefinition: getNpcBehaviorConnectionColor("RelativeWaypointDefinition"),
+  Sensor: getNpcBehaviorConnectionColor("Sensor"),
   Structural: "Gold",
-  ValueToParameterMapping: "Tan",
-  WeightedAction: "DodgerBlue",
+  ValueToParameterMapping: getNpcBehaviorConnectionColor("ValueToParameterMapping"),
+  WeightedAction: getNpcBehaviorConnectionColor("WeightedAction"),
 };
 
 const CATEGORY_DIRECTORY_NAMES: Record<SupportedDescriptorCategory | "Structural", string> = {
@@ -113,9 +115,15 @@ const INSTRUCTION_VARIANT_VALUES = ["Random", "Reference"];
 
 type ChildSpec = {
   childId: string;
-  connectionType: string;
+  connectionType: NpcBehaviorConnectionType;
   multiplicity: "single" | "multiple";
+  pinSide?: "input" | "output";
 };
+
+type OutputAuthoredParentConnectionTypesByChildId = ReadonlyMap<
+  string,
+  ReadonlySet<NpcBehaviorConnectionType>
+>;
 
 type TemplateOutput = {
   directoryName: string;
@@ -131,17 +139,27 @@ function main(): void {
   const descriptors = parseDescriptors();
   const supportedDescriptors = descriptors.filter(
     (descriptor): descriptor is NpcDescriptor & { Category: SupportedDescriptorCategory } =>
-      isSupportedDescriptorCategory(descriptor.Category),
+      isNpcBehaviorSupportedDescriptorCategory(descriptor.Category),
   );
   const instructionDescriptors = [
     findDescriptorOrThrow(descriptors, "Instruction", "Instruction"),
     findDescriptorOrThrow(descriptors, "Instruction", "Random"),
     findDescriptorOrThrow(descriptors, "Instruction", "Reference"),
   ];
+  const outputAuthoredParentConnectionTypesByChildId =
+    collectOutputAuthoredParentConnectionTypesByChildId(
+      supportedDescriptors,
+      instructionDescriptors,
+    );
 
   const templateOutputs = [
-    ...supportedDescriptors.map(buildDescriptorTemplate),
-    buildInstructionNodeTemplate(instructionDescriptors),
+    ...supportedDescriptors.map(descriptor =>
+      buildDescriptorTemplate(descriptor, outputAuthoredParentConnectionTypesByChildId),
+    ),
+    buildInstructionNodeTemplate(
+      instructionDescriptors,
+      outputAuthoredParentConnectionTypesByChildId,
+    ),
     buildInstructionListRootTemplate(),
   ].sort(
     (left, right) =>
@@ -164,10 +182,6 @@ function main(): void {
   console.log(
     `Generated ${templateOutputs.length} NPC node templates in ${path.relative(rootDir, outputRootPath)}.`,
   );
-}
-
-function isSupportedDescriptorCategory(category: string): category is SupportedDescriptorCategory {
-  return SUPPORTED_DESCRIPTOR_CATEGORIES.has(category as SupportedDescriptorCategory);
 }
 
 function isVariantBackedCategory(
@@ -264,25 +278,34 @@ function buildVariantKindDefinition(
 
 function buildDescriptorTemplate(
   descriptor: NpcDescriptor & { Category: SupportedDescriptorCategory },
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
 ): TemplateOutput {
+  const inputs: NodePinDefinition[] = createParentCompatibilityInputs(
+    getDescriptorTemplateParentTargetIds(descriptor),
+    outputAuthoredParentConnectionTypesByChildId,
+  );
   const outputs: NodePinDefinition[] = [];
   const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {};
   const content: NodeContentDefinition[] = [];
 
+  const selfConnectionType = getNpcBehaviorDescriptorSelfConnectionType(descriptor.Category);
+  if (shouldEmitSelfOutputPin(descriptor.Category) && selfConnectionType) {
+    outputs.push(createSelfOutputPin(selfConnectionType));
+  }
+
   for (const attribute of descriptor.Attributes ?? []) {
-    const childSpec = resolveChildSpec(attribute);
+    const childSpec = resolveChildSpec(descriptor, attribute);
     if (childSpec) {
       const pinId = `${attribute.Name}Pin`;
-      outputs.push({
+      const pin: NodePinDefinition = {
         Id: pinId,
         Type: childSpec.connectionType,
-        Color:
-          CATEGORY_COLORS_BY_CONNECTION_TYPE[childSpec.connectionType] ??
-          CATEGORY_COLORS[descriptor.Category],
+        Color: getNpcBehaviorConnectionColor(childSpec.connectionType),
         Label: attribute.Name,
         Description: normalizeDescription(attribute.ShortDescription),
         Multiple: childSpec.multiplicity === "multiple" || undefined,
-      });
+      };
+      (childSpec.pinSide === "input" ? inputs : outputs).push(pin);
       schema[attribute.Name] = {
         Pin: pinId,
         Node: childSpec.childId,
@@ -305,13 +328,13 @@ function buildDescriptorTemplate(
 
   return {
     directoryName: CATEGORY_DIRECTORY_NAMES[descriptor.Category],
-    fileName: `${descriptor.Name}.json`,
+    fileName: `${descriptor.Category}.${descriptor.Name}.json`,
     template: {
       Id: `${descriptor.Category}.${descriptor.Name}`,
       Title: descriptor.Name,
       Color: CATEGORY_COLORS[descriptor.Category],
       Description: normalizeDescription(descriptor.ShortDescription),
-      Inputs: [createGenericInputPin(CATEGORY_COLORS[descriptor.Category])],
+      Inputs: inputs,
       Outputs: outputs.length > 0 ? outputs : undefined,
       Content: content.length > 0 ? content : undefined,
       Schema: Object.keys(schema).length > 0 ? schema : undefined,
@@ -319,7 +342,14 @@ function buildDescriptorTemplate(
   };
 }
 
-function buildInstructionNodeTemplate(instructionDescriptors: NpcDescriptor[]): TemplateOutput {
+function buildInstructionNodeTemplate(
+  instructionDescriptors: NpcDescriptor[],
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+): TemplateOutput {
+  const inputs: NodePinDefinition[] = createParentCompatibilityInputs(
+    [getInstructionTemplateParentTargetId()],
+    outputAuthoredParentConnectionTypesByChildId,
+  );
   const outputs: NodePinDefinition[] = [];
   const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {
     Type: "Type",
@@ -330,16 +360,15 @@ function buildInstructionNodeTemplate(instructionDescriptors: NpcDescriptor[]): 
     const childSpec = resolveInstructionChildSpec(attribute);
     if (childSpec) {
       const pinId = `${attribute.Name}Pin`;
-      outputs.push({
+      const pin: NodePinDefinition = {
         Id: pinId,
         Type: childSpec.connectionType,
-        Color:
-          CATEGORY_COLORS_BY_CONNECTION_TYPE[childSpec.connectionType] ??
-          CATEGORY_COLORS.Structural,
+        Color: getNpcBehaviorConnectionColor(childSpec.connectionType),
         Label: attribute.Name,
         Description: normalizeDescription(attribute.ShortDescription),
         Multiple: childSpec.multiplicity === "multiple" || undefined,
-      });
+      };
+      (childSpec.pinSide === "input" ? inputs : outputs).push(pin);
       schema[attribute.Name] = {
         Pin: pinId,
         Node: childSpec.childId,
@@ -364,7 +393,7 @@ function buildInstructionNodeTemplate(instructionDescriptors: NpcDescriptor[]): 
       Title: "Instruction",
       Color: CATEGORY_COLORS.Structural,
       Description: normalizeDescription(instructionDescriptors[0]?.ShortDescription),
-      Inputs: [createGenericInputPin(CATEGORY_COLORS.Structural)],
+      Inputs: inputs,
       Outputs: outputs,
       Content: content,
       Schema: schema,
@@ -426,82 +455,146 @@ function mergeAttributes(descriptors: NpcDescriptor[]): NpcDescriptorAttribute[]
   return Array.from(attributesByName.values());
 }
 
-function createGenericInputPin(color: string): NodePinDefinition {
+function createParentCompatibilityInputs(
+  childTargetIds: readonly string[],
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+): NodePinDefinition[] {
+  const connectionTypes = new Set<NpcBehaviorConnectionType>();
+  for (const childTargetId of childTargetIds) {
+    for (const connectionType of outputAuthoredParentConnectionTypesByChildId.get(childTargetId) ??
+      []) {
+      connectionTypes.add(connectionType);
+    }
+  }
+
+  if (connectionTypes.size === 0) {
+    return [];
+  }
+
+  return Array.from(connectionTypes)
+    .sort((left, right) => left.localeCompare(right))
+    .map((connectionType, index) =>
+      createParentCompatibilityInputPin(connectionType, index),
+    );
+}
+
+function createParentCompatibilityInputPin(
+  connectionType: NpcBehaviorConnectionType,
+  index: number,
+): NodePinDefinition {
   return {
-    Id: "Input",
-    Type: "Generic",
-    Color: color,
-    Label: "Input",
+    Id: index === 0 ? "Input" : `Input${index}`,
+    Type: connectionType,
+    Color: getNpcBehaviorConnectionColor(connectionType),
+    Label: getNpcBehaviorConnectionLabel(connectionType),
   };
 }
 
-function resolveInstructionChildSpec(attribute: NpcDescriptorAttribute): ChildSpec | null {
-  if (attribute.Name === "Actions" && attribute.Domain === "ActionList") {
-    return {
-      childId: "ActionVariants",
-      connectionType: "Action",
-      multiplicity: "multiple",
-    };
-  }
-
-  if (attribute.Name === "Instructions" && attribute.Domain === "Instruction") {
-    return {
-      childId: "Structural.InstructionNode",
-      connectionType: "Instruction",
-      multiplicity: "multiple",
-    };
-  }
-
-  return resolveChildSpec(attribute);
+function createSelfOutputPin(connectionType: NpcBehaviorConnectionType): NodePinDefinition {
+  return {
+    Id: "Output",
+    Type: connectionType,
+    Color: getNpcBehaviorConnectionColor(connectionType),
+    Label: getNpcBehaviorConnectionLabel(connectionType),
+  };
 }
 
-function resolveChildSpec(attribute: NpcDescriptorAttribute): ChildSpec | null {
-  const domain = typeof attribute.Domain === "string" ? attribute.Domain : null;
+function shouldEmitSelfOutputPin(category: SupportedDescriptorCategory): boolean {
+  const selfConnectionType = getNpcBehaviorDescriptorSelfConnectionType(category);
+  return getNpcBehaviorConnectionAuthoringSide(selfConnectionType) === "input";
+}
+
+function collectOutputAuthoredParentConnectionTypesByChildId(
+  supportedDescriptors: Array<NpcDescriptor & { Category: SupportedDescriptorCategory }>,
+  instructionDescriptors: NpcDescriptor[],
+): Map<string, Set<NpcBehaviorConnectionType>> {
+  const connectionTypesByChildId = new Map<string, Set<NpcBehaviorConnectionType>>();
+
+  const addChildSpec = (childSpec: ChildSpec | null): void => {
+    if (!childSpec || childSpec.pinSide === "input") {
+      return;
+    }
+
+    let connectionTypes = connectionTypesByChildId.get(childSpec.childId);
+    if (!connectionTypes) {
+      connectionTypes = new Set<NpcBehaviorConnectionType>();
+      connectionTypesByChildId.set(childSpec.childId, connectionTypes);
+    }
+    connectionTypes.add(childSpec.connectionType);
+  };
+
+  for (const descriptor of supportedDescriptors) {
+    for (const attribute of descriptor.Attributes ?? []) {
+      addChildSpec(resolveChildSpec(descriptor, attribute));
+    }
+  }
+
+  for (const attribute of mergeAttributes(instructionDescriptors)) {
+    addChildSpec(resolveInstructionChildSpec(attribute));
+  }
+
+  return connectionTypesByChildId;
+}
+
+function resolveInstructionChildSpec(attribute: NpcDescriptorAttribute): ChildSpec | null {
+  return resolveChildSpec({ Category: "Structural", Name: "Instruction" }, attribute);
+}
+
+function resolveChildSpec(
+  descriptor: Pick<NpcDescriptor, "Category" | "Name">,
+  attribute: NpcDescriptorAttribute,
+): ChildSpec | null {
+  const domain = getNpcBehaviorChildDomain(
+    attribute.Type,
+    typeof attribute.Domain === "string" ? attribute.Domain : undefined,
+  );
   if (!domain) {
     return null;
   }
 
-  const childIdByDomain: Record<string, { childId: string; connectionType: string }> = {
-    Action: { childId: "ActionVariants", connectionType: "Action" },
-    ActionList: { childId: "ActionVariants", connectionType: "Action" },
-    Sensor: { childId: "SensorVariants", connectionType: "Sensor" },
-    BodyMotion: { childId: "BodyMotionVariants", connectionType: "BodyMotion" },
-    HeadMotion: { childId: "HeadMotionVariants", connectionType: "HeadMotion" },
-    Instruction: { childId: "Structural.InstructionNode", connectionType: "Instruction" },
-    IEntityFilter: { childId: "FilterVariants", connectionType: "IEntityFilter" },
-    ISensorEntityCollector: {
-      childId: "CollectorVariants",
-      connectionType: "ISensorEntityCollector",
-    },
-    ISensorEntityPrioritiser: {
-      childId: "PrioritiserVariants",
-      connectionType: "ISensorEntityPrioritiser",
-    },
-    Path: { childId: "Path.Path", connectionType: "Path" },
-    WeightedAction: {
-      childId: "WeightedAction.WeightedAction",
-      connectionType: "WeightedAction",
-    },
-    RelativeWaypointDefinition: {
-      childId: "RelativeWaypointDefinition.RelativeWaypointDefinition",
-      connectionType: "RelativeWaypointDefinition",
-    },
-    ValueToParameterMapping: {
-      childId: "ValueToParameterMapping.ValueToParameterMapping",
-      connectionType: "ValueToParameterMapping",
-    },
-  };
-
-  const resolved = childIdByDomain[domain];
+  const resolved = getNpcBehaviorChildDomainDefinition(domain);
   if (!resolved) {
     return null;
   }
 
+  const connectionType = getNpcBehaviorChildConnectionType(
+    descriptor.Category,
+    descriptor.Name,
+    attribute.Name,
+    domain,
+  );
+  if (!connectionType) {
+    return null;
+  }
+
   return {
-    ...resolved,
+    childId: resolved.childId,
+    connectionType,
     multiplicity:
       attribute.Type === "Array" || domain === "ActionList" ? "multiple" : "single",
+    pinSide: getNpcBehaviorChildPinSide(
+      descriptor.Category,
+      descriptor.Name,
+      attribute.Name,
+      domain,
+    ),
   };
+}
+
+function getDescriptorTemplateParentTargetIds(
+  descriptor: NpcDescriptor & { Category: SupportedDescriptorCategory },
+): string[] {
+  const childDefinition = getNpcBehaviorChildDomainDefinition(descriptor.Category);
+  return childDefinition ? [childDefinition.childId] : [];
+}
+
+function getInstructionTemplateParentTargetId(): string {
+  const childDefinition = getNpcBehaviorChildDomainDefinition("Instruction");
+  if (!childDefinition) {
+    throw new Error("Instruction child domain definition is missing.");
+  }
+
+  return childDefinition.childId;
 }
 
 function buildContentField(attribute: NpcDescriptorAttribute): NodeContentDefinition | null {
@@ -572,15 +665,12 @@ function resolveFieldType(
 }
 
 function canRenderArrayField(attribute: NpcDescriptorAttribute): boolean {
-  if (typeof attribute.Domain !== "string") {
-    return true;
-  }
-
-  if (parseEnumValues(attribute.Domain)?.length) {
-    return true;
-  }
-
-  return PRIMITIVE_LIST_DOMAINS.has(attribute.Domain);
+  return (
+    getNpcBehaviorChildDomain(
+      attribute.Type,
+      typeof attribute.Domain === "string" ? attribute.Domain : undefined,
+    ) === undefined
+  );
 }
 
 function parseDefaultValue(
@@ -658,20 +748,5 @@ function normalizeDescription(value: string | null | undefined): string | undefi
 function writeJsonFile(filePath: string, value: unknown): void {
   writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
-
-const CATEGORY_COLORS_BY_CONNECTION_TYPE: Record<string, string> = {
-  Action: CATEGORY_COLORS.Action,
-  BodyMotion: CATEGORY_COLORS.BodyMotion,
-  HeadMotion: CATEGORY_COLORS.HeadMotion,
-  IEntityFilter: CATEGORY_COLORS.IEntityFilter,
-  ISensorEntityCollector: CATEGORY_COLORS.ISensorEntityCollector,
-  ISensorEntityPrioritiser: CATEGORY_COLORS.ISensorEntityPrioritiser,
-  Instruction: CATEGORY_COLORS.Structural,
-  Path: CATEGORY_COLORS.Path,
-  RelativeWaypointDefinition: CATEGORY_COLORS.RelativeWaypointDefinition,
-  Sensor: CATEGORY_COLORS.Sensor,
-  ValueToParameterMapping: CATEGORY_COLORS.ValueToParameterMapping,
-  WeightedAction: CATEGORY_COLORS.WeightedAction,
-};
 
 main();

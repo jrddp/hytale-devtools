@@ -1,0 +1,69 @@
+{
+  "Id": "IEntityFilter.Combat",
+  "Title": "Combat",
+  "Color": "YellowGreen",
+  "Description": "Check the target's combat state",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filter"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TimeElapsedRange",
+      "Type": "List",
+      "Description": "The acceptable elapsed time range in seconds.",
+      "Options": {
+        "Label": "TimeElapsedRange",
+        "Default": [
+          0,
+          3.4028234663852886e+38
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Mode",
+      "Type": "Enum",
+      "Description": "Type of combat to trigger on",
+      "Options": {
+        "Label": "Mode",
+        "Default": "Attacking",
+        "Width": 220,
+        "Values": [
+          "Sequence",
+          "Charging",
+          "Attacking",
+          "Melee",
+          "Ranged",
+          "Blocking",
+          "Any",
+          "None"
+        ],
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "TimeElapsedRange": "TimeElapsedRange",
+    "Mode": "Mode",
+    "Type": "Combat"
+  }
+}

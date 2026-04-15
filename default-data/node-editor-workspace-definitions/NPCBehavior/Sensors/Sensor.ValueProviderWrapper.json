@@ -1,0 +1,85 @@
+{
+  "Id": "Sensor.ValueProviderWrapper",
+  "Title": "ValueProviderWrapper",
+  "Color": "LimeGreen",
+  "Description": "Wraps a sensor and passes down some additional parameter overrides pulled from the value store",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    },
+    {
+      "Id": "ValueToParameterMappingsPin",
+      "Type": "ValueToParameterMapping",
+      "Color": "Tan",
+      "Label": "ValueToParameterMappings",
+      "Description": "The mappings of values to override parameters",
+      "Multiple": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    },
+    {
+      "Id": "SensorPin",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Sensor",
+      "Description": "Sensor to wrap"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "PassValues",
+      "Type": "Bool",
+      "Description": "Used to enable/disable passing of values in components",
+      "Options": {
+        "Label": "PassValues",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "PassValues": "PassValues",
+    "Sensor": {
+      "Pin": "SensorPin",
+      "Node": "SensorVariants"
+    },
+    "ValueToParameterMappings": {
+      "Pin": "ValueToParameterMappingsPin",
+      "Node": "ValueToParameterMapping.ValueToParameterMapping"
+    },
+    "Type": "ValueProviderWrapper"
+  }
+}

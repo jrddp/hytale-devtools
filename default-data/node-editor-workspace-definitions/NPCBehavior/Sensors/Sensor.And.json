@@ -1,0 +1,73 @@
+{
+  "Id": "Sensor.And",
+  "Title": "And",
+  "Color": "LimeGreen",
+  "Description": "Logical AND of list of sensors",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    },
+    {
+      "Id": "SensorsPin",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensors",
+      "Description": "List of sensors",
+      "Multiple": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AutoUnlockTargetSlot",
+      "Type": "SmallString",
+      "Description": "A target slot to unlock when sensor doesn't match anymore",
+      "Options": {
+        "Label": "AutoUnlockTargetSlot",
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Sensors": {
+      "Pin": "SensorsPin",
+      "Node": "SensorVariants"
+    },
+    "AutoUnlockTargetSlot": "AutoUnlockTargetSlot",
+    "Type": "And"
+  }
+}

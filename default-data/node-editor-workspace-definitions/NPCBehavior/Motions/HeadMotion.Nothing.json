@@ -1,0 +1,17 @@
+{
+  "Id": "HeadMotion.Nothing",
+  "Title": "Nothing",
+  "Color": "MediumPurple",
+  "Description": "Do nothing",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "HeadMotion",
+      "Color": "MediumPurple",
+      "Label": "HeadMotion"
+    }
+  ],
+  "Schema": {
+    "Type": "Nothing"
+  }
+}

@@ -351,7 +351,7 @@ export class WorkspaceRuntime {
             }
           }
           map[output.Id] = {
-            schemaKey: "",
+            schemaKey: output.Id,
             localId: output.Id,
             connectionType: output.Type,
             label: output.Label,
@@ -411,17 +411,19 @@ export class WorkspaceRuntime {
           continue;
         }
         const outputPin = outputPinsByLocalId[pinId];
-        if (!outputPin) {
+        const inputPin = inputPins.find(pin => pin.localId === pinId);
+        const resolvedPin = outputPin ?? inputPin;
+        if (!resolvedPin) {
           this.logger.error(
             `Pin ${pinId} not resolved to local id for schema key ${schemaKey} of template ${definition.Id}`,
           );
           continue;
         }
 
-        outputPin.schemaKey = schemaKey;
+        resolvedPin.schemaKey = schemaKey;
 
         const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
-        outputPin.description = outputPin.description ?? schemaField?.markdownDescription;
+        resolvedPin.description = resolvedPin.description ?? schemaField?.markdownDescription;
         childSchemas[schemaKey] = {
           schemaKey,
           targetTemplateOrVariantId: variantOrTemplateId,

@@ -1,0 +1,119 @@
+{
+  "Id": "Sensor.SearchRay",
+  "Title": "SearchRay",
+  "Color": "LimeGreen",
+  "Description": "Fire a ray at a specific angle to see if what it hits matches a given sought block",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WrappedSensor",
+      "Color": "SeaGreen",
+      "Label": "Wrapped Sensor"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "LimeGreen",
+      "Label": "Sensor"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The id of this search ray sensor so the position can be cached",
+      "Options": {
+        "Label": "Name",
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Angle",
+      "Type": "Float",
+      "Description": "Angle to fire the ray",
+      "Options": {
+        "Label": "Angle",
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "How far to search",
+      "Options": {
+        "Label": "Range",
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MinRetestAngle",
+      "Type": "Float",
+      "Description": "The minimum change in NPC rotation before rays stop being throttled",
+      "Options": {
+        "Label": "MinRetestAngle",
+        "Default": 5,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MinRetestMove",
+      "Type": "Float",
+      "Description": "The minimum distance the NPC needs to move while facing the same direction before rays stop being throttled",
+      "Options": {
+        "Label": "MinRetestMove",
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ThrottleTime",
+      "Type": "Float",
+      "Description": "The delay between retests when an NPC is facing the same direction",
+      "Options": {
+        "Label": "ThrottleTime",
+        "Default": 0.5,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Name": "Name",
+    "Angle": "Angle",
+    "Range": "Range",
+    "MinRetestAngle": "MinRetestAngle",
+    "MinRetestMove": "MinRetestMove",
+    "ThrottleTime": "ThrottleTime",
+    "Type": "SearchRay"
+  }
+}

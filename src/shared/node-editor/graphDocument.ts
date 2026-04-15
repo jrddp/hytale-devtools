@@ -15,6 +15,12 @@ import type {
   NodeEditorGraphNodeData,
   RawJsonGraphNode,
 } from "./graphTypes";
+import { getResolvedChildSlots, resolveChildPin } from "./childSlotUtils";
+import {
+  GENERIC_CONNECTION_TYPE,
+  getCompatibleInputHandleId,
+  getCompatibleOutputHandleId,
+} from "./pinUtils";
 import { INPUT_HANDLE_ID } from "./sharedConstants";
 import {
   type GraphRootAdaptationResult,
@@ -34,7 +40,6 @@ const DEFAULT_RAW_JSON_TEXT = "{\n\n}";
 const LINK_OUTPUT_HANDLE_ID = "output";
 const LINK_DEFAULT_OUTPUT_LABEL = "Children";
 const RAW_JSON_NODE_COLOR = "var(--vscode-focusBorder)";
-const GENERIC_CONNECTION_TYPE = "Generic";
 const NON_SEMANTIC_INLINE_METADATA_KEYS = new Set(["$Position", "$Title"]);
 
 const GROUP_TEMPLATE_ID = "$Group";
@@ -223,24 +228,6 @@ function normalizeNodeDefinitionForReuse(value: unknown): unknown {
   return value;
 }
 
-function areConnectionTypesCompatible(sourceType: string, targetType: string): boolean {
-  return (
-    sourceType === GENERIC_CONNECTION_TYPE ||
-    targetType === GENERIC_CONNECTION_TYPE ||
-    sourceType === targetType
-  );
-}
-
-function getCompatibleInputHandleId(template: NodeTemplate, outputPin: NodePin): string {
-  return (
-    template.inputPins.find(pin => pin.connectionType === outputPin.connectionType)?.schemaKey ??
-    template.inputPins.find(pin =>
-      areConnectionTypesCompatible(outputPin.connectionType, pin.connectionType),
-    )?.schemaKey ??
-    INPUT_HANDLE_ID
-  );
-}
-
 function getRootTemplate(workspaceContext: NodeEditorWorkspaceContext): NodeTemplate | undefined {
   return workspaceContext.nodeTemplatesById[workspaceContext.rootTemplateOrVariantId];
 }
@@ -272,8 +259,8 @@ function getRootSerializationDefaultValue(workspaceContext: NodeEditorWorkspaceC
     return {};
   }
 
-  const outputPin = rootTemplate.outputPins.find(pin => pin.schemaKey === rootChildSchema.schemaKey);
-  switch (outputPin?.multiplicity) {
+  const resolvedChildPin = resolveChildPin(rootTemplate, rootChildSchema.schemaKey);
+  switch (resolvedChildPin?.pin.multiplicity) {
     case "multiple":
       return [];
     case "map":
@@ -340,6 +327,32 @@ export function adaptGraphDocumentRootToHostValue(
     preservedData:
       preservedDataEntries.length > 0 ? Object.fromEntries(preservedDataEntries) : undefined,
   };
+}
+
+function getOrderedConnectedNodeIds(
+  connectedNodeIds: string[],
+  nodesById: Map<string, NodeEditorGraphNode>,
+): string[] {
+  const absoluteYByNodeId = new Map<string, number>();
+  const getAbsoluteY = (nodeId: string) => {
+    const cached = absoluteYByNodeId.get(nodeId);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    const node = nodesById.get(nodeId);
+    if (!node) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const absoluteY = getGraphNodeAbsolutePosition(node, nodesById).y;
+    absoluteYByNodeId.set(nodeId, absoluteY);
+    return absoluteY;
+  };
+
+  return [...connectedNodeIds].sort((leftId, rightId) => {
+    return getAbsoluteY(leftId) - getAbsoluteY(rightId);
+  });
 }
 
 export function parseAssetDocumentToGraphDocument(
@@ -485,24 +498,42 @@ export function parseAssetDocumentToGraphDocument(
       const unprocessedData = new Set(Object.keys(localRoot).filter(key => !key.startsWith("$")));
       const unparsedMetadata: Record<string, unknown> = {};
 
-      for (const pin of template.outputPins) {
-        const schemaKey = pin.schemaKey;
+      for (const slot of getResolvedChildSlots(template)) {
+        const schemaKey = slot.childSchema.schemaKey;
         unprocessedData.delete(schemaKey);
 
-        switch (pin.multiplicity) {
+        const connectParsedChild = (childId: string) => {
+          const childNode = nodesById.get(childId);
+          if (slot.side === "output") {
+            addEdge(
+              nodeId,
+              slot.pin.schemaKey,
+              childId,
+              childNode?.type === "datanode"
+                ? (getCompatibleInputHandleId(childNode.data, slot.pin.connectionType) ?? INPUT_HANDLE_ID)
+                : INPUT_HANDLE_ID,
+            );
+            return;
+          }
+
+          addEdge(
+            childId,
+            childNode?.type === "datanode"
+              ? (getCompatibleOutputHandleId(childNode.data, slot.pin.connectionType) ?? INPUT_HANDLE_ID)
+              : INPUT_HANDLE_ID,
+            nodeId,
+            slot.pin.schemaKey,
+          );
+        };
+
+        switch (slot.pin.multiplicity) {
           case "single":
             if (localRoot[schemaKey] !== undefined) {
               const childId = recursiveParseNodes(
                 localRoot[schemaKey] as NodeAssetJson,
-                template.childSchemas[schemaKey]?.targetTemplateOrVariantId,
+                slot.childSchema.targetTemplateOrVariantId,
               );
-              const childNode = nodesById.get(childId);
-              addEdge(
-                nodeId,
-                schemaKey,
-                childId,
-                childNode?.type === "datanode" ? getCompatibleInputHandleId(childNode.data, pin) : INPUT_HANDLE_ID,
-              );
+              connectParsedChild(childId);
             }
             break;
           case "multiple":
@@ -510,16 +541,11 @@ export function parseAssetDocumentToGraphDocument(
               for (let index = 0; index < localRoot[schemaKey].length; index++) {
                 const childId = recursiveParseNodes(
                   localRoot[schemaKey][index] as NodeAssetJson,
-                  template.childSchemas[schemaKey]?.targetTemplateOrVariantId,
+                  slot.childSchema.targetTemplateOrVariantId,
                 );
                 const childNode = nodesById.get(childId)!;
                 childNode.data.inputConnectionIndex = index;
-                addEdge(
-                  nodeId,
-                  schemaKey,
-                  childId,
-                  childNode.type === "datanode" ? getCompatibleInputHandleId(childNode.data, pin) : INPUT_HANDLE_ID,
-                );
+                connectParsedChild(childId);
               }
             }
             break;
@@ -529,16 +555,11 @@ export function parseAssetDocumentToGraphDocument(
               for (const value of Object.values(localRoot[schemaKey] as Record<string, unknown>)) {
                 const childId = recursiveParseNodes(
                   value as NodeAssetJson,
-                  template.childSchemas[schemaKey]?.targetTemplateOrVariantId,
+                  slot.childSchema.targetTemplateOrVariantId,
                 );
                 const childNode = nodesById.get(childId)!;
                 childNode.data.inputConnectionIndex = index;
-                addEdge(
-                  nodeId,
-                  schemaKey,
-                  childId,
-                  childNode.type === "datanode" ? getCompatibleInputHandleId(childNode.data, pin) : INPUT_HANDLE_ID,
-                );
+                connectParsedChild(childId);
                 index += 1;
               }
             }
@@ -669,7 +690,10 @@ export function parseAssetDocumentToGraphDocument(
           const targetNode = nodesById.get(targetNodeId);
           const linkTargetHandleId =
             targetNode?.type === "datanode"
-              ? getCompatibleInputHandleId(targetNode.data, LINK_TEMPLATE.outputPins[0])
+              ? (getCompatibleInputHandleId(
+                  targetNode.data,
+                  LINK_TEMPLATE.outputPins[0].connectionType,
+                ) ?? INPUT_HANDLE_ID)
               : INPUT_HANDLE_ID;
           for (const edge of outgoingConnections.get(sourceNodeId)?.get(sourceHandleId) ?? []) {
             if (edge.target === targetNodeId && edge.targetHandle === linkTargetHandleId) {
@@ -764,32 +788,6 @@ function getGraphNodeAbsolutePosition(
   return { x, y };
 }
 
-function getOrderedConnectedNodeIds(
-  connectedNodeIds: string[],
-  nodesById: Map<string, NodeEditorGraphNode>,
-): string[] {
-  const absoluteYByNodeId = new Map<string, number>();
-  const getAbsoluteY = (nodeId: string) => {
-    const cached = absoluteYByNodeId.get(nodeId);
-    if (cached !== undefined) {
-      return cached;
-    }
-
-    const node = nodesById.get(nodeId);
-    if (!node) {
-      return Number.POSITIVE_INFINITY;
-    }
-
-    const absoluteY = getGraphNodeAbsolutePosition(node, nodesById).y;
-    absoluteYByNodeId.set(nodeId, absoluteY);
-    return absoluteY;
-  };
-
-  return [...connectedNodeIds].sort((leftId, rightId) => {
-    return getAbsoluteY(leftId) - getAbsoluteY(rightId);
-  });
-}
-
 export function serializeGraphDocument(document: NodeEditorGraphDocument): AssetDocumentShape {
   const { rootNodeId, nodes, edges } = document;
   const nodeEditorMetadata: NodeEditorMetadata = {
@@ -802,7 +800,7 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
   };
 
   const outgoingConnections = new Map<string, Map<string, string[]>>();
-  const incomingConnectionCounts = new Map<string, number>();
+  const incomingConnections = new Map<string, Map<string, string[]>>();
 
   for (const edge of edges) {
     if (!outgoingConnections.has(edge.source)) {
@@ -812,12 +810,52 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
       outgoingConnections.get(edge.source)!.set(edge.sourceHandle, []);
     }
     outgoingConnections.get(edge.source)!.get(edge.sourceHandle)!.push(edge.target);
-    incomingConnectionCounts.set(edge.target, (incomingConnectionCounts.get(edge.target) ?? 0) + 1);
+
+    if (!incomingConnections.has(edge.target)) {
+      incomingConnections.set(edge.target, new Map());
+    }
+    if (!incomingConnections.get(edge.target)!.has(edge.targetHandle)) {
+      incomingConnections.get(edge.target)!.set(edge.targetHandle, []);
+    }
+    incomingConnections.get(edge.target)!.get(edge.targetHandle)!.push(edge.source);
   }
 
   const nodesById = new Map(nodes.map(node => [node.id, node]));
   const serializedNodesById = new Map<string, NodeAssetJson | undefined>();
   const serializationStack = new Set<string>();
+
+  const getSerializedChildNodeIds = (
+    node: DataGraphNode,
+    schemaKey: string,
+  ): string[] => {
+    const slot = getResolvedChildSlots(node.data).find(
+      resolvedSlot => resolvedSlot.childSchema.schemaKey === schemaKey,
+    );
+    if (!slot) {
+      return [];
+    }
+
+    const connectedNodeIds =
+      slot.side === "output"
+        ? outgoingConnections.get(node.id)?.get(slot.pin.schemaKey) ?? []
+        : incomingConnections.get(node.id)?.get(slot.pin.schemaKey) ?? [];
+
+    return getOrderedConnectedNodeIds(connectedNodeIds, nodesById);
+  };
+
+  const serializedParentCounts = new Map<string, number>();
+  for (const node of nodes) {
+    if (node.type !== "datanode") {
+      continue;
+    }
+
+    for (const slot of getResolvedChildSlots(node.data)) {
+      const childNodeIds = getSerializedChildNodeIds(node, slot.childSchema.schemaKey);
+      childNodeIds.forEach(childNodeId => {
+        serializedParentCounts.set(childNodeId, (serializedParentCounts.get(childNodeId) ?? 0) + 1);
+      });
+    }
+  }
 
   const recursiveSerializeNode = (nodeId: string | undefined): NodeAssetJson | undefined => {
     if (!nodeId) {
@@ -847,26 +885,23 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         json.$NodeId = node.id;
         json.$Comment = node.data.comment ?? undefined;
 
-        for (const pin of node.data.outputPins) {
-          const connectedNodeIds = getOrderedConnectedNodeIds(
-            outgoingConnections.get(node.id)?.get(pin.schemaKey) ?? [],
-            nodesById,
-          );
+        for (const slot of getResolvedChildSlots(node.data)) {
+          const connectedNodeIds = getSerializedChildNodeIds(node, slot.childSchema.schemaKey);
           if (connectedNodeIds.length === 0) {
             continue;
           }
 
-          switch (pin.multiplicity) {
+          switch (slot.pin.multiplicity) {
             case "single":
-              json[pin.schemaKey] = recursiveSerializeNode(connectedNodeIds[0]);
+              json[slot.childSchema.schemaKey] = recursiveSerializeNode(connectedNodeIds[0]);
               break;
             case "multiple":
-              json[pin.schemaKey] = connectedNodeIds.map(connectedNodeId =>
+              json[slot.childSchema.schemaKey] = connectedNodeIds.map(connectedNodeId =>
                 recursiveSerializeNode(connectedNodeId),
               );
               break;
             case "map":
-              json[pin.schemaKey] = connectedNodeIds.reduce<Record<string, unknown>>(
+              json[slot.childSchema.schemaKey] = connectedNodeIds.reduce<Record<string, unknown>>(
                 (map, connectedNodeId) => {
                   const childNode = nodesById.get(connectedNodeId);
                   const key = (childNode?.data.titleOverride as string | undefined) ?? connectedNodeId;
@@ -958,7 +993,7 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
   const rootNodeSerialized = recursiveSerializeNode(rootNodeId);
 
   for (const node of nodes) {
-    if (node.id === rootNodeId || (incomingConnectionCounts.get(node.id) ?? 0) > 0) {
+    if (node.id === rootNodeId || (serializedParentCounts.get(node.id) ?? 0) > 0) {
       continue;
     }
 

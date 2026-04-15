@@ -1,0 +1,42 @@
+{
+  "Id": "Action.Crouch",
+  "Title": "Crouch",
+  "Color": "DeepSkyBlue",
+  "Description": "Set NPC crouching state",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Crouch",
+      "Type": "Bool",
+      "Description": "True for crouching, false for non-crouching",
+      "Options": {
+        "Label": "Crouch",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Crouch": "Crouch",
+    "Type": "Crouch"
+  }
+}

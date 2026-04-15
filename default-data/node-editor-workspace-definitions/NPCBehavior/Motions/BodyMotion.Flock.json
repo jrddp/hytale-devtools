@@ -1,0 +1,17 @@
+{
+  "Id": "BodyMotion.Flock",
+  "Title": "Flock",
+  "Color": "DarkOrange",
+  "Description": "Flocking - WIP",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "DarkOrange",
+      "Label": "BodyMotion"
+    }
+  ],
+  "Schema": {
+    "Type": "Flock"
+  }
+}

@@ -5,6 +5,7 @@
   import { asCssColor } from "@node-editor/node-editor/utils/colors";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
+  import { shouldShowInputPinLabels } from "@shared/node-editor/pinUtils";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { Snippet } from "svelte";
   import HoverTooltip from "@node-editor/components/HoverTooltip.svelte";
@@ -28,6 +29,7 @@
   } = $derived(data);
 
   const cssColor = $derived(asCssColor(nodeColor));
+  const showInputPinLabels = $derived(shouldShowInputPinLabels(inputPins));
 
   // # Title State
   let lastComittedTitle = $derived(titleOverride);
@@ -206,7 +208,18 @@
     <!-- Input Pins -->
     <div class="flex flex-col gap-2">
       {#each inputPins as pin (pin.localId)}
-        <NodePinHandle nodeId={id} {pin} type="target" />
+        <HoverTooltip text={pin.description} placement="right" wrapperClass={showInputPinLabels ? "w-full" : ""}>
+          {#if showInputPinLabels}
+            <div class="flex items-center gap-2">
+              <NodePinHandle nodeId={id} {pin} type="target" />
+              <div class="text-xs text-vsc-muted whitespace-nowrap">
+                {pin.label}
+              </div>
+            </div>
+          {:else}
+            <NodePinHandle nodeId={id} {pin} type="target" />
+          {/if}
+        </HoverTooltip>
       {/each}
     </div>
 

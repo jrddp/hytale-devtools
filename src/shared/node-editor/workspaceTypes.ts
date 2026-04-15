@@ -47,7 +47,7 @@ export interface NodeField {
 }
 
 export interface NodePin {
-  schemaKey: string; // null for input pins
+  schemaKey: string;
   label?: string;
   description?: string;
   color?: string;

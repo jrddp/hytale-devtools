@@ -1,0 +1,66 @@
+{
+  "Id": "Action.Sequence",
+  "Title": "Sequence",
+  "Color": "DeepSkyBlue",
+  "Description": "List of actions.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ActionsPin",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Actions",
+      "Description": "List of actions",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Blocking",
+      "Type": "Bool",
+      "Description": "Do not execute an action unless the previous action could execute",
+      "Options": {
+        "Label": "Blocking",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Atomic",
+      "Type": "Bool",
+      "Description": "Only execute actions if all actions can be executed",
+      "Options": {
+        "Label": "Atomic",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Blocking": "Blocking",
+    "Atomic": "Atomic",
+    "Actions": {
+      "Pin": "ActionsPin",
+      "Node": "ActionVariants"
+    },
+    "Type": "Sequence"
+  }
+}

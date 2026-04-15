@@ -1,0 +1,30 @@
+{
+  "Id": "Action.PlaySound",
+  "Title": "PlaySound",
+  "Color": "DeepSkyBlue",
+  "Description": "Plays a sound to players within a specified range.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "PlaySound"
+  }
+}

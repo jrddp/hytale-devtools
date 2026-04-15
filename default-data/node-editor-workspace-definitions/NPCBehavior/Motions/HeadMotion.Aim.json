@@ -1,0 +1,67 @@
+{
+  "Id": "HeadMotion.Aim",
+  "Title": "Aim",
+  "Color": "MediumPurple",
+  "Description": "Aim at target",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "HeadMotion",
+      "Color": "MediumPurple",
+      "Label": "HeadMotion"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Spread",
+      "Type": "Float",
+      "Description": "Random targeting error",
+      "Options": {
+        "Label": "Spread",
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "HitProbability",
+      "Type": "Float",
+      "Description": "Probability of shot being straight on target",
+      "Options": {
+        "Label": "HitProbability",
+        "Default": 0.33,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Deflection",
+      "Type": "Bool",
+      "Description": "Compute deflection for moving targets",
+      "Options": {
+        "Label": "Deflection",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelativeTurnSpeed",
+      "Type": "Float",
+      "Description": "The relative turn speed modifier",
+      "Options": {
+        "Label": "RelativeTurnSpeed",
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Spread": "Spread",
+    "HitProbability": "HitProbability",
+    "Deflection": "Deflection",
+    "RelativeTurnSpeed": "RelativeTurnSpeed",
+    "Type": "Aim"
+  }
+}

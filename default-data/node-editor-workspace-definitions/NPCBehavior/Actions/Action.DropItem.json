@@ -1,0 +1,95 @@
+{
+  "Id": "Action.DropItem",
+  "Title": "DropItem",
+  "Color": "DeepSkyBlue",
+  "Description": "Drop an item",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Delay",
+      "Type": "List",
+      "Description": "Range of time to delay in seconds",
+      "Options": {
+        "Label": "Delay",
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ThrowSpeed",
+      "Type": "Float",
+      "Description": "The throw speed to use",
+      "Options": {
+        "Label": "ThrowSpeed",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Distance",
+      "Type": "List",
+      "Description": "The range from which to pick a distance to throw the item",
+      "Options": {
+        "Label": "Distance",
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "DropSector",
+      "Type": "List",
+      "Description": "The sector to spread drops in relative to view direction of NPC",
+      "Options": {
+        "Label": "DropSector",
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240
+      }
+    },
+    {
+      "Id": "PitchHigh",
+      "Type": "Bool",
+      "Description": "Whether to pitch high or pitch low instead",
+      "Options": {
+        "Label": "PitchHigh",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Delay": "Delay",
+    "ThrowSpeed": "ThrowSpeed",
+    "Distance": "Distance",
+    "DropSector": "DropSector",
+    "PitchHigh": "PitchHigh",
+    "Type": "DropItem"
+  }
+}

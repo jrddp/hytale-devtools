@@ -1,0 +1,30 @@
+{
+  "Id": "Action.SetBlockToPlace",
+  "Title": "SetBlockToPlace",
+  "Color": "DeepSkyBlue",
+  "Description": "Set the block type the NPC will place",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "SetBlockToPlace"
+  }
+}

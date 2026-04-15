@@ -1,0 +1,30 @@
+{
+  "Id": "Action.OpenBarterShop",
+  "Title": "OpenBarterShop",
+  "Color": "DeepSkyBlue",
+  "Description": "Open the barter shop UI for the current player",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "OpenBarterShop"
+  }
+}

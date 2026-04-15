@@ -1,0 +1,30 @@
+{
+  "Id": "Action.RecomputePath",
+  "Title": "RecomputePath",
+  "Color": "DeepSkyBlue",
+  "Description": "Force recomputation of path finder solution",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "RecomputePath"
+  }
+}

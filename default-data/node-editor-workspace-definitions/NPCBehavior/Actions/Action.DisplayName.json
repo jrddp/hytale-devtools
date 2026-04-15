@@ -1,0 +1,41 @@
+{
+  "Id": "Action.DisplayName",
+  "Title": "DisplayName",
+  "Color": "DeepSkyBlue",
+  "Description": "Set display name.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "DisplayName",
+      "Type": "SmallString",
+      "Description": "Name to display above NPC",
+      "Options": {
+        "Label": "DisplayName",
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "DisplayName": "DisplayName",
+    "Type": "DisplayName"
+  }
+}

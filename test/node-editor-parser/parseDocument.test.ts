@@ -10,6 +10,7 @@ import {
   nodeTemplate,
   outputPin,
   parseWorkspaceDocument,
+  selfOutputPin,
   workspaceContext,
 } from "./helpers";
 
@@ -101,6 +102,55 @@ const SHARED_SUBTREE_CONTEXT = workspaceContext({
       inputPins: [inputPin("input", "single", { connectionType: "Gamma", localId: "Input" })],
       fieldsBySchemaKey: {
         Name: nodeField("Name"),
+      },
+    }),
+  ],
+});
+
+const REVERSE_INPUT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Reverse Input Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      inputPins: [
+        inputPin("Sensor", "single", { connectionType: "Sensor", localId: "SensorPin" }),
+        inputPin("Filters", "multiple", {
+          connectionType: "Filter",
+          localId: "FiltersPin",
+        }),
+      ],
+      schemaConstants: {
+        Type: "Root",
+      },
+      childSchemas: {
+        Sensor: {
+          schemaKey: "Sensor",
+          targetTemplateOrVariantId: "SensorLeaf",
+          serializationType: "child",
+        },
+        Filters: {
+          schemaKey: "Filters",
+          targetTemplateOrVariantId: "FilterLeaf",
+          serializationType: "child",
+        },
+      },
+    }),
+    nodeTemplate("SensorLeaf", {
+      outputPins: [selfOutputPin("Sensor")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "SensorLeaf",
+      },
+    }),
+    nodeTemplate("FilterLeaf", {
+      outputPins: [selfOutputPin("Filter")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "FilterLeaf",
       },
     }),
   ],
@@ -346,5 +396,58 @@ describe("node editor parseDocument", () => {
         SHARED_SUBTREE_CONTEXT,
       ),
     ).toThrow(/Conflicting serialized payloads/);
+  });
+
+  test("parses reverse-input child slots as edges from child self outputs into parent inputs", () => {
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Sensor: {
+          $NodeId: "Sensor-1",
+          Type: "SensorLeaf",
+          Name: "Condition",
+        },
+        Filters: [
+          {
+            $NodeId: "Filter-1",
+            Type: "FilterLeaf",
+            Name: "First",
+          },
+          {
+            $NodeId: "Filter-2",
+            Type: "FilterLeaf",
+            Name: "Second",
+          },
+        ],
+      },
+      REVERSE_INPUT_CONTEXT,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    const sensor = findNodeByBaseId(state, "Sensor-1");
+    const firstFilter = findNodeByBaseId(state, "Filter-1");
+    const secondFilter = findNodeByBaseId(state, "Filter-2");
+
+    expect(findEdge(state, `${sensor.id}:output-${root.id}`)).toMatchObject({
+      source: sensor.id,
+      sourceHandle: "output",
+      target: root.id,
+      targetHandle: "Sensor",
+    });
+    expect(findEdge(state, `${firstFilter.id}:output-${root.id}`)).toMatchObject({
+      source: firstFilter.id,
+      sourceHandle: "output",
+      target: root.id,
+      targetHandle: "Filters",
+    });
+    expect(findEdge(state, `${secondFilter.id}:output-${root.id}`)).toMatchObject({
+      source: secondFilter.id,
+      sourceHandle: "output",
+      target: root.id,
+      targetHandle: "Filters",
+    });
+    expect(firstFilter.data.inputConnectionIndex).toBe(0);
+    expect(secondFilter.data.inputConnectionIndex).toBe(1);
   });
 });

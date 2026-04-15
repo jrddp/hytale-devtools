@@ -1,0 +1,54 @@
+{
+  "Id": "Action.PlaceBlock",
+  "Title": "PlaceBlock",
+  "Color": "DeepSkyBlue",
+  "Description": "Place a block (chosen by another action) at a position returned by a Sensor if close enough",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The range to target position before block will be placed",
+      "Options": {
+        "Label": "Range",
+        "Default": 3,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AllowEmptyMaterials",
+      "Type": "Bool",
+      "Description": "Whether it should be possible to replace blocks that have empty material",
+      "Options": {
+        "Label": "AllowEmptyMaterials",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Range": "Range",
+    "AllowEmptyMaterials": "AllowEmptyMaterials",
+    "Type": "PlaceBlock"
+  }
+}

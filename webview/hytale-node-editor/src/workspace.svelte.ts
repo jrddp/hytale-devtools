@@ -156,14 +156,18 @@ export class NodeEditorSession {
     });
     return outgoingConnections;
   });
-  /** childId -> targetHandleId -> edge */
-  private incomingConnections: Map<string, Map<string, FlowEdge>> = $derived.by(() => {
-    const incomingConnections: Map<string, Map<string, FlowEdge>> = new Map();
+  /** childId -> targetHandleId -> edges */
+  private incomingConnections: Map<string, Map<string, FlowEdge[]>> = $derived.by(() => {
+    const incomingConnections: Map<string, Map<string, FlowEdge[]>> = new Map();
     this.edges.forEach(edge => {
       if (!incomingConnections.has(edge.target)) {
         incomingConnections.set(edge.target, new Map());
       }
-      incomingConnections.get(edge.target)!.set(edge.targetHandle ?? INPUT_HANDLE_ID, edge);
+      const targetHandleId = edge.targetHandle ?? INPUT_HANDLE_ID;
+      if (!incomingConnections.get(edge.target)!.has(targetHandleId)) {
+        incomingConnections.get(edge.target)!.set(targetHandleId, []);
+      }
+      incomingConnections.get(edge.target)!.get(targetHandleId)!.push(edge);
     });
     return incomingConnections;
   });
@@ -289,12 +293,16 @@ export class NodeEditorSession {
     }
 
     if (handleId !== undefined) {
-      return incomingConnections.get(handleId);
+      return incomingConnections.get(handleId)?.[0];
     }
 
     // Legacy callers still ask for a single "parent" edge without specifying a handle.
     // Prefer the default input when present, otherwise fall back to the first incoming edge.
-    return incomingConnections.get(INPUT_HANDLE_ID) ?? incomingConnections.values().next().value;
+    return incomingConnections.get(INPUT_HANDLE_ID)?.[0] ?? incomingConnections.values().next().value?.[0];
+  }
+
+  getIncomingConnectionsForHandle(nodeId: string, handleId: string): FlowEdge[] {
+    return [...(this.incomingConnections.get(nodeId)?.get(handleId) ?? [])];
   }
 
   getValidTemplates(variantKindOrTemplateId: string | undefined): NodeTemplate[] {

@@ -43,6 +43,19 @@ export function outputPin(
   };
 }
 
+export function selfOutputPin(
+  connectionType: string,
+  overrides: Partial<NodePin> = {},
+): NodePin {
+  return {
+    schemaKey: "output",
+    connectionType,
+    localId: "Output",
+    multiplicity: "single",
+    ...overrides,
+  };
+}
+
 export function inputPin(
   schemaKey: string = "input",
   multiplicity: NodePin["multiplicity"] = "single",

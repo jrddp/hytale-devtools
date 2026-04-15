@@ -6,19 +6,19 @@
   "Inputs": [
     {
       "Id": "Input",
-      "Type": "Generic",
+      "Type": "Instruction",
       "Color": "Gold",
-      "Label": "Input"
-    }
-  ],
-  "Outputs": [
+      "Label": "Instruction"
+    },
     {
       "Id": "SensorPin",
       "Type": "Sensor",
       "Color": "LimeGreen",
       "Label": "Sensor",
       "Description": "Sensor for testing if instruction can be applied"
-    },
+    }
+  ],
+  "Outputs": [
     {
       "Id": "BodyMotionPin",
       "Type": "BodyMotion",

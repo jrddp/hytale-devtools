@@ -1,0 +1,32 @@
+{
+  "Id": "IEntityFilter.StandingOnBlock",
+  "Title": "StandingOnBlock",
+  "Color": "YellowGreen",
+  "Description": "Matches the block directly beneath the entity against a BlockSet",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filter"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Type": "StandingOnBlock"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "Id": "Action.ApplyEntityEffect",
+  "Title": "ApplyEntityEffect",
+  "Color": "DeepSkyBlue",
+  "Description": "Applies an entity effect to the target or self",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "UseTarget",
+      "Type": "Bool",
+      "Description": "Use the sensor-provided target for the action, self otherwise",
+      "Options": {
+        "Label": "UseTarget",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "UseTarget": "UseTarget",
+    "Type": "ApplyEntityEffect"
+  }
+}

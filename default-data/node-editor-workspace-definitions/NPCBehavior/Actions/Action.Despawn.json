@@ -1,0 +1,41 @@
+{
+  "Id": "Action.Despawn",
+  "Title": "Despawn",
+  "Color": "DeepSkyBlue",
+  "Description": "Trigger the NPC to despawn",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Force",
+      "Type": "Bool",
+      "Description": "Force the NPC to remove automatically",
+      "Options": {
+        "Label": "Force",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Force": "Force",
+    "Type": "Despawn"
+  }
+}

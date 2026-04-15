@@ -1,0 +1,47 @@
+{
+  "Id": "BodyMotion.Timer",
+  "Title": "Timer",
+  "Color": "DarkOrange",
+  "Description": "Execute a Motion for a specific maximum time",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "DarkOrange",
+      "Label": "BodyMotion"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "MotionPin",
+      "Type": "BodyMotion",
+      "Color": "DarkOrange",
+      "Label": "Motion",
+      "Description": "Motion to execute"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Time",
+      "Type": "List",
+      "Description": "Range of time from which the random timer length can be chosen",
+      "Options": {
+        "Label": "Time",
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Time": "Time",
+    "Motion": {
+      "Pin": "MotionPin",
+      "Node": "BodyMotionVariants"
+    },
+    "Type": "Timer"
+  }
+}

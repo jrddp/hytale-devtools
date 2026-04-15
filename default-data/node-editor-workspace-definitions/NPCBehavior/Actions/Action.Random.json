@@ -1,0 +1,42 @@
+{
+  "Id": "Action.Random",
+  "Title": "Random",
+  "Color": "DeepSkyBlue",
+  "Description": "Execute a single random action from a list of weighted actions.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    },
+    {
+      "Id": "ActionsPin",
+      "Type": "WeightedAction",
+      "Color": "DodgerBlue",
+      "Label": "Actions",
+      "Description": "List of possible actions",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Actions": {
+      "Pin": "ActionsPin",
+      "Node": "WeightedAction.WeightedAction"
+    },
+    "Type": "Random"
+  }
+}

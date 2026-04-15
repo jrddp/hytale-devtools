@@ -1,0 +1,85 @@
+{
+  "Id": "Action.PickUpItem",
+  "Title": "PickUpItem",
+  "Color": "DeepSkyBlue",
+  "Description": "Pick up an item",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Delay",
+      "Type": "List",
+      "Description": "Range of time to delay in seconds",
+      "Options": {
+        "Label": "Delay",
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The range the item will be picked up from",
+      "Options": {
+        "Label": "Range",
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "StorageTarget",
+      "Type": "Enum",
+      "Description": "Where to prioritise putting the item",
+      "Options": {
+        "Label": "StorageTarget",
+        "Default": "Hotbar",
+        "Width": 220,
+        "Values": [
+          "Hotbar",
+          "Inventory",
+          "Destroy"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Hoover",
+      "Type": "Bool",
+      "Description": "Suck up all items in range",
+      "Options": {
+        "Label": "Hoover",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Delay": "Delay",
+    "Range": "Range",
+    "StorageTarget": "StorageTarget",
+    "Hoover": "Hoover",
+    "Type": "PickUpItem"
+  }
+}

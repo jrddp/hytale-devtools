@@ -1,0 +1,62 @@
+{
+  "Id": "IEntityFilter.Inventory",
+  "Title": "Inventory",
+  "Color": "YellowGreen",
+  "Description": "Test various conditions relating to entity inventory",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "YellowGreen",
+      "Label": "Filter"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "CountRange",
+      "Type": "List",
+      "Description": "The range of number of items that need to match the patterns",
+      "Options": {
+        "Label": "CountRange",
+        "Default": [
+          1,
+          2147483647
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "FreeSlotRange",
+      "Type": "List",
+      "Description": "The range designating the number of required free slots",
+      "Options": {
+        "Label": "FreeSlotRange",
+        "Default": [
+          0,
+          2147483647
+        ],
+        "Width": 240,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "CountRange": "CountRange",
+    "FreeSlotRange": "FreeSlotRange",
+    "Type": "Inventory"
+  }
+}

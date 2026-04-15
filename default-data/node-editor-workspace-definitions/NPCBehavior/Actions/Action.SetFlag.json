@@ -1,0 +1,53 @@
+{
+  "Id": "Action.SetFlag",
+  "Title": "SetFlag",
+  "Color": "DeepSkyBlue",
+  "Description": "Set a named flag to a boolean value",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Action",
+      "Color": "DeepSkyBlue",
+      "Label": "Action"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the flag",
+      "Options": {
+        "Label": "Name",
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SetTo",
+      "Type": "Bool",
+      "Description": "The value to set the flag to",
+      "Options": {
+        "Label": "SetTo",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "SetTo": "SetTo",
+    "Type": "SetFlag"
+  }
+}
