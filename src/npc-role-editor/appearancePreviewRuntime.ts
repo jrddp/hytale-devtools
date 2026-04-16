@@ -1,9 +1,6 @@
 import type { AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
-import {
-  resolveModelPreviewFromPaths,
-  resolveTexturePathWithModelFallback,
-} from "../shared/modelPreviewResolution";
+import { resolveModelPreviewFromModelAsset } from "../shared/modelPreviewResolution";
 import type { ModelPreviewState } from "../shared/modelPreviewTypes";
 
 export async function resolveNpcAppearancePreview(
@@ -16,59 +13,31 @@ export async function resolveNpcAppearancePreview(
     return { type: "none" };
   }
 
-  const visitedAssetNames = new Set<string>();
-  let currentAssetName: string | undefined = trimmedAssetName;
-  let modelPath: string | undefined;
-  let texturePath: string | undefined;
-
-  while (currentAssetName) {
-    if (visitedAssetNames.has(currentAssetName)) {
-      return { type: "none" };
-    }
-    visitedAssetNames.add(currentAssetName);
-
-    const metadata = modelAssetIndex.values[currentAssetName];
-    if (!metadata?.sourcedFromFile) {
-      return { type: "none" };
-    }
-
-    const asset = await runtime.loadAssetByPath(metadata.sourcedFromFile);
-    if (asset?.contentType !== "json" || !isRecord(asset.rawJson)) {
-      return { type: "none" };
-    }
-
-    if (!texturePath) {
-      texturePath = toNonEmptyString(asset.rawJson.Texture);
-    }
-
-    const nextModelPath = toNonEmptyString(asset.rawJson.Model);
-    if (nextModelPath) {
-      modelPath = nextModelPath;
-      break;
-    }
-
-    currentAssetName = toNonEmptyString(asset.rawJson.Parent);
-  }
-
-  if (!modelPath) {
+  const rootAsset = await loadIndexedModelAsset(trimmedAssetName, modelAssetIndex, runtime);
+  if (!rootAsset) {
     return { type: "none" };
   }
 
-  const preview = await resolveModelPreviewFromPaths(
-    modelPath,
-    resolveTexturePathWithModelFallback(texturePath, modelPath),
+  const preview = await resolveModelPreviewFromModelAsset(
+    rootAsset,
     runtime,
+    async parentAssetName => await loadIndexedModelAsset(parentAssetName, modelAssetIndex, runtime),
   );
   return preview.model ? preview : { type: "none" };
 }
 
-function toNonEmptyString(value: unknown): string | undefined {
-  if (typeof value !== "string") {
+async function loadIndexedModelAsset(
+  assetName: string,
+  modelAssetIndex: RegisteredAssetsIndexShard,
+  runtime: AssetCacheRuntime,
+): Promise<Record<string, unknown> | undefined> {
+  const metadata = modelAssetIndex.values[assetName];
+  if (!metadata?.sourcedFromFile) {
     return undefined;
   }
 
-  const trimmed = value.trim();
-  return trimmed || undefined;
+  const asset = await runtime.loadAssetByPath(metadata.sourcedFromFile);
+  return asset?.contentType === "json" && isRecord(asset.rawJson) ? asset.rawJson : undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

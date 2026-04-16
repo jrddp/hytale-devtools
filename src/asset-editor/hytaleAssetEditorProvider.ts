@@ -13,6 +13,7 @@ import {
 } from "../shared/asset-editor/messageTypes";
 import { type AssetDefinition } from "../shared/fieldTypes";
 import {
+  resolveModelPreviewFromModelAsset,
   resolveModelPreviewFromPaths,
   resolveTexturePathWithModelFallback,
 } from "../shared/modelPreviewResolution";
@@ -337,6 +338,14 @@ async function resolveDocumentPreview(
     case "Item":
       return await resolveItemPreview(iconPath, runtime);
     case "Model":
+      if (assetDefinition.title === "ModelAsset" && isRecord(jsonData)) {
+        return await resolveModelPreviewFromModelAsset(
+          jsonData,
+          runtime,
+          async parentName => await loadModelAssetByName(parentName, runtime),
+        );
+      }
+
       return await resolveModelPreview(modelPath, texturePath, runtime);
     default:
       return undefined;
@@ -378,6 +387,14 @@ async function resolveModelPreview(
   return await resolveModelPreviewFromPaths(modelPath, texturePath, runtime);
 }
 
+async function loadModelAssetByName(
+  assetName: string,
+  runtime: AssetCacheRuntime,
+): Promise<Record<string, unknown> | undefined> {
+  const asset = await runtime.loadAsset("ModelAsset", assetName);
+  return asset?.contentType === "json" && isRecord(asset.rawJson) ? asset.rawJson : undefined;
+}
+
 function readDocumentJson(document: vscode.TextDocument): Record<string, unknown> | undefined {
   try {
     return JSON.parse(document.getText()) as Record<string, unknown>;
@@ -405,4 +422,8 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

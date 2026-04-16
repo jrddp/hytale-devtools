@@ -21,6 +21,8 @@ import {
 export interface BlockyanimController {
   setAnimation(animation: BlockyAnimFile | null): void;
   setPlaying(playing: boolean): void;
+  setPlaybackRate(playbackRate: number): void;
+  setLoopingOverride(loopingOverride: boolean | undefined): void;
   resetPose(): void;
   update(deltaSeconds: number): void;
   dispose(): void;
@@ -56,12 +58,28 @@ function getAnimationDurationFrames(animation: BlockyAnimFile): number {
   return animation.duration;
 }
 
-function normalizeAnimationTime(animation: BlockyAnimFile, elapsedSeconds: number): number {
+function isAnimationLooping(
+  animation: BlockyAnimFile,
+  loopingOverride: boolean | undefined,
+): boolean {
+  if (loopingOverride !== undefined) {
+    return loopingOverride;
+  }
+
+  return !animation.holdLastKeyframe;
+}
+
+function normalizeAnimationTime(
+  animation: BlockyAnimFile,
+  elapsedSeconds: number,
+  loopingOverride: boolean | undefined,
+): number {
   const durationSeconds = getAnimationDurationSeconds(animation);
   if (durationSeconds <= 0) {
     return 0;
   }
-  if (animation.holdLastKeyframe) {
+
+  if (!isAnimationLooping(animation, loopingOverride)) {
     return Math.min(Math.max(elapsedSeconds, 0), durationSeconds);
   }
 
@@ -266,13 +284,14 @@ function applyBindingAnimation(
   animation: BlockyAnimFile,
   frameTime: number,
   textureSize: BlockymodelAnimationRig["textureSize"],
+  loopingOverride: boolean | undefined,
 ): void {
   const nodeAnimation = animation.nodeAnimations[binding.nodeName];
   if (!nodeAnimation) {
     return;
   }
   const durationFrames = getAnimationDurationFrames(animation);
-  const looping = !animation.holdLastKeyframe && durationFrames > 0;
+  const looping = isAnimationLooping(animation, loopingOverride) && durationFrames > 0;
 
   const position = sampleVector3Channel(nodeAnimation.position, frameTime, durationFrames, looping);
   if (position) {
@@ -315,6 +334,8 @@ function applyBindingAnimation(
 export function createBlockyanimController(rig: BlockymodelAnimationRig): BlockyanimController {
   let currentAnimation: BlockyAnimFile | null = null;
   let playing = true;
+  let playbackRate = 1;
+  let loopingOverride: boolean | undefined;
   let elapsedSeconds = 0;
 
   function applyCurrentPose(): void {
@@ -323,9 +344,10 @@ export function createBlockyanimController(rig: BlockymodelAnimationRig): Blocky
       return;
     }
 
-    const frameTime = normalizeAnimationTime(currentAnimation, elapsedSeconds) * BLOCKYANIM_FPS;
+    const frameTime =
+      normalizeAnimationTime(currentAnimation, elapsedSeconds, loopingOverride) * BLOCKYANIM_FPS;
     for (const binding of rig.bindings) {
-      applyBindingAnimation(binding, currentAnimation, frameTime, rig.textureSize);
+      applyBindingAnimation(binding, currentAnimation, frameTime, rig.textureSize, loopingOverride);
     }
   }
 
@@ -342,6 +364,14 @@ export function createBlockyanimController(rig: BlockymodelAnimationRig): Blocky
     setPlaying(nextPlaying: boolean): void {
       playing = nextPlaying;
     },
+    setPlaybackRate(nextPlaybackRate: number): void {
+      playbackRate = Number.isFinite(nextPlaybackRate) ? Math.max(0, nextPlaybackRate) : 1;
+      applyCurrentPose();
+    },
+    setLoopingOverride(nextLoopingOverride: boolean | undefined): void {
+      loopingOverride = nextLoopingOverride;
+      applyCurrentPose();
+    },
     resetPose(): void {
       elapsedSeconds = 0;
       resetAnimationRig(rig);
@@ -351,13 +381,15 @@ export function createBlockyanimController(rig: BlockymodelAnimationRig): Blocky
         return;
       }
       if (playing) {
-        elapsedSeconds += Math.max(0, deltaSeconds);
+        elapsedSeconds += Math.max(0, deltaSeconds) * playbackRate;
       }
       applyCurrentPose();
     },
     dispose(): void {
       currentAnimation = null;
       elapsedSeconds = 0;
+      playbackRate = 1;
+      loopingOverride = undefined;
       resetAnimationRig(rig);
     },
   };

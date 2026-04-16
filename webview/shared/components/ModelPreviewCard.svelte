@@ -2,6 +2,7 @@
   import type { ModelPreviewState } from "@shared/modelPreviewTypes";
   import { BlockymodelPreview, type BlockymodelFile } from "@webview-shared/blockymodel";
   import { LoaderCircle } from "lucide-svelte";
+  import { resolveParsedPreviewAnimation } from "./modelPreviewAnimation";
 
   let {
     preview,
@@ -12,6 +13,8 @@
     emptyLabel?: string;
     class?: string;
   } = $props();
+
+  const parsedAnimation = $derived(resolveParsedPreviewAnimation(preview));
 </script>
 
 <div
@@ -21,6 +24,9 @@
     <BlockymodelPreview
       model={preview.model as unknown as BlockymodelFile}
       textureBytes={preview.texture}
+      animation={parsedAnimation}
+      animationSpeed={preview.animationSpeed}
+      animationLooping={preview.animationLooping}
       orbit={true}
       scale={1.35}
       showGrid={false}

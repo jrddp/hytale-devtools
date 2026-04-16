@@ -22,6 +22,8 @@
     textureBytes?: Uint8Array | number[] | null;
     animation?: BlockyAnimFile | null;
     playing?: boolean;
+    animationSpeed?: number;
+    animationLooping?: boolean;
     orbit?: boolean;
     /** View angles in degrees. */
     roll?: number;
@@ -38,6 +40,8 @@
     textureBytes = null,
     animation = null,
     playing = true,
+    animationSpeed = 1,
+    animationLooping = undefined,
     orbit = false,
     roll = $bindable(),
     pitch = $bindable(),
@@ -158,6 +162,8 @@
 
     animationController.setAnimation(animation ?? null);
     animationController.setPlaying(playing);
+    animationController.setPlaybackRate(animationSpeed);
+    animationController.setLoopingOverride(animationLooping);
     runtime.setFrameHandler(animation && playing ? deltaSeconds => animationController?.update(deltaSeconds) : null);
 
     if (!animation) {
@@ -287,8 +293,12 @@
     const nextScene = currentScene;
     const nextAnimation = animation;
     const nextPlaying = playing;
+    const nextAnimationSpeed = animationSpeed;
+    const nextAnimationLooping = animationLooping;
     void nextAnimation;
     void nextPlaying;
+    void nextAnimationSpeed;
+    void nextAnimationLooping;
 
     if (!nextRuntime || !nextScene) {
       return;

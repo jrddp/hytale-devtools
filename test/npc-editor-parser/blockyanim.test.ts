@@ -104,4 +104,43 @@ describe("shared blockyanim support", () => {
     const uv = mesh.geometry.getAttribute("uv");
     expect(uv.array[0]).toBeCloseTo(0.125, 5);
   });
+
+  it("applies playback speed and looping overrides", () => {
+    const pivot = new THREE.Object3D();
+    const rig = createAnimationRig({ width: 16, height: 16 });
+    registerAnimationBinding(rig, createAnimationBinding("Root", pivot));
+
+    const animation = parseBlockyanimFile({
+      formatVersion: 1,
+      duration: 60,
+      holdLastKeyframe: false,
+      nodeAnimations: {
+        Root: {
+          position: [
+            {
+              time: 0,
+              delta: { x: 0, y: 0, z: 0 },
+              interpolationType: "linear",
+            },
+            {
+              time: 60,
+              delta: { x: 6, y: 0, z: 0 },
+              interpolationType: "linear",
+            },
+          ],
+        },
+      },
+    });
+    const controller = createBlockyanimController(rig);
+    controller.setAnimation(animation);
+    controller.setPlaybackRate(2);
+    controller.update(0.25);
+
+    expect(pivot.position.x).toBeCloseTo(3, 5);
+
+    controller.setLoopingOverride(false);
+    controller.update(1);
+
+    expect(pivot.position.x).toBeCloseTo(6, 5);
+  });
 });

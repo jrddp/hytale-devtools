@@ -2,6 +2,9 @@ export type ResolvedModelPreview = {
   type: "Model";
   model?: Record<string, unknown>;
   texture?: number[];
+  animation?: Record<string, unknown>;
+  animationSpeed?: number;
+  animationLooping?: boolean;
   loading?: boolean;
 };
 

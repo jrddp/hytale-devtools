@@ -10,10 +10,27 @@ describe("npc appearance preview runtime", () => {
       "Server/Models/Sheep.json": jsonAsset({
         Model: "Common/Models/Sheep.blockymodel",
         Texture: "Common/Textures/Sheep.png",
+        AnimationSets: {
+          Idle: {
+            Animations: [
+              {
+                Animation: "Common/Animations/Idle.blockyanim",
+                Speed: 1.5,
+                Looping: false,
+              },
+            ],
+          },
+        },
       }),
       "Common/Models/Sheep.blockymodel": jsonAsset({ name: "SheepModel" }),
     }, {
       "Common/Textures/Sheep.png": [1, 2, 3],
+      "Common/Animations/Idle.blockyanim": blockyanimAsset({
+        formatVersion: 1,
+        duration: 60,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      }),
     });
 
     const preview = await resolveNpcAppearancePreview(
@@ -28,6 +45,14 @@ describe("npc appearance preview runtime", () => {
       type: "Model",
       model: { name: "SheepModel" },
       texture: [1, 2, 3],
+      animation: {
+        formatVersion: 1,
+        duration: 60,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      },
+      animationSpeed: 1.5,
+      animationLooping: false,
     });
   });
 
@@ -147,6 +172,29 @@ describe("npc appearance preview runtime", () => {
       ),
     ).resolves.toEqual({ type: "none" });
   });
+
+  test("keeps appearance previews static when idle is missing", async () => {
+    const runtime = createRuntime({
+      "Server/Models/Sheep.json": jsonAsset({
+        Model: "Common/Models/Sheep.blockymodel",
+      }),
+      "Common/Models/Sheep.blockymodel": jsonAsset({ name: "SheepModel" }),
+    }, {});
+
+    const preview = await resolveNpcAppearancePreview(
+      "Sheep",
+      runtime,
+      createModelAssetIndex({
+        Sheep: { sourcedFromFile: "Server/Models/Sheep.json" },
+      }),
+    );
+
+    expect(preview).toEqual({
+      type: "Model",
+      model: { name: "SheepModel" },
+      texture: undefined,
+    });
+  });
 });
 
 function createModelAssetIndex(
@@ -186,4 +234,8 @@ function createRuntime(
     readAssetBytesByPath: async (assetPath: string) =>
       bytesByPath[assetPath] ? Buffer.from(bytesByPath[assetPath]) : undefined,
   } as unknown as AssetCacheRuntime;
+}
+
+function blockyanimAsset(rawJson: Record<string, unknown>): number[] {
+  return Array.from(Buffer.from(JSON.stringify(rawJson), "utf8"));
 }
