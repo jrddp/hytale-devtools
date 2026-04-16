@@ -1,13 +1,13 @@
 {
   "Id": "HeadMotion.Aim",
   "Title": "Aim",
-  "Color": "MediumPurple",
+  "Color": "#B08CE0",
   "Description": "Aim at target",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "HeadMotion"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.TriggerSpawnBeacon",
   "Title": "TriggerSpawnBeacon",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Trigger the nearest spawn beacon matching the configuration id",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

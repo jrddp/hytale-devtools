@@ -1,13 +1,13 @@
 {
   "Id": "Action.SpawnParticles",
   "Title": "SpawnParticles",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Spawn particle system visible within a given range with an offset relative to npc heading",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

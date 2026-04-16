@@ -1,13 +1,13 @@
 {
   "Id": "Path.Path",
   "Title": "Path",
-  "Color": "CornflowerBlue",
+  "Color": "#CC3361",
   "Description": "List of transient path points",
   "Inputs": [
     {
       "Id": "WaypointsPin",
       "Type": "RelativeWaypointDefinition",
-      "Color": "SteelBlue",
+      "Color": "#CC3361",
       "Label": "Waypoints",
       "Description": "List of transient path points",
       "Multiple": true
@@ -17,7 +17,7 @@
     {
       "Id": "Output",
       "Type": "Path",
-      "Color": "CornflowerBlue",
+      "Color": "#CC3361",
       "Label": "Path"
     }
   ],

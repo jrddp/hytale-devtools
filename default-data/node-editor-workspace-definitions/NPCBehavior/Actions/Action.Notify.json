@@ -1,13 +1,13 @@
 {
   "Id": "Action.Notify",
   "Title": "Notify",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Directly notifies a target NPC with a beacon message",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

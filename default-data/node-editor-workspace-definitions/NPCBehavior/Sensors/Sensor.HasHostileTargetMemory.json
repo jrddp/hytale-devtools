@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.HasHostileTargetMemory",
   "Title": "HasHostileTargetMemory",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Checks if there is currently a hostile target in the target memory.",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

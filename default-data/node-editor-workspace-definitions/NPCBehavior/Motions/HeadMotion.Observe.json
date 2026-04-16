@@ -1,13 +1,13 @@
 {
   "Id": "HeadMotion.Observe",
   "Title": "Observe",
-  "Color": "MediumPurple",
+  "Color": "#B08CE0",
   "Description": "Observe surroundings in various ways.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "HeadMotion"
     }
   ],

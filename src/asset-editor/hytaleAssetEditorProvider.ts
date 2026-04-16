@@ -12,6 +12,10 @@ import {
   type AssetEditorWebviewToExtensionMessage,
 } from "../shared/asset-editor/messageTypes";
 import { type AssetDefinition } from "../shared/fieldTypes";
+import {
+  resolveModelPreviewFromPaths,
+  resolveTexturePathWithModelFallback,
+} from "../shared/modelPreviewResolution";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 
 const VIEW_TYPE = "hytale-devtools.hytaleAssetEditor";
@@ -324,7 +328,7 @@ async function resolveDocumentPreview(
   const parentData = parent.parentInstance?.rawJson;
   const iconPath = (jsonData?.["Icon"] ?? parentData?.["Icon"]) as string | undefined;
   const modelPath = (jsonData?.["Model"] ?? parentData?.["Model"]) as string | undefined;
-  const texturePath = resolveWithFallbackTexture(
+  const texturePath = resolveTexturePathWithModelFallback(
     (jsonData?.["Texture"] ?? parentData?.["Texture"]) as string | undefined,
     modelPath,
   );
@@ -347,9 +351,9 @@ async function resolvePreviewRequest(
     case "Item":
       return await resolveItemPreview(request.iconPath, runtime);
     case "Model":
-      return await resolveModelPreview(
+      return await resolveModelPreviewFromPaths(
         request.modelPath,
-        resolveWithFallbackTexture(request.texturePath, request.modelPath),
+        resolveTexturePathWithModelFallback(request.texturePath, request.modelPath),
         runtime,
       );
   }
@@ -371,29 +375,7 @@ async function resolveModelPreview(
   texturePath: string | undefined,
   runtime: AssetCacheRuntime,
 ): Promise<AssetEditorPreview> {
-  const [modelAsset, textureBytes] = await Promise.all([
-    modelPath ? runtime.loadAssetByPath(modelPath) : undefined,
-    texturePath ? runtime.readAssetBytesByPath(texturePath) : undefined,
-  ]);
-
-  return {
-    type: "Model",
-    model: modelAsset?.contentType === "json" ? modelAsset.rawJson : undefined,
-    texture: textureBytes ? Array.from(textureBytes) : undefined,
-  };
-}
-
-// The base game code falls back to the same path as the model, but with .png instead of .blockymodel.
-function resolveWithFallbackTexture(
-  texturePath: string | undefined,
-  modelPath: string | undefined,
-): string | undefined {
-  return (
-    texturePath ??
-    (modelPath?.toLowerCase().endsWith(".blockymodel")
-      ? modelPath.replace(/\.blockymodel$/i, ".png")
-      : undefined)
-  );
+  return await resolveModelPreviewFromPaths(modelPath, texturePath, runtime);
 }
 
 function readDocumentJson(document: vscode.TextDocument): Record<string, unknown> | undefined {

@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Path",
   "Title": "Path",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Find a path based on various criteria",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

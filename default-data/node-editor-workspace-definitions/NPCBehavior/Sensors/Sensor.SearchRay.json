@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.SearchRay",
   "Title": "SearchRay",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Fire a ray at a specific angle to see if what it hits matches a given sought block",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.Crouch",
   "Title": "Crouch",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set NPC crouching state",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

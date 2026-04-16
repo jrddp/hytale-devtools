@@ -1,13 +1,13 @@
 {
   "Id": "Action.FlockTarget",
   "Title": "FlockTarget",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set or clear locked target for flock.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

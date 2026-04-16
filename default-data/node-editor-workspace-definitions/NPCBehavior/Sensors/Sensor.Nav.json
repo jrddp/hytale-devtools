@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Nav",
   "Title": "Nav",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Queries navigation state",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

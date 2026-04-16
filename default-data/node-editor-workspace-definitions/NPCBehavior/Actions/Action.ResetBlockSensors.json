@@ -1,13 +1,13 @@
 {
   "Id": "Action.ResetBlockSensors",
   "Title": "ResetBlockSensors",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Resets a specific block sensor by name, or all block sensors",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

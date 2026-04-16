@@ -1,13 +1,13 @@
 {
   "Id": "Action.DropItem",
   "Title": "DropItem",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Drop an item",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

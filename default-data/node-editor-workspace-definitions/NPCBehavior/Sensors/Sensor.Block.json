@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Block",
   "Title": "Block",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Checks for one of a set of blocks in the nearby area",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.Remove",
   "Title": "Remove",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Erase the target entity from the world (no death animation).",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

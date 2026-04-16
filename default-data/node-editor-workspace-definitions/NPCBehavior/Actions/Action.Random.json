@@ -1,19 +1,19 @@
 {
   "Id": "Action.Random",
   "Title": "Random",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Execute a single random action from a list of weighted actions.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     },
     {
       "Id": "ActionsPin",
       "Type": "WeightedAction",
-      "Color": "DodgerBlue",
+      "Color": "#CC3361",
       "Label": "Actions",
       "Description": "List of possible actions",
       "Multiple": true

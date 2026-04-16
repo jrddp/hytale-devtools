@@ -1,13 +1,13 @@
 {
   "Id": "Sensor.AdjustPosition",
   "Title": "AdjustPosition",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Perform adjustments to the wrapped sensor's returned position",
   "Inputs": [
     {
       "Id": "SensorPin",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor",
       "Description": "Sensor to wrap"
     }
@@ -16,7 +16,7 @@
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

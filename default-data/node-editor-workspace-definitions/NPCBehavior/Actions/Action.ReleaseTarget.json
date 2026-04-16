@@ -1,13 +1,13 @@
 {
   "Id": "Action.ReleaseTarget",
   "Title": "ReleaseTarget",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Clear locked target",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

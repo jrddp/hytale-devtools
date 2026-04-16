@@ -1,13 +1,13 @@
 {
   "Id": "HeadMotion.Nothing",
   "Title": "Nothing",
-  "Color": "MediumPurple",
+  "Color": "#B08CE0",
   "Description": "Do nothing",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "HeadMotion"
     }
   ],

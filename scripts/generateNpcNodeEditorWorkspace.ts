@@ -13,6 +13,7 @@ import {
   getNpcBehaviorChildConnectionType,
   getNpcBehaviorChildDomainDefinition,
   getNpcBehaviorChildPinSide,
+  getNpcBehaviorCategoryColor,
   getNpcBehaviorConnectionAuthoringSide,
   getNpcBehaviorConnectionColor,
   getNpcBehaviorConnectionLabel,
@@ -68,18 +69,18 @@ type SupportedDescriptorCategory =
   | DirectTemplateDescriptorCategory;
 
 const CATEGORY_COLORS: Record<SupportedDescriptorCategory | "Structural", string> = {
-  Action: getNpcBehaviorConnectionColor("Action"),
-  BodyMotion: getNpcBehaviorConnectionColor("BodyMotion"),
-  HeadMotion: getNpcBehaviorConnectionColor("HeadMotion"),
-  IEntityFilter: getNpcBehaviorConnectionColor("IEntityFilter"),
-  ISensorEntityCollector: getNpcBehaviorConnectionColor("ISensorEntityCollector"),
-  ISensorEntityPrioritiser: getNpcBehaviorConnectionColor("ISensorEntityPrioritiser"),
-  Path: getNpcBehaviorConnectionColor("Path"),
-  RelativeWaypointDefinition: getNpcBehaviorConnectionColor("RelativeWaypointDefinition"),
-  Sensor: getNpcBehaviorConnectionColor("Sensor"),
-  Structural: "Gold",
-  ValueToParameterMapping: getNpcBehaviorConnectionColor("ValueToParameterMapping"),
-  WeightedAction: getNpcBehaviorConnectionColor("WeightedAction"),
+  Action: getNpcBehaviorCategoryColor("Action"),
+  BodyMotion: getNpcBehaviorCategoryColor("BodyMotion"),
+  HeadMotion: getNpcBehaviorCategoryColor("HeadMotion"),
+  IEntityFilter: getNpcBehaviorCategoryColor("IEntityFilter"),
+  ISensorEntityCollector: getNpcBehaviorCategoryColor("ISensorEntityCollector"),
+  ISensorEntityPrioritiser: getNpcBehaviorCategoryColor("ISensorEntityPrioritiser"),
+  Path: getNpcBehaviorCategoryColor("Path"),
+  RelativeWaypointDefinition: getNpcBehaviorCategoryColor("RelativeWaypointDefinition"),
+  Sensor: getNpcBehaviorCategoryColor("Sensor"),
+  Structural: getNpcBehaviorCategoryColor("Structural"),
+  ValueToParameterMapping: getNpcBehaviorCategoryColor("ValueToParameterMapping"),
+  WeightedAction: getNpcBehaviorCategoryColor("WeightedAction"),
 };
 
 const CATEGORY_DIRECTORY_NAMES: Record<SupportedDescriptorCategory | "Structural", string> = {

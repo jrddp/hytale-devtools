@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.BlockChange",
   "Title": "BlockChange",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Matches when a block from a blockset within a certain range is changed or interacted with",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

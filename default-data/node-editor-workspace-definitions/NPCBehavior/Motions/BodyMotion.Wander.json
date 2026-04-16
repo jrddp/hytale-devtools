@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.Wander",
   "Title": "Wander",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Random movement",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

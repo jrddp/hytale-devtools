@@ -1,13 +1,13 @@
 {
   "Id": "Structural.InstructionListRoot",
   "Title": "Instructions",
-  "Color": "Gold",
+  "Color": "#2D3746",
   "Description": "Root wrapper for a list of NPC instructions.",
   "Outputs": [
     {
       "Id": "InstructionsPin",
       "Type": "Instruction",
-      "Color": "Gold",
+      "Color": "#2D3746",
       "Label": "Instructions",
       "Multiple": true
     }

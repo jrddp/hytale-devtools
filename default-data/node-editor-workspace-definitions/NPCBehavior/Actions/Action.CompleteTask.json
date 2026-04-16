@@ -1,13 +1,13 @@
 {
   "Id": "Action.CompleteTask",
   "Title": "CompleteTask",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Complete a task",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

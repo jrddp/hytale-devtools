@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.StandingOnBlock",
   "Title": "StandingOnBlock",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Matches the block directly beneath the entity against a BlockSet",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

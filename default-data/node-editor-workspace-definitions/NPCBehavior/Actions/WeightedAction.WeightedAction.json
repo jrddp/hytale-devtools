@@ -1,20 +1,20 @@
 {
   "Id": "WeightedAction.WeightedAction",
   "Title": "WeightedAction",
-  "Color": "DodgerBlue",
+  "Color": "#CC3361",
   "Description": "A wrapped and weighted action intended to be used for Random action lists.",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "WeightedAction",
-      "Color": "DodgerBlue",
+      "Color": "#CC3361",
       "Label": "WeightedAction"
     },
     {
       "Id": "ActionPin",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action",
       "Description": "The action to run"
     }

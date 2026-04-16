@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.AimCharge",
   "Title": "AimCharge",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Aim the NPC at a target position for performing a charge based on aiming information and ensure that the charge is possible before it's executed.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

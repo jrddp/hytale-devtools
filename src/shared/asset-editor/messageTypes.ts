@@ -1,5 +1,6 @@
 import type { AssetPreviewType, AssetDefinition, JsonAssetInstance } from "../fieldTypes";
 import type { IndexReference } from "../indexTypes";
+import type { ModelPreviewRequest, ResolvedModelPreview } from "../modelPreviewTypes";
 
 export type AssetEditorPreview =
   | { type: Exclude<AssetPreviewType, "Item" | "Model"> | "none"; loading?: boolean }
@@ -8,23 +9,14 @@ export type AssetEditorPreview =
       icon?: number[];
       loading?: boolean;
     }
-  | {
-      type: "Model";
-      model?: Record<string, unknown>;
-      texture?: number[];
-      loading?: boolean;
-    };
+  | ResolvedModelPreview;
 
 export type AssetEditorPreviewRequest =
   | {
       type: "Item";
       iconPath?: string;
     }
-  | {
-      type: "Model";
-      modelPath?: string;
-      texturePath?: string;
-    };
+  | ({ type: "Model" } & ModelPreviewRequest);
 
 export type AssetEditorParentState = {
   status: "loading" | "none" | "loaded" | "missing";

@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.Sequence",
   "Title": "Sequence",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "(Looped)Sequence of motions",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],
@@ -15,7 +15,7 @@
     {
       "Id": "MotionsPin",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "Motions",
       "Description": "Array of motions",
       "Multiple": true

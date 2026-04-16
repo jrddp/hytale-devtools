@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "../../shared/theme.css";
 
+@source "../../shared";
 @source "../../hytale-node-editor/src";
 
 @theme inline {

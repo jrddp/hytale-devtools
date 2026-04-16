@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { resolveCachedZipAsset } from "../../src/asset-cache/assetCacheRuntime";
+import { resolveTexturePathWithModelFallback } from "../../src/shared/modelPreviewResolution";
 import type { SchemaDefinition } from "../../src/schema/schemaDefinitionTypes";
 import { schemaDefinitionToAssetDefinition } from "../../src/schema/schemaToFieldResolver";
 
@@ -57,5 +58,14 @@ describe("asset cache runtime descriptors", () => {
       assetName: "Stone",
       contentType: "json",
     });
+  });
+
+  test("falls back from blockymodel model paths to png texture paths", () => {
+    expect(
+      resolveTexturePathWithModelFallback(undefined, "Common/Blocks/Bench.blockymodel"),
+    ).toBe("Common/Blocks/Bench.png");
+    expect(
+      resolveTexturePathWithModelFallback("Common/Textures/Bench.png", "Common/Blocks/Bench.blockymodel"),
+    ).toBe("Common/Textures/Bench.png");
   });
 });

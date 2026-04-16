@@ -1,13 +1,13 @@
 {
   "Id": "Action.Attack",
   "Title": "Attack",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Starts attack",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

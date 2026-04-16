@@ -1,13 +1,13 @@
 {
   "Id": "Sensor.Target",
   "Title": "Target",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Test if given target matches a series of criteria and optional entity filters",
   "Inputs": [
     {
       "Id": "FiltersPin",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filters",
       "Description": "A series of entity filter sensors to test",
       "Multiple": true
@@ -17,7 +17,7 @@
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

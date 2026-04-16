@@ -1,13 +1,13 @@
 {
   "Id": "Action.PlayAnimation",
   "Title": "PlayAnimation",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Play an animation",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

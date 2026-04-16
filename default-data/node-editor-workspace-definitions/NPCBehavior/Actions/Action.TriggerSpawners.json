@@ -1,13 +1,13 @@
 {
   "Id": "Action.TriggerSpawners",
   "Title": "TriggerSpawners",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Trigger all, or up to a certain number of manual spawn markers in a radius around the NPC",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

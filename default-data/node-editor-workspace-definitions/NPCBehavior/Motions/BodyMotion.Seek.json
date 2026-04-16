@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.Seek",
   "Title": "Seek",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Chase target",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

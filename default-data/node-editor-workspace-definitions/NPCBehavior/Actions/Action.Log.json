@@ -1,13 +1,13 @@
 {
   "Id": "Action.Log",
   "Title": "Log",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Log a message to console.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.PlaySound",
   "Title": "PlaySound",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Plays a sound to players within a specified range.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

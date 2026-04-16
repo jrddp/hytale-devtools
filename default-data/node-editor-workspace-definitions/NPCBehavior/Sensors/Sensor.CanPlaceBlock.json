@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.CanPlaceBlock",
   "Title": "CanPlaceBlock",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Test if the currently set block can be placed at the relative position given direction and offset",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

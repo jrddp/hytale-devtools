@@ -1,13 +1,13 @@
 {
   "Id": "Action.TimerContinue",
   "Title": "TimerContinue",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Continue a timer",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

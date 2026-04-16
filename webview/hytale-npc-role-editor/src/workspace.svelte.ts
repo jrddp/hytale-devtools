@@ -9,6 +9,7 @@ import type {
   NpcDescriptorSource,
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { IndexReference } from "@shared/indexTypes";
+import type { ModelPreviewState } from "@shared/modelPreviewTypes";
 import type { VSCodeApi } from "./common";
 import {
   addRichObjectArrayItem,
@@ -62,6 +63,7 @@ import {
   buildNpcIssues,
   type NpcEditorIssue,
 } from "./issues";
+import { resolveEffectiveAppearanceAssetName } from "./appearancePreview";
 import { discoverNpcMainStates } from "./states/discoverStates";
 
 function emptyParameterUsageIndex(): ParameterUsageIndex {
@@ -99,6 +101,7 @@ export class Workspace {
   documentParseError = $state<string | null>(null);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
+  appearancePreview = $state<ModelPreviewState | undefined>(undefined);
   parameterRenameRequestName = $state<string | null>(null);
   parameterRenameRequestVersion = $state(0);
   parameterDescriptionRequestName = $state<string | null>(null);
@@ -152,6 +155,10 @@ export class Workspace {
   setAutocompleteValues(fieldId: string, values: string[]) {
     this.autocompleteField = fieldId;
     this.autocompleteValues = [...values].sort((left, right) => left.localeCompare(right));
+  }
+
+  setAppearancePreview(preview: ModelPreviewState | undefined) {
+    this.appearancePreview = preview;
   }
 
   setVariantReferenceState(reference: NpcRoleEditorVariantReferenceState) {
@@ -857,6 +864,18 @@ export class Workspace {
     return (this.findSection("parameters")?.fields ?? []).filter(isStandardParameterField);
   }
 
+  getAppearanceField(): NpcPropertyField | null {
+    return this.findField("Appearance");
+  }
+
+  getEffectiveAppearanceAssetName(): string | undefined {
+    return resolveEffectiveAppearanceAssetName({
+      appearanceField: this.getAppearanceField(),
+      parameterUsageIndex: this.parameterUsageIndex,
+      standardParameterFields: this.getStandardParameterFields(),
+    });
+  }
+
   reparseDocument() {
     if (this.documentText === null) {
       this.clearDocumentState();
@@ -892,6 +911,7 @@ export class Workspace {
     this.issues = [];
     this.issuesByFieldPath = new Map();
     this.discoveredStates = [];
+    this.appearancePreview = undefined;
     this.documentParseError = null;
   }
 

@@ -1,13 +1,13 @@
 {
   "Id": "Action.LockOnInteractionTarget",
   "Title": "LockOnInteractionTarget",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Locks on to the currently iterated player in the interaction instruction",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

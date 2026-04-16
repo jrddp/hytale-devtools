@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.SpotsMe",
   "Title": "SpotsMe",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Checks if the entity can view the NPC in a given view sector or cone and without obstruction.",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

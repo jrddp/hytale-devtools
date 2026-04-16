@@ -1,20 +1,20 @@
 {
   "Id": "Structural.InstructionNode",
   "Title": "Instruction",
-  "Color": "Gold",
+  "Color": "#2D3746",
   "Description": "An instruction with Sensor, and Motions and Actions, or a list of nested instructions.",
   "Inputs": [
     {
       "Id": "SensorPin",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor",
       "Description": "Sensor for testing if instruction can be applied"
     },
     {
       "Id": "Input",
       "Type": "Instruction",
-      "Color": "Gold",
+      "Color": "#2D3746",
       "Label": "Instruction"
     }
   ],
@@ -22,21 +22,21 @@
     {
       "Id": "BodyMotionPin",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion",
       "Description": "Body motion to be executed"
     },
     {
       "Id": "HeadMotionPin",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "HeadMotion",
       "Description": "Head motion to be executed"
     },
     {
       "Id": "ActionsPin",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Actions",
       "Description": "Actions to be executed",
       "Multiple": true
@@ -44,7 +44,7 @@
     {
       "Id": "InstructionsPin",
       "Type": "Instruction",
-      "Color": "Gold",
+      "Color": "#2D3746",
       "Label": "Instructions",
       "Description": "Optional nested list of instructions",
       "Multiple": true

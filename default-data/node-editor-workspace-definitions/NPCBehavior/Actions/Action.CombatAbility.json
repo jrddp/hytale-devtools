@@ -1,13 +1,13 @@
 {
   "Id": "Action.CombatAbility",
   "Title": "CombatAbility",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Starts the combat ability selected by the combat action evaluator.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

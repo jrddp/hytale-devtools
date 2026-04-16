@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Light",
   "Title": "Light",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Check the light levels of the block an entity is standing on",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

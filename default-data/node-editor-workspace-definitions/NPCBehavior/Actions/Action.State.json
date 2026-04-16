@@ -1,13 +1,13 @@
 {
   "Id": "Action.State",
   "Title": "State",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set state of NPC",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

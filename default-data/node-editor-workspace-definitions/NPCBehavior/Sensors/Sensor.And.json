@@ -1,13 +1,13 @@
 {
   "Id": "Sensor.And",
   "Title": "And",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Logical AND of list of sensors",
   "Inputs": [
     {
       "Id": "SensorsPin",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensors",
       "Description": "List of sensors",
       "Multiple": true
@@ -17,7 +17,7 @@
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

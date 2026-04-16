@@ -1,13 +1,13 @@
 {
   "Id": "Action.SetFlag",
   "Title": "SetFlag",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set a named flag to a boolean value",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

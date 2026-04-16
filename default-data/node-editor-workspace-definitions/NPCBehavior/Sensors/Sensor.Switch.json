@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Switch",
   "Title": "Switch",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Check if a computed boolean is true",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

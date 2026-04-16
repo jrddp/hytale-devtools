@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.Leave",
   "Title": "Leave",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Leave place",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

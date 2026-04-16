@@ -1,14 +1,14 @@
 {
   "Id": "ISensorEntityPrioritiser.Attitude",
   "Title": "Attitude",
-  "Color": "HotPink",
+  "Color": "#7091F0",
   "Description": "Prioritises return entities by attitude",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "ISensorEntityPrioritiser",
-      "Color": "HotPink",
+      "Color": "#7091F0",
       "Label": "Prioritiser"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.PlaceBlock",
   "Title": "PlaceBlock",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Place a block (chosen by another action) at a position returned by a Sensor if close enough",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Sensor.Not",
   "Title": "Not",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Invert sensor test",
   "Inputs": [
     {
       "Id": "SensorPin",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor",
       "Description": "Sensor to test"
     }
@@ -16,7 +16,7 @@
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

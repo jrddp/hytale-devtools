@@ -1,13 +1,13 @@
 {
   "Id": "Action.AddToHostileTargetMemory",
   "Title": "AddToHostileTargetMemory",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Adds the passed target from the sensor to the hostile target memory",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

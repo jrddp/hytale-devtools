@@ -1,13 +1,13 @@
 {
   "Id": "Action.SetBlockToPlace",
   "Title": "SetBlockToPlace",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set the block type the NPC will place",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

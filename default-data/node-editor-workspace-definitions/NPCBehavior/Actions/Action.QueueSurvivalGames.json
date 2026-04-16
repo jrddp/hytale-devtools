@@ -1,13 +1,13 @@
 {
   "Id": "Action.QueueSurvivalGames",
   "Title": "QueueSurvivalGames",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Queue the player for Survival Games",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

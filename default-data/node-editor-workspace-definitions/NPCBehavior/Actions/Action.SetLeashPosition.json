@@ -1,13 +1,13 @@
 {
   "Id": "Action.SetLeashPosition",
   "Title": "SetLeashPosition",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Sets the NPCs current position to the spawn/leash position",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

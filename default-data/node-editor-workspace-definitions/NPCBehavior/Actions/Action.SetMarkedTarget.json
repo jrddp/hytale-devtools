@@ -1,13 +1,13 @@
 {
   "Id": "Action.SetMarkedTarget",
   "Title": "SetMarkedTarget",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Explicitly sets a marked target in a given slot.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.TestProbe",
   "Title": "TestProbe",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Debugging - Test probing",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.SetStat",
   "Title": "SetStat",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Sets (or adds to) an entity stat on the NPC.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

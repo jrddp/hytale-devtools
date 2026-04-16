@@ -1,13 +1,13 @@
 {
   "Id": "Action.StorePosition",
   "Title": "StorePosition",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Store the position from the attached sensor",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

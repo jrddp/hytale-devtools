@@ -1,13 +1,13 @@
 {
   "Id": "HeadMotion.Timer",
   "Title": "Timer",
-  "Color": "MediumPurple",
+  "Color": "#B08CE0",
   "Description": "Execute a Motion for a specific maximum time",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "HeadMotion"
     }
   ],
@@ -15,7 +15,7 @@
     {
       "Id": "MotionPin",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "Motion",
       "Description": "Motion to execute"
     }

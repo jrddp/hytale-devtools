@@ -1,13 +1,13 @@
 {
   "Id": "Action.JoinFlock",
   "Title": "JoinFlock",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Join/build a flock with other entity",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "Action.Nothing",
   "Title": "Nothing",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Do nothing",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

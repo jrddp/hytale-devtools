@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.MatchLook",
   "Title": "MatchLook",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Make NPC body rotate to match look direction",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

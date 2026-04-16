@@ -1,20 +1,20 @@
 {
   "Id": "Sensor.ValueProviderWrapper",
   "Title": "ValueProviderWrapper",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Wraps a sensor and passes down some additional parameter overrides pulled from the value store",
   "Inputs": [
     {
       "Id": "SensorPin",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor",
       "Description": "Sensor to wrap"
     },
     {
       "Id": "ValueToParameterMappingsPin",
       "Type": "ValueToParameterMapping",
-      "Color": "Tan",
+      "Color": "#7091F0",
       "Label": "ValueToParameterMappings",
       "Description": "The mappings of values to override parameters",
       "Multiple": true
@@ -24,7 +24,7 @@
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

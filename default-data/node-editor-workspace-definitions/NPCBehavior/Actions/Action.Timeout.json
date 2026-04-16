@@ -1,13 +1,13 @@
 {
   "Id": "Action.Timeout",
   "Title": "Timeout",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Delay an action, or insert a delay in a sequence of actions",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],
@@ -15,7 +15,7 @@
     {
       "Id": "ActionPin",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action",
       "Description": "Optional action to delay"
     }

@@ -1,13 +1,13 @@
 {
   "Id": "Action.OpenBarterShop",
   "Title": "OpenBarterShop",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Open the barter shop UI for the current player",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

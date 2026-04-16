@@ -1,13 +1,13 @@
 {
   "Id": "Action.SetInteractable",
   "Title": "SetInteractable",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set whether the currently iterated player in the interaction instruction should be able to interact with this NPC",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

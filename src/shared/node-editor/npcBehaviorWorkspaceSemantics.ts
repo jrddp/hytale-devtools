@@ -43,70 +43,80 @@ export const NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE = {
   },
 } as const;
 
+export const NPC_BEHAVIOR_REFERENCE_DARK_COLORS = {
+  action: "#CC3361",
+  bodyMotion: "#00E7B6",
+  default: "#2D3746",
+  filter: "#60C8B8",
+  headMotion: "#B08CE0",
+  reference: "#EAB934",
+  sensor: "#7091F0",
+} as const;
+
 export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
   Action: {
     authoringSide: "output",
-    color: "DeepSkyBlue",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "Action",
   },
   BodyMotion: {
     authoringSide: "output",
-    color: "DarkOrange",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.bodyMotion,
     label: "BodyMotion",
   },
   HeadMotion: {
     authoringSide: "output",
-    color: "MediumPurple",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.headMotion,
     label: "HeadMotion",
   },
   IEntityFilter: {
     authoringSide: "input",
-    color: "YellowGreen",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.filter,
     label: "Filter",
   },
   ISensorEntityCollector: {
     authoringSide: "output",
-    color: "DarkCyan",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
     label: "Collector",
   },
   ISensorEntityPrioritiser: {
     authoringSide: "input",
-    color: "HotPink",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
     label: "Prioritiser",
   },
   Instruction: {
     authoringSide: "output",
-    color: "Gold",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.default,
     label: "Instruction",
   },
   Path: {
     authoringSide: "input",
-    color: "CornflowerBlue",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "Path",
   },
   RelativeWaypointDefinition: {
     authoringSide: "input",
-    color: "SteelBlue",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "Waypoint",
   },
   Sensor: {
     authoringSide: "input",
-    color: "LimeGreen",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
     label: "Sensor",
   },
   PositionSensor: {
     authoringSide: "input",
-    color: "LimeGreen",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
     label: "Position Sensor",
   },
   ValueToParameterMapping: {
     authoringSide: "input",
-    color: "Tan",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
     label: "Mapping",
   },
   WeightedAction: {
     authoringSide: "input",
-    color: "DodgerBlue",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "WeightedAction",
   },
 } as const;
@@ -182,6 +192,31 @@ export function getNpcBehaviorConnectionAuthoringSide(
   connectionType: NpcBehaviorConnectionType,
 ): "input" | "output" {
   return NPC_BEHAVIOR_CONNECTION_DEFINITIONS[connectionType].authoringSide;
+}
+
+export function getNpcBehaviorCategoryColor(
+  category: NpcBehaviorSupportedDescriptorCategory | "Structural",
+): string {
+  switch (category) {
+    case "Action":
+    case "Path":
+    case "RelativeWaypointDefinition":
+    case "WeightedAction":
+      return NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action;
+    case "BodyMotion":
+      return NPC_BEHAVIOR_REFERENCE_DARK_COLORS.bodyMotion;
+    case "HeadMotion":
+      return NPC_BEHAVIOR_REFERENCE_DARK_COLORS.headMotion;
+    case "IEntityFilter":
+      return NPC_BEHAVIOR_REFERENCE_DARK_COLORS.filter;
+    case "ISensorEntityCollector":
+    case "ISensorEntityPrioritiser":
+    case "Sensor":
+    case "ValueToParameterMapping":
+      return NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor;
+    case "Structural":
+      return NPC_BEHAVIOR_REFERENCE_DARK_COLORS.default;
+  }
 }
 
 export function getNpcBehaviorDescriptorSelfConnectionType(

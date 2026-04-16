@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.Stat",
   "Title": "Stat",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Match stat values of the entity",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

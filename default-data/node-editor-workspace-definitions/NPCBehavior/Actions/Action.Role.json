@@ -1,13 +1,13 @@
 {
   "Id": "Action.Role",
   "Title": "Role",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Change the Role of the NPC",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

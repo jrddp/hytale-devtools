@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.Inventory",
   "Title": "Inventory",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Test various conditions relating to entity inventory",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

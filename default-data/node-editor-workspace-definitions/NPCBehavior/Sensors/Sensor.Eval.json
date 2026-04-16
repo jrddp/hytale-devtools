@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Eval",
   "Title": "Eval",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Evaluate javascript expression and test if true",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.TakeOff",
   "Title": "TakeOff",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Switch NPC from walking to flying motion controller",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

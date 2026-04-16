@@ -1,13 +1,13 @@
 {
   "Id": "Action.Appearance",
   "Title": "Appearance",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set model displayed for NPC",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.NPCGroup",
   "Title": "NPCGroup",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Returns whether the entity matches one of the provided NPCGroups",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

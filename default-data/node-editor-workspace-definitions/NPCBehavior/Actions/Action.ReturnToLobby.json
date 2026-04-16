@@ -1,13 +1,13 @@
 {
   "Id": "Action.ReturnToLobby",
   "Title": "ReturnToLobby",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Return the player to the lobby",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

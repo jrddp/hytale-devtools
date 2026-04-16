@@ -1,13 +1,13 @@
 {
   "Id": "Action.FlockState",
   "Title": "FlockState",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Set state name for flock.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

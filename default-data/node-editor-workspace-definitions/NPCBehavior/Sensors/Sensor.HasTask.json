@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.HasTask",
   "Title": "HasTask",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Checks whether or not the player being iterated by the interaction instruction has any of the given tasks",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

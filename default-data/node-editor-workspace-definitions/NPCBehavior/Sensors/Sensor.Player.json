@@ -1,20 +1,20 @@
 {
   "Id": "Sensor.Player",
   "Title": "Player",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Test if player matching specific attributes and filters is in range",
   "Inputs": [
     {
       "Id": "PrioritiserPin",
       "Type": "ISensorEntityPrioritiser",
-      "Color": "HotPink",
+      "Color": "#7091F0",
       "Label": "Prioritiser",
       "Description": "A prioritiser for selecting results based on additional parameters"
     },
     {
       "Id": "FiltersPin",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filters",
       "Description": "A series of entity filter sensors to test",
       "Multiple": true
@@ -24,13 +24,13 @@
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     },
     {
       "Id": "CollectorPin",
       "Type": "ISensorEntityCollector",
-      "Color": "DarkCyan",
+      "Color": "#7091F0",
       "Label": "Collector",
       "Description": "A collector which can process all checked entities and act on them based on whether they match or not"
     }

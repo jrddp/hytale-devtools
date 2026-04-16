@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Kill",
   "Title": "Kill",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Test if NPC made a kill",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "PositionSensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Position Sensor"
     }
   ],

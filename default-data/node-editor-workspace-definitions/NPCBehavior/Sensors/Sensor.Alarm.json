@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Alarm",
   "Title": "Alarm",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Check the state of a named alarm",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

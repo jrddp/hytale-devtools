@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.ItemInHand",
   "Title": "ItemInHand",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Check if entity is holding an item",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

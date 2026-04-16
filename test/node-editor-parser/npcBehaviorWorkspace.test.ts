@@ -15,6 +15,8 @@ import {
   NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE,
   NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS,
   NPC_BEHAVIOR_CONNECTION_DEFINITIONS,
+  NPC_BEHAVIOR_REFERENCE_DARK_COLORS,
+  getNpcBehaviorCategoryColor,
   getNpcBehaviorChildDomain,
   getNpcBehaviorChildConnectionType,
   getNpcBehaviorChildPinSide,
@@ -111,6 +113,9 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace.roots.Sensor.RootNodeType).toBe("SensorVariants");
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"]).toBeDefined();
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.default,
+    );
     expect(workspace.connectionTypesById.PositionSensor.extends).toEqual(["Sensor"]);
     expect(
       workspace.nodeTemplatesById["Structural.InstructionListRoot"].childSchemas.Instructions
@@ -126,11 +131,35 @@ describe("NPC Behavior workspace generation", () => {
         pin => pin.localId === "Output" && pin.connectionType === "Sensor",
       ),
     ).toBe(true);
+    expect(workspace.nodeTemplatesById["Sensor.Any"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
+    );
     expect(
       workspace.nodeTemplatesById["Sensor.Target"].outputPins.some(
         pin => pin.localId === "Output" && pin.connectionType === "PositionSensor",
       ),
     ).toBe(true);
+    expect(workspace.nodeTemplatesById["Action.Timeout"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
+    );
+    expect(workspace.nodeTemplatesById["BodyMotion.Sequence"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.bodyMotion,
+    );
+    expect(workspace.nodeTemplatesById["HeadMotion.Sequence"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.headMotion,
+    );
+    expect(workspace.nodeTemplatesById["IEntityFilter.LineOfSight"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.filter,
+    );
+    expect(workspace.nodeTemplatesById["WeightedAction.WeightedAction"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
+    );
+    expect(workspace.nodeTemplatesById["Path.Path"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
+    );
+    expect(workspace.nodeTemplatesById["ValueToParameterMapping.ValueToParameterMapping"].nodeColor).toBe(
+      NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
+    );
     expect(
       workspace.nodeTemplatesById["IEntityFilter.LineOfSight"].outputPins.some(
         pin => pin.localId === "Output" && pin.connectionType === "IEntityFilter",
@@ -165,6 +194,48 @@ describe("NPC Behavior workspace generation", () => {
         pin => pin.localId === "Output" && pin.connectionType === "ValueToParameterMapping",
       ),
     ).toBe(true);
+  });
+
+  test("uses the reference editor dark-theme palette for generated NPC node families", () => {
+    const workspaceRuntime = createWorkspaceRuntime();
+    const workspace = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"];
+
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("Structural"),
+    );
+    expect(workspace.nodeTemplatesById["Sensor.Target"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("Sensor"),
+    );
+    expect(workspace.nodeTemplatesById["ISensorEntityCollector.CombatTargets"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("ISensorEntityCollector"),
+    );
+    expect(workspace.nodeTemplatesById["ISensorEntityPrioritiser.Attitude"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("ISensorEntityPrioritiser"),
+    );
+    expect(workspace.nodeTemplatesById["Action.Timeout"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("Action"),
+    );
+    expect(workspace.nodeTemplatesById["WeightedAction.WeightedAction"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("WeightedAction"),
+    );
+    expect(workspace.nodeTemplatesById["Path.Path"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("Path"),
+    );
+    expect(
+      workspace.nodeTemplatesById["RelativeWaypointDefinition.RelativeWaypointDefinition"].nodeColor,
+    ).toBe(getNpcBehaviorCategoryColor("RelativeWaypointDefinition"));
+    expect(workspace.nodeTemplatesById["ValueToParameterMapping.ValueToParameterMapping"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("ValueToParameterMapping"),
+    );
+    expect(workspace.nodeTemplatesById["BodyMotion.Sequence"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("BodyMotion"),
+    );
+    expect(workspace.nodeTemplatesById["HeadMotion.Sequence"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("HeadMotion"),
+    );
+    expect(workspace.nodeTemplatesById["IEntityFilter.LineOfSight"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("IEntityFilter"),
+    );
   });
 
   test("maps supported NPC child domains to known semantic connection types and expected pin sides", () => {

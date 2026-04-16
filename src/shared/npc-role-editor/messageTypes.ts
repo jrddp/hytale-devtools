@@ -8,6 +8,7 @@ import type {
   NodeEditorPlatform,
 } from "../node-editor/messageTypes";
 import type { NodeEditorWorkspaceContext } from "../node-editor/workspaceTypes";
+import type { ModelPreviewState } from "../modelPreviewTypes";
 
 export type NpcRoleEditorBootstrapMessage = {
   type: "bootstrap";
@@ -75,6 +76,11 @@ export type NpcRoleEditorContextActionMessage = {
   fieldPath?: string;
 };
 
+export type NpcRoleEditorPreviewUpdateMessage = {
+  type: "previewUpdate";
+  preview?: ModelPreviewState;
+};
+
 export type NpcRoleEditorApplyMessage = {
   type: "apply";
   text: string;
@@ -94,7 +100,8 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | NpcRoleEditorAutocompletionValuesMessage
   | NpcRoleEditorVariantReferenceUpdateMessage
-  | NpcRoleEditorContextActionMessage;
+  | NpcRoleEditorContextActionMessage
+  | NpcRoleEditorPreviewUpdateMessage;
 
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }
@@ -103,6 +110,7 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "openKeybindings"; query?: string }
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
+  | { type: "resolveAppearancePreview"; assetName?: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorGraphEditMessage
   | NpcRoleEditorApplyMessage;

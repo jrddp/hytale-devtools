@@ -1,13 +1,13 @@
 {
   "Id": "Action.Beacon",
   "Title": "Beacon",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Send Beacon Message",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

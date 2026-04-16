@@ -1,13 +1,13 @@
 {
   "Id": "Action.Inventory",
   "Title": "Inventory",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Add or remove items from inventory.",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

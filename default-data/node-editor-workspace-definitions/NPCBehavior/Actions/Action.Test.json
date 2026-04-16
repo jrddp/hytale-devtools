@@ -1,13 +1,13 @@
 {
   "Id": "Action.Test",
   "Title": "Test",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Test action to exercise attribute evaluation (DO NOT USE)",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

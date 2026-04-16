@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { assetCacheRuntime, indexes, LOGGER, workspaceRuntime } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
+import type { ModelPreviewState } from "../shared/modelPreviewTypes";
 import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
@@ -22,6 +23,7 @@ import type {
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorExtensionToWebviewMessage,
   NpcRoleEditorGraphEditMessage,
+  NpcRoleEditorPreviewUpdateMessage,
   NpcRoleEditorVariantReferenceState,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
@@ -32,6 +34,7 @@ import type {
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../utils/hytalePaths";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
+import { resolveNpcAppearancePreview } from "./appearancePreviewRuntime";
 import { applyNpcGraphEditToDocument } from "./graphEditRuntime";
 import {
   filterNpcRoleReferenceNamesFromPaths,
@@ -165,6 +168,8 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
   ): Promise<void> {
     try {
       const documentUri = document.uri.toString();
+      let isDisposed = false;
+      let previewResolutionVersion = 0;
       this.getPanelsForDocument(documentUri).add(webviewPanel);
 
       if (webviewPanel.active) {
@@ -227,12 +232,59 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
       });
 
       webviewPanel.onDidDispose(() => {
+        isDisposed = true;
         panelViewStateSubscription.dispose();
         this.removePanelForDocument(documentUri, webviewPanel);
         if (this.activeDocumentUri === documentUri) {
           this.activeDocumentUri = undefined;
         }
       });
+
+      const postResolvedPreview = async (previewPromise: Promise<ModelPreviewState>) => {
+        const resolutionVersion = ++previewResolutionVersion;
+        const preview = await previewPromise;
+        if (isDisposed || resolutionVersion !== previewResolutionVersion) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
+          type: "previewUpdate",
+          preview,
+        } satisfies NpcRoleEditorPreviewUpdateMessage);
+      };
+
+      const sendResolvedAppearancePreview = async (assetName: string | undefined) => {
+        if (isDisposed) {
+          return;
+        }
+
+        if (!assetCacheRuntime.isReady) {
+          await webviewPanel.webview.postMessage({
+            type: "previewUpdate",
+            preview: assetName ? { type: "none", loading: true } : { type: "none" },
+          } satisfies NpcRoleEditorPreviewUpdateMessage);
+
+          if (!assetName) {
+            return;
+          }
+
+          void assetCacheRuntime.ready.then(() => {
+            if (!isDisposed && assetCacheRuntime.isReady) {
+              void sendResolvedAppearancePreview(assetName);
+            }
+          });
+          return;
+        }
+
+        const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
+        await postResolvedPreview(
+          resolveNpcAppearancePreview(
+            assetName,
+            assetCacheRuntime,
+            modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,
+          ),
+        );
+      };
 
       webviewPanel.webview.onDidReceiveMessage((message: NpcRoleEditorWebviewToExtensionMessage) => {
         switch (message.type) {
@@ -258,6 +310,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
             return;
           case "resolveVariantReference":
             void this.resolveVariantReference(message.referenceName, document.uri, webviewPanel.webview);
+            return;
+          case "resolveAppearancePreview":
+            void sendResolvedAppearancePreview(message.assetName);
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);

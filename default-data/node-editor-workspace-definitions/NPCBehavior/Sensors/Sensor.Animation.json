@@ -1,14 +1,14 @@
 {
   "Id": "Sensor.Animation",
   "Title": "Animation",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Check if a given animation is being played",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

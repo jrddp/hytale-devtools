@@ -1,13 +1,13 @@
 {
   "Id": "Sensor.Or",
   "Title": "Or",
-  "Color": "LimeGreen",
+  "Color": "#7091F0",
   "Description": "Logical OR of list of sensors",
   "Inputs": [
     {
       "Id": "SensorsPin",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensors",
       "Description": "List of sensors",
       "Multiple": true
@@ -17,7 +17,7 @@
     {
       "Id": "Output",
       "Type": "Sensor",
-      "Color": "LimeGreen",
+      "Color": "#7091F0",
       "Label": "Sensor"
     }
   ],

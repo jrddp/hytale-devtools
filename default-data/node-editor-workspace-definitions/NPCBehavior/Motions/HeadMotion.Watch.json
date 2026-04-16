@@ -1,13 +1,13 @@
 {
   "Id": "HeadMotion.Watch",
   "Title": "Watch",
-  "Color": "MediumPurple",
+  "Color": "#B08CE0",
   "Description": "Rotate to target",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "HeadMotion",
-      "Color": "MediumPurple",
+      "Color": "#B08CE0",
       "Label": "HeadMotion"
     }
   ],

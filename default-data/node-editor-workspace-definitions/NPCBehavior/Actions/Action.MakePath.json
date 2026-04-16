@@ -1,19 +1,19 @@
 {
   "Id": "Action.MakePath",
   "Title": "MakePath",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Constructs a transient path for the NPC based on a series of rotations and distances",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     },
     {
       "Id": "PathPin",
       "Type": "Path",
-      "Color": "CornflowerBlue",
+      "Color": "#CC3361",
       "Label": "Path",
       "Description": "A transient path definition"
     }

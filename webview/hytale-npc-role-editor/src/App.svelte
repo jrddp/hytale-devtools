@@ -8,13 +8,14 @@
     NodeEditorControlScheme,
     NodeEditorPlatform,
   } from "@shared/node-editor/messageTypes";
+  import DocumentEditorShell from "@webview-shared/components/DocumentEditorShell.svelte";
+  import ModelPreviewCard from "@webview-shared/components/ModelPreviewCard.svelte";
   import {
     createEmptyNodeEditorClipboardSelection,
     type NodeEditorClipboardSelection,
   } from "@shared/node-editor/clipboardTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
   import { onMount, tick } from "svelte";
-  import { fade } from "svelte/transition";
   import type { VSCodeApi } from "./common";
   import type { NpcPropertyField, NpcPropertySection, NpcSectionId } from "./propertyModel";
   import { buildNpcComputeAutocompleteOptions } from "./compute/computeAutocomplete";
@@ -47,6 +48,7 @@
   );
   let localWebviewState = $state<NpcRoleEditorWebviewState>({});
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
+  let lastRequestedAppearanceAssetName = $state<string | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
     Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
   >({});
@@ -126,6 +128,10 @@
       parameters: standardParameterFields,
     }),
   );
+  const appearanceField = $derived.by(() => workspace.getAppearanceField());
+  const effectiveAppearanceAssetName = $derived.by(
+    () => workspace.getEffectiveAppearanceAssetName() ?? null,
+  );
 
   $effect(() => {
     if (activeGraphSectionId && !activeGraphSection) {
@@ -140,6 +146,25 @@
     }
 
     previousActiveGraphSectionId = activeGraphSectionId;
+  });
+
+  $effect(() => {
+    const assetName = effectiveAppearanceAssetName;
+    if (assetName === lastRequestedAppearanceAssetName) {
+      return;
+    }
+
+    lastRequestedAppearanceAssetName = assetName;
+    if (!assetName) {
+      workspace.setAppearancePreview({ type: "none" });
+      return;
+    }
+
+    workspace.setAppearancePreview({ type: "none", loading: true });
+    vscode.postMessage({
+      type: "resolveAppearancePreview",
+      assetName,
+    });
   });
 
   $effect(() => {
@@ -241,6 +266,9 @@
         return;
       case "referenceUpdate":
         workspace.setVariantReferenceState(message.reference);
+        return;
+      case "previewUpdate":
+        workspace.setAppearancePreview(message.preview);
         return;
       case "error":
         extensionError = message.message;
@@ -402,157 +430,136 @@
   });
 </script>
 
-<main
-  class="flex h-screen min-h-0 flex-col bg-vsc-bg text-sm text-vsc-editor-fg"
-  in:fade={{ duration: 50 }}
->
-  {#if extensionError}
-    <div class="m-4 rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
-      {extensionError}
-    </div>
-  {:else}
-    <header
-      class="flex items-center justify-between gap-3 border-b border-vsc-border bg-vsc-panel px-4 py-3"
-    >
-      <div class="min-w-0">
-        <div class="space-x-1">
-          <span class="truncate text-lg font-semibold">{getDocumentTitle()}</span>
-          <span class="text-xs italic font-normal text-vsc-muted">
-            NPCRole
-          </span>
-        </div>
-        <div class="mt-1 truncate text-xs text-vsc-muted">
-          {workspace.documentPath || "Waiting for document..."}
-        </div>
-      </div>
+{#if extensionError}
+  <div class="m-4 rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
+    {extensionError}
+  </div>
+{:else}
+  <DocumentEditorShell
+    title={getDocumentTitle()}
+    subtitle="NPCRole"
+    path={workspace.documentPath || "Waiting for document..."}
+    bind:scrollRootElement
+  >
+    {#snippet actions()}
+      {#if workspace.roleType}
+        <span class="rounded-full bg-vsc-chip-bg px-2.5 py-1 text-xs font-medium text-vsc-chip-fg">
+          {workspace.roleType}
+        </span>
+      {/if}
+      <button
+        type="button"
+        class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
+        onclick={openRawJson}
+      >
+        Open JSON
+      </button>
+    {/snippet}
 
-      <div class="flex items-center gap-2">
-        {#if workspace.roleType}
-          <span class="rounded-full bg-vsc-chip-bg px-2.5 py-1 text-xs font-medium text-vsc-chip-fg">
-            {workspace.roleType}
-          </span>
-        {/if}
-        <button
-          type="button"
-          class="rounded-md border border-vsc-border bg-vsc-button-bg px-3 py-1.5 text-xs font-medium text-vsc-button-fg hover:bg-vsc-button-hover"
-          onclick={openRawJson}
-        >
-          Open JSON
-        </button>
-      </div>
-    </header>
+    {#snippet sidebar()}
+      {#if appearanceField}
+        <ModelPreviewCard preview={workspace.appearancePreview} />
+      {/if}
 
-    <div class="flex-1 min-h-0 p-4">
-      <div class="grid h-full min-h-0 gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
-        <aside class="space-y-4 self-start">
-          {#if !hasNavigationEntries}
-            <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
-              <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
-            </div>
-          {:else}
-            {#if propertyNavigationEntries.length > 0}
-              <div class="space-y-2">
-                <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
-                  <div class="space-y-2">
-                    {#each propertyNavigationEntries as entry (entry.id)}
-                      {@const button = renderNavigationButton(entry)}
-                      <button
-                        type="button"
-                        class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
-                        class:border-vsc-focus={button.active}
-                        class:bg-vsc-list-active-bg={button.active}
-                        class:text-vsc-list-active-fg={button.active}
-                        class:border-vsc-border={!button.active}
-                        class:bg-vsc-button-secondary-bg={!button.active}
-                        class:text-vsc-button-secondary-fg={!button.active}
-                        onclick={button.onclick}
-                      >
-                        <div class="truncate text-sm font-semibold">{button.name}</div>
-                        <div class="text-xs opacity-70">
-                          {button.fieldCount}
-                          {button.fieldCount === 1 ? "property" : "properties"}
-                        </div>
-                      </button>
-                    {/each}
+      {#if !hasNavigationEntries}
+        <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+          <div class="px-3 py-2 text-xs text-vsc-muted">No sections available yet.</div>
+        </div>
+      {:else}
+        {#if propertyNavigationEntries.length > 0}
+          <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+            <div class="space-y-2">
+              {#each propertyNavigationEntries as entry (entry.id)}
+                {@const button = renderNavigationButton(entry)}
+                <button
+                  type="button"
+                  class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
+                  class:border-vsc-focus={button.active}
+                  class:bg-vsc-list-active-bg={button.active}
+                  class:text-vsc-list-active-fg={button.active}
+                  class:border-vsc-border={!button.active}
+                  class:bg-vsc-button-secondary-bg={!button.active}
+                  class:text-vsc-button-secondary-fg={!button.active}
+                  onclick={button.onclick}
+                >
+                  <div class="truncate text-sm font-semibold">{button.name}</div>
+                  <div class="text-xs opacity-70">
+                    {button.fieldCount}
+                    {button.fieldCount === 1 ? "property" : "properties"}
                   </div>
-                </div>
-              </div>
-            {/if}
-
-            {#if graphNavigationEntries.length > 0}
-              <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
-                <div class="space-y-2">
-                  {#each graphNavigationEntries as entry (entry.id)}
-                    {@const button = renderNavigationButton(entry)}
-                    <button
-                      type="button"
-                      class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
-                      class:border-vsc-focus={button.active}
-                      class:bg-vsc-list-active-bg={button.active}
-                      class:text-vsc-list-active-fg={button.active}
-                      class:border-vsc-border={!button.active}
-                      class:bg-vsc-button-secondary-bg={!button.active}
-                      class:text-vsc-button-secondary-fg={!button.active}
-                      onclick={button.onclick}
-                    >
-                      <div class="truncate text-sm font-semibold">{button.name}</div>
-                      <div class="text-xs opacity-70">Graph page</div>
-                    </button>
-                  {/each}
-                </div>
-              </div>
-            {/if}
-          {/if}
-        </aside>
-
-        <div class="flex h-full min-h-0 min-w-0 self-stretch overflow-hidden flex-col">
-          {#if workspace.documentParseError}
-            <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
-              {workspace.documentParseError}
+                </button>
+              {/each}
             </div>
-          {:else if activeGraphSection && activeGraphField}
-            {#key activeGraphSectionId}
-              <NpcGraphPage
-                field={activeGraphField}
-                workspaceContext={activeGraphWorkspaceContext}
-                controlScheme={nodeEditorControlScheme}
-                platform={nodeEditorPlatform}
-                clipboard={nodeEditorClipboard}
-                autocompleteField={workspace.autocompleteField}
-                autocompleteValues={workspace.autocompleteValues}
-              {computeAutocompleteOptions}
-                documentText={workspace.documentText}
-                initialViewport={activeGraphViewport}
-                onviewportchange={viewport => {
-                  if (activeGraphSectionId) {
-                    persistGraphViewport(activeGraphSectionId, viewport);
-                  }
-                }}
-                documentVersion={workspace.documentVersion}
-                graphUpdate={latestGraphUpdate}
-                {vscode}
-              />
-            {/key}
-          {:else if visiblePropertySections.length === 0}
-            <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
-              No property sections are available for this NPC role yet.
-            </div>
-          {:else}
-            <div
-              bind:this={scrollRootElement}
-              class="h-full min-h-0 overflow-auto [overflow-anchor:none]"
-            >
-              <div class="space-y-4">
-                {#each visiblePropertySections as section (section.id)}
-                  <PropertySection {section} />
-                {/each}
+          </div>
+        {/if}
 
-                <div aria-hidden="true" class="min-h-24 h-[50vh]"></div>
-              </div>
+        {#if graphNavigationEntries.length > 0}
+          <div class="rounded-xl border border-vsc-border bg-vsc-panel p-2">
+            <div class="space-y-2">
+              {#each graphNavigationEntries as entry (entry.id)}
+                {@const button = renderNavigationButton(entry)}
+                <button
+                  type="button"
+                  class="w-full rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color]"
+                  class:border-vsc-focus={button.active}
+                  class:bg-vsc-list-active-bg={button.active}
+                  class:text-vsc-list-active-fg={button.active}
+                  class:border-vsc-border={!button.active}
+                  class:bg-vsc-button-secondary-bg={!button.active}
+                  class:text-vsc-button-secondary-fg={!button.active}
+                  onclick={button.onclick}
+                >
+                  <div class="truncate text-sm font-semibold">{button.name}</div>
+                  <div class="text-xs opacity-70">Graph page</div>
+                </button>
+              {/each}
             </div>
-          {/if}
-        </div>
+          </div>
+        {/if}
+      {/if}
+    {/snippet}
+
+    {#if workspace.documentParseError}
+      <div class="rounded-md border border-vsc-border bg-red-500/10 px-3 py-2 text-vsc-error">
+        {workspace.documentParseError}
       </div>
-    </div>
-  {/if}
-</main>
+    {:else if activeGraphSection && activeGraphField}
+      <div class="min-h-[32rem] h-[calc(100vh-9rem)]">
+        {#key activeGraphSectionId}
+          <NpcGraphPage
+            field={activeGraphField}
+            workspaceContext={activeGraphWorkspaceContext}
+            controlScheme={nodeEditorControlScheme}
+            platform={nodeEditorPlatform}
+            clipboard={nodeEditorClipboard}
+            autocompleteField={workspace.autocompleteField}
+            autocompleteValues={workspace.autocompleteValues}
+          {computeAutocompleteOptions}
+            documentText={workspace.documentText}
+            initialViewport={activeGraphViewport}
+            onviewportchange={viewport => {
+              if (activeGraphSectionId) {
+                persistGraphViewport(activeGraphSectionId, viewport);
+              }
+            }}
+            documentVersion={workspace.documentVersion}
+            graphUpdate={latestGraphUpdate}
+            {vscode}
+          />
+        {/key}
+      </div>
+    {:else if visiblePropertySections.length === 0}
+      <div class="rounded-md border border-dashed border-vsc-border px-4 py-3 text-sm text-vsc-muted">
+        No property sections are available for this NPC role yet.
+      </div>
+    {:else}
+      <div class="space-y-4">
+        {#each visiblePropertySections as section (section.id)}
+          <PropertySection {section} />
+        {/each}
+
+        <div aria-hidden="true" class="min-h-24 h-[50vh]"></div>
+      </div>
+    {/if}
+  </DocumentEditorShell>
+{/if}

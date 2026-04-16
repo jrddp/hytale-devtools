@@ -1,13 +1,13 @@
 {
   "Id": "Action.ToggleStateEvaluator",
   "Title": "ToggleStateEvaluator",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Enable or disable the NPC's state evaluator",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

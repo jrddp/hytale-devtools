@@ -1,13 +1,13 @@
 {
   "Id": "Action.DelayDespawn",
   "Title": "DelayDespawn",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Delay the despawning cycle for some amount of time",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

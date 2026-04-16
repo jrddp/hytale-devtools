@@ -1,13 +1,13 @@
 {
   "Id": "BodyMotion.Land",
   "Title": "Land",
-  "Color": "DarkOrange",
+  "Color": "#00E7B6",
   "Description": "Try to land at the given position",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "BodyMotion",
-      "Color": "DarkOrange",
+      "Color": "#00E7B6",
       "Label": "BodyMotion"
     }
   ],

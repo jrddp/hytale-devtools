@@ -1,13 +1,13 @@
 {
   "Id": "Action.Despawn",
   "Title": "Despawn",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Trigger the NPC to despawn",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],

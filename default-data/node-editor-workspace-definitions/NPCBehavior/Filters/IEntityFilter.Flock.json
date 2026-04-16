@@ -1,14 +1,14 @@
 {
   "Id": "IEntityFilter.Flock",
   "Title": "Flock",
-  "Color": "YellowGreen",
+  "Color": "#60C8B8",
   "Description": "Test for flock membership and related properties",
   "Inputs": [],
   "Outputs": [
     {
       "Id": "Output",
       "Type": "IEntityFilter",
-      "Color": "YellowGreen",
+      "Color": "#60C8B8",
       "Label": "Filter"
     }
   ],

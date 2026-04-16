@@ -1,13 +1,13 @@
 {
   "Id": "Action.TimerPause",
   "Title": "TimerPause",
-  "Color": "DeepSkyBlue",
+  "Color": "#CC3361",
   "Description": "Pause a timer",
   "Inputs": [
     {
       "Id": "Input",
       "Type": "Action",
-      "Color": "DeepSkyBlue",
+      "Color": "#CC3361",
       "Label": "Action"
     }
   ],
