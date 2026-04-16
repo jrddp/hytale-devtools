@@ -1,7 +1,15 @@
 <script lang="ts">
   import * as THREE from "three";
   import { onMount, untrack } from "svelte";
-  import { buildBlockymodelObject3D } from "./buildBlockymodelObject";
+  import {
+    createBlockyanimController,
+    type BlockyanimController,
+  } from "./blockyanimPlayer";
+  import type { BlockyAnimFile } from "./blockyanimTypes";
+  import {
+    buildBlockymodelScene,
+    type BuiltBlockymodelScene,
+  } from "./buildBlockymodelObject";
   import type { BlockymodelFile } from "./blockymodelTypes";
   import {
     createBlockymodelViewerRuntime,
@@ -12,6 +20,8 @@
     model?: BlockymodelFile | null;
     textureUrl?: string | null;
     textureBytes?: Uint8Array | number[] | null;
+    animation?: BlockyAnimFile | null;
+    playing?: boolean;
     orbit?: boolean;
     /** View angles in degrees. */
     roll?: number;
@@ -26,6 +36,8 @@
     model = null,
     textureUrl = null,
     textureBytes = null,
+    animation = null,
+    playing = true,
     orbit = false,
     roll = $bindable(),
     pitch = $bindable(),
@@ -38,7 +50,8 @@
   let container = $state<HTMLDivElement | null>(null);
   let runtime = $state<BlockymodelViewerRuntime | null>(null);
   let currentTexture = $state<THREE.Texture | null>(null);
-  let currentObject = $state<THREE.Object3D | null>(null);
+  let currentScene = $state<BuiltBlockymodelScene | null>(null);
+  let animationController = $state<BlockyanimController | null>(null);
   let rebuildVersion = 0;
   let errorMessage = $state("");
   let loading = $state(false);
@@ -114,10 +127,13 @@
   }
 
   function clearCurrentModel(): void {
+    runtime?.setFrameHandler(null);
+    animationController?.dispose();
+    animationController = null;
     runtime?.setModelObject(null);
-    if (currentObject) {
-      disposeObject3D(currentObject);
-      currentObject = null;
+    if (currentScene) {
+      disposeObject3D(currentScene.root);
+      currentScene = null;
     }
   }
 
@@ -129,6 +145,29 @@
   function clearCurrentSceneState(): void {
     clearCurrentModel();
     clearCurrentTexture();
+  }
+
+  function syncAnimationState(): void {
+    if (!runtime || !currentScene) {
+      return;
+    }
+
+    if (!animationController) {
+      animationController = createBlockyanimController(currentScene.animationRig);
+    }
+
+    animationController.setAnimation(animation ?? null);
+    animationController.setPlaying(playing);
+    runtime.setFrameHandler(animation && playing ? deltaSeconds => animationController?.update(deltaSeconds) : null);
+
+    if (!animation) {
+      animationController.resetPose();
+      runtime.requestRender();
+      return;
+    }
+
+    animationController.update(0);
+    runtime.requestRender();
   }
 
   async function rebuild(
@@ -156,8 +195,9 @@
 
       clearCurrentSceneState();
       currentTexture = nextTexture;
-      currentObject = buildBlockymodelObject3D(nextModel, nextTexture ?? undefined);
-      nextRuntime.setModelObject(currentObject);
+      currentScene = buildBlockymodelScene(nextModel, nextTexture ?? undefined);
+      nextRuntime.setModelObject(currentScene.root);
+      syncAnimationState();
     } catch (error) {
       if (version !== rebuildVersion) {
         return;
@@ -240,6 +280,21 @@
     untrack(() => {
       void rebuild(nextRuntime, nextModel, nextTextureUrl);
     });
+  });
+
+  $effect(() => {
+    const nextRuntime = runtime;
+    const nextScene = currentScene;
+    const nextAnimation = animation;
+    const nextPlaying = playing;
+    void nextAnimation;
+    void nextPlaying;
+
+    if (!nextRuntime || !nextScene) {
+      return;
+    }
+
+    syncAnimationState();
   });
 </script>
 
