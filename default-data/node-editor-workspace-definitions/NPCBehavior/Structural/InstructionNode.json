@@ -5,17 +5,17 @@
   "Description": "An instruction with Sensor, and Motions and Actions, or a list of nested instructions.",
   "Inputs": [
     {
-      "Id": "Input",
-      "Type": "Instruction",
-      "Color": "Gold",
-      "Label": "Instruction"
-    },
-    {
       "Id": "SensorPin",
       "Type": "Sensor",
       "Color": "LimeGreen",
       "Label": "Sensor",
       "Description": "Sensor for testing if instruction can be applied"
+    },
+    {
+      "Id": "Input",
+      "Type": "Instruction",
+      "Color": "Gold",
+      "Label": "Instruction"
     }
   ],
   "Outputs": [

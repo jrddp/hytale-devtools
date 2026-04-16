@@ -285,6 +285,10 @@ describe("NPC Behavior workspace generation", () => {
     expect(
       instructionNode.inputPins.some(pin => pin.schemaKey === "Sensor" && pin.connectionType === "Sensor"),
     ).toBe(true);
+    expect(instructionNode.inputPins.map(pin => pin.label)).toEqual([
+      "Sensor",
+      "Instruction",
+    ]);
 
     const targetSensor = workspace.nodeTemplatesById["Sensor.Target"];
     expect(targetSensor.inputPins.some(pin => pin.connectionType === "Sensor")).toBe(false);

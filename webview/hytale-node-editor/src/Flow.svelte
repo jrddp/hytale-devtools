@@ -138,6 +138,7 @@
     | undefined = $state();
   let helpMenuOpen = $state(false);
   let showDebugOverlay = $state(false);
+  let isHandlingActionRequests = $state(false);
   const activeRenderDetailMode = $derived(lowDetail.activeRenderDetailMode);
 
   const useCanvasLowDetailOverlay = $derived(
@@ -320,7 +321,11 @@
   // # Handle actions requests
   $effect(() => {
     void workspace.areNodesMeasured;
-    if (workspace.actionRequests.length > 0) untrack(() => handleActionRequests());
+    if (!isHandlingActionRequests && workspace.actionRequests.length > 0) {
+      untrack(() => {
+        void handleActionRequests();
+      });
+    }
   });
 
   // custom box-selection handling
@@ -432,11 +437,21 @@
     applySelectionBoxOverrides(flowStore.selectionRect);
   });
 
-  function handleActionRequests() {
+  async function handleActionRequests() {
+    if (isHandlingActionRequests) {
+      return;
+    }
+
+    isHandlingActionRequests = true;
     // retain any actions that are not able to be processed yet
     const retained = [];
-    for (const action of workspace.actionRequests) {
-      switch (action.type) {
+    const initialActionRequests = workspace.actionRequests;
+    const initialActions = [...initialActionRequests];
+    const initialLength = initialActionRequests.length;
+
+    try {
+      for (const action of initialActions) {
+        switch (action.type) {
         case "reveal-node":
           if (!workspace.areNodesMeasured) {
             retained.push(action);
@@ -551,7 +566,7 @@
             }
           }
 
-          const updates = getAutoPositionNodeUpdates(targetNodes, workspace);
+          const updates = await getAutoPositionNodeUpdates(targetNodes, workspace);
           if (updates.length > 0) {
             workspace.applyNodeUpdates(updates);
             recalculateGroupParents(workspace);
@@ -588,10 +603,19 @@
           break;
         default:
           const _exhaustiveCheck: never = action;
+        }
       }
+    } finally {
+      const queuedDuringHandling = workspace.actionRequests.slice(initialLength);
+      const shouldKeepExistingQueue =
+        retained.length === initialLength && queuedDuringHandling.length === 0;
+
+      if (!shouldKeepExistingQueue) {
+        workspace.actionRequests = [...retained, ...queuedDuringHandling];
+      }
+
+      isHandlingActionRequests = false;
     }
-    // length check to avoid trigger reactivity when there is no change
-    if (retained.length !== workspace.actionRequests.length) workspace.actionRequests = retained;
   }
 
   // ! window event

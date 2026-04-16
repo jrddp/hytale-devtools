@@ -351,10 +351,11 @@ function buildInstructionNodeTemplate(
   instructionDescriptors: NpcDescriptor[],
   outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
 ): TemplateOutput {
-  const inputs: NodePinDefinition[] = createParentCompatibilityInputs(
+  const parentInputs = createParentCompatibilityInputs(
     [getInstructionTemplateParentTargetId()],
     outputAuthoredParentConnectionTypesByChildId,
   );
+  const childInputs: NodePinDefinition[] = [];
   const outputs: NodePinDefinition[] = [];
   const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {
     Type: "Type",
@@ -373,7 +374,7 @@ function buildInstructionNodeTemplate(
         Description: normalizeDescription(attribute.ShortDescription),
         Multiple: childSpec.multiplicity === "multiple" || undefined,
       };
-      (childSpec.pinSide === "input" ? inputs : outputs).push(pin);
+      (childSpec.pinSide === "input" ? childInputs : outputs).push(pin);
       schema[attribute.Name] = {
         Pin: pinId,
         Node: childSpec.childId,
@@ -390,6 +391,8 @@ function buildInstructionNodeTemplate(
     schema[attribute.Name] = attribute.Name;
   }
 
+  const inputs = orderInstructionInputs(childInputs, parentInputs);
+
   return {
     directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
     fileName: "InstructionNode.json",
@@ -404,6 +407,33 @@ function buildInstructionNodeTemplate(
       Schema: schema,
     },
   };
+}
+
+function orderInstructionInputs(
+  childInputs: NodePinDefinition[],
+  parentInputs: NodePinDefinition[],
+): NodePinDefinition[] {
+  const orderedChildInputs = [...childInputs].sort((left, right) => {
+    return getInstructionInputPriority(left).priority - getInstructionInputPriority(right).priority;
+  });
+
+  const orderedParentInputs = [...parentInputs].sort((left, right) => {
+    return getInstructionInputPriority(left).priority - getInstructionInputPriority(right).priority;
+  });
+
+  return [...orderedChildInputs, ...orderedParentInputs];
+}
+
+function getInstructionInputPriority(pin: NodePinDefinition): { priority: number } {
+  if (pin.Label === "Sensor") {
+    return { priority: 0 };
+  }
+
+  if (pin.Label === "Instruction") {
+    return { priority: 1 };
+  }
+
+  return { priority: 2 };
 }
 
 function buildInstructionListRootTemplate(): TemplateOutput {

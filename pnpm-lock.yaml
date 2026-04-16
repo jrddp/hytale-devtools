@@ -112,9 +112,6 @@ importers:
 
   webview/hytale-node-editor:
     dependencies:
-      '@dagrejs/dagre':
-        specifier: ^1.1.5
-        version: 1.1.8
       '@floating-ui/dom':
         specifier: ^1.7.6
         version: 1.7.6
@@ -124,6 +121,9 @@ importers:
       '@xyflow/system':
         specifier: ^0.0.75
         version: 0.0.75
+      elkjs:
+        specifier: ^0.11.1
+        version: 0.11.1
       lucide-svelte:
         specifier: ^0.564.0
         version: 0.564.0(svelte@5.53.6)
@@ -219,13 +219,6 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-
-  '@dagrejs/dagre@1.1.8':
-    resolution: {integrity: sha512-5SEDlndt4W/LaVzPYJW+bSmSEZc9EzTf8rJ20WCKvjS5EAZAN0b+x0Yww7VMT4R3Wootkg+X9bUfUxazYw6Blw==}
-
-  '@dagrejs/graphlib@2.2.4':
-    resolution: {integrity: sha512-mepCf/e9+SKYy1d02/UkvSy6+6MoyXhVxP8lLDfA7BPE1X1d4dR0sZznmbM8/XVJ1GPM+Svnx7Xj6ZweByWUkw==}
-    engines: {node: '>17.0.0'}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -1316,6 +1309,9 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  elkjs@0.11.1:
+    resolution: {integrity: sha512-zxxR9k+rx5ktMwT/FwyLdPCrq7xN6e4VGGHH8hA01vVYKjTFik7nHOxBnAYtrgYUB1RpAiLvA1/U2YraWxyKKg==}
 
   emoji-regex@10.6.0:
     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
@@ -2725,12 +2721,6 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@dagrejs/dagre@1.1.8':
-    dependencies:
-      '@dagrejs/graphlib': 2.2.4
-
-  '@dagrejs/graphlib@2.2.4': {}
-
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
 
@@ -3672,6 +3662,8 @@ snapshots:
       gopd: 1.2.0
 
   eastasianwidth@0.2.0: {}
+
+  elkjs@0.11.1: {}
 
   emoji-regex@10.6.0: {}
 

@@ -10,10 +10,10 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@dagrejs/dagre": "^1.1.5",
     "@floating-ui/dom": "^1.7.6",
     "@xyflow/svelte": "^1.5.1",
     "@xyflow/system": "^0.0.75",
+    "elkjs": "^0.11.1",
     "lucide-svelte": "^0.564.0",
     "marked": "^16.3.0",
     "rbush": "^4.0.1"
