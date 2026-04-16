@@ -138,7 +138,7 @@
     | undefined = $state();
   let helpMenuOpen = $state(false);
   let showDebugOverlay = $state(false);
-  let isHandlingActionRequests = $state(false);
+  let isHandlingActionRequests = false;
   const activeRenderDetailMode = $derived(lowDetail.activeRenderDetailMode);
 
   const useCanvasLowDetailOverlay = $derived(
