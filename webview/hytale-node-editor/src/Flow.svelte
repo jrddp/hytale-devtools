@@ -47,7 +47,6 @@
     getInputPin,
     getOutputPin,
     isValidConnection,
-    pruneConflictingEdges,
     recalculateGroupParents,
     resolveFitViewNodeIds,
   } from "@node-editor/node-editor/utils/nodeUtils.svelte";
@@ -315,7 +314,7 @@
     void connectionPreview.pendingSourceConnection;
     void connectionPreview.pendingTargetConnection;
     void liveConnection.current;
-    connectionPreview.syncPreview(liveConnection.current);
+    connectionPreview.updateHover(liveConnection.current);
   });
 
   // # Handle actions requests
@@ -596,7 +595,7 @@
             getAllSiblingOrderUpdates(workspace).map(([nodeId, data]) => [nodeId, { data }]),
           );
 
-          connectionPreview.clearPendingConnection("both", true);
+          connectionPreview.cancel();
           recalculateGroupParents(workspace);
           break;
         case "reveal-selection":
@@ -832,9 +831,7 @@
     onpointerdown: (event: PointerEvent) => {
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
         addMenuInstance = undefined;
-        if (connectionPreview.clearPendingConnection("both", false)) {
-          workspace.applyDocumentState("element-list-changed");
-        }
+        connectionPreview.cancel();
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]")) {
         searchMenuInstance = undefined;
@@ -971,17 +968,23 @@
   const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
     // ## On Connect
     onconnect: connection => {
-      pruneConflictingEdges(connection, workspace);
       workspace.addEdges([connection]);
+      connectionPreview.commit();
       workspace.applyDocumentState("element-list-changed");
     },
     // ## On Connect Start
     onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
-      connectionPreview.handleConnectStart(nodeId!, handleId!, handleType);
+      if (handleType === "source") {
+        connectionPreview.beginSourceDrag(nodeId!, handleId!);
+        return;
+      }
+
+      connectionPreview.beginTargetDrag(nodeId!, handleId!);
     },
     // ## On Connect End
     onconnectend: (event, connectionState) => {
       if (connectionState.toNode === null && connectionPreview.pendingSourceConnection) {
+        connectionPreview.previewFixedConflicts();
         const sourcePin = getOutputPin(
           connectionPreview.pendingSourceConnection.source,
           connectionPreview.pendingSourceConnection.sourceHandle,
@@ -998,6 +1001,7 @@
             : undefined,
         };
       } else if (connectionState.toNode === null && connectionPreview.pendingTargetConnection) {
+        connectionPreview.previewFixedConflicts();
         const targetPin = getInputPin(
           connectionPreview.pendingTargetConnection.target,
           connectionPreview.pendingTargetConnection.targetHandle,
@@ -1014,8 +1018,9 @@
             : undefined,
         };
       } else {
-        // restore conflicts if invalid
-        connectionPreview.clearPendingConnection("both", !connectionState.isValid);
+        if (connectionState.isValid !== true) {
+          connectionPreview.cancel();
+        }
       }
     },
     // ## On Node Drag Stop
@@ -1119,7 +1124,7 @@
   const addMenuEvents: Partial<AddMenuProps> = {
     // ## On Add Menu Cancel
     oncancel: () => {
-      connectionPreview.clearPendingConnection("both", true);
+      connectionPreview.cancel();
       addMenuInstance = undefined;
     },
 
@@ -1136,6 +1141,7 @@
       };
       workspace.nodes = [...workspace.nodes, newNode];
       workspace.trackMeasurementForNodeIds([newNode.id]);
+      let didCreateReplacementConnection = false;
       if (isCreatingRootNode) {
         workspace.rootNodeId = newNode.id;
       } else if (connectionPreview.pendingSourceConnection) {
@@ -1154,6 +1160,7 @@
               targetHandle,
             },
           ]);
+          didCreateReplacementConnection = true;
         }
       } else if (connectionPreview.pendingTargetConnection) {
         const sourceHandle = menuInstance.connectionFilter
@@ -1172,9 +1179,14 @@
               targetHandle: connectionPreview.pendingTargetConnection.targetHandle,
             },
           ]);
+          didCreateReplacementConnection = true;
         }
       }
-      connectionPreview.clearPendingConnection("both", false);
+      if (didCreateReplacementConnection) {
+        connectionPreview.commit();
+      } else {
+        connectionPreview.cancel();
+      }
 
       // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
       workspace.actionRequests.push({ type: "document-refresh" });

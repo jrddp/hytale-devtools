@@ -1,4 +1,4 @@
-import { type SvelteFlowStore } from "@xyflow/svelte";
+import { type Connection, type SvelteFlowStore } from "@xyflow/svelte";
 import { XYHandle } from "@xyflow/system";
 import type { FlowEdge, FlowNode } from "@node-editor/common";
 
@@ -7,6 +7,35 @@ const HANDLE_PRIORITY_EDGE_TARGET_SELECTOR =
 const HANDLE_PRIORITY_SELECTOR =
   ".svelte-flow__handle.connectionindicator, .svelte-flow__handle.connectingfrom";
 const HANDLE_PRIORITY_CLICK_SLOP_PX = 4;
+
+type ForwardPriorityConnectionHandlers = {
+  onBeforeConnect?: ((connection: Connection) => Connection | FlowEdge | false | null | undefined | void) | undefined;
+  onConnect?: ((connection: Connection) => void) | undefined;
+};
+
+function normalizeConnection(connection: Connection | FlowEdge): Connection {
+  return {
+    source: connection.source,
+    sourceHandle: connection.sourceHandle ?? null,
+    target: connection.target,
+    targetHandle: connection.targetHandle ?? null,
+  };
+}
+
+export function forwardPriorityConnection(
+  connection: Connection,
+  {
+    onBeforeConnect,
+    onConnect,
+  }: ForwardPriorityConnectionHandlers,
+) {
+  const nextConnection = onBeforeConnect ? onBeforeConnect(connection) : connection;
+  if (!nextConnection) {
+    return;
+  }
+
+  onConnect?.(normalizeConnection(nextConnection));
+}
 
 // Gives handles priority over overlapping edge hit targets by rerouting mouse-down
 // to XYFlow's native handle connection-start logic.
@@ -137,13 +166,10 @@ export class HandlePriorityController {
       cancelConnection: flowStore.cancelConnection,
       onConnectStart: flowStore.onconnectstart,
       onConnect: connection => {
-        const edge = flowStore.onbeforeconnect ? flowStore.onbeforeconnect(connection) : connection;
-        if (!edge) {
-          return;
-        }
-
-        flowStore.addEdge(edge);
-        flowStore.onconnect?.(connection);
+        forwardPriorityConnection(connection, {
+          onBeforeConnect: flowStore.onbeforeconnect,
+          onConnect: nextConnection => flowStore.onconnect?.(nextConnection),
+        });
       },
       onConnectEnd: (...args) => flowStore.onconnectend?.(...args),
       isValidConnection: flowStore.isValidConnection ?? (() => true),

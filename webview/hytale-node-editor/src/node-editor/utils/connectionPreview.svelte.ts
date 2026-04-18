@@ -1,7 +1,9 @@
 import type { ConnectionState } from "@xyflow/system";
-import type { FlowEdge } from "@node-editor/common";
-import { pruneConflictingEdges } from "@node-editor/node-editor/utils/nodeUtils.svelte";
-import type { NodeEditorSession } from "@node-editor/workspace.svelte";
+import {
+  collectConflictingEdges,
+  type PendingConnection,
+} from "@node-editor/node-editor/utils/nodeUtils.svelte";
+import type { NodeEditorSession, RemovedFlowEdge } from "@node-editor/workspace.svelte";
 
 type SourcePendingConnection = { source: string; sourceHandle: string };
 type TargetPendingConnection = { target: string; targetHandle: string };
@@ -10,126 +12,160 @@ export class ConnectionPreviewController {
   constructor(private readonly session: NodeEditorSession) {}
 
   pendingSourceConnection = $state<SourcePendingConnection | undefined>();
-  pendingSourceConflictingEdges = $state.raw<FlowEdge[]>([]);
   pendingTargetConnection = $state<TargetPendingConnection | undefined>();
-  pendingTargetConflictingEdges = $state.raw<FlowEdge[]>([]);
-  private pendingConnectionPreviewKey = $state<string | undefined>();
+  private previewPrunedEdgesById = $state.raw<Map<string, RemovedFlowEdge>>(new Map());
 
-  clearPendingConnection(
-    type: "source" | "target" | "both",
-    restoreConflicts: boolean,
-  ): boolean {
-    let hadConflicts = false;
-    this.pendingConnectionPreviewKey = undefined;
+  get hasPendingConnection(): boolean {
+    return this.pendingSourceConnection !== undefined || this.pendingTargetConnection !== undefined;
+  }
 
-    if (type === "source" || type === "both") {
-      this.pendingSourceConnection = undefined;
-      if (restoreConflicts) {
-        this.session.addEdges(this.pendingSourceConflictingEdges);
-      }
-      hadConflicts = this.pendingSourceConflictingEdges.length > 0;
-      this.pendingSourceConflictingEdges = [];
+  beginSourceDrag(source: string, sourceHandle: string) {
+    this.cancel();
+    this.pendingSourceConnection = {
+      source,
+      sourceHandle,
+    };
+    this.pendingTargetConnection = undefined;
+    this.syncDesiredPrunedEdges(this.getFixedPendingConnection());
+  }
+
+  beginTargetDrag(target: string, targetHandle: string) {
+    this.cancel();
+    this.pendingTargetConnection = {
+      target,
+      targetHandle,
+    };
+    this.pendingSourceConnection = undefined;
+    this.syncDesiredPrunedEdges(this.getFixedPendingConnection());
+  }
+
+  previewFixedConflicts() {
+    this.syncDesiredPrunedEdges(this.getFixedPendingConnection());
+  }
+
+  updateHover(currentConnection: ConnectionState) {
+    if (!this.hasPendingConnection || !currentConnection.inProgress) {
+      return;
     }
 
-    if (type === "target" || type === "both") {
-      this.pendingTargetConnection = undefined;
-      if (restoreConflicts) {
-        this.session.addEdges(this.pendingTargetConflictingEdges);
-      }
-      hadConflicts = hadConflicts || this.pendingTargetConflictingEdges.length > 0;
-      this.pendingTargetConflictingEdges = [];
-    }
+    this.syncDesiredPrunedEdges(this.buildPendingConnectionForHover(currentConnection));
+  }
 
+  cancel(): boolean {
+    const hadConflicts = this.previewPrunedEdgesById.size > 0;
+    this.restoreRemovedEdges(Array.from(this.previewPrunedEdgesById.values()));
+    this.previewPrunedEdgesById = new Map();
+    this.pendingSourceConnection = undefined;
+    this.pendingTargetConnection = undefined;
     return hadConflicts;
   }
 
-  handleConnectStart(nodeId: string, handleId: string, handleType: "source" | "target") {
-    if (handleType === "source") {
-      this.pendingSourceConnection = {
-        source: nodeId,
-        sourceHandle: handleId,
-      };
-      this.pendingSourceConflictingEdges = [];
-      this.pendingTargetConnection = undefined;
-      this.pendingTargetConflictingEdges = [];
-      this.pendingConnectionPreviewKey = undefined;
-      return;
-    }
-
-    this.pendingTargetConnection = {
-      target: nodeId,
-      targetHandle: handleId,
-    };
-    this.pendingTargetConflictingEdges = [];
+  commit(): boolean {
+    const hadConflicts = this.previewPrunedEdgesById.size > 0;
+    this.previewPrunedEdgesById = new Map();
     this.pendingSourceConnection = undefined;
-    this.pendingSourceConflictingEdges = [];
-    this.pendingConnectionPreviewKey = undefined;
+    this.pendingTargetConnection = undefined;
+    return hadConflicts;
   }
 
-  syncPreview(currentConnection: ConnectionState) {
-    if (!currentConnection.inProgress) {
-      return;
-    }
-
-    const nextPreviewConnection = this.pendingSourceConnection
-      ? {
-          ...this.pendingSourceConnection,
-          target: currentConnection.toNode?.id,
-          targetHandle: currentConnection.toHandle?.id,
-        }
-      : this.pendingTargetConnection
-        ? {
-            ...this.pendingTargetConnection,
-            source: currentConnection.toNode?.id,
-            sourceHandle: currentConnection.toHandle?.id,
-          }
-        : undefined;
-
-    if (!nextPreviewConnection) {
-      return;
-    }
-
-    const nextPreviewKey = this.pendingSourceConnection
-      ? [
-          "source",
-          nextPreviewConnection.source,
-          nextPreviewConnection.sourceHandle,
-          nextPreviewConnection.target ?? "",
-          nextPreviewConnection.targetHandle ?? "",
-        ].join(":")
-      : [
-          "target",
-          nextPreviewConnection.source ?? "",
-          nextPreviewConnection.sourceHandle ?? "",
-          nextPreviewConnection.target,
-          nextPreviewConnection.targetHandle,
-        ].join(":");
-
-    if (this.pendingSourceConflictingEdges.length > 0) {
-      this.session.addEdges(this.pendingSourceConflictingEdges);
-      this.pendingSourceConflictingEdges = [];
-    }
-    if (this.pendingTargetConflictingEdges.length > 0) {
-      this.session.addEdges(this.pendingTargetConflictingEdges);
-      this.pendingTargetConflictingEdges = [];
-    }
-
-    if (currentConnection.isValid !== true) {
-      this.pendingConnectionPreviewKey = undefined;
-      return;
-    }
-
-    if (nextPreviewKey === this.pendingConnectionPreviewKey) {
-      return;
-    }
-
-    this.pendingConnectionPreviewKey = nextPreviewKey;
+  private getFixedPendingConnection(): PendingConnection | undefined {
     if (this.pendingSourceConnection) {
-      this.pendingSourceConflictingEdges = pruneConflictingEdges(nextPreviewConnection, this.session);
+      return { ...this.pendingSourceConnection };
+    }
+
+    if (this.pendingTargetConnection) {
+      return { ...this.pendingTargetConnection };
+    }
+
+    return undefined;
+  }
+
+  private buildPendingConnectionForHover(currentConnection: ConnectionState): PendingConnection | undefined {
+    if (this.pendingSourceConnection) {
+      if (
+        currentConnection.isValid === true &&
+        currentConnection.toNode?.id &&
+        currentConnection.toHandle?.id
+      ) {
+        return {
+          ...this.pendingSourceConnection,
+          target: currentConnection.toNode.id,
+          targetHandle: currentConnection.toHandle.id,
+        };
+      }
+
+      return { ...this.pendingSourceConnection };
+    }
+
+    if (this.pendingTargetConnection) {
+      if (
+        currentConnection.isValid === true &&
+        currentConnection.toNode?.id &&
+        currentConnection.toHandle?.id
+      ) {
+        return {
+          source: currentConnection.toNode.id,
+          sourceHandle: currentConnection.toHandle.id,
+          ...this.pendingTargetConnection,
+        };
+      }
+
+      return { ...this.pendingTargetConnection };
+    }
+
+    return undefined;
+  }
+
+  private syncDesiredPrunedEdges(connection: PendingConnection | undefined) {
+    const previewPrunedEdges = Array.from(this.previewPrunedEdgesById.values()).map(
+      removedEdge => removedEdge.edge,
+    );
+    const desiredConflictingEdges = connection
+      ? collectConflictingEdges(connection, this.session, previewPrunedEdges)
+      : [];
+    const desiredEdgeIds = new Set(desiredConflictingEdges.map(edge => edge.id));
+
+    if (this.previewPrunedEdgesById.size > 0) {
+      const removedIdsToRestore = Array.from(this.previewPrunedEdgesById.keys()).filter(
+        edgeId => !desiredEdgeIds.has(edgeId),
+      );
+      if (removedIdsToRestore.length > 0) {
+        this.restoreRemovedEdges(
+          removedIdsToRestore.flatMap(edgeId => {
+            const removedEdge = this.previewPrunedEdgesById.get(edgeId);
+            return removedEdge ? [removedEdge] : [];
+          }),
+        );
+
+        const nextPrunedEdges = new Map(this.previewPrunedEdgesById);
+        for (const removedId of removedIdsToRestore) {
+          nextPrunedEdges.delete(removedId);
+        }
+        this.previewPrunedEdgesById = nextPrunedEdges;
+      }
+    }
+
+    const edgesToPrune = desiredConflictingEdges.filter(
+      edge => !this.previewPrunedEdgesById.has(edge.id),
+    );
+    if (edgesToPrune.length === 0) {
       return;
     }
 
-    this.pendingTargetConflictingEdges = pruneConflictingEdges(nextPreviewConnection, this.session);
+    const removedEdges = this.session.removeEdgesByIds(edgesToPrune.map(edge => edge.id));
+    if (removedEdges.length === 0) {
+      return;
+    }
+
+    const nextPrunedEdges = new Map(this.previewPrunedEdgesById);
+    for (const removedEdge of removedEdges) {
+      nextPrunedEdges.set(removedEdge.edge.id, removedEdge);
+    }
+    this.previewPrunedEdgesById = nextPrunedEdges;
+  }
+
+  private restoreRemovedEdges(removedEdges: RemovedFlowEdge[]) {
+    this.session.restoreRemovedEdges(removedEdges);
   }
 }
 

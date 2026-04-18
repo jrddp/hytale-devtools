@@ -259,30 +259,47 @@ export function resolveFitViewNodeIds({
   return Array.from(fitNodeIdSet, nodeId => ({ id: nodeId }));
 }
 
-/** Checks handles of edges and removes conflicting edges.
- * @returns edges that were removed
- */
-export function pruneConflictingEdges(
+/** Collects the conflicting edges for a partial or complete pending connection without mutating the session. */
+export function collectConflictingEdges(
   connection: PendingConnection,
   session: NodeEditorSession,
+  additionalEdges: FlowEdge[] = [],
 ): FlowEdge[] {
   const { source, sourceHandle, target, targetHandle } = connection;
-  const prunedIds = new Set<string>();
-  const prunedEdges: FlowEdge[] = [];
-  const pruneEdge = (edge: FlowEdge | undefined) => {
-    if (!edge || prunedIds.has(edge.id)) {
+  const conflictingIds = new Set<string>();
+  const conflictingEdges: FlowEdge[] = [];
+  const collectEdge = (edge: FlowEdge | undefined) => {
+    if (!edge || conflictingIds.has(edge.id)) {
       return;
     }
 
-    prunedIds.add(edge.id);
-    prunedEdges.push(edge);
+    conflictingIds.add(edge.id);
+    conflictingEdges.push(edge);
+  };
+  const collectEdges = (edges: FlowEdge[] | undefined) => {
+    for (const edge of edges ?? []) {
+      collectEdge(edge);
+    }
+  };
+  const collectAdditionalEdges = (
+    predicate: (edge: FlowEdge) => boolean,
+  ) => {
+    for (const edge of additionalEdges) {
+      if (predicate(edge)) {
+        collectEdge(edge);
+      }
+    }
   };
 
   if (target && targetHandle) {
     const targetPin = getInputPin(target, targetHandle, session);
     if (targetPin?.multiplicity === "single") {
-      const conflictingInput: FlowEdge | undefined = session.getIncomingConnection(target, targetHandle);
-      pruneEdge(conflictingInput);
+      collectEdges(session.getIncomingConnectionsForHandle(target, targetHandle));
+      collectAdditionalEdges(
+        edge =>
+          edge.target === target &&
+          (edge.targetHandle ?? INPUT_HANDLE_ID) === targetHandle,
+      );
     }
   }
 
@@ -292,14 +309,21 @@ export function pruneConflictingEdges(
     );
 
     if (outputPin && outputPin.multiplicity === "single") {
-      for (const edge of session.getOutgoingConnectionsForHandle(source, sourceHandle) ?? []) {
-        pruneEdge(edge);
-      }
+      collectEdges(session.getOutgoingConnectionsForHandle(source, sourceHandle));
+      collectAdditionalEdges(
+        edge => edge.source === source && edge.sourceHandle === sourceHandle,
+      );
     }
   }
 
-  session.edges = session.edges.filter(edge => !prunedIds.has(edge.id));
-  return prunedEdges;
+  return conflictingEdges;
+}
+
+export function collectConflictingEdgeIds(
+  connection: PendingConnection,
+  session: NodeEditorSession,
+): string[] {
+  return collectConflictingEdges(connection, session).map(edge => edge.id);
 }
 
 export function collectAllDescendentIds(

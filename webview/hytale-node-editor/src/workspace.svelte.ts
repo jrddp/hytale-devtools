@@ -39,6 +39,10 @@ export type WorkspaceNodeUpdate = [
   string,
   Omit<Partial<FlowNode>, "data"> & { data?: Partial<FlowNodeData> },
 ];
+export interface RemovedFlowEdge {
+  edge: FlowEdge;
+  index: number;
+}
 
 export interface WorkspaceState {
   nodes: FlowNode[];
@@ -340,6 +344,50 @@ export class NodeEditorSession {
       newEdges = addEdge(edge, newEdges);
     }
     this.edges = newEdges;
+  }
+
+  removeEdgesByIds(edgeIds: Iterable<string>): RemovedFlowEdge[] {
+    const removedEdges: RemovedFlowEdge[] = [];
+    const edgeIdSet = new Set(edgeIds);
+    if (edgeIdSet.size === 0) {
+      return removedEdges;
+    }
+
+    this.edges = this.edges.filter((edge, index) => {
+      if (!edgeIdSet.has(edge.id)) {
+        return true;
+      }
+
+      removedEdges.push({ edge, index });
+      return false;
+    });
+
+    return removedEdges;
+  }
+
+  restoreRemovedEdges(removedEdges: RemovedFlowEdge[]): void {
+    if (removedEdges.length === 0) {
+      return;
+    }
+
+    const nextEdges = [...this.edges];
+    const existingEdgeIds = new Set(nextEdges.map(edge => edge.id));
+    const sortedRemovedEdges = [...removedEdges].sort((left, right) => left.index - right.index);
+    let didChange = false;
+
+    for (const removedEdge of sortedRemovedEdges) {
+      if (existingEdgeIds.has(removedEdge.edge.id)) {
+        continue;
+      }
+
+      nextEdges.splice(Math.min(removedEdge.index, nextEdges.length), 0, removedEdge.edge);
+      existingEdgeIds.add(removedEdge.edge.id);
+      didChange = true;
+    }
+
+    if (didChange) {
+      this.edges = nextEdges;
+    }
   }
 
   selectNodes(nodeIds: string[], selectionType: SelectionType): void {

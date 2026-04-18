@@ -212,6 +212,7 @@ export class WorkspaceRuntime {
           }
 
           template.schemaConstants[variantKind.VariantFieldName] = variantValue;
+          this.removeVariantFieldCollision(template, variantKind.VariantFieldName, variantValue);
         }
       }
 
@@ -478,6 +479,24 @@ export class WorkspaceRuntime {
   ): NodeSchemaSerializationType {
     const serializationType = entry.SerializationType ?? entry.serializationType;
     return serializationType === "root" ? "root" : "child";
+  }
+
+  private removeVariantFieldCollision(
+    template: NodeTemplate,
+    variantFieldName: string,
+    variantValue: string,
+  ): void {
+    const collidingField = template.fieldsBySchemaKey[variantFieldName];
+    if (!collidingField || collidingField.localId !== variantValue) {
+      return;
+    }
+
+    const canonicalField = template.fieldsBySchemaKey[variantValue];
+    if (canonicalField?.localId === variantValue) {
+      canonicalField.schemaKey = variantValue;
+    }
+
+    delete template.fieldsBySchemaKey[variantFieldName];
   }
 
   private fieldsFromContentDefinitions(

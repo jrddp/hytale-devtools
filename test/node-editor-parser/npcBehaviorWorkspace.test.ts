@@ -376,6 +376,16 @@ describe("NPC Behavior workspace generation", () => {
     expect(anySensor.inputPins.length).toBe(0);
     expect(anySensor.outputPins.some(pin => pin.localId === "Output" && pin.connectionType === "Sensor")).toBe(true);
 
+    const stateSensor = workspace.nodeTemplatesById["Sensor.State"];
+    expect(Object.keys(stateSensor.fieldsBySchemaKey).sort()).toEqual([
+      "Enabled",
+      "IgnoreMissingSetState",
+      "Once",
+      "State",
+    ]);
+    expect(stateSensor.fieldsBySchemaKey.Type).toBeUndefined();
+    expect(stateSensor.schemaConstants.Type).toBe("State");
+
     const blockSensor = workspace.nodeTemplatesById["Sensor.Block"];
     expect(blockSensor.inputPins.length).toBe(0);
     expect(
