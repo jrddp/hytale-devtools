@@ -1,4 +1,5 @@
 import type { NpcDescriptorDocument, NpcDescriptorSource } from "./descriptorTypes";
+import type { NpcParameterValueJson } from "./documentTypes";
 import type { IndexReference } from "../indexTypes";
 import type { NodeEditorClipboardSelection } from "../node-editor/clipboardTypes";
 import type { NodeEditorGraphEdit } from "../node-editor/graphTypes";
@@ -56,6 +57,8 @@ export type NpcRoleEditorVariantReferenceState = {
   resolvedPath?: string;
   text?: string;
   message?: string;
+  appearanceValue?: NpcParameterValueJson;
+  effectiveParameters?: Record<string, NpcParameterValueJson>;
 };
 
 export type NpcRoleEditorVariantReferenceUpdateMessage = {

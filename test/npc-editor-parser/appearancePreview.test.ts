@@ -7,10 +7,12 @@ describe("npc appearance preview resolution", () => {
   test("resolves a literal appearance asset name directly", () => {
     expect(
       resolveEffectiveAppearanceAssetName({
+        roleType: "Generic",
         appearanceField: createField("Appearance", "Appearance", {
           kind: "literal",
           value: "Sheep",
         }),
+        variantAppearanceField: null,
         parameterUsageIndex: emptyParameterUsageIndex(),
         standardParameterFields: [],
       }),
@@ -23,10 +25,12 @@ describe("npc appearance preview resolution", () => {
 
     expect(
       resolveEffectiveAppearanceAssetName({
+        roleType: "Generic",
         appearanceField: createField("Appearance", "Appearance", {
           kind: "compute",
           expression: "Appearance",
         }),
+        variantAppearanceField: null,
         parameterUsageIndex: usageIndex,
         standardParameterFields: [
           createField("Appearance", "Parameters.Appearance.Value", {
@@ -43,10 +47,12 @@ describe("npc appearance preview resolution", () => {
 
     expect(
       resolveEffectiveAppearanceAssetName({
+        roleType: "Generic",
         appearanceField: createField("Appearance", "Appearance", {
           kind: "compute",
           expression: 'isEmpty("Appearance") ? "A" : "B"',
         }),
+        variantAppearanceField: null,
         parameterUsageIndex: usageIndex,
         standardParameterFields: [
           createField("Appearance", "Parameters.Appearance.Value", {
@@ -64,10 +70,12 @@ describe("npc appearance preview resolution", () => {
 
     expect(
       resolveEffectiveAppearanceAssetName({
+        roleType: "Generic",
         appearanceField: createField("Appearance", "Appearance", {
           kind: "compute",
           expression: "Appearance",
         }),
+        variantAppearanceField: null,
         parameterUsageIndex: usageIndex,
         standardParameterFields: [
           createField("Appearance", "Parameters.Appearance.Value", {
@@ -75,6 +83,63 @@ describe("npc appearance preview resolution", () => {
             expression: "SomeOtherParameter",
           }),
         ],
+      }),
+    ).toBeUndefined();
+  });
+
+  test("prefers variant modify appearance overrides over inherited appearance", () => {
+    expect(
+      resolveEffectiveAppearanceAssetName({
+        roleType: "Variant",
+        appearanceField: null,
+        variantAppearanceField: createField("Appearance", "Modify.Appearance", {
+          kind: "literal",
+          value: "ChildSheep",
+        }),
+        parameterUsageIndex: emptyParameterUsageIndex(),
+        standardParameterFields: [],
+        inheritedAppearanceValue: "ParentSheep",
+      }),
+    ).toBe("ChildSheep");
+  });
+
+  test("resolves inherited computed appearance values through merged variant parameters", () => {
+    expect(
+      resolveEffectiveAppearanceAssetName({
+        roleType: "Variant",
+        appearanceField: null,
+        variantAppearanceField: null,
+        parameterUsageIndex: emptyParameterUsageIndex(),
+        standardParameterFields: [
+          createField("Appearance", "Parameters.Appearance.Value", {
+            kind: "literal",
+            value: "LocalSheep",
+          }),
+        ],
+        inheritedAppearanceValue: {
+          Compute: "Appearance",
+        },
+        inheritedEffectiveParameters: {
+          Appearance: "ParentSheep",
+        },
+      }),
+    ).toBe("LocalSheep");
+  });
+
+  test("does not resolve inherited non-direct compute expressions", () => {
+    expect(
+      resolveEffectiveAppearanceAssetName({
+        roleType: "Variant",
+        appearanceField: null,
+        variantAppearanceField: null,
+        parameterUsageIndex: emptyParameterUsageIndex(),
+        standardParameterFields: [],
+        inheritedAppearanceValue: {
+          Compute: 'isEmpty("Appearance") ? "A" : "B"',
+        },
+        inheritedEffectiveParameters: {
+          Appearance: "ParentSheep",
+        },
       }),
     ).toBeUndefined();
   });

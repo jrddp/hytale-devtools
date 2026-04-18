@@ -16,7 +16,6 @@ import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
 } from "../shared/npc-role-editor/descriptorTypes";
-import { parseNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import type {
   NpcRoleEditorApplyMessage,
   NpcRoleEditorBootstrapMessage,
@@ -37,10 +36,15 @@ import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
 import { resolveNpcAppearancePreview } from "./appearancePreviewRuntime";
 import { applyNpcGraphEditToDocument } from "./graphEditRuntime";
 import {
+  buildVariantAppearancePreviewContext,
   filterNpcRoleReferenceNamesFromPaths,
   getNpcRoleReferenceName,
   isVariantReferenceRoleType,
+  matchesNpcRoleReferenceCandidate,
+  parseLoadedVariantReferenceDocument,
   parseNpcRoleTypeFromText,
+  type LoadedVariantReferenceDocument,
+  type VariantReferenceDocumentLoadResult,
 } from "./variantReferenceResolver";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNpcRoleEditor";
@@ -824,23 +828,81 @@ async function resolveVariantReferenceState(
     };
   }
 
+  const loadReferenceDocument = createVariantReferenceDocumentLoader(documentUri);
+  const loadedReference = await loadReferenceDocument(trimmedReferenceName);
+  if (loadedReference.status === "missing") {
+    return {
+      status: "missing",
+      referenceName: trimmedReferenceName,
+    };
+  }
+
+  if (loadedReference.status === "error") {
+    return {
+      status: "error",
+      referenceName: trimmedReferenceName,
+      message: loadedReference.message,
+    };
+  }
+
+  const previewContext = await buildVariantAppearancePreviewContext({
+    referenceName: trimmedReferenceName,
+    currentDocumentReferenceName,
+    loadReferenceDocument,
+  });
+
+  return {
+    status: "loaded",
+    referenceName: trimmedReferenceName,
+    resolvedPath: loadedReference.reference.resolvedPath,
+    text: loadedReference.reference.text,
+    appearanceValue: previewContext?.appearanceValue,
+    effectiveParameters: previewContext?.effectiveParameters,
+  };
+}
+
+function createVariantReferenceDocumentLoader(
+  documentUri: vscode.Uri,
+): (referenceName: string) => Promise<VariantReferenceDocumentLoadResult> {
+  const cache = new Map<string, Promise<VariantReferenceDocumentLoadResult>>();
+
+  return async (referenceName: string) => {
+    const trimmedReferenceName = referenceName.trim();
+    if (!trimmedReferenceName) {
+      return { status: "missing" };
+    }
+
+    let cached = cache.get(trimmedReferenceName);
+    if (!cached) {
+      cached = loadVariantReferenceDocument(trimmedReferenceName, documentUri);
+      cache.set(trimmedReferenceName, cached);
+    }
+
+    return await cached;
+  };
+}
+
+async function loadVariantReferenceDocument(
+  trimmedReferenceName: string,
+  documentUri: vscode.Uri,
+): Promise<VariantReferenceDocumentLoadResult> {
   const openDocumentMatch = vscode.workspace.textDocuments.find(candidate => {
     return (
       candidate.uri.scheme === "file" &&
       candidate.uri.fsPath !== documentUri.fsPath &&
-      getNpcRoleReferenceName(candidate.uri.fsPath) === trimmedReferenceName
+      matchesNpcRoleReferenceCandidate(candidate.uri.fsPath, trimmedReferenceName)
     );
   });
 
   if (openDocumentMatch) {
-    const parsedType = parseNpcRoleTypeFromText(openDocumentMatch.getText());
+    const text = openDocumentMatch.getText();
+    const parsedType = parseNpcRoleTypeFromText(text);
     if (isVariantReferenceRoleType(parsedType)) {
-      return {
-        status: "loaded",
+      return toLoadedVariantReferenceResult({
         referenceName: trimmedReferenceName,
         resolvedPath: openDocumentMatch.uri.fsPath,
-        text: openDocumentMatch.getText(),
-      };
+        text,
+      });
     }
   }
 
@@ -855,6 +917,10 @@ async function resolveVariantReferenceState(
       continue;
     }
 
+    if (!matchesNpcRoleReferenceCandidate(match.fsPath, trimmedReferenceName)) {
+      continue;
+    }
+
     try {
       const text = fs.readFileSync(match.fsPath, "utf8");
       const parsedType = parseNpcRoleTypeFromText(text);
@@ -862,16 +928,14 @@ async function resolveVariantReferenceState(
         continue;
       }
 
-      return {
-        status: "loaded",
+      return toLoadedVariantReferenceResult({
         referenceName: trimmedReferenceName,
         resolvedPath: match.fsPath,
         text,
-      };
+      });
     } catch (error) {
       return {
         status: "error",
-        referenceName: trimmedReferenceName,
         message: error instanceof Error ? error.message : String(error),
       };
     }
@@ -880,7 +944,7 @@ async function resolveVariantReferenceState(
   const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
   if (registeredShard?.indexKind === "registeredAssets") {
     for (const [assetName, metadata] of Object.entries((registeredShard as RegisteredAssetsIndexShard).values)) {
-      if (getNpcRoleReferenceName(assetName) !== trimmedReferenceName) {
+      if (!matchesNpcRoleReferenceCandidate(assetName, trimmedReferenceName)) {
         continue;
       }
 
@@ -900,16 +964,14 @@ async function resolveVariantReferenceState(
           continue;
         }
 
-        return {
-          status: "loaded",
+        return toLoadedVariantReferenceResult({
           referenceName: trimmedReferenceName,
           resolvedPath: metadata.sourcedFromFile,
           text,
-        };
+        });
       } catch (error) {
         return {
           status: "error",
-          referenceName: trimmedReferenceName,
           message: error instanceof Error ? error.message : String(error),
         };
       }
@@ -918,7 +980,23 @@ async function resolveVariantReferenceState(
 
   return {
     status: "missing",
-    referenceName: trimmedReferenceName,
+  };
+}
+
+function toLoadedVariantReferenceResult(
+  loadedReference: Omit<LoadedVariantReferenceDocument, "document">,
+): VariantReferenceDocumentLoadResult {
+  const parsedReference = parseLoadedVariantReferenceDocument(loadedReference);
+  if (!parsedReference) {
+    return {
+      status: "error",
+      message: `NPC role reference ${loadedReference.referenceName} could not be parsed.`,
+    };
+  }
+
+  return {
+    status: "loaded",
+    reference: parsedReference,
   };
 }
 

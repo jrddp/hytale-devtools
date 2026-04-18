@@ -132,7 +132,7 @@ export function buildNpcPropertySections(
     variantReferenceParameters,
   });
 
-  applyNpcPropertySectionDerivedState(state.sections, parameterUsageIndex, discoveredStates);
+  applyNpcPropertySectionDerivedState(state.sections, parameterUsageIndex, discoveredStates, descriptors);
   return state.sections;
 }
 
@@ -140,30 +140,49 @@ export function applyNpcPropertySectionDerivedState(
   sections: NpcPropertySection[],
   parameterUsageIndex: ParameterUsageIndex,
   discoveredStates: string[],
+  descriptors: NpcDescriptorDocument = [],
 ): void {
-  const roleAttributeSymbolRefsByFieldPath = new Map<string, IndexReference>();
+  const roleAttributeSymbolRefsByKey = new Map<string, IndexReference>();
   const roleAttributeSection = sections.find(section => section.id === "roleAttributes");
 
   for (const field of roleAttributeSection?.fields ?? []) {
     if (field.symbolRef) {
-      roleAttributeSymbolRefsByFieldPath.set(field.fieldPath, field.symbolRef);
+      roleAttributeSymbolRefsByKey.set(field.key, field.symbolRef);
+    }
+  }
+
+  for (const [key, symbolRef] of getDescriptorRoleAttributeSymbolRefsByKey(descriptors)) {
+    if (!roleAttributeSymbolRefsByKey.has(key)) {
+      roleAttributeSymbolRefsByKey.set(key, symbolRef);
     }
   }
 
   const parameterSection = sections.find(section => section.id === "parameters");
-  if (!parameterSection) {
-    return;
+  if (parameterSection) {
+    for (const field of parameterSection.fields) {
+      if (field.key === "_ImportStates") {
+        field.staticSuggestions = [...discoveredStates];
+        continue;
+      }
+
+      field.symbolRef = resolveParameterSymbolRef(
+        field.key,
+        roleAttributeSymbolRefsByKey,
+        parameterUsageIndex,
+      );
+    }
   }
 
-  for (const field of parameterSection.fields) {
-    if (field.key === "_ImportStates") {
-      field.staticSuggestions = [...discoveredStates];
+  const modifySection = sections.find(section => section.id === "modify");
+  for (const field of modifySection?.fields ?? []) {
+    if (field.symbolRef || field.staticSuggestions?.length) {
       continue;
     }
 
-    field.symbolRef = resolveParameterSymbolRef(
+    field.symbolRef = resolveModifyFieldSymbolRef(
       field.key,
-      roleAttributeSymbolRefsByFieldPath,
+      field.fieldPath,
+      roleAttributeSymbolRefsByKey,
       parameterUsageIndex,
     );
   }
@@ -885,20 +904,84 @@ function resolveFieldSymbolRef(
   };
 }
 
+function getDescriptorRoleAttributeSymbolRefsByKey(
+  descriptors: NpcDescriptorDocument,
+): Map<string, IndexReference> {
+  const roleAttributeSymbolRefsByKey = new Map<string, IndexReference>();
+  const roleDescriptor = resolveRoleDescriptor("Generic", descriptors);
+
+  for (const descriptorAttribute of roleDescriptor?.Attributes ?? []) {
+    if (!isNpcRoleAttributeKey(descriptorAttribute.Name)) {
+      continue;
+    }
+
+    const symbolRef = resolveFieldSymbolRef(descriptorAttribute);
+    if (symbolRef) {
+      roleAttributeSymbolRefsByKey.set(descriptorAttribute.Name, symbolRef);
+    }
+  }
+
+  return roleAttributeSymbolRefsByKey;
+}
+
 function resolveParameterSymbolRef(
   parameterName: string,
-  roleAttributeSymbolRefsByFieldPath: Map<string, IndexReference>,
+  roleAttributeSymbolRefsByKey: Map<string, IndexReference>,
   parameterUsageIndex: ParameterUsageIndex,
 ): IndexReference | undefined {
-  const directTranslationPaths = [...parameterUsageIndex.directTranslationByFieldPath.entries()]
+  const translatedRoleAttributeKeys = [...parameterUsageIndex.directTranslationByFieldPath.entries()]
     .filter(([, directTranslationParameter]) => directTranslationParameter === parameterName)
-    .map(([fieldPath]) => fieldPath);
+    .map(([fieldPath]) => resolveRoleAttributeKeyForFieldPath(fieldPath, roleAttributeSymbolRefsByKey))
+    .filter((key): key is string => key !== undefined);
+  const uniqueTranslatedKeys = [...new Set(translatedRoleAttributeKeys)];
 
-  if (directTranslationPaths.length !== 1) {
+  if (uniqueTranslatedKeys.length !== 1) {
     return undefined;
   }
 
-  return roleAttributeSymbolRefsByFieldPath.get(directTranslationPaths[0]);
+  return roleAttributeSymbolRefsByKey.get(uniqueTranslatedKeys[0]);
+}
+
+function resolveModifyFieldSymbolRef(
+  fieldKey: string,
+  fieldPath: string,
+  roleAttributeSymbolRefsByKey: Map<string, IndexReference>,
+  parameterUsageIndex: ParameterUsageIndex,
+): IndexReference | undefined {
+  const directTranslationParameter = parameterUsageIndex.directTranslationByFieldPath.get(fieldPath);
+  if (directTranslationParameter) {
+    const translatedRoleAttributeKeys = [...parameterUsageIndex.directTranslationByFieldPath.entries()]
+      .filter(([, parameterName]) => parameterName === directTranslationParameter)
+      .map(([candidateFieldPath]) =>
+        resolveRoleAttributeKeyForFieldPath(candidateFieldPath, roleAttributeSymbolRefsByKey),
+      )
+      .filter((key): key is string => key !== undefined);
+    const uniqueTranslatedKeys = [...new Set(translatedRoleAttributeKeys)];
+
+    if (uniqueTranslatedKeys.length === 1) {
+      return roleAttributeSymbolRefsByKey.get(uniqueTranslatedKeys[0]);
+    }
+  }
+
+  return roleAttributeSymbolRefsByKey.get(fieldKey);
+}
+
+function resolveRoleAttributeKeyForFieldPath(
+  fieldPath: string,
+  roleAttributeSymbolRefsByKey: Map<string, IndexReference>,
+): string | undefined {
+  if (roleAttributeSymbolRefsByKey.has(fieldPath)) {
+    return fieldPath;
+  }
+
+  if (fieldPath.startsWith("Modify.")) {
+    const fieldKey = fieldPath.slice("Modify.".length);
+    if (roleAttributeSymbolRefsByKey.has(fieldKey)) {
+      return fieldKey;
+    }
+  }
+
+  return undefined;
 }
 
 function parseStaticSuggestions(

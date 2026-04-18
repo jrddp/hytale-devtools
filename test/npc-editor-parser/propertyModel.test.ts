@@ -307,6 +307,7 @@ describe("npc property model symbol enrichment", () => {
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
       [],
+      descriptors,
     );
 
     const parameterSection = state.sections.find(section => section.id === "parameters");
@@ -372,6 +373,7 @@ describe("npc property model symbol enrichment", () => {
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
       [],
+      descriptors,
     );
 
     const parameterSection = state.sections.find(section => section.id === "parameters");
@@ -399,6 +401,7 @@ describe("npc property model symbol enrichment", () => {
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
       ["Alerted", "Idle", "Search"],
+      [],
     );
 
     const parameterSection = state.sections.find(section => section.id === "parameters");
@@ -628,6 +631,149 @@ describe("npc property model symbol enrichment", () => {
       "_CombatConfig",
       "_InteractionVars",
     ]);
+  });
+
+  test("backfills modify override symbol refs from direct-translation role attributes", () => {
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+            Computable: true,
+          },
+        ],
+      },
+    ];
+    const document = createVariantDocument({
+      modify: {
+        Appearance: {
+          Compute: "Appearance",
+        },
+      },
+      parameters: {
+        Appearance: {
+          Value: "Sheep",
+        },
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+      variantReferenceParameters: [],
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
+      [],
+      descriptors,
+    );
+
+    const modifySection = state.sections.find(section => section.id === "modify");
+    const appearanceField = modifySection?.fields.find(field => field.key === "Appearance");
+
+    expect(appearanceField?.symbolRef).toEqual({
+      indexKind: "registeredAssets",
+      key: "ModelAsset",
+    });
+  });
+
+  test("backfills literal modify override symbol refs from matching role-attribute keys", () => {
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+            Computable: true,
+          },
+        ],
+      },
+    ];
+    const document = createVariantDocument({
+      modify: {
+        Appearance: "Sheep",
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+      variantReferenceParameters: [],
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
+      [],
+      descriptors,
+    );
+
+    const modifySection = state.sections.find(section => section.id === "modify");
+    const appearanceField = modifySection?.fields.find(field => field.key === "Appearance");
+
+    expect(appearanceField?.symbolRef).toEqual({
+      indexKind: "registeredAssets",
+      key: "ModelAsset",
+    });
+  });
+
+  test("enriches variant parameters through modify-based direct translations", () => {
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+            Computable: true,
+          },
+        ],
+      },
+    ];
+    const document = createVariantDocument({
+      modify: {
+        Appearance: {
+          Compute: "Appearance",
+        },
+      },
+      parameters: {
+        Appearance: {
+          Value: "Sheep",
+        },
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+      variantReferenceParameters: [],
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
+      [],
+      descriptors,
+    );
+
+    const parameterSection = state.sections.find(section => section.id === "parameters");
+    const appearanceField = parameterSection?.fields.find(field => field.key === "Appearance");
+
+    expect(appearanceField?.symbolRef).toEqual({
+      indexKind: "registeredAssets",
+      key: "ModelAsset",
+    });
   });
 
   test("uses only the immediate parent parameters for variant modify field shaping", () => {

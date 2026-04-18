@@ -68,7 +68,7 @@ export function extractParameterLikeIdentifiers(expression: string): string[] {
   return [...identifiers];
 }
 
-function extractDirectTranslationIdentifier(expression: string): string | null {
+export function extractDirectTranslationIdentifier(expression: string): string | null {
   const trimmed = expression.trim();
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(trimmed)) {
     return null;

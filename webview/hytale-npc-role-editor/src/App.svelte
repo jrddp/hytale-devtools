@@ -19,6 +19,7 @@
   import type { VSCodeApi } from "./common";
   import type { NpcPropertyField, NpcPropertySection, NpcSectionId } from "./propertyModel";
   import { buildNpcComputeAutocompleteOptions } from "./compute/computeAutocomplete";
+  import { syncAppearancePreviewRequest } from "./appearancePreviewRequests";
   import PropertySection from "./components/PropertySection.svelte";
   import NpcGraphPage from "./components/NpcGraphPage.svelte";
   import { workspace } from "./workspace.svelte";
@@ -128,10 +129,20 @@
       parameters: standardParameterFields,
     }),
   );
-  const appearanceField = $derived.by(() => workspace.getAppearanceField());
   const effectiveAppearanceAssetName = $derived.by(
     () => workspace.getEffectiveAppearanceAssetName() ?? null,
   );
+
+  function syncAppearancePreviewRequestState() {
+    lastRequestedAppearanceAssetName = syncAppearancePreviewRequest({
+      assetName: effectiveAppearanceAssetName,
+      lastRequestedAssetName: lastRequestedAppearanceAssetName,
+      vscode,
+      setPreview: preview => {
+        workspace.setAppearancePreview(preview);
+      },
+    });
+  }
 
   $effect(() => {
     if (activeGraphSectionId && !activeGraphSection) {
@@ -149,22 +160,7 @@
   });
 
   $effect(() => {
-    const assetName = effectiveAppearanceAssetName;
-    if (assetName === lastRequestedAppearanceAssetName) {
-      return;
-    }
-
-    lastRequestedAppearanceAssetName = assetName;
-    if (!assetName) {
-      workspace.setAppearancePreview({ type: "none" });
-      return;
-    }
-
-    workspace.setAppearancePreview({ type: "none", loading: true });
-    vscode.postMessage({
-      type: "resolveAppearancePreview",
-      assetName,
-    });
+    syncAppearancePreviewRequestState();
   });
 
   $effect(() => {
@@ -250,6 +246,7 @@
         } else {
           workspace.setDocument(message);
           latestGraphUpdate = null;
+          syncAppearancePreviewRequestState();
         }
         return;
       case "graphUpdate":
@@ -266,6 +263,7 @@
         return;
       case "referenceUpdate":
         workspace.setVariantReferenceState(message.reference);
+        syncAppearancePreviewRequestState();
         return;
       case "previewUpdate":
         workspace.setAppearancePreview(message.preview);
@@ -457,7 +455,7 @@
     {/snippet}
 
     {#snippet sidebar()}
-      {#if appearanceField}
+      {#if effectiveAppearanceAssetName || workspace.appearancePreview}
         <ModelPreviewCard preview={workspace.appearancePreview} />
       {/if}
 

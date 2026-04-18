@@ -16,7 +16,6 @@ import {
   addRichObjectProperty,
   addStateTransition,
   addStateTransitionEdge,
-  applyNpcPropertySectionDerivedState,
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
   buildNpcPropertyState,
@@ -42,8 +41,9 @@ import {
   type NpcPropertyState,
 } from "./propertyModel";
 import type { NpcComponentClass, NpcRoleJson, NpcRoleType } from "./parsing/documentTypes";
+import type { NpcParameterValueJson } from "./parsing/documentTypes";
 import { parseNpcDocumentText } from "./parsing/parseNpcDocument";
-import { serializeNpcDocument, serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
+import { serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
 import {
   addStandardParameter,
   isStandardParameterField,
@@ -55,7 +55,6 @@ import {
 } from "./parsing/parameterMutations";
 import type { NpcStandardParameterEditorType } from "./parsing/parameterEditorTypes";
 import {
-  buildParameterUsageIndex,
   type ParameterUsageIndex,
 } from "./compute/parameterUsageIndex";
 import {
@@ -63,8 +62,8 @@ import {
   buildNpcIssues,
   type NpcEditorIssue,
 } from "./issues";
+import { applyNpcDerivedPropertyMetadata } from "./derivedPropertyMetadata";
 import { resolveEffectiveAppearanceAssetName } from "./appearancePreview";
-import { discoverNpcMainStates } from "./states/discoverStates";
 
 function emptyParameterUsageIndex(): ParameterUsageIndex {
   return {
@@ -174,6 +173,12 @@ export class Workspace {
       const result = parseNpcDocumentText(reference.text);
       if (result.status === "ready") {
         const parentState = buildNpcPropertyState({
+          document: result.document,
+          topLevelKeyOrder: result.topLevelKeyOrder,
+          descriptors: $state.snapshot(this.descriptors),
+        });
+        applyNpcDerivedPropertyMetadata({
+          sections: parentState.sections,
           document: result.document,
           topLevelKeyOrder: result.topLevelKeyOrder,
           descriptors: $state.snapshot(this.descriptors),
@@ -868,11 +873,21 @@ export class Workspace {
     return this.findField("Appearance");
   }
 
+  getVariantAppearanceField(): NpcPropertyField | null {
+    return this.findField("Modify.Appearance");
+  }
+
   getEffectiveAppearanceAssetName(): string | undefined {
+    const resolvedVariantPreviewContext = this.getResolvedVariantReferencePreviewContext();
+
     return resolveEffectiveAppearanceAssetName({
+      roleType: this.roleType,
       appearanceField: this.getAppearanceField(),
+      variantAppearanceField: this.getVariantAppearanceField(),
       parameterUsageIndex: this.parameterUsageIndex,
       standardParameterFields: this.getStandardParameterFields(),
+      inheritedAppearanceValue: resolvedVariantPreviewContext?.appearanceValue,
+      inheritedEffectiveParameters: resolvedVariantPreviewContext?.effectiveParameters,
     });
   }
 
@@ -973,6 +988,27 @@ export class Workspace {
     return this.variantReferenceParameters;
   }
 
+  private getResolvedVariantReferencePreviewContext():
+    | {
+        appearanceValue?: NpcParameterValueJson;
+        effectiveParameters?: Record<string, NpcParameterValueJson>;
+      }
+    | null {
+    const currentReferenceName = this.getCurrentVariantReferenceName();
+    if (
+      !currentReferenceName ||
+      this.variantReferenceState.status !== "loaded" ||
+      this.variantReferenceState.referenceName !== currentReferenceName
+    ) {
+      return null;
+    }
+
+    return {
+      appearanceValue: this.variantReferenceState.appearanceValue,
+      effectiveParameters: this.variantReferenceState.effectiveParameters,
+    };
+  }
+
   private recomputeDerivedState() {
     const document = this.getCurrentDocument();
     if (!document || !this.roleType) {
@@ -983,8 +1019,12 @@ export class Workspace {
       return;
     }
 
-    const serializedDocument = serializeNpcDocument(document, this.topLevelKeyOrder);
-    const parameterUsageIndex = buildParameterUsageIndex(serializedDocument);
+    const { parameterUsageIndex, discoveredStates } = applyNpcDerivedPropertyMetadata({
+      sections: this.propertySections,
+      document,
+      topLevelKeyOrder: this.topLevelKeyOrder,
+      descriptors: $state.snapshot(this.descriptors),
+    });
     const issues = buildNpcIssues({
       roleType: this.roleType,
       sections: this.propertySections,
@@ -993,13 +1033,6 @@ export class Workspace {
       variantReferenceParameters: this.variantReferenceParameters,
     });
     const issuesByFieldPath = buildIssuesByFieldPath(issues);
-    const discoveredStates = discoverNpcMainStates(serializedDocument);
-
-    applyNpcPropertySectionDerivedState(
-      this.propertySections,
-      parameterUsageIndex,
-      discoveredStates,
-    );
 
     this.parameterUsageIndex = parameterUsageIndex;
     this.issues = issues;
