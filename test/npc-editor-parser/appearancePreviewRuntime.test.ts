@@ -59,6 +59,77 @@ describe("npc appearance preview runtime", () => {
     });
   });
 
+  test("resolves an explicitly requested non-idle animation when available", async () => {
+    const runtime = createRuntime({
+      "Server/Models/Sheep.json": jsonAsset({
+        Model: "Common/Models/Sheep.blockymodel",
+        Texture: "Common/Textures/Sheep.png",
+        AnimationSets: {
+          Idle: {
+            Animations: [
+              {
+                Animation: "Common/Animations/Idle.blockyanim",
+                Speed: 1,
+                Looping: true,
+              },
+            ],
+          },
+          Wake: {
+            Animations: [
+              {
+                Animation: "Common/Animations/Wake.blockyanim",
+                Speed: 2,
+                Looping: false,
+              },
+            ],
+          },
+        },
+      }),
+      "Common/Models/Sheep.blockymodel": jsonAsset({ name: "SheepModel" }),
+    }, {
+      "Common/Textures/Sheep.png": [1, 2, 3],
+      "Common/Animations/Idle.blockyanim": blockyanimAsset({
+        formatVersion: 1,
+        duration: 60,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      }),
+      "Common/Animations/Wake.blockyanim": blockyanimAsset({
+        formatVersion: 1,
+        duration: 20,
+        holdLastKeyframe: true,
+        nodeAnimations: {
+          Root: [],
+        },
+      }),
+    });
+
+    const preview = await resolveNpcAppearancePreview(
+      "Sheep",
+      runtime,
+      createModelAssetIndex({
+        Sheep: { sourcedFromFile: "Server/Models/Sheep.json" },
+      }),
+      "Wake",
+    );
+
+    expect(preview).toEqual({
+      type: "Model",
+      model: { name: "SheepModel" },
+      texture: [1, 2, 3],
+      animation: {
+        formatVersion: 1,
+        duration: 20,
+        holdLastKeyframe: true,
+        nodeAnimations: {
+          Root: [],
+        },
+      },
+      animationSpeed: 2,
+      animationLooping: false,
+    });
+  });
+
   test("falls back to a parent model and inherits parent texture when needed", async () => {
     const runtime = createRuntime({
       "Server/Models/Child.json": jsonAsset({

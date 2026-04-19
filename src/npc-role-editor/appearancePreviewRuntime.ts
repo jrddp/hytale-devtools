@@ -15,6 +15,7 @@ export async function resolveNpcAppearanceState(
   assetName: string | undefined,
   runtime: AssetCacheRuntime,
   modelAssetIndex: RegisteredAssetsIndexShard | undefined,
+  animationSetId?: string,
 ): Promise<ResolvedNpcAppearanceState> {
   const trimmedAssetName = assetName?.trim();
   if (!trimmedAssetName || !modelAssetIndex) {
@@ -39,6 +40,7 @@ export async function resolveNpcAppearanceState(
       rootAsset,
       runtime,
       loadParentModelAsset,
+      animationSetId ?? "Idle",
     ),
     resolveModelAnimationSetIdsFromModelAsset(rootAsset, loadParentModelAsset),
   ]);
@@ -53,8 +55,9 @@ export async function resolveNpcAppearancePreview(
   assetName: string | undefined,
   runtime: AssetCacheRuntime,
   modelAssetIndex: RegisteredAssetsIndexShard | undefined,
+  animationSetId?: string,
 ): Promise<ModelPreviewState> {
-  return (await resolveNpcAppearanceState(assetName, runtime, modelAssetIndex)).preview;
+  return (await resolveNpcAppearanceState(assetName, runtime, modelAssetIndex, animationSetId)).preview;
 }
 
 async function loadIndexedModelAsset(

@@ -14,6 +14,7 @@ import { createNodeEditorSession } from "../../webview/hytale-node-editor/src/wo
 import {
   applyNpcGraphUpdateToSession,
   hydrateNpcGraphSessionNodes,
+  resolveFocusedNodePreviewOverride,
   syncNpcGraphSessionFromDocument,
 } from "../../webview/hytale-npc-role-editor/src/npcGraphHost";
 import { workspace } from "../../webview/hytale-npc-role-editor/src/workspace.svelte";
@@ -330,7 +331,55 @@ describe("npc graph host helpers", () => {
         : undefined,
     ).toMatchObject({
       animationAutocompleteKind: "appearance-model",
+      previewFeatureKind: "animation",
       overrideAutocompleteValues: ["Alerted", "Idle", "Wake"],
     });
+  });
+
+  test("resolveFocusedNodePreviewOverride only uses one directly selected data node", () => {
+    const playAnimationTemplate = structuredClone(getNpcTemplate("Action.PlayAnimation"));
+    const animationField = playAnimationTemplate.fieldsBySchemaKey.Animation;
+    if (!animationField) {
+      throw new Error("Expected Action.PlayAnimation to include an Animation field.");
+    }
+    animationField.value = "Wake";
+    animationField.isImplicit = false;
+
+    const selectedAnimationNode: FlowNode = {
+      id: "play-animation-node",
+      type: "datanode",
+      position: { x: 0, y: 0 },
+      selected: true,
+      data: playAnimationTemplate,
+    } as FlowNode;
+
+    expect(resolveFocusedNodePreviewOverride([selectedAnimationNode])).toBe("Wake");
+    expect(
+      resolveFocusedNodePreviewOverride([
+        selectedAnimationNode,
+        {
+          ...structuredClone(selectedAnimationNode),
+          id: "play-animation-node-2",
+          selected: true,
+        },
+      ]),
+    ).toBeNull();
+    expect(
+      resolveFocusedNodePreviewOverride([
+        {
+          ...structuredClone(selectedAnimationNode),
+          data: {
+            ...structuredClone(playAnimationTemplate),
+            fieldsBySchemaKey: {
+              ...structuredClone(playAnimationTemplate.fieldsBySchemaKey),
+              Animation: {
+                ...structuredClone(animationField),
+                value: { Compute: "Animation" },
+              },
+            },
+          },
+        } as FlowNode,
+      ]),
+    ).toBeNull();
   });
 });

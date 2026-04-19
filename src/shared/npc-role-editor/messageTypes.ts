@@ -96,6 +96,7 @@ export type NpcRoleEditorContextActionMessage = {
 export type NpcRoleEditorPreviewUpdateMessage = {
   type: "previewUpdate";
   assetName?: string;
+  animationSetId?: string;
   preview?: ModelPreviewState;
   animationIds?: string[];
 };
@@ -131,7 +132,7 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
   | { type: "resolveComponentReferenceTarget"; componentClass: string; referenceName: string }
-  | { type: "resolveAppearancePreview"; assetName?: string }
+  | { type: "resolveAppearancePreview"; assetName?: string; animationSetId?: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorGraphEditMessage
   | NpcRoleEditorApplyMessage;

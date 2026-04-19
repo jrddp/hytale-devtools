@@ -70,7 +70,12 @@ describe("WorkspaceRuntime", () => {
             },
           },
           NodeCategories: {
-            General: ["SchemaListFallback", "SchemaStringFallback", "ExplicitSymbolLookup"],
+            General: [
+              "SchemaListFallback",
+              "SchemaStringFallback",
+              "ExplicitSymbolLookup",
+              "AnimationPreviewField",
+            ],
           },
         },
         null,
@@ -161,6 +166,32 @@ describe("WorkspaceRuntime", () => {
     );
 
     fs.writeFileSync(
+      path.join(workspaceDir, "AnimationPreviewField.json"),
+      JSON.stringify(
+        {
+          Id: "AnimationPreviewField",
+          Title: "Animation Preview Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "Animation",
+              Type: "SmallString",
+              Options: {
+                Label: "Animation",
+                AnimationAutocompleteKind: "appearance-model",
+              },
+            },
+          ],
+          Schema: {
+            Animation: "Animation",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
       path.join(supplementsDir, "TestWorkspace.json"),
       JSON.stringify(
         {
@@ -206,6 +237,13 @@ describe("WorkspaceRuntime", () => {
     ).toEqual({
       indexKind: "registeredAssets",
       key: "Item",
+    });
+
+    expect(
+      workspace.nodeTemplatesById.AnimationPreviewField.fieldsBySchemaKey.Animation,
+    ).toMatchObject({
+      animationAutocompleteKind: "appearance-model",
+      previewFeatureKind: "animation",
     });
   });
 });

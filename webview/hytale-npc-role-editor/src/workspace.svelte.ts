@@ -123,6 +123,7 @@ export class Workspace {
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
   appearancePreview = $state<ModelPreviewState | undefined>(undefined);
+  appearancePreviewAnimationOverride = $state<string | null>(null);
   appearanceAnimationAssetName = $state<string | null>(null);
   appearanceAnimationIds = $state<string[]>([]);
   componentReferenceTargets = $state.raw<Map<string, NpcRoleEditorComponentReferenceTargetState>>(
@@ -190,6 +191,16 @@ export class Workspace {
 
   setAppearancePreview(preview: ModelPreviewState | undefined) {
     this.appearancePreview = preview;
+  }
+
+  setAppearancePreviewAnimationOverride(animationSetId: string | null | undefined) {
+    const trimmedAnimationSetId = animationSetId?.trim();
+    this.appearancePreviewAnimationOverride =
+      trimmedAnimationSetId && trimmedAnimationSetId.length > 0 ? trimmedAnimationSetId : null;
+  }
+
+  clearAppearancePreviewAnimationOverride() {
+    this.appearancePreviewAnimationOverride = null;
   }
 
   setAppearanceAnimationValues(assetName: string | null, values: string[]) {

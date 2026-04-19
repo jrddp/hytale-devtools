@@ -198,6 +198,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
 
       const postResolvedPreview = async (
         assetName: string | undefined,
+        animationSetId: string | undefined,
         appearanceStatePromise: Promise<Awaited<ReturnType<typeof resolveNpcAppearanceState>>>,
       ) => {
         const resolutionVersion = ++previewResolutionVersion;
@@ -209,12 +210,16 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         await webviewPanel.webview.postMessage({
           type: "previewUpdate",
           assetName,
+          animationSetId,
           preview: appearanceState.preview,
           animationIds: appearanceState.animationIds,
         } satisfies NpcRoleEditorPreviewUpdateMessage);
       };
 
-      const sendResolvedAppearancePreview = async (assetName: string | undefined) => {
+      const sendResolvedAppearancePreview = async (
+        assetName: string | undefined,
+        animationSetId: string | undefined,
+      ) => {
         if (isDisposed) {
           return;
         }
@@ -223,6 +228,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
           await webviewPanel.webview.postMessage({
             type: "previewUpdate",
             assetName,
+            animationSetId,
             preview: assetName ? { type: "none", loading: true } : { type: "none" },
             animationIds: [],
           } satisfies NpcRoleEditorPreviewUpdateMessage);
@@ -233,7 +239,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
 
           void assetCacheRuntime.ready.then(() => {
             if (!isDisposed && assetCacheRuntime.isReady) {
-              void sendResolvedAppearancePreview(assetName);
+              void sendResolvedAppearancePreview(assetName, animationSetId);
             }
           });
           return;
@@ -242,10 +248,12 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
         await postResolvedPreview(
           assetName,
+          animationSetId,
           resolveNpcAppearanceState(
             assetName,
             assetCacheRuntime,
             modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,
+            animationSetId,
           ),
         );
       };
@@ -284,7 +292,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
             );
             return;
           case "resolveAppearancePreview":
-            void sendResolvedAppearancePreview(message.assetName);
+            void sendResolvedAppearancePreview(message.assetName, message.animationSetId);
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);

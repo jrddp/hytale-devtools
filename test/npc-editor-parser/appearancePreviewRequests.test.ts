@@ -2,7 +2,11 @@ import { describe, expect, test } from "vitest";
 import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
 import type { ModelPreviewState } from "../../src/shared/modelPreviewTypes";
 import type { NpcRoleEditorWebviewToExtensionMessage } from "../../src/shared/npc-role-editor/messageTypes";
-import { syncAppearancePreviewRequest } from "../../webview/hytale-npc-role-editor/src/appearancePreviewRequests";
+import {
+  isAppearancePreviewUpdateCurrent,
+  syncAppearancePreviewRequest,
+  type AppearancePreviewRequestState,
+} from "../../webview/hytale-npc-role-editor/src/appearancePreviewRequests";
 import { Workspace } from "../../webview/hytale-npc-role-editor/src/workspace.svelte";
 
 const descriptors: NpcDescriptorDocument = [
@@ -42,7 +46,9 @@ describe("npc appearance preview request scheduling", () => {
 
     harness.sync();
 
-    expect(harness.resolveAppearancePreviewRequests).toEqual(["VariantSheep"]);
+    expect(harness.resolveAppearancePreviewRequests).toEqual([
+      { assetName: "VariantSheep", animationSetId: undefined },
+    ]);
     expect(harness.previewStates.at(-1)).toEqual({ type: "none", loading: true });
   });
 
@@ -72,7 +78,9 @@ describe("npc appearance preview request scheduling", () => {
     });
     harness.sync();
 
-    expect(harness.resolveAppearancePreviewRequests).toEqual(["InheritedSheep"]);
+    expect(harness.resolveAppearancePreviewRequests).toEqual([
+      { assetName: "InheritedSheep", animationSetId: undefined },
+    ]);
   });
 
   test("local parameter edits update inherited compute appearance without another reference round-trip", () => {
@@ -110,7 +118,10 @@ describe("npc appearance preview request scheduling", () => {
     harness.workspace.updateFieldValue("Parameters.Appearance.Value", "LocalSheepB");
     harness.sync();
 
-    expect(harness.resolveAppearancePreviewRequests).toEqual(["LocalSheepA", "LocalSheepB"]);
+    expect(harness.resolveAppearancePreviewRequests).toEqual([
+      { assetName: "LocalSheepA", animationSetId: undefined },
+      { assetName: "LocalSheepB", animationSetId: undefined },
+    ]);
     expect(
       harness.postedMessages.filter(message => message.type === "resolveVariantReference"),
     ).toHaveLength(1);
@@ -135,7 +146,64 @@ describe("npc appearance preview request scheduling", () => {
     harness.sync();
     harness.sync();
 
-    expect(harness.resolveAppearancePreviewRequests).toEqual(["Sheep"]);
+    expect(harness.resolveAppearancePreviewRequests).toEqual([
+      { assetName: "Sheep", animationSetId: undefined },
+    ]);
+  });
+
+  test("re-requests when only the animation override changes", () => {
+    const harness = createHarness();
+    harness.workspace.setDescriptors({
+      descriptors,
+      descriptorPath: "npc_descriptors.json",
+      descriptorSource: "default-data",
+    });
+    harness.workspace.setDocument({
+      documentPath: "/tmp/TestNpc.json",
+      text: JSON.stringify({
+        Type: "Generic",
+        Appearance: "Sheep",
+      }),
+      version: 1,
+    });
+
+    harness.sync();
+    harness.workspace.setAppearancePreviewAnimationOverride("Wake");
+    harness.sync();
+
+    expect(harness.resolveAppearancePreviewRequests).toEqual([
+      { assetName: "Sheep", animationSetId: undefined },
+      { assetName: "Sheep", animationSetId: "Wake" },
+    ]);
+  });
+
+  test("matches preview updates by both asset name and animation override", () => {
+    const request: AppearancePreviewRequestState = {
+      assetName: "Sheep",
+      animationSetId: "Wake",
+    };
+
+    expect(
+      isAppearancePreviewUpdateCurrent({
+        assetName: "Sheep",
+        animationSetId: "Wake",
+        currentRequest: request,
+      }),
+    ).toBe(true);
+    expect(
+      isAppearancePreviewUpdateCurrent({
+        assetName: "Sheep",
+        animationSetId: undefined,
+        currentRequest: request,
+      }),
+    ).toBe(false);
+    expect(
+      isAppearancePreviewUpdateCurrent({
+        assetName: "Cow",
+        animationSetId: "Wake",
+        currentRequest: request,
+      }),
+    ).toBe(false);
   });
 });
 
@@ -143,7 +211,7 @@ function createHarness() {
   const workspace = new Workspace();
   const postedMessages: NpcRoleEditorWebviewToExtensionMessage[] = [];
   const previewStates: Array<ModelPreviewState | undefined> = [];
-  let lastRequestedAssetName: string | null = null;
+  let lastRequestedRequest: AppearancePreviewRequestState | null = null;
 
   const vscode = {
     postMessage(message: NpcRoleEditorWebviewToExtensionMessage) {
@@ -167,12 +235,16 @@ function createHarness() {
             { type: "resolveAppearancePreview" }
           > => message.type === "resolveAppearancePreview",
         )
-        .map(message => message.assetName ?? "");
+        .map(message => ({
+          assetName: message.assetName ?? undefined,
+          animationSetId: message.animationSetId,
+        }));
     },
     sync() {
-      lastRequestedAssetName = syncAppearancePreviewRequest({
+      lastRequestedRequest = syncAppearancePreviewRequest({
         assetName: workspace.getEffectiveAppearanceAssetName() ?? null,
-        lastRequestedAssetName,
+        animationSetId: workspace.appearancePreviewAnimationOverride,
+        lastRequestedRequest,
         vscode,
         setPreview(preview) {
           previewStates.push(preview);

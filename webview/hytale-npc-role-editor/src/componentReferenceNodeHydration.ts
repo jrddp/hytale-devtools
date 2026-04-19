@@ -280,6 +280,7 @@ function createNodeFieldFromNpcField(field: NpcPropertyField, schemaKey: string)
     symbolLookup: field.symbolRef ? { ...field.symbolRef } : undefined,
     stateAutocompleteKind: field.stateAutocompleteKind,
     animationAutocompleteKind: field.animationAutocompleteKind,
+    previewFeatureKind: field.animationAutocompleteKind ? "animation" : undefined,
   };
 }
 
@@ -375,7 +376,8 @@ function componentReferenceFieldsEqual(
         JSON.stringify(rightField.overrideAutocompleteValues ?? []) &&
       JSON.stringify(leftField.symbolLookup ?? null) === JSON.stringify(rightField.symbolLookup ?? null) &&
       leftField.stateAutocompleteKind === rightField.stateAutocompleteKind &&
-      leftField.animationAutocompleteKind === rightField.animationAutocompleteKind
+      leftField.animationAutocompleteKind === rightField.animationAutocompleteKind &&
+      leftField.previewFeatureKind === rightField.previewFeatureKind
     );
   });
 }

@@ -564,6 +564,7 @@ export class WorkspaceRuntime {
           : undefined,
         stateAutocompleteKind: content.Options?.StateAutocompleteKind,
         animationAutocompleteKind: content.Options?.AnimationAutocompleteKind,
+        previewFeatureKind: content.Options?.AnimationAutocompleteKind ? "animation" : undefined,
         subfields: content.Options?.Fields
           ? this.fieldsFromContentDefinitions(content.Options.Fields)
           : undefined,

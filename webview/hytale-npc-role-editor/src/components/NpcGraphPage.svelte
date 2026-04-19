@@ -11,10 +11,12 @@
   import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
   import { createNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { ComputeAutocompleteOption } from "@webview-shared/components/computeAutocomplete";
+  import { onDestroy } from "svelte";
   import type { VSCodeApi } from "../common";
   import {
     applyNpcGraphUpdateToSession,
     hydrateNpcGraphSessionNodes,
+    resolveFocusedNodePreviewOverride,
     syncNpcGraphSessionFromDocument,
   } from "../npcGraphHost";
   import type { NpcPropertyField } from "../propertyModel";
@@ -232,6 +234,7 @@
 
   $effect(() => {
     if (!workspaceContext || !session.isInitialized) {
+      workspace.clearAppearancePreviewAnimationOverride();
       return;
     }
 
@@ -247,6 +250,20 @@
       appearanceAnimationIds: $state.snapshot(workspace.appearanceAnimationIds),
       roleType: workspace.roleType,
     });
+  });
+
+  $effect(() => {
+    if (!workspaceContext || !session.isInitialized) {
+      workspace.clearAppearancePreviewAnimationOverride();
+      return;
+    }
+
+    void session.nodes;
+    workspace.setAppearancePreviewAnimationOverride(resolveFocusedNodePreviewOverride(session.nodes));
+  });
+
+  onDestroy(() => {
+    workspace.clearAppearancePreviewAnimationOverride();
   });
 
   function resolveGraphDocumentFromText(text: string | null) {

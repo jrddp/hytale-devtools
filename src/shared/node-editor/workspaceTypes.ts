@@ -56,6 +56,7 @@ export interface NodeField {
   symbolLookup?: IndexReference;
   stateAutocompleteKind?: NpcStateAutocompleteKind;
   animationAutocompleteKind?: NpcAnimationAutocompleteKind;
+  previewFeatureKind?: "animation";
 }
 
 export interface NodePin {

@@ -48,6 +48,33 @@ export function hydrateNpcGraphSessionNodes({
   }
 }
 
+export function resolveFocusedNodePreviewOverride(
+  nodes: NodeEditorSession["nodes"],
+): string | null {
+  const selectedNodes = nodes.filter(node => node.selected);
+  if (selectedNodes.length !== 1) {
+    return null;
+  }
+
+  const [selectedNode] = selectedNodes;
+  if (!selectedNode || selectedNode.type !== "datanode") {
+    return null;
+  }
+
+  for (const field of Object.values(selectedNode.data.fieldsBySchemaKey)) {
+    if (field.previewFeatureKind !== "animation" || typeof field.value !== "string") {
+      continue;
+    }
+
+    const animationSetId = field.value.trim();
+    if (animationSetId.length > 0) {
+      return animationSetId;
+    }
+  }
+
+  return null;
+}
+
 function hydrateNpcNodeStateAutocomplete({
   nodes,
   discoveredStateInfo,

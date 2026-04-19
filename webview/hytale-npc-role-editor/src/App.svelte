@@ -19,7 +19,11 @@
   import type { VSCodeApi } from "./common";
   import type { NpcPropertyField, NpcPropertySection, NpcSectionId } from "./propertyModel";
   import { buildNpcComputeAutocompleteOptions } from "./compute/computeAutocomplete";
-  import { syncAppearancePreviewRequest } from "./appearancePreviewRequests";
+  import {
+    isAppearancePreviewUpdateCurrent,
+    syncAppearancePreviewRequest,
+    type AppearancePreviewRequestState,
+  } from "./appearancePreviewRequests";
   import PropertySection from "./components/PropertySection.svelte";
   import NpcGraphPage from "./components/NpcGraphPage.svelte";
   import { workspace } from "./workspace.svelte";
@@ -34,7 +38,6 @@
   type NpcRoleEditorWebviewState = {
     graphViewports?: Partial<Record<NpcSectionId, GraphViewport>>;
   };
-
   let extensionError = $state("");
   let scrollRootElement = $state<HTMLDivElement>();
   let scrollRootHeight = $state(0);
@@ -49,7 +52,7 @@
   );
   let localWebviewState = $state<NpcRoleEditorWebviewState>({});
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
-  let lastRequestedAppearanceAssetName = $state<string | null>(null);
+  let lastRequestedAppearancePreviewRequest = $state<AppearancePreviewRequestState | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
     Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
   >({});
@@ -132,15 +135,19 @@
   const effectiveAppearanceAssetName = $derived.by(
     () => workspace.getEffectiveAppearanceAssetName() ?? null,
   );
+  const effectiveAppearanceAnimationSetId = $derived.by(
+    () => workspace.appearancePreviewAnimationOverride ?? null,
+  );
 
   function syncAppearancePreviewRequestState() {
-    if (effectiveAppearanceAssetName !== lastRequestedAppearanceAssetName) {
+    if (effectiveAppearanceAssetName !== lastRequestedAppearancePreviewRequest?.assetName) {
       workspace.setAppearanceAnimationValues(effectiveAppearanceAssetName, []);
     }
 
-    lastRequestedAppearanceAssetName = syncAppearancePreviewRequest({
+    lastRequestedAppearancePreviewRequest = syncAppearancePreviewRequest({
       assetName: effectiveAppearanceAssetName,
-      lastRequestedAssetName: lastRequestedAppearanceAssetName,
+      animationSetId: effectiveAppearanceAnimationSetId,
+      lastRequestedRequest: lastRequestedAppearancePreviewRequest,
       vscode,
       setPreview: preview => {
         workspace.setAppearancePreview(preview);
@@ -274,7 +281,16 @@
         workspace.setComponentReferenceTarget(message.target);
         return;
       case "previewUpdate":
-        if (message.assetName !== undefined && message.assetName !== effectiveAppearanceAssetName) {
+        if (
+          !isAppearancePreviewUpdateCurrent({
+            assetName: message.assetName,
+            animationSetId: message.animationSetId,
+            currentRequest: {
+              assetName: effectiveAppearanceAssetName,
+              animationSetId: effectiveAppearanceAnimationSetId,
+            },
+          })
+        ) {
           return;
         }
         workspace.setAppearancePreview(message.preview);
