@@ -1,5 +1,9 @@
 import type { DataNodeType, FlowNode } from "@node-editor/common";
 import {
+  getNpcAnimationAutocompleteValues,
+  type NpcAnimationAutocompleteKind,
+} from "@shared/npc-role-editor/animationAutocomplete";
+import {
   getNpcStateAutocompleteValues,
   type NpcDiscoveredStateInfo,
   type NpcStateAutocompleteKind,
@@ -275,6 +279,7 @@ function createNodeFieldFromNpcField(field: NpcPropertyField, schemaKey: string)
     overrideAutocompleteValues: field.staticSuggestions ? [...field.staticSuggestions] : undefined,
     symbolLookup: field.symbolRef ? { ...field.symbolRef } : undefined,
     stateAutocompleteKind: field.stateAutocompleteKind,
+    animationAutocompleteKind: field.animationAutocompleteKind,
   };
 }
 
@@ -369,7 +374,8 @@ function componentReferenceFieldsEqual(
       JSON.stringify(leftField.overrideAutocompleteValues ?? []) ===
         JSON.stringify(rightField.overrideAutocompleteValues ?? []) &&
       JSON.stringify(leftField.symbolLookup ?? null) === JSON.stringify(rightField.symbolLookup ?? null) &&
-      leftField.stateAutocompleteKind === rightField.stateAutocompleteKind
+      leftField.stateAutocompleteKind === rightField.stateAutocompleteKind &&
+      leftField.animationAutocompleteKind === rightField.animationAutocompleteKind
     );
   });
 }
@@ -392,35 +398,48 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export function overrideNodeFieldAutocomplete(
   field: NodeField,
-  autocompleteKind: NpcStateAutocompleteKind | undefined,
+  stateAutocompleteKind: NpcStateAutocompleteKind | undefined,
   discoveredStateInfo: NpcDiscoveredStateInfo,
+  animationAutocompleteKind?: NpcAnimationAutocompleteKind,
+  appearanceAnimationIds: string[] = [],
 ): NodeField {
-  if (!autocompleteKind) {
-    if (field.stateAutocompleteKind === undefined && field.overrideAutocompleteValues === undefined) {
+  const nextOverrideAutocompleteValues = stateAutocompleteKind
+    ? getNpcStateAutocompleteValues(discoveredStateInfo, stateAutocompleteKind)
+    : animationAutocompleteKind
+      ? getNpcAnimationAutocompleteValues(appearanceAnimationIds, animationAutocompleteKind)
+      : [];
+  const normalizedOverrideAutocompleteValues =
+    nextOverrideAutocompleteValues.length > 0 ? [...nextOverrideAutocompleteValues] : undefined;
+
+  if (!stateAutocompleteKind && !animationAutocompleteKind) {
+    if (
+      field.stateAutocompleteKind === undefined &&
+      field.animationAutocompleteKind === undefined &&
+      field.overrideAutocompleteValues === undefined
+    ) {
       return field;
     }
 
     return {
       ...field,
       stateAutocompleteKind: undefined,
+      animationAutocompleteKind: undefined,
       overrideAutocompleteValues: undefined,
     };
   }
-
-  const suggestions = getNpcStateAutocompleteValues(discoveredStateInfo, autocompleteKind);
-  const nextOverrideAutocompleteValues =
-    suggestions.length > 0 ? [...suggestions] : undefined;
   if (
-    field.stateAutocompleteKind === autocompleteKind &&
+    field.stateAutocompleteKind === stateAutocompleteKind &&
+    field.animationAutocompleteKind === animationAutocompleteKind &&
     JSON.stringify(field.overrideAutocompleteValues ?? []) ===
-      JSON.stringify(nextOverrideAutocompleteValues ?? [])
+      JSON.stringify(normalizedOverrideAutocompleteValues ?? [])
   ) {
     return field;
   }
 
   return {
     ...field,
-    stateAutocompleteKind: autocompleteKind,
-    overrideAutocompleteValues: nextOverrideAutocompleteValues,
+    stateAutocompleteKind,
+    animationAutocompleteKind,
+    overrideAutocompleteValues: normalizedOverrideAutocompleteValues,
   };
 }

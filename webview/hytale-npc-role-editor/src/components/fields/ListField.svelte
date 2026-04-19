@@ -72,6 +72,11 @@
       ? workspace.getStateAutocompleteValues(field.stateAutocompleteKind)
       : undefined,
   );
+  const animationSuggestions = $derived(
+    field.animationAutocompleteKind
+      ? workspace.getAnimationAutocompleteValues(field.animationAutocompleteKind)
+      : undefined,
+  );
 
   function isPrimitiveListItem(value: unknown): value is string | number | boolean {
     return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
@@ -121,7 +126,7 @@
   }
 
   function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
-    const suggestions = stateSuggestions ?? field.staticSuggestions;
+    const suggestions = stateSuggestions ?? animationSuggestions ?? field.staticSuggestions;
     if (suggestions?.length) {
       const currentValue =
         typeof itemView?.value === "string" ? itemView.value.trim() : "";
@@ -145,7 +150,12 @@
   }
 
   function requestAutocomplete(inputId: string) {
-    if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
+    if (
+      field.stateAutocompleteKind ||
+      field.animationAutocompleteKind ||
+      field.staticSuggestions?.length ||
+      !field.symbolRef
+    ) {
       return;
     }
 

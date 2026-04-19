@@ -37,7 +37,14 @@
       ? workspace.getStateAutocompleteValues(field.stateAutocompleteKind)
       : undefined,
   );
-  const resolvedSuggestions = $derived(stateSuggestions ?? field.staticSuggestions ?? []);
+  const animationSuggestions = $derived(
+    field.animationAutocompleteKind
+      ? workspace.getAnimationAutocompleteValues(field.animationAutocompleteKind)
+      : undefined,
+  );
+  const resolvedSuggestions = $derived(
+    stateSuggestions ?? animationSuggestions ?? field.staticSuggestions ?? [],
+  );
   const autocompleteOptions = $derived(
     resolvedSuggestions.length
       ? resolvedSuggestions.map(value => ({ value }))
@@ -81,7 +88,12 @@
   }
 
   function requestAutocomplete() {
-    if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
+    if (
+      field.stateAutocompleteKind ||
+      field.animationAutocompleteKind ||
+      field.staticSuggestions?.length ||
+      !field.symbolRef
+    ) {
       return;
     }
 

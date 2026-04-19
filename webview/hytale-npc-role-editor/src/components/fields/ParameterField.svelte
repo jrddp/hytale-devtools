@@ -113,9 +113,14 @@
       ? workspace.getStateAutocompleteValues(field.stateAutocompleteKind)
       : undefined,
   );
+  const animationSuggestions = $derived(
+    field.animationAutocompleteKind
+      ? workspace.getAnimationAutocompleteValues(field.animationAutocompleteKind)
+      : undefined,
+  );
   const stringAutocompleteOptions = $derived(
-    (stateSuggestions ?? field.staticSuggestions)?.length
-      ? (stateSuggestions ?? field.staticSuggestions)?.map(value => ({ value }))
+    (stateSuggestions ?? animationSuggestions ?? field.staticSuggestions)?.length
+      ? (stateSuggestions ?? animationSuggestions ?? field.staticSuggestions)?.map(value => ({ value }))
       : field.symbolRef && workspace.autocompleteField === `npc-parameter-${field.id}`
         ? workspace.autocompleteValues.map(value => ({ value }))
         : [],
@@ -299,7 +304,7 @@
   }
 
   function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
-    const suggestions = stateSuggestions ?? field.staticSuggestions;
+    const suggestions = stateSuggestions ?? animationSuggestions ?? field.staticSuggestions;
     if (suggestions?.length) {
       return suggestions.map(value => ({ value }));
     }
@@ -312,7 +317,12 @@
   }
 
   function requestListAutocomplete(inputId: string) {
-    if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
+    if (
+      field.stateAutocompleteKind ||
+      field.animationAutocompleteKind ||
+      field.staticSuggestions?.length ||
+      !field.symbolRef
+    ) {
       return;
     }
 
@@ -414,7 +424,12 @@
       optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
       previewClass="z-[160]"
       onfocus={() => {
-        if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
+        if (
+          field.stateAutocompleteKind ||
+          field.animationAutocompleteKind ||
+          field.staticSuggestions?.length ||
+          !field.symbolRef
+        ) {
           return;
         }
         workspace.requestAutocomplete(`npc-parameter-${field.id}`, field.symbolRef);

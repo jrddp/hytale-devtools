@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 import type { AssetCacheRuntime } from "../../src/asset-cache/assetCacheRuntime";
 import type { JsonAssetInstance } from "../../src/shared/fieldTypes";
-import { resolveModelPreviewFromModelAsset } from "../../src/shared/modelPreviewResolution";
+import {
+  resolveModelAnimationSetIdsFromModelAsset,
+  resolveModelPreviewFromModelAsset,
+} from "../../src/shared/modelPreviewResolution";
 
 describe("shared ModelAsset preview resolution", () => {
   test("resolves direct idle animation metadata", async () => {
@@ -168,6 +171,37 @@ describe("shared ModelAsset preview resolution", () => {
       model: { name: "SheepModel" },
       texture: undefined,
     });
+  });
+
+  test("merges animation set ids across the parent chain", async () => {
+    const animationIds = await resolveModelAnimationSetIdsFromModelAsset(
+      {
+        Parent: "Parent",
+        AnimationSets: {
+          Hurt: {
+            Animations: [{ Animation: "Common/Animations/ChildHurt.blockyanim" }],
+          },
+          Idle: {
+            Animations: [{ Animation: "Common/Animations/ChildIdle.blockyanim" }],
+          },
+        },
+      },
+      async assetName =>
+        assetName === "Parent"
+          ? {
+              AnimationSets: {
+                Attack: {
+                  Animations: [{ Animation: "Common/Animations/Attack.blockyanim" }],
+                },
+                Idle: {
+                  Animations: [{ Animation: "Common/Animations/ParentIdle.blockyanim" }],
+                },
+              },
+            }
+          : undefined,
+    );
+
+    expect(animationIds).toEqual(["Attack", "Hurt", "Idle"]);
   });
 });
 

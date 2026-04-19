@@ -2,6 +2,7 @@ import type {
   NpcDescriptor,
   NpcDescriptorAttribute,
 } from "../../../src/shared/npc-role-editor/descriptorTypes";
+import type { NpcAnimationAutocompleteKind } from "../../../src/shared/npc-role-editor/animationAutocomplete";
 import { resolveNpcDescriptorAssetSymbolLookup } from "../../../src/shared/npc-role-editor/assetSymbolLookup";
 import type { NpcStateAutocompleteKind } from "../../../src/shared/npc-role-editor/stateAutocomplete";
 import { getNpcBehaviorChildDomain } from "../../../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
@@ -50,6 +51,10 @@ export function buildContentField(
   if (stateAutocompleteKind) {
     options.StateAutocompleteKind = stateAutocompleteKind;
   }
+  const animationAutocompleteKind = resolveNpcNodeFieldAnimationAutocompleteKind(descriptor, attribute);
+  if (animationAutocompleteKind) {
+    options.AnimationAutocompleteKind = animationAutocompleteKind;
+  }
 
   return {
     Id: attribute.Name,
@@ -81,6 +86,24 @@ function resolveNpcNodeFieldStateAutocompleteKind(
     attribute.Name === "State"
   ) {
     return "role-full";
+  }
+
+  return undefined;
+}
+
+function resolveNpcNodeFieldAnimationAutocompleteKind(
+  descriptor: Pick<NpcDescriptor, "Category" | "Name">,
+  attribute: Pick<NpcDescriptorAttribute, "Name">,
+): NpcAnimationAutocompleteKind | undefined {
+  if (attribute.Name !== "Animation") {
+    return undefined;
+  }
+
+  if (
+    (descriptor.Category === "Action" && descriptor.Name === "PlayAnimation") ||
+    (descriptor.Category === "Sensor" && descriptor.Name === "Animation")
+  ) {
+    return "appearance-model";
   }
 
   return undefined;

@@ -43,7 +43,8 @@
       "Options": {
         "Label": "Animation",
         "Width": 220,
-        "Computable": true
+        "Computable": true,
+        "AnimationAutocompleteKind": "appearance-model"
       }
     }
   ],

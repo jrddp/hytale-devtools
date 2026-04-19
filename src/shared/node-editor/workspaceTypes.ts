@@ -1,4 +1,5 @@
 import { type IndexReference } from "../indexTypes";
+import type { NpcAnimationAutocompleteKind } from "../npc-role-editor/animationAutocomplete";
 import type { NpcStateAutocompleteKind } from "../npc-role-editor/stateAutocomplete";
 
 export type FieldComponentType =
@@ -54,6 +55,7 @@ export interface NodeField {
   localId: string;
   symbolLookup?: IndexReference;
   stateAutocompleteKind?: NpcStateAutocompleteKind;
+  animationAutocompleteKind?: NpcAnimationAutocompleteKind;
 }
 
 export interface NodePin {

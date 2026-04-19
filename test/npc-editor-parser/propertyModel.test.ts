@@ -513,6 +513,42 @@ describe("npc property model symbol enrichment", () => {
     });
   });
 
+  test("assigns appearance-model animation autocomplete to play animation action fields", () => {
+    const document = createComponentDocument({
+      componentClass: "Action",
+    });
+    document.Content = {
+      Type: "PlayAnimation",
+      Animation: "Idle",
+    };
+
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "PlayAnimation",
+        Category: "Action",
+        Attributes: [
+          {
+            Name: "Animation",
+            Type: "String",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+    const contentField = state.sections.find(section => section.id === "content")?.fields[0];
+    const animationField = contentField?.childFields?.find(field => field.key === "Animation");
+
+    expect(animationField).toMatchObject({
+      fieldPath: "Content.Animation",
+      animationAutocompleteKind: "appearance-model",
+    });
+  });
+
   test("infers compute-backed role attribute field types from array descriptors and matching parameters", () => {
     const document = createGenericDocument({
       roleAttributes: {

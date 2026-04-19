@@ -739,6 +739,7 @@ function createVariantModifyField({
     staticSuggestions: inheritedField?.staticSuggestions ? [...inheritedField.staticSuggestions] : undefined,
     symbolRef: inheritedField?.symbolRef ? { ...inheritedField.symbolRef } : undefined,
     stateAutocompleteKind: inheritedField?.stateAutocompleteKind,
+    animationAutocompleteKind: inheritedField?.animationAutocompleteKind,
     ui: {},
   };
 }

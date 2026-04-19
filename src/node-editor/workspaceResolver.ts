@@ -563,6 +563,7 @@ export class WorkspaceRuntime {
           ? this.cloneIndexReference(content.Options.SymbolLookup)
           : undefined,
         stateAutocompleteKind: content.Options?.StateAutocompleteKind,
+        animationAutocompleteKind: content.Options?.AnimationAutocompleteKind,
         subfields: content.Options?.Fields
           ? this.fieldsFromContentDefinitions(content.Options.Fields)
           : undefined,

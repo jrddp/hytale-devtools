@@ -112,6 +112,7 @@ beforeEach(() => {
     componentParentAliases: ["ParentIdle"],
     componentLocalStates: [".LocalIdle", ".LocalSleep"],
   };
+  workspace.setAppearanceAnimationValues("TestAppearance", ["Alerted", "Idle", "Wake"]);
   workspace.componentReferenceTargets = new Map();
 });
 
@@ -240,6 +241,7 @@ describe("npc graph host helpers", () => {
       session,
       descriptors: parseDescriptors(),
       discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
       roleType: workspace.roleType,
     });
 
@@ -271,6 +273,7 @@ describe("npc graph host helpers", () => {
       session,
       descriptors: parseDescriptors(),
       discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
       roleType: "Generic",
     });
 
@@ -287,6 +290,7 @@ describe("npc graph host helpers", () => {
       session,
       descriptors: parseDescriptors(),
       discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
       roleType: "Component",
     });
 
@@ -297,6 +301,36 @@ describe("npc graph host helpers", () => {
     ).toMatchObject({
       stateAutocompleteKind: "component-local",
       overrideAutocompleteValues: [".LocalIdle", ".LocalSleep"],
+    });
+  });
+
+  test("hydrateNpcGraphSessionNodes applies appearance-model animation autocomplete buckets", () => {
+    const session = createNodeEditorSession();
+    session.isInitialized = true;
+    session.nodes = [
+      {
+        id: "play-animation-node",
+        type: "datanode",
+        position: { x: 0, y: 0 },
+        data: structuredClone(getNpcTemplate("Action.PlayAnimation")),
+      } as FlowNode,
+    ] as never;
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
+      roleType: "Generic",
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey.Animation
+        : undefined,
+    ).toMatchObject({
+      animationAutocompleteKind: "appearance-model",
+      overrideAutocompleteValues: ["Alerted", "Idle", "Wake"],
     });
   });
 });

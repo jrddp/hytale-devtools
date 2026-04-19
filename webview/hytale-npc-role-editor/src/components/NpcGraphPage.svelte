@@ -159,6 +159,7 @@
         session,
         descriptors: $state.snapshot(workspace.descriptors),
         discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+        appearanceAnimationIds: $state.snapshot(workspace.appearanceAnimationIds),
         roleType: workspace.roleType,
       });
       graphError = "";
@@ -204,6 +205,7 @@
           session,
           descriptors: $state.snapshot(workspace.descriptors),
           discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+          appearanceAnimationIds: $state.snapshot(workspace.appearanceAnimationIds),
           roleType: workspace.roleType,
         });
         return;
@@ -219,6 +221,7 @@
         session,
         descriptors: $state.snapshot(workspace.descriptors),
         discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+        appearanceAnimationIds: $state.snapshot(workspace.appearanceAnimationIds),
         roleType: workspace.roleType,
       });
     } catch (error) {
@@ -241,6 +244,7 @@
       session,
       descriptors: $state.snapshot(workspace.descriptors),
       discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+      appearanceAnimationIds: $state.snapshot(workspace.appearanceAnimationIds),
       roleType: workspace.roleType,
     });
   });

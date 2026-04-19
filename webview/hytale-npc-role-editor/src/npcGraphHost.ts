@@ -19,11 +19,13 @@ export function hydrateNpcGraphSessionNodes({
   session,
   descriptors,
   discoveredStateInfo,
+  appearanceAnimationIds,
   roleType,
 }: {
   session: NodeEditorSession;
   descriptors: NpcDescriptorDocument;
   discoveredStateInfo: NpcDiscoveredStateInfo;
+  appearanceAnimationIds: string[];
   roleType: NpcRoleType | null;
 }): void {
   if (!session.isInitialized) {
@@ -33,6 +35,7 @@ export function hydrateNpcGraphSessionNodes({
   const autocompleteHydratedNodes = hydrateNpcNodeStateAutocomplete({
     nodes: session.nodes,
     discoveredStateInfo,
+    appearanceAnimationIds,
     roleType,
   });
   const hydratedNodes = hydrateComponentReferenceNodes({
@@ -48,10 +51,12 @@ export function hydrateNpcGraphSessionNodes({
 function hydrateNpcNodeStateAutocomplete({
   nodes,
   discoveredStateInfo,
+  appearanceAnimationIds,
   roleType,
 }: {
   nodes: NodeEditorSession["nodes"];
   discoveredStateInfo: NpcDiscoveredStateInfo;
+  appearanceAnimationIds: string[];
   roleType: NpcRoleType | null;
 }) {
   let didChange = false;
@@ -71,13 +76,20 @@ function hydrateNpcNodeStateAutocomplete({
         field.stateAutocompleteKind,
         roleType,
       );
-      if (autocompleteKind === undefined && field.stateAutocompleteKind === undefined) {
+      const animationAutocompleteKind = field.animationAutocompleteKind;
+      if (
+        autocompleteKind === undefined &&
+        field.stateAutocompleteKind === undefined &&
+        animationAutocompleteKind === undefined
+      ) {
         continue;
       }
       const nextField = overrideNodeFieldAutocomplete(
         field,
         autocompleteKind,
         discoveredStateInfo,
+        animationAutocompleteKind,
+        appearanceAnimationIds,
       );
       if (nextField === field) {
         continue;

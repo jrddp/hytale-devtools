@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { assetCacheRuntime, indexes, LOGGER, workspaceRuntime } from "../extension";
-import type { ModelPreviewState } from "../shared/modelPreviewTypes";
 import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
@@ -18,7 +17,7 @@ import type {
 } from "../shared/npc-role-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
-import { resolveNpcAppearancePreview } from "./appearancePreviewRuntime";
+import { resolveNpcAppearanceState } from "./appearancePreviewRuntime";
 import { applyNpcGraphEditToDocument } from "./graphEditRuntime";
 import { buildNpcRoleEditorBootstrapMessage } from "./npcRoleEditorBootstrap";
 import {
@@ -197,16 +196,21 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         }
       });
 
-      const postResolvedPreview = async (previewPromise: Promise<ModelPreviewState>) => {
+      const postResolvedPreview = async (
+        assetName: string | undefined,
+        appearanceStatePromise: Promise<Awaited<ReturnType<typeof resolveNpcAppearanceState>>>,
+      ) => {
         const resolutionVersion = ++previewResolutionVersion;
-        const preview = await previewPromise;
+        const appearanceState = await appearanceStatePromise;
         if (isDisposed || resolutionVersion !== previewResolutionVersion) {
           return;
         }
 
         await webviewPanel.webview.postMessage({
           type: "previewUpdate",
-          preview,
+          assetName,
+          preview: appearanceState.preview,
+          animationIds: appearanceState.animationIds,
         } satisfies NpcRoleEditorPreviewUpdateMessage);
       };
 
@@ -218,7 +222,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         if (!assetCacheRuntime.isReady) {
           await webviewPanel.webview.postMessage({
             type: "previewUpdate",
+            assetName,
             preview: assetName ? { type: "none", loading: true } : { type: "none" },
+            animationIds: [],
           } satisfies NpcRoleEditorPreviewUpdateMessage);
 
           if (!assetName) {
@@ -235,7 +241,8 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
 
         const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
         await postResolvedPreview(
-          resolveNpcAppearancePreview(
+          assetName,
+          resolveNpcAppearanceState(
             assetName,
             assetCacheRuntime,
             modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,

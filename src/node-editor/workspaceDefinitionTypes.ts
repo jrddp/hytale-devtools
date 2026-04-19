@@ -6,6 +6,7 @@ import {
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
 import type { IndexReference } from "../shared/indexTypes";
+import type { NpcAnimationAutocompleteKind } from "../shared/npc-role-editor/animationAutocomplete";
 import type { NpcStateAutocompleteKind } from "../shared/npc-role-editor/stateAutocomplete";
 
 // definition as its stored in workspace node jsons
@@ -110,6 +111,7 @@ export interface NodeContentDefinition {
     Computable?: boolean;
     SymbolLookup?: IndexReference;
     StateAutocompleteKind?: NpcStateAutocompleteKind;
+    AnimationAutocompleteKind?: NpcAnimationAutocompleteKind;
   };
 }
 

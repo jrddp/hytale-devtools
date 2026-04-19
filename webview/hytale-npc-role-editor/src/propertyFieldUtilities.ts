@@ -156,6 +156,7 @@ export function cloneNpcPropertyField(field: NpcPropertyField): NpcPropertyField
     typeSuggestions: field.typeSuggestions ? [...field.typeSuggestions] : undefined,
     transitions: field.transitions?.map(cloneStateTransitionEntry),
     symbolRef: field.symbolRef ? { ...field.symbolRef } : undefined,
+    animationAutocompleteKind: field.animationAutocompleteKind,
     preservedData: field.preservedData ? cloneJsonLike(field.preservedData) : undefined,
     ui: field.ui ? { ...field.ui } : undefined,
   };

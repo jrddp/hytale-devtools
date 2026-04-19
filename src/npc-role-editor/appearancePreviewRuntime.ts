@@ -1,29 +1,60 @@
 import type { AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
-import { resolveModelPreviewFromModelAsset } from "../shared/modelPreviewResolution";
+import {
+  resolveModelAnimationSetIdsFromModelAsset,
+  resolveModelPreviewFromModelAsset,
+} from "../shared/modelPreviewResolution";
 import type { ModelPreviewState } from "../shared/modelPreviewTypes";
+
+export type ResolvedNpcAppearanceState = {
+  preview: ModelPreviewState;
+  animationIds: string[];
+};
+
+export async function resolveNpcAppearanceState(
+  assetName: string | undefined,
+  runtime: AssetCacheRuntime,
+  modelAssetIndex: RegisteredAssetsIndexShard | undefined,
+): Promise<ResolvedNpcAppearanceState> {
+  const trimmedAssetName = assetName?.trim();
+  if (!trimmedAssetName || !modelAssetIndex) {
+    return {
+      preview: { type: "none" },
+      animationIds: [],
+    };
+  }
+
+  const rootAsset = await loadIndexedModelAsset(trimmedAssetName, modelAssetIndex, runtime);
+  if (!rootAsset) {
+    return {
+      preview: { type: "none" },
+      animationIds: [],
+    };
+  }
+
+  const loadParentModelAsset = async (parentAssetName: string) =>
+    await loadIndexedModelAsset(parentAssetName, modelAssetIndex, runtime);
+  const [preview, animationIds] = await Promise.all([
+    resolveModelPreviewFromModelAsset(
+      rootAsset,
+      runtime,
+      loadParentModelAsset,
+    ),
+    resolveModelAnimationSetIdsFromModelAsset(rootAsset, loadParentModelAsset),
+  ]);
+
+  return {
+    preview: preview.model ? preview : { type: "none" },
+    animationIds,
+  };
+}
 
 export async function resolveNpcAppearancePreview(
   assetName: string | undefined,
   runtime: AssetCacheRuntime,
   modelAssetIndex: RegisteredAssetsIndexShard | undefined,
 ): Promise<ModelPreviewState> {
-  const trimmedAssetName = assetName?.trim();
-  if (!trimmedAssetName || !modelAssetIndex) {
-    return { type: "none" };
-  }
-
-  const rootAsset = await loadIndexedModelAsset(trimmedAssetName, modelAssetIndex, runtime);
-  if (!rootAsset) {
-    return { type: "none" };
-  }
-
-  const preview = await resolveModelPreviewFromModelAsset(
-    rootAsset,
-    runtime,
-    async parentAssetName => await loadIndexedModelAsset(parentAssetName, modelAssetIndex, runtime),
-  );
-  return preview.model ? preview : { type: "none" };
+  return (await resolveNpcAppearanceState(assetName, runtime, modelAssetIndex)).preview;
 }
 
 async function loadIndexedModelAsset(

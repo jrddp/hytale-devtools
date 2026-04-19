@@ -134,6 +134,10 @@
   );
 
   function syncAppearancePreviewRequestState() {
+    if (effectiveAppearanceAssetName !== lastRequestedAppearanceAssetName) {
+      workspace.setAppearanceAnimationValues(effectiveAppearanceAssetName, []);
+    }
+
     lastRequestedAppearanceAssetName = syncAppearancePreviewRequest({
       assetName: effectiveAppearanceAssetName,
       lastRequestedAssetName: lastRequestedAppearanceAssetName,
@@ -270,7 +274,11 @@
         workspace.setComponentReferenceTarget(message.target);
         return;
       case "previewUpdate":
+        if (message.assetName !== undefined && message.assetName !== effectiveAppearanceAssetName) {
+          return;
+        }
         workspace.setAppearancePreview(message.preview);
+        workspace.setAppearanceAnimationValues(message.assetName ?? null, message.animationIds ?? []);
         return;
       case "error":
         extensionError = message.message;

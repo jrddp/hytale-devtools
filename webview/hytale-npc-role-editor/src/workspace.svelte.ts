@@ -5,6 +5,10 @@ import type {
   NpcRoleEditorVariantReferenceState,
 } from "@shared/npc-role-editor/messageTypes";
 import {
+  getNpcAnimationAutocompleteValues,
+  type NpcAnimationAutocompleteKind,
+} from "@shared/npc-role-editor/animationAutocomplete";
+import {
   createEmptyNpcDiscoveredStateInfo,
   getNpcStateAutocompleteValues,
   type NpcDiscoveredStateInfo,
@@ -119,6 +123,8 @@ export class Workspace {
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
   appearancePreview = $state<ModelPreviewState | undefined>(undefined);
+  appearanceAnimationAssetName = $state<string | null>(null);
+  appearanceAnimationIds = $state<string[]>([]);
   componentReferenceTargets = $state.raw<Map<string, NpcRoleEditorComponentReferenceTargetState>>(
     new Map(),
   );
@@ -184,6 +190,15 @@ export class Workspace {
 
   setAppearancePreview(preview: ModelPreviewState | undefined) {
     this.appearancePreview = preview;
+  }
+
+  setAppearanceAnimationValues(assetName: string | null, values: string[]) {
+    this.appearanceAnimationAssetName = assetName;
+    this.appearanceAnimationIds = [...values].sort((left, right) => left.localeCompare(right));
+  }
+
+  getAnimationAutocompleteValues(kind: NpcAnimationAutocompleteKind | undefined): string[] {
+    return getNpcAnimationAutocompleteValues(this.appearanceAnimationIds, kind);
   }
 
   requestComponentReferenceTarget(componentClass: string, referenceName: string) {

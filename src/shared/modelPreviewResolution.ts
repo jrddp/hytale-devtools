@@ -2,7 +2,7 @@ import type { AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import { stripBomText } from "./fileUtils";
 import type { ResolvedModelPreview } from "./modelPreviewTypes";
 
-type ModelAssetDocument = Record<string, unknown>;
+export type ModelAssetDocument = Record<string, unknown>;
 
 type ResolvedAnimationPreview = Pick<
   ResolvedModelPreview,
@@ -47,6 +47,14 @@ export async function resolveModelPreviewFromModelAsset(
     runtime,
   );
   return resolvedAnimation ? { ...preview, ...resolvedAnimation } : preview;
+}
+
+export async function resolveModelAnimationSetIdsFromModelAsset(
+  modelAsset: ModelAssetDocument,
+  loadParentModelAsset: (assetName: string) => Promise<ModelAssetDocument | undefined>,
+): Promise<string[]> {
+  const assetChain = await collectModelAssetChain(modelAsset, loadParentModelAsset);
+  return resolveMergedAnimationSetIds(assetChain);
 }
 
 // The base game falls back to the same path as the model, but with .png instead of .blockymodel.
@@ -161,6 +169,21 @@ function resolveMergedAnimationEntry(
     speed: toFiniteNumber(animationConfig?.Speed),
     looping: typeof animationConfig?.Looping === "boolean" ? animationConfig.Looping : undefined,
   };
+}
+
+function resolveMergedAnimationSetIds(assetChain: ModelAssetDocument[]): string[] {
+  const mergedAnimationSets: Record<string, unknown> = {};
+
+  for (const asset of [...assetChain].reverse()) {
+    const animationSets = asRecord(asset.AnimationSets);
+    if (!animationSets) {
+      continue;
+    }
+
+    Object.assign(mergedAnimationSets, animationSets);
+  }
+
+  return Object.keys(mergedAnimationSets).sort((left, right) => left.localeCompare(right));
 }
 
 async function loadJsonAssetBytes(

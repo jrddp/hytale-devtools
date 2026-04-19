@@ -95,6 +95,21 @@ describe("NPC node workspace generator builders", () => {
     });
   });
 
+  test("buildContentField annotates appearance-model animation autocomplete metadata for NPC node fields", () => {
+    const actionDescriptor = findDescriptorOrThrow("Action", "PlayAnimation");
+    const animationAttribute = actionDescriptor.Attributes?.find(entry => entry.Name === "Animation");
+    if (!animationAttribute) {
+      throw new Error("Attribute Animation was not found.");
+    }
+
+    expect(buildContentField(actionDescriptor, animationAttribute)).toMatchObject({
+      Id: "Animation",
+      Options: {
+        AnimationAutocompleteKind: "appearance-model",
+      },
+    });
+  });
+
   test("buildContentField includes asset-backed action fields instead of dropping them", () => {
     const actionAppearanceDescriptor = findDescriptorOrThrow("Action", "Appearance");
     const appearanceAttribute = actionAppearanceDescriptor.Attributes?.find(

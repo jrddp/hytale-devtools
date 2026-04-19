@@ -1,5 +1,6 @@
 import type { IndexReference } from "@shared/indexTypes";
 import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
+import type { NpcAnimationAutocompleteKind } from "@shared/npc-role-editor/animationAutocomplete";
 import type { NpcRoleType, NpcComponentClass } from "./parsing/documentTypes";
 
 export type NpcFieldValue =
@@ -87,6 +88,7 @@ export type NpcPropertyField = {
   staticSuggestions?: string[];
   symbolRef?: IndexReference;
   stateAutocompleteKind?: NpcStateAutocompleteKind;
+  animationAutocompleteKind?: NpcAnimationAutocompleteKind;
   preservedData?: Record<string, unknown>;
   ui?: NpcFieldUiState;
 };

@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 import type { AssetCacheRuntime } from "../../src/asset-cache/assetCacheRuntime";
 import type { JsonAssetInstance } from "../../src/shared/fieldTypes";
-import { resolveNpcAppearancePreview } from "../../src/npc-role-editor/appearancePreviewRuntime";
+import {
+  resolveNpcAppearancePreview,
+  resolveNpcAppearanceState,
+} from "../../src/npc-role-editor/appearancePreviewRuntime";
 import type { RegisteredAssetsIndexShard } from "../../src/shared/indexTypes";
 
 describe("npc appearance preview runtime", () => {
@@ -194,6 +197,51 @@ describe("npc appearance preview runtime", () => {
       model: { name: "SheepModel" },
       texture: undefined,
     });
+  });
+
+  test("resolves merged animation ids from the effective appearance model", async () => {
+    const runtime = createRuntime({
+      "Server/Models/Child.json": jsonAsset({
+        Parent: "Parent",
+        Model: "Common/Models/Child.blockymodel",
+        AnimationSets: {
+          Hurt: {
+            Animations: [{ Animation: "Common/Animations/Hurt.blockyanim" }],
+          },
+          Idle: {
+            Animations: [{ Animation: "Common/Animations/ChildIdle.blockyanim" }],
+          },
+        },
+      }),
+      "Server/Models/Parent.json": jsonAsset({
+        Model: "Common/Models/Parent.blockymodel",
+        AnimationSets: {
+          Attack: {
+            Animations: [{ Animation: "Common/Animations/Attack.blockyanim" }],
+          },
+          Idle: {
+            Animations: [{ Animation: "Common/Animations/ParentIdle.blockyanim" }],
+          },
+        },
+      }),
+      "Common/Models/Child.blockymodel": jsonAsset({ name: "ChildModel" }),
+    }, {});
+
+    const appearanceState = await resolveNpcAppearanceState(
+      "Child",
+      runtime,
+      createModelAssetIndex({
+        Child: { sourcedFromFile: "Server/Models/Child.json" },
+        Parent: { sourcedFromFile: "Server/Models/Parent.json" },
+      }),
+    );
+
+    expect(appearanceState.preview).toEqual({
+      type: "Model",
+      model: { name: "ChildModel" },
+      texture: undefined,
+    });
+    expect(appearanceState.animationIds).toEqual(["Attack", "Hurt", "Idle"]);
   });
 });
 

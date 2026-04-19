@@ -95,7 +95,9 @@ export type NpcRoleEditorContextActionMessage = {
 
 export type NpcRoleEditorPreviewUpdateMessage = {
   type: "previewUpdate";
+  assetName?: string;
   preview?: ModelPreviewState;
+  animationIds?: string[];
 };
 
 export type NpcRoleEditorApplyMessage = {
