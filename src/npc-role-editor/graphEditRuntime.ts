@@ -1,7 +1,5 @@
 import type { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
 import {
-  adaptGraphDocumentRootToHostValue,
-  adaptGraphHostValueToDocumentRoot,
   parseAssetDocumentToGraphDocument,
   serializeGraphDocument,
 } from "../shared/node-editor/graphDocument";
@@ -11,6 +9,10 @@ import type { NodeEditorWorkspaceContext } from "../shared/node-editor/workspace
 import { serializeNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import { patchNpcGraphTarget, resolveNpcGraphTarget, type NpcGraphTargetWorkspaceRoot } from "../shared/npc-role-editor/graphTargets";
 import { parseNpcRoleDocumentOrThrow } from "../shared/npc-role-editor/graphDocumentRuntime";
+import {
+  adaptGraphDocumentRootToHostValue,
+  adaptGraphHostValueToDocumentRoot,
+} from "../shared/npc-role-editor/graphRootAdapter";
 
 export function applyNpcGraphEditToDocument(
   document: HytaleNpcRoleDocument,

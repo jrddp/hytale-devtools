@@ -1,11 +1,11 @@
 import {
-  adaptGraphHostValueToDocumentRoot,
   parseAssetDocumentToGraphDocument,
 } from "../node-editor/graphDocument";
 import type { NodeEditorGraphDocument } from "../node-editor/graphTypes";
 import type { NodeEditorWorkspaceContext } from "../node-editor/workspaceTypes";
 import { parseNpcDocumentText, type ParsedNpcRoleDocument } from "./documentParsing";
 import { resolveNpcGraphTarget } from "./graphTargets";
+import { adaptGraphHostValueToDocumentRoot } from "./graphRootAdapter";
 
 export function parseNpcRoleDocumentOrThrow(text: string): ParsedNpcRoleDocument {
   const result = parseNpcDocumentText(text);

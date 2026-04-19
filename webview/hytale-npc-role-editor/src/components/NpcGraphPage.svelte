@@ -8,13 +8,15 @@
   } from "@shared/node-editor/messageTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
   import NodeEditorHost from "@node-editor/NodeEditorHost.svelte";
-  import { reconcileSessionWithGraphUpdate } from "@node-editor/node-editor/utils/documentUpdates";
   import { sortVariantsToBottom } from "@node-editor/node-editor/utils/fieldUtils";
-  import { syncSessionFromGraphDocument } from "@node-editor/node-editor/utils/sessionSync";
   import { createNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { ComputeAutocompleteOption } from "@webview-shared/components/computeAutocomplete";
   import type { VSCodeApi } from "../common";
-  import { hydrateComponentReferenceNodes } from "../componentReferenceNodeHydration";
+  import {
+    applyNpcGraphUpdateToSession,
+    hydrateNpcGraphSessionNodes,
+    syncNpcGraphSessionFromDocument,
+  } from "../npcGraphHost";
   import type { NpcPropertyField } from "../propertyModel";
   import { workspace } from "../workspace.svelte";
   import GraphFallbackField from "./fields/GraphFallbackField.svelte";
@@ -62,21 +64,6 @@
   let lastSyncedDocumentVersion = $state<number | null>(null);
   let lastSyncedGraphFieldPath = $state<string | null>(null);
   let lastAutoFitFieldPath = $state<string | null>(null);
-
-  function rehydrateComponentReferenceNodes() {
-    if (!workspaceContext || !session.isInitialized) {
-      return;
-    }
-
-    const hydratedNodes = hydrateComponentReferenceNodes({
-      nodes: session.nodes,
-      descriptors: $state.snapshot(workspace.descriptors),
-      discoveredStates: $state.snapshot(workspace.discoveredStates),
-    });
-    if (hydratedNodes !== session.nodes) {
-      session.nodes = hydratedNodes;
-    }
-  }
 
   $effect(() => {
     if (session.controlScheme !== controlScheme) {
@@ -158,13 +145,11 @@
     }
 
     try {
-      const didFullSync = reconcileSessionWithGraphUpdate({
+      const didFullSync = applyNpcGraphUpdateToSession({
         session,
         workspaceContext,
+        graphUpdate,
         getFallbackGraphDocument: () => resolveGraphDocumentFromText(graphUpdate.text),
-        version: graphUpdate.version,
-        acknowledgedClientEditId: graphUpdate.acknowledgedClientEditId,
-        appliedEdit: graphUpdate.appliedEdit,
         shouldQueueInitialFitView: !initialViewport && lastAutoFitFieldPath !== field.fieldPath,
       });
       if (didFullSync && !initialViewport && lastAutoFitFieldPath !== field.fieldPath) {
@@ -184,8 +169,10 @@
       return;
     }
 
-    const isSameGraphField = lastSyncedGraphFieldPath === field.fieldPath;
-    if (lastSyncedDocumentVersion === documentVersion && isSameGraphField) {
+    if (
+      lastSyncedDocumentVersion === documentVersion &&
+      lastSyncedGraphFieldPath === field.fieldPath
+    ) {
       return;
     }
 
@@ -193,29 +180,26 @@
       const shouldQueueInitialFitView =
         !initialViewport && lastAutoFitFieldPath !== field.fieldPath;
 
-      if (!isSameGraphField) {
-        syncSessionFromGraphDocument({
+      const didFullSync = syncNpcGraphSessionFromDocument({
+        session,
+        workspaceContext,
+        fieldPath: field.fieldPath,
+        documentText,
+        documentVersion,
+        lastSyncedGraphFieldPath,
+        getFallbackGraphDocument: resolveGraphDocumentFromText,
+        shouldQueueInitialFitView,
+      });
+      if (!didFullSync) {
+        graphError = "";
+        lastSyncedDocumentVersion = documentVersion;
+        lastSyncedGraphFieldPath = field.fieldPath;
+        hydrateNpcGraphSessionNodes({
           session,
-          workspaceContext,
-          graphDocument: resolveGraphDocumentFromText(documentText),
-          sourceVersion: documentVersion,
-          shouldQueueInitialFitView,
+          descriptors: $state.snapshot(workspace.descriptors),
+          discoveredStates: $state.snapshot(workspace.discoveredStates),
         });
-      } else {
-        const didFullSync = reconcileSessionWithGraphUpdate({
-          session,
-          workspaceContext,
-          getFallbackGraphDocument: () => resolveGraphDocumentFromText(documentText),
-          version: documentVersion,
-          shouldQueueInitialFitView,
-        });
-        if (!didFullSync) {
-          graphError = "";
-          lastSyncedDocumentVersion = documentVersion;
-          lastSyncedGraphFieldPath = field.fieldPath;
-          rehydrateComponentReferenceNodes();
-          return;
-        }
+        return;
       }
 
       if (shouldQueueInitialFitView) {
@@ -224,7 +208,11 @@
       graphError = "";
       lastSyncedDocumentVersion = documentVersion;
       lastSyncedGraphFieldPath = field.fieldPath;
-      rehydrateComponentReferenceNodes();
+      hydrateNpcGraphSessionNodes({
+        session,
+        descriptors: $state.snapshot(workspace.descriptors),
+        discoveredStates: $state.snapshot(workspace.discoveredStates),
+      });
     } catch (error) {
       session.isInitialized = false;
       graphError = error instanceof Error ? error.message : String(error);
@@ -240,7 +228,11 @@
     void workspace.componentReferenceTargets;
     void workspace.descriptors;
     void workspace.discoveredStates;
-    rehydrateComponentReferenceNodes();
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: $state.snapshot(workspace.descriptors),
+      discoveredStates: $state.snapshot(workspace.discoveredStates),
+    });
   });
 
   function resolveGraphDocumentFromText(text: string | null) {

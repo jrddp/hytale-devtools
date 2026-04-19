@@ -10,7 +10,7 @@ import type { NodeEditorWorkspaceContext } from "../../src/shared/node-editor/wo
 import {
   adaptGraphDocumentRootToHostValue,
   adaptGraphHostValueToDocumentRoot,
-} from "../../src/shared/node-editor/graphDocument";
+} from "../../src/shared/npc-role-editor/graphRootAdapter";
 import {
   NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE,
   NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS,
