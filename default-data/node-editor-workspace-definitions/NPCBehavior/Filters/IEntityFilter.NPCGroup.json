@@ -23,10 +23,40 @@
         "Width": 18,
         "Computable": true
       }
+    },
+    {
+      "Id": "IncludeGroups",
+      "Type": "List",
+      "Description": "A set of NPCGroups to include in the match",
+      "Options": {
+        "Label": "IncludeGroups",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
+      "Id": "ExcludeGroups",
+      "Type": "List",
+      "Description": "A set of NPCGroups to exclude from the match",
+      "Options": {
+        "Label": "ExcludeGroups",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
     }
   ],
   "Schema": {
     "Enabled": "Enabled",
+    "IncludeGroups": "IncludeGroups",
+    "ExcludeGroups": "ExcludeGroups",
     "Type": "NPCGroup"
   }
 }

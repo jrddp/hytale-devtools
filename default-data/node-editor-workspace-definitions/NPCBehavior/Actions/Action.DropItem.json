@@ -37,6 +37,34 @@
       }
     },
     {
+      "Id": "Item",
+      "Type": "SmallString",
+      "Description": "A specific item to drop",
+      "Options": {
+        "Label": "Item",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
+      "Id": "DropList",
+      "Type": "SmallString",
+      "Description": "A reference to an item drop list",
+      "Options": {
+        "Label": "DropList",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ItemDropList"
+        }
+      }
+    },
+    {
       "Id": "ThrowSpeed",
       "Type": "Float",
       "Description": "The throw speed to use",
@@ -86,6 +114,8 @@
   "Schema": {
     "Once": "Once",
     "Delay": "Delay",
+    "Item": "Item",
+    "DropList": "DropList",
     "ThrowSpeed": "ThrowSpeed",
     "Distance": "Distance",
     "DropSector": "DropSector",

@@ -41,6 +41,20 @@
         "Width": 18,
         "Computable": true
       }
+    },
+    {
+      "Id": "BlockSet",
+      "Type": "SmallString",
+      "Description": "Block set to check against",
+      "Options": {
+        "Label": "BlockSet",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
     }
   ],
   "Schema": {
@@ -51,6 +65,7 @@
       "Node": "SensorVariants",
       "AllowComponentReferences": true
     },
+    "BlockSet": "BlockSet",
     "Type": "BlockType"
   }
 }

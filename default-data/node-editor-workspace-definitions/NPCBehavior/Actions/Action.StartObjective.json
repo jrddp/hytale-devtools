@@ -21,10 +21,25 @@
         "Default": false,
         "Width": 18
       }
+    },
+    {
+      "Id": "Objective",
+      "Type": "SmallString",
+      "Description": "The task to start",
+      "Options": {
+        "Label": "Objective",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ObjectiveAsset"
+        }
+      }
     }
   ],
   "Schema": {
     "Once": "Once",
+    "Objective": "Objective",
     "Type": "StartObjective"
   }
 }

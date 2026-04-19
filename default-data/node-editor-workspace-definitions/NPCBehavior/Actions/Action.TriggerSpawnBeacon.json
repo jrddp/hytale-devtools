@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "BeaconSpawn",
+      "Type": "SmallString",
+      "Description": "The beacon spawn config ID",
+      "Options": {
+        "Label": "BeaconSpawn",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BeaconNPCSpawn"
+        }
+      }
+    },
+    {
       "Id": "Range",
       "Type": "Int",
       "Description": "The distance to search for a beacon to trigger",
@@ -44,6 +58,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "BeaconSpawn": "BeaconSpawn",
     "Range": "Range",
     "TargetSlot": "TargetSlot",
     "Type": "TriggerSpawnBeacon"

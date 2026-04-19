@@ -176,6 +176,21 @@
       }
     },
     {
+      "Id": "Asset",
+      "Type": "SmallString",
+      "Description": "Asset Sheep",
+      "Options": {
+        "Label": "Asset",
+        "Default": "Sheep",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ModelAsset"
+        }
+      }
+    },
+    {
       "Id": "DoubleArray",
       "Type": "List",
       "Description": "DoubleArray [1,2] 0-10",
@@ -209,6 +224,7 @@
     "String": "String",
     "Enum": "Enum",
     "EnumSet": "EnumSet",
+    "Asset": "Asset",
     "DoubleArray": "DoubleArray",
     "StringArray": "StringArray",
     "Type": "Test"

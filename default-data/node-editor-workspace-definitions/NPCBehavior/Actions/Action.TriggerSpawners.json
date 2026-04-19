@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "SpawnMarker",
+      "Type": "SmallString",
+      "Description": "The spawn marker type to trigger",
+      "Options": {
+        "Label": "SpawnMarker",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "SpawnMarker"
+        }
+      }
+    },
+    {
       "Id": "Range",
       "Type": "Float",
       "Description": "The range within which to trigger spawn markers",
@@ -46,6 +60,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "SpawnMarker": "SpawnMarker",
     "Range": "Range",
     "Count": "Count",
     "Type": "TriggerSpawners"

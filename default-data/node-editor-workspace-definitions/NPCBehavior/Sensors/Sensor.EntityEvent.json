@@ -72,6 +72,20 @@
       }
     },
     {
+      "Id": "NPCGroup",
+      "Type": "SmallString",
+      "Description": "NPC group to listen for",
+      "Options": {
+        "Label": "NPCGroup",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
       "Id": "EventType",
       "Type": "Enum",
       "Description": "The event type to listen for",
@@ -105,6 +119,7 @@
     "Range": "Range",
     "SearchType": "SearchType",
     "TargetSlot": "TargetSlot",
+    "NPCGroup": "NPCGroup",
     "EventType": "EventType",
     "FlockOnly": "FlockOnly",
     "Type": "EntityEvent"

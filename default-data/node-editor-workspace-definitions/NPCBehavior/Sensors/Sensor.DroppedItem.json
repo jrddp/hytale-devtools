@@ -67,6 +67,20 @@
       }
     },
     {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match. If omitted, will match any item",
+      "Options": {
+        "Label": "Items",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
       "Id": "Attitudes",
       "Type": "Enum",
       "Description": "Attitudes to match",
@@ -91,6 +105,7 @@
     "Range": "Range",
     "ViewSector": "ViewSector",
     "LineOfSight": "LineOfSight",
+    "Items": "Items",
     "Attitudes": "Attitudes",
     "Type": "DroppedItem"
   }

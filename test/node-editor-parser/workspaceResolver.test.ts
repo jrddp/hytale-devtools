@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -15,9 +17,14 @@ const logger = {
   debug() {},
 };
 
+const tempDirectories: string[] = [];
+
 describe("WorkspaceRuntime", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    for (const directory of tempDirectories.splice(0)) {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   test("resolves workspace context for Windows-style asset paths", () => {
@@ -40,5 +47,165 @@ describe("WorkspaceRuntime", () => {
     expect(workspaceContext).not.toBeNull();
     expect(workspaceContext?.rootMenuName).toBe("HytaleGenerator - Biome");
     expect(workspaceContext?.rootTemplateOrVariantId).toBe("Biome");
+  });
+
+  test("hydrates workspace symbol lookups and schema fallback symbol refs for scalar and list fields", () => {
+    const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "workspace-runtime-test-"));
+    tempDirectories.push(workspaceRoot);
+    const workspacesDir = path.join(workspaceRoot, "workspaces");
+    const supplementsDir = path.join(workspaceRoot, "supplements");
+    const workspaceDir = path.join(workspacesDir, "TestWorkspace");
+    fs.mkdirSync(workspaceDir, { recursive: true });
+    fs.mkdirSync(supplementsDir, { recursive: true });
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "_Workspace.json"),
+      JSON.stringify(
+        {
+          WorkspaceName: "Test Workspace",
+          Roots: {
+            Root: {
+              RootNodeType: "SchemaListFallback",
+              MenuName: "Test Workspace",
+            },
+          },
+          NodeCategories: {
+            General: ["SchemaListFallback", "SchemaStringFallback", "ExplicitSymbolLookup"],
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "SchemaListFallback.json"),
+      JSON.stringify(
+        {
+          Id: "SchemaListFallback",
+          Title: "Schema List Fallback",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "ObjectiveIds",
+              Type: "List",
+              Options: {
+                Label: "ObjectiveIds",
+              },
+            },
+          ],
+          Schema: {
+            ObjectiveIds: "ObjectiveIds",
+            Type: "ObjectiveLineAsset",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "SchemaStringFallback.json"),
+      JSON.stringify(
+        {
+          Id: "SchemaStringFallback",
+          Title: "Schema String Fallback",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "WorldRemovalSoundEventId",
+              Type: "SmallString",
+              Options: {
+                Label: "WorldRemovalSoundEventId",
+              },
+            },
+          ],
+          Schema: {
+            WorldRemovalSoundEventId: "WorldRemovalSoundEventId",
+            Type: "EntityEffect",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "ExplicitSymbolLookup.json"),
+      JSON.stringify(
+        {
+          Id: "ExplicitSymbolLookup",
+          Title: "Explicit Symbol Lookup",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "ObjectiveIds",
+              Type: "List",
+              Options: {
+                Label: "ObjectiveIds",
+                SymbolLookup: {
+                  indexKind: "registeredAssets",
+                  key: "Item",
+                },
+              },
+            },
+          ],
+          Schema: {
+            ObjectiveIds: "ObjectiveIds",
+            Type: "ObjectiveLineAsset",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(supplementsDir, "TestWorkspace.json"),
+      JSON.stringify(
+        {
+          SchemaListFallback: {
+            $ref: "ObjectiveLineAsset.json#",
+          },
+          SchemaStringFallback: {
+            $ref: "EntityEffect.json#",
+          },
+          ExplicitSymbolLookup: {
+            $ref: "ObjectiveLineAsset.json#",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    const schemaRuntime = new SchemaRuntime(schemaDir, logger);
+    const workspaceRuntime = new WorkspaceRuntime(workspacesDir, schemaRuntime, logger, supplementsDir);
+    const workspace = workspaceRuntime.nodeEditorWorkspaces["Test Workspace"];
+    if (!workspace) {
+      throw new Error("Expected test workspace to load.");
+    }
+
+    expect(
+      workspace.nodeTemplatesById.SchemaListFallback.fieldsBySchemaKey.ObjectiveIds.symbolLookup,
+    ).toEqual({
+      indexKind: "registeredAssets",
+      key: "ObjectiveAsset",
+    });
+
+    expect(
+      workspace.nodeTemplatesById.SchemaStringFallback.fieldsBySchemaKey.WorldRemovalSoundEventId
+        .symbolLookup,
+    ).toEqual({
+      indexKind: "registeredAssets",
+      key: "SoundEvent",
+    });
+
+    expect(
+      workspace.nodeTemplatesById.ExplicitSymbolLookup.fieldsBySchemaKey.ObjectiveIds.symbolLookup,
+    ).toEqual({
+      indexKind: "registeredAssets",
+      key: "Item",
+    });
   });
 });

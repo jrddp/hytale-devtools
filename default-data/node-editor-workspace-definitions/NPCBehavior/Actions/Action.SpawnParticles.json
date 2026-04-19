@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "ParticleSystem",
+      "Type": "SmallString",
+      "Description": "Particle system to spawn",
+      "Options": {
+        "Label": "ParticleSystem",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ParticleSystem"
+        }
+      }
+    },
+    {
       "Id": "Range",
       "Type": "Float",
       "Description": "Maximum visibility range",
@@ -67,6 +81,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "ParticleSystem": "ParticleSystem",
     "Range": "Range",
     "Offset": "Offset",
     "TargetNodeName": "TargetNodeName",

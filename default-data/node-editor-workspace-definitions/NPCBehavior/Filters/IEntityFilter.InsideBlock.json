@@ -23,10 +23,25 @@
         "Width": 18,
         "Computable": true
       }
+    },
+    {
+      "Id": "BlockSet",
+      "Type": "SmallString",
+      "Description": "The BlockSet to match against",
+      "Options": {
+        "Label": "BlockSet",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
     }
   ],
   "Schema": {
     "Enabled": "Enabled",
+    "BlockSet": "BlockSet",
     "Type": "InsideBlock"
   }
 }

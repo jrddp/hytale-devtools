@@ -56,6 +56,20 @@
       }
     },
     {
+      "Id": "Blocks",
+      "Type": "SmallString",
+      "Description": "The set of blocks to search for",
+      "Options": {
+        "Label": "Blocks",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
+    },
+    {
       "Id": "Random",
       "Type": "Bool",
       "Description": "Whether to pick at random from within the matched blocks or pick the closest",
@@ -83,6 +97,7 @@
     "Enabled": "Enabled",
     "Range": "Range",
     "MaxHeight": "MaxHeight",
+    "Blocks": "Blocks",
     "Random": "Random",
     "Reserve": "Reserve",
     "Type": "Block"

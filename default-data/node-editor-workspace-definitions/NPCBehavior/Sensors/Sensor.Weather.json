@@ -33,11 +33,26 @@
         "Width": 18,
         "Computable": true
       }
+    },
+    {
+      "Id": "Weathers",
+      "Type": "List",
+      "Description": "The glob patterns to match against weather",
+      "Options": {
+        "Label": "Weathers",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Weather"
+        }
+      }
     }
   ],
   "Schema": {
     "Once": "Once",
     "Enabled": "Enabled",
+    "Weathers": "Weathers",
     "Type": "Weather"
   }
 }

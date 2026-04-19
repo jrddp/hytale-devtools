@@ -65,6 +65,20 @@
       }
     },
     {
+      "Id": "Blocks",
+      "Type": "SmallString",
+      "Description": "The blockset to search for",
+      "Options": {
+        "Label": "Blocks",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
+    },
+    {
       "Id": "MinRetestAngle",
       "Type": "Float",
       "Description": "The minimum change in NPC rotation before rays stop being throttled",
@@ -104,6 +118,7 @@
     "Name": "Name",
     "Angle": "Angle",
     "Range": "Range",
+    "Blocks": "Blocks",
     "MinRetestAngle": "MinRetestAngle",
     "MinRetestMove": "MinRetestMove",
     "ThrottleTime": "ThrottleTime",

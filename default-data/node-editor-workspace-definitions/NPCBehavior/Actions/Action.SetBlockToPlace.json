@@ -21,10 +21,25 @@
         "Default": false,
         "Width": 18
       }
+    },
+    {
+      "Id": "Block",
+      "Type": "SmallString",
+      "Description": "The block item type",
+      "Options": {
+        "Label": "Block",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
     }
   ],
   "Schema": {
     "Once": "Once",
+    "Block": "Block",
     "Type": "SetBlockToPlace"
   }
 }

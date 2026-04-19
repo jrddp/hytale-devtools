@@ -53,6 +53,32 @@
         "Width": 240,
         "Computable": true
       }
+    },
+    {
+      "Id": "IncludeGroups",
+      "Type": "List",
+      "Description": "Match for NPCs in these groups",
+      "Options": {
+        "Label": "IncludeGroups",
+        "Width": 240,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
+      "Id": "ExcludeGroups",
+      "Type": "List",
+      "Description": "Never match NPCs in these groups",
+      "Options": {
+        "Label": "ExcludeGroups",
+        "Width": 240,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
     }
   ],
   "Schema": {
@@ -60,6 +86,8 @@
     "Enabled": "Enabled",
     "Count": "Count",
     "Range": "Range",
+    "IncludeGroups": "IncludeGroups",
+    "ExcludeGroups": "ExcludeGroups",
     "Type": "Count"
   }
 }

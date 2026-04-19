@@ -21,10 +21,25 @@
         "Default": false,
         "Width": 18
       }
+    },
+    {
+      "Id": "Shop",
+      "Type": "SmallString",
+      "Description": "The barter shop to open",
+      "Options": {
+        "Label": "Shop",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BarterShopAsset"
+        }
+      }
     }
   ],
   "Schema": {
     "Once": "Once",
+    "Shop": "Shop",
     "Type": "OpenBarterShop"
   }
 }

@@ -18,6 +18,8 @@ import {
   type NodeSchemaSerializationType,
   type NodeTemplate,
 } from "../shared/node-editor/workspaceTypes";
+import type { Field, StringField } from "../shared/fieldTypes";
+import type { IndexReference } from "../shared/indexTypes";
 import { isObject } from "../shared/typeUtils";
 import {
   type NodeContentDefinition,
@@ -405,8 +407,8 @@ export class WorkspaceRuntime {
 
           // hydrate with schema-sourced data
           const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
-          if (schemaField?.type === "string") {
-            nodeField.symbolLookup = schemaField.symbolRef;
+          if (nodeField.symbolLookup === undefined) {
+            nodeField.symbolLookup = this.getSchemaFieldSymbolLookup(schemaField);
           }
           if (schemaField?.type === "color") {
             nodeField.type = "color";
@@ -557,6 +559,9 @@ export class WorkspaceRuntime {
         isImplicit: true,
         inputWidth: content.Options?.Width,
         overrideAutocompleteValues,
+        symbolLookup: content.Options?.SymbolLookup
+          ? this.cloneIndexReference(content.Options.SymbolLookup)
+          : undefined,
         stateAutocompleteKind: content.Options?.StateAutocompleteKind,
         subfields: content.Options?.Fields
           ? this.fieldsFromContentDefinitions(content.Options.Fields)
@@ -593,5 +598,41 @@ export class WorkspaceRuntime {
         this.logger.warn(`Unknown node template content type: ${type}. Defaulting to string.`);
         return "string";
     }
+  }
+
+  private getSchemaFieldSymbolLookup(schemaField: Field | undefined): IndexReference | undefined {
+    if (!schemaField) {
+      return undefined;
+    }
+
+    if (schemaField.type === "string") {
+      return schemaField.symbolRef ? this.cloneIndexReference(schemaField.symbolRef) : undefined;
+    }
+
+    if (
+      schemaField.type === "array" &&
+      !Array.isArray(schemaField.items) &&
+      schemaField.items.type === "string"
+    ) {
+      const itemField = schemaField.items as StringField;
+      return itemField.symbolRef ? this.cloneIndexReference(itemField.symbolRef) : undefined;
+    }
+
+    return undefined;
+  }
+
+  private cloneIndexReference(reference: IndexReference): IndexReference {
+    if (reference.indexKind === "commonAssetPaths") {
+      return {
+        ...reference,
+        folders: [...reference.folders],
+        filter: reference.filter ? { ...reference.filter } : undefined,
+      };
+    }
+
+    return {
+      ...reference,
+      filter: reference.filter ? { ...reference.filter } : undefined,
+    };
   }
 }

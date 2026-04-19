@@ -94,4 +94,84 @@ describe("NPC node workspace generator builders", () => {
       },
     });
   });
+
+  test("buildContentField includes asset-backed action fields instead of dropping them", () => {
+    const actionAppearanceDescriptor = findDescriptorOrThrow("Action", "Appearance");
+    const appearanceAttribute = actionAppearanceDescriptor.Attributes?.find(
+      entry => entry.Name === "Appearance",
+    );
+    if (!appearanceAttribute) {
+      throw new Error("Attribute Appearance was not found.");
+    }
+
+    expect(buildContentField(actionAppearanceDescriptor, appearanceAttribute)).toMatchObject({
+      Id: "Appearance",
+      Type: "SmallString",
+      Options: {
+        Label: "Appearance",
+        SymbolLookup: {
+          indexKind: "registeredAssets",
+          key: "ModelAsset",
+        },
+        Width: 220,
+      },
+    });
+  });
+
+  test("buildContentField includes asset-array fields instead of dropping them", () => {
+    const sensorDroppedItemDescriptor = findDescriptorOrThrow("Sensor", "DroppedItem");
+    const itemsAttribute = sensorDroppedItemDescriptor.Attributes?.find(entry => entry.Name === "Items");
+    if (!itemsAttribute) {
+      throw new Error("Attribute Items was not found.");
+    }
+
+    expect(buildContentField(sensorDroppedItemDescriptor, itemsAttribute)).toMatchObject({
+      Id: "Items",
+      Type: "List",
+      Options: {
+        Label: "Items",
+        SymbolLookup: {
+          indexKind: "registeredAssets",
+          key: "Item",
+        },
+        Width: 240,
+      },
+    });
+  });
+
+  test("buildContentField emits symbol lookups for non-obvious NPC descriptor domains", () => {
+    const sensorCountDescriptor = findDescriptorOrThrow("Sensor", "Count");
+    const includeGroupsAttribute = sensorCountDescriptor.Attributes?.find(
+      entry => entry.Name === "IncludeGroups",
+    );
+    if (!includeGroupsAttribute) {
+      throw new Error("Attribute IncludeGroups was not found.");
+    }
+
+    const actionAttackDescriptor = findDescriptorOrThrow("Action", "Attack");
+    const attackAttribute = actionAttackDescriptor.Attributes?.find(entry => entry.Name === "Attack");
+    if (!attackAttribute) {
+      throw new Error("Attribute Attack was not found.");
+    }
+
+    expect(buildContentField(sensorCountDescriptor, includeGroupsAttribute)).toMatchObject({
+      Id: "IncludeGroups",
+      Options: {
+        SymbolLookup: {
+          indexKind: "registeredAssets",
+          key: "NPCGroup",
+        },
+      },
+    });
+
+    expect(buildContentField(actionAttackDescriptor, attackAttribute)).toMatchObject({
+      Id: "Attack",
+      Options: {
+        SymbolLookup: {
+          indexKind: "registeredAssets",
+          key: "RootInteraction",
+        },
+      },
+    });
+  });
 });

@@ -43,6 +43,20 @@
       }
     },
     {
+      "Id": "TargetGroups",
+      "Type": "List",
+      "Description": "The target group(s) to send the message to",
+      "Options": {
+        "Label": "TargetGroups",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
       "Id": "SendTargetSlot",
       "Type": "SmallString",
       "Description": "The target slot of the marked entity to send. Omit to send own position",
@@ -77,6 +91,7 @@
     "Once": "Once",
     "Message": "Message",
     "Range": "Range",
+    "TargetGroups": "TargetGroups",
     "SendTargetSlot": "SendTargetSlot",
     "ExpirationTime": "ExpirationTime",
     "SendCount": "SendCount",

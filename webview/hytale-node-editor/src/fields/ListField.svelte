@@ -4,7 +4,15 @@
   import { isObject } from "@node-editor/node-editor/utils/valueUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
+  import type { IndexReference } from "@shared/indexTypes";
+  import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
+  import {
+    buildListItemInputId,
+    getListAutocompleteValues,
+    shouldRequestListAutocomplete,
+  } from "./listFieldUtils";
 
   // TODO lists can technically be types other than string. definition requires investigation.
   let {
@@ -13,11 +21,16 @@
     description,
     initialValue,
     inputWidth,
+    overrideAutocompleteValues,
+    symbolLookup,
     titleActions,
     onconfirm,
   }: FieldProps<unknown[]> & {
+    overrideAutocompleteValues?: string[];
+    symbolLookup?: IndexReference;
     titleActions?: Snippet;
   } = $props();
+  const workspace = useNodeEditorSession();
 
   const DEFAULT_ITEM_WIDTH = 160;
 
@@ -98,6 +111,34 @@
       event.currentTarget.blur();
     }
   }
+
+  function getAutocompleteOptions(itemInputId: string) {
+    return getListAutocompleteValues({
+      itemInputId,
+      overrideAutocompleteValues,
+      symbolLookup,
+      autocompleteField: workspace.autocompleteField,
+      autocompleteValues: workspace.autocompleteValues,
+    }).map(value => ({ value }));
+  }
+
+  function requestAutocomplete(itemInputId: string) {
+    if (!shouldRequestListAutocomplete(overrideAutocompleteValues, symbolLookup) || !symbolLookup) {
+      return;
+    }
+
+    workspace.postMessageToHost({
+      type: "autocompleteRequest",
+      symbolLookup,
+      fieldId: itemInputId,
+    });
+  }
+
+  function handleStringEnterCommit(input: HTMLInputElement) {
+    if (!focusNextEditableInNode(input)) {
+      input.blur();
+    }
+  }
 </script>
 
 <FieldLayout {inputId} {label} {description} align="start" {titleActions}>
@@ -152,13 +193,17 @@
                   {...noMousePropogation}
                 ></textarea>
               {:else}
-                <input
-                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  type="text"
-                  value={typeof item === "string" ? item : String(item ?? "")}
-                  onchange={event => updateTextItem(index, event.currentTarget.value)}
-                  onkeydown={handleEnterNavigation}
-                  {...noMousePropogation}
+                <SingleLineAutocompleteInput
+                  inputId={buildListItemInputId(inputId, index)}
+                  initialValue={typeof item === "string" ? item : String(item ?? "")}
+                  autocompleteOptions={getAutocompleteOptions(buildListItemInputId(inputId, index))}
+                  inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
+                  listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
+                  optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
+                  stopPointerPropagation
+                  onfocus={() => requestAutocomplete(buildListItemInputId(inputId, index))}
+                  oncommit={nextValue => updateTextItem(index, nextValue)}
+                  afterEnterPressed={handleStringEnterCommit}
                 />
               {/if}
             </div>

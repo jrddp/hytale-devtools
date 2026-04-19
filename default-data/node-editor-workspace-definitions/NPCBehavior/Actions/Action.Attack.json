@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "Attack",
+      "Type": "SmallString",
+      "Description": "Attack pattern to use",
+      "Options": {
+        "Label": "Attack",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "RootInteraction"
+        }
+      }
+    },
+    {
       "Id": "AttackType",
       "Type": "Enum",
       "Description": "The interaction type to use",
@@ -159,6 +173,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "Attack": "Attack",
     "AttackType": "AttackType",
     "ChargeFor": "ChargeFor",
     "AttackPauseRange": "AttackPauseRange",

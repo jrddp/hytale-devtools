@@ -25,6 +25,20 @@
       }
     },
     {
+      "Id": "Sequence",
+      "Type": "SmallString",
+      "Description": "The attack ID to check for.",
+      "Options": {
+        "Label": "Sequence",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "RootInteraction"
+        }
+      }
+    },
+    {
       "Id": "TimeElapsedRange",
       "Type": "List",
       "Description": "The acceptable elapsed time range in seconds.",
@@ -62,6 +76,7 @@
   ],
   "Schema": {
     "Enabled": "Enabled",
+    "Sequence": "Sequence",
     "TimeElapsedRange": "TimeElapsedRange",
     "Mode": "Mode",
     "Type": "Combat"

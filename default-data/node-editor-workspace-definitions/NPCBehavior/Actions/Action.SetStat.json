@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "Stat",
+      "Type": "SmallString",
+      "Description": "The entity stat to affect.",
+      "Options": {
+        "Label": "Stat",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "EntityStatType"
+        }
+      }
+    },
+    {
       "Id": "Value",
       "Type": "Float",
       "Description": "The value to set the stat to.",
@@ -46,6 +60,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "Stat": "Stat",
     "Value": "Value",
     "Add": "Add",
     "Type": "SetStat"

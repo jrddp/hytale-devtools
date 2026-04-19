@@ -21,10 +21,25 @@
         "Default": false,
         "Width": 18
       }
+    },
+    {
+      "Id": "SoundEventId",
+      "Type": "SmallString",
+      "Description": "The sound event to play",
+      "Options": {
+        "Label": "SoundEventId",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "SoundEvent"
+        }
+      }
     }
   ],
   "Schema": {
     "Once": "Once",
+    "SoundEventId": "SoundEventId",
     "Type": "PlaySound"
   }
 }

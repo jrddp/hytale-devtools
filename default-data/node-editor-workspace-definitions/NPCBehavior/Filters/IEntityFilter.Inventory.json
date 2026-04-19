@@ -25,6 +25,20 @@
       }
     },
     {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match",
+      "Options": {
+        "Label": "Items",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
       "Id": "CountRange",
       "Type": "List",
       "Description": "The range of number of items that need to match the patterns",
@@ -55,6 +69,7 @@
   ],
   "Schema": {
     "Enabled": "Enabled",
+    "Items": "Items",
     "CountRange": "CountRange",
     "FreeSlotRange": "FreeSlotRange",
     "Type": "Inventory"

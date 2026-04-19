@@ -56,6 +56,20 @@
       }
     },
     {
+      "Id": "Item",
+      "Type": "SmallString",
+      "Description": "Item type to add, remove, or equip",
+      "Options": {
+        "Label": "Item",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
       "Id": "UseTarget",
       "Type": "Bool",
       "Description": "Use the sensor-provided target for the action",
@@ -82,6 +96,7 @@
     "Once": "Once",
     "Operation": "Operation",
     "Count": "Count",
+    "Item": "Item",
     "UseTarget": "UseTarget",
     "Slot": "Slot",
     "Type": "Inventory"

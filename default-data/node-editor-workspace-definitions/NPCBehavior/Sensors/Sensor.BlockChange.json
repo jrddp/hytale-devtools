@@ -72,6 +72,20 @@
       }
     },
     {
+      "Id": "BlockSet",
+      "Type": "SmallString",
+      "Description": "Block set to listen for",
+      "Options": {
+        "Label": "BlockSet",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
+    },
+    {
       "Id": "EventType",
       "Type": "Enum",
       "Description": "The event type to listen for",
@@ -94,6 +108,7 @@
     "Range": "Range",
     "SearchType": "SearchType",
     "TargetSlot": "TargetSlot",
+    "BlockSet": "BlockSet",
     "EventType": "EventType",
     "Type": "BlockChange"
   }

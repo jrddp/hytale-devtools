@@ -21,10 +21,24 @@
         "Default": false,
         "Width": 18
       }
+    },
+    {
+      "Id": "Appearance",
+      "Type": "SmallString",
+      "Description": "Model name to use",
+      "Options": {
+        "Label": "Appearance",
+        "Width": 220,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ModelAsset"
+        }
+      }
     }
   ],
   "Schema": {
     "Once": "Once",
+    "Appearance": "Appearance",
     "Type": "Appearance"
   }
 }

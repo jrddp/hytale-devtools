@@ -5,6 +5,7 @@ import {
   type NodeEditorWorkspaceRootDefinition,
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
+import type { IndexReference } from "../shared/indexTypes";
 import type { NpcStateAutocompleteKind } from "../shared/npc-role-editor/stateAutocomplete";
 
 // definition as its stored in workspace node jsons
@@ -107,6 +108,7 @@ export interface NodeContentDefinition {
     UseUUID?: boolean;
     DefaultValue?: string | number | boolean;
     Computable?: boolean;
+    SymbolLookup?: IndexReference;
     StateAutocompleteKind?: NpcStateAutocompleteKind;
   };
 }

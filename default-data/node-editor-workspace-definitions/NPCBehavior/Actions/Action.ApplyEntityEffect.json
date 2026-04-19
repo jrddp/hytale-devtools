@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "EntityEffect",
+      "Type": "SmallString",
+      "Description": "The entity effect to apply",
+      "Options": {
+        "Label": "EntityEffect",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "EntityEffect"
+        }
+      }
+    },
+    {
       "Id": "UseTarget",
       "Type": "Bool",
       "Description": "Use the sensor-provided target for the action, self otherwise",
@@ -36,6 +50,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "EntityEffect": "EntityEffect",
     "UseTarget": "UseTarget",
     "Type": "ApplyEntityEffect"
   }

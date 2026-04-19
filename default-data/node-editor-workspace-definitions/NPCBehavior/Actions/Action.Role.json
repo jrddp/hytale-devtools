@@ -23,6 +23,20 @@
       }
     },
     {
+      "Id": "Role",
+      "Type": "SmallString",
+      "Description": "The name of the Role to change to",
+      "Options": {
+        "Label": "Role",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCRole"
+        }
+      }
+    },
+    {
       "Id": "ChangeAppearance",
       "Type": "Bool",
       "Description": "Whether the appearance of the new Role should be used",
@@ -46,6 +60,7 @@
   ],
   "Schema": {
     "Once": "Once",
+    "Role": "Role",
     "ChangeAppearance": "ChangeAppearance",
     "State": "State",
     "Type": "Role"

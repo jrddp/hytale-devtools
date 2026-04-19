@@ -2,6 +2,7 @@ import type {
   NpcDescriptor,
   NpcDescriptorAttribute,
 } from "../../../src/shared/npc-role-editor/descriptorTypes";
+import { resolveNpcDescriptorAssetSymbolLookup } from "../../../src/shared/npc-role-editor/assetSymbolLookup";
 import type { NpcStateAutocompleteKind } from "../../../src/shared/npc-role-editor/stateAutocomplete";
 import { getNpcBehaviorChildDomain } from "../../../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
 import type { NodeContentDefinition } from "../../../src/node-editor/workspaceDefinitionTypes";
@@ -40,6 +41,10 @@ export function buildContentField(
   }
   if (attribute.Computable === true) {
     options.Computable = true;
+  }
+  const symbolLookup = resolveNpcDescriptorAssetSymbolLookup(attribute);
+  if (symbolLookup) {
+    options.SymbolLookup = symbolLookup;
   }
   const stateAutocompleteKind = resolveNpcNodeFieldStateAutocompleteKind(descriptor, attribute);
   if (stateAutocompleteKind) {
@@ -118,9 +123,12 @@ function resolveFieldType(
   switch (attribute.Type) {
     case "Boolean":
       return "Bool";
+    case "Asset":
     case "Flag":
     case "String":
       return "SmallString";
+    case "AssetArray":
+      return "List";
     case "Float":
     case "Double":
       return "Float";
@@ -177,6 +185,7 @@ function parseDefaultValue(
       return Number.isFinite(numericValue) ? numericValue : undefined;
     }
     case "Array":
+    case "AssetArray":
       try {
         const parsed = JSON.parse(trimmed) as unknown;
         return Array.isArray(parsed) ? parsed : undefined;

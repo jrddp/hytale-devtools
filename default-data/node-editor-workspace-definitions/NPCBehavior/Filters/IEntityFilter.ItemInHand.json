@@ -25,6 +25,20 @@
       }
     },
     {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match",
+      "Options": {
+        "Label": "Items",
+        "Width": 240,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
       "Id": "Hand",
       "Type": "Enum",
       "Description": "Which hand to check",
@@ -43,6 +57,7 @@
   ],
   "Schema": {
     "Enabled": "Enabled",
+    "Items": "Items",
     "Hand": "Hand",
     "Type": "ItemInHand"
   }

@@ -158,6 +158,8 @@
     {description}
     {inputWidth}
     initialValue={value as string[]}
+    {overrideAutocompleteValues}
+    {symbolLookup}
     titleActions={computeToggle}
     {onconfirm}
   />

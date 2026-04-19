@@ -108,6 +108,20 @@
       }
     },
     {
+      "Id": "Flock",
+      "Type": "SmallString",
+      "Description": "Flock definition to spawn",
+      "Options": {
+        "Label": "Flock",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "FlockAsset"
+        }
+      }
+    },
+    {
       "Id": "LaunchAtTarget",
       "Type": "Bool",
       "Description": "Launch the spawned NPC at target position/entity",
@@ -181,6 +195,7 @@
     "CountRange": "CountRange",
     "DelayRange": "DelayRange",
     "Kind": "Kind",
+    "Flock": "Flock",
     "LaunchAtTarget": "LaunchAtTarget",
     "PitchHigh": "PitchHigh",
     "LaunchSpread": "LaunchSpread",

@@ -3,6 +3,7 @@ import type {
   NpcDescriptorAttribute,
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
+import { resolveNpcDescriptorAssetSymbolLookup } from "@shared/npc-role-editor/assetSymbolLookup";
 import type { IndexReference } from "@shared/indexTypes";
 import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
 import { isNpcComputeJson, isRecord } from "./parsing/documentTypes";
@@ -16,17 +17,6 @@ import {
   normalizeTypeHint,
   toOptionalDisplayString,
 } from "./propertyFieldUtilities";
-
-const DOMAIN_TO_REGISTERED_ASSET_KEY: Record<string, string> = {
-  Model: "ModelAsset",
-  Item: "Item",
-  Role: "NPCRole",
-  Interaction: "RootInteraction",
-  BlockSet: "BlockSet",
-  ItemDropList: "ItemDropList",
-  AttitudeGroup: "AttitudeGroup",
-  ItemAttitudeGroup: "ItemAttitudeGroup",
-};
 
 const CONTENT_WRAPPER_KEYS = new Set([
   "Reference",
@@ -940,23 +930,7 @@ function parseDescriptorDefaultValue(attribute: NpcDescriptorAttribute): unknown
 function resolveFieldSymbolRef(
   descriptorAttribute?: NpcDescriptorAttribute,
 ): IndexReference | undefined {
-  if (!descriptorAttribute || typeof descriptorAttribute.Domain !== "string") {
-    return undefined;
-  }
-
-  const registeredAssetsKey = DOMAIN_TO_REGISTERED_ASSET_KEY[descriptorAttribute.Domain];
-  if (!registeredAssetsKey) {
-    return undefined;
-  }
-
-  if (descriptorAttribute.Type !== "Asset" && descriptorAttribute.Type !== "AssetArray") {
-    return undefined;
-  }
-
-  return {
-    indexKind: "registeredAssets",
-    key: registeredAssetsKey,
-  };
+  return resolveNpcDescriptorAssetSymbolLookup(descriptorAttribute);
 }
 
 function parseStaticSuggestions(
