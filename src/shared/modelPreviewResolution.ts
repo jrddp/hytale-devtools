@@ -1,8 +1,15 @@
 import type { AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import { stripBomText } from "./fileUtils";
-import type { ResolvedModelPreview } from "./modelPreviewTypes";
+import type {
+  ResolvedModelPreview,
+  ResolvedModelPreviewAttachment,
+} from "./modelPreviewTypes";
 
 export type ModelAssetDocument = Record<string, unknown>;
+type ModelAttachmentReference = {
+  Model: string;
+  Texture?: string;
+};
 
 type ResolvedAnimationPreview = Pick<
   ResolvedModelPreview,
@@ -35,18 +42,25 @@ export async function resolveModelPreviewFromModelAsset(
   const assetChain = await collectModelAssetChain(modelAsset, loadParentModelAsset);
   const modelPath = findNearestStringValue(assetChain, "Model");
   const texturePath = findNearestStringValue(assetChain, "Texture");
-  const preview = await resolveModelPreviewFromPaths(
-    modelPath,
-    resolveTexturePathWithModelFallback(texturePath, modelPath),
-    runtime,
-  );
+  const [preview, attachments, resolvedAnimation] = await Promise.all([
+    resolveModelPreviewFromPaths(
+      modelPath,
+      resolveTexturePathWithModelFallback(texturePath, modelPath),
+      runtime,
+    ),
+    resolveDefaultAttachmentPreviews(assetChain, runtime),
+    resolveDefaultAnimationPreview(
+      assetChain,
+      defaultAnimationSetId,
+      runtime,
+    ),
+  ]);
 
-  const resolvedAnimation = await resolveDefaultAnimationPreview(
-    assetChain,
-    defaultAnimationSetId,
-    runtime,
-  );
-  return resolvedAnimation ? { ...preview, ...resolvedAnimation } : preview;
+  const attachmentMetadata = attachments.length > 0 ? { attachments } : undefined;
+  const previewWithAttachments = attachmentMetadata ? { ...preview, ...attachmentMetadata } : preview;
+  return resolvedAnimation
+    ? { ...previewWithAttachments, ...resolvedAnimation }
+    : previewWithAttachments;
 }
 
 export async function resolveModelAnimationSetIdsFromModelAsset(
@@ -107,6 +121,71 @@ function findNearestStringValue(
   }
 
   return undefined;
+}
+
+async function resolveDefaultAttachmentPreviews(
+  assetChain: ModelAssetDocument[],
+  runtime: AssetCacheRuntime,
+): Promise<ResolvedModelPreviewAttachment[]> {
+  const attachmentReferences = findNearestDefaultAttachments(assetChain);
+  if (!attachmentReferences?.length) {
+    return [];
+  }
+
+  const resolvedAttachments = await Promise.all(
+    attachmentReferences.map(async attachment => {
+      const preview = await resolveModelPreviewFromPaths(
+        attachment.Model,
+        resolveTexturePathWithModelFallback(attachment.Texture, attachment.Model),
+        runtime,
+      );
+
+      return preview.model
+        ? {
+            model: preview.model,
+            texture: preview.texture,
+          }
+        : undefined;
+    }),
+  );
+
+  const attachments: ResolvedModelPreviewAttachment[] = [];
+  for (const attachment of resolvedAttachments) {
+    if (attachment) {
+      attachments.push(attachment);
+    }
+  }
+
+  return attachments;
+}
+
+function findNearestDefaultAttachments(
+  assetChain: ModelAssetDocument[],
+): ModelAttachmentReference[] | undefined {
+  for (const asset of assetChain) {
+    if (!Array.isArray(asset.DefaultAttachments)) {
+      continue;
+    }
+
+    const attachments = asset.DefaultAttachments
+      .map(parseModelAttachmentReference)
+      .filter((attachment): attachment is ModelAttachmentReference => attachment !== undefined);
+
+    return attachments;
+  }
+
+  return undefined;
+}
+
+function parseModelAttachmentReference(value: unknown): ModelAttachmentReference | undefined {
+  const record = asRecord(value);
+  const modelPath = toNonEmptyString(record?.Model);
+  if (!modelPath) {
+    return undefined;
+  }
+
+  const texturePath = toNonEmptyString(record?.Texture);
+  return texturePath ? { Model: modelPath, Texture: texturePath } : { Model: modelPath };
 }
 
 async function resolveDefaultAnimationPreview(

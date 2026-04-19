@@ -141,7 +141,16 @@ export class Workspace {
 
   /** @param overrides - record of pointer to override value, e.g. overriding "Icon" with a specific preview. */
   requestResolvedPreview(overrides: Partial<Record<PreviewPointer, string | undefined>> = {}) {
-    const request = buildPreviewRequest(this.assetDefinition?.preview, this.documentRootField, overrides);
+    const serializedDocument = this.documentRootField
+      ? serializeDocument($state.snapshot(this.documentRootField))
+      : null;
+    const request = buildPreviewRequest(
+      this.assetDefinition?.preview,
+      this.assetDefinition?.title,
+      this.documentRootField,
+      serializedDocument,
+      overrides,
+    );
     if (!request) {
       return;
     }

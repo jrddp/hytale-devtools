@@ -3,6 +3,7 @@ export {
   buildBlockymodelObject3D,
   buildBlockymodelScene,
 } from "./buildBlockymodelObject";
+export { buildCompositeBlockymodelScene } from "./buildCompositeBlockymodelScene";
 export { createBlockyanimController } from "./blockyanimPlayer";
 export { parseBlockyanimFile } from "./parseBlockyanim";
 export type {

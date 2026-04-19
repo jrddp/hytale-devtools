@@ -1,7 +1,13 @@
+export type ResolvedModelPreviewAttachment = {
+  model?: Record<string, unknown>;
+  texture?: number[];
+};
+
 export type ResolvedModelPreview = {
   type: "Model";
   model?: Record<string, unknown>;
   texture?: number[];
+  attachments?: ResolvedModelPreviewAttachment[];
   animation?: Record<string, unknown>;
   animationSpeed?: number;
   animationLooping?: boolean;
@@ -18,4 +24,5 @@ export type ModelPreviewState =
 export type ModelPreviewRequest = {
   modelPath?: string;
   texturePath?: string;
+  modelAsset?: Record<string, unknown>;
 };

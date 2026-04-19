@@ -360,6 +360,14 @@ async function resolvePreviewRequest(
     case "Item":
       return await resolveItemPreview(request.iconPath, runtime);
     case "Model":
+      if (isRecord(request.modelAsset)) {
+        return await resolveModelPreviewFromModelAsset(
+          request.modelAsset,
+          runtime,
+          async parentName => await loadModelAssetByName(parentName, runtime),
+        );
+      }
+
       return await resolveModelPreviewFromPaths(
         request.modelPath,
         resolveTexturePathWithModelFallback(request.texturePath, request.modelPath),

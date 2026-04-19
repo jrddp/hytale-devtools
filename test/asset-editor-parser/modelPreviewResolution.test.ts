@@ -203,6 +203,87 @@ describe("shared ModelAsset preview resolution", () => {
 
     expect(animationIds).toEqual(["Attack", "Hurt", "Idle"]);
   });
+
+  test("inherits the nearest default attachments and falls back attachment textures from model paths", async () => {
+    const runtime = createRuntime(
+      {
+        "Common/Models/Base.blockymodel": jsonAsset({ name: "BaseModel" }),
+        "Common/Attachments/Child.blockymodel": jsonAsset({ name: "ChildAttachment" }),
+      },
+      {
+        "Common/Attachments/Child.png": [4, 5, 6],
+      },
+    );
+
+    const preview = await resolveModelPreviewFromModelAsset(
+      {
+        Model: "Common/Models/Base.blockymodel",
+        Parent: "Parent",
+      },
+      runtime,
+      async assetName =>
+        assetName === "Parent"
+          ? {
+              DefaultAttachments: [
+                {
+                  Model: "Common/Attachments/Child.blockymodel",
+                },
+              ],
+            }
+          : undefined,
+    );
+
+    expect(preview.attachments).toEqual([
+      {
+        model: { name: "ChildAttachment" },
+        texture: [4, 5, 6],
+      },
+    ]);
+  });
+
+  test("does not merge parent default attachments when the child overrides them", async () => {
+    const runtime = createRuntime(
+      {
+        "Common/Models/Base.blockymodel": jsonAsset({ name: "BaseModel" }),
+        "Common/Attachments/Child.blockymodel": jsonAsset({ name: "ChildAttachment" }),
+        "Common/Attachments/Parent.blockymodel": jsonAsset({ name: "ParentAttachment" }),
+      },
+      {
+        "Common/Attachments/Child.png": [7, 8],
+        "Common/Attachments/Parent.png": [9, 9],
+      },
+    );
+
+    const preview = await resolveModelPreviewFromModelAsset(
+      {
+        Model: "Common/Models/Base.blockymodel",
+        Parent: "Parent",
+        DefaultAttachments: [
+          {
+            Model: "Common/Attachments/Child.blockymodel",
+          },
+        ],
+      },
+      runtime,
+      async assetName =>
+        assetName === "Parent"
+          ? {
+              DefaultAttachments: [
+                {
+                  Model: "Common/Attachments/Parent.blockymodel",
+                },
+              ],
+            }
+          : undefined,
+    );
+
+    expect(preview.attachments).toEqual([
+      {
+        model: { name: "ChildAttachment" },
+        texture: [7, 8],
+      },
+    ]);
+  });
 });
 
 function createRuntime(

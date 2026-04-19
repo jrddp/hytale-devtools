@@ -286,6 +286,10 @@ function applyBindingAnimation(
   textureSize: BlockymodelAnimationRig["textureSize"],
   loopingOverride: boolean | undefined,
 ): void {
+  if (binding.isPiece) {
+    return;
+  }
+
   const nodeAnimation = animation.nodeAnimations[binding.nodeName];
   if (!nodeAnimation) {
     return;

@@ -23,6 +23,10 @@ export interface BuiltBlockymodelScene {
   animationRig: BlockymodelAnimationRig;
 }
 
+interface BuildBlockymodelSceneOptions {
+  isAttachment?: boolean;
+}
+
 function toVector3(value: Partial<BlockymodelVector3> | undefined, fallback = 0): BlockymodelVector3 {
   return {
     x: typeof value?.x === "number" ? value.x : fallback,
@@ -104,6 +108,7 @@ function buildNode(
   textureSize: TextureDimensions | undefined,
   getMaterial: (mode: BlockymodelShape["shadingMode"], doubleSided: boolean) => THREE.Material,
   animationRig: BlockymodelAnimationRig,
+  options: BuildBlockymodelSceneOptions,
 ): void {
   const pivot = new THREE.Object3D();
   pivot.name = node.name;
@@ -131,9 +136,18 @@ function buildNode(
       pivot.add(mesh);
     }
   }
-  registerAnimationBinding(animationRig, createAnimationBinding(node.name, pivot, mesh));
+  registerAnimationBinding(
+    animationRig,
+    createAnimationBinding(node.name, node.shape.settings.isPiece === true, pivot, mesh),
+  );
 
-  const shapeOffsetForChildren = node.shape ? toVector3(node.shape.offset, 0) : { x: 0, y: 0, z: 0 };
+  const suppressPieceChildOffset =
+    options.isAttachment && node.shape.settings.isPiece === true;
+  const shapeOffsetForChildren = suppressPieceChildOffset
+    ? { x: 0, y: 0, z: 0 }
+    : node.shape
+      ? toVector3(node.shape.offset, 0)
+      : { x: 0, y: 0, z: 0 };
   const nextParentOffset = new THREE.Vector3(
     shapeOffsetForChildren.x,
     shapeOffsetForChildren.y,
@@ -141,13 +155,14 @@ function buildNode(
   );
 
   for (const child of node.children ?? []) {
-    buildNode(child, pivot, nextParentOffset, textureSize, getMaterial, animationRig);
+    buildNode(child, pivot, nextParentOffset, textureSize, getMaterial, animationRig, options);
   }
 }
 
 export function buildBlockymodelScene(
   model: BlockymodelFile,
   texture?: THREE.Texture,
+  options: BuildBlockymodelSceneOptions = {},
 ): BuiltBlockymodelScene {
   const root = new THREE.Group();
   root.name = "BlockymodelRoot";
@@ -158,7 +173,7 @@ export function buildBlockymodelScene(
   const animationRig = createAnimationRig(textureSize);
 
   for (const node of model.nodes ?? []) {
-    buildNode(node, root, zeroOffset, textureSize, getMaterial, animationRig);
+    buildNode(node, root, zeroOffset, textureSize, getMaterial, animationRig, options);
   }
 
   return { root, animationRig };

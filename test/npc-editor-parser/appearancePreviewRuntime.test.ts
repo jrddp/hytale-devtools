@@ -243,6 +243,47 @@ describe("npc appearance preview runtime", () => {
     });
     expect(appearanceState.animationIds).toEqual(["Attack", "Hurt", "Idle"]);
   });
+
+  test("includes inherited default attachments in appearance previews", async () => {
+    const runtime = createRuntime({
+      "Server/Models/Child.json": jsonAsset({
+        Parent: "Parent",
+        Model: "Common/Models/Child.blockymodel",
+      }),
+      "Server/Models/Parent.json": jsonAsset({
+        DefaultAttachments: [
+          {
+            Model: "Common/Attachments/Horns.blockymodel",
+          },
+        ],
+      }),
+      "Common/Models/Child.blockymodel": jsonAsset({ name: "ChildModel" }),
+      "Common/Attachments/Horns.blockymodel": jsonAsset({ name: "HornsAttachment" }),
+    }, {
+      "Common/Attachments/Horns.png": [2, 4, 6],
+    });
+
+    const preview = await resolveNpcAppearancePreview(
+      "Child",
+      runtime,
+      createModelAssetIndex({
+        Child: { sourcedFromFile: "Server/Models/Child.json" },
+        Parent: { sourcedFromFile: "Server/Models/Parent.json" },
+      }),
+    );
+
+    expect(preview).toEqual({
+      type: "Model",
+      model: { name: "ChildModel" },
+      texture: undefined,
+      attachments: [
+        {
+          model: { name: "HornsAttachment" },
+          texture: [2, 4, 6],
+        },
+      ],
+    });
+  });
 });
 
 function createModelAssetIndex(

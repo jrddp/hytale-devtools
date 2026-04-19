@@ -3,6 +3,7 @@ import type { TextureDimensions } from "./uv";
 
 export interface BlockymodelAnimationBinding {
   nodeName: string;
+  isPiece: boolean;
   pivot: THREE.Object3D;
   mesh: THREE.Mesh | null;
   basePosition: THREE.Vector3;
@@ -32,6 +33,7 @@ function cloneUvArray(attribute: THREE.BufferAttribute | undefined): Float32Arra
 
 export function createAnimationBinding(
   nodeName: string,
+  isPiece: boolean,
   pivot: THREE.Object3D,
   mesh: THREE.Mesh | null,
 ): BlockymodelAnimationBinding {
@@ -40,6 +42,7 @@ export function createAnimationBinding(
 
   return {
     nodeName,
+    isPiece,
     pivot,
     mesh,
     basePosition: pivot.position.clone(),

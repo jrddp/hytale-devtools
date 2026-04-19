@@ -54,7 +54,7 @@ describe("shared blockyanim support", () => {
     pivot.add(mesh);
 
     const rig = createAnimationRig({ width: 16, height: 16 });
-    registerAnimationBinding(rig, createAnimationBinding("Root", pivot, mesh));
+    registerAnimationBinding(rig, createAnimationBinding("Root", false, pivot, mesh));
 
     const controller = createBlockyanimController(
       rig,
@@ -108,7 +108,7 @@ describe("shared blockyanim support", () => {
   it("applies playback speed and looping overrides", () => {
     const pivot = new THREE.Object3D();
     const rig = createAnimationRig({ width: 16, height: 16 });
-    registerAnimationBinding(rig, createAnimationBinding("Root", pivot));
+    registerAnimationBinding(rig, createAnimationBinding("Root", false, pivot, null));
 
     const animation = parseBlockyanimFile({
       formatVersion: 1,
@@ -142,5 +142,46 @@ describe("shared blockyanim support", () => {
     controller.update(1);
 
     expect(pivot.position.x).toBeCloseTo(6, 5);
+  });
+
+  it("does not apply base animation tracks to snapped attachment piece bindings", () => {
+    const hostPivot = new THREE.Object3D();
+    const piecePivot = new THREE.Object3D();
+    hostPivot.add(piecePivot);
+
+    const rig = createAnimationRig({ width: 16, height: 16 });
+    registerAnimationBinding(rig, createAnimationBinding("Head", false, hostPivot, null));
+    registerAnimationBinding(rig, createAnimationBinding("Head", true, piecePivot, null));
+
+    const controller = createBlockyanimController(rig);
+    controller.setAnimation(
+      parseBlockyanimFile({
+        formatVersion: 1,
+        duration: 60,
+        holdLastKeyframe: false,
+        nodeAnimations: {
+          Head: {
+            position: [
+              {
+                time: 0,
+                delta: { x: 0, y: 0, z: 0 },
+                interpolationType: "linear",
+              },
+              {
+                time: 60,
+                delta: { x: 6, y: 0, z: 0 },
+                interpolationType: "linear",
+              },
+            ],
+          },
+        },
+      }),
+    );
+    controller.setLoopingOverride(false);
+
+    controller.update(1);
+
+    expect(hostPivot.position.x).toBeCloseTo(6, 5);
+    expect(piecePivot.position.x).toBeCloseTo(0, 5);
   });
 });

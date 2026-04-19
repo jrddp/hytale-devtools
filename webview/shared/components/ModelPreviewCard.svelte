@@ -24,6 +24,12 @@
     <BlockymodelPreview
       model={preview.model as unknown as BlockymodelFile}
       textureBytes={preview.texture}
+      attachments={(preview.attachments ?? [])
+        .filter(attachment => attachment.model)
+        .map(attachment => ({
+          model: attachment.model as unknown as BlockymodelFile,
+          textureBytes: attachment.texture,
+        }))}
       animation={parsedAnimation}
       animationSpeed={preview.animationSpeed}
       animationLooping={preview.animationLooping}
