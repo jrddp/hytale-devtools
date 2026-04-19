@@ -58,7 +58,8 @@
     "Enabled": "Enabled",
     "Sensor": {
       "Pin": "SensorPin",
-      "Node": "SensorVariants"
+      "Node": "SensorVariants",
+      "AllowComponentReferences": true
     },
     "Offset": "Offset",
     "Type": "AdjustPosition"

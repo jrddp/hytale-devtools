@@ -231,6 +231,7 @@
 
   function handleMessage(event: MessageEvent<NpcRoleEditorExtensionToWebviewMessage>) {
     const message = event.data;
+    console.log(message);
 
     switch (message.type) {
       case "bootstrap":
@@ -264,6 +265,9 @@
       case "referenceUpdate":
         workspace.setVariantReferenceState(message.reference);
         syncAppearancePreviewRequestState();
+        return;
+      case "componentReferenceTargetUpdate":
+        workspace.setComponentReferenceTarget(message.target);
         return;
       case "previewUpdate":
         workspace.setAppearancePreview(message.preview);

@@ -20,6 +20,7 @@ import {
   getNpcBehaviorDescriptorSelfConnectionType,
   isNpcBehaviorSupportedDescriptorCategory,
 } from "../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
+import type { NodeSlotOccupancy } from "../src/shared/node-editor/workspaceTypes";
 import type {
   NodeContentDefinition,
   NodeEditorWorkspaceDefinition,
@@ -120,6 +121,19 @@ type ChildSpec = {
   connectionType: NpcBehaviorConnectionType;
   multiplicity: "single" | "multiple";
   pinSide?: "input" | "output";
+  allowComponentReferences?: boolean;
+};
+
+type ComponentReferenceTemplateSpec = {
+  componentClass: string;
+  templateId: string;
+  title: string;
+  directoryName: string;
+  fileName: string;
+  parentCompatibilityChildId: string;
+  selfConnectionType: NpcBehaviorConnectionType;
+  color: string;
+  slotOccupancy?: NodeSlotOccupancy;
 };
 
 type OutputAuthoredParentConnectionTypesByChildId = ReadonlyMap<
@@ -158,6 +172,7 @@ function main(): void {
     ...supportedDescriptors.map(descriptor =>
       buildDescriptorTemplate(descriptor, outputAuthoredParentConnectionTypesByChildId),
     ),
+    ...buildComponentReferenceTemplates(outputAuthoredParentConnectionTypesByChildId),
     buildInstructionNodeTemplate(
       instructionDescriptors,
       outputAuthoredParentConnectionTypesByChildId,
@@ -315,6 +330,7 @@ function buildDescriptorTemplate(
       schema[attribute.Name] = {
         Pin: pinId,
         Node: childSpec.childId,
+        AllowComponentReferences: childSpec.allowComponentReferences || undefined,
       };
       continue;
     }
@@ -379,6 +395,7 @@ function buildInstructionNodeTemplate(
       schema[attribute.Name] = {
         Pin: pinId,
         Node: childSpec.childId,
+        AllowComponentReferences: childSpec.allowComponentReferences || undefined,
       };
       continue;
     }
@@ -406,6 +423,123 @@ function buildInstructionNodeTemplate(
       Outputs: outputs,
       Content: content,
       Schema: schema,
+    },
+  };
+}
+
+function buildComponentReferenceTemplates(
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+): TemplateOutput[] {
+  const specs: ComponentReferenceTemplateSpec[] = [
+    {
+      componentClass: "Instruction",
+      templateId: "Structural.InstructionReference",
+      title: "Instruction Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+      fileName: "InstructionReference.json",
+      parentCompatibilityChildId: "Structural.InstructionNode",
+      selfConnectionType: "Instruction",
+      color: CATEGORY_COLORS.Structural,
+    },
+    {
+      componentClass: "Sensor",
+      templateId: "Sensor.Reference",
+      title: "Sensor Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.Sensor,
+      fileName: "Sensor.Reference.json",
+      parentCompatibilityChildId: "SensorVariants",
+      selfConnectionType: "Sensor",
+      color: CATEGORY_COLORS.Sensor,
+    },
+    {
+      componentClass: "Action",
+      templateId: "Action.ActionReference",
+      title: "Action Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.Action,
+      fileName: "Action.ActionReference.json",
+      parentCompatibilityChildId: "ActionVariants",
+      selfConnectionType: "Action",
+      color: CATEGORY_COLORS.Action,
+    },
+    {
+      componentClass: "ActionList",
+      templateId: "Action.ActionListReference",
+      title: "Action List Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.Action,
+      fileName: "Action.ActionListReference.json",
+      parentCompatibilityChildId: "ActionVariants",
+      selfConnectionType: "ActionListReference",
+      color: CATEGORY_COLORS.Action,
+      slotOccupancy: "whole-slot",
+    },
+    {
+      componentClass: "BodyMotion",
+      templateId: "BodyMotion.Reference",
+      title: "Body Motion Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.BodyMotion,
+      fileName: "BodyMotion.Reference.json",
+      parentCompatibilityChildId: "BodyMotionVariants",
+      selfConnectionType: "BodyMotion",
+      color: CATEGORY_COLORS.BodyMotion,
+    },
+    {
+      componentClass: "HeadMotion",
+      templateId: "HeadMotion.Reference",
+      title: "Head Motion Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.HeadMotion,
+      fileName: "HeadMotion.Reference.json",
+      parentCompatibilityChildId: "HeadMotionVariants",
+      selfConnectionType: "HeadMotion",
+      color: CATEGORY_COLORS.HeadMotion,
+    },
+    {
+      componentClass: "Path",
+      templateId: "Path.Reference",
+      title: "Path Reference",
+      directoryName: CATEGORY_DIRECTORY_NAMES.Path,
+      fileName: "Path.Reference.json",
+      parentCompatibilityChildId: "Path.Path",
+      selfConnectionType: "Path",
+      color: CATEGORY_COLORS.Path,
+    },
+  ];
+
+  return specs.map(spec =>
+    buildComponentReferenceTemplate(spec, outputAuthoredParentConnectionTypesByChildId),
+  );
+}
+
+function buildComponentReferenceTemplate(
+  spec: ComponentReferenceTemplateSpec,
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+): TemplateOutput {
+  const inputs = createParentCompatibilityInputs(
+    [spec.parentCompatibilityChildId],
+    outputAuthoredParentConnectionTypesByChildId,
+    { label: "Parent" },
+  );
+  const outputs =
+    getNpcBehaviorConnectionAuthoringSide(spec.selfConnectionType) === "input"
+      ? [createSelfOutputPin(spec.selfConnectionType)]
+      : undefined;
+
+  return {
+    directoryName: spec.directoryName,
+    fileName: spec.fileName,
+    template: {
+      Id: spec.templateId,
+      Title: spec.title,
+      Color: spec.color,
+      Description: `Reference an external ${spec.componentClass} component.`,
+      Inputs: inputs.length > 0 ? inputs : undefined,
+      Outputs: outputs,
+      Content: [buildReferenceField()],
+      Schema: {
+        Reference: "Reference",
+      },
+      IsComponentReference: true,
+      ComponentReferenceClass: spec.componentClass,
+      SlotOccupancy: spec.slotOccupancy,
     },
   };
 }
@@ -479,6 +613,19 @@ function buildInstructionTypeField(): NodeContentDefinition {
   };
 }
 
+function buildReferenceField(): NodeContentDefinition {
+  return {
+    Id: "Reference",
+    Type: "SmallString",
+    Description: "Referenced component asset name.",
+    Options: {
+      Label: "Reference",
+      Width: 220,
+      Default: "",
+    },
+  };
+}
+
 function mergeAttributes(descriptors: NpcDescriptor[]): NpcDescriptorAttribute[] {
   const attributesByName = new Map<string, NpcDescriptorAttribute>();
   for (const descriptor of descriptors) {
@@ -494,6 +641,9 @@ function mergeAttributes(descriptors: NpcDescriptor[]): NpcDescriptorAttribute[]
 function createParentCompatibilityInputs(
   childTargetIds: readonly string[],
   outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+  options?: {
+    label?: string;
+  },
 ): NodePinDefinition[] {
   const connectionTypes = new Set<NpcBehaviorConnectionType>();
   for (const childTargetId of childTargetIds) {
@@ -507,22 +657,59 @@ function createParentCompatibilityInputs(
     return [];
   }
 
-  return Array.from(connectionTypes)
+  return collapseParentCompatibilityConnectionTypes(Array.from(connectionTypes))
     .sort((left, right) => left.localeCompare(right))
     .map((connectionType, index) =>
-      createParentCompatibilityInputPin(connectionType, index),
+      createParentCompatibilityInputPin(connectionType, index, options?.label),
     );
+}
+
+function collapseParentCompatibilityConnectionTypes(
+  connectionTypes: NpcBehaviorConnectionType[],
+): NpcBehaviorConnectionType[] {
+  return connectionTypes.filter(connectionType => {
+    return !connectionTypes.some(
+      otherType =>
+        otherType !== connectionType &&
+        getNpcBehaviorWorkspaceConnectionAncestors(connectionType).includes(otherType),
+    );
+  });
+}
+
+function getNpcBehaviorWorkspaceConnectionAncestors(
+  connectionType: NpcBehaviorConnectionType,
+): NpcBehaviorConnectionType[] {
+  const visited = new Set<NpcBehaviorConnectionType>();
+  const ancestors: NpcBehaviorConnectionType[] = [];
+  const pending = [
+    ...(NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE[connectionType]?.Extends ?? []),
+  ] as NpcBehaviorConnectionType[];
+
+  while (pending.length > 0) {
+    const next = pending.pop()!;
+    if (visited.has(next)) {
+      continue;
+    }
+    visited.add(next);
+    ancestors.push(next);
+    pending.push(
+      ...((NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE[next]?.Extends ?? []) as NpcBehaviorConnectionType[]),
+    );
+  }
+
+  return ancestors;
 }
 
 function createParentCompatibilityInputPin(
   connectionType: NpcBehaviorConnectionType,
   index: number,
+  label?: string,
 ): NodePinDefinition {
   return {
     Id: index === 0 ? "Input" : `Input${index}`,
     Type: connectionType,
     Color: getNpcBehaviorConnectionColor(connectionType),
-    Label: getNpcBehaviorConnectionLabel(connectionType),
+    Label: label ?? getNpcBehaviorConnectionLabel(connectionType),
   };
 }
 
@@ -617,7 +804,20 @@ function resolveChildSpec(
       attribute.Name,
       domain,
     ),
+    allowComponentReferences: shouldAllowComponentReferencesForDomain(domain),
   };
+}
+
+function shouldAllowComponentReferencesForDomain(domain: string): boolean {
+  return (
+    domain === "Action" ||
+    domain === "ActionList" ||
+    domain === "BodyMotion" ||
+    domain === "HeadMotion" ||
+    domain === "Instruction" ||
+    domain === "Path" ||
+    domain === "Sensor"
+  );
 }
 
 function getDescriptorTemplateParentTargetIds(

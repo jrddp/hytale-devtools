@@ -66,6 +66,20 @@ export type NpcRoleEditorVariantReferenceUpdateMessage = {
   reference: NpcRoleEditorVariantReferenceState;
 };
 
+export type NpcRoleEditorComponentReferenceTargetState = {
+  status: "loading" | "loaded" | "missing" | "error";
+  componentClass: string;
+  referenceName: string;
+  resolvedPath?: string;
+  text?: string;
+  message?: string;
+};
+
+export type NpcRoleEditorComponentReferenceTargetUpdateMessage = {
+  type: "componentReferenceTargetUpdate";
+  target: NpcRoleEditorComponentReferenceTargetState;
+};
+
 export type NpcRoleEditorContextActionMessage = {
   type: "contextAction";
   action:
@@ -103,6 +117,7 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | NpcRoleEditorAutocompletionValuesMessage
   | NpcRoleEditorVariantReferenceUpdateMessage
+  | NpcRoleEditorComponentReferenceTargetUpdateMessage
   | NpcRoleEditorContextActionMessage
   | NpcRoleEditorPreviewUpdateMessage;
 
@@ -113,6 +128,7 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "openKeybindings"; query?: string }
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
+  | { type: "resolveComponentReferenceTarget"; componentClass: string; referenceName: string }
   | { type: "resolveAppearancePreview"; assetName?: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorGraphEditMessage

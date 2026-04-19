@@ -35,7 +35,7 @@
     },
     {
       "Id": "ActionsPin",
-      "Type": "Action",
+      "Type": "ActionListItem",
       "Color": "#CC3361",
       "Label": "Actions",
       "Description": "Actions to be executed",
@@ -188,25 +188,30 @@
     "Enabled": "Enabled",
     "Sensor": {
       "Pin": "SensorPin",
-      "Node": "SensorVariants"
+      "Node": "SensorVariants",
+      "AllowComponentReferences": true
     },
     "BodyMotion": {
       "Pin": "BodyMotionPin",
-      "Node": "BodyMotionVariants"
+      "Node": "BodyMotionVariants",
+      "AllowComponentReferences": true
     },
     "HeadMotion": {
       "Pin": "HeadMotionPin",
-      "Node": "HeadMotionVariants"
+      "Node": "HeadMotionVariants",
+      "AllowComponentReferences": true
     },
     "Actions": {
       "Pin": "ActionsPin",
-      "Node": "ActionVariants"
+      "Node": "ActionVariants",
+      "AllowComponentReferences": true
     },
     "ActionsBlocking": "ActionsBlocking",
     "ActionsAtomic": "ActionsAtomic",
     "Instructions": {
       "Pin": "InstructionsPin",
-      "Node": "Structural.InstructionNode"
+      "Node": "Structural.InstructionNode",
+      "AllowComponentReferences": true
     },
     "Continue": "Continue",
     "Weight": "Weight",

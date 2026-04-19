@@ -6,9 +6,9 @@
   "Inputs": [
     {
       "Id": "Input",
-      "Type": "Action",
+      "Type": "ActionListItem",
       "Color": "#CC3361",
-      "Label": "Action"
+      "Label": "Actions"
     }
   ],
   "Content": [

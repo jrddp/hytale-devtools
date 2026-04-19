@@ -68,7 +68,8 @@
     "PassValues": "PassValues",
     "Sensor": {
       "Pin": "SensorPin",
-      "Node": "SensorVariants"
+      "Node": "SensorVariants",
+      "AllowComponentReferences": true
     },
     "ValueToParameterMappings": {
       "Pin": "ValueToParameterMappingsPin",

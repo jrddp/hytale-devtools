@@ -211,6 +211,10 @@ export class WorkspaceRuntime {
             continue;
           }
 
+          if (template.isComponentReference) {
+            continue;
+          }
+
           template.schemaConstants[variantKind.VariantFieldName] = variantValue;
           this.removeVariantFieldCollision(template, variantKind.VariantFieldName, variantValue);
         }
@@ -440,8 +444,28 @@ export class WorkspaceRuntime {
           schemaKey,
           targetTemplateOrVariantId: variantOrTemplateId,
           serializationType: this.parseSchemaSerializationType(entry),
+          allowComponentReferences: this.parseAllowComponentReferences(entry),
         };
       }
+    }
+
+    const componentReferenceClass =
+      typeof definition.ComponentReferenceClass === "string"
+        ? definition.ComponentReferenceClass
+        : undefined;
+    if (
+      definition.IsComponentReference === true &&
+      componentReferenceClass &&
+      fieldsBySchemaKey.Reference
+    ) {
+      fieldsBySchemaKey.Reference.symbolLookup = {
+        indexKind: "registeredAssets",
+        key: "NPCRole",
+        filter: {
+          npcRoleTypes: ["Component"],
+          npcComponentClasses: [componentReferenceClass],
+        },
+      };
     }
 
     return {
@@ -455,6 +479,9 @@ export class WorkspaceRuntime {
       outputPins: Object.values(outputPinsByLocalId),
       schemaConstants: schemaConstants,
       nodeColor: definition.Color,
+      isComponentReference: definition.IsComponentReference === true ? true : undefined,
+      componentReferenceClass,
+      slotOccupancy: definition.SlotOccupancy === "whole-slot" ? "whole-slot" : undefined,
     };
   }
 
@@ -479,6 +506,14 @@ export class WorkspaceRuntime {
   ): NodeSchemaSerializationType {
     const serializationType = entry.SerializationType ?? entry.serializationType;
     return serializationType === "root" ? "root" : "child";
+  }
+
+  private parseAllowComponentReferences(
+    entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
+  ): boolean | undefined {
+    const allowComponentReferences =
+      entry.AllowComponentReferences ?? entry.allowComponentReferences;
+    return allowComponentReferences === true ? true : undefined;
   }
 
   private removeVariantFieldCollision(

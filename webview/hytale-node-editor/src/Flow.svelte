@@ -39,6 +39,7 @@
   import { createUuidV4 } from "@node-editor/node-editor/utils/idUtils";
   import { createLowDetailController } from "@node-editor/node-editor/utils/lowDetailController.svelte";
   import {
+    collectConflictingEdges,
     getCompatibleInputHandleId,
     getCompatibleOutputHandleId,
     getAbsoluteCenterPosition,
@@ -964,11 +965,33 @@
     event.stopPropagation();
   }
 
+  function commitConnection(connection: {
+    source: string;
+    sourceHandle: string;
+    target: string;
+    targetHandle: string;
+  }) {
+    const conflictingEdges = collectConflictingEdges(connection, workspace);
+    if (conflictingEdges.length > 0) {
+      workspace.removeEdgesByIds(conflictingEdges.map(edge => edge.id));
+    }
+    workspace.addEdges([connection]);
+  }
+
   // # Svelte Flow Events
   const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
     // ## On Connect
     onconnect: connection => {
-      workspace.addEdges([connection]);
+      if (!connection.source || !connection.sourceHandle || !connection.target || !connection.targetHandle) {
+        connectionPreview.cancel();
+        return;
+      }
+      commitConnection({
+        source: connection.source,
+        sourceHandle: connection.sourceHandle,
+        target: connection.target,
+        targetHandle: connection.targetHandle,
+      });
       connectionPreview.commit();
       workspace.applyDocumentState("element-list-changed");
     },
@@ -1153,13 +1176,11 @@
             )
           : undefined;
         if (targetHandle) {
-          workspace.addEdges([
-            {
-              ...connectionPreview.pendingSourceConnection,
-              target: newNode.id,
-              targetHandle,
-            },
-          ]);
+          commitConnection({
+            ...connectionPreview.pendingSourceConnection,
+            target: newNode.id,
+            targetHandle,
+          });
           didCreateReplacementConnection = true;
         }
       } else if (connectionPreview.pendingTargetConnection) {
@@ -1171,14 +1192,12 @@
             )
           : undefined;
         if (sourceHandle) {
-          workspace.addEdges([
-            {
-              source: newNode.id,
-              sourceHandle,
-              target: connectionPreview.pendingTargetConnection.target,
-              targetHandle: connectionPreview.pendingTargetConnection.targetHandle,
-            },
-          ]);
+          commitConnection({
+            source: newNode.id,
+            sourceHandle,
+            target: connectionPreview.pendingTargetConnection.target,
+            targetHandle: connectionPreview.pendingTargetConnection.targetHandle,
+          });
           didCreateReplacementConnection = true;
         }
       }

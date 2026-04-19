@@ -1,6 +1,16 @@
 {
   "WorkspaceName": "NPC Behavior",
   "ConnectionTypes": {
+    "Action": {
+      "Extends": [
+        "ActionListItem"
+      ]
+    },
+    "ActionListReference": {
+      "Extends": [
+        "ActionListItem"
+      ]
+    },
     "PositionSensor": {
       "Extends": [
         "Sensor"
@@ -23,6 +33,8 @@
   },
   "NodeCategories": {
     "Actions": [
+      "Action.ActionListReference",
+      "Action.ActionReference",
       "Action.AddToHostileTargetMemory",
       "Action.Appearance",
       "Action.ApplyEntityEffect",
@@ -107,6 +119,7 @@
       "BodyMotion.MatchLook",
       "BodyMotion.Nothing",
       "BodyMotion.Path",
+      "BodyMotion.Reference",
       "BodyMotion.Seek",
       "BodyMotion.Sequence",
       "BodyMotion.TakeOff",
@@ -144,6 +157,7 @@
       "HeadMotion.Aim",
       "HeadMotion.Nothing",
       "HeadMotion.Observe",
+      "HeadMotion.Reference",
       "HeadMotion.Sequence",
       "HeadMotion.Timer",
       "HeadMotion.Watch"
@@ -153,6 +167,7 @@
     ],
     "Paths": [
       "Path.Path",
+      "Path.Reference",
       "RelativeWaypointDefinition.RelativeWaypointDefinition"
     ],
     "Prioritisers": [
@@ -202,6 +217,7 @@
       "Sensor.Player",
       "Sensor.Random",
       "Sensor.ReadPosition",
+      "Sensor.Reference",
       "Sensor.SearchRay",
       "Sensor.Self",
       "Sensor.State",
@@ -214,7 +230,8 @@
     ],
     "Structural": [
       "Structural.InstructionListRoot",
-      "Structural.InstructionNode"
+      "Structural.InstructionNode",
+      "Structural.InstructionReference"
     ]
   },
   "Variants": {
@@ -264,6 +281,7 @@
         "Player": "Sensor.Player",
         "Random": "Sensor.Random",
         "ReadPosition": "Sensor.ReadPosition",
+        "Reference": "Sensor.Reference",
         "SearchRay": "Sensor.SearchRay",
         "Self": "Sensor.Self",
         "State": "Sensor.State",
@@ -278,6 +296,8 @@
     "ActionVariants": {
       "VariantFieldName": "Type",
       "Variants": {
+        "ActionListReference": "Action.ActionListReference",
+        "ActionReference": "Action.ActionReference",
         "AddToHostileTargetMemory": "Action.AddToHostileTargetMemory",
         "Appearance": "Action.Appearance",
         "ApplyEntityEffect": "Action.ApplyEntityEffect",
@@ -364,6 +384,7 @@
         "MatchLook": "BodyMotion.MatchLook",
         "Nothing": "BodyMotion.Nothing",
         "Path": "BodyMotion.Path",
+        "Reference": "BodyMotion.Reference",
         "Seek": "BodyMotion.Seek",
         "Sequence": "BodyMotion.Sequence",
         "TakeOff": "BodyMotion.TakeOff",
@@ -381,6 +402,7 @@
         "Aim": "HeadMotion.Aim",
         "Nothing": "HeadMotion.Nothing",
         "Observe": "HeadMotion.Observe",
+        "Reference": "HeadMotion.Reference",
         "Sequence": "HeadMotion.Sequence",
         "Timer": "HeadMotion.Timer",
         "Watch": "HeadMotion.Watch"

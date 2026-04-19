@@ -59,7 +59,8 @@
     "Enabled": "Enabled",
     "Sensors": {
       "Pin": "SensorsPin",
-      "Node": "SensorVariants"
+      "Node": "SensorVariants",
+      "AllowComponentReferences": true
     },
     "AutoUnlockTargetSlot": "AutoUnlockTargetSlot",
     "Type": "And"

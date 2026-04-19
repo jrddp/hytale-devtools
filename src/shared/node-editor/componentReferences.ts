@@ -1,0 +1,69 @@
+import type { NodeChildSchema, NodeTemplate } from "./workspaceTypes";
+
+export const COMPONENT_REFERENCE_MODIFY_FIELD_PREFIX = "$componentReference.Modify.";
+export const COMPONENT_REFERENCE_EXPORT_STATE_FIELD_PREFIX =
+  "$componentReference.ExportState.";
+
+export type ComponentReferenceSyntheticField =
+  | {
+      kind: "modify";
+      key: string;
+    }
+  | {
+      kind: "export-state";
+      index: number;
+    };
+
+export function isComponentReferenceNodeTemplate(
+  template: Pick<NodeTemplate, "isComponentReference"> | undefined,
+): boolean {
+  return template?.isComponentReference === true;
+}
+
+export function getComponentReferenceSlotOccupancy(
+  template: Pick<NodeTemplate, "slotOccupancy"> | undefined,
+): "normal-item" | "whole-slot" {
+  return template?.slotOccupancy === "whole-slot" ? "whole-slot" : "normal-item";
+}
+
+export function allowsComponentReferences(
+  childSchema: Pick<NodeChildSchema, "allowComponentReferences"> | undefined,
+): boolean {
+  return childSchema?.allowComponentReferences === true;
+}
+
+export function createComponentReferenceModifyFieldSchemaKey(key: string): string {
+  return `${COMPONENT_REFERENCE_MODIFY_FIELD_PREFIX}${key}`;
+}
+
+export function createComponentReferenceExportStateFieldSchemaKey(index: number): string {
+  return `${COMPONENT_REFERENCE_EXPORT_STATE_FIELD_PREFIX}${index}`;
+}
+
+export function parseComponentReferenceSyntheticFieldSchemaKey(
+  schemaKey: string,
+): ComponentReferenceSyntheticField | null {
+  if (schemaKey.startsWith(COMPONENT_REFERENCE_MODIFY_FIELD_PREFIX)) {
+    return {
+      kind: "modify",
+      key: schemaKey.slice(COMPONENT_REFERENCE_MODIFY_FIELD_PREFIX.length),
+    };
+  }
+
+  if (schemaKey.startsWith(COMPONENT_REFERENCE_EXPORT_STATE_FIELD_PREFIX)) {
+    const suffix = schemaKey.slice(COMPONENT_REFERENCE_EXPORT_STATE_FIELD_PREFIX.length);
+    const index = Number.parseInt(suffix, 10);
+    if (!Number.isNaN(index) && `${index}` === suffix) {
+      return {
+        kind: "export-state",
+        index,
+      };
+    }
+  }
+
+  return null;
+}
+
+export function isComponentReferenceSyntheticFieldSchemaKey(schemaKey: string): boolean {
+  return parseComponentReferenceSyntheticFieldSchemaKey(schemaKey) !== null;
+}

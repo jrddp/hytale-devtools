@@ -1,0 +1,31 @@
+{
+  "Id": "BodyMotion.Reference",
+  "Title": "Body Motion Reference",
+  "Color": "#00E7B6",
+  "Description": "Reference an external BodyMotion component.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Reference",
+      "Type": "SmallString",
+      "Description": "Referenced component asset name.",
+      "Options": {
+        "Label": "Reference",
+        "Width": 220,
+        "Default": ""
+      }
+    }
+  ],
+  "Schema": {
+    "Reference": "Reference"
+  },
+  "IsComponentReference": true,
+  "ComponentReferenceClass": "BodyMotion"
+}

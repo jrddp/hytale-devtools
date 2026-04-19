@@ -1,0 +1,31 @@
+{
+  "Id": "Structural.InstructionReference",
+  "Title": "Instruction Reference",
+  "Color": "#2D3746",
+  "Description": "Reference an external Instruction component.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "Instruction",
+      "Color": "#2D3746",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Reference",
+      "Type": "SmallString",
+      "Description": "Referenced component asset name.",
+      "Options": {
+        "Label": "Reference",
+        "Width": 220,
+        "Default": ""
+      }
+    }
+  ],
+  "Schema": {
+    "Reference": "Reference"
+  },
+  "IsComponentReference": true,
+  "ComponentReferenceClass": "Instruction"
+}

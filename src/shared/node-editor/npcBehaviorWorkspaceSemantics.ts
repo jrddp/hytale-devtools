@@ -38,6 +38,12 @@ export type NpcBehaviorSupportedDescriptorCategory =
   (typeof NPC_BEHAVIOR_SUPPORTED_DESCRIPTOR_CATEGORIES)[number];
 
 export const NPC_BEHAVIOR_CONNECTION_TYPES_FOR_WORKSPACE = {
+  Action: {
+    Extends: ["ActionListItem"],
+  },
+  ActionListReference: {
+    Extends: ["ActionListItem"],
+  },
   PositionSensor: {
     Extends: ["Sensor"],
   },
@@ -58,6 +64,16 @@ export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
     authoringSide: "output",
     color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "Action",
+  },
+  ActionListItem: {
+    authoringSide: "output",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
+    label: "Actions",
+  },
+  ActionListReference: {
+    authoringSide: "output",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.reference,
+    label: "Action List Reference",
   },
   BodyMotion: {
     authoringSide: "output",
@@ -131,7 +147,7 @@ export const NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS: Record<
   }
 > = {
   Action: { childId: "ActionVariants", connectionType: "Action" },
-  ActionList: { childId: "ActionVariants", connectionType: "Action" },
+  ActionList: { childId: "ActionVariants", connectionType: "ActionListItem" },
   BodyMotion: { childId: "BodyMotionVariants", connectionType: "BodyMotion" },
   HeadMotion: { childId: "HeadMotionVariants", connectionType: "HeadMotion" },
   IEntityFilter: { childId: "FilterVariants", connectionType: "IEntityFilter" },

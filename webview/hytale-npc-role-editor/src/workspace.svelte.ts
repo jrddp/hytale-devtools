@@ -1,6 +1,7 @@
 import type {
   NpcRoleEditorWebviewToExtensionMessage,
   NpcRoleEditorApplyMessage,
+  NpcRoleEditorComponentReferenceTargetState,
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorVariantReferenceState,
 } from "@shared/npc-role-editor/messageTypes";
@@ -101,6 +102,9 @@ export class Workspace {
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
   appearancePreview = $state<ModelPreviewState | undefined>(undefined);
+  componentReferenceTargets = $state.raw<Map<string, NpcRoleEditorComponentReferenceTargetState>>(
+    new Map(),
+  );
   parameterRenameRequestName = $state<string | null>(null);
   parameterRenameRequestVersion = $state(0);
   parameterDescriptionRequestName = $state<string | null>(null);
@@ -158,6 +162,65 @@ export class Workspace {
 
   setAppearancePreview(preview: ModelPreviewState | undefined) {
     this.appearancePreview = preview;
+  }
+
+  requestComponentReferenceTarget(componentClass: string, referenceName: string) {
+    const trimmedReferenceName = referenceName.trim();
+    if (!this.documentPath || !componentClass || !trimmedReferenceName) {
+      return;
+    }
+
+    const cacheKey = this.getComponentReferenceTargetCacheKey(componentClass, trimmedReferenceName);
+    const existing = this.componentReferenceTargets.get(cacheKey);
+    if (
+      existing &&
+      (existing.status === "loading" ||
+        existing.status === "loaded" ||
+        existing.status === "missing" ||
+        existing.status === "error")
+    ) {
+      return;
+    }
+
+    const nextTargets = new Map(this.componentReferenceTargets);
+    nextTargets.set(cacheKey, {
+      status: "loading",
+      componentClass,
+      referenceName: trimmedReferenceName,
+    });
+    this.componentReferenceTargets = nextTargets;
+    this.vscode.postMessage({
+      type: "resolveComponentReferenceTarget",
+      componentClass,
+      referenceName: trimmedReferenceName,
+    } satisfies NpcRoleEditorWebviewToExtensionMessage);
+  }
+
+  setComponentReferenceTarget(target: NpcRoleEditorComponentReferenceTargetState) {
+    if (!this.documentPath || !target.componentClass || !target.referenceName) {
+      return;
+    }
+
+    const nextTargets = new Map(this.componentReferenceTargets);
+    nextTargets.set(
+      this.getComponentReferenceTargetCacheKey(target.componentClass, target.referenceName),
+      target,
+    );
+    this.componentReferenceTargets = nextTargets;
+  }
+
+  getComponentReferenceTarget(
+    componentClass: string,
+    referenceName: string,
+  ): NpcRoleEditorComponentReferenceTargetState | undefined {
+    const trimmedReferenceName = referenceName.trim();
+    if (!this.documentPath || !componentClass || !trimmedReferenceName) {
+      return undefined;
+    }
+
+    return this.componentReferenceTargets.get(
+      this.getComponentReferenceTargetCacheKey(componentClass, trimmedReferenceName),
+    );
   }
 
   setVariantReferenceState(reference: NpcRoleEditorVariantReferenceState) {
@@ -1237,6 +1300,10 @@ export class Workspace {
 
     this.refreshVariantReferenceResolution(document);
     this.rebuildPropertyStateFromCurrentDocument();
+  }
+
+  private getComponentReferenceTargetCacheKey(componentClass: string, referenceName: string): string {
+    return `${this.documentPath}::${componentClass}::${referenceName}`;
   }
 
   private getCurrentVariantReferenceName(): string | undefined {

@@ -5,6 +5,7 @@
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
+  import ComponentReferenceNodeBody from "./ComponentReferenceNodeBody.svelte";
 
   const { id, ...props }: DataNodeType = $props();
   const fieldsBySchemaKey = $derived(props.data.fieldsBySchemaKey);
@@ -43,9 +44,16 @@
 </script>
 
 <BaseNode {id} {...props}>
-  <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
-    {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
-      <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
-    {/each}
-  </div>
+  {#if props.data.isComponentReference}
+    <ComponentReferenceNodeBody
+      nodeId={id}
+      {fieldsBySchemaKey}
+    />
+  {:else}
+    <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
+      {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
+        <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
+      {/each}
+    </div>
+  {/if}
 </BaseNode>

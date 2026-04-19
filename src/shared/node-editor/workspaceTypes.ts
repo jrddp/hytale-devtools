@@ -14,6 +14,7 @@ export type FieldComponentType =
   | "color";
 
 export type NodeSchemaSerializationType = "child" | "root";
+export type NodeSlotOccupancy = "whole-slot";
 export interface NodeConnectionTypeDefinition {
   Extends?: string[];
 }
@@ -68,6 +69,7 @@ export interface NodeChildSchema {
   schemaKey: string;
   targetTemplateOrVariantId: string;
   serializationType: NodeSchemaSerializationType;
+  allowComponentReferences?: boolean;
 }
 
 // processed template for optimized usage. only uses schema keys, Content/Pin local keys are abstracted.
@@ -85,6 +87,9 @@ export interface NodeTemplate {
   // constants defined in Schema, e.g. Type -> "Biome"
   schemaConstants: Record<string, string>;
   nodeColor?: string;
+  isComponentReference?: true;
+  componentReferenceClass?: string;
+  slotOccupancy?: NodeSlotOccupancy;
 }
 
 export interface NodeEditorWorkspace {

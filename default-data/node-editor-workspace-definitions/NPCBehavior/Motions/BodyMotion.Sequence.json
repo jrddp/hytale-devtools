@@ -48,7 +48,8 @@
     "RestartOnActivate": "RestartOnActivate",
     "Motions": {
       "Pin": "MotionsPin",
-      "Node": "BodyMotionVariants"
+      "Node": "BodyMotionVariants",
+      "AllowComponentReferences": true
     },
     "Type": "Sequence"
   }

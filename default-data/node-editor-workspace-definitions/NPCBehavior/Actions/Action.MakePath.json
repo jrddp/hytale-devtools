@@ -6,9 +6,9 @@
   "Inputs": [
     {
       "Id": "Input",
-      "Type": "Action",
+      "Type": "ActionListItem",
       "Color": "#CC3361",
-      "Label": "Action"
+      "Label": "Actions"
     },
     {
       "Id": "PathPin",
@@ -34,7 +34,8 @@
     "Once": "Once",
     "Path": {
       "Pin": "PathPin",
-      "Node": "Path.Path"
+      "Node": "Path.Path",
+      "AllowComponentReferences": true
     },
     "Type": "MakePath"
   }

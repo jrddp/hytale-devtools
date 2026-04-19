@@ -7,6 +7,7 @@ export type IndexKind =
 
 export type IndexReferenceFilter = {
   npcRoleTypes?: string[];
+  npcComponentClasses?: string[];
 };
 
 export type IndexReference =

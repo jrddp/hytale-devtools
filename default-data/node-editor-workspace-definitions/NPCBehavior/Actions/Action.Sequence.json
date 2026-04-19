@@ -6,15 +6,15 @@
   "Inputs": [
     {
       "Id": "Input",
-      "Type": "Action",
+      "Type": "ActionListItem",
       "Color": "#CC3361",
-      "Label": "Action"
+      "Label": "Actions"
     }
   ],
   "Outputs": [
     {
       "Id": "ActionsPin",
-      "Type": "Action",
+      "Type": "ActionListItem",
       "Color": "#CC3361",
       "Label": "Actions",
       "Description": "List of actions",
@@ -59,7 +59,8 @@
     "Atomic": "Atomic",
     "Actions": {
       "Pin": "ActionsPin",
-      "Node": "ActionVariants"
+      "Node": "ActionVariants",
+      "AllowComponentReferences": true
     },
     "Type": "Sequence"
   }

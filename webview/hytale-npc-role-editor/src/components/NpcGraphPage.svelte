@@ -14,7 +14,9 @@
   import { createNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { ComputeAutocompleteOption } from "@webview-shared/components/computeAutocomplete";
   import type { VSCodeApi } from "../common";
+  import { hydrateComponentReferenceNodes } from "../componentReferenceNodeHydration";
   import type { NpcPropertyField } from "../propertyModel";
+  import { workspace } from "../workspace.svelte";
   import GraphFallbackField from "./fields/GraphFallbackField.svelte";
 
   type GraphViewport = {
@@ -60,6 +62,21 @@
   let lastSyncedDocumentVersion = $state<number | null>(null);
   let lastSyncedGraphFieldPath = $state<string | null>(null);
   let lastAutoFitFieldPath = $state<string | null>(null);
+
+  function rehydrateComponentReferenceNodes() {
+    if (!workspaceContext || !session.isInitialized) {
+      return;
+    }
+
+    const hydratedNodes = hydrateComponentReferenceNodes({
+      nodes: session.nodes,
+      descriptors: $state.snapshot(workspace.descriptors),
+      discoveredStates: $state.snapshot(workspace.discoveredStates),
+    });
+    if (hydratedNodes !== session.nodes) {
+      session.nodes = hydratedNodes;
+    }
+  }
 
   $effect(() => {
     if (session.controlScheme !== controlScheme) {
@@ -196,6 +213,7 @@
           graphError = "";
           lastSyncedDocumentVersion = documentVersion;
           lastSyncedGraphFieldPath = field.fieldPath;
+          rehydrateComponentReferenceNodes();
           return;
         }
       }
@@ -206,10 +224,23 @@
       graphError = "";
       lastSyncedDocumentVersion = documentVersion;
       lastSyncedGraphFieldPath = field.fieldPath;
+      rehydrateComponentReferenceNodes();
     } catch (error) {
       session.isInitialized = false;
       graphError = error instanceof Error ? error.message : String(error);
     }
+  });
+
+  $effect(() => {
+    if (!workspaceContext || !session.isInitialized) {
+      return;
+    }
+
+    void session.sourceVersion;
+    void workspace.componentReferenceTargets;
+    void workspace.descriptors;
+    void workspace.discoveredStates;
+    rehydrateComponentReferenceNodes();
   });
 
   function resolveGraphDocumentFromText(text: string | null) {

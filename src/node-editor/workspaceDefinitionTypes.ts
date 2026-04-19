@@ -1,6 +1,7 @@
 import {
   type NodeConnectionTypeDefinition,
   type NodeSchemaSerializationType,
+  type NodeSlotOccupancy,
   type NodeEditorWorkspaceRootDefinition,
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
@@ -16,6 +17,9 @@ export type NodeTemplateDefinition = {
   Inputs?: NodePinDefinition[];
   Schema?: NodeSchemaDefinition;
   IsReference?: true;
+  IsComponentReference?: true;
+  ComponentReferenceClass?: string;
+  SlotOccupancy?: NodeSlotOccupancy;
   FileRefKey?: string;
   FileRefValue?: string;
   ModifyKey?: string;
@@ -116,10 +120,12 @@ export interface NodeSchemaDefinition {
         Node?: string;
         Pin?: string;
         SerializationType?: NodeSchemaSerializationType;
+        AllowComponentReferences?: boolean;
         // they mix casings in workspaces sometimes.. e.g. ScriptableBrushes Root.json
         node?: string;
         pin?: string;
         serializationType?: NodeSchemaSerializationType;
+        allowComponentReferences?: boolean;
       }
     | string;
 }

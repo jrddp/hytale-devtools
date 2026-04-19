@@ -34,7 +34,8 @@
   "Schema": {
     "Action": {
       "Pin": "ActionPin",
-      "Node": "ActionVariants"
+      "Node": "ActionVariants",
+      "AllowComponentReferences": true
     },
     "Weight": "Weight"
   }

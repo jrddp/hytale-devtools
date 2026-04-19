@@ -1,4 +1,3 @@
-import path from "node:path";
 import { parseNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import type {
   NpcJsonValue,
@@ -7,6 +6,10 @@ import type {
   NpcRoleJson,
 } from "../shared/npc-role-editor/documentTypes";
 import { isNpcComputeJson } from "../shared/npc-role-editor/documentTypes";
+import {
+  getNpcRoleReferenceName,
+  matchesNpcRoleReferenceCandidate,
+} from "./npcReferenceResolver";
 
 export const VARIANT_REFERENCE_ROLE_TYPES = [
   "Generic",
@@ -24,65 +27,11 @@ export function isVariantReferenceRoleType(value: unknown): value is VariantRefe
   );
 }
 
-export function parseNpcRoleTypeFromText(text: string): string | undefined {
-  try {
-    const parsed = JSON.parse(text);
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-      return undefined;
-    }
-
-    const type = (parsed as Record<string, unknown>).Type;
-    return typeof type === "string" ? type : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-export function getNpcRoleReferenceName(value: string): string {
-  return path.basename(value).replace(/\.json$/i, "");
-}
-
-export function matchesNpcRoleReferenceCandidate(candidate: string, referenceValue: string): boolean {
-  const normalizedReferenceValue = normalizeNpcRoleReferenceCandidate(referenceValue);
-  if (!normalizedReferenceValue) {
-    return false;
-  }
-
-  const normalizedCandidate = normalizeNpcRoleReferenceCandidate(candidate);
-  if (normalizedCandidate === normalizedReferenceValue) {
-    return true;
-  }
-
-  if (normalizedCandidate.endsWith(`/${normalizedReferenceValue}`)) {
-    return true;
-  }
-
-  return getNpcRoleReferenceName(normalizedCandidate) === getNpcRoleReferenceName(normalizedReferenceValue);
-}
-
-export function isLikelyNpcComponentReferencePath(value: string): boolean {
-  const normalized = value.replaceAll("\\", "/");
-  const referenceName = getNpcRoleReferenceName(normalized);
-  return normalized.includes("/Components/") || referenceName.startsWith("Component_");
-}
-
-export function filterNpcRoleReferenceNamesFromPaths(
-  values: Iterable<string>,
-  allowedRoleTypes: readonly string[] = VARIANT_REFERENCE_ROLE_TYPES,
-): string[] {
-  const includeComponents = allowedRoleTypes.includes("Component");
-  const filtered = new Set<string>();
-
-  for (const value of values) {
-    if (!includeComponents && isLikelyNpcComponentReferencePath(value)) {
-      continue;
-    }
-
-    filtered.add(getNpcRoleReferenceName(value));
-  }
-
-  return [...filtered].sort((left, right) => left.localeCompare(right));
-}
+export {
+  filterNpcRoleReferenceNamesFromPaths,
+  matchesNpcRoleReferenceCandidate,
+  parseNpcRoleTypeFromText,
+} from "./npcReferenceResolver";
 
 export type LoadedVariantReferenceDocument = {
   referenceName: string;
@@ -263,12 +212,4 @@ function isNpcJsonValue(value: unknown): value is NpcJsonValue {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function normalizeNpcRoleReferenceCandidate(value: string): string {
-  return value
-    .trim()
-    .replaceAll("\\", "/")
-    .replace(/\.json$/i, "")
-    .replace(/\/+/g, "/");
 }

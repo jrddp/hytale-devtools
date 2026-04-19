@@ -17,9 +17,19 @@ import type {
 } from "./graphTypes";
 import { getResolvedChildSlots, resolveChildPin } from "./childSlotUtils";
 import {
+  allowsComponentReferences,
+  getComponentReferenceSlotOccupancy,
+  isComponentReferenceNodeTemplate,
+  isComponentReferenceSyntheticFieldSchemaKey,
+  parseComponentReferenceSyntheticFieldSchemaKey,
+} from "./componentReferences";
+import {
   GENERIC_CONNECTION_TYPE,
   getCompatibleInputHandleId,
   getCompatibleOutputHandleId,
+  SELF_OUTPUT_PIN_LOCAL_ID,
+  templateHasCompatibleInput,
+  templateHasCompatibleOutput,
 } from "./pinUtils";
 import { INPUT_HANDLE_ID } from "./sharedConstants";
 import {
@@ -211,6 +221,41 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+function isStaticComponentReferenceWrapper(value: unknown): value is NodeAssetJson & { Reference: string } {
+  return isObject(value) && typeof value.Reference === "string";
+}
+
+function findCompatibleComponentReferenceTemplate(
+  workspaceContext: NodeEditorWorkspaceContext,
+  connectionType: string,
+  occupancy: "normal-item" | "whole-slot",
+  side: "input" | "output",
+): NodeTemplate | undefined {
+  const compatibleTemplates = Object.values(workspaceContext.nodeTemplatesById).filter(template => {
+    if (!isComponentReferenceNodeTemplate(template)) {
+      return false;
+    }
+
+    if (getComponentReferenceSlotOccupancy(template) !== occupancy) {
+      return false;
+    }
+
+    return side === "output"
+      ? templateHasCompatibleInput(
+          template,
+          connectionType,
+          workspaceContext.connectionTypesById,
+        )
+      : templateHasCompatibleOutput(
+          template,
+          connectionType,
+          workspaceContext.connectionTypesById,
+        );
+  });
+
+  return compatibleTemplates.length === 1 ? compatibleTemplates[0] : undefined;
+}
+
 function normalizeNodeDefinitionForReuse(value: unknown): unknown {
   if (Array.isArray(value)) {
     return value.map(normalizeNodeDefinitionForReuse);
@@ -230,6 +275,45 @@ function normalizeNodeDefinitionForReuse(value: unknown): unknown {
 
 function getRootTemplate(workspaceContext: NodeEditorWorkspaceContext): NodeTemplate | undefined {
   return workspaceContext.nodeTemplatesById[workspaceContext.rootTemplateOrVariantId];
+}
+
+function getRootSelfConnectionType(rootTemplate: NodeTemplate | undefined): string | undefined {
+  if (!rootTemplate) {
+    return undefined;
+  }
+
+  return (
+    rootTemplate.inputPins.find(pin => pin.localId === "Input" || pin.schemaKey === INPUT_HANDLE_ID)?.connectionType ??
+    rootTemplate.outputPins.find(
+      pin => pin.localId === SELF_OUTPUT_PIN_LOCAL_ID || pin.schemaKey === SELF_OUTPUT_PIN_LOCAL_ID,
+    )?.connectionType
+  );
+}
+
+function findCompatibleRootComponentReferenceTemplate(
+  workspaceContext: NodeEditorWorkspaceContext,
+): NodeTemplate | undefined {
+  const rootConnectionType = getRootSelfConnectionType(getRootTemplate(workspaceContext));
+  if (!rootConnectionType) {
+    return undefined;
+  }
+
+  const compatibleTemplates = Object.values(workspaceContext.nodeTemplatesById).filter(template => {
+    if (!isComponentReferenceNodeTemplate(template)) {
+      return false;
+    }
+
+    if (getComponentReferenceSlotOccupancy(template) !== "normal-item") {
+      return false;
+    }
+
+    return (
+      templateHasCompatibleInput(template, rootConnectionType, workspaceContext.connectionTypesById) ||
+      templateHasCompatibleOutput(template, rootConnectionType, workspaceContext.connectionTypesById)
+    );
+  });
+
+  return compatibleTemplates.length === 1 ? compatibleTemplates[0] : undefined;
 }
 
 function getRootSerializationChildSchema(
@@ -502,6 +586,26 @@ export function parseAssetDocumentToGraphDocument(
         const schemaKey = slot.childSchema.schemaKey;
         unprocessedData.delete(schemaKey);
 
+        const parseChildNode = (
+          childValue: unknown,
+          occupancy: "normal-item" | "whole-slot" = "normal-item",
+        ) => {
+          const referenceTemplate =
+            allowsComponentReferences(slot.childSchema) && isStaticComponentReferenceWrapper(childValue)
+              ? findCompatibleComponentReferenceTemplate(
+                  workspaceContext,
+                  slot.pin.connectionType,
+                  occupancy,
+                  slot.side,
+                )
+              : undefined;
+
+          return recursiveParseNodes(
+            childValue as NodeAssetJson,
+            referenceTemplate?.templateId ?? slot.childSchema.targetTemplateOrVariantId,
+          );
+        };
+
         const connectParsedChild = (childId: string) => {
           const childNode = nodesById.get(childId);
           if (slot.side === "output") {
@@ -537,22 +641,33 @@ export function parseAssetDocumentToGraphDocument(
         switch (slot.pin.multiplicity) {
           case "single":
             if (localRoot[schemaKey] !== undefined) {
-              const childId = recursiveParseNodes(
-                localRoot[schemaKey] as NodeAssetJson,
-                slot.childSchema.targetTemplateOrVariantId,
-              );
+              const childId = parseChildNode(localRoot[schemaKey]);
               connectParsedChild(childId);
             }
             break;
           case "multiple":
             if (Array.isArray(localRoot[schemaKey])) {
               for (let index = 0; index < localRoot[schemaKey].length; index++) {
-                const childId = recursiveParseNodes(
-                  localRoot[schemaKey][index] as NodeAssetJson,
-                  slot.childSchema.targetTemplateOrVariantId,
-                );
+                const childId = parseChildNode(localRoot[schemaKey][index]);
                 const childNode = nodesById.get(childId)!;
                 childNode.data.inputConnectionIndex = index;
+                connectParsedChild(childId);
+              }
+            } else if (
+              allowsComponentReferences(slot.childSchema) &&
+              isStaticComponentReferenceWrapper(localRoot[schemaKey])
+            ) {
+              const wholeSlotTemplate = findCompatibleComponentReferenceTemplate(
+                workspaceContext,
+                slot.pin.connectionType,
+                "whole-slot",
+                slot.side,
+              );
+              if (wholeSlotTemplate) {
+                const childId = recursiveParseNodes(
+                  localRoot[schemaKey] as NodeAssetJson,
+                  wholeSlotTemplate.templateId,
+                );
                 connectParsedChild(childId);
               }
             }
@@ -643,7 +758,12 @@ export function parseAssetDocumentToGraphDocument(
   };
 
   const rootNodeId = documentHasRootNode
-    ? recursiveParseNodes(documentRoot, rootTemplateOrVariantId)
+    ? recursiveParseNodes(
+        documentRoot,
+        isStaticComponentReferenceWrapper(documentRoot)
+          ? (findCompatibleRootComponentReferenceTemplate(workspaceContext)?.templateId ?? rootTemplateOrVariantId)
+          : rootTemplateOrVariantId,
+      )
     : undefined;
 
   const nodeEditorMetadata = documentRoot.$NodeEditorMetadata;
@@ -894,20 +1014,44 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         json.$NodeId = node.id;
         json.$Comment = node.data.comment ?? undefined;
 
+        const originalUnparsedMetadata = node.data.unparsedMetadata ?? {};
+        const hadOriginalComponentModify = Object.hasOwn(originalUnparsedMetadata, "Modify");
+        const originalComponentModify = originalUnparsedMetadata.Modify;
+        const preservedUnparsedMetadata =
+          isComponentReferenceNodeTemplate(node.data) && hadOriginalComponentModify
+            ? Object.fromEntries(
+                Object.entries(originalUnparsedMetadata).filter(([key]) => key !== "Modify"),
+              )
+            : originalUnparsedMetadata;
+        let componentModify =
+          isComponentReferenceNodeTemplate(node.data) && isObject(originalUnparsedMetadata.Modify)
+            ? (cloneJsonLike(originalUnparsedMetadata.Modify) as Record<string, unknown>)
+            : undefined;
+
         for (const slot of getResolvedChildSlots(node.data)) {
           const connectedNodeIds = getSerializedChildNodeIds(node, slot.childSchema.schemaKey);
           if (connectedNodeIds.length === 0) {
             continue;
           }
 
+          const wholeSlotConnectedNodeId = connectedNodeIds.find(connectedNodeId => {
+            const childNode = nodesById.get(connectedNodeId);
+            return (
+              childNode?.type === "datanode" &&
+              getComponentReferenceSlotOccupancy(childNode.data) === "whole-slot"
+            );
+          });
+
           switch (slot.pin.multiplicity) {
             case "single":
               json[slot.childSchema.schemaKey] = recursiveSerializeNode(connectedNodeIds[0]);
               break;
             case "multiple":
-              json[slot.childSchema.schemaKey] = connectedNodeIds.map(connectedNodeId =>
-                recursiveSerializeNode(connectedNodeId),
-              );
+              json[slot.childSchema.schemaKey] = wholeSlotConnectedNodeId
+                ? recursiveSerializeNode(wholeSlotConnectedNodeId)
+                : connectedNodeIds.map(connectedNodeId =>
+                    recursiveSerializeNode(connectedNodeId),
+                  );
               break;
             case "map":
               json[slot.childSchema.schemaKey] = connectedNodeIds.reduce<Record<string, unknown>>(
@@ -930,12 +1074,45 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
           if (field.value === "" && field.isImplicit) {
             continue;
           }
-          json[field.schemaKey as string] = field.value;
+          const schemaKey = field.schemaKey as string;
+          if (
+            isComponentReferenceNodeTemplate(node.data) &&
+            isComponentReferenceSyntheticFieldSchemaKey(schemaKey)
+          ) {
+            const syntheticField = parseComponentReferenceSyntheticFieldSchemaKey(schemaKey);
+            if (!syntheticField) {
+              continue;
+            }
+            componentModify ??= {};
+
+            switch (syntheticField.kind) {
+              case "modify":
+                componentModify[syntheticField.key] = cloneJsonLike(field.value);
+                break;
+              case "export-state": {
+                const exportStates = Array.isArray(componentModify._ExportStates)
+                  ? [...componentModify._ExportStates]
+                  : [];
+                exportStates[syntheticField.index] = cloneJsonLike(field.value);
+                componentModify._ExportStates = exportStates;
+                break;
+              }
+            }
+            continue;
+          }
+
+          json[schemaKey] = field.value;
+        }
+
+        if (isComponentReferenceNodeTemplate(node.data) && (hadOriginalComponentModify || componentModify)) {
+          json.Modify =
+            componentModify ??
+            (hadOriginalComponentModify ? cloneJsonLike(originalComponentModify) : {});
         }
 
         json = {
           ...json,
-          ...(node.data.unparsedMetadata ?? {}),
+          ...preservedUnparsedMetadata,
           ...node.data.schemaConstants,
         };
 

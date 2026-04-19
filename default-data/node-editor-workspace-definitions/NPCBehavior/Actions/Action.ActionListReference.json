@@ -1,0 +1,32 @@
+{
+  "Id": "Action.ActionListReference",
+  "Title": "Action List Reference",
+  "Color": "#CC3361",
+  "Description": "Reference an external ActionList component.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Reference",
+      "Type": "SmallString",
+      "Description": "Referenced component asset name.",
+      "Options": {
+        "Label": "Reference",
+        "Width": 220,
+        "Default": ""
+      }
+    }
+  ],
+  "Schema": {
+    "Reference": "Reference"
+  },
+  "IsComponentReference": true,
+  "ComponentReferenceClass": "ActionList",
+  "SlotOccupancy": "whole-slot"
+}

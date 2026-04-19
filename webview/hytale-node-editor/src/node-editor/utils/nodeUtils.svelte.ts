@@ -1,6 +1,11 @@
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { getResolvedChildSlots } from "@shared/node-editor/childSlotUtils";
 import {
+  allowsComponentReferences,
+  getComponentReferenceSlotOccupancy,
+  isComponentReferenceNodeTemplate,
+} from "@shared/node-editor/componentReferences";
+import {
   areConnectionTypesCompatible,
   GENERIC_CONNECTION_TYPE,
   getCompatibleInputHandleId,
@@ -69,11 +74,110 @@ export function isValidConnection(
   const sourcePin = sourceNode.data.outputPins?.find(pin => pin.schemaKey === connection.sourceHandle);
   const targetPin = targetNode.data.inputPins?.find(pin => pin.schemaKey === connection.targetHandle);
   if (!sourcePin || !targetPin) return false;
-  return areConnectionTypesCompatible(
-    sourcePin.connectionType,
-    targetPin.connectionType,
-    session.context.connectionTypesById,
-  );
+  if (
+    !areConnectionTypesCompatible(
+      sourcePin.connectionType,
+      targetPin.connectionType,
+      session.context.connectionTypesById,
+    )
+  ) {
+    return false;
+  }
+
+  const parentSlotConnection = resolveSerializedParentSlotConnection(connection, session);
+  if (!parentSlotConnection) {
+    return true;
+  }
+
+  const childNode = session.getNodeById(parentSlotConnection.childNodeId) as DataNodeType | undefined;
+  if (
+    childNode?.type === "datanode" &&
+    isComponentReferenceNodeTemplate(childNode.data) &&
+    !allowsComponentReferences(parentSlotConnection.slot.childSchema)
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function resolveSerializedParentSlotConnection(
+  connection: PendingConnection,
+  session: NodeEditorSession,
+):
+  | {
+      parentId: string;
+      parentHandleId: string;
+      childNodeId: string;
+      slot: ReturnType<typeof getResolvedChildSlots>[number];
+    }
+  | undefined {
+  const { source, sourceHandle, target, targetHandle } = connection;
+
+  if (source && sourceHandle) {
+    const sourceNode = session.getNodeById(source) as DataNodeType | undefined;
+    const sourceSlot =
+      sourceNode?.type === "datanode"
+        ? getResolvedChildSlots(sourceNode.data).find(
+            slot => slot.side === "output" && slot.pin.schemaKey === sourceHandle,
+          )
+        : undefined;
+    if (sourceSlot && target) {
+      return {
+        parentId: source,
+        parentHandleId: sourceHandle,
+        childNodeId: target,
+        slot: sourceSlot,
+      };
+    }
+  }
+
+  if (target && targetHandle) {
+    const targetNode = session.getNodeById(target) as DataNodeType | undefined;
+    const targetSlot =
+      targetNode?.type === "datanode"
+        ? getResolvedChildSlots(targetNode.data).find(
+            slot => slot.side === "input" && slot.pin.schemaKey === targetHandle,
+          )
+        : undefined;
+    if (targetSlot && source) {
+      return {
+        parentId: target,
+        parentHandleId: targetHandle,
+        childNodeId: source,
+        slot: targetSlot,
+      };
+    }
+  }
+
+  return undefined;
+}
+
+function getSerializedSiblingEdgesForParentSlot(
+  parentSlotConnection: NonNullable<ReturnType<typeof resolveSerializedParentSlotConnection>>,
+  session: NodeEditorSession,
+): FlowEdge[] {
+  return parentSlotConnection.slot.side === "output"
+    ? session.getOutgoingConnectionsForHandle(
+        parentSlotConnection.parentId,
+        parentSlotConnection.parentHandleId,
+      )
+    : session.getIncomingConnectionsForHandle(
+        parentSlotConnection.parentId,
+        parentSlotConnection.parentHandleId,
+      );
+}
+
+function getSerializedChildNodeIdForParentSlotEdge(
+  edge: FlowEdge,
+  parentSlotConnection: NonNullable<ReturnType<typeof resolveSerializedParentSlotConnection>>,
+): string {
+  return parentSlotConnection.slot.side === "output" ? edge.target : edge.source;
+}
+
+function isWholeSlotOccupantNode(nodeId: string, session: NodeEditorSession): boolean {
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  return node?.type === "datanode" && getComponentReferenceSlotOccupancy(node.data) === "whole-slot";
 }
 
 function getSerializedChildIdsByHandle(
@@ -313,6 +417,54 @@ export function collectConflictingEdges(
       collectAdditionalEdges(
         edge => edge.source === source && edge.sourceHandle === sourceHandle,
       );
+    }
+  }
+
+  const parentSlotConnection = resolveSerializedParentSlotConnection(connection, session);
+  if (parentSlotConnection) {
+    const childNode = session.getNodeById(parentSlotConnection.childNodeId) as DataNodeType | undefined;
+    if (childNode?.type === "datanode") {
+      const childOccupancy = getComponentReferenceSlotOccupancy(childNode.data);
+      const siblingEdges = getSerializedSiblingEdgesForParentSlot(parentSlotConnection, session);
+
+      if (childOccupancy === "whole-slot") {
+        collectEdges(siblingEdges);
+        collectAdditionalEdges(edge => {
+          if (
+            edge.source === parentSlotConnection.parentId &&
+            edge.sourceHandle === parentSlotConnection.parentHandleId
+          ) {
+            return true;
+          }
+
+          return (
+            edge.target === parentSlotConnection.parentId &&
+            (edge.targetHandle ?? INPUT_HANDLE_ID) === parentSlotConnection.parentHandleId
+          );
+        });
+      } else {
+        for (const edge of siblingEdges) {
+          if (
+            isWholeSlotOccupantNode(
+              getSerializedChildNodeIdForParentSlotEdge(edge, parentSlotConnection),
+              session,
+            )
+          ) {
+            collectEdge(edge);
+          }
+        }
+        collectAdditionalEdges(edge => {
+          const siblingNodeId =
+            edge.source === parentSlotConnection.parentId &&
+            edge.sourceHandle === parentSlotConnection.parentHandleId
+              ? edge.target
+              : edge.target === parentSlotConnection.parentId &&
+                  (edge.targetHandle ?? INPUT_HANDLE_ID) === parentSlotConnection.parentHandleId
+                ? edge.source
+                : null;
+          return siblingNodeId ? isWholeSlotOccupantNode(siblingNodeId, session) : false;
+        });
+      }
     }
   }
 

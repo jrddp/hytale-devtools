@@ -40,7 +40,8 @@
     "Time": "Time",
     "Motion": {
       "Pin": "MotionPin",
-      "Node": "BodyMotionVariants"
+      "Node": "BodyMotionVariants",
+      "AllowComponentReferences": true
     },
     "Type": "Timer"
   }

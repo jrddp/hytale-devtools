@@ -1,0 +1,428 @@
+import path from "node:path";
+import { describe, expect, test } from "vitest";
+
+import { WorkspaceRuntime } from "../../src/node-editor/workspaceResolver";
+import { SchemaRuntime } from "../../src/schema/schemaLoader";
+import type { NodeEditorWorkspaceContext, NodeTemplate } from "../../src/shared/node-editor/workspaceTypes";
+import type { FlowEdge, FlowNode } from "../../webview/hytale-node-editor/src/common";
+import { parseDocumentText } from "../../webview/hytale-node-editor/src/node-editor/parsing/parseDocument.svelte";
+import {
+  collectConflictingEdges,
+  getCompatibleInputHandleId,
+} from "../../webview/hytale-node-editor/src/node-editor/utils/nodeUtils.svelte";
+import { serializeWorkspaceState } from "../../webview/hytale-node-editor/src/node-editor/parsing/serializeDocument";
+import { createNodeEditorSession } from "../../webview/hytale-node-editor/src/workspace.svelte";
+import {
+  areSemanticallyEquivalentValues,
+  formatSemanticDiff,
+  normalizeRoundTripJson,
+  normalizeWorkspaceStateForSemanticComparison,
+} from "./helpers";
+
+const schemaDir = path.resolve(process.cwd(), "default-data/export-data/schemas");
+const workspacesRootPath = path.resolve(process.cwd(), "default-data/node-editor-workspace-definitions");
+
+const logger = {
+  error() {},
+  warn() {},
+  info() {},
+  debug() {},
+};
+
+function createWorkspaceRuntime(): WorkspaceRuntime {
+  const schemaRuntime = new SchemaRuntime(schemaDir, logger);
+  return new WorkspaceRuntime(workspacesRootPath, schemaRuntime, logger);
+}
+
+function getNpcBehaviorWorkspace() {
+  const workspaceRuntime = createWorkspaceRuntime();
+  const workspace = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"];
+  expect(workspace).toBeDefined();
+  return workspace;
+}
+
+function getNpcBehaviorContext(rootId: "Instructions" | "Instruction" | "Sensor"): NodeEditorWorkspaceContext {
+  const workspaceRuntime = createWorkspaceRuntime();
+  const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", rootId);
+  if (!context) {
+    throw new Error(`NPC Behavior workspace root "${rootId}" could not be resolved.`);
+  }
+  return context;
+}
+
+function expectSemanticRoundTrip(
+  documentRoot: Record<string, unknown>,
+  context: NodeEditorWorkspaceContext,
+): Record<string, unknown> {
+  const parsed = parseDocumentText(JSON.stringify(documentRoot), context);
+  const serialized = normalizeRoundTripJson(
+    serializeWorkspaceState(parsed, context.rootMenuName),
+  ) as Record<string, unknown>;
+  const reparsed = parseDocumentText(JSON.stringify(serialized), context);
+  const expected = normalizeWorkspaceStateForSemanticComparison(parsed);
+  const actual = normalizeWorkspaceStateForSemanticComparison(reparsed);
+
+  if (!areSemanticallyEquivalentValues(expected, actual)) {
+    throw new Error(formatSemanticDiff(expected, actual));
+  }
+
+  return serialized;
+}
+
+function findTemplateNodeIds(nodes: FlowNode[]): string[] {
+  return nodes
+    .filter((node): node is FlowNode & { type: "datanode" } => node.type === "datanode")
+    .map(node => node.data.templateId);
+}
+
+function createDataNode(id: string, template: NodeTemplate): FlowNode {
+  return {
+    id,
+    type: "datanode",
+    position: { x: 0, y: 0 },
+    data: structuredClone(template),
+  } as FlowNode;
+}
+
+function createEdge(
+  id: string,
+  source: string,
+  sourceHandle: string,
+  target: string,
+  targetHandle: string,
+): FlowEdge {
+  return {
+    id,
+    source,
+    sourceHandle,
+    target,
+    targetHandle,
+  } as FlowEdge;
+}
+
+describe("NPC behavior component references", () => {
+  test("generates component-reference templates, autocomplete filters, and reference-enabled slots", () => {
+    const workspace = getNpcBehaviorWorkspace();
+
+    expect(workspace.nodeTemplatesById["Structural.InstructionReference"]).toMatchObject({
+      isComponentReference: true,
+      componentReferenceClass: "Instruction",
+    });
+    expect(workspace.nodeTemplatesById["Sensor.Reference"]).toMatchObject({
+      isComponentReference: true,
+      componentReferenceClass: "Sensor",
+    });
+    expect(workspace.nodeTemplatesById["Action.ActionReference"]).toMatchObject({
+      isComponentReference: true,
+      componentReferenceClass: "Action",
+    });
+    expect(workspace.nodeTemplatesById["Action.ActionListReference"]).toMatchObject({
+      isComponentReference: true,
+      componentReferenceClass: "ActionList",
+      slotOccupancy: "whole-slot",
+    });
+    expect(workspace.nodeTemplatesById["Path.Reference"]).toMatchObject({
+      isComponentReference: true,
+      componentReferenceClass: "Path",
+    });
+
+    expect(
+      workspace.nodeTemplatesById["Sensor.Reference"].fieldsBySchemaKey.Reference.symbolLookup,
+    ).toMatchObject({
+      indexKind: "registeredAssets",
+      key: "NPCRole",
+      filter: {
+        npcRoleTypes: ["Component"],
+        npcComponentClasses: ["Sensor"],
+      },
+    });
+    expect(
+      workspace.nodeTemplatesById["Action.ActionReference"].fieldsBySchemaKey.Reference.symbolLookup,
+    ).toMatchObject({
+      filter: {
+        npcRoleTypes: ["Component"],
+        npcComponentClasses: ["Action"],
+      },
+    });
+
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].childSchemas.Sensor).toMatchObject({
+      allowComponentReferences: true,
+    });
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].childSchemas.BodyMotion).toMatchObject({
+      allowComponentReferences: true,
+    });
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].childSchemas.HeadMotion).toMatchObject({
+      allowComponentReferences: true,
+    });
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].childSchemas.Actions).toMatchObject({
+      allowComponentReferences: true,
+    });
+    expect(workspace.nodeTemplatesById["Action.Timeout"].childSchemas.Action).toMatchObject({
+      allowComponentReferences: true,
+    });
+    expect(workspace.nodeTemplatesById["Action.MakePath"].childSchemas.Path).toMatchObject({
+      allowComponentReferences: true,
+    });
+
+    expect(workspace.connectionTypesById.Action.extends).toContain("ActionListItem");
+    expect(workspace.connectionTypesById.ActionListReference.extends).toContain("ActionListItem");
+    expect(workspace.nodeTemplatesById["Action.ActionReference"].inputPins).toHaveLength(1);
+    expect(workspace.nodeTemplatesById["Action.ActionReference"].inputPins[0]).toMatchObject({
+      connectionType: "ActionListItem",
+      label: "Parent",
+    });
+    expect(workspace.nodeTemplatesById["Action.ActionListReference"].inputPins).toHaveLength(1);
+    expect(workspace.nodeTemplatesById["Action.ActionListReference"].inputPins[0]).toMatchObject({
+      connectionType: "ActionListItem",
+      label: "Parent",
+    });
+  });
+
+  test("round-trips an instruction reference wrapper at the root", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const documentRoot = {
+      Reference: "Component_Instruction_Generic_Idle",
+      Modify: {
+        UseTarget: true,
+        _ExportStates: ["Idle"],
+      },
+    };
+
+    const parsed = parseDocumentText(JSON.stringify(documentRoot), context);
+    expect(findTemplateNodeIds(parsed.nodes)).toContain("Structural.InstructionReference");
+
+    const serialized = expectSemanticRoundTrip(documentRoot, context);
+    expect(serialized).toMatchObject({
+      Reference: "Component_Instruction_Generic_Idle",
+      Modify: {
+        UseTarget: true,
+        _ExportStates: ["Idle"],
+      },
+    });
+    expect(serialized).not.toHaveProperty("Type");
+  });
+
+  test("round-trips child component references for sensor, motions, action items, and paths", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const documentRoot = {
+      Name: "Use Component References",
+      Sensor: {
+        Reference: "Component_Sensor_Sound",
+        Modify: {
+          Range: 10,
+          _ExportStates: ["Alerted"],
+        },
+      },
+      BodyMotion: {
+        Reference: "Component_BodyMotion_Idle",
+        Modify: {
+          BlendDuration: 0.2,
+        },
+      },
+      HeadMotion: {
+        Reference: "Component_HeadMotion_Idle",
+        Modify: {
+          TrackTarget: true,
+        },
+      },
+      Actions: [
+        {
+          Reference: "Component_Test_Action_Sequence",
+          Modify: {
+            Delay: 0.5,
+          },
+        },
+        {
+          Type: "MakePath",
+          Path: {
+            Reference: "Component_Path_Test",
+            Modify: {
+              IgnoreObstacles: true,
+            },
+          },
+        },
+      ],
+    };
+
+    const parsed = parseDocumentText(JSON.stringify(documentRoot), context);
+    expect(findTemplateNodeIds(parsed.nodes)).toEqual(
+      expect.arrayContaining([
+        "Structural.InstructionNode",
+        "Sensor.Reference",
+        "BodyMotion.Reference",
+        "HeadMotion.Reference",
+        "Action.ActionReference",
+        "Action.MakePath",
+        "Path.Reference",
+      ]),
+    );
+
+    const serialized = expectSemanticRoundTrip(documentRoot, context);
+    expect(serialized).toMatchObject({
+      Name: "Use Component References",
+      Sensor: {
+        Reference: "Component_Sensor_Sound",
+        Modify: {
+          Range: 10,
+          _ExportStates: ["Alerted"],
+        },
+      },
+      BodyMotion: {
+        Reference: "Component_BodyMotion_Idle",
+        Modify: {
+          BlendDuration: 0.2,
+        },
+      },
+      HeadMotion: {
+        Reference: "Component_HeadMotion_Idle",
+        Modify: {
+          TrackTarget: true,
+        },
+      },
+      Actions: [
+        {
+          Reference: "Component_Test_Action_Sequence",
+          Modify: {
+            Delay: 0.5,
+          },
+        },
+        {
+          Type: "MakePath",
+          Path: {
+            Reference: "Component_Path_Test",
+            Modify: {
+              IgnoreObstacles: true,
+            },
+          },
+        },
+      ],
+    });
+    expect((serialized.Sensor as Record<string, unknown>)?.Type).toBeUndefined();
+    expect((serialized.BodyMotion as Record<string, unknown>)?.Type).toBeUndefined();
+    expect((serialized.HeadMotion as Record<string, unknown>)?.Type).toBeUndefined();
+    expect(((serialized.Actions as unknown[])?.[0] as Record<string, unknown>)?.Type).toBeUndefined();
+    expect(
+      ((((serialized.Actions as unknown[])?.[1] as Record<string, unknown>)?.Path as Record<string, unknown>)?.Type),
+    ).toBeUndefined();
+  });
+
+  test("round-trips an exclusive ActionList reference wrapper on flattened Actions slots", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const documentRoot = {
+      Name: "Sleep",
+      Actions: {
+        Reference: "Component_ActionList_Sleep",
+        Modify: {
+          UseTarget: true,
+        },
+      },
+    };
+
+    const parsed = parseDocumentText(JSON.stringify(documentRoot), context);
+    expect(findTemplateNodeIds(parsed.nodes)).toContain("Action.ActionListReference");
+
+    const serialized = expectSemanticRoundTrip(documentRoot, context);
+    expect(serialized).toMatchObject({
+      Name: "Sleep",
+      Actions: {
+        Reference: "Component_ActionList_Sleep",
+        Modify: {
+          UseTarget: true,
+        },
+      },
+    });
+    expect((serialized.Actions as Record<string, unknown>)?.Type).toBeUndefined();
+  });
+
+  test("treats ActionListReference as exclusive while allowing normal Action references to coexist", () => {
+    const workspace = getNpcBehaviorWorkspace();
+    const context = getNpcBehaviorContext("Instruction");
+    const session = createNodeEditorSession();
+    session.context = context;
+
+    const instructionTemplate = workspace.nodeTemplatesById["Structural.InstructionNode"];
+    const timeoutTemplate = workspace.nodeTemplatesById["Action.Timeout"];
+    const actionReferenceTemplate = workspace.nodeTemplatesById["Action.ActionReference"];
+    const actionListReferenceTemplate = workspace.nodeTemplatesById["Action.ActionListReference"];
+    const actionsPin = instructionTemplate.outputPins.find(pin => pin.schemaKey === "Actions");
+    expect(actionsPin).toBeDefined();
+
+    const timeoutInputHandle = getCompatibleInputHandleId(
+      timeoutTemplate,
+      actionsPin!.connectionType,
+      context.connectionTypesById,
+    );
+    const actionReferenceInputHandle = getCompatibleInputHandleId(
+      actionReferenceTemplate,
+      actionsPin!.connectionType,
+      context.connectionTypesById,
+    );
+    const actionListReferenceInputHandle = getCompatibleInputHandleId(
+      actionListReferenceTemplate,
+      actionsPin!.connectionType,
+      context.connectionTypesById,
+    );
+    expect(timeoutInputHandle).toBeDefined();
+    expect(actionReferenceInputHandle).toBeDefined();
+    expect(actionListReferenceInputHandle).toBeDefined();
+
+    session.nodes = [
+      createDataNode("instruction", instructionTemplate),
+      createDataNode("timeout", timeoutTemplate),
+      createDataNode("action-ref", actionReferenceTemplate),
+      createDataNode("action-ref-new", actionReferenceTemplate),
+      createDataNode("action-list-ref", actionListReferenceTemplate),
+    ];
+
+    session.edges = [
+      createEdge("edge-timeout", "instruction", "Actions", "timeout", timeoutInputHandle!),
+      createEdge("edge-action-ref", "instruction", "Actions", "action-ref", actionReferenceInputHandle!),
+    ];
+
+    expect(
+      collectConflictingEdges(
+        {
+          source: "instruction",
+          sourceHandle: "Actions",
+          target: "action-ref-new",
+          targetHandle: actionReferenceInputHandle!,
+        },
+        session,
+      ),
+    ).toEqual([]);
+
+    expect(
+      collectConflictingEdges(
+        {
+          source: "instruction",
+          sourceHandle: "Actions",
+          target: "action-list-ref",
+          targetHandle: actionListReferenceInputHandle!,
+        },
+        session,
+      ).map(edge => edge.id),
+    ).toEqual(["edge-timeout", "edge-action-ref"]);
+
+    session.edges = [
+      createEdge(
+        "edge-action-list-ref",
+        "instruction",
+        "Actions",
+        "action-list-ref",
+        actionListReferenceInputHandle!,
+      ),
+    ];
+
+    expect(
+      collectConflictingEdges(
+        {
+          source: "instruction",
+          sourceHandle: "Actions",
+          target: "action-ref",
+          targetHandle: actionReferenceInputHandle!,
+        },
+        session,
+      ).map(edge => edge.id),
+    ).toEqual(["edge-action-list-ref"]);
+  });
+});
