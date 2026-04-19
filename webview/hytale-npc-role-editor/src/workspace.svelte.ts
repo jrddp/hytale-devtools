@@ -1,6 +1,5 @@
 import type {
   NpcRoleEditorWebviewToExtensionMessage,
-  NpcRoleEditorApplyMessage,
   NpcRoleEditorComponentReferenceTargetState,
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorVariantReferenceState,
@@ -15,65 +14,77 @@ import type { VSCodeApi } from "./common";
 import {
   addRichObjectArrayItem,
   addRichObjectProperty,
-  addStateTransition,
-  addStateTransitionEdge,
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
-  buildNpcPropertyState,
-  createVariantModifyOverrideFieldFromParent,
   isRichObjectField,
   isStateTransitionsField,
-  reorderStateTransitionEdges,
-  reorderStateTransitions,
-  removeStateTransition,
-  removeStateTransitionEdge,
-  serializeNpcPropertyState,
   setRichObjectVariantType,
   syncStateTransitionsFieldPaths,
   syncStructuredFieldPaths,
-  updateStateTransitionComment,
-  updateStateTransitionEdgeEnabled,
-  updateStateTransitionEdgePriority,
-  updateStateTransitionEdgeStates,
-  updateStateTransitionEnabled,
   type NpcFieldValue,
   type NpcPropertyField,
   type NpcPropertySection,
-  type NpcPropertyState,
 } from "./propertyModel";
-import type { NpcComponentClass, NpcRoleJson, NpcRoleType } from "./parsing/documentTypes";
-import type { NpcParameterValueJson } from "./parsing/documentTypes";
-import { parseNpcDocumentText } from "./parsing/parseNpcDocument";
-import { serializeNpcDocumentText } from "./parsing/serializeNpcDocument";
+import type { NpcComponentClass, NpcRoleType } from "./parsing/documentTypes";
 import {
-  addStandardParameter,
   isStandardParameterField,
-  removeStandardParameter,
-  renameStandardParameter,
-  reorderStandardParameters,
-  updateStandardParameterDescription,
-  updateStandardParameterEditorType,
 } from "./parsing/parameterMutations";
 import type { NpcStandardParameterEditorType } from "./parsing/parameterEditorTypes";
-import {
-  type ParameterUsageIndex,
-} from "./compute/parameterUsageIndex";
-import {
-  buildIssuesByFieldPath,
-  buildNpcIssues,
-  type NpcEditorIssue,
-} from "./issues";
-import { applyNpcDerivedPropertyMetadata } from "./derivedPropertyMetadata";
+import { type ParameterUsageIndex } from "./compute/parameterUsageIndex";
+import { type NpcEditorIssue } from "./issues";
 import { resolveEffectiveAppearanceAssetName } from "./appearancePreview";
-
-function emptyParameterUsageIndex(): ParameterUsageIndex {
-  return {
-    usagesByParameter: new Map(),
-    directTranslationByFieldPath: new Map(),
-  };
-}
-
-const DEFAULT_EDIT_LABEL = "Edit NPC Role";
+import {
+  addWorkspaceStandardParameter,
+  addWorkspaceVariantModifyOverride,
+  getAvailableWorkspaceVariantModifyOverrideFields,
+  getWorkspaceStandardParameterFields,
+  removeWorkspaceStandardParameter,
+  renameWorkspaceStandardParameter,
+  reorderWorkspaceStandardParameters,
+  updateWorkspaceStandardParameterDescription,
+  updateWorkspaceStandardParameterEditorType,
+} from "./workspace/actions/parameterActions";
+import {
+  addWorkspaceStateTransition,
+  addWorkspaceStateTransitionEdge,
+  removeWorkspaceStateTransition,
+  removeWorkspaceStateTransitionEdge,
+  reorderWorkspaceStateTransitionEdges,
+  reorderWorkspaceStateTransitions,
+  updateWorkspaceStateTransitionComment,
+  updateWorkspaceStateTransitionEdgeEnabled,
+  updateWorkspaceStateTransitionEdgePriority,
+  updateWorkspaceStateTransitionEdgeStates,
+  updateWorkspaceStateTransitionEnabled,
+} from "./workspace/actions/stateTransitionActions";
+import {
+  getWorkspaceComponentReferenceTarget,
+  requestWorkspaceComponentReferenceTarget,
+  setWorkspaceComponentReferenceTarget,
+} from "./workspace/componentReferenceState";
+import {
+  emptyParameterUsageIndex,
+  recomputeWorkspaceDerivedState,
+} from "./workspace/derivedState";
+import {
+  applyWorkspaceDocumentState,
+  flushWorkspaceDeferredDocumentState,
+  reparseWorkspaceDocument,
+  setWorkspaceDeferredDocument,
+  setWorkspaceDocument,
+} from "./workspace/documentSession";
+import {
+  getResolvedVariantReferenceParametersForDocument,
+  getResolvedVariantReferencePreviewContext,
+  refreshWorkspaceVariantReferenceResolution,
+  refreshWorkspaceVariantReferenceResolutionFromCurrentState,
+  setWorkspaceVariantReferenceState,
+} from "./workspace/variantReferenceState";
+import {
+  findWorkspaceField,
+  findWorkspaceFieldLocation,
+  findWorkspaceSection,
+} from "./workspace/fieldLookup";
 
 export class Workspace {
   vscode = $state<VSCodeApi>() as VSCodeApi;
@@ -130,7 +141,7 @@ export class Workspace {
       return;
     }
 
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
   }
 
   setDevelopment(isDevelopment: boolean) {
@@ -165,104 +176,22 @@ export class Workspace {
   }
 
   requestComponentReferenceTarget(componentClass: string, referenceName: string) {
-    const trimmedReferenceName = referenceName.trim();
-    if (!this.documentPath || !componentClass || !trimmedReferenceName) {
-      return;
-    }
-
-    const cacheKey = this.getComponentReferenceTargetCacheKey(componentClass, trimmedReferenceName);
-    const existing = this.componentReferenceTargets.get(cacheKey);
-    if (
-      existing &&
-      (existing.status === "loading" ||
-        existing.status === "loaded" ||
-        existing.status === "missing" ||
-        existing.status === "error")
-    ) {
-      return;
-    }
-
-    const nextTargets = new Map(this.componentReferenceTargets);
-    nextTargets.set(cacheKey, {
-      status: "loading",
-      componentClass,
-      referenceName: trimmedReferenceName,
-    });
-    this.componentReferenceTargets = nextTargets;
-    this.vscode.postMessage({
-      type: "resolveComponentReferenceTarget",
-      componentClass,
-      referenceName: trimmedReferenceName,
-    } satisfies NpcRoleEditorWebviewToExtensionMessage);
+    requestWorkspaceComponentReferenceTarget(this, componentClass, referenceName);
   }
 
   setComponentReferenceTarget(target: NpcRoleEditorComponentReferenceTargetState) {
-    if (!this.documentPath || !target.componentClass || !target.referenceName) {
-      return;
-    }
-
-    const nextTargets = new Map(this.componentReferenceTargets);
-    nextTargets.set(
-      this.getComponentReferenceTargetCacheKey(target.componentClass, target.referenceName),
-      target,
-    );
-    this.componentReferenceTargets = nextTargets;
+    setWorkspaceComponentReferenceTarget(this, target);
   }
 
   getComponentReferenceTarget(
     componentClass: string,
     referenceName: string,
   ): NpcRoleEditorComponentReferenceTargetState | undefined {
-    const trimmedReferenceName = referenceName.trim();
-    if (!this.documentPath || !componentClass || !trimmedReferenceName) {
-      return undefined;
-    }
-
-    return this.componentReferenceTargets.get(
-      this.getComponentReferenceTargetCacheKey(componentClass, trimmedReferenceName),
-    );
+    return getWorkspaceComponentReferenceTarget(this, componentClass, referenceName);
   }
 
   setVariantReferenceState(reference: NpcRoleEditorVariantReferenceState) {
-    const currentReferenceName = this.getCurrentVariantReferenceName();
-    if (reference.referenceName && reference.referenceName !== currentReferenceName) {
-      return;
-    }
-
-    let nextState = reference;
-    let nextParameters: NpcPropertyField[] = [];
-
-    if (reference.status === "loaded" && typeof reference.text === "string") {
-      const result = parseNpcDocumentText(reference.text);
-      if (result.status === "ready") {
-        const parentState = buildNpcPropertyState({
-          document: result.document,
-          topLevelKeyOrder: result.topLevelKeyOrder,
-          descriptors: $state.snapshot(this.descriptors),
-        });
-        applyNpcDerivedPropertyMetadata({
-          sections: parentState.sections,
-          document: result.document,
-          topLevelKeyOrder: result.topLevelKeyOrder,
-          descriptors: $state.snapshot(this.descriptors),
-        });
-        nextParameters = parentState.sections
-          .find(section => section.id === "parameters")
-          ?.fields.filter(isStandardParameterField)
-          .map(field => structuredClone(field)) ?? [];
-      } else {
-        nextState = {
-          status: "error",
-          referenceName: reference.referenceName,
-          resolvedPath: reference.resolvedPath,
-          message: result.error,
-        };
-      }
-    }
-
-    this.variantReferenceState = nextState;
-    this.variantReferenceParameters = nextParameters;
-    this.rebuildPropertyStateFromCurrentDocument();
+    setWorkspaceVariantReferenceState(this, reference);
   }
 
   setDocument({
@@ -274,13 +203,16 @@ export class Workspace {
     text: string;
     version: number;
   }) {
-    this.documentPath = documentPath;
-    this.documentVersion = version;
-    if (this.documentText === text) {
+    if (
+      !setWorkspaceDocument(this, {
+        documentPath,
+        text,
+        version,
+      })
+    ) {
       return;
     }
 
-    this.documentText = text;
     this.reparseDocument();
   }
 
@@ -293,44 +225,27 @@ export class Workspace {
     text: string;
     version: number;
   }) {
-    this.documentPath = documentPath;
-    this.documentVersion = version;
-    if (this.documentText === text) {
-      return;
-    }
-
-    this.documentText = text;
-    this.hasDeferredDocumentRefresh = true;
+    setWorkspaceDeferredDocument(this, {
+      documentPath,
+      text,
+      version,
+    });
   }
 
   flushDeferredDocumentState() {
-    if (!this.hasDeferredDocumentRefresh || this.parsedDocumentVersion === this.documentVersion) {
-      this.hasDeferredDocumentRefresh = false;
+    if (!flushWorkspaceDeferredDocumentState(this)) {
       return;
     }
 
     this.reparseDocument();
   }
 
-  applyDocumentState(label = DEFAULT_EDIT_LABEL) {
-    const document = this.getCurrentDocument();
-    if (!document) {
-      return;
-    }
-
-    const text = serializeNpcDocumentText(document, this.topLevelKeyOrder);
-    this.documentText = text;
-    const payload: NpcRoleEditorApplyMessage = {
-      type: "apply",
-      text,
-      sourceVersion: this.documentVersion,
-      label,
-    };
-    this.vscode.postMessage(payload satisfies NpcRoleEditorWebviewToExtensionMessage);
+  applyDocumentState(label = "Edit NPC Role") {
+    applyWorkspaceDocumentState(this, label);
   }
 
   updateFieldValue(fieldPath: string, value: unknown) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
       return false;
     }
@@ -340,16 +255,16 @@ export class Workspace {
       value: structuredClone(value),
     };
     field.isSet = true;
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState(`Edit ${fieldPath}`);
     if (fieldPath === "Reference") {
-      this.refreshVariantReferenceResolutionFromCurrentState();
+      refreshWorkspaceVariantReferenceResolutionFromCurrentState(this);
     }
     return true;
   }
 
   updateFieldComputeExpression(fieldPath: string, expression: string) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
       return false;
     }
@@ -359,16 +274,16 @@ export class Workspace {
       expression,
     };
     field.isSet = true;
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState(`Edit ${fieldPath}`);
     if (fieldPath === "Reference") {
-      this.refreshVariantReferenceResolutionFromCurrentState();
+      refreshWorkspaceVariantReferenceResolutionFromCurrentState(this);
     }
     return true;
   }
 
   toggleFieldComputeMode(fieldPath: string) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field || field.computable !== true) {
       return false;
     }
@@ -381,33 +296,27 @@ export class Workspace {
             expression: coerceLiteralValueToComputeExpression(field),
           };
     field.isSet = true;
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     if (fieldPath === "Reference") {
-      this.refreshVariantReferenceResolutionFromCurrentState();
+      refreshWorkspaceVariantReferenceResolutionFromCurrentState(this);
     }
     return true;
   }
 
   unsetField(fieldPath: string) {
-    const fieldLocation = this.findFieldLocation(fieldPath);
+    const fieldLocation = findWorkspaceFieldLocation(this.propertySections, fieldPath);
     const field = fieldLocation?.field;
     if (!field || field.canUnset === false) {
       return false;
     }
 
-    const parametersSection = this.findSection("parameters");
+    const parametersSection = findWorkspaceSection(this.propertySections, "parameters");
     if (parametersSection && isStandardParameterField(field)) {
-      const removed = removeStandardParameter(parametersSection, field.key);
-      if (!removed) {
-        return false;
-      }
-      this.recomputeDerivedState();
-      this.applyDocumentState();
-      return true;
+      return this.removeStandardParameter(field.key);
     }
 
-    const modifySection = this.findSection("modify");
+    const modifySection = findWorkspaceSection(this.propertySections, "modify");
     if (modifySection && field.fieldPath.startsWith("Modify.")) {
       const nextFields = modifySection.fields.filter(candidate => candidate.fieldPath !== fieldPath);
       if (nextFields.length === modifySection.fields.length) {
@@ -416,7 +325,7 @@ export class Workspace {
 
       modifySection.fields = nextFields;
       modifySection.keyOrder = (modifySection.keyOrder ?? []).filter(key => key !== field.key);
-      this.recomputeDerivedState();
+      recomputeWorkspaceDerivedState(this);
       this.applyDocumentState();
       return true;
     }
@@ -426,7 +335,7 @@ export class Workspace {
         (_, index) => index !== fieldLocation.arrayIndex,
       );
       syncStructuredFieldPaths(fieldLocation.arrayParentField);
-      this.recomputeDerivedState();
+      recomputeWorkspaceDerivedState(this);
       this.applyDocumentState();
       return true;
     }
@@ -443,148 +352,47 @@ export class Workspace {
       field.transitions = [];
       syncStateTransitionsFieldPaths(field);
     }
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     if (fieldPath === "Reference") {
-      this.refreshVariantReferenceResolutionFromCurrentState();
+      refreshWorkspaceVariantReferenceResolutionFromCurrentState(this);
     }
     return true;
   }
 
   addStandardParameter() {
-    const section = this.findSection("parameters");
-    if (!section) {
-      return null;
-    }
-
-    const nextName = addStandardParameter(section);
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return nextName;
+    return addWorkspaceStandardParameter(this);
   }
 
   renameStandardParameter(currentName: string, nextName: string) {
-    const section = this.findSection("parameters");
-    if (!section) {
-      return false;
-    }
-
-    const renamed = renameStandardParameter(section, currentName, nextName);
-    if (!renamed) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return renameWorkspaceStandardParameter(this, currentName, nextName);
   }
 
   updateStandardParameterDescription(parameterName: string, description: string) {
-    const section = this.findSection("parameters");
-    if (!section) {
-      return false;
-    }
-
-    const updated = updateStandardParameterDescription(section, parameterName, description);
-    if (!updated) {
-      return false;
-    }
-
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStandardParameterDescription(this, parameterName, description);
   }
 
   removeStandardParameter(parameterName: string) {
-    const section = this.findSection("parameters");
-    if (!section) {
-      return false;
-    }
-
-    const removed = removeStandardParameter(section, parameterName);
-    if (!removed) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return removeWorkspaceStandardParameter(this, parameterName);
   }
 
   reorderStandardParameters(parameterNames: string[]) {
-    const section = this.findSection("parameters");
-    if (!section) {
-      return false;
-    }
-
-    const reordered = reorderStandardParameters(section, parameterNames);
-    if (!reordered) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return reorderWorkspaceStandardParameters(this, parameterNames);
   }
 
   updateStandardParameterEditorType(
     parameterName: string,
     editorType: NpcStandardParameterEditorType,
   ) {
-    const section = this.findSection("parameters");
-    if (!section) {
-      return false;
-    }
-
-    const updated = updateStandardParameterEditorType(section, parameterName, editorType);
-    if (!updated) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStandardParameterEditorType(this, parameterName, editorType);
   }
 
   addVariantModifyOverride(parameterName: string) {
-    const modifySection = this.findSection("modify");
-    const inheritedField = this.variantReferenceParameters.find(field => field.key === parameterName);
-    if (!modifySection || !inheritedField || inheritedField.preservedData?.Private === true) {
-      return false;
-    }
-
-    if (modifySection.fields.some(field => field.key === parameterName)) {
-      return false;
-    }
-
-    const nextField = createVariantModifyOverrideFieldFromParent(inheritedField);
-    const firstSpecialModifierIndex = modifySection.fields.findIndex(field => field.key.startsWith("_"));
-
-    if (firstSpecialModifierIndex === -1) {
-      modifySection.fields = [...modifySection.fields, nextField];
-    } else {
-      modifySection.fields = [
-        ...modifySection.fields.slice(0, firstSpecialModifierIndex),
-        nextField,
-        ...modifySection.fields.slice(firstSpecialModifierIndex),
-      ];
-    }
-
-    const nextKeyOrder = [...(modifySection.keyOrder ?? [])];
-    const firstSpecialModifierKeyOrderIndex = nextKeyOrder.findIndex(key => key.startsWith("_"));
-    if (firstSpecialModifierKeyOrderIndex === -1) {
-      nextKeyOrder.push(parameterName);
-    } else {
-      nextKeyOrder.splice(firstSpecialModifierKeyOrderIndex, 0, parameterName);
-    }
-    modifySection.keyOrder = nextKeyOrder;
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return addWorkspaceVariantModifyOverride(this, parameterName);
   }
 
   setRichObjectVariantType(fieldPath: string, nextType: string) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
       return false;
     }
@@ -594,13 +402,13 @@ export class Workspace {
       return false;
     }
 
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     return true;
   }
 
   addRichObjectProperty(fieldPath: string, propertyKey: string) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
       return false;
     }
@@ -610,13 +418,13 @@ export class Workspace {
       return false;
     }
 
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     return true;
   }
 
   addRichObjectArrayItem(fieldPath: string) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
       return false;
     }
@@ -626,13 +434,13 @@ export class Workspace {
       return false;
     }
 
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     return true;
   }
 
   reorderRichObjectArray(fieldPath: string, childFieldIds: string[]) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field || !isRichObjectField(field) || field.structureKind !== "array") {
       return false;
     }
@@ -648,7 +456,7 @@ export class Workspace {
 
     field.childFields = reorderedFields;
     syncStructuredFieldPaths(field);
-    this.recomputeDerivedState();
+    recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     return true;
   }
@@ -674,66 +482,19 @@ export class Workspace {
   }
 
   addStateTransition(fieldPath: string) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const added = addStateTransition(field, $state.snapshot(this.descriptors));
-    if (!added) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return addWorkspaceStateTransition(this, fieldPath);
   }
 
   removeStateTransition(fieldPath: string, transitionId: string) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const removed = removeStateTransition(field, transitionId);
-    if (!removed) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return removeWorkspaceStateTransition(this, fieldPath, transitionId);
   }
 
   reorderStateTransitions(fieldPath: string, transitionIds: string[]) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const reordered = reorderStateTransitions(field, transitionIds);
-    if (!reordered) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return reorderWorkspaceStateTransitions(this, fieldPath, transitionIds);
   }
 
   updateStateTransitionComment(fieldPath: string, transitionId: string, comment: string) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const updated = updateStateTransitionComment(field, transitionId, comment);
-    if (!updated) {
-      return false;
-    }
-
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStateTransitionComment(this, fieldPath, transitionId, comment);
   }
 
   updateStateTransitionEnabled(
@@ -741,66 +502,19 @@ export class Workspace {
     transitionId: string,
     value: NpcFieldValue | undefined,
   ) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const updated = updateStateTransitionEnabled(field, transitionId, value);
-    if (!updated) {
-      return false;
-    }
-
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStateTransitionEnabled(this, fieldPath, transitionId, value);
   }
 
   addStateTransitionEdge(fieldPath: string, transitionId: string) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const added = addStateTransitionEdge(field, transitionId);
-    if (!added) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return addWorkspaceStateTransitionEdge(this, fieldPath, transitionId);
   }
 
   removeStateTransitionEdge(fieldPath: string, transitionId: string, edgeId: string) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const removed = removeStateTransitionEdge(field, transitionId, edgeId);
-    if (!removed) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return removeWorkspaceStateTransitionEdge(this, fieldPath, transitionId, edgeId);
   }
 
   reorderStateTransitionEdges(fieldPath: string, transitionId: string, edgeIds: string[]) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const reordered = reorderStateTransitionEdges(field, transitionId, edgeIds);
-    if (!reordered) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return reorderWorkspaceStateTransitionEdges(this, fieldPath, transitionId, edgeIds);
   }
 
   updateStateTransitionEdgeStates(
@@ -810,19 +524,14 @@ export class Workspace {
     direction: "from" | "to",
     values: string[],
   ) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const updated = updateStateTransitionEdgeStates(field, transitionId, edgeId, direction, values);
-    if (!updated) {
-      return false;
-    }
-
-    this.recomputeDerivedState();
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStateTransitionEdgeStates(
+      this,
+      fieldPath,
+      transitionId,
+      edgeId,
+      direction,
+      values,
+    );
   }
 
   updateStateTransitionEdgePriority(
@@ -831,18 +540,7 @@ export class Workspace {
     edgeId: string,
     priority: number | undefined,
   ) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const updated = updateStateTransitionEdgePriority(field, transitionId, edgeId, priority);
-    if (!updated) {
-      return false;
-    }
-
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStateTransitionEdgePriority(this, fieldPath, transitionId, edgeId, priority);
   }
 
   updateStateTransitionEdgeEnabled(
@@ -851,31 +549,11 @@ export class Workspace {
     edgeId: string,
     value: NpcFieldValue | undefined,
   ) {
-    const field = this.findField(fieldPath);
-    if (!field || !isStateTransitionsField(field)) {
-      return false;
-    }
-
-    const updated = updateStateTransitionEdgeEnabled(field, transitionId, edgeId, value);
-    if (!updated) {
-      return false;
-    }
-
-    this.applyDocumentState();
-    return true;
+    return updateWorkspaceStateTransitionEdgeEnabled(this, fieldPath, transitionId, edgeId, value);
   }
 
   getAvailableVariantModifyOverrideFields(): NpcPropertyField[] {
-    const modifySection = this.findSection("modify");
-    const overriddenKeys = new Set(
-      (modifySection?.fields ?? [])
-        .filter(field => !field.key.startsWith("_"))
-        .map(field => field.key),
-    );
-
-    return this.variantReferenceParameters.filter(
-      field => field.preservedData?.Private !== true && !overriddenKeys.has(field.key),
-    );
+    return getAvailableWorkspaceVariantModifyOverrideFields(this);
   }
 
   handleContextAction(message: NpcRoleEditorContextActionMessage) {
@@ -929,19 +607,19 @@ export class Workspace {
   }
 
   getStandardParameterFields(): NpcPropertyField[] {
-    return (this.findSection("parameters")?.fields ?? []).filter(isStandardParameterField);
+    return getWorkspaceStandardParameterFields(this);
   }
 
   getAppearanceField(): NpcPropertyField | null {
-    return this.findField("Appearance");
+    return findWorkspaceField(this.propertySections, "Appearance");
   }
 
   getVariantAppearanceField(): NpcPropertyField | null {
-    return this.findField("Modify.Appearance");
+    return findWorkspaceField(this.propertySections, "Modify.Appearance");
   }
 
   getEffectiveAppearanceAssetName(): string | undefined {
-    const resolvedVariantPreviewContext = this.getResolvedVariantReferencePreviewContext();
+    const resolvedVariantPreviewContext = getResolvedVariantReferencePreviewContext(this);
 
     return resolveEffectiveAppearanceAssetName({
       roleType: this.roleType,
@@ -955,373 +633,18 @@ export class Workspace {
   }
 
   reparseDocument() {
-    if (this.documentText === null) {
-      this.clearDocumentState();
-      return;
-    }
-
-    const result = parseNpcDocumentText(this.documentText);
-    if (result.status === "error") {
-      this.clearDocumentState();
-      this.documentParseError = result.error;
-      return;
-    }
-
-    this.rebuildPropertyStateFromParsedDocument(result.document, result.topLevelKeyOrder);
-    this.documentParseError = null;
-    this.parsedDocumentVersion = this.documentVersion;
-    this.hasDeferredDocumentRefresh = false;
-    this.recomputeDerivedState();
-    this.refreshVariantReferenceResolution(result.document);
-  }
-
-  private clearDocumentState() {
-    this.roleType = null;
-    this.componentClass = null;
-    this.propertySections = [];
-    this.preservedTopLevelFields = {};
-    this.topLevelKeyOrder = [];
-    this.parsedDocumentVersion = this.documentVersion;
-    this.hasDeferredDocumentRefresh = false;
-    this.variantReferenceState = { status: "none" };
-    this.variantReferenceParameters = [];
-    this.parameterUsageIndex = emptyParameterUsageIndex();
-    this.issues = [];
-    this.issuesByFieldPath = new Map();
-    this.discoveredStates = [];
-    this.appearancePreview = undefined;
-    this.documentParseError = null;
-  }
-
-  private applyPropertyState(state: NpcPropertyState) {
-    this.roleType = state.roleType;
-    this.componentClass = state.componentClass;
-    this.propertySections = state.sections;
-    this.preservedTopLevelFields = state.preservedTopLevelFields;
-    this.topLevelKeyOrder = [...state.topLevelKeyOrder];
-  }
-
-  private rebuildPropertyStateFromParsedDocument(
-    document: NpcRoleJson,
-    topLevelKeyOrder: string[],
-  ) {
-    const propertyState = buildNpcPropertyState({
-      document,
-      topLevelKeyOrder,
-      descriptors: $state.snapshot(this.descriptors),
-      variantReferenceParameters: this.getResolvedVariantReferenceParametersForDocument(document),
-    });
-    this.applyPropertyState(propertyState);
-  }
-
-  private rebuildPropertyStateFromCurrentDocument() {
-    if (this.documentText === null) {
-      this.clearDocumentState();
-      return;
-    }
-
-    const result = parseNpcDocumentText(this.documentText);
-    if (result.status === "error") {
-      this.clearDocumentState();
-      this.documentParseError = result.error;
-      return;
-    }
-
-    this.rebuildPropertyStateFromParsedDocument(result.document, result.topLevelKeyOrder);
-    this.documentParseError = null;
-    this.parsedDocumentVersion = this.documentVersion;
-    this.hasDeferredDocumentRefresh = false;
-    this.recomputeDerivedState();
-  }
-
-  private getResolvedVariantReferenceParametersForDocument(document: NpcRoleJson): NpcPropertyField[] {
-    if (document.Type !== "Variant" || typeof document.Reference !== "string") {
-      return [];
-    }
-
-    const trimmedReference = document.Reference.trim();
-    if (
-      !trimmedReference ||
-      this.variantReferenceState.status !== "loaded" ||
-      this.variantReferenceState.referenceName !== trimmedReference
-    ) {
-      return [];
-    }
-
-    return this.variantReferenceParameters;
-  }
-
-  private getResolvedVariantReferencePreviewContext():
-    | {
-        appearanceValue?: NpcParameterValueJson;
-        effectiveParameters?: Record<string, NpcParameterValueJson>;
-      }
-    | null {
-    const currentReferenceName = this.getCurrentVariantReferenceName();
-    if (
-      !currentReferenceName ||
-      this.variantReferenceState.status !== "loaded" ||
-      this.variantReferenceState.referenceName !== currentReferenceName
-    ) {
-      return null;
-    }
-
-    return {
-      appearanceValue: this.variantReferenceState.appearanceValue,
-      effectiveParameters: this.variantReferenceState.effectiveParameters,
-    };
-  }
-
-  private recomputeDerivedState() {
-    const document = this.getCurrentDocument();
-    if (!document || !this.roleType) {
-      this.parameterUsageIndex = emptyParameterUsageIndex();
-      this.issues = [];
-      this.issuesByFieldPath = new Map();
-      this.discoveredStates = [];
-      return;
-    }
-
-    const { parameterUsageIndex, discoveredStates } = applyNpcDerivedPropertyMetadata({
-      sections: this.propertySections,
-      document,
-      topLevelKeyOrder: this.topLevelKeyOrder,
-      descriptors: $state.snapshot(this.descriptors),
-    });
-    const issues = buildNpcIssues({
-      roleType: this.roleType,
-      sections: this.propertySections,
-      parameterUsageIndex,
-      variantReferenceState: this.variantReferenceState,
-      variantReferenceParameters: this.variantReferenceParameters,
-    });
-    const issuesByFieldPath = buildIssuesByFieldPath(issues);
-
-    this.parameterUsageIndex = parameterUsageIndex;
-    this.issues = issues;
-    this.issuesByFieldPath = issuesByFieldPath;
-    this.discoveredStates = discoveredStates;
-  }
-
-  private getCurrentDocument(): NpcRoleJson | null {
-    if (!this.roleType) {
-      return null;
-    }
-
-    return serializeNpcPropertyState({
-      roleType: this.roleType,
-      componentClass: this.componentClass,
-      sections: this.propertySections,
-      preservedTopLevelFields: this.preservedTopLevelFields,
-      topLevelKeyOrder: this.topLevelKeyOrder,
-    });
-  }
-
-  private findSection(sectionId: NpcPropertySection["id"]): NpcPropertySection | null {
-    return this.propertySections.find(section => section.id === sectionId) ?? null;
-  }
-
-  private findField(fieldPath: string): NpcPropertyField | null {
-    return this.findFieldLocation(fieldPath)?.field ?? null;
-  }
-
-  private findFieldLocation(fieldPath: string): {
-    field: NpcPropertyField;
-    section: NpcPropertySection;
-    parentField: NpcPropertyField | null;
-    arrayParentField: NpcPropertyField | null;
-    arrayIndex: number | null;
-  } | null {
-    for (const section of this.propertySections) {
-      for (const field of section.fields) {
-        const location = this.findFieldLocationInField(field, fieldPath, section, null, null, null);
-        if (location) {
-          return location;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  private findFieldLocationInField(
-    field: NpcPropertyField,
-    targetFieldPath: string,
-    section: NpcPropertySection,
-    parentField: NpcPropertyField | null,
-    arrayParentField: NpcPropertyField | null,
-    arrayIndex: number | null,
-  ): {
-    field: NpcPropertyField;
-    section: NpcPropertySection;
-    parentField: NpcPropertyField | null;
-    arrayParentField: NpcPropertyField | null;
-    arrayIndex: number | null;
-  } | null {
-    if (field.fieldPath === targetFieldPath) {
-      return {
-        field,
-        section,
-        parentField,
-        arrayParentField,
-        arrayIndex,
-      };
-    }
-
-    if (isStateTransitionsField(field)) {
-      for (const transition of field.transitions ?? []) {
-        const location = this.findFieldLocationInField(
-          transition.actionsField,
-          targetFieldPath,
-          section,
-          field,
-          null,
-          null,
-        );
-        if (location) {
-          return location;
-        }
-      }
-      return null;
-    }
-
-    if (!isRichObjectField(field)) {
-      return null;
-    }
-
-    const childFields = field.childFields ?? [];
-    if (field.structureKind === "array") {
-      for (const [index, childField] of childFields.entries()) {
-        const location = this.findFieldLocationInField(
-          childField,
-          targetFieldPath,
-          section,
-          field,
-          field,
-          index,
-        );
-        if (location) {
-          return location;
-        }
-      }
-      return null;
-    }
-
-    for (const childField of childFields) {
-      const location = this.findFieldLocationInField(
-        childField,
-        targetFieldPath,
-        section,
-        field,
-        null,
-        null,
-      );
-      if (location) {
-        return location;
-      }
-    }
-
-    return null;
-  }
-
-  private refreshVariantReferenceResolution(document: NpcRoleJson) {
-    if (document.Type !== "Variant") {
-      this.variantReferenceState = { status: "none" };
-      this.variantReferenceParameters = [];
-      return;
-    }
-
-    if (typeof document.Reference !== "string") {
-      if (document.Reference === undefined) {
-        this.variantReferenceState = { status: "none" };
-      } else {
-        this.variantReferenceState = {
-          status: "error",
-          message: "Variant reference must be a static role name.",
-        };
-      }
-      this.variantReferenceParameters = [];
-      return;
-    }
-
-    const trimmedReference = document.Reference.trim();
-    if (!trimmedReference) {
-      this.variantReferenceState = { status: "none" };
-      this.variantReferenceParameters = [];
-      return;
-    }
-
-    if (
-      this.variantReferenceState.status === "loading" &&
-      this.variantReferenceState.referenceName === trimmedReference
-    ) {
-      return;
-    }
-
-    if (
-      this.variantReferenceState.status === "loaded" &&
-      this.variantReferenceState.referenceName === trimmedReference
-    ) {
-      return;
-    }
-
-    if (
-      this.variantReferenceState.status === "missing" &&
-      this.variantReferenceState.referenceName === trimmedReference
-    ) {
-      return;
-    }
-
-    if (
-      this.variantReferenceState.status === "error" &&
-      this.variantReferenceState.referenceName === trimmedReference
-    ) {
-      return;
-    }
-
-    this.variantReferenceState = {
-      status: "loading",
-      referenceName: trimmedReference,
-    };
-    this.variantReferenceParameters = [];
-    this.vscode.postMessage({
-      type: "resolveVariantReference",
-      referenceName: trimmedReference,
-    } satisfies NpcRoleEditorWebviewToExtensionMessage);
-  }
-
-  private refreshVariantReferenceResolutionFromCurrentState() {
-    const document = this.getCurrentDocument();
+    const document = reparseWorkspaceDocument(this, document =>
+      getResolvedVariantReferenceParametersForDocument(this, document),
+    );
     if (!document) {
-      this.variantReferenceState = { status: "none" };
-      this.variantReferenceParameters = [];
       return;
     }
 
-    this.refreshVariantReferenceResolution(document);
-    this.rebuildPropertyStateFromCurrentDocument();
-  }
-
-  private getComponentReferenceTargetCacheKey(componentClass: string, referenceName: string): string {
-    return `${this.documentPath}::${componentClass}::${referenceName}`;
-  }
-
-  private getCurrentVariantReferenceName(): string | undefined {
-    const referenceField = this.findField("Reference");
-    if (
-      !referenceField ||
-      referenceField.value.kind !== "literal" ||
-      typeof referenceField.value.value !== "string"
-    ) {
-      return undefined;
-    }
-
-    const trimmedValue = referenceField.value.value.trim();
-    return trimmedValue || undefined;
+    refreshWorkspaceVariantReferenceResolution(this, document);
   }
 
   private logFieldInstance(fieldPath: string) {
-    const field = this.findField(fieldPath);
+    const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
       console.warn("[NPC Field Debug] Field not found.", { fieldPath });
       return;
