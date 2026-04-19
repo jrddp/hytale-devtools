@@ -276,4 +276,88 @@ describe("npc component reference node hydration", () => {
       isImplicit: false,
     });
   });
+
+  test("updates derived rows when the reference target changes between hydrations", () => {
+    const oldReferenceName = "Component_Sensor_Sound";
+    const newReferenceName = "Component_Sensor_Block";
+    workspace.setComponentReferenceTarget({
+      status: "loaded",
+      componentClass: "Sensor",
+      referenceName: oldReferenceName,
+      text: JSON.stringify({
+        Type: "Component",
+        Class: "Sensor",
+        Parameters: {
+          _ImportStates: ["OldState"],
+          Range: {
+            Value: 5,
+          },
+        },
+        Content: {
+          Type: "Block",
+        },
+      }),
+    });
+    workspace.setComponentReferenceTarget({
+      status: "loaded",
+      componentClass: "Sensor",
+      referenceName: newReferenceName,
+      text: JSON.stringify({
+        Type: "Component",
+        Class: "Sensor",
+        Parameters: {
+          _ImportStates: ["NewState"],
+          UseTarget: {
+            Value: false,
+          },
+        },
+        Content: {
+          Type: "Block",
+        },
+      }),
+    });
+
+    const [initialNode] = hydrateComponentReferenceNodes({
+      nodes: [createReferenceNode("Sensor.Reference", oldReferenceName, {})],
+      descriptors: parseDescriptors(),
+      discoveredStates: workspace.discoveredStates,
+    });
+
+    if (initialNode.type !== "datanode") {
+      throw new Error("Expected data node.");
+    }
+
+    initialNode.data.fieldsBySchemaKey.Reference = {
+      ...initialNode.data.fieldsBySchemaKey.Reference,
+      value: newReferenceName,
+      isImplicit: false,
+    };
+
+    const [rehydratedNode] = hydrateComponentReferenceNodes({
+      nodes: [initialNode],
+      descriptors: parseDescriptors(),
+      discoveredStates: workspace.discoveredStates,
+    });
+
+    expect(
+      rehydratedNode.type === "datanode"
+        ? rehydratedNode.data.fieldsBySchemaKey[createComponentReferenceExportStateFieldSchemaKey(0)]
+        : undefined,
+    ).toMatchObject({
+      label: "NewState",
+    });
+    expect(
+      rehydratedNode.type === "datanode"
+        ? rehydratedNode.data.fieldsBySchemaKey[createComponentReferenceModifyFieldSchemaKey("UseTarget")]
+        : undefined,
+    ).toMatchObject({
+      label: "Use Target",
+      isImplicit: true,
+    });
+    expect(
+      rehydratedNode.type === "datanode"
+        ? rehydratedNode.data.fieldsBySchemaKey[createComponentReferenceModifyFieldSchemaKey("Range")]
+        : undefined,
+    ).toBeUndefined();
+  });
 });

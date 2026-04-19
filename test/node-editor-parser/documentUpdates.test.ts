@@ -86,4 +86,72 @@ describe("node editor document update reconciliation", () => {
     expect(session.sourceVersion).toBe(2);
     expect(session.committedGraphDocument?.nodes[0]?.data.titleOverride).toBe("After");
   });
+
+  test("queues a document refresh for incremental element-list-changed edits", () => {
+    const session = createNodeEditorSession();
+    const context = workspaceContext({
+      templates: [nodeTemplate("Root"), nodeTemplate("Child")],
+    });
+    session.context = context;
+    session.sourceVersion = 1;
+    session.committedGraphDocument = createGraphDocument("Before");
+    session.nodes = structuredClone(session.committedGraphDocument.nodes);
+    session.edges = [];
+    session.rootNodeId = "root";
+
+    const getFallbackGraphDocument = vi.fn(() => createGraphDocument("Fallback"));
+
+    const didFullSync = reconcileSessionWithGraphUpdate({
+      session,
+      workspaceContext: context,
+      getFallbackGraphDocument,
+      version: 2,
+      appliedEdit: {
+        kind: "element-list-changed",
+        addedNodes: [
+          {
+            id: "child",
+            type: "datanode",
+            position: { x: 20, y: 20 },
+            data: nodeTemplate("Child"),
+          },
+        ],
+        removedNodes: [],
+        addedEdges: [],
+        removedEdges: [],
+        beforeRootNodeId: "root",
+        afterRootNodeId: "root",
+      },
+    });
+
+    expect(didFullSync).toBe(false);
+    expect(getFallbackGraphDocument).not.toHaveBeenCalled();
+    expect(session.sourceVersion).toBe(2);
+    expect(session.actionRequests).toEqual([{ type: "document-refresh" }]);
+    expect(session.committedGraphDocument?.nodes).toHaveLength(2);
+  });
+
+  test("falls back to full sync when no incremental edit is available for a newer version", () => {
+    const session = createNodeEditorSession();
+    const context = workspaceContext({
+      templates: [nodeTemplate("Root")],
+    });
+    session.context = context;
+    session.sourceVersion = 1;
+    session.committedGraphDocument = createGraphDocument("Before");
+
+    const getFallbackGraphDocument = vi.fn(() => createGraphDocument("Fallback"));
+
+    const didFullSync = reconcileSessionWithGraphUpdate({
+      session,
+      workspaceContext: context,
+      getFallbackGraphDocument,
+      version: 2,
+    });
+
+    expect(didFullSync).toBe(true);
+    expect(getFallbackGraphDocument).toHaveBeenCalledTimes(1);
+    expect(session.sourceVersion).toBe(2);
+    expect(session.committedGraphDocument?.nodes[0]?.data.titleOverride).toBe("Fallback");
+  });
 });

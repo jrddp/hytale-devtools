@@ -82,6 +82,37 @@ function createInteractionInstructionDocument(): NpcRoleJson {
   };
 }
 
+function createDeathInstructionDocument(): NpcRoleJson {
+  return {
+    Type: "Generic",
+    DeathInstruction: {
+      $NodeId: "Instruction-11111111-1111-4111-8111-111111111111",
+      Name: "Land",
+      Sensor: {
+        $NodeId: "Sensor-22222222-2222-4222-8222-222222222222",
+        Type: "And",
+        Sensors: [
+          {
+            $NodeId: "Sensor-33333333-3333-4333-8333-333333333333",
+            Type: "BlockType",
+            BlockSet: "Empty",
+            Sensor: {
+              $NodeId: "Sensor-44444444-4444-4444-8444-444444444444",
+              Type: "AdjustPosition",
+              Offset: [0, -1, 0],
+              Sensor: {
+                $NodeId: "Sensor-55555555-5555-4555-8555-555555555555",
+                Type: "Block",
+                RelativeTo: "Self",
+              },
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
 function createInstructionsDocument(): NpcRoleJson {
   return {
     Type: "Generic",
@@ -218,6 +249,57 @@ describe("npc embedded graph round-trip", () => {
     expect(
       (
         ((parsed.InteractionInstruction as Record<string, unknown>).Sensor as Record<string, unknown>)
+          .Sensors as Record<string, unknown>[]
+      )[0].Sensor,
+    ).toMatchObject({
+      Type: "AdjustPosition",
+      Offset: [0, -1, 0],
+    });
+  });
+
+  test("applies and inverts DeathInstruction graph edits through the NPC document runtime", () => {
+    const document = createNpcDocument(createDeathInstructionDocument());
+    const { workspaceRuntime, context } = getNpcBehaviorContext("Instruction");
+    const initialGraphDocument = resolveNpcGraphDocumentFromText({
+      text: document.text,
+      fieldPath: "DeathInstruction",
+      workspaceContext: context,
+    });
+    const adjustPositionNode = findGraphNodeByTemplateId(
+      initialGraphDocument.nodes,
+      "Sensor.AdjustPosition",
+    );
+    const edit = createOffsetEdit(adjustPositionNode.id, [0, -5, 0]);
+
+    applyNpcGraphEditToDocument(document, {
+      fieldPath: "DeathInstruction",
+      edit,
+      resolveWorkspaceContext: workspaceRoot =>
+        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", workspaceRoot),
+    });
+
+    let parsed = parseNpcRoleDocumentOrThrow(document.text).document;
+    expect(
+      (
+        ((parsed.DeathInstruction as Record<string, unknown>).Sensor as Record<string, unknown>)
+          .Sensors as Record<string, unknown>[]
+      )[0].Sensor,
+    ).toMatchObject({
+      Type: "AdjustPosition",
+      Offset: [0, -5, 0],
+    });
+
+    applyNpcGraphEditToDocument(document, {
+      fieldPath: "DeathInstruction",
+      edit: invertNodeEditorGraphEdit(edit),
+      resolveWorkspaceContext: workspaceRoot =>
+        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", workspaceRoot),
+    });
+
+    parsed = parseNpcRoleDocumentOrThrow(document.text).document;
+    expect(
+      (
+        ((parsed.DeathInstruction as Record<string, unknown>).Sensor as Record<string, unknown>)
           .Sensors as Record<string, unknown>[]
       )[0].Sensor,
     ).toMatchObject({
