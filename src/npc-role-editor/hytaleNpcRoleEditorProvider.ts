@@ -1,9 +1,5 @@
-import * as fs from "node:fs";
-import * as path from "node:path";
 import * as vscode from "vscode";
 import { assetCacheRuntime, indexes, LOGGER, workspaceRuntime } from "../extension";
-import { getValuesByIndexReference } from "../schema/symbolResolver";
-import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
 import type { ModelPreviewState } from "../shared/modelPreviewTypes";
 import {
   createEmptyNodeEditorClipboardSelection,
@@ -13,51 +9,33 @@ import { graphEditMessageToGraphEdit } from "../shared/node-editor/graphEditMess
 import { invertNodeEditorGraphEdit } from "../shared/node-editor/graphEditUtils";
 import type { NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import type {
-  NpcDescriptorDocument,
-  NpcDescriptorSource,
-} from "../shared/npc-role-editor/descriptorTypes";
-import type {
   NpcRoleEditorApplyMessage,
-  NpcRoleEditorBootstrapMessage,
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorExtensionToWebviewMessage,
   NpcRoleEditorGraphEditMessage,
   NpcRoleEditorPreviewUpdateMessage,
-  NpcRoleEditorVariantReferenceState,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
-import type {
-  NodeEditorControlScheme,
-  NodeEditorPlatform,
-} from "../shared/node-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
-import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../utils/hytalePaths";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
 import { resolveNpcAppearancePreview } from "./appearancePreviewRuntime";
 import { applyNpcGraphEditToDocument } from "./graphEditRuntime";
+import { buildNpcRoleEditorBootstrapMessage } from "./npcRoleEditorBootstrap";
 import {
-  filterNpcRoleReferenceNamesFromPaths,
-  getNpcRoleReferenceName,
-  matchesNpcRoleReferenceCandidate,
-  parseNpcComponentClassFromText,
-  parseNpcRoleTypeFromText,
-} from "./npcReferenceResolver";
+  normalizeTextEol,
+  readNpcRoleTextFromUri,
+  writeNpcRoleTextToUri,
+} from "./npcRoleEditorDocumentIO";
 import {
-  buildVariantAppearancePreviewContext,
-  isVariantReferenceRoleType,
-  parseLoadedVariantReferenceDocument,
-  type LoadedVariantReferenceDocument,
-  type VariantReferenceDocumentLoadResult,
-} from "./variantReferenceResolver";
+  resolveComponentReferenceTargetState,
+  resolveNpcAutocompleteValues,
+  resolveVariantReferenceState,
+} from "./npcRoleEditorReferenceLookup";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNpcRoleEditor";
-const NPC_DESCRIPTOR_FILE_NAME = "npc_descriptors.json";
-const WORKSPACE_NPC_ROLE_GLOB = "**/Server/NPC/Roles/**/*.json";
-const WORKSPACE_NPC_ROLE_EXCLUDE_GLOB = "**/{node_modules,.git,dist,build,.svelte-kit}/**";
 const DEFAULT_EDIT_LABEL = "Edit NPC Role";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
-const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
 
 let activeProvider: HytaleNpcRoleEditorProvider | null = null;
 
@@ -116,12 +94,6 @@ export async function triggerNpcRoleEditorContextAction(
     fieldPath: fieldPath ?? undefined,
   });
 }
-
-type LoadedNpcDescriptors = {
-  descriptors: NpcDescriptorDocument;
-  descriptorPath: string;
-  descriptorSource: NpcDescriptorSource;
-};
 
 type HytaleNpcRoleReplaceTextEdit = {
   kind: "replaceText";
@@ -199,29 +171,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
 
       const sendBootstrap = async () => {
         try {
-          const loadedDescriptors = this.loadNpcDescriptors();
-          const payload: NpcRoleEditorBootstrapMessage = {
-            type: "bootstrap",
-            ...loadedDescriptors,
-            isDevelopment: this.context.extensionMode === vscode.ExtensionMode.Development,
-            nodeEditorControlScheme: readNodeEditorControlScheme(),
-            nodeEditorPlatform: readNodeEditorPlatform(),
-            nodeEditorClipboard: this.copiedSelection,
-            npcBehaviorGraphContexts: {
-              Instructions: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
-                "NPC Behavior",
-                "Instructions",
-              ) ?? undefined,
-              Instruction: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
-                "NPC Behavior",
-                "Instruction",
-              ) ?? undefined,
-              Sensor: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
-                "NPC Behavior",
-                "Sensor",
-              ) ?? undefined,
-            },
-          };
+          const payload = buildNpcRoleEditorBootstrapMessage(this.context, this.copiedSelection);
           await webviewPanel.webview.postMessage(payload);
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
@@ -385,45 +335,6 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     };
   }
 
-  private loadNpcDescriptors(): LoadedNpcDescriptors {
-    const activeDataRoot = resolveDataRootDirFromContext(this.context);
-    const defaultDataRoot = resolveDefaultSchemaDataRoot(this.context.extensionPath);
-    const candidates: Array<{ descriptorPath: string; descriptorSource: NpcDescriptorSource }> = [
-      {
-        descriptorPath: path.join(activeDataRoot.rootPath, NPC_DESCRIPTOR_FILE_NAME),
-        descriptorSource: activeDataRoot.source,
-      },
-    ];
-
-    if (path.normalize(defaultDataRoot) !== path.normalize(activeDataRoot.rootPath)) {
-      candidates.push({
-        descriptorPath: path.join(defaultDataRoot, NPC_DESCRIPTOR_FILE_NAME),
-        descriptorSource: "default-data",
-      });
-    }
-
-    for (const candidate of candidates) {
-      if (!fs.existsSync(candidate.descriptorPath)) {
-        continue;
-      }
-
-      const parsed = JSON.parse(fs.readFileSync(candidate.descriptorPath, "utf8"));
-      if (!Array.isArray(parsed)) {
-        throw new Error(`NPC descriptor file at ${candidate.descriptorPath} was not an array.`);
-      }
-
-      return {
-        descriptors: parsed as NpcDescriptorDocument,
-        descriptorPath: candidate.descriptorPath,
-        descriptorSource: candidate.descriptorSource,
-      };
-    }
-
-    throw new Error(
-      `NPC descriptor export was not found in ${candidates.map(candidate => candidate.descriptorPath).join(" or ")}`,
-    );
-  }
-
   private getPanelsForDocument(documentUri: string): Set<vscode.WebviewPanel> {
     let panels = this.webviewPanelsByDocumentUri.get(documentUri);
     if (!panels) {
@@ -564,84 +475,8 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     await webview.postMessage({
       type: "autocompletionValues",
       fieldId: message.fieldId,
-      values: await this.getAutocompleteValues(message.symbolLookup, documentUri),
+      values: await resolveNpcAutocompleteValues(message.symbolLookup, documentUri),
     } satisfies NpcRoleEditorExtensionToWebviewMessage);
-  }
-
-  private async getAutocompleteValues(
-    symbolLookup: Extract<NpcRoleEditorWebviewToExtensionMessage, { type: "autocompleteRequest" }>["symbolLookup"],
-    documentUri: vscode.Uri,
-  ): Promise<string[]> {
-    if (symbolLookup.indexKind !== "registeredAssets" || symbolLookup.key !== "NPCRole") {
-      return getValuesByIndexReference(symbolLookup);
-    }
-
-    const requestedRoleTypes = symbolLookup.filter?.npcRoleTypes ?? [];
-    const requestedComponentClasses = new Set(symbolLookup.filter?.npcComponentClasses ?? []);
-    if (requestedRoleTypes.length === 0 && requestedComponentClasses.size === 0) {
-      return getValuesByIndexReference(symbolLookup);
-    }
-
-    const candidatePaths = new Set<string>();
-    const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
-    if (registeredShard?.indexKind === "registeredAssets") {
-      for (const assetName of Object.keys((registeredShard as RegisteredAssetsIndexShard).values)) {
-        candidatePaths.add(assetName);
-      }
-    }
-
-    for (const openDocument of vscode.workspace.textDocuments) {
-      if (openDocument.uri.scheme !== "file" || !openDocument.fileName.endsWith(".json")) {
-        continue;
-      }
-
-      candidatePaths.add(openDocument.uri.fsPath);
-    }
-
-    const workspaceRoleUris = await vscode.workspace.findFiles(
-      WORKSPACE_NPC_ROLE_GLOB,
-      WORKSPACE_NPC_ROLE_EXCLUDE_GLOB,
-      5000,
-    );
-    for (const roleUri of workspaceRoleUris) {
-      candidatePaths.add(roleUri.fsPath);
-    }
-
-    candidatePaths.add(documentUri.fsPath);
-
-    if (requestedComponentClasses.size === 0) {
-      return filterNpcRoleReferenceNamesFromPaths(candidatePaths, requestedRoleTypes);
-    }
-
-    const matchedReferenceNames = new Set<string>();
-    for (const candidatePath of candidatePaths) {
-      const candidateInfo = await loadNpcReferenceDocumentInfo(candidatePath, documentUri);
-      if (!candidateInfo) {
-        continue;
-      }
-
-      if (
-        requestedRoleTypes.length > 0 &&
-        !requestedRoleTypes.includes(candidateInfo.roleType)
-      ) {
-        continue;
-      }
-
-      if (
-        requestedComponentClasses.size > 0 &&
-        (!candidateInfo.componentClass || !requestedComponentClasses.has(candidateInfo.componentClass))
-      ) {
-        continue;
-      }
-
-      matchedReferenceNames.add(getNpcRoleReferenceName(candidatePath));
-    }
-
-    if (requestedComponentClasses.size > 0) {
-      return [...matchedReferenceNames].sort((left, right) => left.localeCompare(right));
-    }
-
-    return filterNpcRoleReferenceNamesFromPaths(matchedReferenceNames, requestedRoleTypes);
   }
 
   private async resolveVariantReference(
@@ -852,435 +687,6 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
   }
 }
 
-function readNodeEditorControlScheme(): NodeEditorControlScheme {
-  const configuredValue = vscode.workspace
-    .getConfiguration(EXTENSION_CONFIG_NAMESPACE)
-    .get<string>(NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY);
-  if (configuredValue === "trackpad") {
-    return "trackpad";
-  }
-
-  return DEFAULT_NODE_EDITOR_CONTROL_SCHEME;
-}
-
-function readNodeEditorPlatform(): NodeEditorPlatform {
-  if (process.platform === "darwin") {
-    return "mac";
-  }
-
-  if (process.platform === "linux") {
-    return "linux";
-  }
-
-  return "win";
-}
-
-async function resolveVariantReferenceState(
-  referenceName: string,
-  documentUri: vscode.Uri,
-): Promise<NpcRoleEditorVariantReferenceState> {
-  const trimmedReferenceName = referenceName.trim();
-  if (!trimmedReferenceName) {
-    return { status: "none" };
-  }
-
-  const currentDocumentReferenceName = getNpcRoleReferenceName(documentUri.fsPath);
-  if (trimmedReferenceName === currentDocumentReferenceName) {
-    return {
-      status: "error",
-      referenceName: trimmedReferenceName,
-      message: "Variants cannot reference themselves.",
-    };
-  }
-
-  const loadReferenceDocument = createVariantReferenceDocumentLoader(documentUri);
-  const loadedReference = await loadReferenceDocument(trimmedReferenceName);
-  if (loadedReference.status === "missing") {
-    return {
-      status: "missing",
-      referenceName: trimmedReferenceName,
-    };
-  }
-
-  if (loadedReference.status === "error") {
-    return {
-      status: "error",
-      referenceName: trimmedReferenceName,
-      message: loadedReference.message,
-    };
-  }
-
-  const previewContext = await buildVariantAppearancePreviewContext({
-    referenceName: trimmedReferenceName,
-    currentDocumentReferenceName,
-    loadReferenceDocument,
-  });
-
-  return {
-    status: "loaded",
-    referenceName: trimmedReferenceName,
-    resolvedPath: loadedReference.reference.resolvedPath,
-    text: loadedReference.reference.text,
-    appearanceValue: previewContext?.appearanceValue,
-    effectiveParameters: previewContext?.effectiveParameters,
-  };
-}
-
-type LoadedNpcReferenceDocumentInfo = {
-  roleType: string;
-  componentClass?: string;
-};
-
-async function resolveComponentReferenceTargetState(
-  componentClass: string,
-  referenceName: string,
-  documentUri: vscode.Uri,
-): Promise<Extract<
-  NpcRoleEditorExtensionToWebviewMessage,
-  { type: "componentReferenceTargetUpdate" }
->["target"]> {
-  const loadedReference = await loadComponentReferenceDocument(referenceName, componentClass, documentUri);
-  if (loadedReference.status === "missing") {
-    return {
-      status: "missing",
-      componentClass,
-      referenceName,
-    };
-  }
-
-  if (loadedReference.status === "error") {
-    return {
-      status: "error",
-      componentClass,
-      referenceName,
-      message: loadedReference.message,
-    };
-  }
-
-  return {
-    status: "loaded",
-    componentClass,
-    referenceName,
-    resolvedPath: loadedReference.resolvedPath,
-    text: loadedReference.text,
-  };
-}
-
-async function loadComponentReferenceDocument(
-  referenceName: string,
-  componentClass: string,
-  documentUri: vscode.Uri,
-):
-  Promise<
-    | { status: "loaded"; resolvedPath: string; text: string }
-    | { status: "missing" }
-    | { status: "error"; message: string }
-  > {
-  const openDocumentMatch = vscode.workspace.textDocuments.find(candidate => {
-    return (
-      candidate.uri.scheme === "file" &&
-      candidate.uri.fsPath !== documentUri.fsPath &&
-      matchesNpcRoleReferenceCandidate(candidate.uri.fsPath, referenceName)
-    );
-  });
-
-  if (openDocumentMatch) {
-    const text = openDocumentMatch.getText();
-    if (parseNpcComponentClassFromText(text) === componentClass) {
-      return {
-        status: "loaded",
-        resolvedPath: openDocumentMatch.uri.fsPath,
-        text,
-      };
-    }
-  }
-
-  const workspaceMatches = await vscode.workspace.findFiles(
-    `**/${referenceName}.json`,
-    WORKSPACE_NPC_ROLE_EXCLUDE_GLOB,
-    100,
-  );
-
-  for (const match of workspaceMatches) {
-    if (match.fsPath === documentUri.fsPath) {
-      continue;
-    }
-
-    if (!matchesNpcRoleReferenceCandidate(match.fsPath, referenceName)) {
-      continue;
-    }
-
-    try {
-      const text = fs.readFileSync(match.fsPath, "utf8");
-      if (parseNpcComponentClassFromText(text) !== componentClass) {
-        continue;
-      }
-
-      return {
-        status: "loaded",
-        resolvedPath: match.fsPath,
-        text,
-      };
-    } catch (error) {
-      return {
-        status: "error",
-        message: error instanceof Error ? error.message : String(error),
-      };
-    }
-  }
-
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
-  if (registeredShard?.indexKind === "registeredAssets") {
-    for (const [assetName, metadata] of Object.entries((registeredShard as RegisteredAssetsIndexShard).values)) {
-      if (!matchesNpcRoleReferenceCandidate(assetName, referenceName)) {
-        continue;
-      }
-
-      if (!metadata.sourcedFromFile) {
-        continue;
-      }
-
-      try {
-        const bytes = await assetCacheRuntime.readAssetBytesByPath(metadata.sourcedFromFile);
-        if (!bytes) {
-          continue;
-        }
-
-        const text = bytes.toString("utf8");
-        if (parseNpcComponentClassFromText(text) !== componentClass) {
-          continue;
-        }
-
-        return {
-          status: "loaded",
-          resolvedPath: metadata.sourcedFromFile,
-          text,
-        };
-      } catch (error) {
-        return {
-          status: "error",
-          message: error instanceof Error ? error.message : String(error),
-        };
-      }
-    }
-  }
-
-  return {
-    status: "missing",
-  };
-}
-
-async function loadNpcReferenceDocumentInfo(
-  referencePath: string,
-  documentUri: vscode.Uri,
-): Promise<LoadedNpcReferenceDocumentInfo | undefined> {
-  const openDocument = vscode.workspace.textDocuments.find(candidate => {
-    return candidate.uri.scheme === "file" && candidate.uri.fsPath === referencePath;
-  });
-
-  if (openDocument) {
-    const text = openDocument.getText();
-    const roleType = parseNpcRoleTypeFromText(text);
-    if (!roleType) {
-      return undefined;
-    }
-
-    return {
-      roleType,
-      componentClass: parseNpcComponentClassFromText(text),
-    };
-  }
-
-  if (path.isAbsolute(referencePath)) {
-    try {
-      const text = fs.readFileSync(referencePath, "utf8");
-      const roleType = parseNpcRoleTypeFromText(text);
-      if (!roleType) {
-        return undefined;
-      }
-
-      return {
-        roleType,
-        componentClass: parseNpcComponentClassFromText(text),
-      };
-    } catch {
-      return undefined;
-    }
-  }
-
-  if (referencePath === documentUri.fsPath) {
-    return undefined;
-  }
-
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
-  const metadata =
-    registeredShard?.indexKind === "registeredAssets"
-      ? (registeredShard as RegisteredAssetsIndexShard).values[referencePath]
-      : undefined;
-  if (!metadata?.sourcedFromFile) {
-    return undefined;
-  }
-
-  try {
-    const bytes = await assetCacheRuntime.readAssetBytesByPath(metadata.sourcedFromFile);
-    if (!bytes) {
-      return undefined;
-    }
-
-    const text = bytes.toString("utf8");
-    const roleType = parseNpcRoleTypeFromText(text);
-    if (!roleType) {
-      return undefined;
-    }
-
-    return {
-      roleType,
-      componentClass: parseNpcComponentClassFromText(text),
-    };
-  } catch {
-    return undefined;
-  }
-}
-
-function createVariantReferenceDocumentLoader(
-  documentUri: vscode.Uri,
-): (referenceName: string) => Promise<VariantReferenceDocumentLoadResult> {
-  const cache = new Map<string, Promise<VariantReferenceDocumentLoadResult>>();
-
-  return async (referenceName: string) => {
-    const trimmedReferenceName = referenceName.trim();
-    if (!trimmedReferenceName) {
-      return { status: "missing" };
-    }
-
-    let cached = cache.get(trimmedReferenceName);
-    if (!cached) {
-      cached = loadVariantReferenceDocument(trimmedReferenceName, documentUri);
-      cache.set(trimmedReferenceName, cached);
-    }
-
-    return await cached;
-  };
-}
-
-async function loadVariantReferenceDocument(
-  trimmedReferenceName: string,
-  documentUri: vscode.Uri,
-): Promise<VariantReferenceDocumentLoadResult> {
-  const openDocumentMatch = vscode.workspace.textDocuments.find(candidate => {
-    return (
-      candidate.uri.scheme === "file" &&
-      candidate.uri.fsPath !== documentUri.fsPath &&
-      matchesNpcRoleReferenceCandidate(candidate.uri.fsPath, trimmedReferenceName)
-    );
-  });
-
-  if (openDocumentMatch) {
-    const text = openDocumentMatch.getText();
-    const parsedType = parseNpcRoleTypeFromText(text);
-    if (isVariantReferenceRoleType(parsedType)) {
-      return toLoadedVariantReferenceResult({
-        referenceName: trimmedReferenceName,
-        resolvedPath: openDocumentMatch.uri.fsPath,
-        text,
-      });
-    }
-  }
-
-  const workspaceMatches = await vscode.workspace.findFiles(
-    `**/${trimmedReferenceName}.json`,
-    WORKSPACE_NPC_ROLE_EXCLUDE_GLOB,
-    50,
-  );
-
-  for (const match of workspaceMatches) {
-    if (match.fsPath === documentUri.fsPath) {
-      continue;
-    }
-
-    if (!matchesNpcRoleReferenceCandidate(match.fsPath, trimmedReferenceName)) {
-      continue;
-    }
-
-    try {
-      const text = fs.readFileSync(match.fsPath, "utf8");
-      const parsedType = parseNpcRoleTypeFromText(text);
-      if (!isVariantReferenceRoleType(parsedType)) {
-        continue;
-      }
-
-      return toLoadedVariantReferenceResult({
-        referenceName: trimmedReferenceName,
-        resolvedPath: match.fsPath,
-        text,
-      });
-    } catch (error) {
-      return {
-        status: "error",
-        message: error instanceof Error ? error.message : String(error),
-      };
-    }
-  }
-
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
-  if (registeredShard?.indexKind === "registeredAssets") {
-    for (const [assetName, metadata] of Object.entries((registeredShard as RegisteredAssetsIndexShard).values)) {
-      if (!matchesNpcRoleReferenceCandidate(assetName, trimmedReferenceName)) {
-        continue;
-      }
-
-      if (!metadata.sourcedFromFile) {
-        continue;
-      }
-
-      try {
-        const bytes = await assetCacheRuntime.readAssetBytesByPath(metadata.sourcedFromFile);
-        if (!bytes) {
-          continue;
-        }
-
-        const text = bytes.toString("utf8");
-        const parsedType = parseNpcRoleTypeFromText(text);
-        if (!isVariantReferenceRoleType(parsedType)) {
-          continue;
-        }
-
-        return toLoadedVariantReferenceResult({
-          referenceName: trimmedReferenceName,
-          resolvedPath: metadata.sourcedFromFile,
-          text,
-        });
-      } catch (error) {
-        return {
-          status: "error",
-          message: error instanceof Error ? error.message : String(error),
-        };
-      }
-    }
-  }
-
-  return {
-    status: "missing",
-  };
-}
-
-function toLoadedVariantReferenceResult(
-  loadedReference: Omit<LoadedVariantReferenceDocument, "document">,
-): VariantReferenceDocumentLoadResult {
-  const parsedReference = parseLoadedVariantReferenceDocument(loadedReference);
-  if (!parsedReference) {
-    return {
-      status: "error",
-      message: `NPC role reference ${loadedReference.referenceName} could not be parsed.`,
-    };
-  }
-
-  return {
-    status: "loaded",
-    reference: parsedReference,
-  };
-}
-
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -1292,36 +698,4 @@ function escapeHtml(value: string): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-async function readNpcRoleTextFromUri(
-  uri: vscode.Uri,
-): Promise<{ text: string; eol: vscode.EndOfLine }> {
-  const bytes = await vscode.workspace.fs.readFile(uri);
-  const text = stripBom(Buffer.from(bytes).toString("utf8"));
-  return {
-    text,
-    eol: detectTextEol(text),
-  };
-}
-
-async function writeNpcRoleTextToUri(
-  uri: vscode.Uri,
-  text: string,
-  eol: vscode.EndOfLine,
-): Promise<void> {
-  await vscode.workspace.fs.writeFile(uri, Buffer.from(normalizeTextEol(text, eol), "utf8"));
-}
-
-function stripBom(text: string): string {
-  return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
-}
-
-function detectTextEol(text: string): vscode.EndOfLine {
-  return text.includes("\r\n") ? vscode.EndOfLine.CRLF : vscode.EndOfLine.LF;
-}
-
-function normalizeTextEol(text: string, eol: vscode.EndOfLine): string {
-  const targetEol = eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
-  return text.replace(/\r\n|\r|\n/g, targetEol);
 }
