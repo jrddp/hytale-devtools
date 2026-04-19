@@ -185,7 +185,7 @@ function buildDescriptorTemplate(
       continue;
     }
 
-    const field = buildContentField(attribute);
+    const field = buildContentField(descriptor, attribute);
     if (!field) {
       continue;
     }
@@ -242,7 +242,13 @@ function buildInstructionNodeTemplate(
       continue;
     }
 
-    const field = buildContentField(attribute);
+    const field = buildContentField(
+      {
+        Category: "Structural",
+        Name: "Instruction",
+      },
+      attribute,
+    );
     if (!field) {
       continue;
     }

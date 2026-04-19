@@ -4,6 +4,12 @@ import type {
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorVariantReferenceState,
 } from "@shared/npc-role-editor/messageTypes";
+import {
+  createEmptyNpcDiscoveredStateInfo,
+  getNpcStateAutocompleteValues,
+  type NpcDiscoveredStateInfo,
+  type NpcStateAutocompleteKind,
+} from "@shared/npc-role-editor/stateAutocomplete";
 import type {
   NpcDescriptorDocument,
   NpcDescriptorSource,
@@ -108,7 +114,7 @@ export class Workspace {
   parameterUsageIndex = $state<ParameterUsageIndex>(emptyParameterUsageIndex());
   issues = $state<NpcEditorIssue[]>([]);
   issuesByFieldPath = $state<Map<string, NpcEditorIssue[]>>(new Map());
-  discoveredStates = $state<string[]>([]);
+  discoveredStateInfo = $state<NpcDiscoveredStateInfo>(createEmptyNpcDiscoveredStateInfo());
   documentParseError = $state<string | null>(null);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
@@ -170,6 +176,10 @@ export class Workspace {
   setAutocompleteValues(fieldId: string, values: string[]) {
     this.autocompleteField = fieldId;
     this.autocompleteValues = [...values].sort((left, right) => left.localeCompare(right));
+  }
+
+  getStateAutocompleteValues(kind: NpcStateAutocompleteKind | undefined): string[] {
+    return getNpcStateAutocompleteValues(this.discoveredStateInfo, kind);
   }
 
   setAppearancePreview(preview: ModelPreviewState | undefined) {

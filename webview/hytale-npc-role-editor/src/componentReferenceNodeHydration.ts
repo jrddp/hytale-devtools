@@ -1,5 +1,10 @@
 import type { DataNodeType, FlowNode } from "@node-editor/common";
 import {
+  getNpcStateAutocompleteValues,
+  type NpcDiscoveredStateInfo,
+  type NpcStateAutocompleteKind,
+} from "@shared/npc-role-editor/stateAutocomplete";
+import {
   createComponentReferenceExportStateFieldSchemaKey,
   createComponentReferenceModifyFieldSchemaKey,
   isComponentReferenceNodeTemplate,
@@ -21,7 +26,7 @@ type ComponentReferenceInspection = {
 type HydrateOptions = {
   nodes: FlowNode[];
   descriptors: NpcDescriptorDocument;
-  discoveredStates: string[];
+  discoveredStateInfo: NpcDiscoveredStateInfo;
 };
 
 const inspectionCache = new Map<
@@ -35,7 +40,7 @@ const inspectionCache = new Map<
 export function hydrateComponentReferenceNodes({
   nodes,
   descriptors,
-  discoveredStates,
+  discoveredStateInfo,
 }: HydrateOptions): FlowNode[] {
   let didChange = false;
 
@@ -69,7 +74,7 @@ export function hydrateComponentReferenceNodes({
     const nextFieldsBySchemaKey = buildComponentReferenceFields(
       node as DataNodeType,
       inspection,
-      discoveredStates,
+      discoveredStateInfo,
     );
     if (componentReferenceFieldsEqual(node.data.fieldsBySchemaKey, nextFieldsBySchemaKey)) {
       return node;
@@ -116,7 +121,6 @@ function inspectComponentReferenceTarget(
       usagesByParameter: new Map(),
       directTranslationByFieldPath: new Map(),
     },
-    [],
   );
   const parameterSection = sections.find(section => section.id === "parameters");
   if (!parameterSection) {
@@ -147,7 +151,7 @@ function inspectComponentReferenceTarget(
 function buildComponentReferenceFields(
   node: DataNodeType,
   inspection: ComponentReferenceInspection | undefined,
-  discoveredStates: string[],
+  discoveredStateInfo: NpcDiscoveredStateInfo,
 ): Record<string, NodeField> {
   const nextFieldsBySchemaKey: Record<string, NodeField> = {};
   const currentReferenceField = node.data.fieldsBySchemaKey.Reference;
@@ -228,7 +232,7 @@ function buildComponentReferenceFields(
           createComponentReferenceExportStateFieldSchemaKey(index),
           importState,
           activeExportStates[index] ?? "",
-          discoveredStates,
+          discoveredStateInfo,
           activeExportStates[index] === undefined,
         );
     });
@@ -238,7 +242,7 @@ function buildComponentReferenceFields(
           createComponentReferenceExportStateFieldSchemaKey(index),
           `Export State ${index + 1}`,
           activeExportStates[index] ?? "",
-          discoveredStates,
+          discoveredStateInfo,
           false,
         );
     }
@@ -249,7 +253,7 @@ function buildComponentReferenceFields(
           createComponentReferenceExportStateFieldSchemaKey(index),
           `Export State ${index + 1}`,
           value,
-          discoveredStates,
+          discoveredStateInfo,
           false,
         );
     });
@@ -270,6 +274,7 @@ function createNodeFieldFromNpcField(field: NpcPropertyField, schemaKey: string)
     isImplicit: false,
     overrideAutocompleteValues: field.staticSuggestions ? [...field.staticSuggestions] : undefined,
     symbolLookup: field.symbolRef ? { ...field.symbolRef } : undefined,
+    stateAutocompleteKind: field.stateAutocompleteKind,
   };
 }
 
@@ -324,9 +329,10 @@ function createExportStateField(
   schemaKey: string,
   label: string,
   value: string,
-  discoveredStates: string[],
+  discoveredStateInfo: NpcDiscoveredStateInfo,
   isImplicit: boolean,
 ): NodeField {
+  const suggestions = getNpcStateAutocompleteValues(discoveredStateInfo, "role-full");
   return {
     schemaKey,
     localId: schemaKey,
@@ -335,7 +341,7 @@ function createExportStateField(
     description: "Maps this imported component state to a parent state name.",
     value,
     isImplicit,
-    overrideAutocompleteValues: discoveredStates.length > 0 ? [...discoveredStates] : undefined,
+    overrideAutocompleteValues: suggestions.length > 0 ? [...suggestions] : undefined,
   };
 }
 
@@ -362,7 +368,8 @@ function componentReferenceFieldsEqual(
       JSON.stringify(leftField.value) === JSON.stringify(rightField.value) &&
       JSON.stringify(leftField.overrideAutocompleteValues ?? []) ===
         JSON.stringify(rightField.overrideAutocompleteValues ?? []) &&
-      JSON.stringify(leftField.symbolLookup ?? null) === JSON.stringify(rightField.symbolLookup ?? null)
+      JSON.stringify(leftField.symbolLookup ?? null) === JSON.stringify(rightField.symbolLookup ?? null) &&
+      leftField.stateAutocompleteKind === rightField.stateAutocompleteKind
     );
   });
 }
@@ -381,4 +388,39 @@ function overrideNodeFieldValue(
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function overrideNodeFieldAutocomplete(
+  field: NodeField,
+  autocompleteKind: NpcStateAutocompleteKind | undefined,
+  discoveredStateInfo: NpcDiscoveredStateInfo,
+): NodeField {
+  if (!autocompleteKind) {
+    if (field.stateAutocompleteKind === undefined && field.overrideAutocompleteValues === undefined) {
+      return field;
+    }
+
+    return {
+      ...field,
+      stateAutocompleteKind: undefined,
+      overrideAutocompleteValues: undefined,
+    };
+  }
+
+  const suggestions = getNpcStateAutocompleteValues(discoveredStateInfo, autocompleteKind);
+  const nextOverrideAutocompleteValues =
+    suggestions.length > 0 ? [...suggestions] : undefined;
+  if (
+    field.stateAutocompleteKind === autocompleteKind &&
+    JSON.stringify(field.overrideAutocompleteValues ?? []) ===
+      JSON.stringify(nextOverrideAutocompleteValues ?? [])
+  ) {
+    return field;
+  }
+
+  return {
+    ...field,
+    stateAutocompleteKind: autocompleteKind,
+    overrideAutocompleteValues: nextOverrideAutocompleteValues,
+  };
 }

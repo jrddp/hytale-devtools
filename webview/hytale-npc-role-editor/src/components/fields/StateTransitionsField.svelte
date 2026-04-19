@@ -293,7 +293,7 @@
                 <StateNameListEditor
                   title="From"
                   values={edgeView.edge.from}
-                  suggestions={workspace.discoveredStates}
+                  suggestions={workspace.discoveredStateInfo.roleMainStates}
                   emptyText="Matches any state."
                   onchange={values => {
                     workspace.updateStateTransitionEdgeStates(
@@ -309,7 +309,7 @@
                 <StateNameListEditor
                   title="To"
                   values={edgeView.edge.to}
-                  suggestions={workspace.discoveredStates}
+                  suggestions={workspace.discoveredStateInfo.roleMainStates}
                   emptyText="Matches any destination state."
                   onchange={values => {
                     workspace.updateStateTransitionEdgeStates(

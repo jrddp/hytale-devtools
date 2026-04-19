@@ -1,3 +1,4 @@
+import { createEmptyNpcDiscoveredStateInfo } from "@shared/npc-role-editor/stateAutocomplete";
 import type { Workspace } from "../workspace.svelte";
 import type { NpcRoleEditorApplyMessage } from "@shared/npc-role-editor/messageTypes";
 import type { NpcRoleJson } from "../parsing/documentTypes";
@@ -130,7 +131,7 @@ export function clearWorkspaceDocumentState(workspace: Workspace) {
   workspace.parameterUsageIndex = emptyParameterUsageIndex();
   workspace.issues = [];
   workspace.issuesByFieldPath = new Map();
-  workspace.discoveredStates = [];
+  workspace.discoveredStateInfo = createEmptyNpcDiscoveredStateInfo();
   workspace.appearancePreview = undefined;
   workspace.documentParseError = null;
 }

@@ -106,7 +106,12 @@ beforeEach(() => {
     version: 1,
     text: JSON.stringify({ Type: "Generic" }, null, 2),
   });
-  workspace.discoveredStates = ["Idle", "Alerted"];
+  workspace.discoveredStateInfo = {
+    roleMainStates: ["Alerted", "Idle"],
+    roleFullStates: ["Alerted", "Idle", "Idle.Patrol"],
+    componentParentAliases: ["ParentIdle"],
+    componentLocalStates: [".LocalIdle", ".LocalSleep"],
+  };
   workspace.componentReferenceTargets = new Map();
 });
 
@@ -234,7 +239,8 @@ describe("npc graph host helpers", () => {
     hydrateNpcGraphSessionNodes({
       session,
       descriptors: parseDescriptors(),
-      discoveredStates: workspace.discoveredStates,
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      roleType: workspace.roleType,
     });
 
     expect(
@@ -246,6 +252,51 @@ describe("npc graph host helpers", () => {
     ).toMatchObject({
       label: "Range",
       isImplicit: true,
+    });
+  });
+
+  test("hydrateNpcGraphSessionNodes applies state autocomplete buckets for NPC node fields", () => {
+    const session = createNodeEditorSession();
+    session.isInitialized = true;
+    session.nodes = [
+      {
+        id: "action-state-node",
+        type: "datanode",
+        position: { x: 0, y: 0 },
+        data: structuredClone(getNpcTemplate("Action.State")),
+      } as FlowNode,
+    ] as never;
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      roleType: "Generic",
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey.State
+        : undefined,
+    ).toMatchObject({
+      stateAutocompleteKind: "role-full",
+      overrideAutocompleteValues: ["Alerted", "Idle", "Idle.Patrol"],
+    });
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      roleType: "Component",
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey.State
+        : undefined,
+    ).toMatchObject({
+      stateAutocompleteKind: "component-local",
+      overrideAutocompleteValues: [".LocalIdle", ".LocalSleep"],
     });
   });
 });

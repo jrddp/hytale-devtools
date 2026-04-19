@@ -4,6 +4,7 @@ import type {
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { IndexReference } from "@shared/indexTypes";
+import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
 import type {
   NpcComponentClass,
   NpcModifyJson,
@@ -122,7 +123,6 @@ export function buildNpcPropertySections(
   document: NpcRoleJson,
   descriptors: NpcDescriptorDocument,
   parameterUsageIndex: ParameterUsageIndex,
-  discoveredStates: string[],
   variantReferenceParameters: NpcPropertyField[] = [],
 ): NpcPropertySection[] {
   const state = buildNpcPropertyState({
@@ -132,14 +132,13 @@ export function buildNpcPropertySections(
     variantReferenceParameters,
   });
 
-  applyNpcPropertySectionDerivedState(state.sections, parameterUsageIndex, discoveredStates, descriptors);
+  applyNpcPropertySectionDerivedState(state.sections, parameterUsageIndex, descriptors);
   return state.sections;
 }
 
 export function applyNpcPropertySectionDerivedState(
   sections: NpcPropertySection[],
   parameterUsageIndex: ParameterUsageIndex,
-  discoveredStates: string[],
   descriptors: NpcDescriptorDocument = [],
 ): void {
   const roleAttributeSymbolRefsByKey = new Map<string, IndexReference>();
@@ -160,11 +159,6 @@ export function applyNpcPropertySectionDerivedState(
   const parameterSection = sections.find(section => section.id === "parameters");
   if (parameterSection) {
     for (const field of parameterSection.fields) {
-      if (field.key === "_ImportStates") {
-        field.staticSuggestions = [...discoveredStates];
-        continue;
-      }
-
       field.symbolRef = resolveParameterSymbolRef(
         field.key,
         roleAttributeSymbolRefsByKey,
@@ -550,6 +544,7 @@ function createImportStatesField(parameters: NpcParametersJson | undefined): Npc
     isDescriptionEditable: false,
     computable: false,
     isSet: Array.isArray(parameters?._ImportStates),
+    stateAutocompleteKind: "component-parent-alias",
     ui: {},
   };
 }
@@ -625,6 +620,7 @@ function createRoleAttributeField({
     canUnset: isSet,
     isDescriptionEditable: false,
     itemType: parsedShape.itemType,
+    stateAutocompleteKind: resolveRoleAttributeStateAutocompleteKind(key),
     staticSuggestions: parseStaticSuggestions(descriptorAttribute),
     symbolRef: resolveFieldSymbolRef(descriptorAttribute),
     ui: {},
@@ -752,6 +748,7 @@ function createVariantModifyField({
     itemType: parsedShape.itemType,
     staticSuggestions: inheritedField?.staticSuggestions ? [...inheritedField.staticSuggestions] : undefined,
     symbolRef: inheritedField?.symbolRef ? { ...inheritedField.symbolRef } : undefined,
+    stateAutocompleteKind: inheritedField?.stateAutocompleteKind,
     ui: {},
   };
 }
@@ -902,6 +899,19 @@ function resolveFieldSymbolRef(
     indexKind: "registeredAssets",
     key: registeredAssetsKey,
   };
+}
+
+function resolveRoleAttributeStateAutocompleteKind(
+  key: string,
+): NpcStateAutocompleteKind | undefined {
+  switch (key) {
+    case "StartState":
+      return "role-main";
+    case "BusyStates":
+      return "role-full";
+    default:
+      return undefined;
+  }
 }
 
 function getDescriptorRoleAttributeSymbolRefsByKey(

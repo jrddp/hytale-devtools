@@ -1,3 +1,4 @@
+import { createEmptyNpcDiscoveredStateInfo } from "@shared/npc-role-editor/stateAutocomplete";
 import type { Workspace } from "../workspace.svelte";
 import type { ParameterUsageIndex } from "../compute/parameterUsageIndex";
 import { buildIssuesByFieldPath, buildNpcIssues } from "../issues";
@@ -17,11 +18,11 @@ export function recomputeWorkspaceDerivedState(workspace: Workspace) {
     workspace.parameterUsageIndex = emptyParameterUsageIndex();
     workspace.issues = [];
     workspace.issuesByFieldPath = new Map();
-    workspace.discoveredStates = [];
+    workspace.discoveredStateInfo = createEmptyNpcDiscoveredStateInfo();
     return;
   }
 
-  const { parameterUsageIndex, discoveredStates } = applyNpcDerivedPropertyMetadata({
+  const { parameterUsageIndex, discoveredStateInfo } = applyNpcDerivedPropertyMetadata({
     sections: workspace.propertySections,
     document,
     topLevelKeyOrder: workspace.topLevelKeyOrder,
@@ -38,5 +39,5 @@ export function recomputeWorkspaceDerivedState(workspace: Workspace) {
   workspace.parameterUsageIndex = parameterUsageIndex;
   workspace.issues = issues;
   workspace.issuesByFieldPath = buildIssuesByFieldPath(issues);
-  workspace.discoveredStates = discoveredStates;
+  workspace.discoveredStateInfo = discoveredStateInfo;
 }

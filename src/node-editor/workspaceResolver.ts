@@ -557,6 +557,7 @@ export class WorkspaceRuntime {
         isImplicit: true,
         inputWidth: content.Options?.Width,
         overrideAutocompleteValues,
+        stateAutocompleteKind: content.Options?.StateAutocompleteKind,
         subfields: content.Options?.Fields
           ? this.fieldsFromContentDefinitions(content.Options.Fields)
           : undefined,

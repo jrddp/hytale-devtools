@@ -108,9 +108,14 @@
       ? "border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));"
       : undefined,
   );
+  const stateSuggestions = $derived(
+    field.stateAutocompleteKind
+      ? workspace.getStateAutocompleteValues(field.stateAutocompleteKind)
+      : undefined,
+  );
   const stringAutocompleteOptions = $derived(
-    field.staticSuggestions?.length
-      ? field.staticSuggestions.map(value => ({ value }))
+    (stateSuggestions ?? field.staticSuggestions)?.length
+      ? (stateSuggestions ?? field.staticSuggestions)?.map(value => ({ value }))
       : field.symbolRef && workspace.autocompleteField === `npc-parameter-${field.id}`
         ? workspace.autocompleteValues.map(value => ({ value }))
         : [],
@@ -294,8 +299,9 @@
   }
 
   function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
-    if (field.staticSuggestions?.length) {
-      return field.staticSuggestions.map(value => ({ value }));
+    const suggestions = stateSuggestions ?? field.staticSuggestions;
+    if (suggestions?.length) {
+      return suggestions.map(value => ({ value }));
     }
 
     if (!field.symbolRef || workspace.autocompleteField !== inputId) {
@@ -306,7 +312,7 @@
   }
 
   function requestListAutocomplete(inputId: string) {
-    if (field.staticSuggestions?.length || !field.symbolRef) {
+    if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
       return;
     }
 
@@ -408,7 +414,7 @@
       optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
       previewClass="z-[160]"
       onfocus={() => {
-        if (field.staticSuggestions?.length || !field.symbolRef) {
+        if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
           return;
         }
         workspace.requestAutocomplete(`npc-parameter-${field.id}`, field.symbolRef);

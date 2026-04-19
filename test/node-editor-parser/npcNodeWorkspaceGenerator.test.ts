@@ -23,7 +23,7 @@ describe("NPC node workspace generator builders", () => {
       throw new Error("Attribute Shape was not found.");
     }
 
-    expect(buildContentField(attribute)).toMatchObject({
+    expect(buildContentField(bodyMotionPathDescriptor, attribute)).toMatchObject({
       Id: "Shape",
       Type: "Enum",
       Options: {
@@ -78,5 +78,20 @@ describe("NPC node workspace generator builders", () => {
     expect(templateIds.has("Action.ActionReference")).toBe(true);
     expect(templateIds.has("Action.ActionListReference")).toBe(true);
     expect(templateIds.has("Path.Reference")).toBe(true);
+  });
+
+  test("buildContentField annotates state autocomplete metadata for NPC node fields", () => {
+    const actionStateDescriptor = findDescriptorOrThrow("Action", "State");
+    const stateAttribute = actionStateDescriptor.Attributes?.find(entry => entry.Name === "State");
+    if (!stateAttribute) {
+      throw new Error("Attribute State was not found.");
+    }
+
+    expect(buildContentField(actionStateDescriptor, stateAttribute)).toMatchObject({
+      Id: "State",
+      Options: {
+        StateAutocompleteKind: "role-full",
+      },
+    });
   });
 });

@@ -84,7 +84,12 @@ beforeEach(() => {
     version: 1,
     text: JSON.stringify({ Type: "Generic" }, null, 2),
   });
-  workspace.discoveredStates = ["Idle", "Alerted", "Sleep"];
+  workspace.discoveredStateInfo = {
+    roleMainStates: ["Alerted", "Idle", "Sleep"],
+    roleFullStates: ["Alerted", "Idle", "Idle.Patrol", "Sleep"],
+    componentParentAliases: [],
+    componentLocalStates: [],
+  };
   workspace.componentReferenceTargets = new Map();
 });
 
@@ -116,7 +121,7 @@ describe("npc component reference node hydration", () => {
         }),
       ],
       descriptors: parseDescriptors(),
-      discoveredStates: workspace.discoveredStates,
+      discoveredStateInfo: workspace.discoveredStateInfo,
     });
 
     const exportStateField =
@@ -137,7 +142,7 @@ describe("npc component reference node hydration", () => {
     expect(exportStateField).toMatchObject({
       label: "ComponentAlert",
       value: "Alerted",
-      overrideAutocompleteValues: ["Idle", "Alerted", "Sleep"],
+      overrideAutocompleteValues: ["Alerted", "Idle", "Idle.Patrol", "Sleep"],
     });
     expect(rangeField).toMatchObject({
       label: "Range",
@@ -168,7 +173,7 @@ describe("npc component reference node hydration", () => {
         }),
       ],
       descriptors: parseDescriptors(),
-      discoveredStates: workspace.discoveredStates,
+      discoveredStateInfo: workspace.discoveredStateInfo,
     });
 
     const exportStateField =
@@ -242,7 +247,7 @@ describe("npc component reference node hydration", () => {
     const [rehydratedNode] = hydrateComponentReferenceNodes({
       nodes: [node],
       descriptors: parseDescriptors(),
-      discoveredStates: workspace.discoveredStates,
+      discoveredStateInfo: workspace.discoveredStateInfo,
     });
 
     expect(
@@ -292,7 +297,7 @@ describe("npc component reference node hydration", () => {
     const [initialNode] = hydrateComponentReferenceNodes({
       nodes: [createReferenceNode("Sensor.Reference", oldReferenceName, {})],
       descriptors: parseDescriptors(),
-      discoveredStates: workspace.discoveredStates,
+      discoveredStateInfo: workspace.discoveredStateInfo,
     });
 
     if (initialNode.type !== "datanode") {
@@ -308,7 +313,7 @@ describe("npc component reference node hydration", () => {
     const [rehydratedNode] = hydrateComponentReferenceNodes({
       nodes: [initialNode],
       descriptors: parseDescriptors(),
-      discoveredStates: workspace.discoveredStates,
+      discoveredStateInfo: workspace.discoveredStateInfo,
     });
 
     expect(

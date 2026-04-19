@@ -306,7 +306,6 @@ describe("npc property model symbol enrichment", () => {
     applyNpcPropertySectionDerivedState(
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
-      [],
       descriptors,
     );
 
@@ -372,7 +371,6 @@ describe("npc property model symbol enrichment", () => {
     applyNpcPropertySectionDerivedState(
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
-      [],
       descriptors,
     );
 
@@ -400,7 +398,6 @@ describe("npc property model symbol enrichment", () => {
     applyNpcPropertySectionDerivedState(
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
-      ["Alerted", "Idle", "Search"],
       [],
     );
 
@@ -415,7 +412,104 @@ describe("npc property model symbol enrichment", () => {
         kind: "literal",
         value: ["Idle"],
       },
-      staticSuggestions: ["Alerted", "Idle", "Search"],
+      stateAutocompleteKind: "component-parent-alias",
+    });
+  });
+
+  test("assigns role state autocomplete kinds for start and busy states", () => {
+    const document = createGenericDocument({
+      roleAttributes: {
+        StartState: "Idle",
+        BusyStates: ["Idle.Patrol"],
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+    const roleAttributeSection = state.sections.find(section => section.id === "roleAttributes");
+
+    expect(roleAttributeSection?.fields.find(field => field.key === "StartState")).toMatchObject({
+      stateAutocompleteKind: "role-main",
+    });
+    expect(roleAttributeSection?.fields.find(field => field.key === "BusyStates")).toMatchObject({
+      stateAutocompleteKind: "role-full",
+    });
+  });
+
+  test("assigns component-local autocomplete to component action state fields", () => {
+    const document = createComponentDocument({
+      componentClass: "Action",
+    });
+    document.Content = {
+      Type: "State",
+      State: ".Sleep",
+    };
+
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "State",
+        Category: "Action",
+        Attributes: [
+          {
+            Name: "State",
+            Type: "String",
+            Required: "REQUIRED",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+    const contentField = state.sections.find(section => section.id === "content")?.fields[0];
+    const stateField = contentField?.childFields?.find(field => field.key === "State");
+
+    expect(stateField).toMatchObject({
+      fieldPath: "Content.State",
+      stateAutocompleteKind: "component-local",
+    });
+  });
+
+  test("assigns component-parent-alias autocomplete to parent state action fields", () => {
+    const document = createComponentDocument({
+      componentClass: "Action",
+    });
+    document.Content = {
+      Type: "ParentState",
+      State: "Idle",
+    };
+
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "ParentState",
+        Category: "Action",
+        Attributes: [
+          {
+            Name: "State",
+            Type: "String",
+            Required: "REQUIRED",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+    const contentField = state.sections.find(section => section.id === "content")?.fields[0];
+    const stateField = contentField?.childFields?.find(field => field.key === "State");
+
+    expect(stateField).toMatchObject({
+      fieldPath: "Content.State",
+      stateAutocompleteKind: "component-parent-alias",
     });
   });
 
@@ -670,7 +764,6 @@ describe("npc property model symbol enrichment", () => {
     applyNpcPropertySectionDerivedState(
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
-      [],
       descriptors,
     );
 
@@ -713,7 +806,6 @@ describe("npc property model symbol enrichment", () => {
     applyNpcPropertySectionDerivedState(
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
-      [],
       descriptors,
     );
 
@@ -763,7 +855,6 @@ describe("npc property model symbol enrichment", () => {
     applyNpcPropertySectionDerivedState(
       state.sections,
       buildParameterUsageIndex(serializeNpcDocument(document)),
-      [],
       descriptors,
     );
 

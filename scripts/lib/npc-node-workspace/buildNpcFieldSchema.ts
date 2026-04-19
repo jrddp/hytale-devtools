@@ -1,4 +1,8 @@
-import type { NpcDescriptorAttribute } from "../../../src/shared/npc-role-editor/descriptorTypes";
+import type {
+  NpcDescriptor,
+  NpcDescriptorAttribute,
+} from "../../../src/shared/npc-role-editor/descriptorTypes";
+import type { NpcStateAutocompleteKind } from "../../../src/shared/npc-role-editor/stateAutocomplete";
 import { getNpcBehaviorChildDomain } from "../../../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
 import type { NodeContentDefinition } from "../../../src/node-editor/workspaceDefinitionTypes";
 import {
@@ -6,7 +10,10 @@ import {
   normalizeDescription,
 } from "./npcNodeWorkspaceModel";
 
-export function buildContentField(attribute: NpcDescriptorAttribute): NodeContentDefinition | null {
+export function buildContentField(
+  descriptor: Pick<NpcDescriptor, "Category" | "Name">,
+  attribute: NpcDescriptorAttribute,
+): NodeContentDefinition | null {
   if (attribute.Type === "Parameters") {
     return null;
   }
@@ -34,6 +41,10 @@ export function buildContentField(attribute: NpcDescriptorAttribute): NodeConten
   if (attribute.Computable === true) {
     options.Computable = true;
   }
+  const stateAutocompleteKind = resolveNpcNodeFieldStateAutocompleteKind(descriptor, attribute);
+  if (stateAutocompleteKind) {
+    options.StateAutocompleteKind = stateAutocompleteKind;
+  }
 
   return {
     Id: attribute.Name,
@@ -41,6 +52,33 @@ export function buildContentField(attribute: NpcDescriptorAttribute): NodeConten
     Description: normalizeDescription(attribute.ShortDescription),
     Options: options,
   };
+}
+
+function resolveNpcNodeFieldStateAutocompleteKind(
+  descriptor: Pick<NpcDescriptor, "Category" | "Name">,
+  attribute: Pick<NpcDescriptorAttribute, "Name">,
+): NpcStateAutocompleteKind | undefined {
+  if (attribute.Name === "StartState") {
+    return "role-main";
+  }
+
+  if (attribute.Name === "BusyStates") {
+    return "role-full";
+  }
+
+  if (descriptor.Category === "Action" && descriptor.Name === "ParentState" && attribute.Name === "State") {
+    return "component-parent-alias";
+  }
+
+  if (
+    (descriptor.Category === "Action" || descriptor.Category === "Sensor") &&
+    descriptor.Name === "State" &&
+    attribute.Name === "State"
+  ) {
+    return "role-full";
+  }
+
+  return undefined;
 }
 
 export function buildInstructionTypeField(): NodeContentDefinition {

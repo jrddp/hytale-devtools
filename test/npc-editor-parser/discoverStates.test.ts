@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { discoverNpcMainStates } from "../../webview/hytale-npc-role-editor/src/states/discoverStates";
+import { discoverNpcStates } from "../../webview/hytale-npc-role-editor/src/states/discoverStates";
 
 describe("npc state discovery", () => {
-  test("discovers unique main states across top-level state references", () => {
-    const states = discoverNpcMainStates({
+  test("discovers main and full role states across top-level state references", () => {
+    const states = discoverNpcStates({
       Type: "Generic",
       StartState: "Idle",
       BusyStates: ["Idle.Patrol", "Search"],
@@ -20,11 +20,16 @@ describe("npc state discovery", () => {
       ],
     });
 
-    expect(states).toEqual(["Alerted", "Idle", "Search"]);
+    expect(states).toEqual({
+      roleMainStates: ["Alerted", "Idle", "Search"],
+      roleFullStates: ["Idle.Patrol", "Search"],
+      componentParentAliases: [],
+      componentLocalStates: [],
+    });
   });
 
-  test("resolves relative state references against instruction sensor context", () => {
-    const states = discoverNpcMainStates({
+  test("resolves relative role state references against instruction sensor context", () => {
+    const states = discoverNpcStates({
       Type: "Generic",
       Instructions: [
         {
@@ -37,33 +42,48 @@ describe("npc state discovery", () => {
               Type: "State",
               State: ".Patrol",
             },
-            {
-              Type: "ParentState",
-              State: ".Alerted",
-            },
           ],
         },
       ],
     });
 
-    expect(states).toEqual(["Idle"]);
+    expect(states).toEqual({
+      roleMainStates: ["Idle"],
+      roleFullStates: ["Idle", "Idle.Patrol"],
+      componentParentAliases: [],
+      componentLocalStates: [],
+    });
   });
 
-  test("includes import and export state mappings as main-state suggestions", () => {
-    const states = discoverNpcMainStates({
+  test("separates component parent aliases from local component states", () => {
+    const states = discoverNpcStates({
       Type: "Component",
+      DefaultState: ".Evaluate",
       Parameters: {
         _ImportStates: ["Idle", "Search.Scan"],
       },
       Content: [
         {
+          Type: "ParentState",
+          State: "Alerted",
+        },
+        {
+          Type: "State",
+          State: ".Sleep",
+        },
+        {
           Modify: {
-            _ExportStates: ["Alerted.Chase"],
+            _ExportStates: ["Search.Scan"],
           },
         },
       ],
     });
 
-    expect(states).toEqual(["Alerted", "Idle", "Search"]);
+    expect(states).toEqual({
+      roleMainStates: ["Search"],
+      roleFullStates: ["Search.Scan"],
+      componentParentAliases: ["Alerted", "Idle", "Search"],
+      componentLocalStates: [".Evaluate", ".Sleep"],
+    });
   });
 });

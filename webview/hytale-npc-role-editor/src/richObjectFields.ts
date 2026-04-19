@@ -4,6 +4,7 @@ import type {
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { IndexReference } from "@shared/indexTypes";
+import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
 import { isNpcComputeJson, isRecord } from "./parsing/documentTypes";
 import type { NpcPropertyField } from "./propertyTypes";
 import {
@@ -631,6 +632,7 @@ function buildStructuredObjectFields({
 
     nextFields.push(
       createStructuredAttributeField({
+        descriptor,
         attribute,
         fieldPath: propertyPath,
         value: hasRawValue ? rawValue : defaultValue,
@@ -645,6 +647,7 @@ function buildStructuredObjectFields({
 }
 
 function createStructuredAttributeField({
+  descriptor,
   attribute,
   fieldPath,
   value,
@@ -652,6 +655,7 @@ function createStructuredAttributeField({
   isSet,
   seedDefaults,
 }: {
+  descriptor: NpcDescriptor;
   attribute: NpcDescriptorAttribute;
   fieldPath: string;
   value: unknown;
@@ -756,10 +760,36 @@ function createStructuredAttributeField({
     canUnset: true,
     isDescriptionEditable: false,
     itemType: fallbackShape.itemType,
+    stateAutocompleteKind: resolveStructuredStateAutocompleteKind(descriptor, attribute, fieldPath),
     staticSuggestions: parseStaticSuggestions(attribute),
     symbolRef: resolveFieldSymbolRef(attribute),
     ui: {},
   };
+}
+
+function resolveStructuredStateAutocompleteKind(
+  descriptor: Pick<NpcDescriptor, "Category" | "Name">,
+  attribute: Pick<NpcDescriptorAttribute, "Name">,
+  fieldPath: string,
+): NpcStateAutocompleteKind | undefined {
+  if (attribute.Name !== "State") {
+    return undefined;
+  }
+
+  if (descriptor.Category === "Action" && descriptor.Name === "ParentState") {
+    return "component-parent-alias";
+  }
+
+  if (
+    (descriptor.Category === "Action" || descriptor.Category === "Sensor") &&
+    descriptor.Name === "State"
+  ) {
+    return fieldPath.startsWith("Content.") || fieldPath === "Content.State"
+      ? "component-local"
+      : "role-full";
+  }
+
+  return undefined;
 }
 
 function seedSpecialRichObjectDefaults(

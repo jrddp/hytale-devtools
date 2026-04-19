@@ -158,7 +158,8 @@
       hydrateNpcGraphSessionNodes({
         session,
         descriptors: $state.snapshot(workspace.descriptors),
-        discoveredStates: $state.snapshot(workspace.discoveredStates),
+        discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+        roleType: workspace.roleType,
       });
       graphError = "";
       lastSyncedDocumentVersion = graphUpdate.version;
@@ -202,7 +203,8 @@
         hydrateNpcGraphSessionNodes({
           session,
           descriptors: $state.snapshot(workspace.descriptors),
-          discoveredStates: $state.snapshot(workspace.discoveredStates),
+          discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+          roleType: workspace.roleType,
         });
         return;
       }
@@ -216,7 +218,8 @@
       hydrateNpcGraphSessionNodes({
         session,
         descriptors: $state.snapshot(workspace.descriptors),
-        discoveredStates: $state.snapshot(workspace.discoveredStates),
+        discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+        roleType: workspace.roleType,
       });
     } catch (error) {
       session.isInitialized = false;
@@ -232,11 +235,13 @@
     void session.sourceVersion;
     void workspace.componentReferenceTargetVersion;
     void workspace.descriptors;
-    void workspace.discoveredStates;
+    void workspace.discoveredStateInfo;
+    void workspace.roleType;
     hydrateNpcGraphSessionNodes({
       session,
       descriptors: $state.snapshot(workspace.descriptors),
-      discoveredStates: $state.snapshot(workspace.discoveredStates),
+      discoveredStateInfo: $state.snapshot(workspace.discoveredStateInfo),
+      roleType: workspace.roleType,
     });
   });
 

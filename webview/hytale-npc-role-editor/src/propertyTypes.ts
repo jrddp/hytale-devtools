@@ -1,4 +1,5 @@
 import type { IndexReference } from "@shared/indexTypes";
+import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
 import type { NpcRoleType, NpcComponentClass } from "./parsing/documentTypes";
 
 export type NpcFieldValue =
@@ -85,6 +86,7 @@ export type NpcPropertyField = {
   itemType?: "string" | "number" | "boolean";
   staticSuggestions?: string[];
   symbolRef?: IndexReference;
+  stateAutocompleteKind?: NpcStateAutocompleteKind;
   preservedData?: Record<string, unknown>;
   ui?: NpcFieldUiState;
 };

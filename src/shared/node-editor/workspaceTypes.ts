@@ -1,4 +1,5 @@
 import { type IndexReference } from "../indexTypes";
+import type { NpcStateAutocompleteKind } from "../npc-role-editor/stateAutocomplete";
 
 export type FieldComponentType =
   | "checkbox"
@@ -52,6 +53,7 @@ export interface NodeField {
   subfields?: NodeField[];
   localId: string;
   symbolLookup?: IndexReference;
+  stateAutocompleteKind?: NpcStateAutocompleteKind;
 }
 
 export interface NodePin {

@@ -32,13 +32,18 @@
       ? "border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));"
       : undefined,
   );
+  const stateSuggestions = $derived(
+    field.stateAutocompleteKind
+      ? workspace.getStateAutocompleteValues(field.stateAutocompleteKind)
+      : undefined,
+  );
+  const resolvedSuggestions = $derived(stateSuggestions ?? field.staticSuggestions ?? []);
   const autocompleteOptions = $derived(
-    (field.staticSuggestions?.length
-      ? field.staticSuggestions.map(value => ({ value }))
+    resolvedSuggestions.length
+      ? resolvedSuggestions.map(value => ({ value }))
       : field.symbolRef && workspace.autocompleteField === inputId
         ? workspace.autocompleteValues.map(value => ({ value }))
         : []
-    ),
   );
   const computeAutocompleteOptions = $derived(
     buildNpcComputeAutocompleteOptions({
@@ -76,7 +81,7 @@
   }
 
   function requestAutocomplete() {
-    if (field.staticSuggestions?.length || !field.symbolRef) {
+    if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
       return;
     }
 

@@ -40,7 +40,8 @@
       "Description": "State to compare to",
       "Options": {
         "Label": "State",
-        "Width": 220
+        "Width": 220,
+        "StateAutocompleteKind": "role-full"
       }
     },
     {

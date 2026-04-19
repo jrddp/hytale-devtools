@@ -67,6 +67,11 @@
       scope: "standard",
     }),
   );
+  const stateSuggestions = $derived(
+    field.stateAutocompleteKind
+      ? workspace.getStateAutocompleteValues(field.stateAutocompleteKind)
+      : undefined,
+  );
 
   function isPrimitiveListItem(value: unknown): value is string | number | boolean {
     return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
@@ -116,7 +121,8 @@
   }
 
   function getAutocompleteOptions(inputId: string, itemView?: ListItemView) {
-    if (field.staticSuggestions?.length) {
+    const suggestions = stateSuggestions ?? field.staticSuggestions;
+    if (suggestions?.length) {
       const currentValue =
         typeof itemView?.value === "string" ? itemView.value.trim() : "";
       const usedValues = new Set(
@@ -126,7 +132,7 @@
           .filter(Boolean),
       );
 
-      return field.staticSuggestions
+      return suggestions
         .filter(value => value === currentValue || !usedValues.has(value))
         .map(value => ({ value }));
     }
@@ -139,7 +145,7 @@
   }
 
   function requestAutocomplete(inputId: string) {
-    if (field.staticSuggestions?.length || !field.symbolRef) {
+    if (field.stateAutocompleteKind || field.staticSuggestions?.length || !field.symbolRef) {
       return;
     }
 
