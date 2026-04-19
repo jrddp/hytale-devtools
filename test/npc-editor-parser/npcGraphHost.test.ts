@@ -224,18 +224,11 @@ describe("npc graph host helpers", () => {
       status: "loaded",
       componentClass: "Sensor",
       referenceName: "Component_Sensor_Sound",
-      text: JSON.stringify({
-        Type: "Component",
-        Class: "Sensor",
-        Parameters: {
-          Range: {
-            Value: 5,
-          },
+      parameters: {
+        Range: {
+          Value: 5,
         },
-        Content: {
-          Type: "Block",
-        },
-      }),
+      },
     });
 
     hydrateNpcGraphSessionNodes({

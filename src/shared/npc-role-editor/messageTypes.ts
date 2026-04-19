@@ -1,5 +1,5 @@
 import type { NpcDescriptorDocument, NpcDescriptorSource } from "./descriptorTypes";
-import type { NpcParameterValueJson } from "./documentTypes";
+import type { NpcParameterValueJson, NpcParametersJson } from "./documentTypes";
 import type { IndexReference } from "../indexTypes";
 import type { NodeEditorClipboardSelection } from "../node-editor/clipboardTypes";
 import type { NodeEditorGraphEdit } from "../node-editor/graphTypes";
@@ -71,7 +71,7 @@ export type NpcRoleEditorComponentReferenceTargetState = {
   componentClass: string;
   referenceName: string;
   resolvedPath?: string;
-  text?: string;
+  parameters?: NpcParametersJson;
   message?: string;
 };
 

@@ -37,6 +37,7 @@ export function requestWorkspaceComponentReferenceTarget(
     referenceName: trimmedReferenceName,
   });
   workspace.componentReferenceTargets = nextTargets;
+  workspace.componentReferenceTargetVersion += 1;
   workspace.vscode.postMessage({
     type: "resolveComponentReferenceTarget",
     componentClass,
@@ -62,6 +63,7 @@ export function setWorkspaceComponentReferenceTarget(
     target,
   );
   workspace.componentReferenceTargets = nextTargets;
+  workspace.componentReferenceTargetVersion += 1;
 }
 
 export function getWorkspaceComponentReferenceTarget(

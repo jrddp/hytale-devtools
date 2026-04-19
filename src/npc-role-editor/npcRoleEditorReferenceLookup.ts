@@ -4,11 +4,13 @@ import * as vscode from "vscode";
 import { assetCacheRuntime, indexes } from "../extension";
 import { getValuesByIndexReference } from "../schema/symbolResolver";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
+import { parseNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import type {
   NpcRoleEditorComponentReferenceTargetState,
   NpcRoleEditorVariantReferenceState,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
+import { isRecord, type NpcParametersJson } from "../shared/npc-role-editor/documentTypes";
 import {
   filterNpcRoleReferenceNamesFromPaths,
   getNpcRoleReferenceName,
@@ -187,7 +189,7 @@ export async function resolveComponentReferenceTargetState(
     componentClass,
     referenceName,
     resolvedPath: loadedReference.resolvedPath,
-    text: loadedReference.text,
+    parameters: loadedReference.parameters,
   };
 }
 
@@ -197,7 +199,7 @@ async function loadComponentReferenceDocument(
   documentUri: vscode.Uri,
 ):
   Promise<
-    | { status: "loaded"; resolvedPath: string; text: string }
+    | { status: "loaded"; resolvedPath: string; parameters: NpcParametersJson | undefined }
     | { status: "missing" }
     | { status: "error"; message: string }
   > {
@@ -212,11 +214,7 @@ async function loadComponentReferenceDocument(
   if (openDocumentMatch) {
     const text = openDocumentMatch.getText();
     if (parseNpcComponentClassFromText(text) === componentClass) {
-      return {
-        status: "loaded",
-        resolvedPath: openDocumentMatch.uri.fsPath,
-        text,
-      };
+      return toLoadedComponentReferenceResult(openDocumentMatch.uri.fsPath, text);
     }
   }
 
@@ -241,11 +239,7 @@ async function loadComponentReferenceDocument(
         continue;
       }
 
-      return {
-        status: "loaded",
-        resolvedPath: match.fsPath,
-        text,
-      };
+      return toLoadedComponentReferenceResult(match.fsPath, text);
     } catch (error) {
       return {
         status: "error",
@@ -276,11 +270,7 @@ async function loadComponentReferenceDocument(
           continue;
         }
 
-        return {
-          status: "loaded",
-          resolvedPath: metadata.sourcedFromFile,
-          text,
-        };
+        return toLoadedComponentReferenceResult(metadata.sourcedFromFile, text);
       } catch (error) {
         return {
           status: "error",
@@ -292,6 +282,29 @@ async function loadComponentReferenceDocument(
 
   return {
     status: "missing",
+  };
+}
+
+function toLoadedComponentReferenceResult(
+  resolvedPath: string,
+  text: string,
+):
+  | { status: "loaded"; resolvedPath: string; parameters: NpcParametersJson | undefined }
+  | { status: "error"; message: string } {
+  const parseResult = parseNpcDocumentText(text);
+  if (parseResult.status !== "ready" || parseResult.document.Type !== "Component") {
+    return {
+      status: "error",
+      message: `NPC component reference ${resolvedPath} could not be parsed.`,
+    };
+  }
+
+  return {
+    status: "loaded",
+    resolvedPath,
+    parameters: isRecord(parseResult.document.Parameters)
+      ? (structuredClone(parseResult.document.Parameters) as NpcParametersJson)
+      : undefined,
   };
 }
 

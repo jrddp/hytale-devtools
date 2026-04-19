@@ -90,11 +90,8 @@
 
 <div class="flex min-w-[20rem] flex-col gap-3">
   {#if referenceField}
-    <div class="space-y-1">
-      <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-vsc-muted">Reference</div>
-      <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
-        <FieldEditor nodeId={nodeId} {...referenceField} onconfirm={value => updateField("Reference", value)} />
-      </div>
+    <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
+      <FieldEditor nodeId={nodeId} {...referenceField} onconfirm={value => updateField("Reference", value)} />
     </div>
   {/if}
 

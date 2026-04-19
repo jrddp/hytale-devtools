@@ -6,9 +6,9 @@ import {
   parseComponentReferenceSyntheticFieldSchemaKey,
 } from "@shared/node-editor/componentReferences";
 import type { NpcDescriptorDocument } from "@shared/npc-role-editor/descriptorTypes";
+import type { NpcParametersJson } from "@shared/npc-role-editor/documentTypes";
 import type { NodeField } from "@shared/node-editor/workspaceTypes";
 import { buildNpcPropertySections } from "./buildPropertyState";
-import { parseNpcDocumentText } from "./parsing/parseNpcDocument";
 import type { NpcPropertyField } from "./propertyTypes";
 import { humanize } from "./propertyFieldUtilities";
 import { workspace } from "./workspace.svelte";
@@ -27,7 +27,7 @@ type HydrateOptions = {
 const inspectionCache = new Map<
   string,
   {
-    text: string;
+    signature: string;
     inspection: ComponentReferenceInspection;
   }
 >();
@@ -57,8 +57,13 @@ export function hydrateComponentReferenceNodes({
     }
 
     const inspection =
-      targetState?.status === "loaded" && targetState.text
-        ? inspectComponentReferenceTarget(componentClass, referenceName, targetState.text, descriptors)
+      targetState?.status === "loaded"
+        ? inspectComponentReferenceTarget(
+            componentClass,
+            referenceName,
+            targetState.parameters,
+            descriptors,
+          )
         : undefined;
 
     const nextFieldsBySchemaKey = buildComponentReferenceFields(
@@ -86,7 +91,7 @@ export function hydrateComponentReferenceNodes({
 function inspectComponentReferenceTarget(
   componentClass: string | undefined,
   referenceName: string,
-  text: string,
+  parameters: NpcParametersJson | undefined,
   descriptors: NpcDescriptorDocument,
 ): ComponentReferenceInspection | undefined {
   if (!componentClass) {
@@ -94,22 +99,18 @@ function inspectComponentReferenceTarget(
   }
 
   const cacheKey = `${componentClass}::${referenceName}`;
+  const signature = JSON.stringify(parameters ?? null);
   const cached = inspectionCache.get(cacheKey);
-  if (cached?.text === text) {
+  if (cached?.signature === signature) {
     return cached.inspection;
   }
 
-  const parseResult = parseNpcDocumentText(text);
-  if (
-    parseResult.status !== "ready" ||
-    parseResult.document.Type !== "Component" ||
-    parseResult.document.Class !== componentClass
-  ) {
-    return undefined;
-  }
-
   const sections = buildNpcPropertySections(
-    parseResult.document,
+    {
+      Type: "Component",
+      Class: componentClass,
+      Parameters: parameters,
+    },
     descriptors,
     {
       usagesByParameter: new Map(),
@@ -137,7 +138,7 @@ function inspectComponentReferenceTarget(
     overrideFields,
   };
   inspectionCache.set(cacheKey, {
-    text,
+    signature,
     inspection,
   });
   return inspection;

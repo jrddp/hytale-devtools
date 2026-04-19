@@ -155,6 +155,11 @@
       if (didFullSync && !initialViewport && lastAutoFitFieldPath !== field.fieldPath) {
         lastAutoFitFieldPath = field.fieldPath;
       }
+      hydrateNpcGraphSessionNodes({
+        session,
+        descriptors: $state.snapshot(workspace.descriptors),
+        discoveredStates: $state.snapshot(workspace.discoveredStates),
+      });
       graphError = "";
       lastSyncedDocumentVersion = graphUpdate.version;
       lastSyncedGraphFieldPath = field.fieldPath;
@@ -225,7 +230,7 @@
     }
 
     void session.sourceVersion;
-    void workspace.componentReferenceTargets;
+    void workspace.componentReferenceTargetVersion;
     void workspace.descriptors;
     void workspace.discoveredStates;
     hydrateNpcGraphSessionNodes({

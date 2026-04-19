@@ -116,6 +116,7 @@ export class Workspace {
   componentReferenceTargets = $state.raw<Map<string, NpcRoleEditorComponentReferenceTargetState>>(
     new Map(),
   );
+  componentReferenceTargetVersion = $state(0);
   parameterRenameRequestName = $state<string | null>(null);
   parameterRenameRequestVersion = $state(0);
   parameterDescriptionRequestName = $state<string | null>(null);

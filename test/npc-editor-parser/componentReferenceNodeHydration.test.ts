@@ -95,24 +95,17 @@ describe("npc component reference node hydration", () => {
       status: "loaded",
       componentClass: "Sensor",
       referenceName,
-      text: JSON.stringify({
-        Type: "Component",
-        Class: "Sensor",
-        Parameters: {
-          _ImportStates: ["ComponentAlert"],
-          Range: {
-            Value: 5,
-            Description: "How far the sensor can detect targets.",
-          },
-          UseTarget: {
-            Value: false,
-            Description: "Whether the referenced sensor should use the current target.",
-          },
+      parameters: {
+        _ImportStates: ["ComponentAlert"],
+        Range: {
+          Value: 5,
+          Description: "How far the sensor can detect targets.",
         },
-        Content: {
-          Type: "Block",
+        UseTarget: {
+          Value: false,
+          Description: "Whether the referenced sensor should use the current target.",
         },
-      }),
+      },
     });
 
     const [hydratedNode] = hydrateComponentReferenceNodes({
@@ -213,19 +206,12 @@ describe("npc component reference node hydration", () => {
       status: "loaded",
       componentClass: "Sensor",
       referenceName,
-      text: JSON.stringify({
-        Type: "Component",
-        Class: "Sensor",
-        Parameters: {
-          _ImportStates: ["ComponentAlert"],
-          Range: {
-            Value: 5,
-          },
+      parameters: {
+        _ImportStates: ["ComponentAlert"],
+        Range: {
+          Value: 5,
         },
-        Content: {
-          Type: "Block",
-        },
-      }),
+      },
     });
 
     const node = createReferenceNode("Sensor.Reference", referenceName, {
@@ -284,37 +270,23 @@ describe("npc component reference node hydration", () => {
       status: "loaded",
       componentClass: "Sensor",
       referenceName: oldReferenceName,
-      text: JSON.stringify({
-        Type: "Component",
-        Class: "Sensor",
-        Parameters: {
-          _ImportStates: ["OldState"],
-          Range: {
-            Value: 5,
-          },
+      parameters: {
+        _ImportStates: ["OldState"],
+        Range: {
+          Value: 5,
         },
-        Content: {
-          Type: "Block",
-        },
-      }),
+      },
     });
     workspace.setComponentReferenceTarget({
       status: "loaded",
       componentClass: "Sensor",
       referenceName: newReferenceName,
-      text: JSON.stringify({
-        Type: "Component",
-        Class: "Sensor",
-        Parameters: {
-          _ImportStates: ["NewState"],
-          UseTarget: {
-            Value: false,
-          },
+      parameters: {
+        _ImportStates: ["NewState"],
+        UseTarget: {
+          Value: false,
         },
-        Content: {
-          Type: "Block",
-        },
-      }),
+      },
     });
 
     const [initialNode] = hydrateComponentReferenceNodes({
