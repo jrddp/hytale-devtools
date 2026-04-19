@@ -1,0 +1,177 @@
+import type { NpcDescriptorAttribute } from "../../../src/shared/npc-role-editor/descriptorTypes";
+import { getNpcBehaviorChildDomain } from "../../../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
+import type { NodeContentDefinition } from "../../../src/node-editor/workspaceDefinitionTypes";
+import {
+  INSTRUCTION_VARIANT_VALUES,
+  normalizeDescription,
+} from "./npcNodeWorkspaceModel";
+
+export function buildContentField(attribute: NpcDescriptorAttribute): NodeContentDefinition | null {
+  if (attribute.Type === "Parameters") {
+    return null;
+  }
+
+  const enumValues = parseEnumValues(attribute.Domain);
+  const type = resolveFieldType(attribute, enumValues);
+  if (!type) {
+    return null;
+  }
+
+  const options: NodeContentDefinition["Options"] = {
+    Label: attribute.Name,
+  };
+  const defaultValue = parseDefaultValue(attribute);
+  if (defaultValue !== undefined) {
+    options.Default = defaultValue;
+  }
+  const inputWidth = getInputWidth(type);
+  if (inputWidth !== undefined) {
+    options.Width = inputWidth;
+  }
+  if (enumValues?.length) {
+    options.Values = enumValues;
+  }
+  if (attribute.Computable === true) {
+    options.Computable = true;
+  }
+
+  return {
+    Id: attribute.Name,
+    Type: type,
+    Description: normalizeDescription(attribute.ShortDescription),
+    Options: options,
+  };
+}
+
+export function buildInstructionTypeField(): NodeContentDefinition {
+  return {
+    Id: "Type",
+    Type: "Enum",
+    Description: "Instruction subtype. Leave unset for the default instruction shape.",
+    Options: {
+      Label: "Type",
+      Values: INSTRUCTION_VARIANT_VALUES,
+      Width: 220,
+    },
+  };
+}
+
+export function buildReferenceField(): NodeContentDefinition {
+  return {
+    Id: "Reference",
+    Type: "SmallString",
+    Description: "Referenced component asset name.",
+    Options: {
+      Label: "Reference",
+      Width: 220,
+      Default: "",
+    },
+  };
+}
+
+function resolveFieldType(
+  attribute: NpcDescriptorAttribute,
+  enumValues: string[] | undefined,
+): NodeContentDefinition["Type"] | null {
+  if (enumValues?.length) {
+    return "Enum";
+  }
+
+  switch (attribute.Type) {
+    case "Boolean":
+      return "Bool";
+    case "Flag":
+    case "String":
+      return "SmallString";
+    case "Float":
+    case "Double":
+      return "Float";
+    case "Int":
+    case "Integer":
+    case "Long":
+      return "Int";
+    case "Array":
+      return canRenderArrayField(attribute) ? "List" : null;
+    case "ObjectRef":
+      return null;
+    default:
+      return null;
+  }
+}
+
+function canRenderArrayField(attribute: NpcDescriptorAttribute): boolean {
+  return (
+    getNpcBehaviorChildDomain(
+      attribute.Type,
+      typeof attribute.Domain === "string" ? attribute.Domain : undefined,
+    ) === undefined
+  );
+}
+
+function parseDefaultValue(
+  attribute: NpcDescriptorAttribute,
+): string | number | boolean | unknown[] | undefined {
+  const rawValue = attribute.DefaultValue;
+  if (rawValue == null) {
+    return undefined;
+  }
+
+  const trimmed = rawValue.trim();
+  if (!trimmed) {
+    return attribute.Type === "String" || attribute.Type === "Flag" ? "" : undefined;
+  }
+
+  switch (attribute.Type) {
+    case "Boolean":
+      if (trimmed === "true") {
+        return true;
+      }
+      if (trimmed === "false") {
+        return false;
+      }
+      return undefined;
+    case "Float":
+    case "Double":
+    case "Int":
+    case "Integer":
+    case "Long": {
+      const numericValue = Number(trimmed);
+      return Number.isFinite(numericValue) ? numericValue : undefined;
+    }
+    case "Array":
+      try {
+        const parsed = JSON.parse(trimmed) as unknown;
+        return Array.isArray(parsed) ? parsed : undefined;
+      } catch {
+        return undefined;
+      }
+    default:
+      return rawValue;
+  }
+}
+
+function parseEnumValues(domain: unknown): string[] | undefined {
+  if (typeof domain !== "string" || !domain.startsWith("[") || !domain.endsWith("]")) {
+    return undefined;
+  }
+
+  return domain
+    .slice(1, -1)
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean);
+}
+
+function getInputWidth(type: NodeContentDefinition["Type"]): number | undefined {
+  switch (type) {
+    case "Bool":
+      return 18;
+    case "Float":
+    case "Int":
+      return 88;
+    case "List":
+      return 240;
+    default:
+      return 220;
+  }
+}
