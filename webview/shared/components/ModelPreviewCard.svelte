@@ -53,7 +53,7 @@
       animationSpeed={preview.animationSpeed}
       animationLooping={preview.animationLooping}
       orbit={true}
-      scale={1.35}
+      scale={1.5}
       showGrid={false}
       class="size-full"
     />
