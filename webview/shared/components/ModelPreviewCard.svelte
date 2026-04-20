@@ -1,5 +1,8 @@
 <script lang="ts">
-  import type { ModelPreviewState } from "@shared/modelPreviewTypes";
+  import type {
+    ModelPreviewState,
+    ResolvedModelPreviewAttachment,
+  } from "@shared/modelPreviewTypes";
   import { BlockymodelPreview, type BlockymodelFile } from "@webview-shared/blockymodel";
   import { LoaderCircle } from "lucide-svelte";
   import { resolveParsedPreviewAnimation } from "./modelPreviewAnimation";
@@ -14,6 +17,27 @@
     class?: string;
   } = $props();
 
+  let lastPreviewAttachments: ResolvedModelPreviewAttachment[] | undefined = undefined;
+  let lastResolvedAttachments: Array<{
+    model: BlockymodelFile;
+    textureBytes?: number[];
+  }> = [];
+
+  const resolvedAttachments = $derived.by(() => {
+    const previewAttachments = preview?.type === "Model" ? preview.attachments : undefined;
+    if (previewAttachments === lastPreviewAttachments) {
+      return lastResolvedAttachments;
+    }
+
+    lastPreviewAttachments = previewAttachments;
+    lastResolvedAttachments = (previewAttachments ?? [])
+      .filter(attachment => attachment.model)
+      .map(attachment => ({
+        model: attachment.model as unknown as BlockymodelFile,
+        textureBytes: attachment.texture,
+      }));
+    return lastResolvedAttachments;
+  });
   const parsedAnimation = $derived(resolveParsedPreviewAnimation(preview));
 </script>
 
@@ -24,12 +48,7 @@
     <BlockymodelPreview
       model={preview.model as unknown as BlockymodelFile}
       textureBytes={preview.texture}
-      attachments={(preview.attachments ?? [])
-        .filter(attachment => attachment.model)
-        .map(attachment => ({
-          model: attachment.model as unknown as BlockymodelFile,
-          textureBytes: attachment.texture,
-        }))}
+      attachments={resolvedAttachments}
       animation={parsedAnimation}
       animationSpeed={preview.animationSpeed}
       animationLooping={preview.animationLooping}

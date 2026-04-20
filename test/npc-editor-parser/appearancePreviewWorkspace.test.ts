@@ -198,6 +198,145 @@ describe("npc workspace appearance preview integration", () => {
 
     expect(workspace.getEffectiveAppearanceAssetName()).toBeUndefined();
   });
+
+  test("base preview results seed idle animation and compose the visible preview", () => {
+    const workspace = createWorkspace();
+    const model = { name: "SheepModel" };
+    const attachments = [{ model: { name: "Horns" } }];
+    const idleAnimation = {
+      animation: {
+        formatVersion: 1,
+        duration: 20,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      },
+      animationSpeed: 1,
+      animationLooping: true,
+    };
+
+    workspace.beginAppearanceBasePreviewLoad("Sheep");
+    workspace.setAppearanceBasePreviewResult({
+      assetName: "Sheep",
+      basePreview: {
+        type: "Model",
+        model,
+        texture: [1, 2, 3],
+        attachments,
+      },
+      animationIds: ["Wake", "Idle"],
+      idleAnimationPreview: idleAnimation,
+    });
+
+    expect(workspace.appearanceAnimationIds).toEqual(["Idle", "Wake"]);
+    expect(workspace.getAppearanceAnimationPreview("Sheep", "Idle")).toEqual(idleAnimation);
+    expect(workspace.appearancePreview).toEqual({
+      type: "Model",
+      model,
+      texture: [1, 2, 3],
+      attachments,
+      ...idleAnimation,
+    });
+  });
+
+  test("cached animation swaps preserve base model references and can return to idle immediately", () => {
+    const workspace = createWorkspace();
+    const model = { name: "SheepModel" };
+    const attachments = [{ model: { name: "Horns" } }];
+    const idleAnimation = {
+      animation: {
+        formatVersion: 1,
+        duration: 20,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      },
+      animationSpeed: 1,
+      animationLooping: true,
+    };
+    const wakeAnimation = {
+      animation: {
+        formatVersion: 1,
+        duration: 10,
+        holdLastKeyframe: true,
+        nodeAnimations: {
+          Root: [],
+        },
+      },
+      animationSpeed: 2,
+      animationLooping: false,
+    };
+
+    workspace.beginAppearanceBasePreviewLoad("Sheep");
+    workspace.setAppearanceBasePreviewResult({
+      assetName: "Sheep",
+      basePreview: {
+        type: "Model",
+        model,
+        attachments,
+      },
+      animationIds: ["Wake", "Idle"],
+      idleAnimationPreview: idleAnimation,
+    });
+    const idlePreview = workspace.appearancePreview;
+
+    workspace.setAppearanceAnimationPreviewResult({
+      assetName: "Sheep",
+      animationSetId: "Wake",
+      animationPreview: wakeAnimation,
+    });
+    expect(workspace.showAppearanceAnimationPreview("Sheep", "Wake")).toBe(true);
+
+    const wakePreview = workspace.appearancePreview;
+    expect(wakePreview?.type).toBe("Model");
+    expect(wakePreview?.type === "Model" ? wakePreview.model : undefined).toBe(
+      idlePreview?.type === "Model" ? idlePreview.model : undefined,
+    );
+    expect(wakePreview?.type === "Model" ? wakePreview.attachments : undefined).toBe(
+      idlePreview?.type === "Model" ? idlePreview.attachments : undefined,
+    );
+    expect(wakePreview?.type === "Model" ? wakePreview.animation : undefined).toEqual(
+      wakeAnimation.animation,
+    );
+
+    expect(workspace.showAppearanceAnimationPreview("Sheep", "Idle")).toBe(true);
+    expect(workspace.appearancePreview).toEqual(idlePreview);
+  });
+
+  test("missing cached animations leave the base preview static", () => {
+    const workspace = createWorkspace();
+    const model = { name: "SheepModel" };
+    const idleAnimation = {
+      animation: {
+        formatVersion: 1,
+        duration: 20,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      },
+      animationSpeed: 1,
+      animationLooping: true,
+    };
+
+    workspace.beginAppearanceBasePreviewLoad("Sheep");
+    workspace.setAppearanceBasePreviewResult({
+      assetName: "Sheep",
+      basePreview: {
+        type: "Model",
+        model,
+      },
+      animationIds: ["Idle"],
+      idleAnimationPreview: idleAnimation,
+    });
+    workspace.setAppearanceAnimationPreviewResult({
+      assetName: "Sheep",
+      animationSetId: "Wake",
+      animationPreview: undefined,
+    });
+
+    expect(workspace.showAppearanceAnimationPreview("Sheep", "Wake")).toBe(true);
+    expect(workspace.appearancePreview).toEqual({
+      type: "Model",
+      model,
+    });
+  });
 });
 
 function createWorkspace(): Workspace {

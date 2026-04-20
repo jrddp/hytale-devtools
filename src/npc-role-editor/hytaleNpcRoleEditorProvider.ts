@@ -12,12 +12,16 @@ import type {
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorExtensionToWebviewMessage,
   NpcRoleEditorGraphEditMessage,
-  NpcRoleEditorPreviewUpdateMessage,
+  NpcRoleEditorAppearancePreviewAnimationUpdateMessage,
+  NpcRoleEditorAppearancePreviewBaseUpdateMessage,
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
-import { resolveNpcAppearanceState } from "./appearancePreviewRuntime";
+import {
+  resolveNpcAppearanceAnimationPreview,
+  resolveNpcAppearanceBaseState,
+} from "./appearancePreviewRuntime";
 import { applyNpcGraphEditToDocument } from "./graphEditRuntime";
 import { buildNpcRoleEditorBootstrapMessage } from "./npcRoleEditorBootstrap";
 import {
@@ -147,7 +151,6 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     try {
       const documentUri = document.uri.toString();
       let isDisposed = false;
-      let previewResolutionVersion = 0;
       this.getPanelsForDocument(documentUri).add(webviewPanel);
 
       if (webviewPanel.active) {
@@ -196,64 +199,104 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         }
       });
 
-      const postResolvedPreview = async (
+      let basePreviewResolutionVersion = 0;
+      let animationPreviewResolutionVersion = 0;
+
+      const postResolvedBasePreview = async (
         assetName: string | undefined,
-        animationSetId: string | undefined,
-        appearanceStatePromise: Promise<Awaited<ReturnType<typeof resolveNpcAppearanceState>>>,
+        appearanceStatePromise: Promise<Awaited<ReturnType<typeof resolveNpcAppearanceBaseState>>>,
       ) => {
-        const resolutionVersion = ++previewResolutionVersion;
+        const resolutionVersion = ++basePreviewResolutionVersion;
         const appearanceState = await appearanceStatePromise;
-        if (isDisposed || resolutionVersion !== previewResolutionVersion) {
+        if (isDisposed || resolutionVersion !== basePreviewResolutionVersion) {
           return;
         }
 
         await webviewPanel.webview.postMessage({
-          type: "previewUpdate",
+          type: "appearancePreviewBaseUpdate",
           assetName,
-          animationSetId,
-          preview: appearanceState.preview,
+          basePreview: appearanceState.basePreview,
           animationIds: appearanceState.animationIds,
-        } satisfies NpcRoleEditorPreviewUpdateMessage);
+          idleAnimationPreview: appearanceState.idleAnimationPreview,
+        } satisfies NpcRoleEditorAppearancePreviewBaseUpdateMessage);
       };
 
-      const sendResolvedAppearancePreview = async (
+      const postResolvedAnimationPreview = async (
         assetName: string | undefined,
-        animationSetId: string | undefined,
+        animationSetId: string,
+        animationPreviewPromise: Promise<Awaited<ReturnType<typeof resolveNpcAppearanceAnimationPreview>>>,
+      ) => {
+        const resolutionVersion = ++animationPreviewResolutionVersion;
+        const animationPreview = await animationPreviewPromise;
+        if (isDisposed || resolutionVersion !== animationPreviewResolutionVersion || !assetName) {
+          return;
+        }
+
+        await webviewPanel.webview.postMessage({
+          type: "appearancePreviewAnimationUpdate",
+          assetName,
+          animationSetId,
+          animationPreview,
+        } satisfies NpcRoleEditorAppearancePreviewAnimationUpdateMessage);
+      };
+
+      const sendResolvedAppearancePreviewBase = async (
+        assetName: string | undefined,
       ) => {
         if (isDisposed) {
           return;
         }
 
         if (!assetCacheRuntime.isReady) {
-          await webviewPanel.webview.postMessage({
-            type: "previewUpdate",
-            assetName,
-            animationSetId,
-            preview: assetName ? { type: "none", loading: true } : { type: "none" },
-            animationIds: [],
-          } satisfies NpcRoleEditorPreviewUpdateMessage);
-
           if (!assetName) {
             return;
           }
 
           void assetCacheRuntime.ready.then(() => {
             if (!isDisposed && assetCacheRuntime.isReady) {
-              void sendResolvedAppearancePreview(assetName, animationSetId);
+              void sendResolvedAppearancePreviewBase(assetName);
             }
           });
           return;
         }
 
         const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
-        await postResolvedPreview(
+        await postResolvedBasePreview(
           assetName,
-          animationSetId,
-          resolveNpcAppearanceState(
+          resolveNpcAppearanceBaseState(
             assetName,
             assetCacheRuntime,
             modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,
+          ),
+        );
+      };
+
+      const sendResolvedAppearancePreviewAnimation = async (
+        assetName: string,
+        animationSetId: string,
+      ) => {
+        if (isDisposed) {
+          return;
+        }
+
+        if (!assetCacheRuntime.isReady) {
+          void assetCacheRuntime.ready.then(() => {
+            if (!isDisposed && assetCacheRuntime.isReady) {
+              void sendResolvedAppearancePreviewAnimation(assetName, animationSetId);
+            }
+          });
+          return;
+        }
+
+        const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
+        await postResolvedAnimationPreview(
+          assetName,
+          animationSetId,
+          resolveNpcAppearanceAnimationPreview(
+            assetName,
             animationSetId,
+            assetCacheRuntime,
+            modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,
           ),
         );
       };
@@ -291,8 +334,11 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
               webviewPanel.webview,
             );
             return;
-          case "resolveAppearancePreview":
-            void sendResolvedAppearancePreview(message.assetName, message.animationSetId);
+          case "resolveAppearancePreviewBase":
+            void sendResolvedAppearancePreviewBase(message.assetName);
+            return;
+          case "resolveAppearancePreviewAnimation":
+            void sendResolvedAppearancePreviewAnimation(message.assetName, message.animationSetId);
             return;
           case "apply":
             void this.applyWebviewEdits(document, message, webviewPanel.webview);

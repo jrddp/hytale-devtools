@@ -2,6 +2,8 @@ import { describe, expect, test } from "vitest";
 import type { AssetCacheRuntime } from "../../src/asset-cache/assetCacheRuntime";
 import type { JsonAssetInstance } from "../../src/shared/fieldTypes";
 import {
+  resolveNpcAppearanceAnimationPreview,
+  resolveNpcAppearanceBaseState,
   resolveNpcAppearancePreview,
   resolveNpcAppearanceState,
 } from "../../src/npc-role-editor/appearancePreviewRuntime";
@@ -313,6 +315,79 @@ describe("npc appearance preview runtime", () => {
       texture: undefined,
     });
     expect(appearanceState.animationIds).toEqual(["Attack", "Hurt", "Idle"]);
+  });
+
+  test("base preview resolution splits static preview data from idle animation", async () => {
+    const runtime = createRuntime({
+      "Server/Models/Sheep.json": jsonAsset({
+        Model: "Common/Models/Sheep.blockymodel",
+        Texture: "Common/Textures/Sheep.png",
+        AnimationSets: {
+          Idle: {
+            Animations: [
+              {
+                Animation: "Common/Animations/Idle.blockyanim",
+                Speed: 1.25,
+                Looping: true,
+              },
+            ],
+          },
+        },
+      }),
+      "Common/Models/Sheep.blockymodel": jsonAsset({ name: "SheepModel" }),
+    }, {
+      "Common/Textures/Sheep.png": [7, 7],
+      "Common/Animations/Idle.blockyanim": blockyanimAsset({
+        formatVersion: 1,
+        duration: 42,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      }),
+    });
+
+    const appearanceState = await resolveNpcAppearanceBaseState(
+      "Sheep",
+      runtime,
+      createModelAssetIndex({
+        Sheep: { sourcedFromFile: "Server/Models/Sheep.json" },
+      }),
+    );
+
+    expect(appearanceState.basePreview).toEqual({
+      type: "Model",
+      model: { name: "SheepModel" },
+      texture: [7, 7],
+    });
+    expect(appearanceState.idleAnimationPreview).toEqual({
+      animation: {
+        formatVersion: 1,
+        duration: 42,
+        holdLastKeyframe: false,
+        nodeAnimations: {},
+      },
+      animationSpeed: 1.25,
+      animationLooping: true,
+    });
+  });
+
+  test("missing animation previews resolve to undefined without dropping the base model", async () => {
+    const runtime = createRuntime({
+      "Server/Models/Sheep.json": jsonAsset({
+        Model: "Common/Models/Sheep.blockymodel",
+      }),
+      "Common/Models/Sheep.blockymodel": jsonAsset({ name: "SheepModel" }),
+    }, {});
+
+    const animationPreview = await resolveNpcAppearanceAnimationPreview(
+      "Sheep",
+      "Wake",
+      runtime,
+      createModelAssetIndex({
+        Sheep: { sourcedFromFile: "Server/Models/Sheep.json" },
+      }),
+    );
+
+    expect(animationPreview).toBeUndefined();
   });
 
   test("includes inherited default attachments in appearance previews", async () => {

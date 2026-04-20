@@ -1,6 +1,7 @@
 import type { AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import { stripBomText } from "./fileUtils";
 import type {
+  AnimationPreviewState,
   ResolvedModelPreview,
   ResolvedModelPreviewAttachment,
 } from "./modelPreviewTypes";
@@ -10,11 +11,6 @@ type ModelAttachmentReference = {
   Model: string;
   Texture?: string;
 };
-
-type ResolvedAnimationPreview = Pick<
-  ResolvedModelPreview,
-  "animation" | "animationSpeed" | "animationLooping"
->;
 
 export async function resolveModelPreviewFromPaths(
   modelPath: string | undefined,
@@ -69,6 +65,16 @@ export async function resolveModelAnimationSetIdsFromModelAsset(
 ): Promise<string[]> {
   const assetChain = await collectModelAssetChain(modelAsset, loadParentModelAsset);
   return resolveMergedAnimationSetIds(assetChain);
+}
+
+export async function resolveModelAnimationPreviewFromModelAsset(
+  modelAsset: ModelAssetDocument,
+  loadParentModelAsset: (assetName: string) => Promise<ModelAssetDocument | undefined>,
+  animationSetId: string,
+  runtime: AssetCacheRuntime,
+): Promise<AnimationPreviewState | undefined> {
+  const assetChain = await collectModelAssetChain(modelAsset, loadParentModelAsset);
+  return await resolveDefaultAnimationPreview(assetChain, animationSetId, runtime);
 }
 
 // The base game falls back to the same path as the model, but with .png instead of .blockymodel.
@@ -192,7 +198,7 @@ async function resolveDefaultAnimationPreview(
   assetChain: ModelAssetDocument[],
   animationSetId: string,
   runtime: AssetCacheRuntime,
-): Promise<ResolvedAnimationPreview | undefined> {
+): Promise<AnimationPreviewState | undefined> {
   const animationEntry = resolveMergedAnimationEntry(assetChain, animationSetId);
   if (!animationEntry) {
     return undefined;

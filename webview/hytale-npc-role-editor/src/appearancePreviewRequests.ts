@@ -1,58 +1,76 @@
-import type { ModelPreviewState } from "@shared/modelPreviewTypes";
 import type { NpcRoleEditorWebviewToExtensionMessage } from "@shared/npc-role-editor/messageTypes";
 import type { VSCodeApi } from "./common";
 
-export type AppearancePreviewRequestState = {
-  assetName: string | null;
-  animationSetId: string | null;
+export type AppearancePreviewAnimationRequestState = {
+  assetName: string;
+  animationSetId: string;
 };
 
-export function isAppearancePreviewUpdateCurrent({
-  assetName,
-  animationSetId,
-  currentRequest,
-}: {
-  assetName: string | undefined;
-  animationSetId: string | undefined;
-  currentRequest: AppearancePreviewRequestState | null;
-}): boolean {
-  return (
-    (assetName ?? null) === (currentRequest?.assetName ?? null) &&
-    (animationSetId ?? null) === (currentRequest?.animationSetId ?? null)
-  );
+export function createAppearanceAnimationPreviewCacheKey(
+  assetName: string,
+  animationSetId: string,
+): string {
+  return `${assetName}::${animationSetId}`;
 }
 
-export function syncAppearancePreviewRequest({
+export function isAppearancePreviewBaseUpdateCurrent({
+  assetName,
+  currentAssetName,
+}: {
+  assetName: string | undefined;
+  currentAssetName: string | null;
+}): boolean {
+  return (assetName ?? null) === currentAssetName;
+}
+
+export function isAppearancePreviewAnimationUpdateCurrent({
+  assetName,
+  animationSetId,
+  currentAssetName,
+  currentAnimationSetId,
+}: {
+  assetName: string;
+  animationSetId: string;
+  currentAssetName: string | null;
+  currentAnimationSetId: string | null;
+}): boolean {
+  return assetName === currentAssetName && animationSetId === currentAnimationSetId;
+}
+
+export function requestAppearancePreviewBase(
+  vscode: Pick<VSCodeApi, "postMessage">,
+  assetName: string | null,
+): void {
+  vscode.postMessage({
+    type: "resolveAppearancePreviewBase",
+    assetName: assetName ?? undefined,
+  } satisfies NpcRoleEditorWebviewToExtensionMessage);
+}
+
+export function syncAppearancePreviewAnimationRequest({
   assetName,
   animationSetId,
   lastRequestedRequest,
   vscode,
-  setPreview,
 }: {
-  assetName: string | null;
-  animationSetId: string | null;
-  lastRequestedRequest: AppearancePreviewRequestState | null;
+  assetName: string;
+  animationSetId: string;
+  lastRequestedRequest: AppearancePreviewAnimationRequestState | null;
   vscode: Pick<VSCodeApi, "postMessage">;
-  setPreview: (preview: ModelPreviewState | undefined) => void;
-}): AppearancePreviewRequestState | null {
+}): AppearancePreviewAnimationRequestState {
   if (
-    assetName === lastRequestedRequest?.assetName &&
-    animationSetId === lastRequestedRequest?.animationSetId
+    lastRequestedRequest?.assetName === assetName &&
+    lastRequestedRequest.animationSetId === animationSetId
   ) {
     return lastRequestedRequest;
   }
 
-  if (!assetName) {
-    setPreview({ type: "none" });
-    return null;
-  }
-
-  setPreview({ type: "none", loading: true });
   vscode.postMessage({
-    type: "resolveAppearancePreview",
+    type: "resolveAppearancePreviewAnimation",
     assetName,
-    animationSetId: animationSetId ?? undefined,
+    animationSetId,
   } satisfies NpcRoleEditorWebviewToExtensionMessage);
+
   return {
     assetName,
     animationSetId,

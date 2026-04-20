@@ -9,7 +9,10 @@ import type {
   NodeEditorPlatform,
 } from "../node-editor/messageTypes";
 import type { NodeEditorWorkspaceContext } from "../node-editor/workspaceTypes";
-import type { ModelPreviewState } from "../modelPreviewTypes";
+import type {
+  AnimationPreviewState,
+  BaseModelPreviewState,
+} from "../modelPreviewTypes";
 
 export type NpcRoleEditorBootstrapMessage = {
   type: "bootstrap";
@@ -93,12 +96,19 @@ export type NpcRoleEditorContextActionMessage = {
   fieldPath?: string;
 };
 
-export type NpcRoleEditorPreviewUpdateMessage = {
-  type: "previewUpdate";
+export type NpcRoleEditorAppearancePreviewBaseUpdateMessage = {
+  type: "appearancePreviewBaseUpdate";
   assetName?: string;
-  animationSetId?: string;
-  preview?: ModelPreviewState;
+  basePreview?: BaseModelPreviewState;
   animationIds?: string[];
+  idleAnimationPreview?: AnimationPreviewState;
+};
+
+export type NpcRoleEditorAppearancePreviewAnimationUpdateMessage = {
+  type: "appearancePreviewAnimationUpdate";
+  assetName: string;
+  animationSetId: string;
+  animationPreview?: AnimationPreviewState;
 };
 
 export type NpcRoleEditorApplyMessage = {
@@ -122,7 +132,8 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorVariantReferenceUpdateMessage
   | NpcRoleEditorComponentReferenceTargetUpdateMessage
   | NpcRoleEditorContextActionMessage
-  | NpcRoleEditorPreviewUpdateMessage;
+  | NpcRoleEditorAppearancePreviewBaseUpdateMessage
+  | NpcRoleEditorAppearancePreviewAnimationUpdateMessage;
 
 export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "ready" }
@@ -132,7 +143,8 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
   | { type: "resolveComponentReferenceTarget"; componentClass: string; referenceName: string }
-  | { type: "resolveAppearancePreview"; assetName?: string; animationSetId?: string }
+  | { type: "resolveAppearancePreviewBase"; assetName?: string }
+  | { type: "resolveAppearancePreviewAnimation"; assetName: string; animationSetId: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
   | NpcRoleEditorGraphEditMessage
   | NpcRoleEditorApplyMessage;

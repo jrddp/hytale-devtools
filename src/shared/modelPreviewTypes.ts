@@ -3,14 +3,20 @@ export type ResolvedModelPreviewAttachment = {
   texture?: number[];
 };
 
-export type ResolvedModelPreview = {
+export type BaseModelPreviewState = {
   type: "Model";
   model?: Record<string, unknown>;
   texture?: number[];
   attachments?: ResolvedModelPreviewAttachment[];
+};
+
+export type AnimationPreviewState = {
   animation?: Record<string, unknown>;
   animationSpeed?: number;
   animationLooping?: boolean;
+};
+
+export type ResolvedModelPreview = BaseModelPreviewState & AnimationPreviewState & {
   loading?: boolean;
 };
 

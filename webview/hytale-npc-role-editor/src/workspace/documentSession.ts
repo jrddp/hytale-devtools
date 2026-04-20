@@ -132,6 +132,6 @@ export function clearWorkspaceDocumentState(workspace: Workspace) {
   workspace.issues = [];
   workspace.issuesByFieldPath = new Map();
   workspace.discoveredStateInfo = createEmptyNpcDiscoveredStateInfo();
-  workspace.appearancePreview = undefined;
+  workspace.clearAppearancePreviewState();
   workspace.documentParseError = null;
 }

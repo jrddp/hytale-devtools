@@ -19,8 +19,20 @@ import type {
   NpcDescriptorSource,
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { IndexReference } from "@shared/indexTypes";
-import type { ModelPreviewState } from "@shared/modelPreviewTypes";
+import type {
+  AnimationPreviewState,
+  BaseModelPreviewState,
+  ModelPreviewState,
+} from "@shared/modelPreviewTypes";
 import type { VSCodeApi } from "./common";
+import {
+  beginWorkspaceAppearanceBasePreviewLoad,
+  clearWorkspaceAppearancePreviewState,
+  getWorkspaceAppearanceAnimationPreview,
+  setWorkspaceAppearanceAnimationPreviewResult,
+  setWorkspaceAppearanceBasePreviewResult,
+  showWorkspaceAppearanceAnimationPreview,
+} from "./workspace/appearancePreviewState";
 import {
   addRichObjectArrayItem,
   addRichObjectProperty,
@@ -123,8 +135,14 @@ export class Workspace {
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
   appearancePreview = $state<ModelPreviewState | undefined>(undefined);
+  appearanceBasePreviewAssetName = $state<string | null>(null);
+  appearanceBasePreview = $state<BaseModelPreviewState | undefined>(undefined);
+  appearanceBasePreviewLoading = $state(false);
+  appearanceActiveAnimationAssetName = $state<string | null>(null);
+  appearanceActiveAnimationSetId = $state<string | null>(null);
+  appearanceActiveAnimationPreview = $state<AnimationPreviewState | undefined>(undefined);
+  appearanceAnimationPreviewCache = $state.raw<Map<string, AnimationPreviewState | null>>(new Map());
   appearancePreviewAnimationOverride = $state<string | null>(null);
-  appearanceAnimationAssetName = $state<string | null>(null);
   appearanceAnimationIds = $state<string[]>([]);
   componentReferenceTargets = $state.raw<Map<string, NpcRoleEditorComponentReferenceTargetState>>(
     new Map(),
@@ -193,6 +211,64 @@ export class Workspace {
     this.appearancePreview = preview;
   }
 
+  beginAppearanceBasePreviewLoad(assetName: string | null) {
+    beginWorkspaceAppearanceBasePreviewLoad(this, assetName);
+  }
+
+  clearAppearancePreviewState() {
+    clearWorkspaceAppearancePreviewState(this);
+  }
+
+  setAppearanceBasePreviewResult({
+    assetName,
+    basePreview,
+    animationIds,
+    idleAnimationPreview,
+  }: {
+    assetName: string | null;
+    basePreview?: BaseModelPreviewState;
+    animationIds: string[];
+    idleAnimationPreview?: AnimationPreviewState;
+  }) {
+    setWorkspaceAppearanceBasePreviewResult(this, {
+      assetName,
+      basePreview,
+      animationIds,
+      idleAnimationPreview,
+    });
+  }
+
+  setAppearanceAnimationPreviewResult({
+    assetName,
+    animationSetId,
+    animationPreview,
+  }: {
+    assetName: string;
+    animationSetId: string;
+    animationPreview?: AnimationPreviewState;
+  }) {
+    setWorkspaceAppearanceAnimationPreviewResult(this, {
+      assetName,
+      animationSetId,
+      animationPreview,
+    });
+  }
+
+  getAppearanceAnimationPreview(
+    assetName: string,
+    animationSetId: string,
+  ): AnimationPreviewState | undefined {
+    return getWorkspaceAppearanceAnimationPreview(this, assetName, animationSetId);
+  }
+
+  showAppearanceAnimationPreview(assetName: string, animationSetId: string): boolean {
+    return showWorkspaceAppearanceAnimationPreview(this, assetName, animationSetId);
+  }
+
+  hasAppearanceBasePreviewForAsset(assetName: string): boolean {
+    return this.appearanceBasePreviewAssetName === assetName && Boolean(this.appearanceBasePreview?.model);
+  }
+
   setAppearancePreviewAnimationOverride(animationSetId: string | null | undefined) {
     const trimmedAnimationSetId = animationSetId?.trim();
     this.appearancePreviewAnimationOverride =
@@ -203,8 +279,7 @@ export class Workspace {
     this.appearancePreviewAnimationOverride = null;
   }
 
-  setAppearanceAnimationValues(assetName: string | null, values: string[]) {
-    this.appearanceAnimationAssetName = assetName;
+  setAppearanceAnimationValues(_assetName: string | null, values: string[]) {
     this.appearanceAnimationIds = [...values].sort((left, right) => left.localeCompare(right));
   }
 

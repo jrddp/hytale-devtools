@@ -15,14 +15,16 @@
     type NodeEditorClipboardSelection,
   } from "@shared/node-editor/clipboardTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
-  import { onMount, tick } from "svelte";
+  import { onMount, tick, untrack } from "svelte";
   import type { VSCodeApi } from "./common";
   import type { NpcPropertyField, NpcPropertySection, NpcSectionId } from "./propertyModel";
   import { buildNpcComputeAutocompleteOptions } from "./compute/computeAutocomplete";
   import {
-    isAppearancePreviewUpdateCurrent,
-    syncAppearancePreviewRequest,
-    type AppearancePreviewRequestState,
+    isAppearancePreviewAnimationUpdateCurrent,
+    isAppearancePreviewBaseUpdateCurrent,
+    requestAppearancePreviewBase,
+    syncAppearancePreviewAnimationRequest,
+    type AppearancePreviewAnimationRequestState,
   } from "./appearancePreviewRequests";
   import PropertySection from "./components/PropertySection.svelte";
   import NpcGraphPage from "./components/NpcGraphPage.svelte";
@@ -52,7 +54,7 @@
   );
   let localWebviewState = $state<NpcRoleEditorWebviewState>({});
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
-  let lastRequestedAppearancePreviewRequest = $state<AppearancePreviewRequestState | null>(null);
+  let lastRequestedAppearanceAnimationRequest = $state<AppearancePreviewAnimationRequestState | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
     Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
   >({});
@@ -135,23 +137,59 @@
   const effectiveAppearanceAssetName = $derived.by(
     () => workspace.getEffectiveAppearanceAssetName() ?? null,
   );
-  const effectiveAppearanceAnimationSetId = $derived.by(
-    () => workspace.appearancePreviewAnimationOverride ?? null,
+  const desiredAppearanceAnimationSetId = $derived.by(
+    () => (effectiveAppearanceAssetName ? workspace.appearancePreviewAnimationOverride ?? "Idle" : null),
   );
 
-  function syncAppearancePreviewRequestState() {
-    if (effectiveAppearanceAssetName !== lastRequestedAppearancePreviewRequest?.assetName) {
-      workspace.setAppearanceAnimationValues(effectiveAppearanceAssetName, []);
+  function syncAppearancePreviewBaseRequestState() {
+    if (effectiveAppearanceAssetName === workspace.appearanceBasePreviewAssetName) {
+      return;
     }
 
-    lastRequestedAppearancePreviewRequest = syncAppearancePreviewRequest({
+    untrack(() => {
+      workspace.beginAppearanceBasePreviewLoad(effectiveAppearanceAssetName);
+    });
+    lastRequestedAppearanceAnimationRequest = null;
+    if (!effectiveAppearanceAssetName) {
+      return;
+    }
+
+    requestAppearancePreviewBase(vscode, effectiveAppearanceAssetName);
+  }
+
+  function syncAppearancePreviewAnimationRequestState() {
+    if (!effectiveAppearanceAssetName || !desiredAppearanceAnimationSetId) {
+      lastRequestedAppearanceAnimationRequest = null;
+      return;
+    }
+
+    if (!workspace.hasAppearanceBasePreviewForAsset(effectiveAppearanceAssetName)) {
+      lastRequestedAppearanceAnimationRequest = null;
+      return;
+    }
+
+    if (
+      untrack(() =>
+        workspace.showAppearanceAnimationPreview(
+          effectiveAppearanceAssetName,
+          desiredAppearanceAnimationSetId,
+        ),
+      )
+    ) {
+      lastRequestedAppearanceAnimationRequest = null;
+      return;
+    }
+
+    if (desiredAppearanceAnimationSetId === "Idle") {
+      lastRequestedAppearanceAnimationRequest = null;
+      return;
+    }
+
+    lastRequestedAppearanceAnimationRequest = syncAppearancePreviewAnimationRequest({
       assetName: effectiveAppearanceAssetName,
-      animationSetId: effectiveAppearanceAnimationSetId,
-      lastRequestedRequest: lastRequestedAppearancePreviewRequest,
+      animationSetId: desiredAppearanceAnimationSetId,
+      lastRequestedRequest: lastRequestedAppearanceAnimationRequest,
       vscode,
-      setPreview: preview => {
-        workspace.setAppearancePreview(preview);
-      },
     });
   }
 
@@ -171,7 +209,11 @@
   });
 
   $effect(() => {
-    syncAppearancePreviewRequestState();
+    syncAppearancePreviewBaseRequestState();
+  });
+
+  $effect(() => {
+    syncAppearancePreviewAnimationRequestState();
   });
 
   $effect(() => {
@@ -258,7 +300,6 @@
         } else {
           workspace.setDocument(message);
           latestGraphUpdate = null;
-          syncAppearancePreviewRequestState();
         }
         return;
       case "graphUpdate":
@@ -275,26 +316,43 @@
         return;
       case "referenceUpdate":
         workspace.setVariantReferenceState(message.reference);
-        syncAppearancePreviewRequestState();
         return;
       case "componentReferenceTargetUpdate":
         workspace.setComponentReferenceTarget(message.target);
         return;
-      case "previewUpdate":
+      case "appearancePreviewBaseUpdate":
         if (
-          !isAppearancePreviewUpdateCurrent({
+          !isAppearancePreviewBaseUpdateCurrent({
             assetName: message.assetName,
-            animationSetId: message.animationSetId,
-            currentRequest: {
-              assetName: effectiveAppearanceAssetName,
-              animationSetId: effectiveAppearanceAnimationSetId,
-            },
+            currentAssetName: effectiveAppearanceAssetName,
           })
         ) {
           return;
         }
-        workspace.setAppearancePreview(message.preview);
-        workspace.setAppearanceAnimationValues(message.assetName ?? null, message.animationIds ?? []);
+        workspace.setAppearanceBasePreviewResult({
+          assetName: message.assetName ?? null,
+          basePreview: message.basePreview,
+          animationIds: message.animationIds ?? [],
+          idleAnimationPreview: message.idleAnimationPreview,
+        });
+        return;
+      case "appearancePreviewAnimationUpdate":
+        if (
+          !isAppearancePreviewAnimationUpdateCurrent({
+            assetName: message.assetName,
+            animationSetId: message.animationSetId,
+            currentAssetName: effectiveAppearanceAssetName,
+            currentAnimationSetId: desiredAppearanceAnimationSetId,
+          })
+        ) {
+          return;
+        }
+        workspace.setAppearanceAnimationPreviewResult({
+          assetName: message.assetName,
+          animationSetId: message.animationSetId,
+          animationPreview: message.animationPreview,
+        });
+        workspace.showAppearanceAnimationPreview(message.assetName, message.animationSetId);
         return;
       case "error":
         extensionError = message.message;
