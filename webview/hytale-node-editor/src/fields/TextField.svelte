@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { IndexReference } from "@shared/indexTypes";
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import { focusNextEditableInNode } from "@node-editor/node-editor/utils/focusNavigation";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
@@ -17,12 +19,14 @@
     multiline = false,
     overrideAutocompleteValues,
     symbolLookup,
+    previewFeatureKind,
     titleActions,
     onconfirm,
   }: FieldProps<string> & {
     multiline?: boolean;
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
+    previewFeatureKind?: NodeField["previewFeatureKind"];
     titleActions?: Snippet;
   } = $props();
   const workspace = useNodeEditorSession();
@@ -75,6 +79,25 @@
       input.blur();
     }
   }
+
+  function handleConsideredPreview(value?: string) {
+    if (previewFeatureKind !== "animation") {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.clearConsideredPreviewFeature("animation");
+      return;
+    }
+
+    workspace.setConsideredPreviewFeature("animation", value);
+  }
+
+  onDestroy(() => {
+    if (previewFeatureKind === "animation") {
+      workspace.clearConsideredPreviewFeature("animation");
+    }
+  });
 </script>
 
 <FieldLayout
@@ -108,6 +131,7 @@
         optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
         stopPointerPropagation
         onfocus={requestAutocomplete}
+        onconsider={handleConsideredPreview}
         oncommit={nextValue => {
           value = nextValue;
           confirmValue();

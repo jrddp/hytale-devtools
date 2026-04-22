@@ -67,6 +67,11 @@ export interface NodeEditorHostBridge {
   postMessage(message: WebviewToExtensionMessage): void | PromiseLike<boolean>;
 }
 
+export type NodeEditorPreviewFeatureConsideration = {
+  kind: "animation";
+  value: string;
+};
+
 function hasRenderableNodeSize(node: FlowNode) {
   const width = node.measured?.width ?? node.width;
   const height = node.measured?.height ?? node.height;
@@ -103,6 +108,7 @@ export class NodeEditorSession {
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
   computeAutocompleteOptions = $state<ComputeAutocompleteOption[]>([]);
+  consideredPreviewFeature = $state<NodeEditorPreviewFeatureConsideration | null>(null);
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
@@ -185,6 +191,35 @@ export class NodeEditorSession {
 
   getNodeById(nodeId: string) {
     return this.nodesById.get(nodeId);
+  }
+
+  setConsideredPreviewFeature(
+    kind: NodeEditorPreviewFeatureConsideration["kind"],
+    value: string | null | undefined,
+  ) {
+    const trimmedValue = value?.trim();
+    if (!trimmedValue) {
+      this.clearConsideredPreviewFeature(kind);
+      return;
+    }
+
+    if (
+      this.consideredPreviewFeature?.kind === kind &&
+      this.consideredPreviewFeature.value === trimmedValue
+    ) {
+      return;
+    }
+
+    this.consideredPreviewFeature = {
+      kind,
+      value: trimmedValue,
+    };
+  }
+
+  clearConsideredPreviewFeature(kind?: NodeEditorPreviewFeatureConsideration["kind"]) {
+    if (!kind || this.consideredPreviewFeature?.kind === kind) {
+      this.consideredPreviewFeature = null;
+    }
   }
 
   getRootNode(): FlowNode | undefined {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import { flip } from "svelte/animate";
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
@@ -198,6 +199,25 @@
       .replace(/(?!^)-/g, "")
       .replace(/(\..*)\./g, "$1");
   }
+
+  function handleConsideredAnimation(value?: string) {
+    if (!field.animationAutocompleteKind) {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+      return;
+    }
+
+    workspace.setAppearanceAutocompleteAnimationOverride(value);
+  }
+
+  onDestroy(() => {
+    if (field.animationAutocompleteKind) {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+    }
+  });
 
   function commitNumberValue() {
     const sanitized = sanitizeNumber(scalarDraftValue);
@@ -434,6 +454,7 @@
         }
         workspace.requestAutocomplete(`npc-parameter-${field.id}`, field.symbolRef);
       }}
+      onconsider={handleConsideredAnimation}
       oncommit={value => {
         scalarDraftValue = value;
         commitValue(value);
@@ -570,6 +591,7 @@
                     optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
                     previewClass="z-[160]"
                     onfocus={() => requestListAutocomplete(inputId)}
+                    onconsider={handleConsideredAnimation}
                     oncommit={value => {
                       commitListItemViews(
                         itemViews.map(item =>

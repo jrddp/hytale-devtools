@@ -75,6 +75,21 @@ export function resolveFocusedNodePreviewOverride(
   return null;
 }
 
+export function resolveNpcGraphPreviewOverrides(
+  session: NodeEditorSession,
+): {
+  autocompleteAnimationOverride: string | null;
+  focusedAnimationOverride: string | null;
+} {
+  return {
+    autocompleteAnimationOverride:
+      session.consideredPreviewFeature?.kind === "animation"
+        ? session.consideredPreviewFeature.value
+        : null,
+    focusedAnimationOverride: resolveFocusedNodePreviewOverride(session.nodes),
+  };
+}
+
 function hydrateNpcNodeStateAutocomplete({
   nodes,
   discoveredStateInfo,

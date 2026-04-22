@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import { flip } from "svelte/animate";
   import { GripVertical, Plus } from "lucide-svelte";
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
@@ -161,6 +162,25 @@
 
     workspace.requestAutocomplete(inputId, field.symbolRef);
   }
+
+  function handleConsideredAnimation(value?: string) {
+    if (!field.animationAutocompleteKind) {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+      return;
+    }
+
+    workspace.setAppearanceAutocompleteAnimationOverride(value);
+  }
+
+  onDestroy(() => {
+    if (field.animationAutocompleteKind) {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+    }
+  });
 </script>
 
 {#snippet computeToggle()}
@@ -310,6 +330,7 @@
                   optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
                   previewClass="z-[160]"
                   onfocus={() => requestAutocomplete(inputId)}
+                  onconsider={handleConsideredAnimation}
                   oncommit={value => {
                     commitItemViews(
                       itemViews.map(item =>

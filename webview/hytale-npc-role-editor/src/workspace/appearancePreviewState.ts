@@ -8,6 +8,22 @@ import type { Workspace } from "../workspace.svelte";
 
 type CachedAnimationPreviewState = AnimationPreviewState | null;
 
+export function resolveDesiredAppearanceAnimationSetId({
+  assetName,
+  autocompleteAnimationOverride,
+  focusedAnimationOverride,
+}: {
+  assetName: string | null;
+  autocompleteAnimationOverride: string | null;
+  focusedAnimationOverride: string | null;
+}): string | null {
+  if (!assetName) {
+    return null;
+  }
+
+  return autocompleteAnimationOverride ?? focusedAnimationOverride ?? "Idle";
+}
+
 export function beginWorkspaceAppearanceBasePreviewLoad(
   workspace: Workspace,
   assetName: string | null,
@@ -36,6 +52,8 @@ export function clearWorkspaceAppearancePreviewState(workspace: Workspace): void
   workspace.appearanceActiveAnimationPreview = undefined;
   workspace.appearanceAnimationIds = [];
   workspace.appearanceAnimationPreviewCache = new Map();
+  workspace.appearanceFocusedAnimationOverride = null;
+  workspace.appearanceAutocompleteAnimationOverride = null;
   workspace.appearancePreview = undefined;
 }
 

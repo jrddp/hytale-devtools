@@ -26,6 +26,7 @@
     syncAppearancePreviewAnimationRequest,
     type AppearancePreviewAnimationRequestState,
   } from "./appearancePreviewRequests";
+  import { resolveDesiredAppearanceAnimationSetId } from "./workspace/appearancePreviewState";
   import PropertySection from "./components/PropertySection.svelte";
   import NpcGraphPage from "./components/NpcGraphPage.svelte";
   import { workspace } from "./workspace.svelte";
@@ -138,7 +139,12 @@
     () => workspace.getEffectiveAppearanceAssetName() ?? null,
   );
   const desiredAppearanceAnimationSetId = $derived.by(
-    () => (effectiveAppearanceAssetName ? workspace.appearancePreviewAnimationOverride ?? "Idle" : null),
+    () =>
+      resolveDesiredAppearanceAnimationSetId({
+        assetName: effectiveAppearanceAssetName,
+        autocompleteAnimationOverride: workspace.appearanceAutocompleteAnimationOverride,
+        focusedAnimationOverride: workspace.appearanceFocusedAnimationOverride,
+      }),
   );
 
   function syncAppearancePreviewBaseRequestState() {

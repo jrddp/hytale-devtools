@@ -14,6 +14,7 @@ import { createNodeEditorSession } from "../../webview/hytale-node-editor/src/wo
 import {
   applyNpcGraphUpdateToSession,
   hydrateNpcGraphSessionNodes,
+  resolveNpcGraphPreviewOverrides,
   resolveFocusedNodePreviewOverride,
   syncNpcGraphSessionFromDocument,
 } from "../../webview/hytale-npc-role-editor/src/npcGraphHost";
@@ -381,5 +382,43 @@ describe("npc graph host helpers", () => {
         } as FlowNode,
       ]),
     ).toBeNull();
+  });
+
+  test("resolveNpcGraphPreviewOverrides prefers considered autocomplete animation over focused node animation", () => {
+    const session = createNodeEditorSession();
+    const playAnimationTemplate = structuredClone(getNpcTemplate("Action.PlayAnimation"));
+    const animationField = playAnimationTemplate.fieldsBySchemaKey.Animation;
+    if (!animationField) {
+      throw new Error("Expected Action.PlayAnimation to include an Animation field.");
+    }
+
+    animationField.value = "Wake";
+    animationField.isImplicit = false;
+    session.nodes = [
+      {
+        id: "play-animation-node",
+        type: "datanode",
+        position: { x: 0, y: 0 },
+        selected: true,
+        data: playAnimationTemplate,
+      } as FlowNode,
+    ] as never;
+
+    expect(resolveNpcGraphPreviewOverrides(session)).toEqual({
+      autocompleteAnimationOverride: null,
+      focusedAnimationOverride: "Wake",
+    });
+
+    session.setConsideredPreviewFeature("animation", "Alerted");
+    expect(resolveNpcGraphPreviewOverrides(session)).toEqual({
+      autocompleteAnimationOverride: "Alerted",
+      focusedAnimationOverride: "Wake",
+    });
+
+    session.clearConsideredPreviewFeature("animation");
+    expect(resolveNpcGraphPreviewOverrides(session)).toEqual({
+      autocompleteAnimationOverride: null,
+      focusedAnimationOverride: "Wake",
+    });
   });
 });

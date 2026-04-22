@@ -32,6 +32,7 @@
     parentSchemaKey,
     symbolLookup,
     overrideAutocompleteValues,
+    previewFeatureKind,
     computable = false,
   }: NodeField & {
     nodeId?: string;
@@ -160,6 +161,7 @@
     initialValue={value as string[]}
     {overrideAutocompleteValues}
     {symbolLookup}
+    {previewFeatureKind}
     titleActions={computeToggle}
     {onconfirm}
   />
@@ -172,6 +174,7 @@
     initialValue={value as string}
     overrideAutocompleteValues={overrideAutocompleteValues}
     {symbolLookup}
+    {previewFeatureKind}
     titleActions={computeToggle}
     {onconfirm}
   />
@@ -236,6 +239,7 @@
     multiline={type === "text"}
     {overrideAutocompleteValues}
     {symbolLookup}
+    {previewFeatureKind}
     titleActions={computeToggle}
     {onconfirm}
   />

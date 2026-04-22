@@ -142,7 +142,8 @@ export class Workspace {
   appearanceActiveAnimationSetId = $state<string | null>(null);
   appearanceActiveAnimationPreview = $state<AnimationPreviewState | undefined>(undefined);
   appearanceAnimationPreviewCache = $state.raw<Map<string, AnimationPreviewState | null>>(new Map());
-  appearancePreviewAnimationOverride = $state<string | null>(null);
+  appearanceFocusedAnimationOverride = $state<string | null>(null);
+  appearanceAutocompleteAnimationOverride = $state<string | null>(null);
   appearanceAnimationIds = $state<string[]>([]);
   componentReferenceTargets = $state.raw<Map<string, NpcRoleEditorComponentReferenceTargetState>>(
     new Map(),
@@ -269,14 +270,24 @@ export class Workspace {
     return this.appearanceBasePreviewAssetName === assetName && Boolean(this.appearanceBasePreview?.model);
   }
 
-  setAppearancePreviewAnimationOverride(animationSetId: string | null | undefined) {
+  setAppearanceFocusedAnimationOverride(animationSetId: string | null | undefined) {
     const trimmedAnimationSetId = animationSetId?.trim();
-    this.appearancePreviewAnimationOverride =
+    this.appearanceFocusedAnimationOverride =
       trimmedAnimationSetId && trimmedAnimationSetId.length > 0 ? trimmedAnimationSetId : null;
   }
 
-  clearAppearancePreviewAnimationOverride() {
-    this.appearancePreviewAnimationOverride = null;
+  clearAppearanceFocusedAnimationOverride() {
+    this.appearanceFocusedAnimationOverride = null;
+  }
+
+  setAppearanceAutocompleteAnimationOverride(animationSetId: string | null | undefined) {
+    const trimmedAnimationSetId = animationSetId?.trim();
+    this.appearanceAutocompleteAnimationOverride =
+      trimmedAnimationSetId && trimmedAnimationSetId.length > 0 ? trimmedAnimationSetId : null;
+  }
+
+  clearAppearanceAutocompleteAnimationOverride() {
+    this.appearanceAutocompleteAnimationOverride = null;
   }
 
   setAppearanceAnimationValues(_assetName: string | null, values: string[]) {

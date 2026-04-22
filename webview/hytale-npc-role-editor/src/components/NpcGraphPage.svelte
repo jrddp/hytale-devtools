@@ -16,7 +16,7 @@
   import {
     applyNpcGraphUpdateToSession,
     hydrateNpcGraphSessionNodes,
-    resolveFocusedNodePreviewOverride,
+    resolveNpcGraphPreviewOverrides,
     syncNpcGraphSessionFromDocument,
   } from "../npcGraphHost";
   import type { NpcPropertyField } from "../propertyModel";
@@ -234,7 +234,8 @@
 
   $effect(() => {
     if (!workspaceContext || !session.isInitialized) {
-      workspace.clearAppearancePreviewAnimationOverride();
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+      workspace.clearAppearanceFocusedAnimationOverride();
       return;
     }
 
@@ -254,16 +255,32 @@
 
   $effect(() => {
     if (!workspaceContext || !session.isInitialized) {
-      workspace.clearAppearancePreviewAnimationOverride();
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+      workspace.clearAppearanceFocusedAnimationOverride();
       return;
     }
 
     void session.nodes;
-    workspace.setAppearancePreviewAnimationOverride(resolveFocusedNodePreviewOverride(session.nodes));
+    void session.consideredPreviewFeature;
+    const { autocompleteAnimationOverride, focusedAnimationOverride } =
+      resolveNpcGraphPreviewOverrides(session);
+
+    if (autocompleteAnimationOverride) {
+      workspace.setAppearanceAutocompleteAnimationOverride(autocompleteAnimationOverride);
+    } else {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+    }
+
+    if (focusedAnimationOverride) {
+      workspace.setAppearanceFocusedAnimationOverride(focusedAnimationOverride);
+    } else {
+      workspace.clearAppearanceFocusedAnimationOverride();
+    }
   });
 
   onDestroy(() => {
-    workspace.clearAppearancePreviewAnimationOverride();
+    workspace.clearAppearanceAutocompleteAnimationOverride();
+    workspace.clearAppearanceFocusedAnimationOverride();
   });
 
   function resolveGraphDocumentFromText(text: string | null) {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { isObject } from "@node-editor/node-editor/utils/valueUtils";
@@ -6,6 +7,7 @@
   import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { IndexReference } from "@shared/indexTypes";
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
   import {
@@ -23,11 +25,13 @@
     inputWidth,
     overrideAutocompleteValues,
     symbolLookup,
+    previewFeatureKind,
     titleActions,
     onconfirm,
   }: FieldProps<unknown[]> & {
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
+    previewFeatureKind?: NodeField["previewFeatureKind"];
     titleActions?: Snippet;
   } = $props();
   const workspace = useNodeEditorSession();
@@ -139,6 +143,25 @@
       input.blur();
     }
   }
+
+  function handleConsideredPreview(value?: string) {
+    if (previewFeatureKind !== "animation") {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.clearConsideredPreviewFeature("animation");
+      return;
+    }
+
+    workspace.setConsideredPreviewFeature("animation", value);
+  }
+
+  onDestroy(() => {
+    if (previewFeatureKind === "animation") {
+      workspace.clearConsideredPreviewFeature("animation");
+    }
+  });
 </script>
 
 <FieldLayout {inputId} {label} {description} align="start" {titleActions}>
@@ -202,6 +225,7 @@
                   optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
                   stopPointerPropagation
                   onfocus={() => requestAutocomplete(buildListItemInputId(inputId, index))}
+                  onconsider={handleConsideredPreview}
                   oncommit={nextValue => updateTextItem(index, nextValue)}
                   afterEnterPressed={handleStringEnterCommit}
                 />

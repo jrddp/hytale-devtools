@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
@@ -99,6 +100,25 @@
 
     workspace.requestAutocomplete(inputId, field.symbolRef);
   }
+
+  function handleConsideredAnimation(value?: string) {
+    if (!field.animationAutocompleteKind) {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+      return;
+    }
+
+    workspace.setAppearanceAutocompleteAnimationOverride(value);
+  }
+
+  onDestroy(() => {
+    if (field.animationAutocompleteKind) {
+      workspace.clearAppearanceAutocompleteAnimationOverride();
+    }
+  });
 </script>
 
 {#snippet computeToggle()}
@@ -173,6 +193,7 @@
       optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
       previewClass="z-[160]"
       onfocus={requestAutocomplete}
+      onconsider={handleConsideredAnimation}
       oncommit={value => {
         draftValue = value;
         workspace.updateFieldValue(field.fieldPath, value);

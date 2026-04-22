@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
 import { Workspace } from "../../webview/hytale-npc-role-editor/src/workspace.svelte";
+import { resolveDesiredAppearanceAnimationSetId } from "../../webview/hytale-npc-role-editor/src/workspace/appearancePreviewState";
 
 describe("npc workspace appearance preview integration", () => {
   const descriptors: NpcDescriptorDocument = [
@@ -336,6 +337,39 @@ describe("npc workspace appearance preview integration", () => {
       type: "Model",
       model,
     });
+  });
+
+  test("autocomplete animation override takes precedence over focused animation and falls back to idle", () => {
+    const workspace = createWorkspace();
+
+    workspace.setAppearanceFocusedAnimationOverride(" Wake ");
+    workspace.setAppearanceAutocompleteAnimationOverride(" Alerted ");
+
+    expect(
+      resolveDesiredAppearanceAnimationSetId({
+        assetName: "Sheep",
+        autocompleteAnimationOverride: workspace.appearanceAutocompleteAnimationOverride,
+        focusedAnimationOverride: workspace.appearanceFocusedAnimationOverride,
+      }),
+    ).toBe("Alerted");
+
+    workspace.clearAppearanceAutocompleteAnimationOverride();
+    expect(
+      resolveDesiredAppearanceAnimationSetId({
+        assetName: "Sheep",
+        autocompleteAnimationOverride: workspace.appearanceAutocompleteAnimationOverride,
+        focusedAnimationOverride: workspace.appearanceFocusedAnimationOverride,
+      }),
+    ).toBe("Wake");
+
+    workspace.clearAppearanceFocusedAnimationOverride();
+    expect(
+      resolveDesiredAppearanceAnimationSetId({
+        assetName: "Sheep",
+        autocompleteAnimationOverride: workspace.appearanceAutocompleteAnimationOverride,
+        focusedAnimationOverride: workspace.appearanceFocusedAnimationOverride,
+      }),
+    ).toBe("Idle");
   });
 });
 
