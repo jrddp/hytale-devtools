@@ -45,6 +45,15 @@ export function buildNpcIssues({
 
   if (roleType === "Generic" || roleType === "Abstract") {
     for (const field of roleAttributesSection?.fields ?? []) {
+      if (field.required === true && field.isSet === false) {
+        issues.push({
+          severity: "error",
+          code: "required-role-attribute-missing",
+          message: "Required role attribute is unset.",
+          fieldPath: field.fieldPath,
+        });
+      }
+
       if (field.value.kind !== "compute") {
         continue;
       }

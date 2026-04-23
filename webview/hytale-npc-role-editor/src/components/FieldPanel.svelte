@@ -13,6 +13,7 @@
   let {
     title,
     typeLabel,
+    required = false,
     description,
     infoItems = [],
     issues = [],
@@ -35,6 +36,7 @@
   }: {
     title: string;
     typeLabel?: string;
+    required?: boolean;
     description?: string;
     infoItems?: NpcFieldInfoItem[];
     issues?: NpcEditorIssue[];
@@ -92,10 +94,13 @@
     <div class="space-y-2">
       <div class="space-y-1">
         <div class="font-semibold">
-          {title}{#if typeLabel}&nbsp;({typeLabel}){/if}
+          {#if required}* {/if}{title}{#if typeLabel}&nbsp;({typeLabel}){/if}
         </div>
         {#if description}
           <div class="whitespace-pre-line">{description}</div>
+        {/if}
+        {#if required}
+          <div>Required</div>
         {/if}
       </div>
 
@@ -144,7 +149,7 @@
                 {@render titleContent()}
               </div>
             {:else}
-              <h2 class="relative text-sm font-semibold truncate">{title}</h2>
+              <h2 class="relative text-sm font-semibold truncate">{#if required}* {/if}{title}</h2>
             {/if}
 
             {#if hasTooltipContent && !hideInfoButton}
@@ -270,7 +275,7 @@
             {@render titleContent()}
           </div>
         {:else}
-          <h2 class="relative text-sm font-semibold truncate">{title}</h2>
+          <h2 class="relative text-sm font-semibold truncate">{#if required}* {/if}{title}</h2>
         {/if}
 
         {#if hasTooltipContent && !hideInfoButton}
