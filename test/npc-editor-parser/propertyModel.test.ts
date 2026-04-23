@@ -439,6 +439,36 @@ describe("npc property model symbol enrichment", () => {
     });
   });
 
+  test("keeps an empty role attributes section when descriptor-backed role attributes are available", () => {
+    const document = createGenericDocument();
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+
+    expect(state.sections.find(section => section.id === "roleAttributes")).toMatchObject({
+      fields: [],
+    });
+    expect(serializeNpcPropertyState(state)).toEqual({
+      Type: "Generic",
+    });
+  });
+
   test("assigns component-local autocomplete to component action state fields", () => {
     const document = createComponentDocument({
       componentClass: "Action",

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { NpcPropertyField, NpcPropertySection } from "../propertyModel";
+  import type { NpcPropertySection } from "../propertyModel";
+  import { summarizeNpcFieldValue } from "../propertyModel";
   import { workspace } from "../workspace.svelte";
   import AddSearchMenu from "./AddSearchMenu.svelte";
   import FieldRenderer from "./FieldRenderer.svelte";
@@ -30,23 +31,6 @@
         return "Set Reference to add inherited overrides.";
     }
   });
-
-  function summarizeFieldValue(field: NpcPropertyField): string {
-    if (field.value.kind === "compute") {
-      return `Compute: ${field.value.expression}`;
-    }
-
-    const literalValue = field.value.value;
-    if (Array.isArray(literalValue)) {
-      return literalValue.length === 0 ? "[]" : JSON.stringify(literalValue);
-    }
-
-    if (literalValue !== null && typeof literalValue === "object") {
-      return JSON.stringify(literalValue);
-    }
-
-    return String(literalValue ?? "");
-  }
 </script>
 
 <section
@@ -76,7 +60,8 @@
         items={availableOverrideFields.map(field => ({
           id: field.key,
           label: field.key,
-          summary: summarizeFieldValue(field),
+          summary: summarizeNpcFieldValue(field),
+          keywords: [field.label],
         }))}
         onselect={item => {
           workspace.addVariantModifyOverride(item.id);

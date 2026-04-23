@@ -17,6 +17,7 @@ import type {
 import { isNpcComputeJson, isRecord } from "./parsing/documentTypes";
 import type { ParameterUsageIndex } from "./compute/parameterUsageIndex";
 import { isNpcRoleAttributeKey } from "./roleAttributes";
+import { createRoleAttributeField, resolveRoleDescriptor } from "./roleAttributeFields";
 import type { NpcPropertyField, NpcPropertySection, NpcPropertyState } from "./propertyTypes";
 import {
   cloneJsonLike,
@@ -498,7 +499,12 @@ function buildRoleAttributesSection(
   }
 
   if (fields.length === 0) {
-    return null;
+    const hasAvailableRoleAttributes = (roleDescriptor?.Attributes ?? []).some(
+      descriptorAttribute => isNpcRoleAttributeKey(descriptorAttribute.Name),
+    );
+    if (!hasAvailableRoleAttributes) {
+      return null;
+    }
   }
 
   return {
@@ -570,49 +576,6 @@ function createParameterField(
     isSet: true,
     itemType,
     preservedData,
-    ui: {},
-  };
-}
-
-function createRoleAttributeField({
-  key,
-  value,
-  descriptorAttribute,
-  parameterDefinition,
-  isSet,
-}: {
-  key: string;
-  value: unknown;
-  descriptorAttribute?: NpcDescriptorAttribute;
-  parameterDefinition?: NpcParameterDefinitionJson;
-  isSet: boolean;
-}): NpcPropertyField {
-  const parsedShape =
-    value === undefined
-      ? inferFieldShapeFromDescriptor(descriptorAttribute, parameterDefinition)
-      : parseRoleAttributeFieldShape(value, descriptorAttribute, parameterDefinition);
-
-  return {
-    id: `role-attribute-${key}`,
-    key,
-    label: humanize(key) ?? key,
-    fieldPath: key,
-    kind: parsedShape.kind,
-    value: parsedShape.value,
-    description:
-      toOptionalDisplayString(descriptorAttribute?.ShortDescription) ??
-      toOptionalDisplayString(descriptorAttribute?.LongDescription),
-    required: descriptorAttribute?.Required === "REQUIRED",
-    isSet,
-    computable: descriptorAttribute?.Computable === true,
-    canRename: false,
-    canChangeType: false,
-    canUnset: isSet,
-    isDescriptionEditable: false,
-    itemType: parsedShape.itemType,
-    stateAutocompleteKind: resolveRoleAttributeStateAutocompleteKind(key),
-    staticSuggestions: parseStaticSuggestions(descriptorAttribute),
-    symbolRef: resolveFieldSymbolRef(descriptorAttribute),
     ui: {},
   };
 }
@@ -781,26 +744,6 @@ function parseParameterFieldShape(
   return inferLiteralFieldShape(definition.Value, normalizeTypeHint(definition.TypeHint));
 }
 
-function parseRoleAttributeFieldShape(
-  value: unknown,
-  descriptorAttribute?: NpcDescriptorAttribute,
-  parameterDefinition?: NpcParameterDefinitionJson,
-): Pick<NpcPropertyField, "kind" | "value" | "itemType"> {
-  if (isNpcComputeJson(value)) {
-    const fallbackShape = inferFieldShapeFromDescriptor(descriptorAttribute, parameterDefinition);
-    return {
-      kind: fallbackShape.kind,
-      value: {
-        kind: "compute",
-        expression: value.Compute,
-      },
-      itemType: fallbackShape.itemType,
-    };
-  }
-
-  return inferLiteralFieldShape(value);
-}
-
 function parseVariantModifyFieldShape(
   value: unknown,
   inheritedField?: NpcPropertyField,
@@ -860,33 +803,10 @@ function buildPreservedTopLevelFields(document: NpcRoleJson): Record<string, unk
   return preservedTopLevelFields;
 }
 
-function resolveRoleDescriptor(
-  roleType: NpcRoleType,
-  descriptors: NpcDescriptorDocument,
-): NpcDescriptor | undefined {
-  const descriptorName = roleType === "Abstract" ? "Generic" : roleType;
-  return descriptors.find(
-    descriptor => descriptor.Category === "Role" && descriptor.Name === descriptorName,
-  );
-}
-
 function resolveFieldSymbolRef(
   descriptorAttribute?: NpcDescriptorAttribute,
 ): IndexReference | undefined {
   return resolveNpcDescriptorAssetSymbolLookup(descriptorAttribute);
-}
-
-function resolveRoleAttributeStateAutocompleteKind(
-  key: string,
-): NpcStateAutocompleteKind | undefined {
-  switch (key) {
-    case "StartState":
-      return "role-main";
-    case "BusyStates":
-      return "role-full";
-    default:
-      return undefined;
-  }
 }
 
 function getDescriptorRoleAttributeSymbolRefsByKey(
@@ -969,68 +889,6 @@ function resolveRoleAttributeKeyForFieldPath(
   return undefined;
 }
 
-function parseStaticSuggestions(
-  descriptorAttribute?: NpcDescriptorAttribute,
-): string[] | undefined {
-  const rawFlagDescriptions = descriptorAttribute?.FlagDescriptions;
-  if (!isRecord(rawFlagDescriptions)) {
-    return undefined;
-  }
-
-  const values = Object.keys(rawFlagDescriptions).map(normalizeFlagValue);
-  return values.length > 0 ? values : undefined;
-}
-
-function inferFieldShapeFromDescriptor(
-  descriptorAttribute?: NpcDescriptorAttribute,
-  parameterDefinition?: NpcParameterDefinitionJson,
-): Pick<NpcPropertyField, "kind" | "value" | "itemType"> {
-  const descriptorType = descriptorAttribute?.Type;
-  const normalizedDomain = normalizeTypeHint(descriptorAttribute?.Domain);
-
-  switch (descriptorType) {
-    case "Boolean":
-      return {
-        kind: "boolean",
-        value: { kind: "literal", value: false },
-      };
-    case "Integer":
-    case "Double":
-      return {
-        kind: "number",
-        value: { kind: "literal", value: 0 },
-      };
-    case "AssetArray":
-      return {
-        kind: "list",
-        value: { kind: "literal", value: [] },
-        itemType: "string",
-      };
-    case "Array":
-      return {
-        kind: "list",
-        value: { kind: "literal", value: [] },
-        itemType: normalizedDomain ?? "string",
-      };
-    case "Asset":
-    case "Enum":
-    case "Flag":
-    case "String":
-      return {
-        kind: "string",
-        value: { kind: "literal", value: "" },
-      };
-    default:
-      if (parameterDefinition) {
-        return parseParameterFieldShape(parameterDefinition);
-      }
-
-      return {
-        kind: "rawJson",
-        value: { kind: "literal", value: {} },
-      };
-  }
-}
 
 function inferLiteralFieldShape(
   value: unknown,

@@ -67,6 +67,10 @@ import {
   updateWorkspaceStandardParameterEditorType,
 } from "./workspace/actions/parameterActions";
 import {
+  addWorkspaceRoleAttribute,
+  getAvailableWorkspaceRoleAttributeFields,
+} from "./workspace/actions/roleAttributeActions";
+import {
   addWorkspaceStateTransition,
   addWorkspaceStateTransitionEdge,
   removeWorkspaceStateTransition,
@@ -514,6 +518,10 @@ export class Workspace {
     return addWorkspaceVariantModifyOverride(this, parameterName);
   }
 
+  addRoleAttribute(attributeKey: string) {
+    return addWorkspaceRoleAttribute(this, attributeKey);
+  }
+
   setRichObjectVariantType(fieldPath: string, nextType: string) {
     const field = findWorkspaceField(this.propertySections, fieldPath);
     if (!field) {
@@ -677,6 +685,10 @@ export class Workspace {
 
   getAvailableVariantModifyOverrideFields(): NpcPropertyField[] {
     return getAvailableWorkspaceVariantModifyOverrideFields(this);
+  }
+
+  getAvailableRoleAttributeFields(): NpcPropertyField[] {
+    return getAvailableWorkspaceRoleAttributeFields(this);
   }
 
   handleContextAction(message: NpcRoleEditorContextActionMessage) {

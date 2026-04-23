@@ -3,6 +3,7 @@
   import ContentSection from "./ContentSection.svelte";
   import FieldRenderer from "./FieldRenderer.svelte";
   import ParameterSection from "./ParameterSection.svelte";
+  import RoleAttributesSection from "./RoleAttributesSection.svelte";
   import SingleRootSection from "./SingleRootSection.svelte";
   import VariantModifySection from "./VariantModifySection.svelte";
   import { workspace } from "../workspace.svelte";
@@ -16,6 +17,8 @@
   <VariantModifySection {section} />
 {:else if section.id === "content"}
   <ContentSection {section} />
+{:else if section.id === "roleAttributes"}
+  <RoleAttributesSection {section} />
 {:else if section.id === "instructions"}
   <SingleRootSection
     {section}

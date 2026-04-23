@@ -49,6 +49,27 @@ export function getNpcFieldTypeLabel(field: NpcPropertyField): string {
   }
 }
 
+export function summarizeNpcFieldValue(field: NpcPropertyField): string {
+  if (field.value.kind === "compute") {
+    return `Compute: ${field.value.expression}`;
+  }
+
+  const literalValue = field.value.value;
+  if (Array.isArray(literalValue)) {
+    return literalValue.length === 0 ? "[]" : JSON.stringify(literalValue);
+  }
+
+  if (literalValue !== null && typeof literalValue === "object") {
+    return JSON.stringify(literalValue);
+  }
+
+  if (literalValue === "") {
+    return "(empty)";
+  }
+
+  return String(literalValue ?? "");
+}
+
 export function createDefaultParameterField(parameterName: string): NpcPropertyField {
   return {
     id: `parameter-${parameterName}`,
