@@ -131,7 +131,7 @@ export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
     label: "Mapping",
   },
   WeightedAction: {
-    authoringSide: "input",
+    authoringSide: "output",
     color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "WeightedAction",
   },

@@ -3,14 +3,15 @@
   "Title": "WeightedAction",
   "Color": "#CC3361",
   "Description": "A wrapped and weighted action intended to be used for Random action lists.",
-  "Inputs": [],
-  "Outputs": [
+  "Inputs": [
     {
-      "Id": "Output",
+      "Id": "Input",
       "Type": "WeightedAction",
       "Color": "#CC3361",
       "Label": "WeightedAction"
-    },
+    }
+  ],
+  "Outputs": [
     {
       "Id": "ActionPin",
       "Type": "Action",

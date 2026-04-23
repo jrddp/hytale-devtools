@@ -185,8 +185,8 @@ describe("NPC Behavior workspace generation", () => {
       ),
     ).toBe(true);
     expect(
-      workspace.nodeTemplatesById["WeightedAction.WeightedAction"].outputPins.some(
-        pin => pin.localId === "Output" && pin.connectionType === "WeightedAction",
+      workspace.nodeTemplatesById["WeightedAction.WeightedAction"].inputPins.some(
+        pin => pin.localId === "Input" && pin.connectionType === "WeightedAction",
       ),
     ).toBe(true);
     expect(
@@ -475,10 +475,10 @@ describe("NPC Behavior workspace generation", () => {
     ).toBe(true);
 
     const weightedAction = workspace.nodeTemplatesById["WeightedAction.WeightedAction"];
-    expect(weightedAction.inputPins.length).toBe(0);
+    expect(weightedAction.inputPins.some(pin => pin.localId === "Input" && pin.connectionType === "WeightedAction")).toBe(true);
     expect(
-      weightedAction.outputPins.some(
-        pin => pin.localId === "Output" && pin.connectionType === "WeightedAction",
+      workspace.nodeTemplatesById["Action.Random"].outputPins.some(
+        pin => pin.schemaKey === "Actions" && pin.connectionType === "WeightedAction",
       ),
     ).toBe(true);
     expect(

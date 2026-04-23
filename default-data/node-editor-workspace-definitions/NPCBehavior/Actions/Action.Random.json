@@ -9,7 +9,9 @@
       "Type": "ActionListItem",
       "Color": "#CC3361",
       "Label": "Actions"
-    },
+    }
+  ],
+  "Outputs": [
     {
       "Id": "ActionsPin",
       "Type": "WeightedAction",
