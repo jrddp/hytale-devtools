@@ -148,6 +148,51 @@ describe("npc workspace autocomplete enrichment", () => {
     expect(reparsed.status).toBe("ready");
     expect(reparsed.status === "ready" ? reparsed.document.DropDeathItemsInstantly : undefined).toBe(true);
   });
+
+  test("unsetting an optional role attribute removes it from the section and restores it to the add menu", () => {
+    const workspace = createWorkspace();
+    workspace.setDescriptors({
+      descriptors: [
+        {
+          Name: "Generic",
+          Category: "Role",
+          Attributes: [
+            {
+              Name: "DropDeathItemsInstantly",
+              Type: "Boolean",
+              DefaultValue: "true",
+            },
+          ],
+        },
+      ],
+      descriptorPath: "npc_descriptors.json",
+      descriptorSource: "default-data",
+    });
+    workspace.setDocument({
+      documentPath: "/tmp/TestNpc.json",
+      text: JSON.stringify({
+        Type: "Generic",
+      }),
+      version: 1,
+    });
+
+    expect(workspace.addRoleAttribute("DropDeathItemsInstantly")).toBe(true);
+    expect(workspace.unsetField("DropDeathItemsInstantly")).toBe(true);
+
+    const roleAttributesSection = workspace.propertySections.find(section => section.id === "roleAttributes");
+    expect(roleAttributesSection?.fields.some(field => field.key === "DropDeathItemsInstantly")).toBe(false);
+    expect(workspace.getAvailableRoleAttributeFields().some(field => field.key === "DropDeathItemsInstantly")).toBe(
+      true,
+    );
+
+    const reparsed = parseNpcDocumentText(workspace.documentText ?? "");
+    expect(reparsed.status).toBe("ready");
+    expect(
+      reparsed.status === "ready"
+        ? Object.prototype.hasOwnProperty.call(reparsed.document, "DropDeathItemsInstantly")
+        : true,
+    ).toBe(false);
+  });
 });
 
 function createWorkspace(): Workspace {

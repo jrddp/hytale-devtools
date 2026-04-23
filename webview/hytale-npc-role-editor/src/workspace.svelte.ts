@@ -457,6 +457,21 @@ export class Workspace {
       return true;
     }
 
+    const roleAttributesSection = findWorkspaceSection(this.propertySections, "roleAttributes");
+    if (roleAttributesSection && fieldLocation.section.id === "roleAttributes" && field.required !== true) {
+      const nextFields = roleAttributesSection.fields.filter(
+        candidate => candidate.fieldPath !== fieldPath,
+      );
+      if (nextFields.length === roleAttributesSection.fields.length) {
+        return false;
+      }
+
+      roleAttributesSection.fields = nextFields;
+      recomputeWorkspaceDerivedState(this);
+      this.applyDocumentState();
+      return true;
+    }
+
     if (fieldLocation.arrayParentField && fieldLocation.arrayIndex !== null) {
       fieldLocation.arrayParentField.childFields = (fieldLocation.arrayParentField.childFields ?? []).filter(
         (_, index) => index !== fieldLocation.arrayIndex,
