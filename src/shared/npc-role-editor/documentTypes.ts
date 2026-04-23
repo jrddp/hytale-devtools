@@ -1,5 +1,16 @@
 export type NpcRoleType = "Generic" | "Abstract" | "Variant" | "Component";
 
+export const NPC_COMPONENT_CLASSES = [
+  "Action",
+  "ActionList",
+  "BodyMotion",
+  "HeadMotion",
+  "Instruction",
+  "Path",
+  "Role",
+  "Sensor",
+] as const;
+
 export type NpcComponentClass =
   | "Action"
   | "ActionList"
@@ -7,6 +18,7 @@ export type NpcComponentClass =
   | "HeadMotion"
   | "Instruction"
   | "Path"
+  | "Role"
   | "Sensor"
   | (string & {});
 
