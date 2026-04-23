@@ -507,7 +507,10 @@ export class WorkspaceRuntime {
     entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
   ): NodeSchemaSerializationType {
     const serializationType = entry.SerializationType ?? entry.serializationType;
-    return serializationType === "root" ? "root" : "child";
+    if (serializationType === "root" || serializationType === "sibling") {
+      return serializationType;
+    }
+    return "child";
   }
 
   private parseAllowComponentReferences(

@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Not",
-  "Title": "Not",
+  "Title": "Filter: Not",
   "Color": "#60C8B8",
   "Description": "Invert filter test",
   "Inputs": [

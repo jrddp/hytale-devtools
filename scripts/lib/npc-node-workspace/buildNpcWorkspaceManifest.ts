@@ -12,7 +12,6 @@ import type {
 } from "../../../src/node-editor/workspaceDefinitionTypes";
 import {
   buildContentField,
-  buildInstructionTypeField,
   buildReferenceField,
 } from "./buildNpcFieldSchema";
 import {
@@ -34,7 +33,7 @@ import {
   NODE_CATEGORY_NAMES,
   WORKSPACE_NAME,
   isVariantBackedCategory,
-  mergeAttributes,
+  normalizeNpcNodeTitle,
   normalizeDescription,
   type ComponentReferenceTemplateSpec,
   type NpcWorkspaceBuildArtifacts,
@@ -60,7 +59,7 @@ export function buildNpcWorkspaceArtifacts(
       buildDescriptorTemplate(descriptor, outputAuthoredParentConnectionTypesByChildId),
     ),
     ...buildComponentReferenceTemplates(outputAuthoredParentConnectionTypesByChildId),
-    buildInstructionNodeTemplate(
+    ...buildInstructionTemplates(
       instructionDescriptors,
       outputAuthoredParentConnectionTypesByChildId,
     ),
@@ -103,7 +102,7 @@ function buildWorkspaceDefinition(
         MenuName: "Instructions",
       },
       Instruction: {
-        RootNodeType: "Structural.InstructionNode",
+        RootNodeType: "InstructionVariants",
         MenuName: "Instruction",
       },
       Sensor: {
@@ -130,6 +129,13 @@ function buildWorkspaceDefinition(
         "ISensorEntityPrioritiser",
         templateOutputs,
       ),
+      InstructionVariants: {
+        VariantFieldName: "Type",
+        DefaultTemplateId: "Structural.InstructionNode",
+        Variants: {
+          Random: "Structural.RandomInstructionNode",
+        },
+      },
     },
   };
 }
@@ -203,7 +209,7 @@ function buildDescriptorTemplate(
     fileName: `${descriptor.Category}.${descriptor.Name}.json`,
     template: {
       Id: `${descriptor.Category}.${descriptor.Name}`,
-      Title: descriptor.Name,
+      Title: normalizeNpcNodeTitle(descriptor.Category, descriptor.Name),
       Color: CATEGORY_COLORS[descriptor.Category],
       Description: normalizeDescription(descriptor.ShortDescription),
       Inputs: inputs,
@@ -214,8 +220,31 @@ function buildDescriptorTemplate(
   };
 }
 
-function buildInstructionNodeTemplate(
+function buildInstructionTemplates(
   instructionDescriptors: NpcDescriptor[],
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+): TemplateOutput[] {
+  const standardDescriptor = instructionDescriptors.find(descriptor => descriptor.Name === "Instruction");
+  const randomDescriptor = instructionDescriptors.find(descriptor => descriptor.Name === "Random");
+  if (!standardDescriptor || !randomDescriptor) {
+    throw new Error("Expected Instruction and Random instruction descriptors.");
+  }
+
+  return [
+    buildStandardInstructionTemplate(
+      standardDescriptor,
+      outputAuthoredParentConnectionTypesByChildId,
+    ),
+    buildRandomInstructionTemplate(
+      randomDescriptor,
+      outputAuthoredParentConnectionTypesByChildId,
+    ),
+    buildWeightedInstructionTemplate(),
+  ];
+}
+
+function buildStandardInstructionTemplate(
+  descriptor: NpcDescriptor,
   outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
 ): TemplateOutput {
   const parentInputs = createParentCompatibilityInputs(
@@ -224,12 +253,14 @@ function buildInstructionNodeTemplate(
   );
   const childInputs: NodePinDefinition[] = [];
   const outputs: NodePinDefinition[] = [];
-  const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {
-    Type: "Type",
-  };
-  const content: NodeContentDefinition[] = [buildInstructionTypeField()];
+  const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {};
+  const content: NodeContentDefinition[] = [];
 
-  for (const attribute of mergeAttributes(instructionDescriptors)) {
+  for (const attribute of descriptor.Attributes ?? []) {
+    if (attribute.Name === "Weight") {
+      continue;
+    }
+
     const childSpec = resolveInstructionChildSpec(attribute);
     if (childSpec) {
       const pin = createChildPinDefinition(attribute, childSpec);
@@ -266,11 +297,144 @@ function buildInstructionNodeTemplate(
       Id: "Structural.InstructionNode",
       Title: "Instruction",
       Color: CATEGORY_COLORS.Structural,
-      Description: normalizeDescription(instructionDescriptors[0]?.ShortDescription),
+      Description: normalizeDescription(descriptor.ShortDescription),
       Inputs: inputs,
       Outputs: outputs,
       Content: content,
       Schema: schema,
+    },
+  };
+}
+
+function buildRandomInstructionTemplate(
+  descriptor: NpcDescriptor,
+  outputAuthoredParentConnectionTypesByChildId: OutputAuthoredParentConnectionTypesByChildId,
+): TemplateOutput {
+  const parentInputs = createParentCompatibilityInputs(
+    [getInstructionTemplateParentTargetId()],
+    outputAuthoredParentConnectionTypesByChildId,
+  );
+  const childInputs: NodePinDefinition[] = [];
+  const outputs: NodePinDefinition[] = [];
+  const schema: NonNullable<NodeTemplateDefinition["Schema"]> = {
+    Type: "Random",
+  };
+  const content: NodeContentDefinition[] = [];
+
+  for (const attribute of descriptor.Attributes ?? []) {
+    if (attribute.Name === "Weight") {
+      continue;
+    }
+
+    if (attribute.Name === "Instructions") {
+      const pin = {
+        Id: "WeightedInstructionsPin",
+        Type: "WeightedInstruction",
+        Color: CATEGORY_COLORS.Structural,
+        Label: "Instructions",
+        Description: normalizeDescription(attribute.ShortDescription),
+        Multiple: true,
+      } satisfies NodePinDefinition;
+      outputs.push(pin);
+      schema.Instructions = {
+        Pin: pin.Id,
+        Node: "Structural.WeightedInstruction",
+      };
+      continue;
+    }
+
+    const childSpec = resolveInstructionChildSpec(attribute);
+    if (childSpec) {
+      const pin = createChildPinDefinition(attribute, childSpec);
+      (childSpec.pinSide === "input" ? childInputs : outputs).push(pin);
+      schema[attribute.Name] = {
+        Pin: pin.Id,
+        Node: childSpec.childId,
+        AllowComponentReferences: childSpec.allowComponentReferences || undefined,
+      };
+      continue;
+    }
+
+    const field = buildContentField(
+      {
+        Category: "Structural",
+        Name: "RandomInstruction",
+      },
+      attribute,
+    );
+    if (!field) {
+      continue;
+    }
+
+    content.push(field);
+    schema[attribute.Name] = attribute.Name;
+  }
+
+  const inputs = orderInstructionInputs(childInputs, parentInputs);
+
+  return {
+    directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+    fileName: "RandomInstructionNode.json",
+    template: {
+      Id: "Structural.RandomInstructionNode",
+      Title: "Random Instruction",
+      Color: CATEGORY_COLORS.Structural,
+      Description: normalizeDescription(descriptor.ShortDescription),
+      Inputs: inputs,
+      Outputs: outputs,
+      Content: content,
+      Schema: schema,
+    },
+  };
+}
+
+function buildWeightedInstructionTemplate(): TemplateOutput {
+  return {
+    directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+    fileName: "WeightedInstruction.json",
+    template: {
+      Id: "Structural.WeightedInstruction",
+      Title: "Weighted Instruction",
+      Color: CATEGORY_COLORS.Structural,
+      Description: "A weighted wrapper for a random instruction entry.",
+      Inputs: [
+        {
+          Id: "Input",
+          Type: "WeightedInstruction",
+          Color: CATEGORY_COLORS.Structural,
+          Label: "Weighted Instruction",
+        },
+      ],
+      Outputs: [
+        {
+          Id: "InstructionPin",
+          Type: "Instruction",
+          Color: CATEGORY_COLORS.Structural,
+          Label: "Instruction",
+        },
+      ],
+      Content: [
+        {
+          Id: "Weight",
+          Type: "Float",
+          Description: "Weighted chance of picking this instruction in a random instruction",
+          Options: {
+            Label: "Weight",
+            Default: 1,
+            Width: 88,
+            Computable: true,
+          },
+        },
+      ],
+      Schema: {
+        Weight: "Weight",
+        Instruction: {
+          Pin: "InstructionPin",
+          Node: "InstructionVariants",
+          SerializationType: "sibling",
+          AllowComponentReferences: true,
+        },
+      },
     },
   };
 }
@@ -366,7 +530,7 @@ function buildInstructionListRootTemplate(): TemplateOutput {
       Schema: {
         Instructions: {
           Pin: "InstructionsPin",
-          Node: "Structural.InstructionNode",
+          Node: "InstructionVariants",
           SerializationType: "root",
         },
       },

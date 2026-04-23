@@ -1,6 +1,6 @@
 {
   "Id": "Action.OverrideAttitude",
-  "Title": "OverrideAttitude",
+  "Title": "Action: OverrideAttitude",
   "Color": "#CC3361",
   "Description": "Override this NPCs attitude towards the provided target for a given duration",
   "Inputs": [

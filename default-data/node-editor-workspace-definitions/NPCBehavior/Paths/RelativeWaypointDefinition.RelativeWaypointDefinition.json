@@ -1,6 +1,6 @@
 {
   "Id": "RelativeWaypointDefinition.RelativeWaypointDefinition",
-  "Title": "RelativeWaypointDefinition",
+  "Title": "Waypoint: RelativeWaypointDefinition",
   "Color": "#CC3361",
   "Description": "A simple path waypoint definition where each waypoint is relative to the previous",
   "Inputs": [],

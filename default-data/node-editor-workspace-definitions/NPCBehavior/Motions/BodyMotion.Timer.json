@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Timer",
-  "Title": "Timer",
+  "Title": "Body Motion: Timer",
   "Color": "#00E7B6",
   "Description": "Execute a Motion for a specific maximum time",
   "Inputs": [

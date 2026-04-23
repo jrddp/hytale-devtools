@@ -1,6 +1,6 @@
 {
   "Id": "Action.TimerRestart",
-  "Title": "TimerRestart",
+  "Title": "Action: TimerRestart",
   "Color": "#CC3361",
   "Description": "Restart a timer",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Action.ParentState",
-  "Title": "ParentState",
+  "Title": "Action: ParentState",
   "Color": "#CC3361",
   "Description": "Set the main state of NPC from within a component",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Action.SetFlag",
-  "Title": "SetFlag",
+  "Title": "Action: SetFlag",
   "Color": "#CC3361",
   "Description": "Set a named flag to a boolean value",
   "Inputs": [

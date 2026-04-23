@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.HeightDifference",
-  "Title": "HeightDifference",
+  "Title": "Filter: HeightDifference",
   "Color": "#60C8B8",
   "Description": "Matches entities within the given height range",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "Action.Timeout",
-  "Title": "Timeout",
+  "Title": "Action: Timeout",
   "Color": "#CC3361",
   "Description": "Delay an action, or insert a delay in a sequence of actions",
   "Inputs": [

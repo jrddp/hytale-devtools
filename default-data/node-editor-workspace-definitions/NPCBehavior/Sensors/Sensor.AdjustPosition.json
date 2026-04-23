@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.AdjustPosition",
-  "Title": "AdjustPosition",
+  "Title": "Sensor: AdjustPosition",
   "Color": "#7091F0",
   "Description": "Perform adjustments to the wrapped sensor's returned position",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Action.CombatAbility",
-  "Title": "CombatAbility",
+  "Title": "Action: CombatAbility",
   "Color": "#CC3361",
   "Description": "Starts the combat ability selected by the combat action evaluator.",
   "Inputs": [

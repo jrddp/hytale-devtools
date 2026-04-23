@@ -52,18 +52,6 @@ function parseDescriptors(): NpcDescriptorDocument {
   return JSON.parse(readFileSync(descriptorsPath, "utf8")) as NpcDescriptorDocument;
 }
 
-function mergeAttributes(descriptors: NpcDescriptorDocument): Array<{ Name: string; Type: string; Domain?: unknown }> {
-  const attributesByName = new Map<string, { Name: string; Type: string; Domain?: unknown }>();
-  for (const descriptor of descriptors) {
-    for (const attribute of descriptor.Attributes ?? []) {
-      if (!attributesByName.has(attribute.Name)) {
-        attributesByName.set(attribute.Name, attribute);
-      }
-    }
-  }
-  return Array.from(attributesByName.values());
-}
-
 function getNpcBehaviorContext(rootId: "Instructions" | "Instruction" | "Sensor"): NodeEditorWorkspaceContext {
   const workspaceRuntime = createWorkspaceRuntime();
   const workspace = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"];
@@ -108,11 +96,20 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace).toBeDefined();
 
     expect(Object.keys(workspace.roots).sort()).toEqual(["Instruction", "Instructions", "Sensor"]);
-    expect(workspace.roots.Instruction.RootNodeType).toBe("Structural.InstructionNode");
+    expect(workspace.roots.Instruction.RootNodeType).toBe("InstructionVariants");
     expect(workspace.roots.Instructions.RootNodeType).toBe("Structural.InstructionListRoot");
     expect(workspace.roots.Sensor.RootNodeType).toBe("SensorVariants");
+    expect(workspace.variantKindsById.InstructionVariants).toEqual({
+      VariantFieldName: "Type",
+      DefaultTemplateId: "Structural.InstructionNode",
+      Variants: {
+        Random: "Structural.RandomInstructionNode",
+      },
+    });
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"]).toBeDefined();
+    expect(workspace.nodeTemplatesById["Structural.RandomInstructionNode"]).toBeDefined();
+    expect(workspace.nodeTemplatesById["Structural.WeightedInstruction"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"].nodeColor).toBe(
       NPC_BEHAVIOR_REFERENCE_DARK_COLORS.default,
     );
@@ -126,11 +123,21 @@ describe("NPC Behavior workspace generation", () => {
         pin => pin.schemaKey === "Sensor",
       ),
     ).toBe(true);
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].defaultTitle).toBe(
+      "Instruction",
+    );
+    expect(workspace.nodeTemplatesById["Structural.RandomInstructionNode"].defaultTitle).toBe(
+      "Random Instruction",
+    );
+    expect(workspace.nodeTemplatesById["Structural.InstructionReference"].defaultTitle).toBe(
+      "Instruction Reference",
+    );
     expect(
       workspace.nodeTemplatesById["Sensor.Any"].outputPins.some(
         pin => pin.localId === "Output" && pin.connectionType === "Sensor",
       ),
     ).toBe(true);
+    expect(workspace.nodeTemplatesById["Sensor.Any"].defaultTitle).toBe("Sensor: Any");
     expect(workspace.nodeTemplatesById["Sensor.Any"].nodeColor).toBe(
       NPC_BEHAVIOR_REFERENCE_DARK_COLORS.sensor,
     );
@@ -166,7 +173,10 @@ describe("NPC Behavior workspace generation", () => {
       ),
     ).toBe(true);
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"].fieldsBySchemaKey.Enabled?.computable).toBe(true);
-    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].fieldsBySchemaKey.Weight?.computable).toBe(true);
+    expect(workspace.nodeTemplatesById["Structural.InstructionNode"].fieldsBySchemaKey.Weight).toBeUndefined();
+    expect(
+      workspace.nodeTemplatesById["Structural.WeightedInstruction"].fieldsBySchemaKey.Weight?.computable,
+    ).toBe(true);
     expect(workspace.nodeTemplatesById["Sensor.Target"].fieldsBySchemaKey.Range?.computable).toBe(true);
     expect(workspace.nodeTemplatesById["Sensor.Target"].fieldsBySchemaKey.TargetSlot?.computable).toBe(true);
     expect(workspace.nodeTemplatesById["Action.Timeout"]).toBeDefined();
@@ -190,6 +200,16 @@ describe("NPC Behavior workspace generation", () => {
       ),
     ).toBe(true);
     expect(
+      workspace.nodeTemplatesById["Structural.WeightedInstruction"].inputPins.some(
+        pin => pin.localId === "Input" && pin.connectionType === "WeightedInstruction",
+      ),
+    ).toBe(true);
+    expect(
+      workspace.nodeTemplatesById["Structural.WeightedInstruction"].outputPins.some(
+        pin => pin.schemaKey === "Instruction" && pin.connectionType === "Instruction",
+      ),
+    ).toBe(true);
+    expect(
       workspace.nodeTemplatesById["ValueToParameterMapping.ValueToParameterMapping"].outputPins.some(
         pin => pin.localId === "Output" && pin.connectionType === "ValueToParameterMapping",
       ),
@@ -201,6 +221,9 @@ describe("NPC Behavior workspace generation", () => {
     const workspace = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"];
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"].nodeColor).toBe(
+      getNpcBehaviorCategoryColor("Structural"),
+    );
+    expect(workspace.nodeTemplatesById["Structural.RandomInstructionNode"].nodeColor).toBe(
       getNpcBehaviorCategoryColor("Structural"),
     );
     expect(workspace.nodeTemplatesById["Sensor.Target"].nodeColor).toBe(
@@ -292,45 +315,64 @@ describe("NPC Behavior workspace generation", () => {
     }
 
     const instructionDescriptors = allDescriptors.filter(descriptor => descriptor.Category === "Instruction");
-    const instructionNode = workspace.nodeTemplatesById["Structural.InstructionNode"];
-    if (!instructionNode) {
-      throw new Error("Expected generated template Structural.InstructionNode.");
-    }
-
-    for (const attribute of mergeAttributes(instructionDescriptors)) {
-      const domain = getNpcBehaviorChildDomain(
-        attribute.Type,
-        typeof attribute.Domain === "string" ? attribute.Domain : undefined,
-      );
-      if (!domain) {
+    for (const descriptor of instructionDescriptors) {
+      const templateId =
+        descriptor.Name === "Instruction"
+          ? "Structural.InstructionNode"
+          : descriptor.Name === "Random"
+            ? "Structural.RandomInstructionNode"
+            : undefined;
+      if (!templateId) {
         continue;
       }
 
-      mappedDomains.add(domain);
-      const mapping = NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS[domain];
-      expect(mapping, `Instruction.${attribute.Name}`).toBeDefined();
-      const expectedConnectionType = getNpcBehaviorChildConnectionType(
-        "Structural",
-        "Instruction",
-        attribute.Name,
-        domain,
-      );
-      expect(expectedConnectionType, `Instruction.${attribute.Name}`).toBeDefined();
+      const instructionNode = workspace.nodeTemplatesById[templateId];
+      if (!instructionNode) {
+        throw new Error(`Expected generated template ${templateId}.`);
+      }
 
-      const expectedSide = getNpcBehaviorChildPinSide(
-        "Structural",
-        "Instruction",
-        attribute.Name,
-        domain,
-      );
-      const actualPin =
-        expectedSide === "input"
-          ? instructionNode.inputPins.find(pin => pin.schemaKey === attribute.Name)
-          : instructionNode.outputPins.find(pin => pin.schemaKey === attribute.Name);
+      for (const attribute of descriptor.Attributes ?? []) {
+        const domain = getNpcBehaviorChildDomain(
+          attribute.Type,
+          typeof attribute.Domain === "string" ? attribute.Domain : undefined,
+        );
+        if (!domain) {
+          continue;
+        }
 
-      expect(actualPin, `Instruction.${attribute.Name}`).toBeDefined();
-      expect(actualPin?.connectionType).toBe(expectedConnectionType);
-      expect(actualPin?.color).toBe(getNpcBehaviorConnectionColor(expectedConnectionType!));
+        mappedDomains.add(domain);
+        const mapping = NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS[domain];
+        expect(mapping, `${descriptor.Name}.${attribute.Name}`).toBeDefined();
+
+        const expectedConnectionType =
+          descriptor.Name === "Random" && attribute.Name === "Instructions"
+            ? "WeightedInstruction"
+            : getNpcBehaviorChildConnectionType(
+                "Structural",
+                "Instruction",
+                attribute.Name,
+                domain,
+              );
+        expect(expectedConnectionType, `${descriptor.Name}.${attribute.Name}`).toBeDefined();
+
+        const expectedSide =
+          descriptor.Name === "Random" && attribute.Name === "Instructions"
+            ? "output"
+            : getNpcBehaviorChildPinSide(
+                "Structural",
+                "Instruction",
+                attribute.Name,
+                domain,
+              );
+        const actualPin =
+          expectedSide === "input"
+            ? instructionNode.inputPins.find(pin => pin.schemaKey === attribute.Name)
+            : instructionNode.outputPins.find(pin => pin.schemaKey === attribute.Name);
+
+        expect(actualPin, `${descriptor.Name}.${attribute.Name}`).toBeDefined();
+        expect(actualPin?.connectionType).toBe(expectedConnectionType);
+        expect(actualPin?.color).toBe(getNpcBehaviorConnectionColor(expectedConnectionType!));
+      }
     }
 
     expect([...mappedDomains].sort()).toEqual(
@@ -485,6 +527,25 @@ describe("NPC Behavior workspace generation", () => {
       weightedAction.outputPins.some(pin => pin.schemaKey === "Action" && pin.connectionType === "Action"),
     ).toBe(true);
 
+    const randomInstruction = workspace.nodeTemplatesById["Structural.RandomInstructionNode"];
+    expect(randomInstruction.outputPins.some(pin => pin.schemaKey === "Actions")).toBe(false);
+    expect(randomInstruction.outputPins.some(pin => pin.schemaKey === "BodyMotion")).toBe(false);
+    expect(randomInstruction.outputPins.some(pin => pin.schemaKey === "HeadMotion")).toBe(false);
+    expect(
+      randomInstruction.outputPins.some(
+        pin => pin.schemaKey === "Instructions" && pin.connectionType === "WeightedInstruction",
+      ),
+    ).toBe(true);
+    expect(randomInstruction.schemaConstants.Type).toBe("Random");
+
+    const weightedInstruction = workspace.nodeTemplatesById["Structural.WeightedInstruction"];
+    expect(
+      weightedInstruction.outputPins.some(
+        pin => pin.schemaKey === "Instruction" && pin.connectionType === "Instruction",
+      ),
+    ).toBe(true);
+    expect(weightedInstruction.childSchemas.Instruction?.serializationType).toBe("sibling");
+
     const instructionsRoot = workspace.nodeTemplatesById["Structural.InstructionListRoot"];
     expect(instructionsRoot.inputPins.length).toBe(0);
     expect(
@@ -578,6 +639,41 @@ describe("NPC Behavior workspace generation", () => {
     expect(serialized.Instructions).toBeInstanceOf(Array);
   });
 
+  test("round-trips the random Instruction root through weighted instruction wrappers", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const serialized = expectSemanticRoundTrip(
+      {
+        $NodeId: "Instruction-1",
+        Type: "Random",
+        Name: "Choose",
+        Continue: true,
+        ResetOnStateChange: false,
+        ExecuteFor: [1, 2],
+        Instructions: [
+          {
+            Weight: 2.5,
+            Name: "Choice A",
+          },
+          {
+            Weight: 1,
+            Reference: "Component_Instruction_Generic_Idle",
+          },
+        ],
+      },
+      context,
+    );
+
+    expect(serialized.Type).toBe("Random");
+    expect((serialized.Instructions as Record<string, unknown>[])[0]).toMatchObject({
+      Weight: 2.5,
+      Name: "Choice A",
+    });
+    expect((serialized.Instructions as Record<string, unknown>[])[1]).toMatchObject({
+      Weight: 1,
+      Reference: "Component_Instruction_Generic_Idle",
+    });
+  });
+
   test("round-trips reverse-input sensor and filter child slots in the generated NPC workspace", () => {
     const context = getNpcBehaviorContext("Instruction");
     const serialized = expectSemanticRoundTrip(
@@ -631,20 +727,28 @@ describe("NPC Behavior workspace generation", () => {
     const serialized = expectSemanticRoundTrip(
       {
         $NodeId: "Instruction-1",
+        Type: "Random",
         Enabled: { Compute: "isEmpty(TargetSlot)" },
-        Weight: { Compute: "randomInRange(1, 3)" },
         Sensor: {
           $NodeId: "Sensor-1",
           Type: "Target",
           TargetSlot: { Compute: "TargetParameter" },
           Range: { Compute: "randomInRange(5, 10)" },
         },
+        Instructions: [
+          {
+            Weight: { Compute: "randomInRange(1, 3)" },
+            Name: "Weighted Child",
+          },
+        ],
       },
       context,
     );
 
     expect(serialized.Enabled).toEqual({ Compute: "isEmpty(TargetSlot)" });
-    expect(serialized.Weight).toEqual({ Compute: "randomInRange(1, 3)" });
+    expect((serialized.Instructions as Record<string, unknown>[])[0].Weight).toEqual({
+      Compute: "randomInRange(1, 3)",
+    });
     expect((serialized.Sensor as Record<string, unknown>).TargetSlot).toEqual({
       Compute: "TargetParameter",
     });
@@ -700,7 +804,7 @@ describe("NPC Behavior workspace generation", () => {
             Type: "Random",
             Instructions: [
               {
-                $NodeId: "Instruction-3",
+                Weight: 2,
                 Name: "Nested",
               },
             ],
@@ -712,6 +816,10 @@ describe("NPC Behavior workspace generation", () => {
 
     expect(serialized.Instructions).toBeInstanceOf(Array);
     expect((serialized.Instructions as unknown[])).toHaveLength(2);
+    expect(
+      ((serialized.Instructions as Record<string, unknown>[])[1].Instructions as Record<string, unknown>[])[0]
+        .Weight,
+    ).toBe(2);
   });
 
   test("adapts the Instructions root between host value and graph document root while preserving $ metadata", () => {

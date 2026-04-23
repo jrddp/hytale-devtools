@@ -1,6 +1,6 @@
 {
   "Id": "Action.Spawn",
-  "Title": "Spawn",
+  "Title": "Action: Spawn",
   "Color": "#CC3361",
   "Description": "Spawn an NPC",
   "Inputs": [

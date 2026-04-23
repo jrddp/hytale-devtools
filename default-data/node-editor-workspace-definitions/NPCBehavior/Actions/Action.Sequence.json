@@ -1,6 +1,6 @@
 {
   "Id": "Action.Sequence",
-  "Title": "Sequence",
+  "Title": "Action: Sequence",
   "Color": "#CC3361",
   "Description": "List of actions.",
   "Inputs": [

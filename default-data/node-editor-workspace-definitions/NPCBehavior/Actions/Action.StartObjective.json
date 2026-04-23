@@ -1,6 +1,6 @@
 {
   "Id": "Action.StartObjective",
-  "Title": "StartObjective",
+  "Title": "Action: StartObjective",
   "Color": "#CC3361",
   "Description": "Start the given objective for the currently iterated player in the interaction instruction",
   "Inputs": [

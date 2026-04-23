@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Seek",
-  "Title": "Seek",
+  "Title": "Body Motion: Seek",
   "Color": "#00E7B6",
   "Description": "Chase target",
   "Inputs": [

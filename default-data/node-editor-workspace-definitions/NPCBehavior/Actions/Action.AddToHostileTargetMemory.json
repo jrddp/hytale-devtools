@@ -1,6 +1,6 @@
 {
   "Id": "Action.AddToHostileTargetMemory",
-  "Title": "AddToHostileTargetMemory",
+  "Title": "Action: AddToHostileTargetMemory",
   "Color": "#CC3361",
   "Description": "Adds the passed target from the sensor to the hostile target memory",
   "Inputs": [

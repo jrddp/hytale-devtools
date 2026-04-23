@@ -131,6 +131,73 @@ const REVERSE_INPUT_CONTEXT = workspaceContext({
   ],
 });
 
+const DEFAULT_VARIANT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "RootVariants",
+  rootMenuName: "Default Variant Test Workspace",
+  templates: [
+    nodeTemplate("Root.Standard", {
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+    }),
+    nodeTemplate("Root.Special", {
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+      schemaConstants: {
+        Type: "Special",
+      },
+    }),
+  ],
+  variantKindsById: {
+    RootVariants: {
+      VariantFieldName: "Type",
+      DefaultTemplateId: "Root.Standard",
+      Variants: {
+        Special: "Root.Special",
+      },
+    },
+  },
+});
+
+const SIBLING_SERIALIZATION_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Sibling Serialization Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [outputPin("Wrapper")],
+      childTypes: {
+        Wrapper: "Wrapper",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("Wrapper", {
+      fieldsBySchemaKey: {
+        Weight: nodeField("Weight", "float"),
+      },
+      outputPins: [outputPin("Instruction", "single", { connectionType: "Instruction" })],
+      childSchemas: {
+        Instruction: {
+          schemaKey: "Instruction",
+          targetTemplateOrVariantId: "Instruction",
+          serializationType: "sibling",
+        },
+      },
+    }),
+    nodeTemplate("Instruction", {
+      inputPins: [inputPin("input", "single", { connectionType: "Instruction", localId: "Input" })],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "Instruction",
+      },
+    }),
+  ],
+});
+
 describe("node editor serializeDocument", () => {
   test("round-trips representative workspace documents without global workspace mocks", () => {
     const document = {
@@ -232,6 +299,77 @@ describe("node editor serializeDocument", () => {
       areSemanticallyEquivalentValues(expected, actual),
       formatSemanticDiff(expected, actual),
     ).toBe(true);
+  });
+
+  test("round-trips a default variant root without introducing the variant field", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        Name: "Default Root",
+      },
+      DEFAULT_VARIANT_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, DEFAULT_VARIANT_CONTEXT.rootMenuName);
+    expect(serialized).toMatchObject({
+      Name: "Default Root",
+      $NodeEditorMetadata: expect.any(Object),
+    });
+    expect((serialized as Record<string, unknown>).Type).toBeUndefined();
+  });
+
+  test("serializes sibling wrapper nodes as flattened objects owned by the wrapper", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Wrapper: {
+          $NodeId: "Wrapper-1",
+          Weight: 2,
+          Type: "Instruction",
+          Name: "Leaf Instruction",
+        },
+        $NodeEditorMetadata: {
+          $WorkspaceID: SIBLING_SERIALIZATION_CONTEXT.rootMenuName,
+          $Nodes: {
+            "Root-1": {
+              $Position: { $x: 0, $y: 0 },
+            },
+            "Wrapper-1": {
+              $Position: { $x: 120, $y: 40 },
+            },
+          },
+        },
+      },
+      SIBLING_SERIALIZATION_CONTEXT,
+    );
+
+    const serialized = normalizeRoundTripJson(
+      serializeWorkspace(parsed, SIBLING_SERIALIZATION_CONTEXT.rootMenuName),
+    ) as Record<string, unknown>;
+    const root = findNodeByBaseId(parsed, "Root-1");
+    const wrapper = findNodeByBaseId(parsed, "Wrapper-1");
+
+    expect(serialized).toEqual({
+      $NodeId: root.id,
+      Type: "Root",
+      Wrapper: {
+        $NodeId: wrapper.id,
+        Weight: 2,
+        Type: "Instruction",
+        Name: "Leaf Instruction",
+      },
+      $NodeEditorMetadata: {
+        $Nodes: {
+          [root.id]: {
+            $Position: { $x: 0, $y: 0 },
+          },
+          [wrapper.id]: {
+            $Position: { $x: 120, $y: 40 },
+          },
+        },
+        $WorkspaceID: SIBLING_SERIALIZATION_CONTEXT.rootMenuName,
+      },
+    });
   });
 
   test("orders multiple-child outputs by vertical position when serializing", () => {

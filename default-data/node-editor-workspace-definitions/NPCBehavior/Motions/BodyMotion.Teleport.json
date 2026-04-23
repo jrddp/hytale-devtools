@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Teleport",
-  "Title": "Teleport",
+  "Title": "Body Motion: Teleport",
   "Color": "#00E7B6",
   "Description": "Teleport NPC to a position given by a sensor",
   "Inputs": [

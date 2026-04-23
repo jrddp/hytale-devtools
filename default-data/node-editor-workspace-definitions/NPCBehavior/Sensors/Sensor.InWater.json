@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.InWater",
-  "Title": "InWater",
+  "Title": "Sensor: InWater",
   "Color": "#7091F0",
   "Description": "Check if NPC is currently in water",
   "Inputs": [],

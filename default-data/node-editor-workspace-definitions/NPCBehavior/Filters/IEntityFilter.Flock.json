@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Flock",
-  "Title": "Flock",
+  "Title": "Filter: Flock",
   "Color": "#60C8B8",
   "Description": "Test for flock membership and related properties",
   "Inputs": [],

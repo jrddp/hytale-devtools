@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Path",
-  "Title": "Path",
+  "Title": "Sensor: Path",
   "Color": "#7091F0",
   "Description": "Find a path based on various criteria",
   "Inputs": [],

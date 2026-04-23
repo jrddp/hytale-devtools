@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.StandingOnBlock",
-  "Title": "StandingOnBlock",
+  "Title": "Filter: StandingOnBlock",
   "Color": "#60C8B8",
   "Description": "Matches the block directly beneath the entity against a BlockSet",
   "Inputs": [],

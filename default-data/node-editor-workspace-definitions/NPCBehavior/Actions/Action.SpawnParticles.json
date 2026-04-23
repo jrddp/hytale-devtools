@@ -1,6 +1,6 @@
 {
   "Id": "Action.SpawnParticles",
-  "Title": "SpawnParticles",
+  "Title": "Action: SpawnParticles",
   "Color": "#CC3361",
   "Description": "Spawn particle system visible within a given range with an offset relative to npc heading",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Action.SetMarkedTarget",
-  "Title": "SetMarkedTarget",
+  "Title": "Action: SetMarkedTarget",
   "Color": "#CC3361",
   "Description": "Explicitly sets a marked target in a given slot.",
   "Inputs": [

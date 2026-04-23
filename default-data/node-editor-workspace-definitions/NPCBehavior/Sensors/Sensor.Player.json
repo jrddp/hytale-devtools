@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Player",
-  "Title": "Player",
+  "Title": "Sensor: Player",
   "Color": "#7091F0",
   "Description": "Test if player matching specific attributes and filters is in range",
   "Inputs": [

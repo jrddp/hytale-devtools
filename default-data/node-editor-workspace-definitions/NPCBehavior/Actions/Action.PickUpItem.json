@@ -1,6 +1,6 @@
 {
   "Id": "Action.PickUpItem",
-  "Title": "PickUpItem",
+  "Title": "Action: PickUpItem",
   "Color": "#CC3361",
   "Description": "Pick up an item",
   "Inputs": [

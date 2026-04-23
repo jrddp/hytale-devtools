@@ -1,6 +1,6 @@
 {
   "Id": "Action.RecomputePath",
-  "Title": "RecomputePath",
+  "Title": "Action: RecomputePath",
   "Color": "#CC3361",
   "Description": "Force recomputation of path finder solution",
   "Inputs": [

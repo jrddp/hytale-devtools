@@ -1,6 +1,6 @@
 {
   "Id": "Action.Mount",
-  "Title": "Mount",
+  "Title": "Action: Mount",
   "Color": "#CC3361",
   "Description": "Enable the player to mount the entity",
   "Inputs": [

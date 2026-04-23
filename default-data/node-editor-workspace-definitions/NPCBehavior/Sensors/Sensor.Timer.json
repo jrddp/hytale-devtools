@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Timer",
-  "Title": "Timer",
+  "Title": "Sensor: Timer",
   "Color": "#7091F0",
   "Description": "Tests if a timer exists and the value is within a certain range",
   "Inputs": [],

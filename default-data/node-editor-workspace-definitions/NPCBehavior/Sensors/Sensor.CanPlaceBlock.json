@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.CanPlaceBlock",
-  "Title": "CanPlaceBlock",
+  "Title": "Sensor: CanPlaceBlock",
   "Color": "#7091F0",
   "Description": "Test if the currently set block can be placed at the relative position given direction and offset",
   "Inputs": [],

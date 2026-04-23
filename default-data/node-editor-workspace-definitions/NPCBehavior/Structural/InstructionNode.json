@@ -52,19 +52,6 @@
   ],
   "Content": [
     {
-      "Id": "Type",
-      "Type": "Enum",
-      "Description": "Instruction subtype. Leave unset for the default instruction shape.",
-      "Options": {
-        "Label": "Type",
-        "Values": [
-          "Random",
-          "Reference"
-        ],
-        "Width": 220
-      }
-    },
-    {
       "Id": "Name",
       "Type": "SmallString",
       "Description": "Optional name for descriptor",
@@ -124,17 +111,6 @@
       }
     },
     {
-      "Id": "Weight",
-      "Type": "Float",
-      "Description": "Weighted chance of picking this instruction in a random instruction",
-      "Options": {
-        "Label": "Weight",
-        "Default": 1,
-        "Width": 88,
-        "Computable": true
-      }
-    },
-    {
       "Id": "TreeMode",
       "Type": "Bool",
       "Description": "Whether this instruction and its contents should be treated like a traditional behaviour tree.",
@@ -154,35 +130,9 @@
         "Width": 18,
         "Computable": true
       }
-    },
-    {
-      "Id": "ResetOnStateChange",
-      "Type": "Bool",
-      "Description": "Whether to reset when NPC state changes",
-      "Options": {
-        "Label": "ResetOnStateChange",
-        "Default": true,
-        "Width": 18,
-        "Computable": true
-      }
-    },
-    {
-      "Id": "ExecuteFor",
-      "Type": "List",
-      "Description": "How long to execute the chosen instruction before picking another",
-      "Options": {
-        "Label": "ExecuteFor",
-        "Default": [
-          1.7976931348623157e+308,
-          1.7976931348623157e+308
-        ],
-        "Width": 240,
-        "Computable": true
-      }
     }
   ],
   "Schema": {
-    "Type": "Type",
     "Name": "Name",
     "Tag": "Tag",
     "Enabled": "Enabled",
@@ -210,14 +160,11 @@
     "ActionsAtomic": "ActionsAtomic",
     "Instructions": {
       "Pin": "InstructionsPin",
-      "Node": "Structural.InstructionNode",
+      "Node": "InstructionVariants",
       "AllowComponentReferences": true
     },
     "Continue": "Continue",
-    "Weight": "Weight",
     "TreeMode": "TreeMode",
-    "InvertTreeModeResult": "InvertTreeModeResult",
-    "ResetOnStateChange": "ResetOnStateChange",
-    "ExecuteFor": "ExecuteFor"
+    "InvertTreeModeResult": "InvertTreeModeResult"
   }
 }

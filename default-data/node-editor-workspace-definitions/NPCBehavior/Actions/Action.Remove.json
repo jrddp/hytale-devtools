@@ -1,6 +1,6 @@
 {
   "Id": "Action.Remove",
-  "Title": "Remove",
+  "Title": "Action: Remove",
   "Color": "#CC3361",
   "Description": "Erase the target entity from the world (no death animation).",
   "Inputs": [

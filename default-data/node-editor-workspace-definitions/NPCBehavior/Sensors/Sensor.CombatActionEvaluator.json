@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.CombatActionEvaluator",
-  "Title": "CombatActionEvaluator",
+  "Title": "Sensor: CombatActionEvaluator",
   "Color": "#7091F0",
   "Description": "A sensor which handles funnelling information to actions and motions from the combat action evaluator.",
   "Inputs": [],

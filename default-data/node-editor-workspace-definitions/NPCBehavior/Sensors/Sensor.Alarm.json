@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Alarm",
-  "Title": "Alarm",
+  "Title": "Sensor: Alarm",
   "Color": "#7091F0",
   "Description": "Check the state of a named alarm",
   "Inputs": [],

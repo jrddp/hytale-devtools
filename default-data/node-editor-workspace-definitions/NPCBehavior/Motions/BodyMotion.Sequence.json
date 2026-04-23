@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Sequence",
-  "Title": "Sequence",
+  "Title": "Body Motion: Sequence",
   "Color": "#00E7B6",
   "Description": "(Looped)Sequence of motions",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Random",
-  "Title": "Random",
+  "Title": "Sensor: Random",
   "Color": "#7091F0",
   "Description": "Alternates between returning true and false for specified random durations",
   "Inputs": [],

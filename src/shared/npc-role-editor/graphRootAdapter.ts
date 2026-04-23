@@ -1,6 +1,7 @@
 import { cloneJsonLike } from "../jsonClone";
 import { resolveChildPin } from "../node-editor/childSlotUtils";
 import { INPUT_HANDLE_ID } from "../node-editor/sharedConstants";
+import { getDefaultTemplateForTemplateOrVariantId } from "../node-editor/variantUtils";
 import type {
   GraphRootAdaptationResult,
   NodeChildSchema,
@@ -14,7 +15,10 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 function getRootTemplate(workspaceContext: NodeEditorWorkspaceContext): NodeTemplate | undefined {
-  return workspaceContext.nodeTemplatesById[workspaceContext.rootTemplateOrVariantId];
+  return getDefaultTemplateForTemplateOrVariantId(
+    workspaceContext,
+    workspaceContext.rootTemplateOrVariantId,
+  );
 }
 
 function getRootSerializationChildSchema(

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Leash",
-  "Title": "Leash",
+  "Title": "Sensor: Leash",
   "Color": "#7091F0",
   "Description": "Triggers when the NPC is outside a specified range from the leash point",
   "Inputs": [],

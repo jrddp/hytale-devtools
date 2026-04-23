@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Beacon",
-  "Title": "Beacon",
+  "Title": "Sensor: Beacon",
   "Color": "#7091F0",
   "Description": "Checks to see if any messages have been broadcasted by nearby NPCs",
   "Inputs": [],

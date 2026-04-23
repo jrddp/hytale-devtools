@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Kill",
-  "Title": "Kill",
+  "Title": "Sensor: Kill",
   "Color": "#7091F0",
   "Description": "Test if NPC made a kill",
   "Inputs": [],

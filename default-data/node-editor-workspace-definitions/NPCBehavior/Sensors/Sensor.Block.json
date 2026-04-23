@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Block",
-  "Title": "Block",
+  "Title": "Sensor: Block",
   "Color": "#7091F0",
   "Description": "Checks for one of a set of blocks in the nearby area",
   "Inputs": [],

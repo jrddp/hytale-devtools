@@ -1,6 +1,6 @@
 {
   "Id": "Action.TimerStop",
-  "Title": "TimerStop",
+  "Title": "Action: TimerStop",
   "Color": "#CC3361",
   "Description": "Stop a timer",
   "Inputs": [

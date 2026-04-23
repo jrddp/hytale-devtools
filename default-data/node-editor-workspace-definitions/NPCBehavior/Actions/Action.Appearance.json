@@ -1,6 +1,6 @@
 {
   "Id": "Action.Appearance",
-  "Title": "Appearance",
+  "Title": "Action: Appearance",
   "Color": "#CC3361",
   "Description": "Set model displayed for NPC",
   "Inputs": [

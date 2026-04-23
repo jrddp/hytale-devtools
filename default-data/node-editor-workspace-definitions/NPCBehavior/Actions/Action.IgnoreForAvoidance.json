@@ -1,6 +1,6 @@
 {
   "Id": "Action.IgnoreForAvoidance",
-  "Title": "IgnoreForAvoidance",
+  "Title": "Action: IgnoreForAvoidance",
   "Color": "#CC3361",
   "Description": "Set the target slot of an entity that should be ignored during avoidance",
   "Inputs": [

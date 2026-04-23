@@ -1,6 +1,6 @@
 {
   "Id": "Action.TriggerSpawnBeacon",
-  "Title": "TriggerSpawnBeacon",
+  "Title": "Action: TriggerSpawnBeacon",
   "Color": "#CC3361",
   "Description": "Trigger the nearest spawn beacon matching the configuration id",
   "Inputs": [

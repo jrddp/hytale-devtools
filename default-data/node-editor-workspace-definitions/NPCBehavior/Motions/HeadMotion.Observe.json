@@ -1,6 +1,6 @@
 {
   "Id": "HeadMotion.Observe",
-  "Title": "Observe",
+  "Title": "Head Motion: Observe",
   "Color": "#B08CE0",
   "Description": "Observe surroundings in various ways.",
   "Inputs": [

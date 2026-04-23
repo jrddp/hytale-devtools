@@ -1,6 +1,6 @@
 {
   "Id": "Action.ToggleStateEvaluator",
-  "Title": "ToggleStateEvaluator",
+  "Title": "Action: ToggleStateEvaluator",
   "Color": "#CC3361",
   "Description": "Enable or disable the NPC's state evaluator",
   "Inputs": [

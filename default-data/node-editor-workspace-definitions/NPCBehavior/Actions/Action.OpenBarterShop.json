@@ -1,6 +1,6 @@
 {
   "Id": "Action.OpenBarterShop",
-  "Title": "OpenBarterShop",
+  "Title": "Action: OpenBarterShop",
   "Color": "#CC3361",
   "Description": "Open the barter shop UI for the current player",
   "Inputs": [

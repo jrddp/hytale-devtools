@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Not",
-  "Title": "Not",
+  "Title": "Sensor: Not",
   "Color": "#7091F0",
   "Description": "Invert sensor test",
   "Inputs": [

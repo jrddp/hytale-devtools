@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Leave",
-  "Title": "Leave",
+  "Title": "Body Motion: Leave",
   "Color": "#00E7B6",
   "Description": "Leave place",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Switch",
-  "Title": "Switch",
+  "Title": "Sensor: Switch",
   "Color": "#7091F0",
   "Description": "Check if a computed boolean is true",
   "Inputs": [],

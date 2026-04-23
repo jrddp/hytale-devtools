@@ -12,6 +12,7 @@ import {
   parseComponentReferenceSyntheticFieldSchemaKey,
 } from "./componentReferences";
 import { cloneJsonLike } from "../jsonClone";
+import { getSiblingSerializedChildSlot } from "./siblingSerialization";
 
 const DEFAULT_COMMENT_FONT_SIZE = 9;
 
@@ -133,7 +134,11 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
     }
   }
 
-  const recursiveSerializeNode = (nodeId: string | undefined): NodeAssetJson | undefined => {
+  const recursiveSerializeNode = (
+    nodeId: string | undefined,
+    options?: { omitSelfMetadata?: boolean },
+  ): NodeAssetJson | undefined => {
+    const omitSelfMetadata = options?.omitSelfMetadata === true;
     if (!nodeId) {
       return undefined;
     }
@@ -146,7 +151,7 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
     if (serializationStack.has(nodeId)) {
       throw new Error(`Circular reference detected for node ${nodeId}.`);
     }
-    if (serializedNodesById.has(nodeId)) {
+    if (!omitSelfMetadata && serializedNodesById.has(nodeId)) {
       const cached = serializedNodesById.get(nodeId);
       return cached ? structuredClone(cached) : undefined;
     }
@@ -158,8 +163,20 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
 
     switch (node.type) {
       case "datanode":
-        json.$NodeId = node.id;
-        json.$Comment = node.data.comment ?? undefined;
+        const siblingSlot = getSiblingSerializedChildSlot(node.data);
+        const siblingChildNodeIds = siblingSlot
+          ? getSerializedChildNodeIds(node, siblingSlot.childSchema.schemaKey)
+          : [];
+        if (siblingChildNodeIds.length > 1) {
+          throw new Error(
+            `Node ${node.id} has multiple connected sibling-serialized children for ${siblingSlot?.childSchema.schemaKey}.`,
+          );
+        }
+
+        if (!omitSelfMetadata) {
+          json.$NodeId = node.id;
+          json.$Comment = node.data.comment ?? undefined;
+        }
 
         const originalUnparsedMetadata = node.data.unparsedMetadata ?? {};
         const hadOriginalComponentModify = Object.hasOwn(originalUnparsedMetadata, "Modify");
@@ -176,6 +193,10 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
             : undefined;
 
         for (const slot of getResolvedChildSlots(node.data)) {
+          if (slot.childSchema.serializationType === "sibling") {
+            continue;
+          }
+
           const connectedNodeIds = getSerializedChildNodeIds(node, slot.childSchema.schemaKey);
           if (connectedNodeIds.length === 0) {
             continue;
@@ -263,27 +284,44 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
           ...node.data.schemaConstants,
         };
 
-        nodeEditorMetadata.$Nodes![node.id] = {
-          $Position: {
-            $x: absolutePosition.x,
-            $y: absolutePosition.y,
-          },
-          $Title: node.data.titleOverride ?? undefined,
-        };
+        if (siblingChildNodeIds[0]) {
+          json = {
+            ...json,
+            ...recursiveSerializeNode(siblingChildNodeIds[0], {
+              omitSelfMetadata: true,
+            }),
+          };
+        }
+
+        if (!omitSelfMetadata) {
+          nodeEditorMetadata.$Nodes![node.id] = {
+            $Position: {
+              $x: absolutePosition.x,
+              $y: absolutePosition.y,
+            },
+            $Title: node.data.titleOverride ?? undefined,
+          };
+        }
         break;
       case "rawjson":
         json = {
-          $NodeId: node.id,
-          $Comment: node.data.comment,
+          ...(omitSelfMetadata
+            ? {}
+            : {
+                $NodeId: node.id,
+                $Comment: node.data.comment,
+              }),
           ...JSON.parse(node.data.jsonString),
         };
-        nodeEditorMetadata.$Nodes![node.id] = {
-          $Position: {
-            $x: absolutePosition.x,
-            $y: absolutePosition.y,
-          },
-          $Title: node.data.titleOverride ?? undefined,
-        };
+        if (!omitSelfMetadata) {
+          nodeEditorMetadata.$Nodes![node.id] = {
+            $Position: {
+              $x: absolutePosition.x,
+              $y: absolutePosition.y,
+            },
+            $Title: node.data.titleOverride ?? undefined,
+          };
+        }
         break;
       case "comment":
         nodeEditorMetadata.$Comments!.push({
@@ -319,7 +357,9 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
     }
 
     serializationStack.delete(nodeId);
-    serializedNodesById.set(nodeId, json ? structuredClone(json) : undefined);
+    if (!omitSelfMetadata) {
+      serializedNodesById.set(nodeId, json ? structuredClone(json) : undefined);
+    }
     return json ? structuredClone(json) : undefined;
   };
 

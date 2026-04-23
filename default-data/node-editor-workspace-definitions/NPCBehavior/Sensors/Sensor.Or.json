@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Or",
-  "Title": "Or",
+  "Title": "Sensor: Or",
   "Color": "#7091F0",
   "Description": "Logical OR of list of sensors",
   "Inputs": [

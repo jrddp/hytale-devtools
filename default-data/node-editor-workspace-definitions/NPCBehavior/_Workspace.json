@@ -23,7 +23,7 @@
       "MenuName": "Instructions"
     },
     "Instruction": {
-      "RootNodeType": "Structural.InstructionNode",
+      "RootNodeType": "InstructionVariants",
       "MenuName": "Instruction"
     },
     "Sensor": {
@@ -231,7 +231,9 @@
     "Structural": [
       "Structural.InstructionListRoot",
       "Structural.InstructionNode",
-      "Structural.InstructionReference"
+      "Structural.InstructionReference",
+      "Structural.RandomInstructionNode",
+      "Structural.WeightedInstruction"
     ]
   },
   "Variants": {
@@ -441,6 +443,13 @@
       "VariantFieldName": "Type",
       "Variants": {
         "Attitude": "ISensorEntityPrioritiser.Attitude"
+      }
+    },
+    "InstructionVariants": {
+      "VariantFieldName": "Type",
+      "DefaultTemplateId": "Structural.InstructionNode",
+      "Variants": {
+        "Random": "Structural.RandomInstructionNode"
       }
     }
   }

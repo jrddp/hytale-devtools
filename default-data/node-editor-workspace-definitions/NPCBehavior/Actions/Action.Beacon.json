@@ -1,6 +1,6 @@
 {
   "Id": "Action.Beacon",
-  "Title": "Beacon",
+  "Title": "Action: Beacon",
   "Color": "#CC3361",
   "Description": "Send Beacon Message",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "WeightedAction.WeightedAction",
-  "Title": "WeightedAction",
+  "Title": "Action: Weighted Action",
   "Color": "#CC3361",
   "Description": "A wrapped and weighted action intended to be used for Random action lists.",
   "Inputs": [
@@ -8,7 +8,7 @@
       "Id": "Input",
       "Type": "WeightedAction",
       "Color": "#CC3361",
-      "Label": "WeightedAction"
+      "Label": "Weighted Action"
     }
   ],
   "Outputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Path.Path",
-  "Title": "Path",
+  "Title": "Path: Path",
   "Color": "#CC3361",
   "Description": "List of transient path points",
   "Inputs": [

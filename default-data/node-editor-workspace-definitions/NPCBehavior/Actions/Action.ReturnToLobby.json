@@ -1,6 +1,6 @@
 {
   "Id": "Action.ReturnToLobby",
-  "Title": "ReturnToLobby",
+  "Title": "Action: ReturnToLobby",
   "Color": "#CC3361",
   "Description": "Return the player to the lobby",
   "Inputs": [

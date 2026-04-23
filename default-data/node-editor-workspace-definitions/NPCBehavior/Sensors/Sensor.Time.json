@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Time",
-  "Title": "Time",
+  "Title": "Sensor: Time",
   "Color": "#7091F0",
   "Description": "Check if the day/year time is within some specified time.",
   "Inputs": [],

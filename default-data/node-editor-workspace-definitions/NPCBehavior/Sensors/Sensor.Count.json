@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Count",
-  "Title": "Count",
+  "Title": "Sensor: Count",
   "Color": "#7091F0",
   "Description": "Check if there is a certain number of NPCs or players within a specific range",
   "Inputs": [],

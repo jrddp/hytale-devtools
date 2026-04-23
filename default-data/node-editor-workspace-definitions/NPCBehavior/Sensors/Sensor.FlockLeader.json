@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.FlockLeader",
-  "Title": "FlockLeader",
+  "Title": "Sensor: FlockLeader",
   "Color": "#7091F0",
   "Description": "Test for the presence and provide position of the flock leader",
   "Inputs": [],

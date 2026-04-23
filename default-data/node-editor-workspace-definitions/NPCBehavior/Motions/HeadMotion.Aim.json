@@ -1,6 +1,6 @@
 {
   "Id": "HeadMotion.Aim",
-  "Title": "Aim",
+  "Title": "Head Motion: Aim",
   "Color": "#B08CE0",
   "Description": "Aim at target",
   "Inputs": [

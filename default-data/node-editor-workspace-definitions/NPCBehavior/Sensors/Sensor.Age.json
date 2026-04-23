@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Age",
-  "Title": "Age",
+  "Title": "Sensor: Age",
   "Color": "#7091F0",
   "Description": "Triggers when the age of the NPC falls between a certain range",
   "Inputs": [],

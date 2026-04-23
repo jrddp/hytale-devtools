@@ -1,6 +1,6 @@
 {
   "Id": "Action.Random",
-  "Title": "Random",
+  "Title": "Action: Random",
   "Color": "#CC3361",
   "Description": "Execute a single random action from a list of weighted actions.",
   "Inputs": [

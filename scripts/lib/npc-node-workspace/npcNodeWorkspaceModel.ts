@@ -97,7 +97,20 @@ export const NODE_CATEGORY_NAMES: Record<SupportedDescriptorCategory | "Structur
   WeightedAction: "Actions",
 };
 
-export const INSTRUCTION_VARIANT_VALUES = ["Random", "Reference"];
+export const TITLE_PREFIX_BY_CATEGORY: Record<SupportedDescriptorCategory | "Structural", string> = {
+  Action: "Action",
+  BodyMotion: "Body Motion",
+  HeadMotion: "Head Motion",
+  IEntityFilter: "Filter",
+  ISensorEntityCollector: "Collector",
+  ISensorEntityPrioritiser: "Prioritiser",
+  Path: "Path",
+  RelativeWaypointDefinition: "Waypoint",
+  Sensor: "Sensor",
+  Structural: "Structural",
+  ValueToParameterMapping: "Mapping",
+  WeightedAction: "Action",
+};
 
 export type ChildSpec = {
   childId: string;
@@ -126,7 +139,7 @@ export const COMPONENT_REFERENCE_TEMPLATE_SPECS: ComponentReferenceTemplateSpec[
     title: "Instruction Reference",
     directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
     fileName: "InstructionReference.json",
-    parentCompatibilityChildId: "Structural.InstructionNode",
+    parentCompatibilityChildId: "InstructionVariants",
     selfConnectionType: "Instruction",
     color: CATEGORY_COLORS.Structural,
   },
@@ -241,4 +254,22 @@ export function mergeAttributes(descriptors: NpcDescriptor[]): NpcDescriptorAttr
 
 export function normalizeDescription(value: string | null | undefined): string | undefined {
   return value && value.trim().length > 0 ? value : undefined;
+}
+
+export function prefixNodeTitle(
+  category: SupportedDescriptorCategory | "Structural",
+  title: string,
+): string {
+  return `${TITLE_PREFIX_BY_CATEGORY[category]}: ${title}`;
+}
+
+export function normalizeNpcNodeTitle(
+  category: SupportedDescriptorCategory,
+  descriptorName: string,
+): string {
+  if (category === "WeightedAction" && descriptorName === "WeightedAction") {
+    return prefixNodeTitle(category, "Weighted Action");
+  }
+
+  return prefixNodeTitle(category, descriptorName);
 }

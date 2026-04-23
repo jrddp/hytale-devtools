@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Eval",
-  "Title": "Eval",
+  "Title": "Sensor: Eval",
   "Color": "#7091F0",
   "Description": "Evaluate javascript expression and test if true",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "Action.Die",
-  "Title": "Die",
+  "Title": "Action: Die",
   "Color": "#CC3361",
   "Description": "Kill the NPC",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.InteractionContext",
-  "Title": "InteractionContext",
+  "Title": "Sensor: InteractionContext",
   "Color": "#7091F0",
   "Description": "Checks whether the currently iterated player in the interaction instruction has interacted with this NPC in the given context",
   "Inputs": [],

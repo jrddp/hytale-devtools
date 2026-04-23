@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Altitude",
-  "Title": "Altitude",
+  "Title": "Filter: Altitude",
   "Color": "#60C8B8",
   "Description": "Matches targets if they're within the defined range above the ground",
   "Inputs": [],

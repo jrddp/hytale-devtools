@@ -1,6 +1,6 @@
 {
   "Id": "Action.FlockState",
-  "Title": "FlockState",
+  "Title": "Action: FlockState",
   "Color": "#CC3361",
   "Description": "Set state name for flock.",
   "Inputs": [

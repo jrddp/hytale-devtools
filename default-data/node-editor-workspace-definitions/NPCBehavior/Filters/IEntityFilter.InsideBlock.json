@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.InsideBlock",
-  "Title": "InsideBlock",
+  "Title": "Filter: InsideBlock",
   "Color": "#60C8B8",
   "Description": "Matches if the entity is inside any of the blocks in the BlockSet",
   "Inputs": [],

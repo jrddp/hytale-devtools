@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Weather",
-  "Title": "Weather",
+  "Title": "Sensor: Weather",
   "Color": "#7091F0",
   "Description": "Matches the current weather at the NPCs position against a set of weather globs",
   "Inputs": [],

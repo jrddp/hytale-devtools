@@ -1,6 +1,6 @@
 {
   "Id": "Action.JoinFlock",
-  "Title": "JoinFlock",
+  "Title": "Action: JoinFlock",
   "Color": "#CC3361",
   "Description": "Join/build a flock with other entity",
   "Inputs": [

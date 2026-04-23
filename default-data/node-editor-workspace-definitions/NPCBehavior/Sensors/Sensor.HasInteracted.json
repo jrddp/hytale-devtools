@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.HasInteracted",
-  "Title": "HasInteracted",
+  "Title": "Sensor: HasInteracted",
   "Color": "#7091F0",
   "Description": "Checks whether the currently iterated player in the interaction instruction has interacted with this NPC",
   "Inputs": [],

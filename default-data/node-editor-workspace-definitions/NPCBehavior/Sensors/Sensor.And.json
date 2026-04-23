@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.And",
-  "Title": "And",
+  "Title": "Sensor: And",
   "Color": "#7091F0",
   "Description": "Logical AND of list of sensors",
   "Inputs": [

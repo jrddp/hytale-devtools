@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.EntityEvent",
-  "Title": "EntityEvent",
+  "Title": "Sensor: EntityEvent",
   "Color": "#7091F0",
   "Description": "Matches when an entity from a specific NPC group within a certain range is damaged, killed, or interacted with",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Any",
-  "Title": "Any",
+  "Title": "Sensor: Any",
   "Color": "#7091F0",
   "Description": "Return always true",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.ReadPosition",
-  "Title": "ReadPosition",
+  "Title": "Sensor: ReadPosition",
   "Color": "#7091F0",
   "Description": "Read a stored position with some conditions",
   "Inputs": [],

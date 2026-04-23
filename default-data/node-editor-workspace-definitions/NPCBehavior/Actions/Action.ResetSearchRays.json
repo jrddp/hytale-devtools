@@ -1,6 +1,6 @@
 {
   "Id": "Action.ResetSearchRays",
-  "Title": "ResetSearchRays",
+  "Title": "Action: ResetSearchRays",
   "Color": "#CC3361",
   "Description": "Resets a specific search ray sensor cached position by name, or all search ray sensors",
   "Inputs": [

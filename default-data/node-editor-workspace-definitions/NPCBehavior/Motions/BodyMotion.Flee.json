@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Flee",
-  "Title": "Flee",
+  "Title": "Body Motion: Flee",
   "Color": "#00E7B6",
   "Description": "Move away from target",
   "Inputs": [

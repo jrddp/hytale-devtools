@@ -1,6 +1,6 @@
 {
   "Id": "ValueToParameterMapping.ValueToParameterMapping",
-  "Title": "ValueToParameterMapping",
+  "Title": "Mapping: ValueToParameterMapping",
   "Color": "#7091F0",
   "Description": "An entry containing a list of actions to execute when moving from one state to another",
   "Inputs": [],

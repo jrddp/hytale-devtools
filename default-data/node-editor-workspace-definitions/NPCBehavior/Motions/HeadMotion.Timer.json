@@ -1,6 +1,6 @@
 {
   "Id": "HeadMotion.Timer",
-  "Title": "Timer",
+  "Title": "Head Motion: Timer",
   "Color": "#B08CE0",
   "Description": "Execute a Motion for a specific maximum time",
   "Inputs": [

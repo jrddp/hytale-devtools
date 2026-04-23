@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.IsBackingAway",
-  "Title": "IsBackingAway",
+  "Title": "Sensor: IsBackingAway",
   "Color": "#7091F0",
   "Description": "Test if the NPC is currently backing away from something.",
   "Inputs": [],

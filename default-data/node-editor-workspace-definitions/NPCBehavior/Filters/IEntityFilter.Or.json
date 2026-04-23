@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Or",
-  "Title": "Or",
+  "Title": "Filter: Or",
   "Color": "#60C8B8",
   "Description": "Logical OR of a list of filters",
   "Inputs": [

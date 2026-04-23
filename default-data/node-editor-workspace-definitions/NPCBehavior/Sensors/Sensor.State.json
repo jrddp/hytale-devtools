@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.State",
-  "Title": "State",
+  "Title": "Sensor: State",
   "Color": "#7091F0",
   "Description": "Test for a specific state",
   "Inputs": [],

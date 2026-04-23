@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Target",
-  "Title": "Target",
+  "Title": "Sensor: Target",
   "Color": "#7091F0",
   "Description": "Test if given target matches a series of criteria and optional entity filters",
   "Inputs": [

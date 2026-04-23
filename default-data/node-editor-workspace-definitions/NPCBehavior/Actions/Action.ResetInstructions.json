@@ -1,6 +1,6 @@
 {
   "Id": "Action.ResetInstructions",
-  "Title": "ResetInstructions",
+  "Title": "Action: ResetInstructions",
   "Color": "#CC3361",
   "Description": "Force reset instructionList",
   "Inputs": [

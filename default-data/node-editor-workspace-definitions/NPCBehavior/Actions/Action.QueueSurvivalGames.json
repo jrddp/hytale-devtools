@@ -1,6 +1,6 @@
 {
   "Id": "Action.QueueSurvivalGames",
-  "Title": "QueueSurvivalGames",
+  "Title": "Action: QueueSurvivalGames",
   "Color": "#CC3361",
   "Description": "Queue the player for Survival Games",
   "Inputs": [

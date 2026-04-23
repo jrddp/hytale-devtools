@@ -66,18 +66,47 @@ describe("NPC node workspace generator builders", () => {
         RootNodeType: "Structural.InstructionListRoot",
       },
       Instruction: {
-        RootNodeType: "Structural.InstructionNode",
+        RootNodeType: "InstructionVariants",
       },
       Sensor: {
         RootNodeType: "SensorVariants",
       },
     });
 
+    expect(artifacts.workspaceDefinition.Variants?.InstructionVariants).toMatchObject({
+      VariantFieldName: "Type",
+      DefaultTemplateId: "Structural.InstructionNode",
+      Variants: {
+        Random: "Structural.RandomInstructionNode",
+      },
+    });
+
     const templateIds = new Set(artifacts.templateOutputs.map(output => output.template.Id));
     expect(templateIds.has("Structural.InstructionReference")).toBe(true);
+    expect(templateIds.has("Structural.RandomInstructionNode")).toBe(true);
+    expect(templateIds.has("Structural.WeightedInstruction")).toBe(true);
     expect(templateIds.has("Action.ActionReference")).toBe(true);
     expect(templateIds.has("Action.ActionListReference")).toBe(true);
     expect(templateIds.has("Path.Reference")).toBe(true);
+
+    expect(
+      artifacts.templateOutputs.find(output => output.template.Id === "Action.Random")?.template.Title,
+    ).toBe("Action: Random");
+    expect(
+      artifacts.templateOutputs.find(output => output.template.Id === "Sensor.Random")?.template.Title,
+    ).toBe("Sensor: Random");
+    expect(
+      artifacts.templateOutputs.find(output => output.template.Id === "Structural.InstructionNode")
+        ?.template.Title,
+    ).toBe("Instruction");
+    expect(
+      artifacts.templateOutputs.find(output => output.template.Id === "Structural.RandomInstructionNode")
+        ?.template.Title,
+    ).toBe("Random Instruction");
+    expect(
+      artifacts.templateOutputs.find(output => output.template.Id === "Structural.WeightedInstruction")
+        ?.template.Title,
+    ).toBe("Weighted Instruction");
   });
 
   test("buildContentField annotates state autocomplete metadata for NPC node fields", () => {

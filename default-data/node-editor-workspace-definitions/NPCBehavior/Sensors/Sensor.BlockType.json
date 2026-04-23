@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.BlockType",
-  "Title": "BlockType",
+  "Title": "Sensor: BlockType",
   "Color": "#7091F0",
   "Description": "Checks if the block at the given position matches the provided block set",
   "Inputs": [

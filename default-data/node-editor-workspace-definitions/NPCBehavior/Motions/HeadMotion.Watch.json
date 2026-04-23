@@ -1,6 +1,6 @@
 {
   "Id": "HeadMotion.Watch",
-  "Title": "Watch",
+  "Title": "Head Motion: Watch",
   "Color": "#B08CE0",
   "Description": "Rotate to target",
   "Inputs": [

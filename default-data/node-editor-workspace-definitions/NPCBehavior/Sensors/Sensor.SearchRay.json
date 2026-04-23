@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.SearchRay",
-  "Title": "SearchRay",
+  "Title": "Sensor: SearchRay",
   "Color": "#7091F0",
   "Description": "Fire a ray at a specific angle to see if what it hits matches a given sought block",
   "Inputs": [],

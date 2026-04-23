@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Nav",
-  "Title": "Nav",
+  "Title": "Sensor: Nav",
   "Color": "#7091F0",
   "Description": "Queries navigation state",
   "Inputs": [],

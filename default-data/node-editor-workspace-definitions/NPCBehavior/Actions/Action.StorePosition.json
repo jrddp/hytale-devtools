@@ -1,6 +1,6 @@
 {
   "Id": "Action.StorePosition",
-  "Title": "StorePosition",
+  "Title": "Action: StorePosition",
   "Color": "#CC3361",
   "Description": "Store the position from the attached sensor",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.ValueProviderWrapper",
-  "Title": "ValueProviderWrapper",
+  "Title": "Sensor: ValueProviderWrapper",
   "Color": "#7091F0",
   "Description": "Wraps a sensor and passes down some additional parameter overrides pulled from the value store",
   "Inputs": [

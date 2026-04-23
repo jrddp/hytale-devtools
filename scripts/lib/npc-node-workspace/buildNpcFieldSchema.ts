@@ -7,10 +7,7 @@ import { resolveNpcDescriptorAssetSymbolLookup } from "../../../src/shared/npc-r
 import type { NpcStateAutocompleteKind } from "../../../src/shared/npc-role-editor/stateAutocomplete";
 import { getNpcBehaviorChildDomain } from "../../../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
 import type { NodeContentDefinition } from "../../../src/node-editor/workspaceDefinitionTypes";
-import {
-  INSTRUCTION_VARIANT_VALUES,
-  normalizeDescription,
-} from "./npcNodeWorkspaceModel";
+import { normalizeDescription } from "./npcNodeWorkspaceModel";
 
 export function buildContentField(
   descriptor: Pick<NpcDescriptor, "Category" | "Name">,
@@ -107,19 +104,6 @@ function resolveNpcNodeFieldAnimationAutocompleteKind(
   }
 
   return undefined;
-}
-
-export function buildInstructionTypeField(): NodeContentDefinition {
-  return {
-    Id: "Type",
-    Type: "Enum",
-    Description: "Instruction subtype. Leave unset for the default instruction shape.",
-    Options: {
-      Label: "Type",
-      Values: INSTRUCTION_VARIANT_VALUES,
-      Width: 220,
-    },
-  };
 }
 
 export function buildReferenceField(): NodeContentDefinition {

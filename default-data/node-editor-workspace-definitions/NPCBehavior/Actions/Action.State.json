@@ -1,6 +1,6 @@
 {
   "Id": "Action.State",
-  "Title": "State",
+  "Title": "Action: State",
   "Color": "#CC3361",
   "Description": "Set state of NPC",
   "Inputs": [

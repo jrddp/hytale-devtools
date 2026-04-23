@@ -156,6 +156,73 @@ const REVERSE_INPUT_CONTEXT = workspaceContext({
   ],
 });
 
+const DEFAULT_VARIANT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "RootVariants",
+  rootMenuName: "Default Variant Test Workspace",
+  templates: [
+    nodeTemplate("Root.Standard", {
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+    }),
+    nodeTemplate("Root.Special", {
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+      schemaConstants: {
+        Type: "Special",
+      },
+    }),
+  ],
+  variantKindsById: {
+    RootVariants: {
+      VariantFieldName: "Type",
+      DefaultTemplateId: "Root.Standard",
+      Variants: {
+        Special: "Root.Special",
+      },
+    },
+  },
+});
+
+const SIBLING_SERIALIZATION_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Sibling Serialization Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [outputPin("Wrapper")],
+      childTypes: {
+        Wrapper: "Wrapper",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("Wrapper", {
+      fieldsBySchemaKey: {
+        Weight: nodeField("Weight", "float"),
+      },
+      outputPins: [outputPin("Instruction", "single", { connectionType: "Instruction" })],
+      childSchemas: {
+        Instruction: {
+          schemaKey: "Instruction",
+          targetTemplateOrVariantId: "Instruction",
+          serializationType: "sibling",
+        },
+      },
+    }),
+    nodeTemplate("Instruction", {
+      inputPins: [inputPin("input", "single", { connectionType: "Instruction", localId: "Input" })],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "Instruction",
+      },
+    }),
+  ],
+});
+
 describe("node editor parseDocument", () => {
   test("parses graph nodes, metadata nodes, comments, and groups into workspace state", () => {
     const state = parseWorkspaceDocument(
@@ -300,6 +367,61 @@ describe("node editor parseDocument", () => {
       sourceHandle: "Children",
       target: third.id,
     });
+  });
+
+  test("uses a variant default template when the variant field is absent", () => {
+    const state = parseWorkspaceDocument(
+      {
+        Name: "Default Root",
+      },
+      DEFAULT_VARIANT_CONTEXT,
+    );
+
+    const root = findNode(state, state.rootNodeId!);
+    expect(root.type).toBe("datanode");
+    expect(root.data.templateId).toBe("Root.Standard");
+    expect(root.data.fieldsBySchemaKey.Name.value).toBe("Default Root");
+  });
+
+  test("does not silently default a variant when the variant field is present but unmapped", () => {
+    const state = parseWorkspaceDocument(
+      {
+        Type: "Unknown",
+        Name: "Fallback Root",
+      },
+      DEFAULT_VARIANT_CONTEXT,
+    );
+
+    const root = findNode(state, state.rootNodeId!);
+    expect(root.type).toBe("rawjson");
+  });
+
+  test("parses sibling-serialized wrapper children from the same source object", () => {
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Wrapper: {
+          $NodeId: "Wrapper-1",
+          Weight: 2,
+          Type: "Instruction",
+          Name: "Leaf Instruction",
+        },
+      },
+      SIBLING_SERIALIZATION_CONTEXT,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    const wrapper = findNodeByBaseId(state, "Wrapper-1");
+    const instruction = state.nodes.find(
+      node => node.type === "datanode" && node.data.templateId === "Instruction",
+    );
+
+    expect(instruction).toBeDefined();
+    expect(wrapper.data.fieldsBySchemaKey.Weight.value).toBe(2);
+    expect(instruction?.data.fieldsBySchemaKey.Name.value).toBe("Leaf Instruction");
+    expect(findEdge(state, `${root.id}:Wrapper-${wrapper.id}`)).toBeDefined();
+    expect(findEdge(state, `${wrapper.id}:Instruction-${instruction?.id}`)).toBeDefined();
   });
 
   test("assigns parsed edges to the compatible input handle instead of always using the default input", () => {

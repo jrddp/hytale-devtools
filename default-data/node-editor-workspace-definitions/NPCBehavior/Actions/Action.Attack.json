@@ -1,6 +1,6 @@
 {
   "Id": "Action.Attack",
-  "Title": "Attack",
+  "Title": "Action: Attack",
   "Color": "#CC3361",
   "Description": "Starts attack",
   "Inputs": [

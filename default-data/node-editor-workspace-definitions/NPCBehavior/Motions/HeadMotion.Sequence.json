@@ -1,6 +1,6 @@
 {
   "Id": "HeadMotion.Sequence",
-  "Title": "Sequence",
+  "Title": "Head Motion: Sequence",
   "Color": "#B08CE0",
   "Description": "(Looped)Sequence of motions",
   "Inputs": [

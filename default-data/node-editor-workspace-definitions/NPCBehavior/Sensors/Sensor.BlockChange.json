@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.BlockChange",
-  "Title": "BlockChange",
+  "Title": "Sensor: BlockChange",
   "Color": "#7091F0",
   "Description": "Matches when a block from a blockset within a certain range is changed or interacted with",
   "Inputs": [],

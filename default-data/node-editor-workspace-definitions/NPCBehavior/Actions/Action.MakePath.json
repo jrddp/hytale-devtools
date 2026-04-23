@@ -1,6 +1,6 @@
 {
   "Id": "Action.MakePath",
-  "Title": "MakePath",
+  "Title": "Action: MakePath",
   "Color": "#CC3361",
   "Description": "Constructs a transient path for the NPC based on a series of rotations and distances",
   "Inputs": [

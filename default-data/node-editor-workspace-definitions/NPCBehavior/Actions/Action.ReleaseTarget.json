@@ -1,6 +1,6 @@
 {
   "Id": "Action.ReleaseTarget",
-  "Title": "ReleaseTarget",
+  "Title": "Action: ReleaseTarget",
   "Color": "#CC3361",
   "Description": "Clear locked target",
   "Inputs": [

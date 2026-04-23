@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.IsBusy",
-  "Title": "IsBusy",
+  "Title": "Sensor: IsBusy",
   "Color": "#7091F0",
   "Description": "Tests if an NPC is in one of the defined Busy States.",
   "Inputs": [],

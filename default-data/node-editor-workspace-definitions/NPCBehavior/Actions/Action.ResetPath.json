@@ -1,6 +1,6 @@
 {
   "Id": "Action.ResetPath",
-  "Title": "ResetPath",
+  "Title": "Action: ResetPath",
   "Color": "#CC3361",
   "Description": "Resets the current patrol path this NPC follows.",
   "Inputs": [

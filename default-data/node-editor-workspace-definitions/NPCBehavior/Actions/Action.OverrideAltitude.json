@@ -1,6 +1,6 @@
 {
   "Id": "Action.OverrideAltitude",
-  "Title": "OverrideAltitude",
+  "Title": "Action: OverrideAltitude",
   "Color": "#CC3361",
   "Description": "Temporarily override the preferred altitude of a flying NPC",
   "Inputs": [

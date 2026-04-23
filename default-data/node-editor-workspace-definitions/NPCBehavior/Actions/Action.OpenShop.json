@@ -1,6 +1,6 @@
 {
   "Id": "Action.OpenShop",
-  "Title": "OpenShop",
+  "Title": "Action: OpenShop",
   "Color": "#CC3361",
   "Description": "Open the shop UI for the current player",
   "Inputs": [

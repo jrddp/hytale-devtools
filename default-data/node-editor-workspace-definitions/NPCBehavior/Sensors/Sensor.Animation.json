@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Animation",
-  "Title": "Animation",
+  "Title": "Sensor: Animation",
   "Color": "#7091F0",
   "Description": "Check if a given animation is being played",
   "Inputs": [],

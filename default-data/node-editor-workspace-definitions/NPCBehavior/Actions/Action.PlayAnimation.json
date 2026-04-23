@@ -1,6 +1,6 @@
 {
   "Id": "Action.PlayAnimation",
-  "Title": "PlayAnimation",
+  "Title": "Action: PlayAnimation",
   "Color": "#CC3361",
   "Description": "Play an animation",
   "Inputs": [

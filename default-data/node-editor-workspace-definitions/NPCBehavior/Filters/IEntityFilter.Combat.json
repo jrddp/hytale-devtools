@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Combat",
-  "Title": "Combat",
+  "Title": "Filter: Combat",
   "Color": "#60C8B8",
   "Description": "Check the target's combat state",
   "Inputs": [],

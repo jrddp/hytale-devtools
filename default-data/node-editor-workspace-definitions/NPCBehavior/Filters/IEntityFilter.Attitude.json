@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Attitude",
-  "Title": "Attitude",
+  "Title": "Filter: Attitude",
   "Color": "#60C8B8",
   "Description": "Matches the attitude towards the locked target",
   "Inputs": [],

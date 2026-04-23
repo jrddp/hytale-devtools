@@ -1,6 +1,6 @@
 {
   "Id": "Action.TimerModify",
-  "Title": "TimerModify",
+  "Title": "Action: TimerModify",
   "Color": "#CC3361",
   "Description": "Modify values of a timer",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Flag",
-  "Title": "Flag",
+  "Title": "Sensor: Flag",
   "Color": "#7091F0",
   "Description": "Test if a named flag is set or not",
   "Inputs": [],

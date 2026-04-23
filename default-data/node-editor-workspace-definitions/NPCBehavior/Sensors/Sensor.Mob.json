@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Mob",
-  "Title": "Mob",
+  "Title": "Sensor: Mob",
   "Color": "#7091F0",
   "Description": "Test if entity matching specific attributes and filters is in range",
   "Inputs": [

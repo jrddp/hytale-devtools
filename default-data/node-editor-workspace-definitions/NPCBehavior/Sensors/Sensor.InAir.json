@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.InAir",
-  "Title": "InAir",
+  "Title": "Sensor: InAir",
   "Color": "#7091F0",
   "Description": "Test if NPC is not on ground",
   "Inputs": [],

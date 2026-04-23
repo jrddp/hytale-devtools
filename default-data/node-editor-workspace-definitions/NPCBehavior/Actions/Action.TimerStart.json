@@ -1,6 +1,6 @@
 {
   "Id": "Action.TimerStart",
-  "Title": "TimerStart",
+  "Title": "Action: TimerStart",
   "Color": "#CC3361",
   "Description": "Start a timer",
   "Inputs": [

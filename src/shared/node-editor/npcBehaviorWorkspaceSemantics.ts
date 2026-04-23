@@ -133,7 +133,12 @@ export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
   WeightedAction: {
     authoringSide: "output",
     color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
-    label: "WeightedAction",
+    label: "Weighted Action",
+  },
+  WeightedInstruction: {
+    authoringSide: "output",
+    color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.default,
+    label: "Weighted Instruction",
   },
 } as const;
 
@@ -151,7 +156,7 @@ export const NPC_BEHAVIOR_CHILD_DOMAIN_DEFINITIONS: Record<
   BodyMotion: { childId: "BodyMotionVariants", connectionType: "BodyMotion" },
   HeadMotion: { childId: "HeadMotionVariants", connectionType: "HeadMotion" },
   IEntityFilter: { childId: "FilterVariants", connectionType: "IEntityFilter" },
-  Instruction: { childId: "Structural.InstructionNode", connectionType: "Instruction" },
+  Instruction: { childId: "InstructionVariants", connectionType: "Instruction" },
   ISensorEntityCollector: {
     childId: "CollectorVariants",
     connectionType: "ISensorEntityCollector",
@@ -262,6 +267,10 @@ export function getNpcBehaviorTemplateSelfConnectionType(
   templateId: string,
 ): NpcBehaviorConnectionType | undefined {
   if (templateId === "Structural.InstructionNode") {
+    return "Instruction";
+  }
+
+  if (templateId === "Structural.RandomInstructionNode") {
     return "Instruction";
   }
 

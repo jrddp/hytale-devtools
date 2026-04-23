@@ -1,6 +1,6 @@
 {
   "Id": "Action.ApplyEntityEffect",
-  "Title": "ApplyEntityEffect",
+  "Title": "Action: ApplyEntityEffect",
   "Color": "#CC3361",
   "Description": "Applies an entity effect to the target or self",
   "Inputs": [

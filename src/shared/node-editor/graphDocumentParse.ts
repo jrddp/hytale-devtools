@@ -11,6 +11,7 @@ import type {
   RawJsonGraphNode,
 } from "./graphTypes";
 import { getResolvedChildSlots } from "./childSlotUtils";
+import { getSiblingSerializedChildSlot } from "./siblingSerialization";
 import {
   allowsComponentReferences,
   getComponentReferenceSlotOccupancy,
@@ -26,6 +27,10 @@ import {
 } from "./pinUtils";
 import { INPUT_HANDLE_ID } from "./sharedConstants";
 import type { NodeEditorWorkspaceContext, NodePin, NodeTemplate } from "./workspaceTypes";
+import {
+  getDefaultTemplateForTemplateOrVariantId,
+  getVariantKind,
+} from "./variantUtils";
 
 const DEFAULT_COMMENT_WIDTH = 200;
 const DEFAULT_COMMENT_HEIGHT = 100;
@@ -47,6 +52,10 @@ const UUID_SUFFIX_RE =
 
 function createNodeId(templateId: string): string {
   return `${templateId}-${crypto.randomUUID()}`;
+}
+
+function createSyntheticSiblingNodeId(templateId: string, parentNodeId: string, schemaKey: string): string {
+  return `${templateId}__sibling__${parentNodeId}__${schemaKey}`;
 }
 
 function splitNodeIdSuffix(nodeId: string): { baseId: string; hasUuidSuffix: boolean } {
@@ -243,7 +252,10 @@ function normalizeNodeDefinitionForReuse(value: unknown): unknown {
 }
 
 function getRootTemplate(workspaceContext: NodeEditorWorkspaceContext): NodeTemplate | undefined {
-  return workspaceContext.nodeTemplatesById[workspaceContext.rootTemplateOrVariantId];
+  return getDefaultTemplateForTemplateOrVariantId(
+    workspaceContext,
+    workspaceContext.rootTemplateOrVariantId,
+  );
 }
 
 function getRootSelfConnectionType(rootTemplate: NodeTemplate | undefined): string | undefined {
@@ -387,6 +399,10 @@ export function parseAssetDocumentToGraphDocument(
   const recursiveParseNodes = (
     localRoot: NodeAssetJson,
     variantOrTemplateId: string | null,
+    options?: {
+      syntheticSiblingParentNodeId?: string;
+      syntheticSiblingSchemaKey?: string;
+    },
   ): string => {
     let templateId: string | undefined;
     const rawNodeId = localRoot.$NodeId;
@@ -395,7 +411,7 @@ export function parseAssetDocumentToGraphDocument(
       : { baseId: "", hasUuidSuffix: false };
     let nodeId: string;
     const position = localRoot.$Position ?? { $x: 0, $y: 0 };
-    const variantKind = variantOrTemplateId ? variantKindsById[variantOrTemplateId] : undefined;
+    const variantKind = getVariantKind(variantKindsById, variantOrTemplateId);
 
     if (rawNodeId && rawNodeIdInfo.hasUuidSuffix && nodesById.has(rawNodeId)) {
       const normalizedDefinition = JSON.stringify(normalizeNodeDefinitionForReuse(localRoot));
@@ -407,9 +423,12 @@ export function parseAssetDocumentToGraphDocument(
     }
 
     if (variantKind) {
-      const nodeType = localRoot[variantKind.VariantFieldName] as string | undefined;
-      if (nodeType) {
+      const hasVariantField = Object.hasOwn(localRoot, variantKind.VariantFieldName);
+      const nodeType = localRoot[variantKind.VariantFieldName];
+      if (typeof nodeType === "string") {
         templateId = variantKind.Variants[nodeType];
+      } else if (!hasVariantField) {
+        templateId = variantKind.DefaultTemplateId;
       }
     }
 
@@ -422,15 +441,67 @@ export function parseAssetDocumentToGraphDocument(
 
     const template = templateId ? nodeTemplatesById[templateId] : undefined;
     if (template) {
-      nodeId = normalizeParsedNodeId(rawNodeId, template.templateId);
+      if (
+        !rawNodeId &&
+        options?.syntheticSiblingParentNodeId &&
+        options.syntheticSiblingSchemaKey
+      ) {
+        nodeId = createSyntheticSiblingNodeId(
+          template.templateId,
+          options.syntheticSiblingParentNodeId,
+          options.syntheticSiblingSchemaKey,
+        );
+      } else {
+        nodeId = normalizeParsedNodeId(rawNodeId, template.templateId);
+      }
 
       const clonedTemplateData = cloneTemplate(template);
-      const unprocessedData = new Set(Object.keys(localRoot).filter(key => !key.startsWith("$")));
+      const siblingSlot = getSiblingSerializedChildSlot(template);
+      const unprocessedData = new Set(
+        Object.keys(localRoot).filter(key => {
+          if (key.startsWith("$")) {
+            return false;
+          }
+
+          if (!siblingSlot) {
+            return true;
+          }
+
+          return (
+            Object.hasOwn(clonedTemplateData.fieldsBySchemaKey, key) ||
+            Object.hasOwn(template.schemaConstants, key) ||
+            (Object.hasOwn(template.childSchemas, key) &&
+              key !== siblingSlot.childSchema.schemaKey)
+          );
+        }),
+      );
       const unparsedMetadata: Record<string, unknown> = {};
+      const siblingChildValue =
+        siblingSlot === undefined
+          ? undefined
+          : Object.fromEntries(
+              Object.entries(localRoot).filter(([key]) => {
+                if (key.startsWith("$")) {
+                  return false;
+                }
+
+                if (Object.hasOwn(clonedTemplateData.fieldsBySchemaKey, key)) {
+                  return false;
+                }
+
+                if (Object.hasOwn(template.schemaConstants, key)) {
+                  return false;
+                }
+
+                return true;
+              }),
+            );
 
       for (const slot of getResolvedChildSlots(template)) {
         const schemaKey = slot.childSchema.schemaKey;
-        unprocessedData.delete(schemaKey);
+        if (slot.childSchema.serializationType !== "sibling") {
+          unprocessedData.delete(schemaKey);
+        }
 
         const parseChildNode = (
           childValue: unknown,
@@ -449,6 +520,12 @@ export function parseAssetDocumentToGraphDocument(
           return recursiveParseNodes(
             childValue as NodeAssetJson,
             referenceTemplate?.templateId ?? slot.childSchema.targetTemplateOrVariantId,
+            slot.childSchema.serializationType === "sibling"
+              ? {
+                  syntheticSiblingParentNodeId: nodeId,
+                  syntheticSiblingSchemaKey: slot.childSchema.schemaKey,
+                }
+              : undefined,
           );
         };
 
@@ -486,7 +563,12 @@ export function parseAssetDocumentToGraphDocument(
 
         switch (slot.pin.multiplicity) {
           case "single":
-            if (localRoot[schemaKey] !== undefined) {
+            if (slot.childSchema.serializationType === "sibling") {
+              if (siblingChildValue && Object.keys(siblingChildValue).length > 0) {
+                const childId = parseChildNode(siblingChildValue);
+                connectParsedChild(childId);
+              }
+            } else if (localRoot[schemaKey] !== undefined) {
               const childId = parseChildNode(localRoot[schemaKey]);
               connectParsedChild(childId);
             }
@@ -547,7 +629,7 @@ export function parseAssetDocumentToGraphDocument(
       }
 
       for (const key of unprocessedData) {
-        if (template.schemaConstants[key]) {
+        if (Object.hasOwn(template.schemaConstants, key)) {
           continue;
         }
         unparsedMetadata[key] = localRoot[key];
@@ -572,7 +654,19 @@ export function parseAssetDocumentToGraphDocument(
         );
       }
     } else {
-      nodeId = normalizeParsedNodeId(rawNodeId, "Generic");
+      if (
+        !rawNodeId &&
+        options?.syntheticSiblingParentNodeId &&
+        options.syntheticSiblingSchemaKey
+      ) {
+        nodeId = createSyntheticSiblingNodeId(
+          "Generic",
+          options.syntheticSiblingParentNodeId,
+          options.syntheticSiblingSchemaKey,
+        );
+      } else {
+        nodeId = normalizeParsedNodeId(rawNodeId, "Generic");
+      }
 
       const data: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(localRoot)) {

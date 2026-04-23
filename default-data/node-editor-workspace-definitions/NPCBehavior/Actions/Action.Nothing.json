@@ -1,6 +1,6 @@
 {
   "Id": "Action.Nothing",
-  "Title": "Nothing",
+  "Title": "Action: Nothing",
   "Color": "#CC3361",
   "Description": "Do nothing",
   "Inputs": [

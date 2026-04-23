@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Path",
-  "Title": "Path",
+  "Title": "Body Motion: Path",
   "Color": "#00E7B6",
   "Description": "Walk along a path",
   "Inputs": [

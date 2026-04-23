@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.LineOfSight",
-  "Title": "LineOfSight",
+  "Title": "Filter: LineOfSight",
   "Color": "#60C8B8",
   "Description": "Matches if there is line of sight to the target",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.WanderInCircle",
-  "Title": "WanderInCircle",
+  "Title": "Body Motion: WanderInCircle",
   "Color": "#00E7B6",
   "Description": "Random movement in circle around spawn position",
   "Inputs": [

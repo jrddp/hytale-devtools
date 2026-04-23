@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Inventory",
-  "Title": "Inventory",
+  "Title": "Filter: Inventory",
   "Color": "#60C8B8",
   "Description": "Test various conditions relating to entity inventory",
   "Inputs": [],

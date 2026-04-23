@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.Wander",
-  "Title": "Wander",
+  "Title": "Body Motion: Wander",
   "Color": "#00E7B6",
   "Description": "Random movement",
   "Inputs": [

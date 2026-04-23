@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.InflictedDamage",
-  "Title": "InflictedDamage",
+  "Title": "Sensor: InflictedDamage",
   "Color": "#7091F0",
   "Description": "Test if an individual or the flock it belongs to inflicted combat damage",
   "Inputs": [],

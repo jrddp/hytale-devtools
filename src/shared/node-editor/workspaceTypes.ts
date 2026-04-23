@@ -15,7 +15,7 @@ export type FieldComponentType =
   | "intslider"
   | "color";
 
-export type NodeSchemaSerializationType = "child" | "root";
+export type NodeSchemaSerializationType = "child" | "root" | "sibling";
 export type NodeSlotOccupancy = "whole-slot";
 export interface NodeConnectionTypeDefinition {
   Extends?: string[];
@@ -35,6 +35,7 @@ export interface NodeEditorWorkspaceRootDefinition {
 
 export interface VariantKindDefinition {
   VariantFieldName: string;
+  DefaultTemplateId?: string;
   // maps node[VariantFieldName] -> template ID
   Variants: Record<string, string>;
 }

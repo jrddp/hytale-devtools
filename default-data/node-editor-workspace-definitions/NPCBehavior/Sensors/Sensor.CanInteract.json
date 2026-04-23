@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.CanInteract",
-  "Title": "CanInteract",
+  "Title": "Sensor: CanInteract",
   "Color": "#7091F0",
   "Description": "Checks whether or not the player being iterated by the interaction instruction can interact with this NPC",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.MaintainDistance",
-  "Title": "MaintainDistance",
+  "Title": "Body Motion: MaintainDistance",
   "Color": "#00E7B6",
   "Description": "Maintain distance from a given position",
   "Inputs": [

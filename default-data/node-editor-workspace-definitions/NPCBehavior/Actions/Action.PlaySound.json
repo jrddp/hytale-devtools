@@ -1,6 +1,6 @@
 {
   "Id": "Action.PlaySound",
-  "Title": "PlaySound",
+  "Title": "Action: PlaySound",
   "Color": "#CC3361",
   "Description": "Plays a sound to players within a specified range.",
   "Inputs": [

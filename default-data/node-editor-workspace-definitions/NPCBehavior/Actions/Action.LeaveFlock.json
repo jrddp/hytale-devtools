@@ -1,6 +1,6 @@
 {
   "Id": "Action.LeaveFlock",
-  "Title": "LeaveFlock",
+  "Title": "Action: LeaveFlock",
   "Color": "#CC3361",
   "Description": "Leave flock.",
   "Inputs": [

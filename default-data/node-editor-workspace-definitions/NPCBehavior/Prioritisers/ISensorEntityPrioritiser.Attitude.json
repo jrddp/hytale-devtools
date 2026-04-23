@@ -1,6 +1,6 @@
 {
   "Id": "ISensorEntityPrioritiser.Attitude",
-  "Title": "Attitude",
+  "Title": "Prioritiser: Attitude",
   "Color": "#7091F0",
   "Description": "Prioritises return entities by attitude",
   "Inputs": [],

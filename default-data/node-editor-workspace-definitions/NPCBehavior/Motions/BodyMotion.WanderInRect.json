@@ -1,6 +1,6 @@
 {
   "Id": "BodyMotion.WanderInRect",
-  "Title": "WanderInRect",
+  "Title": "Body Motion: WanderInRect",
   "Color": "#00E7B6",
   "Description": "Random movement in rectangle around spawn position",
   "Inputs": [

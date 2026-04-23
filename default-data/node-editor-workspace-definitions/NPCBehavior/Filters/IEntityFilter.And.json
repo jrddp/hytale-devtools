@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.And",
-  "Title": "And",
+  "Title": "Filter: And",
   "Color": "#60C8B8",
   "Description": "Logical AND of a list of filters",
   "Inputs": [

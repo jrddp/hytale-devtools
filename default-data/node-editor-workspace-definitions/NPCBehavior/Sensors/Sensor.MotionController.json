@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.MotionController",
-  "Title": "MotionController",
+  "Title": "Sensor: MotionController",
   "Color": "#7091F0",
   "Description": "Test if specific motion controller is active.",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "Action.ResetBlockSensors",
-  "Title": "ResetBlockSensors",
+  "Title": "Action: ResetBlockSensors",
   "Color": "#CC3361",
   "Description": "Resets a specific block sensor by name, or all block sensors",
   "Inputs": [

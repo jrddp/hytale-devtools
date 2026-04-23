@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.Stat",
-  "Title": "Stat",
+  "Title": "Filter: Stat",
   "Color": "#60C8B8",
   "Description": "Match stat values of the entity",
   "Inputs": [],

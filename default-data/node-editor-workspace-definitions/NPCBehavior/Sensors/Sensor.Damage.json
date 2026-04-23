@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Damage",
-  "Title": "Damage",
+  "Title": "Sensor: Damage",
   "Color": "#7091F0",
   "Description": "Test if NPC suffered damage",
   "Inputs": [],

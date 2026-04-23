@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.ItemInHand",
-  "Title": "ItemInHand",
+  "Title": "Filter: ItemInHand",
   "Color": "#60C8B8",
   "Description": "Check if entity is holding an item",
   "Inputs": [],

@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.Self",
-  "Title": "Self",
+  "Title": "Sensor: Self",
   "Color": "#7091F0",
   "Description": "Test if the NPC itself matches a set of entity filters",
   "Inputs": [

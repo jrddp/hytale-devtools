@@ -1,6 +1,6 @@
 {
   "Id": "Action.Notify",
-  "Title": "Notify",
+  "Title": "Action: Notify",
   "Color": "#CC3361",
   "Description": "Directly notifies a target NPC with a beacon message",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "Action.FlockBeacon",
-  "Title": "FlockBeacon",
+  "Title": "Action: FlockBeacon",
   "Color": "#CC3361",
   "Description": "Send beacon message to flock",
   "Inputs": [

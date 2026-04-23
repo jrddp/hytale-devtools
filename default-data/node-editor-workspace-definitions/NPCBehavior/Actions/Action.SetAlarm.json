@@ -1,6 +1,6 @@
 {
   "Id": "Action.SetAlarm",
-  "Title": "SetAlarm",
+  "Title": "Action: SetAlarm",
   "Color": "#CC3361",
   "Description": "Set a named alarm on the NPC",
   "Inputs": [

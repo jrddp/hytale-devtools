@@ -1,6 +1,6 @@
 {
   "Id": "Sensor.FlockCombatDamage",
-  "Title": "FlockCombatDamage",
+  "Title": "Sensor: FlockCombatDamage",
   "Color": "#7091F0",
   "Description": "Test if flock with NPC received combat damage",
   "Inputs": [],

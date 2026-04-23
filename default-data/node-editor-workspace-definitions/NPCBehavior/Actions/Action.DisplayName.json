@@ -1,6 +1,6 @@
 {
   "Id": "Action.DisplayName",
-  "Title": "DisplayName",
+  "Title": "Action: DisplayName",
   "Color": "#CC3361",
   "Description": "Set display name.",
   "Inputs": [

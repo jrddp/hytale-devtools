@@ -1,6 +1,6 @@
 {
   "Id": "Action.ModelAttachment",
-  "Title": "ModelAttachment",
+  "Title": "Action: ModelAttachment",
   "Color": "#CC3361",
   "Description": "Set an attachment on the current NPC model",
   "Inputs": [

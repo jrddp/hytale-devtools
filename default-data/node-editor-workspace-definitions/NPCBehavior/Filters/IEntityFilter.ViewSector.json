@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.ViewSector",
-  "Title": "ViewSector",
+  "Title": "Filter: ViewSector",
   "Color": "#60C8B8",
   "Description": "Matches entities within the given view sector",
   "Inputs": [],

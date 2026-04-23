@@ -1,6 +1,6 @@
 {
   "Id": "Action.Test",
-  "Title": "Test",
+  "Title": "Action: Test",
   "Color": "#CC3361",
   "Description": "Test action to exercise attribute evaluation (DO NOT USE)",
   "Inputs": [

@@ -1,6 +1,6 @@
 {
   "Id": "IEntityFilter.MovementState",
-  "Title": "MovementState",
+  "Title": "Filter: MovementState",
   "Color": "#60C8B8",
   "Description": "Check if the entity is in the given movement state",
   "Inputs": [],
