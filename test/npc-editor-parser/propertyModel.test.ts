@@ -439,6 +439,50 @@ describe("npc property model symbol enrichment", () => {
     });
   });
 
+  test("orders required role attributes before optional ones", () => {
+    const document = createGenericDocument({
+      roleAttributes: {
+        Appearance: "NPCs/Test",
+        BusyStates: ["Idle.Patrol"],
+      },
+    });
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+          },
+          {
+            Name: "StartState",
+            Type: "String",
+            Required: "REQUIRED",
+          },
+          {
+            Name: "BusyStates",
+            Type: "Array",
+            Domain: "String",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+
+    expect(state.sections.find(section => section.id === "roleAttributes")?.fields.map(field => field.key)).toEqual([
+      "StartState",
+      "Appearance",
+      "BusyStates",
+    ]);
+  });
+
   test("keeps an empty role attributes section when descriptor-backed role attributes are available", () => {
     const document = createGenericDocument();
     const descriptors: NpcDescriptorDocument = [

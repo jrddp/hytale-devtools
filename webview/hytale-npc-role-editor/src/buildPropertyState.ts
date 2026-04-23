@@ -507,11 +507,16 @@ function buildRoleAttributesSection(
     }
   }
 
+  const orderedFields = [
+    ...fields.filter(field => field.required === true),
+    ...fields.filter(field => field.required !== true),
+  ];
+
   return {
     id: "roleAttributes",
     name: SECTION_NAMES.roleAttributes,
     description: "Top-level role settings surfaced from the current NPC role document.",
-    fields,
+    fields: orderedFields,
     ui: {},
   };
 }

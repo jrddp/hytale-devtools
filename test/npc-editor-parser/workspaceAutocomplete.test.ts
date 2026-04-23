@@ -193,6 +193,62 @@ describe("npc workspace autocomplete enrichment", () => {
         : true,
     ).toBe(false);
   });
+
+  test("appends added optional role attributes after required entries and preserves their relative order", () => {
+    const workspace = createWorkspace();
+    workspace.setDescriptors({
+      descriptors: [
+        {
+          Name: "Generic",
+          Category: "Role",
+          Attributes: [
+            {
+              Name: "StartState",
+              Type: "String",
+              Required: "REQUIRED",
+            },
+            {
+              Name: "Appearance",
+              Type: "Asset",
+              Domain: "Model",
+            },
+            {
+              Name: "DropDeathItemsInstantly",
+              Type: "Boolean",
+              DefaultValue: "true",
+            },
+          ],
+        },
+      ],
+      descriptorPath: "npc_descriptors.json",
+      descriptorSource: "default-data",
+    });
+    workspace.setDocument({
+      documentPath: "/tmp/TestNpc.json",
+      text: JSON.stringify({
+        Type: "Generic",
+      }),
+      version: 1,
+    });
+
+    expect(workspace.addRoleAttribute("Appearance")).toBe(true);
+    expect(workspace.addRoleAttribute("DropDeathItemsInstantly")).toBe(true);
+
+    const roleAttributesSection = workspace.propertySections.find(section => section.id === "roleAttributes");
+    expect(roleAttributesSection?.fields.map(field => field.key)).toEqual([
+      "StartState",
+      "Appearance",
+      "DropDeathItemsInstantly",
+    ]);
+
+    const reparsed = parseNpcDocumentText(workspace.documentText ?? "");
+    expect(reparsed.status).toBe("ready");
+    expect(reparsed.status === "ready" ? reparsed.topLevelKeyOrder : []).toEqual([
+      "Type",
+      "Appearance",
+      "DropDeathItemsInstantly",
+    ]);
+  });
 });
 
 function createWorkspace(): Workspace {
