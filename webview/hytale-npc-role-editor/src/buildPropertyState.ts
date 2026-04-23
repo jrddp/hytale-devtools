@@ -17,7 +17,11 @@ import type {
 import { isNpcComputeJson, isRecord } from "./parsing/documentTypes";
 import type { ParameterUsageIndex } from "./compute/parameterUsageIndex";
 import { isNpcRoleAttributeKey } from "./roleAttributes";
-import { createRoleAttributeField, resolveRoleDescriptor } from "./roleAttributeFields";
+import {
+  createRoleAttributeField,
+  isEffectivelyRequiredRoleAttribute,
+  resolveRoleDescriptor,
+} from "./roleAttributeFields";
 import type { NpcPropertyField, NpcPropertySection, NpcPropertyState } from "./propertyTypes";
 import {
   cloneJsonLike,
@@ -478,7 +482,7 @@ function buildRoleAttributesSection(
 
   for (const descriptorAttribute of roleDescriptor?.Attributes ?? []) {
     if (
-      descriptorAttribute.Required !== "REQUIRED" ||
+      !isEffectivelyRequiredRoleAttribute(descriptorAttribute.Name, descriptorAttribute) ||
       includedKeys.has(descriptorAttribute.Name) ||
       !isNpcRoleAttributeKey(descriptorAttribute.Name)
     ) {

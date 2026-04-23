@@ -4,20 +4,21 @@ import type {
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
 import type { NpcAnimationAutocompleteKind } from "@shared/npc-role-editor/animationAutocomplete";
-import { resolveNpcDescriptorAssetSymbolLookup } from "@shared/npc-role-editor/assetSymbolLookup";
-import type { IndexReference } from "@shared/indexTypes";
 import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
 import { isNpcComputeJson, isRecord } from "./parsing/documentTypes";
 import type { NpcPropertyField } from "./propertyTypes";
 import {
   cloneJsonLike,
   humanize,
-  inferItemTypeFromPrimitiveList,
-  isPrimitiveListItem,
-  normalizeFlagValue,
-  normalizeTypeHint,
   toOptionalDisplayString,
 } from "./propertyFieldUtilities";
+import {
+  inferPrimitiveNpcFieldShapeFromDescriptor,
+  inferPrimitiveNpcLiteralFieldShape,
+  parseNpcDescriptorDefaultValue,
+  parseNpcDescriptorStaticSuggestions,
+  resolveNpcDescriptorFieldSymbolRef,
+} from "./descriptorFieldSupport";
 
 const CONTENT_WRAPPER_KEYS = new Set([
   "Reference",
@@ -616,7 +617,7 @@ function buildStructuredObjectFields({
     const propertyPath = `${fieldPath}.${attribute.Name}`;
     const hasRawValue = source ? Object.prototype.hasOwnProperty.call(source, attribute.Name) : false;
     const rawValue = hasRawValue ? source?.[attribute.Name] : undefined;
-    const defaultValue = !hasRawValue && seedDefaults ? parseDescriptorDefaultValue(attribute) : undefined;
+    const defaultValue = !hasRawValue && seedDefaults ? parseNpcDescriptorDefaultValue(attribute) : undefined;
     const shouldBeSet =
       hasRawValue ||
       (seedDefaults && (attribute.Required === "REQUIRED" || defaultValue !== undefined));
@@ -753,8 +754,8 @@ function createStructuredAttributeField({
     itemType: fallbackShape.itemType,
     stateAutocompleteKind: resolveStructuredStateAutocompleteKind(descriptor, attribute, fieldPath),
     animationAutocompleteKind: resolveStructuredAnimationAutocompleteKind(descriptor, attribute),
-    staticSuggestions: parseStaticSuggestions(attribute),
-    symbolRef: resolveFieldSymbolRef(attribute),
+    staticSuggestions: parseNpcDescriptorStaticSuggestions(attribute),
+    symbolRef: resolveNpcDescriptorFieldSymbolRef(attribute),
     ui: {},
   };
 }
@@ -915,100 +916,10 @@ function isSupportedStructuredArrayDomain(
   return isSupportedRichObjectShape(domain, descriptors);
 }
 
-function parseDescriptorDefaultValue(attribute: NpcDescriptorAttribute): unknown {
-  const defaultValue = attribute.DefaultValue;
-  if (typeof defaultValue !== "string" || !defaultValue.trim()) {
-    return undefined;
-  }
-
-  switch (attribute.Type) {
-    case "Boolean":
-      return defaultValue === "true";
-    case "Integer":
-    case "Double": {
-      const nextValue = Number(defaultValue);
-      return Number.isFinite(nextValue) ? nextValue : undefined;
-    }
-    case "Asset":
-    case "Enum":
-    case "Flag":
-    case "String":
-      return defaultValue;
-    case "Array":
-    case "AssetArray":
-      try {
-        const parsed = JSON.parse(defaultValue);
-        return Array.isArray(parsed) ? parsed : undefined;
-      } catch {
-        return undefined;
-      }
-    default:
-      return undefined;
-  }
-}
-
-function resolveFieldSymbolRef(
-  descriptorAttribute?: NpcDescriptorAttribute,
-): IndexReference | undefined {
-  return resolveNpcDescriptorAssetSymbolLookup(descriptorAttribute);
-}
-
-function parseStaticSuggestions(
-  descriptorAttribute?: NpcDescriptorAttribute,
-): string[] | undefined {
-  const rawFlagDescriptions = descriptorAttribute?.FlagDescriptions;
-  if (!isRecord(rawFlagDescriptions)) {
-    return undefined;
-  }
-
-  const values = Object.keys(rawFlagDescriptions).map(normalizeFlagValue);
-  return values.length > 0 ? values : undefined;
-}
-
 function inferFieldShapeFromDescriptor(
   descriptorAttribute?: NpcDescriptorAttribute,
 ): Pick<NpcPropertyField, "kind" | "value" | "itemType"> {
-  const descriptorType = descriptorAttribute?.Type;
-  const normalizedDomain = normalizeTypeHint(descriptorAttribute?.Domain);
-
-  switch (descriptorType) {
-    case "Boolean":
-      return {
-        kind: "boolean",
-        value: { kind: "literal", value: false },
-      };
-    case "Integer":
-    case "Double":
-      return {
-        kind: "number",
-        value: { kind: "literal", value: 0 },
-      };
-    case "AssetArray":
-      return {
-        kind: "list",
-        value: { kind: "literal", value: [] },
-        itemType: "string",
-      };
-    case "Array":
-      return {
-        kind: "list",
-        value: { kind: "literal", value: [] },
-        itemType: normalizedDomain ?? "string",
-      };
-    case "Asset":
-    case "Enum":
-    case "Flag":
-    case "String":
-      return {
-        kind: "string",
-        value: { kind: "literal", value: "" },
-      };
-    default:
-      return {
-        kind: "rawJson",
-        value: { kind: "literal", value: {} },
-      };
-  }
+  return inferPrimitiveNpcFieldShapeFromDescriptor(descriptorAttribute);
 }
 
 function parseStructuredFieldShape(
@@ -1027,52 +938,5 @@ function parseStructuredFieldShape(
     };
   }
 
-  return inferLiteralFieldShape(value);
-}
-
-function inferLiteralFieldShape(
-  value: unknown,
-  fallbackItemType?: "string" | "number" | "boolean",
-): Pick<NpcPropertyField, "kind" | "value" | "itemType"> {
-  if (typeof value === "boolean") {
-    return {
-      kind: "boolean",
-      value: { kind: "literal", value },
-    };
-  }
-
-  if (typeof value === "number") {
-    return {
-      kind: "number",
-      value: { kind: "literal", value },
-    };
-  }
-
-  if (typeof value === "string") {
-    return {
-      kind: "string",
-      value: { kind: "literal", value },
-    };
-  }
-
-  if (Array.isArray(value) && value.every(isPrimitiveListItem)) {
-    return {
-      kind: "list",
-      value: { kind: "literal", value: cloneJsonLike(value) },
-      itemType: inferItemTypeFromPrimitiveList(value) ?? fallbackItemType ?? "string",
-    };
-  }
-
-  if (Array.isArray(value) && value.length === 0) {
-    return {
-      kind: "list",
-      value: { kind: "literal", value: [] },
-      itemType: fallbackItemType ?? "string",
-    };
-  }
-
-  return {
-    kind: "rawJson",
-    value: { kind: "literal", value: cloneJsonLike(value) },
-  };
+  return inferPrimitiveNpcLiteralFieldShape(value);
 }

@@ -158,6 +158,38 @@ describe("npc editor issues", () => {
     );
   });
 
+  test("does not flag BusyStates as missing when runtime treats it as optional", () => {
+    const document = createGenericDocument({});
+    const sections = buildSections(document, [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "BusyStates",
+            Type: "StringList",
+            Required: "REQUIRED",
+          },
+        ],
+      },
+    ]);
+
+    const issues = buildNpcIssues({
+      roleType: "Generic",
+      sections,
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+    });
+
+    expect(issues).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "required-role-attribute-missing",
+          fieldPath: "BusyStates",
+        }),
+      ]),
+    );
+  });
+
   test("builds variant reference and modify warnings", () => {
     const parentDocument = createGenericDocument({
       parameters: {
