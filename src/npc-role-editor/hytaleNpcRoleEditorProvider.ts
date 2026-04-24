@@ -73,8 +73,28 @@ export async function triggerNpcRoleEditorContextAction(
   const parameterName =
     isRecord(context) && typeof context.parameterName === "string" ? context.parameterName : null;
   const fieldPath = isRecord(context) && typeof context.fieldPath === "string" ? context.fieldPath : null;
+  const nodeEditorGraphFieldPath =
+    isRecord(context) && typeof context.nodeEditorGraphFieldPath === "string"
+      ? context.nodeEditorGraphFieldPath
+      : null;
+  const nodeEditorNodeId =
+    isRecord(context) && typeof context.nodeEditorNodeId === "string" ? context.nodeEditorNodeId : null;
 
   if (!activeProvider) {
+    return;
+  }
+
+  if (action === "setGraphRoot") {
+    if (!nodeEditorGraphFieldPath || !nodeEditorNodeId) {
+      return;
+    }
+
+    await activeProvider.postContextAction({
+      type: "contextAction",
+      action,
+      fieldPath: nodeEditorGraphFieldPath,
+      nodeEditorNodeId,
+    });
     return;
   }
 

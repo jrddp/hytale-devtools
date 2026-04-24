@@ -154,4 +154,38 @@ describe("node editor document update reconciliation", () => {
     expect(session.sourceVersion).toBe(2);
     expect(session.committedGraphDocument?.nodes[0]?.data.titleOverride).toBe("Fallback");
   });
+
+  test("falls back to full sync when an uninitialized session receives an incremental edit", () => {
+    const session = createNodeEditorSession();
+    const context = workspaceContext({
+      templates: [nodeTemplate("Root")],
+    });
+    session.context = context;
+
+    const getFallbackGraphDocument = vi.fn(() => createGraphDocument("Fallback"));
+
+    const didFullSync = reconcileSessionWithGraphUpdate({
+      session,
+      workspaceContext: context,
+      getFallbackGraphDocument,
+      version: 2,
+      appliedEdit: {
+        kind: "node-renamed",
+        changes: [
+          {
+            nodeId: "root",
+            beforeTitleOverride: "Before",
+            afterTitleOverride: "After",
+          },
+        ],
+      },
+    });
+
+    expect(didFullSync).toBe(true);
+    expect(getFallbackGraphDocument).toHaveBeenCalledTimes(1);
+    expect(session.isInitialized).toBe(true);
+    expect(session.sourceVersion).toBe(2);
+    expect(session.nodes[0]?.data.titleOverride).toBe("Fallback");
+    expect(session.committedGraphDocument?.nodes[0]?.data.titleOverride).toBe("Fallback");
+  });
 });

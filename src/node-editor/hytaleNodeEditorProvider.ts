@@ -26,6 +26,7 @@ import { HytaleNodeDocument } from "./hytaleNodeDocument";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
+const NODE_EDITOR_SET_ROOT_CONTEXT_COMMAND = "hytale-devtools.nodeEditor.context.setRoot";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
 const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
@@ -47,8 +48,19 @@ export function registerHytaleNodeEditorProvider(
         );
       }),
   );
+  const setRootContextCommandRegistration = vscode.commands.registerCommand(
+    NODE_EDITOR_SET_ROOT_CONTEXT_COMMAND,
+    (menuContext: unknown) => {
+      void provider.triggerSetRootContextAction(menuContext);
+    },
+  );
 
-  return vscode.Disposable.from(providerRegistration, provider, ...quickActionCommandRegistrations);
+  return vscode.Disposable.from(
+    providerRegistration,
+    provider,
+    setRootContextCommandRegistration,
+    ...quickActionCommandRegistrations,
+  );
 }
 
 class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNodeDocument> {
@@ -269,6 +281,24 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
       request: { type: actionType },
       allowEditableTarget,
     });
+  }
+
+  public async triggerSetRootContextAction(menuContext: unknown): Promise<void> {
+    const nodeId = readNodeEditorNodeIdFromContext(menuContext);
+    if (!nodeId) {
+      return;
+    }
+
+    const targetPanel = this.resolveTargetWebviewPanel();
+    if (!targetPanel) {
+      return;
+    }
+
+    await targetPanel.webview.postMessage({
+      type: "action",
+      request: { type: "set-root", nodeId },
+      allowEditableTarget: true,
+    } satisfies ExtensionToWebviewMessage);
   }
 
   private getPanelsForDocument(documentUri: string): Set<vscode.WebviewPanel> {
@@ -528,6 +558,12 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
   }
 
   return undefined;
+}
+
+function readNodeEditorNodeIdFromContext(menuContext: unknown): string | undefined {
+  return isObject(menuContext) && typeof menuContext.nodeEditorNodeId === "string"
+    ? menuContext.nodeEditorNodeId
+    : undefined;
 }
 
 function escapeHtml(value: string): string {

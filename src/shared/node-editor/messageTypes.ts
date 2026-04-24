@@ -19,6 +19,7 @@ export type ActionRequest =
   | { type: "view-raw-json" }
   | { type: "help-and-hotkeys" }
   | { type: "customize-keybinds"; query?: string }
+  | { type: "set-root"; nodeId: string }
   | { type: "reveal-selection"; selection: Selection }
   | { type: "document-refresh" }; // recalculates groups, resets pending connections, etc
 

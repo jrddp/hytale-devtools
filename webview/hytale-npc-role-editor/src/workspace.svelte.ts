@@ -155,6 +155,9 @@ export class Workspace {
   parameterDescriptionRequestVersion = $state(0);
   parameterTypeChangeRequestName = $state<string | null>(null);
   parameterTypeChangeRequestVersion = $state(0);
+  graphRootSetRequestFieldPath = $state<string | null>(null);
+  graphRootSetRequestNodeId = $state<string | null>(null);
+  graphRootSetRequestVersion = $state(0);
 
   setDescriptors({
     descriptors,
@@ -706,6 +709,13 @@ export class Workspace {
       case "logFieldInstance":
         if (message.fieldPath) {
           this.logFieldInstance(message.fieldPath);
+        }
+        return;
+      case "setGraphRoot":
+        if (message.fieldPath && message.nodeEditorNodeId) {
+          this.graphRootSetRequestFieldPath = message.fieldPath;
+          this.graphRootSetRequestNodeId = message.nodeEditorNodeId;
+          this.graphRootSetRequestVersion += 1;
         }
         return;
       default:

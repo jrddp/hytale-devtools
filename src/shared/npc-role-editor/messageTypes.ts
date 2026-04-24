@@ -91,9 +91,11 @@ export type NpcRoleEditorContextActionMessage = {
     | "deleteField"
     | "changeParameterType"
     | "editParameterDescription"
-    | "logFieldInstance";
+    | "logFieldInstance"
+    | "setGraphRoot";
   parameterName?: string;
   fieldPath?: string;
+  nodeEditorNodeId?: string;
 };
 
 export type NpcRoleEditorAppearancePreviewBaseUpdateMessage = {

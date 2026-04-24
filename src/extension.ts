@@ -156,6 +156,14 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(logNpcFieldInstanceCommand);
 
+  const setNpcGraphRootCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.setGraphRoot",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("setGraphRoot", menuContext);
+    },
+  );
+  context.subscriptions.push(setNpcGraphRootCommand);
+
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));

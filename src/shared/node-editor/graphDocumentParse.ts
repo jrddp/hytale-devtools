@@ -18,17 +18,18 @@ import {
   isComponentReferenceNodeTemplate,
 } from "./componentReferences";
 import {
+  findCompatibleRootComponentReferenceTemplate,
+} from "./rootCompatibility";
+import {
   GENERIC_CONNECTION_TYPE,
   getCompatibleInputHandleId,
   getCompatibleOutputHandleId,
-  SELF_OUTPUT_PIN_LOCAL_ID,
   templateHasCompatibleInput,
   templateHasCompatibleOutput,
 } from "./pinUtils";
 import { INPUT_HANDLE_ID } from "./sharedConstants";
 import type { NodeEditorWorkspaceContext, NodePin, NodeTemplate } from "./workspaceTypes";
 import {
-  getDefaultTemplateForTemplateOrVariantId,
   getVariantKind,
 } from "./variantUtils";
 
@@ -249,52 +250,6 @@ function normalizeNodeDefinitionForReuse(value: unknown): unknown {
   }
 
   return value;
-}
-
-function getRootTemplate(workspaceContext: NodeEditorWorkspaceContext): NodeTemplate | undefined {
-  return getDefaultTemplateForTemplateOrVariantId(
-    workspaceContext,
-    workspaceContext.rootTemplateOrVariantId,
-  );
-}
-
-function getRootSelfConnectionType(rootTemplate: NodeTemplate | undefined): string | undefined {
-  if (!rootTemplate) {
-    return undefined;
-  }
-
-  return (
-    rootTemplate.inputPins.find(pin => pin.localId === "Input" || pin.schemaKey === INPUT_HANDLE_ID)?.connectionType ??
-    rootTemplate.outputPins.find(
-      pin => pin.localId === SELF_OUTPUT_PIN_LOCAL_ID || pin.schemaKey === SELF_OUTPUT_PIN_LOCAL_ID,
-    )?.connectionType
-  );
-}
-
-function findCompatibleRootComponentReferenceTemplate(
-  workspaceContext: NodeEditorWorkspaceContext,
-): NodeTemplate | undefined {
-  const rootConnectionType = getRootSelfConnectionType(getRootTemplate(workspaceContext));
-  if (!rootConnectionType) {
-    return undefined;
-  }
-
-  const compatibleTemplates = Object.values(workspaceContext.nodeTemplatesById).filter(template => {
-    if (!isComponentReferenceNodeTemplate(template)) {
-      return false;
-    }
-
-    if (getComponentReferenceSlotOccupancy(template) !== "normal-item") {
-      return false;
-    }
-
-    return (
-      templateHasCompatibleInput(template, rootConnectionType, workspaceContext.connectionTypesById) ||
-      templateHasCompatibleOutput(template, rootConnectionType, workspaceContext.connectionTypesById)
-    );
-  });
-
-  return compatibleTemplates.length === 1 ? compatibleTemplates[0] : undefined;
 }
 
 export function parseAssetDocumentToGraphDocument(

@@ -6,6 +6,10 @@ import { createContext } from "svelte";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { applyNodeEditorGraphEdit } from "@shared/node-editor/graphEditUtils";
 import {
+  canNodeBeSetAsWorkspaceRoot,
+  getValidTemplatesForTemplateOrVariantId,
+} from "@shared/node-editor/rootCompatibility";
+import {
   type NodeEditorGraphDocument,
   type NodeEditorGraphEdit,
 } from "@shared/node-editor/graphTypes";
@@ -102,6 +106,7 @@ export class NodeEditorSession {
   context = $state<NodeEditorWorkspaceContext>();
   hostBridge = $state<NodeEditorHostBridge | undefined>();
   allowOpenRawJson = $state(true);
+  embeddedGraphFieldPath = $state<string | undefined>();
 
   actionRequests = $state<ActionRequest[]>([]);
 
@@ -346,16 +351,27 @@ export class NodeEditorSession {
   }
 
   getValidTemplates(variantKindOrTemplateId: string | undefined): NodeTemplate[] {
-    const variantKind = this.context.variantKindsById[variantKindOrTemplateId];
-    if (variantKind) {
-      return Object.values(variantKind.Variants).map(
-        templateId => this.context.nodeTemplatesById[templateId],
-      );
+    return getValidTemplatesForTemplateOrVariantId(this.context, variantKindOrTemplateId);
+  }
+
+  setRootNode(nodeId: string): boolean {
+    const node = this.getNodeById(nodeId);
+    if (
+      !node ||
+      !canNodeBeSetAsWorkspaceRoot({
+        nodeId,
+        currentRootNodeId: this.rootNodeId,
+        nodeType: node.type,
+        template: node.data,
+        workspaceContext: this.context,
+      })
+    ) {
+      return false;
     }
-    if (variantKindOrTemplateId) {
-      return [this.context.nodeTemplatesById[variantKindOrTemplateId]];
-    }
-    return [];
+
+    this.rootNodeId = nodeId;
+    this.applyDocumentState("element-list-changed");
+    return true;
   }
 
   selectNode(nodeId: string, selectionType: SelectionType): void {

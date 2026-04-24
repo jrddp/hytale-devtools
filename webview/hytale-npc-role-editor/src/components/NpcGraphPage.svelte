@@ -66,6 +66,11 @@
   let lastSyncedDocumentVersion = $state<number | null>(null);
   let lastSyncedGraphFieldPath = $state<string | null>(null);
   let lastAutoFitFieldPath = $state<string | null>(null);
+  let lastHandledSetRootRequestVersion = $state(0);
+
+  $effect(() => {
+    session.embeddedGraphFieldPath = field.fieldPath;
+  });
 
   $effect(() => {
     if (session.controlScheme !== controlScheme) {
@@ -276,6 +281,23 @@
     } else {
       workspace.clearAppearanceFocusedAnimationOverride();
     }
+  });
+
+  $effect(() => {
+    const requestVersion = workspace.graphRootSetRequestVersion;
+    if (
+      requestVersion === lastHandledSetRootRequestVersion ||
+      workspace.graphRootSetRequestFieldPath !== field.fieldPath ||
+      !workspace.graphRootSetRequestNodeId
+    ) {
+      return;
+    }
+
+    lastHandledSetRootRequestVersion = requestVersion;
+    session.actionRequests.push({
+      type: "set-root",
+      nodeId: workspace.graphRootSetRequestNodeId,
+    });
   });
 
   onDestroy(() => {

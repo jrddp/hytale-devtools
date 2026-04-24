@@ -76,6 +76,16 @@
         "category": "Hytale NPC Role Editor"
       },
       {
+        "command": "hytale-devtools.npcRoleEditor.context.setGraphRoot",
+        "title": "Set Root",
+        "category": "Hytale NPC Role Editor"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.context.setRoot",
+        "title": "Set Root",
+        "category": "Hytale Node Editor"
+      },
+      {
         "command": "hytale-devtools.nodeEditor.quickAction.go-to-root",
         "title": "Go to Root",
         "category": "Hytale Node Editor",
@@ -120,6 +130,16 @@
     ],
     "menus": {
       "webview/context": [
+        {
+          "command": "hytale-devtools.nodeEditor.context.setRoot",
+          "when": "webviewId == 'hytale-devtools.hytaleNodeEditor' && webviewSection == 'nodeEditorNode' && nodeEditorCanSetRoot",
+          "group": "2_modification@1"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.setGraphRoot",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'nodeEditorNode' && nodeEditorCanSetRoot && nodeEditorGraphFieldPath",
+          "group": "2_modification@1"
+        },
         {
           "command": "hytale-devtools.npcRoleEditor.context.renameParameter",
           "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'npcParameterRow'",
@@ -183,6 +203,14 @@
         },
         {
           "command": "hytale-devtools.npcRoleEditor.context.logFieldInstance",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.setGraphRoot",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.nodeEditor.context.setRoot",
           "when": "false"
         }
       ]

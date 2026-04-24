@@ -587,6 +587,9 @@
         case "customize-keybinds":
           workspace.postMessageToHost({ type: "openKeybindings", query: "Hytale Node Editor" });
           break;
+        case "set-root":
+          workspace.setRootNode(action.nodeId);
+          break;
         case "document-refresh":
           if (!workspace.areNodesMeasured) {
             retained.push(action);
@@ -873,7 +876,17 @@
     if (workspace.controlScheme !== "mouse") {
       return;
     }
+    if (isSetRootNativeContextTarget(event)) {
+      return;
+    }
     event.preventDefault();
+  }
+
+  function isSetRootNativeContextTarget(event: Event): boolean {
+    return (
+      event.target instanceof Element &&
+      event.target.closest("[data-node-editor-set-root-context='true']") !== null
+    );
   }
 
   // In low-detail mode the real node DOM is hidden, so clicks on canvas-rendered nodes still target the pane.
@@ -1054,6 +1067,9 @@
     // ## On Node Context Menu
     onnodecontextmenu: ({ event: pointerEvent, node }) => {
       if (workspace.controlScheme === "mouse") {
+        if (isSetRootNativeContextTarget(pointerEvent)) {
+          return;
+        }
         pointerEvent.preventDefault();
         pointerEvent.stopPropagation();
         return;

@@ -45,7 +45,7 @@ export function reconcileSessionWithGraphUpdate({
     return false;
   }
 
-  if (appliedEdit && applyIncomingGraphEditToSession(session, appliedEdit)) {
+  if (session.committedGraphDocument && appliedEdit && applyIncomingGraphEditToSession(session, appliedEdit)) {
     session.sourceVersion = version;
     const nextCommittedGraphDocument = session.committedGraphDocument
       ? cloneJsonLike(session.committedGraphDocument)

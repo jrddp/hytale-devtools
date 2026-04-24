@@ -6,6 +6,7 @@
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
   import { shouldShowRootTitlePrefix } from "@node-editor/node-editor/utils/rootTitle";
+  import { canNodeBeSetAsWorkspaceRoot } from "@shared/node-editor/rootCompatibility";
   import { shouldShowInputPinLabels } from "@shared/node-editor/pinUtils";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { Snippet } from "svelte";
@@ -13,7 +14,7 @@
   import NodePinHandle from "./NodePinHandle.svelte";
 
   const { updateNodeData } = useSvelteFlow();
-  const { id, data, children, selected, dragging, ...props }: FlowNode & { children?: Snippet } =
+  const { id, type: nodeType, data, children, selected, dragging, ...props }: FlowNode & { children?: Snippet } =
     $props();
   const workspace = useNodeEditorSession();
 
@@ -37,6 +38,25 @@
   let effectiveTitle = $derived(titleOverride ?? defaultTitle);
   const isRootNode = $derived(workspace.rootNodeId === id);
   const showRootTitlePrefix = $derived(shouldShowRootTitlePrefix(effectiveTitle, isRootNode));
+  const canSetRoot = $derived(
+    canNodeBeSetAsWorkspaceRoot({
+      nodeId: id,
+      currentRootNodeId: workspace.rootNodeId,
+      nodeType,
+      template: data,
+      workspaceContext: workspace.context,
+    }),
+  );
+  const vscodeContext = $derived(
+    JSON.stringify({
+      webviewSection: "nodeEditorNode",
+      nodeEditorNodeId: id,
+      nodeEditorCanSetRoot: canSetRoot,
+      ...(workspace.embeddedGraphFieldPath
+        ? { nodeEditorGraphFieldPath: workspace.embeddedGraphFieldPath }
+        : {}),
+    }),
+  );
   let titleInputElement = $state<HTMLInputElement>();
   let titleSizerWidth = $state(0);
   let isEditingTitle = $state(false);
@@ -123,6 +143,8 @@
 
 <div
   class="ring ring-vsc-editor-widget-border rounded-lg shadow-lg bg-vsc-editor-widget-bg text-vsc-editor-fg transition-[border-color,box-shadow] overflow-visible"
+  data-vscode-context={vscodeContext}
+  data-node-editor-set-root-context={canSetRoot ? "true" : undefined}
   style="min-width: {MIN_WIDTH_PX}px; outline: {selected
     ? '2px solid var(--vscode-focusBorder)'
     : 'none'}; {dragging && 'cursor-grabbing!'}"
