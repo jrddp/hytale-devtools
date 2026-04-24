@@ -14,6 +14,12 @@
     createEmptyNodeEditorClipboardSelection,
     type NodeEditorClipboardSelection,
   } from "@shared/node-editor/clipboardTypes";
+  import { parseAssetDocumentToGraphDocument } from "@shared/node-editor/graphDocument";
+  import { adaptGraphHostValueToDocumentRoot } from "@shared/npc-role-editor/graphRootAdapter";
+  import { parseNpcRoleDocumentOrThrow } from "@shared/npc-role-editor/graphDocumentRuntime";
+  import { resolveNpcGraphTarget } from "@shared/npc-role-editor/graphTargets";
+  import type { NpcRoleJson } from "@shared/npc-role-editor/documentTypes";
+  import type { NodeEditorGraphNode } from "@shared/node-editor/graphTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
   import { onMount, tick, untrack } from "svelte";
   import type { VSCodeApi } from "./common";
@@ -77,6 +83,17 @@
       kind: "properties" as const,
     })),
   );
+  const graphNavigationDocument = $derived.by(() => {
+    if (typeof workspace.documentText !== "string") {
+      return null;
+    }
+
+    try {
+      return parseNpcRoleDocumentOrThrow(workspace.documentText).document;
+    } catch {
+      return null;
+    }
+  });
 
   const graphNavigationEntries = $derived.by(() =>
     workspace.propertySections
@@ -86,6 +103,7 @@
         name: section.name,
         fieldCount: section.fields.length,
         kind: "graph" as const,
+        subtitle: getGraphNavigationSubtitle(section),
         section,
       })),
   );
@@ -102,11 +120,13 @@
     name: string;
     fieldCount: number;
     kind: "properties" | "graph";
+    subtitle?: string;
   }) => ({
     id: entry.id,
     name: entry.name,
     fieldCount: entry.fieldCount,
     kind: entry.kind,
+    subtitle: entry.subtitle,
     active: entry.id === activeNavigationEntryId,
     onclick: () => {
       const section = getSectionById(entry.id);
@@ -408,6 +428,100 @@
     return field.kind === "graph" ? field : null;
   }
 
+  function getGraphNavigationSubtitle(section: NpcPropertySection): string {
+    const field = getGraphRootField(section);
+    if (!field) {
+      return "Not set";
+    }
+
+    const workspaceContext = getGraphWorkspaceContextForSection(section);
+    if (!workspaceContext) {
+      return "Not set";
+    }
+
+    if (graphNavigationDocument) {
+      const target = resolveNpcGraphTarget(graphNavigationDocument, field.fieldPath);
+      if (!target || !isGraphFieldSetInDocument(graphNavigationDocument, field.fieldPath)) {
+        return "Not set";
+      }
+
+      try {
+        return getGraphNodeCountSubtitle(target.value, workspaceContext, target.preservedData);
+      } catch {
+        return "Not set";
+      }
+    }
+
+    if (field.isSet === false) {
+      return "Not set";
+    }
+
+    try {
+      const value = field.value.kind === "literal" ? field.value.value : undefined;
+      return getGraphNodeCountSubtitle(value, workspaceContext, field.preservedData);
+    } catch {
+      return "Not set";
+    }
+  }
+
+  function getGraphNodeCountSubtitle(
+    value: unknown,
+    workspaceContext: NodeEditorWorkspaceContext,
+    preservedData?: Record<string, unknown>,
+  ): string {
+    const graphDocument = parseAssetDocumentToGraphDocument(
+      adaptGraphHostValueToDocumentRoot(value, workspaceContext, preservedData),
+      workspaceContext,
+    );
+    const count = graphDocument.nodes.filter(
+      node => isCountedGraphContentNode(node, graphDocument.rootNodeId, workspaceContext),
+    ).length;
+    return `${count} ${count === 1 ? "node" : "nodes"}`;
+  }
+
+  function isCountedGraphContentNode(
+    node: NodeEditorGraphNode,
+    rootNodeId: string | undefined,
+    workspaceContext: NodeEditorWorkspaceContext,
+  ): boolean {
+    if (node.type === "groupnode" || node.type === "comment") {
+      return false;
+    }
+
+    return node.id !== rootNodeId || !isImplicitGraphRootNode(node, workspaceContext);
+  }
+
+  function isImplicitGraphRootNode(
+    node: NodeEditorGraphNode,
+    workspaceContext: NodeEditorWorkspaceContext,
+  ): boolean {
+    const template = workspaceContext.nodeTemplatesById[node.data.templateId];
+    return (
+      node.data.templateId === workspaceContext.rootTemplateOrVariantId &&
+      !!template &&
+      Object.values(template.childSchemas).some(
+        childSchema => childSchema.serializationType === "root",
+      )
+    );
+  }
+
+  function isGraphFieldSetInDocument(document: NpcRoleJson, fieldPath: string): boolean {
+    switch (fieldPath) {
+      case "Instructions":
+      case "InteractionInstruction":
+      case "DeathInstruction":
+        return Object.prototype.hasOwnProperty.call(document, fieldPath);
+      case "Content":
+        return (
+          document.Type === "Component" &&
+          (document.Class === "Instruction" || document.Class === "Sensor") &&
+          Object.prototype.hasOwnProperty.call(document, "Content")
+        );
+      default:
+        return false;
+    }
+  }
+
   function getGraphWorkspaceContextByRootType(
     rootType: string,
   ): NodeEditorWorkspaceContext | undefined {
@@ -431,6 +545,7 @@
 
   async function navigateToSection(section: NpcPropertySection) {
     if (isGraphPageSection(section)) {
+      pendingPropertySectionId = null;
       activeGraphSectionId = section.id;
       return;
     }
@@ -449,9 +564,11 @@
     const sectionTop = sectionElement.getBoundingClientRect().top;
 
     scrollRootElement.scrollTo({
-      behavior: "smooth",
+      behavior: "instant",
       top: scrollRootElement.scrollTop + sectionTop - rootTop - OUTLINE_ACTIVE_OFFSET_PX,
     });
+    pendingPropertySectionId = null;
+    updateActivePropertySection();
   }
 
   function updateActivePropertySection() {
@@ -600,7 +717,9 @@
                   onclick={button.onclick}
                 >
                   <div class="truncate text-sm font-semibold">{button.name}</div>
-                  <div class="text-xs opacity-70">Graph page</div>
+                  {#if button.subtitle}
+                    <div class="text-xs opacity-70">{button.subtitle}</div>
+                  {/if}
                 </button>
               {/each}
             </div>

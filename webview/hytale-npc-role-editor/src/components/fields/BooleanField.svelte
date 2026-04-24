@@ -43,6 +43,7 @@
 <FieldPanel
   title={field.label}
   typeLabel={getNpcFieldTypeLabel(field)}
+  required={field.required === true}
   description={field.description}
   issues={issues}
   titleActions={computeToggle}

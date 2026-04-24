@@ -22,6 +22,7 @@ export {
   createStateTransitionEntryId,
   createVariantModifyOverrideFieldFromParent,
   getNpcFieldTypeLabel,
+  summarizeNpcFieldValue,
   getTypeHintForItemType,
   humanize,
   inferItemTypeFromPrimitiveList,

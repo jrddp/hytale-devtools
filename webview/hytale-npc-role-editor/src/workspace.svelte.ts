@@ -67,6 +67,10 @@ import {
   updateWorkspaceStandardParameterEditorType,
 } from "./workspace/actions/parameterActions";
 import {
+  addWorkspaceRoleAttribute,
+  getAvailableWorkspaceRoleAttributeFields,
+} from "./workspace/actions/roleAttributeActions";
+import {
   addWorkspaceStateTransition,
   addWorkspaceStateTransitionEdge,
   removeWorkspaceStateTransition,
@@ -456,6 +460,21 @@ export class Workspace {
       return true;
     }
 
+    const roleAttributesSection = findWorkspaceSection(this.propertySections, "roleAttributes");
+    if (roleAttributesSection && fieldLocation.section.id === "roleAttributes" && field.required !== true) {
+      const nextFields = roleAttributesSection.fields.filter(
+        candidate => candidate.fieldPath !== fieldPath,
+      );
+      if (nextFields.length === roleAttributesSection.fields.length) {
+        return false;
+      }
+
+      roleAttributesSection.fields = nextFields;
+      recomputeWorkspaceDerivedState(this);
+      this.applyDocumentState();
+      return true;
+    }
+
     if (fieldLocation.arrayParentField && fieldLocation.arrayIndex !== null) {
       fieldLocation.arrayParentField.childFields = (fieldLocation.arrayParentField.childFields ?? []).filter(
         (_, index) => index !== fieldLocation.arrayIndex,
@@ -515,6 +534,10 @@ export class Workspace {
 
   addVariantModifyOverride(parameterName: string) {
     return addWorkspaceVariantModifyOverride(this, parameterName);
+  }
+
+  addRoleAttribute(attributeKey: string) {
+    return addWorkspaceRoleAttribute(this, attributeKey);
   }
 
   setRichObjectVariantType(fieldPath: string, nextType: string) {
@@ -680,6 +703,10 @@ export class Workspace {
 
   getAvailableVariantModifyOverrideFields(): NpcPropertyField[] {
     return getAvailableWorkspaceVariantModifyOverrideFields(this);
+  }
+
+  getAvailableRoleAttributeFields(): NpcPropertyField[] {
+    return getAvailableWorkspaceRoleAttributeFields(this);
   }
 
   handleContextAction(message: NpcRoleEditorContextActionMessage) {

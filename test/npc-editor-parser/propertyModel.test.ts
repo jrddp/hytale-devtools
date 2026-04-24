@@ -11,6 +11,7 @@ import { buildParameterUsageIndex } from "../../webview/hytale-npc-role-editor/s
 import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
 import type { NpcRoleJson } from "../../webview/hytale-npc-role-editor/src/parsing/documentTypes";
 import { serializeNpcDocument } from "../../webview/hytale-npc-role-editor/src/parsing/serializeNpcDocument";
+import { getAvailableRoleAttributeFields } from "../../webview/hytale-npc-role-editor/src/roleAttributeFields";
 
 function createGenericDocument({
   roleAttributes = {},
@@ -436,6 +437,134 @@ describe("npc property model symbol enrichment", () => {
     });
     expect(roleAttributeSection?.fields.find(field => field.key === "BusyStates")).toMatchObject({
       stateAutocompleteKind: "role-full",
+    });
+  });
+
+  test("treats BusyStates as addable despite its descriptor-required mismatch", () => {
+    const document = createGenericDocument();
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "StartState",
+            Type: "String",
+            Required: "REQUIRED",
+          },
+          {
+            Name: "BusyStates",
+            Type: "StringList",
+            Required: "REQUIRED",
+          },
+          {
+            Name: "DisplayNames",
+            Type: "StringList",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+
+    expect(state.sections.find(section => section.id === "roleAttributes")?.fields.map(field => field.key)).toEqual([
+      "StartState",
+    ]);
+
+    const availableFields = getAvailableRoleAttributeFields({
+      roleType: "Generic",
+      descriptors,
+      includedKeys: [],
+    });
+
+    expect(availableFields.find(field => field.key === "BusyStates")).toMatchObject({
+      kind: "list",
+      itemType: "string",
+      required: false,
+      stateAutocompleteKind: "role-full",
+    });
+    expect(availableFields.find(field => field.key === "DisplayNames")).toMatchObject({
+      kind: "list",
+      itemType: "string",
+      required: false,
+    });
+  });
+
+  test("orders required role attributes before optional ones", () => {
+    const document = createGenericDocument({
+      roleAttributes: {
+        Appearance: "NPCs/Test",
+        BusyStates: ["Idle.Patrol"],
+      },
+    });
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+          },
+          {
+            Name: "StartState",
+            Type: "String",
+            Required: "REQUIRED",
+          },
+          {
+            Name: "BusyStates",
+            Type: "Array",
+            Domain: "String",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+
+    expect(state.sections.find(section => section.id === "roleAttributes")?.fields.map(field => field.key)).toEqual([
+      "StartState",
+      "Appearance",
+      "BusyStates",
+    ]);
+  });
+
+  test("keeps an empty role attributes section when descriptor-backed role attributes are available", () => {
+    const document = createGenericDocument();
+    const descriptors: NpcDescriptorDocument = [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "Appearance",
+            Type: "Asset",
+            Domain: "Model",
+          },
+        ],
+      },
+    ];
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors,
+    });
+
+    expect(state.sections.find(section => section.id === "roleAttributes")).toMatchObject({
+      fields: [],
+    });
+    expect(serializeNpcPropertyState(state)).toEqual({
+      Type: "Generic",
     });
   });
 

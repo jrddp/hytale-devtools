@@ -39,11 +39,14 @@ function createVariantDocument({
   };
 }
 
-function buildSections(document: NpcRoleJson): NpcPropertySection[] {
+function buildSections(
+  document: NpcRoleJson,
+  descriptors: Parameters<typeof buildNpcPropertyState>[0]["descriptors"] = [],
+): NpcPropertySection[] {
   return buildNpcPropertyState({
     document,
     topLevelKeyOrder: Object.keys(document),
-    descriptors: [],
+    descriptors,
   }).sections;
 }
 
@@ -116,6 +119,72 @@ describe("npc editor issues", () => {
           code: "compute-parse-error",
           message: "Invalid expression.",
           fieldPath: "MaxHealth",
+        }),
+      ]),
+    );
+  });
+
+  test("builds missing required role attribute errors", () => {
+    const document = createGenericDocument({});
+    const sections = buildSections(document, [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "StartState",
+            Type: "String",
+            Required: "REQUIRED",
+          },
+        ],
+      },
+    ]);
+
+    const issues = buildNpcIssues({
+      roleType: "Generic",
+      sections,
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+    });
+
+    expect(issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          severity: "error",
+          code: "required-role-attribute-missing",
+          message: "Required role attribute is unset.",
+          fieldPath: "StartState",
+        }),
+      ]),
+    );
+  });
+
+  test("does not flag BusyStates as missing when runtime treats it as optional", () => {
+    const document = createGenericDocument({});
+    const sections = buildSections(document, [
+      {
+        Name: "Generic",
+        Category: "Role",
+        Attributes: [
+          {
+            Name: "BusyStates",
+            Type: "StringList",
+            Required: "REQUIRED",
+          },
+        ],
+      },
+    ]);
+
+    const issues = buildNpcIssues({
+      roleType: "Generic",
+      sections,
+      parameterUsageIndex: buildParameterUsageIndex(serializeNpcDocument(document)),
+    });
+
+    expect(issues).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "required-role-attribute-missing",
+          fieldPath: "BusyStates",
         }),
       ]),
     );
