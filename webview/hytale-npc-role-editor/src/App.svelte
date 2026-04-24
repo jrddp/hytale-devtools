@@ -16,6 +16,10 @@
   } from "@shared/node-editor/clipboardTypes";
   import { parseAssetDocumentToGraphDocument } from "@shared/node-editor/graphDocument";
   import { adaptGraphHostValueToDocumentRoot } from "@shared/npc-role-editor/graphRootAdapter";
+  import { parseNpcRoleDocumentOrThrow } from "@shared/npc-role-editor/graphDocumentRuntime";
+  import { resolveNpcGraphTarget } from "@shared/npc-role-editor/graphTargets";
+  import type { NpcRoleJson } from "@shared/npc-role-editor/documentTypes";
+  import type { NodeEditorGraphNode } from "@shared/node-editor/graphTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
   import { onMount, tick, untrack } from "svelte";
   import type { VSCodeApi } from "./common";
@@ -79,6 +83,17 @@
       kind: "properties" as const,
     })),
   );
+  const graphNavigationDocument = $derived.by(() => {
+    if (typeof workspace.documentText !== "string") {
+      return null;
+    }
+
+    try {
+      return parseNpcRoleDocumentOrThrow(workspace.documentText).document;
+    } catch {
+      return null;
+    }
+  });
 
   const graphNavigationEntries = $derived.by(() =>
     workspace.propertySections
@@ -415,7 +430,7 @@
 
   function getGraphNavigationSubtitle(section: NpcPropertySection): string {
     const field = getGraphRootField(section);
-    if (!field || field.isSet === false) {
+    if (!field) {
       return "Not set";
     }
 
@@ -424,21 +439,86 @@
       return "Not set";
     }
 
+    if (graphNavigationDocument) {
+      const target = resolveNpcGraphTarget(graphNavigationDocument, field.fieldPath);
+      if (!target || !isGraphFieldSetInDocument(graphNavigationDocument, field.fieldPath)) {
+        return "Not set";
+      }
+
+      try {
+        return getGraphNodeCountSubtitle(target.value, workspaceContext, target.preservedData);
+      } catch {
+        return "Not set";
+      }
+    }
+
+    if (field.isSet === false) {
+      return "Not set";
+    }
+
     try {
       const value = field.value.kind === "literal" ? field.value.value : undefined;
-      const graphDocument = parseAssetDocumentToGraphDocument(
-        adaptGraphHostValueToDocumentRoot(value, workspaceContext, field.preservedData),
-        workspaceContext,
-      );
-      const count = graphDocument.nodes.filter(
-        node =>
-          node.id !== graphDocument.rootNodeId &&
-          node.type !== "groupnode" &&
-          node.type !== "comment",
-      ).length;
-      return `${count} ${count === 1 ? "node" : "nodes"}`;
+      return getGraphNodeCountSubtitle(value, workspaceContext, field.preservedData);
     } catch {
       return "Not set";
+    }
+  }
+
+  function getGraphNodeCountSubtitle(
+    value: unknown,
+    workspaceContext: NodeEditorWorkspaceContext,
+    preservedData?: Record<string, unknown>,
+  ): string {
+    const graphDocument = parseAssetDocumentToGraphDocument(
+      adaptGraphHostValueToDocumentRoot(value, workspaceContext, preservedData),
+      workspaceContext,
+    );
+    const count = graphDocument.nodes.filter(
+      node => isCountedGraphContentNode(node, graphDocument.rootNodeId, workspaceContext),
+    ).length;
+    return `${count} ${count === 1 ? "node" : "nodes"}`;
+  }
+
+  function isCountedGraphContentNode(
+    node: NodeEditorGraphNode,
+    rootNodeId: string | undefined,
+    workspaceContext: NodeEditorWorkspaceContext,
+  ): boolean {
+    if (node.type === "groupnode" || node.type === "comment") {
+      return false;
+    }
+
+    return node.id !== rootNodeId || !isImplicitGraphRootNode(node, workspaceContext);
+  }
+
+  function isImplicitGraphRootNode(
+    node: NodeEditorGraphNode,
+    workspaceContext: NodeEditorWorkspaceContext,
+  ): boolean {
+    const template = workspaceContext.nodeTemplatesById[node.data.templateId];
+    return (
+      node.data.templateId === workspaceContext.rootTemplateOrVariantId &&
+      !!template &&
+      Object.values(template.childSchemas).some(
+        childSchema => childSchema.serializationType === "root",
+      )
+    );
+  }
+
+  function isGraphFieldSetInDocument(document: NpcRoleJson, fieldPath: string): boolean {
+    switch (fieldPath) {
+      case "Instructions":
+      case "InteractionInstruction":
+      case "DeathInstruction":
+        return Object.prototype.hasOwnProperty.call(document, fieldPath);
+      case "Content":
+        return (
+          document.Type === "Component" &&
+          (document.Class === "Instruction" || document.Class === "Sensor") &&
+          Object.prototype.hasOwnProperty.call(document, "Content")
+        );
+      default:
+        return false;
     }
   }
 
