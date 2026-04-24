@@ -543,6 +543,7 @@ export function parseAssetDocumentToGraphDocument(
         if (hasExplicitField) {
           clonedTemplateData.fieldsBySchemaKey[key].value = value;
           clonedTemplateData.fieldsBySchemaKey[key].isImplicit = false;
+          clonedTemplateData.fieldsBySchemaKey[key].isSet = true;
         }
       }
 

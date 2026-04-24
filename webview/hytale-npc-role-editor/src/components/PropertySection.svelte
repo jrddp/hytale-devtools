@@ -53,7 +53,7 @@
     {section}
     addButtonLabel="Add State Transition"
     onadd={() => {
-      workspace.addStateTransition("StateTransitions");
+      workspace.addTopLevelStateTransitionsRoot();
     }}
   />
 {:else}

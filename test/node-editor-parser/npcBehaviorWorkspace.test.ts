@@ -64,22 +64,13 @@ function mergeAttributes(descriptors: NpcDescriptorDocument): Array<{ Name: stri
   return Array.from(attributesByName.values());
 }
 
-function getNpcBehaviorContext(rootId: "Instructions" | "Instruction" | "Sensor"): NodeEditorWorkspaceContext {
+function getNpcBehaviorContext(
+  rootId: "Instructions" | "Instruction" | "Sensor" | "StateTransitions",
+): NodeEditorWorkspaceContext {
   const workspaceRuntime = createWorkspaceRuntime();
-  const workspace = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"];
-  expect(workspace).toBeDefined();
-
-  const root = workspace.roots[rootId];
-  expect(root).toBeDefined();
-
-  return {
-    nodeTemplatesById: workspace.nodeTemplatesById,
-    variantKindsById: workspace.variantKindsById,
-    templateCategories: workspace.templateCategories,
-    rootTemplateOrVariantId: root.RootNodeType,
-    rootMenuName: root.MenuName,
-    connectionTypesById: workspace.connectionTypesById,
-  };
+  const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", rootId);
+  expect(context).toBeDefined();
+  return context!;
 }
 
 function expectSemanticRoundTrip(
@@ -107,10 +98,16 @@ describe("NPC Behavior workspace generation", () => {
     const workspace = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"];
     expect(workspace).toBeDefined();
 
-    expect(Object.keys(workspace.roots).sort()).toEqual(["Instruction", "Instructions", "Sensor"]);
+    expect(Object.keys(workspace.roots).sort()).toEqual([
+      "Instruction",
+      "Instructions",
+      "Sensor",
+      "StateTransitions",
+    ]);
     expect(workspace.roots.Instruction.RootNodeType).toBe("Structural.InstructionNode");
     expect(workspace.roots.Instructions.RootNodeType).toBe("Structural.InstructionListRoot");
     expect(workspace.roots.Sensor.RootNodeType).toBe("SensorVariants");
+    expect(workspace.roots.StateTransitions.RootNodeType).toBe("Structural.StateTransitionListRoot");
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"].nodeColor).toBe(
@@ -170,6 +167,8 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace.nodeTemplatesById["Sensor.Target"].fieldsBySchemaKey.Range?.computable).toBe(true);
     expect(workspace.nodeTemplatesById["Sensor.Target"].fieldsBySchemaKey.TargetSlot?.computable).toBe(true);
     expect(workspace.nodeTemplatesById["Action.Timeout"]).toBeDefined();
+    expect(workspace.nodeTemplatesById["Structural.StateTransitionNode"]).toBeDefined();
+    expect(workspace.nodeTemplatesById["Structural.StateTransitionMappingNode"]).toBeDefined();
     expect(workspace.nodeTemplatesById["WeightedAction.WeightedAction"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Path.Path"]).toBeDefined();
     expect(workspace.nodeTemplatesById["RelativeWaypointDefinition.RelativeWaypointDefinition"]).toBeDefined();
@@ -194,6 +193,25 @@ describe("NPC Behavior workspace generation", () => {
         pin => pin.localId === "Output" && pin.connectionType === "ValueToParameterMapping",
       ),
     ).toBe(true);
+  });
+
+  test("filters the StateTransitions root to actions and state-transition templates", () => {
+    const context = getNpcBehaviorContext("StateTransitions");
+
+    expect(Object.keys(context.templateCategories).sort()).toEqual(["Actions", "State Transitions"]);
+    expect(context.templateCategories.Actions).toContain("Action.Timeout");
+    expect(context.templateCategories["State Transitions"]).toEqual([
+      "Structural.StateTransitionNode",
+      "Structural.StateTransitionMappingNode",
+    ]);
+    expect(context.templateCategories.Sensors).toBeUndefined();
+
+    const transitionNode = context.nodeTemplatesById["Structural.StateTransitionNode"];
+    const mappingNode = context.nodeTemplatesById["Structural.StateTransitionMappingNode"];
+    expect(transitionNode.inputPins.some(pin => pin.schemaKey === "States")).toBe(true);
+    expect(transitionNode.outputPins.some(pin => pin.schemaKey === "States")).toBe(false);
+    expect(mappingNode.outputPins.some(pin => pin.connectionType === "StateTransitionMapping")).toBe(true);
+    expect(mappingNode.inputPins.some(pin => pin.connectionType === "StateTransitionMapping")).toBe(false);
   });
 
   test("uses the reference editor dark-theme palette for generated NPC node families", () => {
@@ -712,6 +730,124 @@ describe("NPC Behavior workspace generation", () => {
 
     expect(serialized.Instructions).toBeInstanceOf(Array);
     expect((serialized.Instructions as unknown[])).toHaveLength(2);
+  });
+
+  test("round-trips the StateTransitions root with nested mappings and shared actions", () => {
+    const context = getNpcBehaviorContext("StateTransitions");
+    const serialized = expectSemanticRoundTrip(
+      {
+        StateTransitions: [
+          {
+            $NodeId: "Transition-1",
+            $Comment: "Alert",
+            Enabled: {
+              Compute: "CanAlert",
+            },
+            States: [
+              {
+                $NodeId: "Mapping-1",
+                From: ["Idle"],
+                To: ["Alerted"],
+                Priority: 2,
+                Enabled: true,
+              },
+              {
+                $NodeId: "Mapping-2",
+                From: ["Search"],
+                To: ["Idle"],
+              },
+            ],
+            Actions: [
+              {
+                $NodeId: "Action-1",
+                Type: "Timeout",
+                Delay: [1, 1],
+              },
+            ],
+          },
+        ],
+      },
+      context,
+    );
+
+    expect(serialized.StateTransitions).toHaveLength(1);
+    expect(serialized.StateTransitions?.[0]).toMatchObject({
+      $Comment: "Alert",
+      Enabled: {
+        Compute: "CanAlert",
+      },
+    });
+    expect(serialized.StateTransitions?.[0]?.$NodeId).toMatch(/^Transition-1-/);
+    expect(serialized.StateTransitions?.[0]?.States).toHaveLength(2);
+    expect(serialized.StateTransitions?.[0]?.States?.[0]).toMatchObject({
+      From: ["Idle"],
+      To: ["Alerted"],
+      Priority: 2,
+      Enabled: true,
+    });
+    expect(serialized.StateTransitions?.[0]?.States?.[0]?.$NodeId).toMatch(/^Mapping-1-/);
+    expect(serialized.StateTransitions?.[0]?.States?.[1]).toMatchObject({
+      From: ["Search"],
+      To: ["Idle"],
+    });
+    expect(serialized.StateTransitions?.[0]?.States?.[1]?.$NodeId).toMatch(/^Mapping-2-/);
+    expect(serialized.StateTransitions?.[0]?.Actions).toHaveLength(1);
+    expect(serialized.StateTransitions?.[0]?.Actions?.[0]).toMatchObject({
+      Type: "Timeout",
+      Delay: [1, 1],
+    });
+    expect(serialized.StateTransitions?.[0]?.Actions?.[0]?.$NodeId).toMatch(/^Action-1-/);
+  });
+
+  test("parses StateTransitions mappings without node ids next to component-reference actions", () => {
+    const context = getNpcBehaviorContext("StateTransitions");
+    const state = parseDocumentText(
+      JSON.stringify({
+        StateTransitions: [
+          {
+            States: [
+              {
+                From: ["Idle"],
+                To: ["Sleep"],
+              },
+            ],
+            Actions: {
+              Reference: "Component_ActionList_Sleep",
+            },
+          },
+        ],
+      }),
+      context,
+    );
+
+    const mappingNode = state.nodes.find(
+      node => node.type === "datanode" && node.data.templateId === "Structural.StateTransitionMappingNode",
+    );
+    const transitionNode = state.nodes.find(
+      node => node.type === "datanode" && node.data.templateId === "Structural.StateTransitionNode",
+    );
+    expect(mappingNode).toBeDefined();
+    expect(transitionNode).toBeDefined();
+    expect(mappingNode?.data.fieldsBySchemaKey.From.value).toEqual(["Idle"]);
+    expect(mappingNode?.data.fieldsBySchemaKey.To.value).toEqual(["Sleep"]);
+    expect(state.edges).toContainEqual(
+      expect.objectContaining({
+        source: mappingNode?.id,
+        target: transitionNode?.id,
+        targetHandle: "States",
+      }),
+    );
+
+    const serialized = serializeWorkspaceState(state, context.rootMenuName);
+
+    expect(serialized.StateTransitions?.[0]?.States).toHaveLength(1);
+    expect(serialized.StateTransitions?.[0]?.States?.[0]).toMatchObject({
+      From: ["Idle"],
+      To: ["Sleep"],
+    });
+    expect(serialized.StateTransitions?.[0]?.Actions).toMatchObject({
+      Reference: "Component_ActionList_Sleep",
+    });
   });
 
   test("adapts the Instructions root between host value and graph document root while preserving $ metadata", () => {

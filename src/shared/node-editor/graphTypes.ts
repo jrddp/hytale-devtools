@@ -126,6 +126,8 @@ export type NodeEditorGraphPropertyChange =
       afterValue: unknown;
       beforeIsImplicit?: boolean;
       afterIsImplicit?: boolean;
+      beforeIsSet?: boolean;
+      afterIsSet?: boolean;
     }
   | {
       type: "comment";

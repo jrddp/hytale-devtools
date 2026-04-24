@@ -1,11 +1,6 @@
 import type { NpcComputeJson } from "./parsing/documentTypes";
 import { isNpcComputeJson, isRecord } from "./parsing/documentTypes";
-import type {
-  NpcFieldValue,
-  NpcPropertyField,
-  NpcStateTransitionEdge,
-  NpcStateTransitionEntry,
-} from "./propertyTypes";
+import type { NpcFieldValue, NpcPropertyField } from "./propertyTypes";
 
 export function getNpcFieldTypeLabel(field: NpcPropertyField): string {
   if (field.value.kind === "compute") {
@@ -44,8 +39,6 @@ export function getNpcFieldTypeLabel(field: NpcPropertyField): string {
       return "Graph";
     case "richObject":
       return "Structured Content";
-    case "stateTransitions":
-      return "State Transitions";
   }
 }
 
@@ -99,15 +92,18 @@ export function coerceFieldValueToEmptyLiteral(field: NpcPropertyField): NpcFiel
     case "list":
       return { kind: "literal", value: [] };
     case "rawJson":
-    case "graph":
       return { kind: "literal", value: {} };
+    case "graph":
+      return {
+        kind: "literal",
+        value:
+          field.value.kind === "literal" && Array.isArray(field.value.value) ? [] : {},
+      };
     case "richObject":
       return {
         kind: "literal",
         value: field.structureKind === "array" ? [] : {},
       };
-    case "stateTransitions":
-      return { kind: "literal", value: [] };
   }
 }
 
@@ -154,7 +150,6 @@ export function cloneNpcPropertyField(field: NpcPropertyField): NpcPropertyField
     itemShapeKey: field.itemShapeKey,
     variantType: field.variantType,
     typeSuggestions: field.typeSuggestions ? [...field.typeSuggestions] : undefined,
-    transitions: field.transitions?.map(cloneStateTransitionEntry),
     symbolRef: field.symbolRef ? { ...field.symbolRef } : undefined,
     animationAutocompleteKind: field.animationAutocompleteKind,
     preservedData: field.preservedData ? cloneJsonLike(field.preservedData) : undefined,
@@ -326,33 +321,4 @@ export function serializeFieldValue(value: NpcFieldValue): unknown {
   }
 
   return cloneJsonLike(value.value);
-}
-
-export function createStateTransitionEntryId(index: number): string {
-  return `state-transition-${index}`;
-}
-
-export function createStateTransitionEdgeId(index: number): string {
-  return `state-transition-edge-${index}`;
-}
-
-function cloneStateTransitionEntry(entry: NpcStateTransitionEntry): NpcStateTransitionEntry {
-  return {
-    ...entry,
-    enabled: cloneOptionalFieldValue(entry.enabled),
-    edges: entry.edges.map(cloneStateTransitionEdge),
-    actionsField: cloneNpcPropertyField(entry.actionsField),
-    preservedData: entry.preservedData ? cloneJsonLike(entry.preservedData) : undefined,
-    ui: entry.ui ? { ...entry.ui } : undefined,
-  };
-}
-
-function cloneStateTransitionEdge(edge: NpcStateTransitionEdge): NpcStateTransitionEdge {
-  return {
-    ...edge,
-    from: [...edge.from],
-    to: [...edge.to],
-    enabled: cloneOptionalFieldValue(edge.enabled),
-    preservedData: edge.preservedData ? cloneJsonLike(edge.preservedData) : undefined,
-  };
 }

@@ -234,6 +234,48 @@ describe("node editor serializeDocument", () => {
     ).toBe(true);
   });
 
+  test("omits unset fields and includes them once explicitly set", () => {
+    const context = workspaceContext({
+      templates: [
+        nodeTemplate("Root", {
+          fieldsBySchemaKey: {
+            Enabled: nodeField("Enabled", "checkbox", {
+              value: true,
+              defaultValue: true,
+              isSet: false,
+            }),
+          },
+          schemaConstants: {
+            Type: "Root",
+          },
+        }),
+      ],
+    });
+
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      context,
+    );
+
+    expect(serializeWorkspace(parsed, context.rootMenuName)).toEqual({
+      $NodeId: expect.any(String),
+      Type: "Root",
+      $NodeEditorMetadata: expect.any(Object),
+    });
+
+    const rootNode = findNodeByBaseId(parsed, "Root-1");
+    rootNode.data.fieldsBySchemaKey.Enabled.isSet = true;
+    rootNode.data.fieldsBySchemaKey.Enabled.value = false;
+
+    expect(serializeWorkspace(parsed, context.rootMenuName)).toMatchObject({
+      Type: "Root",
+      Enabled: false,
+    });
+  });
+
   test("orders multiple-child outputs by vertical position when serializing", () => {
     const parsed = parseWorkspaceDocument(
       {
@@ -279,7 +321,7 @@ describe("node editor serializeDocument", () => {
     expect(serializedChildren.map(child => child.Value)).toEqual(["Second Value", "First Value"]);
   });
 
-  test("omits implicit empty string fields but preserves non-empty defaults", () => {
+  test("omits unset fields including non-empty defaults", () => {
     const parsed = parseWorkspaceDocument(
       {
         $NodeId: "Root-1",
@@ -291,7 +333,7 @@ describe("node editor serializeDocument", () => {
     const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
 
     expect(serialized).not.toHaveProperty("Name");
-    expect(serialized.Preset).toBe("Default Preset");
+    expect(serialized).not.toHaveProperty("Preset");
   });
 
   test("preserves explicit empty string fields", () => {
@@ -323,6 +365,7 @@ describe("node editor serializeDocument", () => {
       ...rootNode.data.fieldsBySchemaKey.Name,
       value: "",
       isImplicit: false,
+      isSet: true,
     };
 
     const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);

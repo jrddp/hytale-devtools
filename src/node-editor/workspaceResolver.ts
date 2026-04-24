@@ -131,14 +131,7 @@ export class WorkspaceRuntime {
       }
     }
 
-    return {
-      nodeTemplatesById: workspace.nodeTemplatesById,
-      variantKindsById: workspace.variantKindsById,
-      templateCategories: workspace.templateCategories,
-      rootTemplateOrVariantId: rootDefinition.RootNodeType,
-      rootMenuName: rootDefinition.MenuName,
-      connectionTypesById: workspace.connectionTypesById,
-    };
+    return this.createWorkspaceContext(workspace, rootDefinition);
   }
 
   resolveWorkspaceContextByWorkspaceRoot(
@@ -158,10 +151,31 @@ export class WorkspaceRuntime {
       return null;
     }
 
+    return this.createWorkspaceContext(workspace, rootDefinition);
+  }
+
+  private createWorkspaceContext(
+    workspace: NodeEditorWorkspace,
+    rootDefinition: NodeEditorWorkspaceRootDefinition,
+  ): NodeEditorWorkspaceContext {
+    const allowedCategories = rootDefinition.AllowedCategories;
+    const allowedTemplates = rootDefinition.AllowedTemplates;
+    const templateCategories = Object.fromEntries(
+      Object.entries(workspace.templateCategories)
+        .filter(([category]) => !allowedCategories || allowedCategories.includes(category))
+        .map(([category, templateIds]) => [
+          category,
+          allowedTemplates
+            ? templateIds.filter(templateId => allowedTemplates.includes(templateId))
+            : templateIds,
+        ])
+        .filter(([, templateIds]) => templateIds.length > 0),
+    );
+
     return {
       nodeTemplatesById: workspace.nodeTemplatesById,
       variantKindsById: workspace.variantKindsById,
-      templateCategories: workspace.templateCategories,
+      templateCategories,
       rootTemplateOrVariantId: rootDefinition.RootNodeType,
       rootMenuName: rootDefinition.MenuName,
       connectionTypesById: workspace.connectionTypesById,
@@ -544,6 +558,7 @@ export class WorkspaceRuntime {
       const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
         ? content.Options.Values.filter((value): value is string => typeof value === "string")
         : undefined;
+      const defaultValue = content.Options?.Default ?? content.Options?.DefaultValue;
 
       return {
         schemaKey: content.Id,
@@ -554,9 +569,11 @@ export class WorkspaceRuntime {
           supplementedDescriptionsByLocalId[content.Id] ??
           content.Description ??
           content.Options.Description,
-        value: content.Options?.Default ?? content.Options?.DefaultValue,
+        value: defaultValue,
+        defaultValue,
         computable: content.Options?.Computable === true,
         isImplicit: true,
+        isSet: false,
         inputWidth: content.Options?.Width,
         overrideAutocompleteValues,
         symbolLookup: content.Options?.SymbolLookup

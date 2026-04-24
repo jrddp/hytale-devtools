@@ -1,0 +1,5586 @@
+{
+  "Type": "Abstract",
+  "StartState": "Idle",
+  "Parameters": {
+    "Appearance": {
+      "Value": "Deer_Stag",
+      "Description": "The NPC's model."
+    },
+    "ParticleOffset": {
+      "Value": [
+        0,
+        1,
+        0
+      ],
+      "Description": "The offset of any spawned particle systems."
+    },
+    "WanderRadius": {
+      "Value": 7,
+      "Description": "The wander radius of the NPC."
+    },
+    "ViewRange": {
+      "Value": 16,
+      "Description": "The view distance of the NPC, in blocks."
+    },
+    "ViewSector": {
+      "Value": 180,
+      "Description": "The view sector of the NPC, in degrees."
+    },
+    "HearingRange": {
+      "Value": 8,
+      "Description": "The hearing distance of the NPC, in blocks."
+    },
+    "AbsoluteDetectionRange": {
+      "Value": 4,
+      "Description": "The range at which a target is guaranteed to be detected, in blocks. If set to zero, absolute detection will be disabled. The interval [ AbsoluteDetectionRange, AlertedActionRange ] defines the distance range within which an NPC can be befriended."
+    },
+    "AlertedRange": {
+      "Value": 18,
+      "Description": "The range within which the target can be seen/sensed when the NPC is alerted to their presence, in blocks. Should be higher than sense ranges."
+    },
+    "AlertedActionRange": {
+      "Value": 8,
+      "Description": "The range at which an NPC will react to other NPCs and players, depending on the attitude towards them, in blocks. Should be higher than AbsoluteDetectionRange to make the NPC befriendable."
+    },
+    "LeashDistance": {
+      "Value": 20,
+      "Description": "The range at which an NPC will start to want to return to their spawn point, in blocks."
+    },
+    "AttractiveItemSet": {
+      "Value": [],
+      "Description": "The list of items that are deemed attractive (there's a chance targets holding them will be followed).",
+      "TypeHint": "String"
+    },
+    "AttractiveItemSetParticles": {
+      "Value": "Want_Food_Carrot",
+      "Description": "The particle system that spawns to indicate the NPC's liked item(s)."
+    },
+    "WeightFollowItem": {
+      "Value": 100,
+      "Description": "The probability the NPC will follow an attractive item when held by a non-hostile target, in percent."
+    },
+    "FollowItemAlways": {
+      "Value": true,
+      "Description": "Whether the NPC will follow an attractive item indefinitely. If set to false, make sure FollowItemTimeout is properly configured."
+    },
+    "FollowItemPreDelay": {
+      "Value": [
+        1,
+        2
+      ],
+      "Description": "The time delay before an NPC starts following an item."
+    },
+    "FollowItemTimeout": {
+      "Value": [
+        20,
+        40
+      ],
+      "Description": "The duration of the follow item behaviour, after which the NPC will give up on the target. Requires FollowItemAlways to be set to false."
+    },
+    "DropList": {
+      "Value": "Empty",
+      "Description": "The NPC's drop list."
+    },
+    "FlockArray": {
+      "Value": [],
+      "Description": "The set of NPCs belonging to this flock type",
+      "TypeHint": "String"
+    },
+    "ClimbHeight": {
+      "Value": 1,
+      "Description": "The maximum climb height, in blocks."
+    },
+    "AttitudeGroup": {
+      "Value": "Prey",
+      "Description": "The attitude group this NPC belongs to."
+    },
+    "PlayerDefaultAttitude": {
+      "Value": "Neutral",
+      "Description": "The default attitude towards the player."
+    },
+    "AlertedTimeoutGiveUp": {
+      "Value": [
+        5,
+        8
+      ],
+      "Description": "The timeout after which an alerted NPC will give up on the target, in seconds."
+    },
+    "GrazingBlockSet": {
+      "Value": "Grass",
+      "Description": "The type of block that this NPC will graze on top of."
+    },
+    "FoodBlockSet": {
+      "Value": "Hay",
+      "Description": "The type of block that this NPC will occasionally seek out to munch on."
+    },
+    "DayTimePeriod": {
+      "Value": [
+        6.01,
+        17.99
+      ],
+      "Description": "The hour range considered to be daytime for this NPC (inclusive). Hours should be written with decimal fractions."
+    },
+    "DayTimeNapWeight": {
+      "Value": 2,
+      "Description": "The weight used to determine if the NPC should have a short nap during the day. Set to 0 to disable."
+    },
+    "DayTimeNapTimeRange": {
+      "Value": [
+        10,
+        12
+      ],
+      "Description": "The duration range of daytime naps, in seconds."
+    },
+    "DayFlavorAnimation": {
+      "Value": "",
+      "Description": "The flavor animation to play during the day. Ignored if null or empty."
+    },
+    "IgnoreOverrideTime": {
+      "Value": 20,
+      "Description": "The duration of the ignore attitude override for the target."
+    },
+    "IsMountable": {
+      "Value": false,
+      "Description": "Whether this NPC can be mounted. This only triggers a reaction, as mounting requires the NPC to be tamed."
+    },
+    "IsTameable": {
+      "Value": false,
+      "Description": "Whether this NPC can be tamed."
+    },
+    "TameRequiredAttitudes": {
+      "Value": [
+        "Friendly",
+        "Neutral"
+      ],
+      "Description": "The attitude groups of players that can tame the NPC."
+    },
+    "TameRoleChange": {
+      "Value": "Tamed_Sheep",
+      "Description": "The role the NPC will change into when it's tamed."
+    },
+    "ProduceItem": {
+      "Value": "",
+      "Description": "The item this NPC produces (poop, eggs, etc)."
+    },
+    "ProduceTimeout": {
+      "Value": [
+        "PT6H",
+        "PT36H"
+      ],
+      "Description": "The timeout between consecutive produces."
+    },
+    "DayFlavorAnimationLength": {
+      "Value": [
+        3,
+        5
+      ],
+      "Description": "How long the daytime flavor animation will be played for, in seconds."
+    },
+    "Timid": {
+      "Value": false,
+      "Description": "Whether this NPC is timid or not. Timid NPCs are harder to approach and befriend."
+    },
+    "AttackWhenStartled": {
+      "Value": false,
+      "Description": "Whether this NPC attacks when startled."
+    },
+    "Attack": {
+      "Value": "",
+      "Description": "The attack interaction this NPC will use."
+    },
+    "AttackRange": {
+      "Value": 5,
+      "Description": "The range at which the NPC can identify an attacker."
+    },
+    "MaxSpeed": {
+      "Value": 4,
+      "Description": "The maximum walking speed of the NPC."
+    },
+    "MaxHealth": {
+      "Value": 100,
+      "Description": "The maximum health of the NPC."
+    },
+    "MaxRotationSpeed": {
+      "Value": 360,
+      "Description": "The maximum rotation speed, in degrees per second."
+    },
+    "RunThreshold": {
+      "Value": 0.5,
+      "Description": "The speed ratio at which the NPC switches to run animation (e.g if MaxSpeed is 10, and RunThreshold is set to 0.55, the NPC will start running at speed 5.5)."
+    },
+    "DeathParticles": {
+      "Value": "Effect_Death",
+      "Description": "The particle system that spawns when the NPC's corpse disappears."
+    },
+    "DropDeathItemsInstantly": {
+      "Value": false,
+      "Description": "Whether the NPC's drop list should be executed when the NPC dies. If set to false, items drop when the corpse disappears."
+    },
+    "DeathAnimationTime": {
+      "Value": 2,
+      "Description": "The time it takes for this NPC's corpse to disappear."
+    },
+    "IsMemory": {
+      "Value": false,
+      "Description": "Whether the NPC is a memory."
+    },
+    "MemoriesCategory": {
+      "Value": "Livestock",
+      "Description": "The category of the memory."
+    },
+    "MemoriesNameOverride": {
+      "Value": "",
+      "Description": "If set, overrides the memory name."
+    },
+    "BreathesInWater": {
+      "Value": false,
+      "Description": "Whether this NPC can breathe underwater."
+    },
+    "DeathEffectInteraction": {
+      "Value": "Root_NPC_Death",
+      "Description": "Death interaction (which effect will be played on death."
+    },
+    "NameTranslationKey": {
+      "Value": "server.npcRoles.Template.name",
+      "Description": "The translation key for the NPC name display"
+    }
+  },
+  "IsMemory": {
+    "Compute": "IsMemory"
+  },
+  "MemoriesCategory": {
+    "Compute": "MemoriesCategory"
+  },
+  "MemoriesNameOverride": {
+    "Compute": "MemoriesNameOverride"
+  },
+  "DropList": {
+    "Compute": "DropList"
+  },
+  "FlockSpawnTypes": {
+    "Compute": "FlockArray"
+  },
+  "FlockAllowedNPC": {
+    "Compute": "FlockArray"
+  },
+  "FlockCanLead": true,
+  "FlockSpawnTypesRandom": true,
+  "DisableDamageGroups": [
+    "Self"
+  ],
+  "Appearance": {
+    "Compute": "Appearance"
+  },
+  "DefaultPlayerAttitude": {
+    "Compute": "PlayerDefaultAttitude"
+  },
+  "DefaultNPCAttitude": "Ignore",
+  "AttitudeGroup": {
+    "Compute": "AttitudeGroup"
+  },
+  "ApplySeparation": true,
+  "SeparationDistance": 1,
+  "SeparationWeight": 1,
+  "SeparationDistanceTarget": 0.5,
+  "SeparationNearRadiusTarget": 1,
+  "SeparationFarRadiusTarget": 7,
+  "BreathesInWater": {
+    "Compute": "BreathesInWater"
+  },
+  "KnockbackScale": 0.5,
+  "DeathAnimationTime": 0.1,
+  "DeathInteraction": {
+    "Compute": "DeathEffectInteraction"
+  },
+  "MotionControllerList": [
+    {
+      "Type": "Walk",
+      "MaxWalkSpeed": {
+        "Compute": "MaxSpeed"
+      },
+      "Gravity": 15,
+      "MaxFallSpeed": 15,
+      "JumpHeight": 0.1,
+      "MaxRotationSpeed": {
+        "Compute": "MaxRotationSpeed"
+      },
+      "Acceleration": 100,
+      "RunThreshold": {
+        "Compute": "RunThreshold"
+      },
+      "DescentAnimationType": "Fall",
+      "DescentSteepness": 2.5,
+      "DescentBlending": 1,
+      "JumpDescentSteepness": 8,
+      "MaxClimbHeight": {
+        "Compute": "ClimbHeight"
+      }
+    }
+  ],
+  "StateTransitions": [
+    {
+      "States": [
+        {
+          "From": [
+            "Idle"
+          ],
+          "To": [
+            "Sleep"
+          ]
+        }
+      ],
+      "Actions": {
+        "Reference": "Component_ActionList_Sleep"
+      }
+    },
+    {
+      "States": [
+        {
+          "From": [
+            "Sleep"
+          ],
+          "To": [
+            "Alerted",
+            "Flee",
+            "Idle"
+          ]
+        }
+      ],
+      "Actions": {
+        "Reference": "Component_ActionList_Wake"
+      }
+    },
+    {
+      "$Comment": "Always clear animation when moving from Alerted or Flee state.",
+      "States": [
+        {
+          "From": [
+            "Alerted",
+            "Flee"
+          ],
+          "To": []
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "PlayAnimation",
+          "Slot": "Status"
+        },
+        {
+          "Type": "SetFlag",
+          "Name": "AnimationBlock",
+          "SetTo": false
+        }
+      ]
+    },
+    {
+      "$Comment": "Always clear target and reset instructions when going back to idle.",
+      "States": [
+        {
+          "From": [],
+          "To": [
+            "Idle"
+          ]
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "ReleaseTarget"
+        },
+        {
+          "Type": "ResetInstructions"
+        },
+        {
+          "Type": "PlayAnimation",
+          "Slot": "Status"
+        }
+      ]
+    },
+    {
+      "$Comment": "Clear idle anims",
+      "States": [
+        {
+          "From": [
+            "Idle"
+          ],
+          "To": []
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "PlayAnimation",
+          "Slot": "Status"
+        }
+      ]
+    }
+  ],
+  "MaxHealth": {
+    "Compute": "MaxHealth"
+  },
+  "InteractionVars": {
+    "Melee_Damage": {
+      "Interactions": [
+        {
+          "$Comment": "Config for a successful melee hit, default values for Effects and HitShape are not overwritten here, see each NPC_ file",
+          "Parent": "NPC_Attack_Melee_Damage",
+          "DamageCalculator": {
+            "Type": "Absolute",
+            "BaseDamage": {
+              "Physical": 5
+            },
+            "RandomPercentageModifier": 0.1
+          }
+        }
+      ]
+    }
+  },
+  "Instructions": [
+    {
+      "$NodeId": "Structural.InstructionNode-e0791b6b-7651-4165-a525-2aa895e1e992",
+      "$Comment": "This is separate so it can run all the time regardless of the rest of the script",
+      "Enabled": true,
+      "ActionsBlocking": false,
+      "ActionsAtomic": false,
+      "Continue": true,
+      "Weight": 1,
+      "TreeMode": false,
+      "InvertTreeModeResult": false,
+      "ResetOnStateChange": true,
+      "ExecuteFor": [
+        1.7976931348623157e+308,
+        1.7976931348623157e+308
+      ]
+    },
+    {
+      "$NodeId": "Structural.InstructionNode-09edb612-ee43-482f-9a55-7451a9eba2e3",
+      "$Comment": "This is separate so it can run all the time regardless of the rest of the script, when in water go straight to panic to get out",
+      "Instructions": [
+        {
+          "$NodeId": "Structural.InstructionNode-d15c109d-4aac-4e1c-b0cc-f0570108e48a",
+          "Sensor": {
+            "$NodeId": "Sensor.And-e62bc3d8-d1f1-4284-b08e-86724f23912a",
+            "Sensors": [
+              {
+                "$NodeId": "Sensor.InWater-95edba56-9568-47fe-b8d5-c0b93e9571ff",
+                "Once": false,
+                "Enabled": true,
+                "Type": "InWater"
+              },
+              {
+                "$NodeId": "Sensor.Not-57262463-e158-41a9-a934-ccf23228cac8",
+                "Sensor": {
+                  "$NodeId": "Sensor.State-6716c308-fd0c-49b6-b72a-da20bbb87bf1",
+                  "Once": false,
+                  "Enabled": true,
+                  "State": "Panic",
+                  "IgnoreMissingSetState": false,
+                  "Type": "State"
+                },
+                "Once": false,
+                "Enabled": true,
+                "Type": "Not"
+              }
+            ],
+            "Once": false,
+            "Enabled": true,
+            "Type": "And"
+          },
+          "Actions": [
+            {
+              "$NodeId": "Action.State-4eda08d6-dd25-4a5f-a902-d99d867f2b88",
+              "Once": false,
+              "State": "Panic",
+              "ClearState": true,
+              "Type": "State"
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        }
+      ],
+      "Enabled": true,
+      "ActionsBlocking": false,
+      "ActionsAtomic": false,
+      "Continue": true,
+      "Weight": 1,
+      "TreeMode": false,
+      "InvertTreeModeResult": false,
+      "ResetOnStateChange": true,
+      "ExecuteFor": [
+        1.7976931348623157e+308,
+        1.7976931348623157e+308
+      ]
+    },
+    {
+      "$NodeId": "Structural.InstructionNode-b219cb67-e1e0-4b3d-907e-8a16f341c3a4",
+      "$Comment": "Initialize the produce alarm. This prevents NPCs from producing as soon as they spawn in",
+      "Sensor": {
+        "$NodeId": "Sensor.Any-34335a4c-721b-4379-ae42-e449c3a91bb6",
+        "Once": true,
+        "Enabled": true,
+        "Type": "Any"
+      },
+      "Actions": [
+        {
+          "$NodeId": "Action.SetAlarm-f3d8e9cc-d95e-47c1-852e-40a3b2b955ac",
+          "Once": false,
+          "Name": "Produce_Ready",
+          "DurationRange": {
+            "Compute": "ProduceTimeout"
+          },
+          "Type": "SetAlarm"
+        }
+      ],
+      "Enabled": {
+        "Compute": "!isEmpty(ProduceItem)"
+      },
+      "ActionsBlocking": false,
+      "ActionsAtomic": false,
+      "Continue": false,
+      "Weight": 1,
+      "TreeMode": false,
+      "InvertTreeModeResult": false,
+      "ResetOnStateChange": true,
+      "ExecuteFor": [
+        1.7976931348623157e+308,
+        1.7976931348623157e+308
+      ]
+    },
+    {
+      "$NodeId": "Structural.InstructionNode-8192e0b3-0746-4c17-984d-cea715ec3b1e",
+      "$Comment": "Clear the produce alarm when it finishes",
+      "Sensor": {
+        "$NodeId": "Sensor.Alarm-7734ccb8-9192-48e0-94bb-304e1d779c74",
+        "Once": false,
+        "Enabled": true,
+        "Name": "Produce_Ready",
+        "State": "Passed",
+        "Clear": true,
+        "Type": "Alarm"
+      },
+      "Actions": [
+        {
+          "$NodeId": "Action.Nothing-12832dc6-6b5e-4868-b79b-b28d1b102847",
+          "Once": false,
+          "Type": "Nothing"
+        }
+      ],
+      "Enabled": {
+        "Compute": "!isEmpty(ProduceItem)"
+      },
+      "ActionsBlocking": false,
+      "ActionsAtomic": false,
+      "Continue": true,
+      "Weight": 1,
+      "TreeMode": false,
+      "InvertTreeModeResult": false,
+      "ResetOnStateChange": true,
+      "ExecuteFor": [
+        1.7976931348623157e+308,
+        1.7976931348623157e+308
+      ]
+    },
+    {
+      "$NodeId": "Structural.InstructionNode-8ce4e990-eb59-497c-8038-a28739179254",
+      "Instructions": [
+        {
+          "$NodeId": "Structural.InstructionNode-d6365143-3307-4a7e-9598-26ee13a4b931",
+          "Sensor": {
+            "$NodeId": "Sensor.State-1918bc80-3f72-42cc-822a-9c7cae8501fe",
+            "Once": false,
+            "Enabled": true,
+            "State": "Idle",
+            "IgnoreMissingSetState": false,
+            "Type": "State"
+          },
+          "Instructions": [
+            {
+              "$NodeId": "Structural.InstructionNode-e9eca5eb-65d2-4b19-9689-b2896b5f769e",
+              "$Comment": "Switch to flee state if any flock member engages a target TODO switch to attack if you are very close and can attack? otherwise flee.",
+              "Sensor": {
+                "$NodeId": "Sensor.Beacon-5e365157-28f8-4e38-b928-77ca0a342e84",
+                "Once": false,
+                "Enabled": true,
+                "Message": "Flock_Attack",
+                "Range": {
+                  "Compute": "HearingRange"
+                },
+                "TargetSlot": "LockedTarget",
+                "ConsumeMessage": true,
+                "Type": "Beacon"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-34767c85-8a93-407e-ba73-cd6231aa35bb",
+                  "Once": false,
+                  "State": "Alerted",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": {
+                "Compute": "!isEmptyStringArray(FlockArray)"
+              },
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionReference-b7509c2b-0542-49c4-b1c9-b3fff0d5c132",
+              "Reference": "Component_Instruction_Damage_Check",
+              "Modify": {
+                "_ExportStates": [
+                  "Flee.Switch",
+                  "Panic"
+                ],
+                "AlertedRange": {
+                  "Compute": "AlertedRange"
+                }
+              }
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-a4f1b401-91e5-4c83-b397-05f12986095b",
+              "$Comment": "Check if there are any potential things that can alert the NPC",
+              "Sensor": {
+                "$NodeId": "Sensor.Reference-c65a6eab-3f3d-4446-af45-d3651357141e",
+                "Reference": "Component_Sensor_Standard_Detection",
+                "Modify": {
+                  "ViewRange": {
+                    "Compute": "ViewRange"
+                  },
+                  "ViewSector": {
+                    "Compute": "ViewSector"
+                  },
+                  "HearingRange": {
+                    "Compute": "HearingRange"
+                  },
+                  "AbsoluteDetectionRange": {
+                    "Compute": "AbsoluteDetectionRange"
+                  },
+                  "Attitudes": [
+                    "Hostile",
+                    "Neutral"
+                  ]
+                }
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-82e23109-a9da-4e00-9bed-9d1c3447d4a3",
+                  "Once": false,
+                  "State": "Alerted",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-715d0ffb-605c-4ad0-bef1-325683cca507",
+              "$Comment": "If we're beyond our soft leash radius for a set period of time, return home.",
+              "Sensor": {
+                "$NodeId": "Sensor.Leash-9add8adf-3cad-4735-84cd-b14f208be2c7",
+                "Once": false,
+                "Enabled": true,
+                "Range": {
+                  "Compute": "LeashDistance"
+                },
+                "Type": "Leash"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-75c452d5-a553-4398-a210-ec1784b918a7",
+                  "Once": false,
+                  "State": "ReturnHome",
+                  "ClearState": true,
+                  "Type": "State"
+                },
+                {
+                  "$NodeId": "Action.Timeout-3895c1fc-01cf-47d3-aec3-d49781cb7375",
+                  "Once": false,
+                  "Delay": [
+                    15,
+                    20
+                  ],
+                  "DelayAfter": false,
+                  "Type": "Timeout"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": true,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-b87dbdfc-4020-460f-be86-954c49f8505b",
+              "Sensor": {
+                "$NodeId": "Sensor.State-12edad02-df76-46e9-a7c2-3aa368be9831",
+                "Once": false,
+                "Enabled": true,
+                "State": ".FindFood",
+                "IgnoreMissingSetState": false,
+                "Type": "State"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-5efce615-24f4-4e93-8ec2-2afc5183e6e1",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Or-5f6ee947-9745-49b1-9ce7-41d59461ccb0",
+                    "Sensors": [
+                      {
+                        "$NodeId": "Sensor.Block-c9f5ef69-d8f4-43e6-9f6e-71e60b3f76c5",
+                        "Once": false,
+                        "Enabled": true,
+                        "Range": 1.5,
+                        "MaxHeight": 4,
+                        "Blocks": {
+                          "Compute": "FoodBlockSet"
+                        },
+                        "Random": true,
+                        "Reserve": false,
+                        "Type": "Block"
+                      },
+                      {
+                        "$NodeId": "Sensor.DroppedItem-7f714d85-b8c8-47f4-bd20-cc13f846c743",
+                        "Once": false,
+                        "Enabled": {
+                          "Compute": "!isEmptyStringArray(AttractiveItemSet)"
+                        },
+                        "Range": 1,
+                        "ViewSector": {
+                          "Compute": "ViewSector"
+                        },
+                        "LineOfSight": true,
+                        "Items": {
+                          "Compute": "AttractiveItemSet"
+                        },
+                        "Attitudes": "[]",
+                        "Type": "DroppedItem"
+                      }
+                    ],
+                    "Once": false,
+                    "Enabled": true,
+                    "Type": "Or"
+                  },
+                  "BodyMotion": {
+                    "$NodeId": "BodyMotion.AimCharge-adab33d0-c871-41b0-a9f7-d6e6cccd0468",
+                    "RelativeTurnSpeed": 1,
+                    "Type": "AimCharge"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.PickUpItem-1f913c0b-b75a-4ee1-8a49-7fc7336a9589",
+                      "Once": false,
+                      "Delay": [
+                        1,
+                        1
+                      ],
+                      "Range": 1.5,
+                      "StorageTarget": "Destroy",
+                      "Hoover": false,
+                      "Items": [
+                        "*Hay*"
+                      ],
+                      "Type": "PickUpItem"
+                    },
+                    {
+                      "$NodeId": "Action.PlayAnimation-a42f28b0-c55b-4015-9ef1-1232a22a7fa0",
+                      "Once": false,
+                      "Slot": "Status",
+                      "Animation": "Eat",
+                      "Type": "PlayAnimation"
+                    },
+                    {
+                      "$NodeId": "Action.Timeout-60193039-ca59-4734-9de1-c9197b85668d",
+                      "Once": false,
+                      "Delay": [
+                        4,
+                        6
+                      ],
+                      "DelayAfter": false,
+                      "Type": "Timeout"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": true,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-69dc6522-8cd2-469e-a1ac-133e1595d161",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Or-3225c3bb-c2a1-49ae-b938-9485683f310e",
+                    "Sensors": [
+                      {
+                        "$NodeId": "Sensor.Block-1364695a-787b-4cc3-9361-8f0289cfbbc8",
+                        "Once": false,
+                        "Enabled": true,
+                        "Range": {
+                          "Compute": "ViewRange"
+                        },
+                        "MaxHeight": 4,
+                        "Blocks": {
+                          "Compute": "FoodBlockSet"
+                        },
+                        "Random": true,
+                        "Reserve": false,
+                        "Type": "Block"
+                      },
+                      {
+                        "$NodeId": "Sensor.DroppedItem-5ea23199-1b2a-4969-89e0-c5f8785399c4",
+                        "Once": false,
+                        "Enabled": {
+                          "Compute": "!isEmptyStringArray(AttractiveItemSet)"
+                        },
+                        "Range": {
+                          "Compute": "ViewRange"
+                        },
+                        "ViewSector": {
+                          "Compute": "ViewSector"
+                        },
+                        "LineOfSight": true,
+                        "Items": {
+                          "Compute": "AttractiveItemSet"
+                        },
+                        "Attitudes": "[]",
+                        "Type": "DroppedItem"
+                      }
+                    ],
+                    "Once": false,
+                    "Enabled": true,
+                    "Type": "Or"
+                  },
+                  "BodyMotion": {
+                    "$NodeId": "BodyMotion.Seek-21a7e2a2-ddcd-4c57-a5d6-296329aa128e",
+                    "RelativeSpeed": 0.6,
+                    "RelativeSpeedWaypoint": 0.5,
+                    "WaypointRadius": 0.5,
+                    "UseBestPath": true,
+                    "ThrottleDelayRange": [
+                      3,
+                      5
+                    ],
+                    "ThrottleIgnoreCount": 3,
+                    "BuildOptimisedPath": true,
+                    "AvoidBlockDamage": true,
+                    "RelaxedMoveConstraints": false,
+                    "BlendHeading": 0.5,
+                    "PathSmoothing": 2,
+                    "RejectionWeight": 3,
+                    "UseSteering": true,
+                    "SkipSteering": true,
+                    "UsePathfinder": true,
+                    "MinPathLength": 2,
+                    "DiagonalMoves": true,
+                    "StepsPerTick": 50,
+                    "MaxPathLength": 200,
+                    "MaxOpenNodes": 200,
+                    "MaxTotalNodes": 900,
+                    "DesiredAltitudeWeight": -1,
+                    "WaitDistance": 1,
+                    "RecomputeDistance": 10,
+                    "ReprojectDistance": 0.5,
+                    "AdjustRangeByHitboxSize": false,
+                    "RecomputeConeAngle": 0,
+                    "Reachable": false,
+                    "HeightDifference": [
+                      -1,
+                      1
+                    ],
+                    "SlowDownDistance": 8,
+                    "StopDistance": 0.5,
+                    "AbortDistance": 96,
+                    "Falloff": 3,
+                    "SwitchToSteeringDistance": 20,
+                    "Type": "Seek"
+                  },
+                  "HeadMotion": {
+                    "$NodeId": "HeadMotion.Watch-954490f5-77fc-4986-addd-9aadfc20bd1c",
+                    "RelativeTurnSpeed": 1,
+                    "Type": "Watch"
+                  },
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-3e225a58-d2bf-4319-a3ce-c243bb90e299",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Any-3173293a-c3dd-4b28-b62b-ea6e6fd91a03",
+                    "Once": false,
+                    "Enabled": true,
+                    "Type": "Any"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.PlayAnimation-ff9a2fd6-d12f-49dc-ae0d-0ed8c5ec0fa7",
+                      "Once": false,
+                      "Slot": "Status",
+                      "Type": "PlayAnimation"
+                    },
+                    {
+                      "$NodeId": "Action.Timeout-cee2a470-fa59-44c9-ad61-ac20e320938b",
+                      "Once": false,
+                      "Delay": [
+                        2,
+                        4
+                      ],
+                      "DelayAfter": false,
+                      "Type": "Timeout"
+                    },
+                    {
+                      "$NodeId": "Action.ResetBlockSensors-3be8794f-81ba-4657-a3fc-48aa542f9506",
+                      "Once": false,
+                      "Type": "ResetBlockSensors"
+                    },
+                    {
+                      "$NodeId": "Action.State-a2f83cc3-4535-4ee3-a32c-d743cdfb7e3a",
+                      "Once": false,
+                      "State": ".Default",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": true,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-6f0266db-91d8-4dbe-b54d-2fcfbdd1a495",
+              "$Comment": "Produce an item",
+              "Sensor": {
+                "$NodeId": "Sensor.Alarm-31e64279-4d7c-46c3-829f-8e475a00dce9",
+                "Once": false,
+                "Enabled": true,
+                "Name": "Produce_Ready",
+                "State": "Unset",
+                "Clear": false,
+                "Type": "Alarm"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.DropItem-0330d179-d246-40b5-bc47-91bb0f39945f",
+                  "Once": false,
+                  "Delay": [
+                    0,
+                    0
+                  ],
+                  "Item": {
+                    "Compute": "ProduceItem"
+                  },
+                  "ThrowSpeed": 14,
+                  "Distance": [
+                    0.8,
+                    0.8
+                  ],
+                  "DropSector": [
+                    170,
+                    190
+                  ],
+                  "PitchHigh": false,
+                  "Type": "DropItem"
+                },
+                {
+                  "$NodeId": "Action.SetAlarm-02006d93-2e10-4760-8a39-77e6f15b216d",
+                  "Once": false,
+                  "Name": "Produce_Ready",
+                  "DurationRange": {
+                    "Compute": "ProduceTimeout"
+                  },
+                  "Type": "SetAlarm"
+                }
+              ],
+              "Enabled": {
+                "Compute": "!isEmpty(ProduceItem)"
+              },
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-dcb412e7-e0bf-4a82-b1ca-1441c52b6d05",
+              "$Comment": "Execute daytime idle behaviors.",
+              "Sensor": {
+                "$NodeId": "Sensor.Time-e829f1f7-8927-4b40-8ec7-a76772aa5996",
+                "Once": false,
+                "Enabled": true,
+                "Period": {
+                  "Compute": "DayTimePeriod"
+                },
+                "CheckDay": true,
+                "CheckYear": false,
+                "ScaleDayTimeRange": true,
+                "Type": "Time"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-0b0f43a3-8802-496c-ba85-36bf6ed1a006",
+                  "$Comment": "Regular wander.",
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-2fc9a026-82d1-4e5e-bdbb-43d24b7edf4b",
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.Crouch-8ff1877d-0fe0-4253-9bdf-1aab2fbcb93e",
+                          "Once": false,
+                          "Crouch": false,
+                          "Type": "Crouch"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": false,
+                      "ActionsAtomic": false,
+                      "Continue": true,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    },
+                    {
+                      "$NodeId": "Structural.InstructionReference-91ea0c67-5638-4cba-8cf0-0d6a38e610b7",
+                      "Reference": "Component_Instruction_Leash_To_Flock_Leader",
+                      "Modify": {
+                        "Enabled": {
+                          "Compute": "!isEmptyStringArray(FlockArray)"
+                        },
+                        "WanderRadius": {
+                          "Compute": "WanderRadius"
+                        },
+                        "StopDistance": 3
+                      }
+                    },
+                    {
+                      "$NodeId": "Structural.InstructionNode-93ceb69e-5f70-4579-915e-f5d9ac802d50",
+                      "BodyMotion": {
+                        "$NodeId": "BodyMotion.Sequence-c9c1013b-4ded-45fd-b108-90bfe99c7957",
+                        "Motions": [
+                          {
+                            "$NodeId": "BodyMotion.Timer-1b785d74-c9e7-4b70-9bec-3d8723e469b8",
+                            "Motion": {
+                              "$NodeId": "BodyMotion.Nothing-832ef765-0e73-474f-a57a-306eff8c8559",
+                              "Type": "Nothing"
+                            },
+                            "Time": [
+                              3,
+                              8
+                            ],
+                            "Type": "Timer"
+                          },
+                          {
+                            "$NodeId": "BodyMotion.Timer-01e741d9-934c-47d2-998b-7f7434ff9b73",
+                            "Motion": {
+                              "$NodeId": "BodyMotion.WanderInCircle-77e819da-28ee-4c47-9645-4a7a7be94920",
+                              "MinWalkTime": 2,
+                              "MaxWalkTime": 4,
+                              "MinHeadingChange": 0,
+                              "MaxHeadingChange": 60,
+                              "RelaxHeadingChange": true,
+                              "RelativeSpeed": 0.18,
+                              "MinMoveDistance": 0.5,
+                              "StopDistance": 0.5,
+                              "TestsPerTick": 1,
+                              "AvoidBlockDamage": true,
+                              "RelaxedMoveConstraints": false,
+                              "DesiredAltitudeWeight": -1,
+                              "Radius": {
+                                "Compute": "WanderRadius"
+                              },
+                              "Flock": false,
+                              "UseSphere": false,
+                              "Type": "WanderInCircle"
+                            },
+                            "Time": [
+                              1,
+                              5
+                            ],
+                            "Type": "Timer"
+                          }
+                        ],
+                        "Looped": true,
+                        "RestartOnActivate": false,
+                        "Type": "Sequence"
+                      },
+                      "Enabled": true,
+                      "ActionsBlocking": false,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 20,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-cf30152f-2603-4090-bfb4-6aca6c0908e7",
+                  "$Comment": "TODO: grazing component seems to be borked",
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-ad67705f-706e-442a-9acd-2c33bef23d7a",
+                      "Sensor": {
+                        "$NodeId": "Sensor.Self-a9edb927-734b-420e-bbcd-84b103f280a0",
+                        "Filters": [
+                          {
+                            "$NodeId": "IEntityFilter.StandingOnBlock-3f2ad376-48ed-4505-a727-30dc1899e420",
+                            "Enabled": true,
+                            "BlockSet": {
+                              "Compute": "GrazingBlockSet"
+                            },
+                            "Type": "StandingOnBlock"
+                          }
+                        ],
+                        "Once": false,
+                        "Enabled": true,
+                        "Type": "Self"
+                      },
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.PlayAnimation-5474be28-fcee-4b93-8818-571dd6cb3868",
+                          "Once": false,
+                          "Slot": "Status",
+                          "Animation": "Eat",
+                          "Type": "PlayAnimation"
+                        },
+                        {
+                          "$NodeId": "Action.Timeout-3f9f8709-1edd-45f0-aa01-3dafa59e1904",
+                          "Once": false,
+                          "Delay": [
+                            5,
+                            6
+                          ],
+                          "DelayAfter": false,
+                          "Type": "Timeout"
+                        },
+                        {
+                          "$NodeId": "Action.PlayAnimation-611fe0a8-aecb-4ae8-b35a-e20b0b3b0944",
+                          "Once": false,
+                          "Slot": "Status",
+                          "Type": "PlayAnimation"
+                        },
+                        {
+                          "$NodeId": "Action.ResetInstructions-def33a9f-2660-44a6-a0dd-022adf5265db",
+                          "Once": false,
+                          "Type": "ResetInstructions"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": true,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    },
+                    {
+                      "$NodeId": "Structural.InstructionNode-48d4dc85-ff57-4843-9920-0ca5417e4b51",
+                      "$Comment": "They are not standing on grazing block",
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.ResetInstructions-7df3bbf8-dbf6-4248-8ac8-c9ff08c4392b",
+                          "Once": false,
+                          "Type": "ResetInstructions"
+                        },
+                        {
+                          "$NodeId": "Action.State-69db1ae8-d988-4036-8cca-72fab8aa2eff",
+                          "Once": false,
+                          "State": ".Default",
+                          "ClearState": true,
+                          "Type": "State"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": false,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 10,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-d8cf1755-2106-4e93-b37a-4c6411f6f3ad",
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-30de8e8a-3e36-4a7e-b53d-532dc063be0b",
+                      "Sensor": {
+                        "$NodeId": "Sensor.Or-a5edb99f-bb9e-4190-8f1f-baf79ca27222",
+                        "Sensors": [
+                          {
+                            "$NodeId": "Sensor.DroppedItem-59fed2b4-7e51-48b0-b2d8-1f16a4b36137",
+                            "Once": false,
+                            "Enabled": {
+                              "Compute": "!isEmptyStringArray(AttractiveItemSet)"
+                            },
+                            "Range": {
+                              "Compute": "ViewRange"
+                            },
+                            "ViewSector": {
+                              "Compute": "ViewSector"
+                            },
+                            "LineOfSight": true,
+                            "Items": {
+                              "Compute": "AttractiveItemSet"
+                            },
+                            "Attitudes": "[]",
+                            "Type": "DroppedItem"
+                          },
+                          {
+                            "$NodeId": "Sensor.Block-23480ceb-9c71-4660-9673-c4306132e280",
+                            "Once": false,
+                            "Enabled": {
+                              "Compute": "!isEmpty(FoodBlockSet)"
+                            },
+                            "Range": {
+                              "Compute": "ViewRange"
+                            },
+                            "MaxHeight": 4,
+                            "Blocks": {
+                              "Compute": "FoodBlockSet"
+                            },
+                            "Random": true,
+                            "Reserve": false,
+                            "Type": "Block"
+                          }
+                        ],
+                        "Once": false,
+                        "Enabled": true,
+                        "Type": "Or"
+                      },
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.State-3c75aedc-3638-43fe-9039-5f14a36a30f6",
+                          "Once": false,
+                          "State": ".FindFood",
+                          "ClearState": true,
+                          "Type": "State"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": false,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "!isEmpty(FoodBlockSet) || !isEmptyStringArray(AttractiveItemSet)"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 10,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-e62c65d7-6ed0-4f76-bae7-e4053729ae60",
+                  "$Comment": "Play a daytime flavor animation.",
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-48492fb4-c9aa-4b7d-a302-f8891fb65bbf",
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.PlayAnimation-6a37d46a-e9f7-4a45-becb-9b570ce40697",
+                          "Once": false,
+                          "Slot": "Status",
+                          "Type": "PlayAnimation"
+                        },
+                        {
+                          "$NodeId": "Action.PlayAnimation-90cd814e-f332-468c-bc4d-5cd9ec84f89c",
+                          "Once": false,
+                          "Slot": "Status",
+                          "Animation": {
+                            "Compute": "DayFlavorAnimation"
+                          },
+                          "Type": "PlayAnimation"
+                        },
+                        {
+                          "$NodeId": "Action.Timeout-2ace3da8-0f17-44e5-838e-72b8673f2b3c",
+                          "Once": false,
+                          "Delay": {
+                            "Compute": "DayFlavorAnimationLength"
+                          },
+                          "DelayAfter": false,
+                          "Type": "Timeout"
+                        },
+                        {
+                          "$NodeId": "Action.ResetInstructions-e3fc6aab-962d-464b-86e4-42dbf6796301",
+                          "Once": false,
+                          "Type": "ResetInstructions"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": true,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "!isEmpty(DayFlavorAnimation)"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 3,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-f7458327-233a-4ca6-85b3-6fcf3ef15053",
+                  "$Comment": "Nap.",
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-ee080a4a-cb36-4f14-9e70-829410218f5d",
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.State-4a99e2a6-671a-4263-a41b-9c7f07503a33",
+                          "Once": false,
+                          "State": "Sleep.Nap",
+                          "ClearState": true,
+                          "Type": "State"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": false,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "DayTimeNapWeight > 0"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": {
+                    "Compute": "DayTimeNapWeight"
+                  },
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                }
+              ],
+              "Type": "Random",
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                20,
+                30
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-1152c8d9-dbb0-44a1-a4e4-a4bacd020874",
+              "$Comment": "Sleep time.",
+              "Actions": [
+                {
+                  "$NodeId": "Action.Timeout-33a95659-a657-425d-b359-29e706d6fbeb",
+                  "Action": {
+                    "$NodeId": "Action.Sequence-7a97d131-84ce-48f6-82be-61787f112436",
+                    "Actions": [
+                      {
+                        "$NodeId": "Action.State-5e444e3d-bb1b-4aa6-9fc0-2e770fd004cc",
+                        "Once": false,
+                        "State": "Sleep",
+                        "ClearState": true,
+                        "Type": "State"
+                      }
+                    ],
+                    "Once": false,
+                    "Blocking": false,
+                    "Atomic": false,
+                    "Type": "Sequence"
+                  },
+                  "Once": false,
+                  "Delay": [
+                    2,
+                    4
+                  ],
+                  "DelayAfter": false,
+                  "Type": "Timeout"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        },
+        {
+          "$NodeId": "Structural.InstructionNode-eb9fb797-66b0-4754-aff0-41719dc004e0",
+          "Sensor": {
+            "$NodeId": "Sensor.State-ba6d6c3e-a29a-46c5-8967-37d90d3d1bda",
+            "Once": false,
+            "Enabled": true,
+            "State": "Sleep",
+            "IgnoreMissingSetState": false,
+            "Type": "State"
+          },
+          "Instructions": [
+            {
+              "$NodeId": "Structural.InstructionNode-36d33ea6-be0c-45e2-ad04-4fe3c0e01a55",
+              "$Comment": "Wake up if an enemy attacks a flock member.",
+              "Sensor": {
+                "$NodeId": "Sensor.Beacon-a675ce94-1eb5-485a-ae58-ff8377c13126",
+                "Once": false,
+                "Enabled": true,
+                "Message": "Flock_Attack",
+                "Range": 64,
+                "TargetSlot": "LockedTarget",
+                "ConsumeMessage": true,
+                "Type": "Beacon"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-267e7a05-d629-4bc0-b72d-d2a1e9c64632",
+                  "Once": false,
+                  "State": "Alerted",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": {
+                "Compute": "!isEmptyStringArray(FlockArray)"
+              },
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-354eb60a-5a7c-4067-8013-d08a9118c4c6",
+              "$Comment": "Just a little nap.",
+              "Sensor": {
+                "$NodeId": "Sensor.State-c170d70b-453c-4116-8599-c32c5b610ba3",
+                "Once": false,
+                "Enabled": true,
+                "State": ".Nap",
+                "IgnoreMissingSetState": false,
+                "Type": "State"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-fd527ad2-58d7-40ce-bbbe-110a875b23f3",
+                  "$Comment": "Start the nap timer",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Any-e076c66b-231b-4b23-8347-a703f8efac47",
+                    "Once": true,
+                    "Enabled": true,
+                    "Type": "Any"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.TimerRestart-a1df1624-7bd2-42b6-8f0d-d1dec83b62b4",
+                      "Once": false,
+                      "Name": "NapTimer",
+                      "Type": "TimerRestart"
+                    },
+                    {
+                      "$NodeId": "Action.TimerStart-185f6773-e2bb-4f0a-a797-0edec1cb3bf8",
+                      "Once": false,
+                      "Name": "NapTimer",
+                      "StartValueRange": {
+                        "Compute": "DayTimeNapTimeRange"
+                      },
+                      "RestartValueRange": {
+                        "Compute": "DayTimeNapTimeRange"
+                      },
+                      "Rate": 1,
+                      "Repeating": false,
+                      "Type": "TimerStart"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": true,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionReference-d78a7457-7def-421d-bdf5-85fd68b09c6d",
+                  "Reference": "Component_Instruction_Wild_Sleep_State",
+                  "Modify": {
+                    "_ExportStates": [
+                      "Panic",
+                      "Panic",
+                      "Flee.Switch",
+                      "Idle"
+                    ],
+                    "HearingRange": {
+                      "Compute": "HearingRange"
+                    },
+                    "Attitudes": [
+                      "Hostile",
+                      "Neutral"
+                    ],
+                    "WakeupSensor": "Component_Sensor_Timed_Nap"
+                  }
+                }
+              ],
+              "Enabled": {
+                "Compute": "DayTimeNapWeight > 0"
+              },
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-20052976-15ac-4c70-afe9-5b77414066a8",
+              "$Comment": "Night-time sleep.",
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionReference-1f351d3e-3477-4089-a3e9-7c5f1563c252",
+                  "Reference": "Component_Instruction_Wild_Sleep_State",
+                  "Modify": {
+                    "_ExportStates": [
+                      "Panic",
+                      "Panic",
+                      "Flee.Switch",
+                      "Idle"
+                    ],
+                    "HearingRange": {
+                      "Compute": "HearingRange"
+                    },
+                    "Attitudes": [
+                      "Hostile",
+                      "Neutral"
+                    ],
+                    "DayTimePeriod": {
+                      "Compute": "DayTimePeriod"
+                    }
+                  }
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        },
+        {
+          "$NodeId": "Structural.InstructionNode-d1d9fae2-3efa-408e-bce1-1280bf81086f",
+          "$Comment": "Used when receiving something like a flock beacon that may potentially result in the NPC becoming alerted but could also be discarded with a random chance.",
+          "Sensor": {
+            "$NodeId": "Sensor.State-d2458e8a-1359-4d91-86e3-c798e6b0293e",
+            "Once": false,
+            "Enabled": true,
+            "State": "Alerted",
+            "IgnoreMissingSetState": false,
+            "Type": "State"
+          },
+          "Instructions": [
+            {
+              "$NodeId": "Structural.InstructionNode-fbc0daa5-997f-4ff2-9e23-55f51d4d4c8b",
+              "$Comment": "Play the alerted animation when entering the state",
+              "Sensor": {
+                "$NodeId": "Sensor.Any-602bb90a-79ec-40f8-a1f1-7f33dfb0b647",
+                "Once": true,
+                "Enabled": true,
+                "Type": "Any"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.PlayAnimation-f69dde58-c90c-4b08-a8f0-278e9dce0726",
+                  "Once": false,
+                  "Slot": "Status",
+                  "Animation": "Alerted",
+                  "Type": "PlayAnimation"
+                },
+                {
+                  "$NodeId": "Action.TimerStart-b0756eb0-7313-4415-81c0-6c5bef0c5deb",
+                  "Once": false,
+                  "Name": "AlertedTimer",
+                  "StartValueRange": {
+                    "Compute": "AlertedTimeoutGiveUp"
+                  },
+                  "RestartValueRange": {
+                    "Compute": "AlertedTimeoutGiveUp"
+                  },
+                  "Rate": 1,
+                  "Repeating": false,
+                  "Type": "TimerStart"
+                },
+                {
+                  "$NodeId": "Action.TimerRestart-155df8ed-e557-41ad-b57b-03c3ab24a81d",
+                  "Once": false,
+                  "Name": "AlertedTimer",
+                  "Type": "TimerRestart"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionReference-a336bb9a-5481-4454-b2c0-f90228f1a44d",
+              "$Comment": "Check for damage",
+              "Reference": "Component_Instruction_Damage_Check",
+              "Modify": {
+                "_ExportStates": [
+                  "Flee.Switch",
+                  "Panic"
+                ],
+                "AlertedRange": {
+                  "Compute": "AlertedRange"
+                }
+              }
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-517541ea-ebe5-413b-901b-db5369d8e4a2",
+              "$Comment": "Watching a target always, if we have any",
+              "Sensor": {
+                "$NodeId": "Sensor.Target-193f407a-d6c0-42a1-b89b-c1bd6a06f885",
+                "Once": false,
+                "Enabled": true,
+                "TargetSlot": "LockedTarget",
+                "Range": {
+                  "Compute": "AlertedRange"
+                },
+                "AutoUnlockTarget": false,
+                "Type": "Target"
+              },
+              "HeadMotion": {
+                "$NodeId": "HeadMotion.Watch-bc6b961f-cdfa-461a-a2bc-d9c75bc48de2",
+                "RelativeTurnSpeed": 1,
+                "Type": "Watch"
+              },
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-2f750c51-807f-43fd-bcde-b0c4ee97cf7b",
+              "Sensor": {
+                "$NodeId": "Sensor.State-5aa54fa2-42bf-4a83-9c8c-9e9ef4cfd3c3",
+                "Once": false,
+                "Enabled": true,
+                "State": ".TimerEnd",
+                "IgnoreMissingSetState": false,
+                "Type": "State"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-a3a1c8e0-10e5-4b43-b170-05df897804a0",
+                  "$Comment": "Timer ended, we are not timid and still have a target, ignore it for a bit",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-d973a7e2-953e-49c8-a0e3-9c095fd8328c",
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": {
+                      "Compute": "AlertedRange"
+                    },
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-df35a85d-a0d1-43c5-8956-746226b8a085",
+                      "Once": false,
+                      "State": "Idle",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "!Timid"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-b360e60b-687a-4421-86b3-74f7d0f70cbb",
+                  "$Comment": "Timer ended, we are timid and still have a target, flee",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-19da37b8-4132-4462-8724-2a06542bf25e",
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": {
+                      "Compute": "AlertedRange"
+                    },
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-ec832c31-6cc3-4411-b520-62f3f1a2070b",
+                      "Once": false,
+                      "State": "Flee",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "Timid"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-0bfcc45b-d26e-4326-aa5b-696616e7d56c",
+                  "$Comment": "There is no target, so just go idle",
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-c0bf6aa9-4e19-4666-a324-7895d91e2ba6",
+                      "Once": false,
+                      "State": "Idle",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-e011e9cd-a26c-455a-bb0d-77b0ef368869",
+              "Sensor": {
+                "$NodeId": "Sensor.State-dde6295b-4a89-4245-8b37-c12a1fcc2c7f",
+                "Once": false,
+                "Enabled": true,
+                "State": ".FollowItem",
+                "IgnoreMissingSetState": false,
+                "Type": "State"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-13359cc2-88f5-4b45-a080-472f0836eeb5",
+                  "$Comment": "If enabled, start a timer to give up on chasing a target",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-cdc476c4-d44f-4d7c-ad3b-61b43a3229b1",
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": 1.7976931348623157e+308,
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.OverrideAttitude-fec8208c-f759-4eb9-b279-9ef357a6b1bf",
+                      "Once": false,
+                      "Attitude": "Ignore",
+                      "Duration": {
+                        "Compute": "IgnoreOverrideTime"
+                      },
+                      "Type": "OverrideAttitude"
+                    },
+                    {
+                      "$NodeId": "Action.Timeout-e34c6988-f83b-4d3e-9a62-b12d9fcea746",
+                      "Once": false,
+                      "Delay": {
+                        "Compute": "FollowItemTimeout"
+                      },
+                      "DelayAfter": false,
+                      "Type": "Timeout"
+                    },
+                    {
+                      "$NodeId": "Action.State-f964859b-64c8-4a50-9f5b-9fbd9fdae840",
+                      "Once": false,
+                      "State": "Idle",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "!FollowItemAlways"
+                  },
+                  "ActionsBlocking": true,
+                  "ActionsAtomic": false,
+                  "Continue": true,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-e2fd7903-d0ee-4f52-b6ee-28f59b45d43b",
+                  "$Comment": "If the target is holding a liked item, follow it",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-021e4503-1a09-4070-84c2-01512c819247",
+                    "Filters": [
+                      {
+                        "$NodeId": "IEntityFilter.ItemInHand-5f9809a6-ccbf-4cc4-916b-0a8da2f417de",
+                        "Enabled": true,
+                        "Items": {
+                          "Compute": "AttractiveItemSet"
+                        },
+                        "Hand": "Both",
+                        "Type": "ItemInHand"
+                      },
+                      {
+                        "$NodeId": "IEntityFilter.Not-0d60c553-fdef-411b-a6e4-261e61fcd72e",
+                        "Filter": {
+                          "$NodeId": "IEntityFilter.Attitude-c92ac973-9040-41d1-9c5a-8acda930dabe",
+                          "Enabled": true,
+                          "Attitudes": [
+                            "Hostile",
+                            "Ignore"
+                          ],
+                          "Type": "Attitude"
+                        },
+                        "Enabled": true,
+                        "Type": "Not"
+                      }
+                    ],
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": {
+                      "Compute": "ViewRange"
+                    },
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "BodyMotion": {
+                    "$NodeId": "BodyMotion.Seek-2dd609bd-33d9-45cd-8b01-490266f82257",
+                    "RelativeSpeed": 0.4,
+                    "RelativeSpeedWaypoint": 0.5,
+                    "WaypointRadius": 0.5,
+                    "UseBestPath": true,
+                    "ThrottleDelayRange": [
+                      3,
+                      5
+                    ],
+                    "ThrottleIgnoreCount": 3,
+                    "BuildOptimisedPath": true,
+                    "AvoidBlockDamage": true,
+                    "RelaxedMoveConstraints": false,
+                    "BlendHeading": 0.5,
+                    "PathSmoothing": 2,
+                    "RejectionWeight": 3,
+                    "UseSteering": true,
+                    "SkipSteering": true,
+                    "UsePathfinder": true,
+                    "MinPathLength": 2,
+                    "DiagonalMoves": true,
+                    "StepsPerTick": 50,
+                    "MaxPathLength": 200,
+                    "MaxOpenNodes": 200,
+                    "MaxTotalNodes": 900,
+                    "DesiredAltitudeWeight": -1,
+                    "WaitDistance": 1,
+                    "RecomputeDistance": 10,
+                    "ReprojectDistance": 0.5,
+                    "AdjustRangeByHitboxSize": false,
+                    "RecomputeConeAngle": 0,
+                    "Reachable": false,
+                    "HeightDifference": [
+                      -1,
+                      1
+                    ],
+                    "SlowDownDistance": 3.5,
+                    "StopDistance": 3,
+                    "AbortDistance": 96,
+                    "Falloff": 3,
+                    "SwitchToSteeringDistance": 20,
+                    "Type": "Seek"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.PlayAnimation-a51ccd2b-bdfc-4c3c-8a8e-70bfbed8b32f",
+                      "Once": false,
+                      "Slot": "Status",
+                      "Animation": "Curious",
+                      "Type": "PlayAnimation"
+                    }
+                  ],
+                  "Enabled": {
+                    "Compute": "!isEmptyStringArray(AttractiveItemSet)"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-7771cdd4-801c-4300-8767-a7729d287bd7",
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-375ff61c-c2e8-4cba-b281-119af7d653db",
+                      "Once": false,
+                      "State": ".Default",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-c7f05422-4ffc-4e23-a389-39c0833672e7",
+              "$Comment": "After the alerted timeout, make a decision",
+              "Sensor": {
+                "$NodeId": "Sensor.Timer-21948b8f-6eef-49a1-a2ed-8378e920826a",
+                "Once": false,
+                "Enabled": true,
+                "Name": "AlertedTimer",
+                "State": "Stopped",
+                "TimeRemainingRange": [
+                  0,
+                  1.7976931348623157e+308
+                ],
+                "Type": "Timer"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-068f3907-074f-463a-81a7-7c270045a8b1",
+                  "Once": false,
+                  "State": ".TimerEnd",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-7e363364-9be2-4cf7-8278-91c22b84e9f9",
+              "$Comment": "If the target gets too close, flee for a bit",
+              "Sensor": {
+                "$NodeId": "Sensor.Target-dedf1d4d-9617-4fc8-8423-1a3429795a5f",
+                "Once": false,
+                "Enabled": true,
+                "TargetSlot": "LockedTarget",
+                "Range": {
+                  "Compute": "AlertedActionRange * randomInRange(0.2, 0.4)"
+                },
+                "AutoUnlockTarget": false,
+                "Type": "Target"
+              },
+              "BodyMotion": {
+                "$NodeId": "BodyMotion.Flee-861310bc-4e46-446b-8c81-694c579c27ce",
+                "RelativeSpeed": 0.5,
+                "RelativeSpeedWaypoint": 0.5,
+                "WaypointRadius": 0.5,
+                "UseBestPath": true,
+                "ThrottleDelayRange": [
+                  3,
+                  5
+                ],
+                "ThrottleIgnoreCount": 3,
+                "BuildOptimisedPath": true,
+                "AvoidBlockDamage": true,
+                "RelaxedMoveConstraints": false,
+                "BlendHeading": 0.5,
+                "PathSmoothing": 2,
+                "RejectionWeight": 3,
+                "UseSteering": true,
+                "SkipSteering": true,
+                "UsePathfinder": true,
+                "MinPathLength": 2,
+                "DiagonalMoves": true,
+                "StepsPerTick": 50,
+                "MaxPathLength": 200,
+                "MaxOpenNodes": 200,
+                "MaxTotalNodes": 900,
+                "DesiredAltitudeWeight": -1,
+                "WaitDistance": 1,
+                "RecomputeDistance": 10,
+                "ReprojectDistance": 0.5,
+                "AdjustRangeByHitboxSize": false,
+                "RecomputeConeAngle": 0,
+                "SlowDownDistance": {
+                  "Compute": "AlertedActionRange * 0.25"
+                },
+                "StopDistance": {
+                  "Compute": "AlertedActionRange"
+                },
+                "Falloff": 3,
+                "HoldDirectionTimeRange": [
+                  2,
+                  5
+                ],
+                "ChangeDirectionViewSector": 230,
+                "DirectionJitter": 45,
+                "ErraticDistance": 4,
+                "ErraticExtraJitter": 45,
+                "ErraticChangeDurationMultiplier": 0.5,
+                "Type": "Flee"
+              },
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-6f279026-fb5d-46c3-9cc9-3680589fa978",
+              "Sensor": {
+                "$NodeId": "Sensor.Target-a7b5e703-c418-4070-9e48-7ac89be6fdc1",
+                "$Comment": "If target is reasonably close, the NPC will react instead of just staring",
+                "Filters": [
+                  {
+                    "$NodeId": "IEntityFilter.LineOfSight-5887b043-a60d-495e-8abb-0ca29d29b71a",
+                    "Enabled": true,
+                    "Type": "LineOfSight"
+                  }
+                ],
+                "Once": false,
+                "Enabled": true,
+                "TargetSlot": "LockedTarget",
+                "Range": {
+                  "Compute": "AlertedActionRange"
+                },
+                "AutoUnlockTarget": false,
+                "Type": "Target"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-82da9ade-67ee-4070-a7a5-d6c0c049ee19",
+                  "$Comment": "Threatening actions that will cause the NPC to flee",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Or-0df282eb-9941-4a6d-a4f4-b9710d0a3737",
+                    "Sensors": [
+                      {
+                        "$NodeId": "Sensor.Target-88b61e95-5f31-4636-b422-eb17ba7159a1",
+                        "Filters": [
+                          {
+                            "$NodeId": "IEntityFilter.Or-92756aec-d51d-433e-8a62-bfeab41933df",
+                            "Filters": [
+                              {
+                                "$NodeId": "IEntityFilter.Attitude-26a49745-43cc-43cd-b4c3-f2b91cb520ad",
+                                "Enabled": true,
+                                "Attitudes": [
+                                  "Hostile"
+                                ],
+                                "Type": "Attitude"
+                              },
+                              {
+                                "$NodeId": "IEntityFilter.Combat-35290b11-33f1-4d26-a1bb-91ed6eb30640",
+                                "Enabled": true,
+                                "TimeElapsedRange": [
+                                  0,
+                                  3.4028234663852886e+38
+                                ],
+                                "Mode": "Attacking",
+                                "Type": "Combat"
+                              },
+                              {
+                                "$NodeId": "IEntityFilter.ItemInHand-51d9e7d0-41c3-4407-bf14-f8bc76d1ed09",
+                                "Enabled": true,
+                                "Items": [
+                                  "*Weapon*"
+                                ],
+                                "Hand": "Both",
+                                "Type": "ItemInHand"
+                              }
+                            ],
+                            "Enabled": true,
+                            "Type": "Or"
+                          }
+                        ],
+                        "Once": false,
+                        "Enabled": true,
+                        "TargetSlot": "LockedTarget",
+                        "Range": 1.7976931348623157e+308,
+                        "AutoUnlockTarget": false,
+                        "Type": "Target"
+                      },
+                      {
+                        "$NodeId": "Sensor.Target-1872c3ab-a2fd-404b-a7e6-e567a0473435",
+                        "Filters": [
+                          {
+                            "$NodeId": "IEntityFilter.Not-9397a2bc-1738-4265-a61b-b56e3ed59bc9",
+                            "Filter": {
+                              "$NodeId": "IEntityFilter.MovementState-b072ea8c-090d-4d12-a66a-4816ac6f8fb4",
+                              "Enabled": true,
+                              "State": "Crouching",
+                              "Type": "MovementState"
+                            },
+                            "Enabled": true,
+                            "Type": "Not"
+                          }
+                        ],
+                        "Once": false,
+                        "Enabled": {
+                          "Compute": "Timid"
+                        },
+                        "TargetSlot": "LockedTarget",
+                        "Range": 1.7976931348623157e+308,
+                        "AutoUnlockTarget": false,
+                        "Type": "Target"
+                      }
+                    ],
+                    "Once": false,
+                    "Enabled": true,
+                    "Type": "Or"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-ce06a833-bbf6-4c45-81f8-7105560da8ac",
+                      "Once": false,
+                      "State": "Flee.Switch",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-149a88d3-10b5-4ffb-80e4-36134079ced3",
+                  "$Comment": "If the target is holding a liked item, follow it",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-b48680ac-6d9c-4871-a577-fc7c7b6e7e9f",
+                    "Filters": [
+                      {
+                        "$NodeId": "IEntityFilter.ItemInHand-d4fe4598-44a5-4298-9d3d-f7057d77fcbd",
+                        "Enabled": true,
+                        "Items": {
+                          "Compute": "AttractiveItemSet"
+                        },
+                        "Hand": "Both",
+                        "Type": "ItemInHand"
+                      },
+                      {
+                        "$NodeId": "IEntityFilter.Not-168c83f2-2bcb-4868-a561-dac55c8d0b4b",
+                        "Filter": {
+                          "$NodeId": "IEntityFilter.Attitude-5619aba1-5a26-472d-8b08-027fd9dd09a6",
+                          "Enabled": true,
+                          "Attitudes": [
+                            "Hostile",
+                            "Ignore"
+                          ],
+                          "Type": "Attitude"
+                        },
+                        "Enabled": true,
+                        "Type": "Not"
+                      }
+                    ],
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": {
+                      "Compute": "ViewRange"
+                    },
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-8368dca5-6bf0-4358-b95e-0034e72a852f",
+                      "Sensor": {
+                        "$NodeId": "Sensor.Target-b32b1136-6276-4b27-bbdc-f23ef2c6529f",
+                        "Once": false,
+                        "Enabled": true,
+                        "TargetSlot": "LockedTarget",
+                        "Range": 1.7976931348623157e+308,
+                        "AutoUnlockTarget": false,
+                        "Type": "Target"
+                      },
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.SpawnParticles-1ed9e17c-2dc8-422e-b697-e1e76dfb4742",
+                          "Once": false,
+                          "ParticleSystem": "Hearts_Subtle",
+                          "Range": 75,
+                          "Offset": {
+                            "Compute": "ParticleOffset"
+                          },
+                          "TargetNodeName": "Head",
+                          "IsDetachedFromModel": false,
+                          "Type": "SpawnParticles"
+                        },
+                        {
+                          "$NodeId": "Action.Timeout-f20a5b2b-b2c8-464e-a4d9-9846530b7f20",
+                          "Once": false,
+                          "Delay": {
+                            "Compute": "FollowItemPreDelay"
+                          },
+                          "DelayAfter": false,
+                          "Type": "Timeout"
+                        },
+                        {
+                          "$NodeId": "Action.State-b228fcae-a5f0-4f17-ac55-83c8ae74b51d",
+                          "Once": false,
+                          "State": ".FollowItem",
+                          "ClearState": true,
+                          "Type": "State"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": true,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": {
+                        "Compute": "WeightFollowItem"
+                      },
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    },
+                    {
+                      "$NodeId": "Structural.InstructionNode-62736815-9a63-4f06-a1fa-7487cdea374e",
+                      "Sensor": {
+                        "$NodeId": "Sensor.Target-fd854224-9ab8-4968-99c6-ae01039c5255",
+                        "Once": false,
+                        "Enabled": true,
+                        "TargetSlot": "LockedTarget",
+                        "Range": 1.7976931348623157e+308,
+                        "AutoUnlockTarget": false,
+                        "Type": "Target"
+                      },
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.Nothing-bddaf927-e363-4233-b780-23f1cf7c1f4d",
+                          "Once": false,
+                          "Type": "Nothing"
+                        }
+                      ],
+                      "Enabled": {
+                        "Compute": "WeightFollowItem < 100"
+                      },
+                      "ActionsBlocking": true,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": {
+                        "Compute": "100 - WeightFollowItem"
+                      },
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Type": "Random",
+                  "Enabled": {
+                    "Compute": "!isEmptyStringArray(AttractiveItemSet)"
+                  },
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    15,
+                    20
+                  ]
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-aca042c2-f2e0-42b3-9bc5-d4a8fac642c7",
+              "Sensor": {
+                "$NodeId": "Sensor.Not-f970519a-6949-4632-9c67-9932fdd61170",
+                "Sensor": {
+                  "$NodeId": "Sensor.Target-be373b7f-0b49-4438-8479-960f28560c83",
+                  "Once": false,
+                  "Enabled": true,
+                  "TargetSlot": "LockedTarget",
+                  "Range": 1.7976931348623157e+308,
+                  "AutoUnlockTarget": false,
+                  "Type": "Target"
+                },
+                "Once": false,
+                "Enabled": true,
+                "Type": "Not"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-b24a3a0c-848f-4765-a31e-4dbe08b433e3",
+                  "Once": false,
+                  "State": "Idle",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        },
+        {
+          "$NodeId": "Structural.InstructionNode-1876269c-3b02-496d-8399-1434c065f6da",
+          "Sensor": {
+            "$NodeId": "Sensor.State-8a70d11a-2b23-44e0-95c1-48b7202dc690",
+            "Once": false,
+            "Enabled": true,
+            "State": "ReturnHome",
+            "IgnoreMissingSetState": false,
+            "Type": "State"
+          },
+          "Instructions": [
+            {
+              "$NodeId": "Structural.InstructionNode-ea899bc1-0535-4086-b729-bbf420a9201a",
+              "$Comment": "Switch to flee state if any flock member engages a target TODO switch to attack if you are very close and can attack? otherwise flee.",
+              "Sensor": {
+                "$NodeId": "Sensor.Beacon-04be2b05-ce7a-41b9-839e-38279f383c43",
+                "Once": false,
+                "Enabled": true,
+                "Message": "Flock_Attack",
+                "Range": {
+                  "Compute": "HearingRange"
+                },
+                "TargetSlot": "LockedTarget",
+                "ConsumeMessage": true,
+                "Type": "Beacon"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-437334de-15e0-4cc0-aa60-11cfea24606c",
+                  "Once": false,
+                  "State": "Alerted",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": {
+                "Compute": "!isEmptyStringArray(FlockArray)"
+              },
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionReference-2364b288-df4f-4dea-a385-5342ec616f3f",
+              "Reference": "Component_Instruction_Damage_Check",
+              "Modify": {
+                "_ExportStates": [
+                  "Flee.Switch",
+                  "Panic"
+                ],
+                "AlertedRange": {
+                  "Compute": "AlertedRange"
+                }
+              }
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-95796d4a-042f-42c4-84a8-bb1aba672736",
+              "$Comment": "Check if there are any potential things that can alert the NPC",
+              "Sensor": {
+                "$NodeId": "Sensor.Reference-0a3acbe1-410a-40b4-9546-6cff696a2218",
+                "Reference": "Component_Sensor_Standard_Detection",
+                "Modify": {
+                  "ViewRange": {
+                    "Compute": "ViewRange"
+                  },
+                  "ViewSector": {
+                    "Compute": "ViewSector"
+                  },
+                  "HearingRange": {
+                    "Compute": "HearingRange"
+                  },
+                  "AbsoluteDetectionRange": {
+                    "Compute": "AbsoluteDetectionRange"
+                  },
+                  "Attitudes": [
+                    "Hostile",
+                    "Neutral",
+                    "Friendly"
+                  ]
+                }
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.State-0f25e54c-5263-4743-bbe6-25b6c2c00b5c",
+                  "Once": false,
+                  "State": "Alerted",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-b5c67b0b-3687-46b3-aca1-3812106425ef",
+              "Sensor": {
+                "$NodeId": "Sensor.Leash-04297df5-34ec-4696-941c-df9963585e8f",
+                "$Comment": "TODO: make them walk home, expose walking speed?",
+                "Once": false,
+                "Enabled": true,
+                "Range": {
+                  "Compute": "LeashDistance * 0.3"
+                },
+                "Type": "Leash"
+              },
+              "BodyMotion": {
+                "$NodeId": "BodyMotion.Seek-7423e975-613d-4f85-a646-a281b7ffdce0",
+                "RelativeSpeed": 0.4,
+                "RelativeSpeedWaypoint": 0.5,
+                "WaypointRadius": 0.5,
+                "UseBestPath": true,
+                "ThrottleDelayRange": [
+                  3,
+                  5
+                ],
+                "ThrottleIgnoreCount": 3,
+                "BuildOptimisedPath": true,
+                "AvoidBlockDamage": true,
+                "RelaxedMoveConstraints": true,
+                "BlendHeading": 0.5,
+                "PathSmoothing": 2,
+                "RejectionWeight": 3,
+                "UseSteering": true,
+                "SkipSteering": true,
+                "UsePathfinder": true,
+                "MinPathLength": 2,
+                "DiagonalMoves": true,
+                "StepsPerTick": 50,
+                "MaxPathLength": 200,
+                "MaxOpenNodes": 200,
+                "MaxTotalNodes": 900,
+                "DesiredAltitudeWeight": -1,
+                "WaitDistance": 1,
+                "RecomputeDistance": 10,
+                "ReprojectDistance": 0.5,
+                "AdjustRangeByHitboxSize": false,
+                "RecomputeConeAngle": 0,
+                "Reachable": false,
+                "HeightDifference": [
+                  -1,
+                  1
+                ],
+                "SlowDownDistance": 1,
+                "StopDistance": 0.5,
+                "AbortDistance": 96,
+                "Falloff": 3,
+                "SwitchToSteeringDistance": 20,
+                "Type": "Seek"
+              },
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-3821afa1-8313-457d-81d3-01436e1480c2",
+              "Actions": [
+                {
+                  "$NodeId": "Action.SetStat-b47b5a5c-240c-47f6-babc-fca6364980eb",
+                  "Once": false,
+                  "Stat": "Health",
+                  "Value": 1000000,
+                  "Add": false,
+                  "Type": "SetStat"
+                },
+                {
+                  "$NodeId": "Action.State-d132055e-f8f0-4d1d-8466-9e639282d218",
+                  "Once": false,
+                  "State": "Idle",
+                  "ClearState": true,
+                  "Type": "State"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        },
+        {
+          "$NodeId": "Structural.InstructionNode-4e3ad795-ac27-45de-bb4a-26d0070e6edc",
+          "Sensor": {
+            "$NodeId": "Sensor.State-b0124794-cc9c-48e5-b806-f5d3194a9b50",
+            "Once": false,
+            "Enabled": true,
+            "State": "Flee",
+            "IgnoreMissingSetState": false,
+            "Type": "State"
+          },
+          "Instructions": [
+            {
+              "$NodeId": "Structural.InstructionNode-7940f204-8e28-4d16-882d-5a22856d3426",
+              "$Comment": "TODO: Add a state message",
+              "Sensor": {
+                "$NodeId": "Sensor.Any-47bff58f-1822-4f4c-8da2-268ddbdcf7ae",
+                "Once": true,
+                "Enabled": true,
+                "Type": "Any"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.FlockBeacon-8b97e93a-6169-425a-80f1-312a6a31d98d",
+                  "Once": false,
+                  "Message": "Flock_Attack",
+                  "SendTargetSlot": "LockedTarget",
+                  "ExpirationTime": 1,
+                  "SendToSelf": true,
+                  "SendToLeaderOnly": false,
+                  "Type": "FlockBeacon"
+                }
+              ],
+              "Enabled": {
+                "Compute": "!isEmptyStringArray(FlockArray)"
+              },
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionReference-6cee98a1-571c-45ea-bd30-5397a13574df",
+              "Reference": "Component_Instruction_Damage_Check",
+              "Modify": {
+                "_ExportStates": [
+                  "Flee.Switch",
+                  "Panic"
+                ],
+                "AlertedRange": {
+                  "Compute": "AlertedRange"
+                }
+              }
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-7a4f01ca-a078-4833-aa24-e26024571c49",
+              "Sensor": {
+                "$NodeId": "Sensor.State-a9a6cd3e-d303-4b9d-8354-ea9dbe5d690c",
+                "Once": false,
+                "Enabled": true,
+                "State": ".Switch",
+                "IgnoreMissingSetState": false,
+                "Type": "State"
+              },
+              "Instructions": [
+                {
+                  "$NodeId": "Structural.InstructionNode-1c2f140a-5361-453c-a966-89d66745cb95",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-9453c6c4-415a-4028-bdf7-7d8988648241",
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": {
+                      "Compute": "AttackRange"
+                    },
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "Instructions": [
+                    {
+                      "$NodeId": "Structural.InstructionNode-34cc2c21-bb36-4d40-a46b-aea67bbb616f",
+                      "Sensor": {
+                        "$NodeId": "Sensor.Target-dcb56cd0-6cf7-421e-91cf-5f2272bd709a",
+                        "Filters": [
+                          {
+                            "$NodeId": "IEntityFilter.Not-0b333da5-0903-4b11-995b-0fb19fc849ac",
+                            "Filter": {
+                              "$NodeId": "IEntityFilter.ViewSector-94e01789-4cf0-4536-a56b-7ea752c60bc8",
+                              "Enabled": true,
+                              "ViewSector": 270,
+                              "Type": "ViewSector"
+                            },
+                            "Enabled": true,
+                            "Type": "Not"
+                          }
+                        ],
+                        "Once": false,
+                        "Enabled": true,
+                        "TargetSlot": "LockedTarget",
+                        "Range": 1.7976931348623157e+308,
+                        "AutoUnlockTarget": false,
+                        "Type": "Target"
+                      },
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.OverrideAttitude-835675e8-1d2a-4e89-a002-6cc24dfa6181",
+                          "Once": false,
+                          "Attitude": "Hostile",
+                          "Duration": 10,
+                          "Type": "OverrideAttitude"
+                        },
+                        {
+                          "$NodeId": "Action.PlayAnimation-54e29484-3b8d-4778-bc5c-b0cd90b20b4f",
+                          "Once": false,
+                          "Slot": "Status",
+                          "Animation": "Alerted",
+                          "Type": "PlayAnimation"
+                        },
+                        {
+                          "$NodeId": "Action.Timeout-aaf9b775-4948-4342-a937-4f4387fc9d37",
+                          "Once": false,
+                          "Delay": [
+                            0.2,
+                            0.2
+                          ],
+                          "DelayAfter": false,
+                          "Type": "Timeout"
+                        },
+                        {
+                          "$NodeId": "Action.PlayAnimation-38b17232-650a-4d69-8a87-eafc8c946879",
+                          "Once": false,
+                          "Slot": "Status",
+                          "Type": "PlayAnimation"
+                        },
+                        {
+                          "$NodeId": "Action.State-9dcfdaa5-21e0-4264-aba1-e44d5dcb33f3",
+                          "Once": false,
+                          "State": "Flee.Attack",
+                          "ClearState": true,
+                          "Type": "State"
+                        }
+                      ],
+                      "Enabled": {
+                        "Compute": "AttackWhenStartled"
+                      },
+                      "ActionsBlocking": true,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    },
+                    {
+                      "$NodeId": "Structural.InstructionNode-1b1f0959-d90e-44cc-b69c-4d76a308d06c",
+                      "Actions": [
+                        {
+                          "$NodeId": "Action.State-e938f252-e13b-4b50-84f2-61afd7ad887f",
+                          "Once": false,
+                          "State": ".Default",
+                          "ClearState": true,
+                          "Type": "State"
+                        }
+                      ],
+                      "Enabled": true,
+                      "ActionsBlocking": false,
+                      "ActionsAtomic": false,
+                      "Continue": false,
+                      "Weight": 1,
+                      "TreeMode": false,
+                      "InvertTreeModeResult": false,
+                      "ResetOnStateChange": true,
+                      "ExecuteFor": [
+                        1.7976931348623157e+308,
+                        1.7976931348623157e+308
+                      ]
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-2ee9b547-f18a-4353-bb96-acb8e322a998",
+                  "Sensor": {
+                    "$NodeId": "Sensor.Target-7a83ffc3-7991-427c-bf34-1e0a0d1fd243",
+                    "Once": false,
+                    "Enabled": true,
+                    "TargetSlot": "LockedTarget",
+                    "Range": {
+                      "Compute": "AlertedRange"
+                    },
+                    "AutoUnlockTarget": false,
+                    "Type": "Target"
+                  },
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-17ef977d-284b-41a8-96d9-94dd0a40d08e",
+                      "Once": false,
+                      "State": ".Default",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                },
+                {
+                  "$NodeId": "Structural.InstructionNode-0fc642b0-2a0f-4724-864a-ed503f9a5e4f",
+                  "Actions": [
+                    {
+                      "$NodeId": "Action.State-28e59169-ecc9-467a-9cef-dde428c697c8",
+                      "Once": false,
+                      "State": "Panic",
+                      "ClearState": true,
+                      "Type": "State"
+                    }
+                  ],
+                  "Enabled": true,
+                  "ActionsBlocking": false,
+                  "ActionsAtomic": false,
+                  "Continue": false,
+                  "Weight": 1,
+                  "TreeMode": false,
+                  "InvertTreeModeResult": false,
+                  "ResetOnStateChange": true,
+                  "ExecuteFor": [
+                    1.7976931348623157e+308,
+                    1.7976931348623157e+308
+                  ]
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-785ffb44-1bf0-4b26-9fcd-0bf579001c10",
+              "Sensor": {
+                "$NodeId": "Sensor.State-a6f344b7-e11c-4f38-b9ad-32961882afbe",
+                "Once": false,
+                "Enabled": true,
+                "State": ".Attack",
+                "IgnoreMissingSetState": false,
+                "Type": "State"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.Attack-b8e1a7ad-bfd3-4a6e-b764-9226430c2189",
+                  "Once": false,
+                  "Attack": {
+                    "Compute": "Attack"
+                  },
+                  "AttackType": "Primary",
+                  "ChargeFor": 0,
+                  "AttackPauseRange": [
+                    1,
+                    2
+                  ],
+                  "AimingTimeRange": [
+                    0,
+                    0
+                  ],
+                  "LineOfSight": false,
+                  "AvoidFriendlyFire": true,
+                  "BallisticMode": "Short",
+                  "MeleeConeAngle": 30,
+                  "DamageFriendlies": false,
+                  "SkipAiming": false,
+                  "ChargeDistance": 0,
+                  "Type": "Attack"
+                },
+                {
+                  "$NodeId": "Action.Timeout-730ab744-e464-49bd-bc86-58e0b2e72ba1",
+                  "Action": {
+                    "$NodeId": "Action.State-1c089f7b-fc13-4c22-867d-b057cf9ea9cb",
+                    "Once": false,
+                    "State": ".Default",
+                    "ClearState": true,
+                    "Type": "State"
+                  },
+                  "Once": false,
+                  "Delay": [
+                    0.3,
+                    0.3
+                  ],
+                  "DelayAfter": false,
+                  "Type": "Timeout"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": true,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-cbad2152-7f95-43ff-b209-16a5947105cb",
+              "Sensor": {
+                "$NodeId": "Sensor.Target-1d5e86dc-e146-4c5d-85b5-8b0764889ddd",
+                "Once": false,
+                "Enabled": true,
+                "TargetSlot": "LockedTarget",
+                "Range": {
+                  "Compute": "AlertedRange + 3"
+                },
+                "AutoUnlockTarget": false,
+                "Type": "Target"
+              },
+              "BodyMotion": {
+                "$NodeId": "BodyMotion.Flee-279097ba-bfbf-435b-893b-8db6db7b9d5f",
+                "RelativeSpeed": 0.68,
+                "RelativeSpeedWaypoint": 0.5,
+                "WaypointRadius": 0.5,
+                "UseBestPath": true,
+                "ThrottleDelayRange": [
+                  3,
+                  5
+                ],
+                "ThrottleIgnoreCount": 3,
+                "BuildOptimisedPath": true,
+                "AvoidBlockDamage": true,
+                "RelaxedMoveConstraints": true,
+                "BlendHeading": 0.5,
+                "PathSmoothing": 2,
+                "RejectionWeight": 3,
+                "UseSteering": true,
+                "SkipSteering": true,
+                "UsePathfinder": true,
+                "MinPathLength": 2,
+                "DiagonalMoves": true,
+                "StepsPerTick": 50,
+                "MaxPathLength": 200,
+                "MaxOpenNodes": 200,
+                "MaxTotalNodes": 900,
+                "DesiredAltitudeWeight": -1,
+                "WaitDistance": 1,
+                "RecomputeDistance": 10,
+                "ReprojectDistance": 0.5,
+                "AdjustRangeByHitboxSize": false,
+                "RecomputeConeAngle": 0,
+                "SlowDownDistance": {
+                  "Compute": "AlertedRange - 3"
+                },
+                "StopDistance": {
+                  "Compute": "AlertedRange + 3"
+                },
+                "Falloff": 3,
+                "HoldDirectionTimeRange": [
+                  2,
+                  5
+                ],
+                "ChangeDirectionViewSector": 230,
+                "DirectionJitter": 45,
+                "ErraticDistance": 4,
+                "ErraticExtraJitter": 45,
+                "ErraticChangeDurationMultiplier": 0.5,
+                "Type": "Flee"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.Timeout-446d3024-4961-4169-babe-c161101a3c8e",
+                  "Action": {
+                    "$NodeId": "Action.State-bd7bf655-b57f-405d-9ee2-3c762b7a0d4b",
+                    "Once": false,
+                    "State": ".Switch",
+                    "ClearState": true,
+                    "Type": "State"
+                  },
+                  "Once": false,
+                  "Delay": [
+                    8,
+                    8
+                  ],
+                  "DelayAfter": false,
+                  "Type": "Timeout"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-c6635d05-ad5a-4d54-9dec-463ae71894d7",
+              "Actions": [
+                {
+                  "$NodeId": "Action.Timeout-ab86d23d-0f75-4891-a47c-ccc6a73455ef",
+                  "Action": {
+                    "$NodeId": "Action.State-e57e4832-3aee-48eb-9e60-a98a10b13fa3",
+                    "Once": false,
+                    "State": "Idle",
+                    "ClearState": true,
+                    "Type": "State"
+                  },
+                  "Once": false,
+                  "Delay": [
+                    3,
+                    6
+                  ],
+                  "DelayAfter": false,
+                  "Type": "Timeout"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        },
+        {
+          "$NodeId": "Structural.InstructionNode-ea0ff340-9c62-493a-a556-a1db8b5668b9",
+          "Sensor": {
+            "$NodeId": "Sensor.State-63941a30-1178-480b-af3a-87fb4963df79",
+            "Once": false,
+            "Enabled": true,
+            "State": "Panic",
+            "IgnoreMissingSetState": false,
+            "Type": "State"
+          },
+          "Instructions": [
+            {
+              "$NodeId": "Structural.InstructionNode-9accecec-65d4-4ce7-8bbb-aee748052c53",
+              "Sensor": {
+                "$NodeId": "Sensor.Any-8240e1db-cde9-4f80-90b8-5c2aca86267d",
+                "Once": true,
+                "Enabled": true,
+                "Type": "Any"
+              },
+              "Actions": [
+                {
+                  "$NodeId": "Action.PlayAnimation-299d726b-2f79-4610-9078-ba040c124471",
+                  "Once": false,
+                  "Slot": "Status",
+                  "Animation": "Alerted",
+                  "Type": "PlayAnimation"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-84e95df7-697f-4968-af41-57e7d8ca7304",
+              "Actions": [
+                {
+                  "$NodeId": "Action.Timeout-fd9966d2-2f96-41e2-b2a1-47aa72293c54",
+                  "Action": {
+                    "$NodeId": "Action.State-db6f1bcd-0513-4b24-ab6d-477b2c9aec2c",
+                    "Once": false,
+                    "State": "Idle",
+                    "ClearState": true,
+                    "Type": "State"
+                  },
+                  "Once": false,
+                  "Delay": [
+                    6,
+                    12
+                  ],
+                  "DelayAfter": false,
+                  "Type": "Timeout"
+                }
+              ],
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": true,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-7807218d-a52b-4e51-aa48-071fef4edb0a",
+              "Sensor": {
+                "$NodeId": "Sensor.Damage-63aafdcb-7fb5-4411-9b8d-8de633b0613e",
+                "Once": false,
+                "Enabled": true,
+                "Combat": true,
+                "Friendly": false,
+                "Drowning": false,
+                "Environment": false,
+                "Other": false,
+                "Type": "Damage"
+              },
+              "BodyMotion": {
+                "$NodeId": "BodyMotion.Flee-733c373b-b3bf-4cc8-9cc1-877fa61f8178",
+                "RelativeSpeed": 1,
+                "RelativeSpeedWaypoint": 0.5,
+                "WaypointRadius": 0.5,
+                "UseBestPath": true,
+                "ThrottleDelayRange": [
+                  3,
+                  5
+                ],
+                "ThrottleIgnoreCount": 3,
+                "BuildOptimisedPath": true,
+                "AvoidBlockDamage": true,
+                "RelaxedMoveConstraints": false,
+                "BlendHeading": 0.5,
+                "PathSmoothing": 2,
+                "RejectionWeight": 3,
+                "UseSteering": true,
+                "SkipSteering": true,
+                "UsePathfinder": true,
+                "MinPathLength": 2,
+                "DiagonalMoves": true,
+                "StepsPerTick": 50,
+                "MaxPathLength": 200,
+                "MaxOpenNodes": 200,
+                "MaxTotalNodes": 900,
+                "DesiredAltitudeWeight": -1,
+                "WaitDistance": 1,
+                "RecomputeDistance": 10,
+                "ReprojectDistance": 0.5,
+                "AdjustRangeByHitboxSize": false,
+                "RecomputeConeAngle": 0,
+                "SlowDownDistance": 9,
+                "StopDistance": 14,
+                "Falloff": 3,
+                "HoldDirectionTimeRange": [
+                  2,
+                  5
+                ],
+                "ChangeDirectionViewSector": 230,
+                "DirectionJitter": 45,
+                "ErraticDistance": 4,
+                "ErraticExtraJitter": 45,
+                "ErraticChangeDurationMultiplier": 0.5,
+                "Type": "Flee"
+              },
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            },
+            {
+              "$NodeId": "Structural.InstructionNode-623dce2b-e41d-4752-aec8-375acf15fcfa",
+              "BodyMotion": {
+                "$NodeId": "BodyMotion.WanderInCircle-0c18abec-8e84-435f-b098-84f2b75381a5",
+                "MinWalkTime": 2,
+                "MaxWalkTime": 4,
+                "MinHeadingChange": 0,
+                "MaxHeadingChange": 90,
+                "RelaxHeadingChange": true,
+                "RelativeSpeed": 1,
+                "MinMoveDistance": 0.5,
+                "StopDistance": 0.5,
+                "TestsPerTick": 1,
+                "AvoidBlockDamage": true,
+                "RelaxedMoveConstraints": true,
+                "DesiredAltitudeWeight": -1,
+                "Radius": 10,
+                "Flock": false,
+                "UseSphere": false,
+                "Type": "WanderInCircle"
+              },
+              "Enabled": true,
+              "ActionsBlocking": false,
+              "ActionsAtomic": false,
+              "Continue": false,
+              "Weight": 1,
+              "TreeMode": false,
+              "InvertTreeModeResult": false,
+              "ResetOnStateChange": true,
+              "ExecuteFor": [
+                1.7976931348623157e+308,
+                1.7976931348623157e+308
+              ]
+            }
+          ],
+          "Enabled": true,
+          "ActionsBlocking": false,
+          "ActionsAtomic": false,
+          "Continue": false,
+          "Weight": 1,
+          "TreeMode": false,
+          "InvertTreeModeResult": false,
+          "ResetOnStateChange": true,
+          "ExecuteFor": [
+            1.7976931348623157e+308,
+            1.7976931348623157e+308
+          ]
+        }
+      ],
+      "Enabled": true,
+      "ActionsBlocking": false,
+      "ActionsAtomic": false,
+      "Continue": false,
+      "Weight": 1,
+      "TreeMode": false,
+      "InvertTreeModeResult": false,
+      "ResetOnStateChange": true,
+      "ExecuteFor": [
+        1.7976931348623157e+308,
+        1.7976931348623157e+308
+      ]
+    }
+  ],
+  "InteractionInstruction": {
+    "$NodeId": "Structural.InstructionNode-55e1cd23-cf23-4d25-b326-bbaca3862847",
+    "Instructions": [
+      {
+        "$NodeId": "Structural.InstructionNode-ea26e436-d22e-4af5-aa97-579aa9b8d308",
+        "Actions": [
+          {
+            "$NodeId": "Action.LockOnInteractionTarget-0d334597-fa0e-4f06-af17-e49a9ab5fb63",
+            "Once": false,
+            "TargetSlot": "InteractionTarget",
+            "Type": "LockOnInteractionTarget"
+          }
+        ],
+        "Enabled": true,
+        "ActionsBlocking": false,
+        "ActionsAtomic": false,
+        "Continue": true,
+        "Weight": 1,
+        "TreeMode": false,
+        "InvertTreeModeResult": false,
+        "ResetOnStateChange": true,
+        "ExecuteFor": [
+          1.7976931348623157e+308,
+          1.7976931348623157e+308
+        ]
+      },
+      {
+        "$NodeId": "Structural.InstructionNode-cce1c336-7c6b-453d-b1f6-ddd41c3d4b52",
+        "Instructions": [
+          {
+            "$NodeId": "Structural.InstructionNode-3ba18041-8593-4b92-8b3a-0cec9f710c84",
+            "Sensor": {
+              "$NodeId": "Sensor.State-343f9272-e632-42d3-b0dd-685599fb9fc9",
+              "$Comment": "Check the negative first so we can exit early and avoid the rest of the logic",
+              "Once": false,
+              "Enabled": true,
+              "State": "Sleep",
+              "IgnoreMissingSetState": false,
+              "Type": "State"
+            },
+            "Actions": [
+              {
+                "$NodeId": "Action.Nothing-5fddaf42-45bc-4f65-8689-d119b3628fe6",
+                "Once": false,
+                "Type": "Nothing"
+              }
+            ],
+            "Enabled": true,
+            "ActionsBlocking": false,
+            "ActionsAtomic": false,
+            "Continue": false,
+            "Weight": 1,
+            "TreeMode": false,
+            "InvertTreeModeResult": true,
+            "ResetOnStateChange": true,
+            "ExecuteFor": [
+              1.7976931348623157e+308,
+              1.7976931348623157e+308
+            ]
+          },
+          {
+            "$NodeId": "Structural.InstructionNode-c72e600f-f042-4b04-8e46-54904c269a7f",
+            "Sensor": {
+              "$NodeId": "Sensor.Any-d0eec757-0d42-403e-94ce-1d2e9cf6e587",
+              "Once": false,
+              "Enabled": true,
+              "Type": "Any"
+            },
+            "Actions": [
+              {
+                "$NodeId": "Action.SetInteractable-0780ad54-7c9e-4fde-b130-7b388e3a3060",
+                "Once": false,
+                "Interactable": true,
+                "Hint": "server.interactionHints.tame",
+                "ShowPrompt": true,
+                "Type": "SetInteractable"
+              }
+            ],
+            "Enabled": true,
+            "ActionsBlocking": false,
+            "ActionsAtomic": false,
+            "Continue": true,
+            "Weight": 1,
+            "TreeMode": false,
+            "InvertTreeModeResult": true,
+            "ResetOnStateChange": true,
+            "ExecuteFor": [
+              1.7976931348623157e+308,
+              1.7976931348623157e+308
+            ]
+          },
+          {
+            "$NodeId": "Structural.InstructionNode-058f7a7d-12da-4571-9a5b-b93b118cce28",
+            "Sensor": {
+              "$NodeId": "Sensor.HasInteracted-62d55d98-7b08-4d2f-8f3e-44458e89b46c",
+              "Once": false,
+              "Enabled": true,
+              "Type": "HasInteracted"
+            },
+            "Instructions": [
+              {
+                "$NodeId": "Structural.InstructionNode-349c953c-794d-4ef4-8c61-5e490ee6f77b",
+                "$Comment": "Get tamed",
+                "Sensor": {
+                  "$NodeId": "Sensor.Target-8c22b5e6-cce7-4e10-a593-0d80e428c320",
+                  "Filters": [
+                    {
+                      "$NodeId": "IEntityFilter.ItemInHand-09e7a9b6-451e-4fb2-9e13-8f8683f0bd3a",
+                      "Enabled": {
+                        "Compute": "!isEmptyStringArray(AttractiveItemSet)"
+                      },
+                      "Items": {
+                        "Compute": "AttractiveItemSet"
+                      },
+                      "Hand": "Main",
+                      "Type": "ItemInHand"
+                    }
+                  ],
+                  "Once": false,
+                  "Enabled": true,
+                  "TargetSlot": "InteractionTarget",
+                  "Range": 1.7976931348623157e+308,
+                  "AutoUnlockTarget": false,
+                  "Type": "Target"
+                },
+                "Actions": [
+                  {
+                    "$NodeId": "Action.Inventory-05f23b0d-367e-4da7-b949-e30aa9f08fef",
+                    "Once": false,
+                    "Operation": "RemoveHeldItem",
+                    "Count": 1,
+                    "UseTarget": true,
+                    "Slot": 0,
+                    "Type": "Inventory"
+                  },
+                  {
+                    "$NodeId": "Action.SetInteractable-78407a70-8490-4e5e-a043-22627e757d54",
+                    "Once": false,
+                    "Interactable": false,
+                    "ShowPrompt": true,
+                    "Type": "SetInteractable"
+                  },
+                  {
+                    "$NodeId": "Action.Role-2362e317-6dc8-46f8-b603-7e718b0d972e",
+                    "Once": false,
+                    "Role": {
+                      "Compute": "TameRoleChange"
+                    },
+                    "ChangeAppearance": true,
+                    "State": "$Tamed",
+                    "Type": "Role"
+                  }
+                ],
+                "Enabled": true,
+                "ActionsBlocking": false,
+                "ActionsAtomic": false,
+                "Continue": false,
+                "Weight": 1,
+                "TreeMode": false,
+                "InvertTreeModeResult": false,
+                "ResetOnStateChange": true,
+                "ExecuteFor": [
+                  1.7976931348623157e+308,
+                  1.7976931348623157e+308
+                ]
+              },
+              {
+                "$NodeId": "Structural.InstructionNode-5d434f4a-6d81-4806-b175-cd886688e4cd",
+                "Actions": [
+                  {
+                    "$NodeId": "Action.PlayAnimation-0e9df610-d52a-4853-ae05-f5e572b24c6e",
+                    "Once": false,
+                    "Slot": "Status",
+                    "Animation": "Alerted",
+                    "Type": "PlayAnimation"
+                  },
+                  {
+                    "$NodeId": "Action.SpawnParticles-cf766822-44d6-4a22-a081-ae4a4fc170a3",
+                    "Once": false,
+                    "ParticleSystem": {
+                      "Compute": "AttractiveItemSetParticles"
+                    },
+                    "Range": 75,
+                    "Offset": {
+                      "Compute": "ParticleOffset"
+                    },
+                    "TargetNodeName": "Head",
+                    "IsDetachedFromModel": false,
+                    "Type": "SpawnParticles"
+                  }
+                ],
+                "Enabled": true,
+                "ActionsBlocking": false,
+                "ActionsAtomic": false,
+                "Continue": false,
+                "Weight": 1,
+                "TreeMode": false,
+                "InvertTreeModeResult": false,
+                "ResetOnStateChange": true,
+                "ExecuteFor": [
+                  1.7976931348623157e+308,
+                  1.7976931348623157e+308
+                ]
+              }
+            ],
+            "Enabled": true,
+            "ActionsBlocking": false,
+            "ActionsAtomic": false,
+            "Continue": false,
+            "Weight": 1,
+            "TreeMode": false,
+            "InvertTreeModeResult": false,
+            "ResetOnStateChange": true,
+            "ExecuteFor": [
+              1.7976931348623157e+308,
+              1.7976931348623157e+308
+            ]
+          }
+        ],
+        "Enabled": {
+          "Compute": "IsTameable"
+        },
+        "ActionsBlocking": false,
+        "ActionsAtomic": false,
+        "Continue": false,
+        "Weight": 1,
+        "TreeMode": true,
+        "InvertTreeModeResult": false,
+        "ResetOnStateChange": true,
+        "ExecuteFor": [
+          1.7976931348623157e+308,
+          1.7976931348623157e+308
+        ]
+      },
+      {
+        "$NodeId": "Structural.InstructionNode-4e72c7e0-51cd-46c3-9411-3e53fb1b1d1d",
+        "$Comment": "Only now that we've failed to match all possible interactions do we set interactability to false.",
+        "Actions": [
+          {
+            "$NodeId": "Action.SetInteractable-977dfaf0-17e7-4c9e-832c-b882669f3d70",
+            "Once": false,
+            "Interactable": false,
+            "ShowPrompt": true,
+            "Type": "SetInteractable"
+          }
+        ],
+        "Enabled": true,
+        "ActionsBlocking": false,
+        "ActionsAtomic": false,
+        "Continue": false,
+        "Weight": 1,
+        "TreeMode": false,
+        "InvertTreeModeResult": false,
+        "ResetOnStateChange": true,
+        "ExecuteFor": [
+          1.7976931348623157e+308,
+          1.7976931348623157e+308
+        ]
+      }
+    ],
+    "Enabled": true,
+    "ActionsBlocking": false,
+    "ActionsAtomic": false,
+    "Continue": false,
+    "Weight": 1,
+    "TreeMode": false,
+    "InvertTreeModeResult": false,
+    "ResetOnStateChange": true,
+    "ExecuteFor": [
+      1.7976931348623157e+308,
+      1.7976931348623157e+308
+    ],
+    "$NodeEditorMetadata": {
+      "$Nodes": {
+        "Action.LockOnInteractionTarget-0d334597-fa0e-4f06-af17-e49a9ab5fb63": {
+          "$Position": {
+            "$x": 1682,
+            "$y": -50
+          }
+        },
+        "Structural.InstructionNode-ea26e436-d22e-4af5-aa97-579aa9b8d308": {
+          "$Position": {
+            "$x": 840,
+            "$y": -100
+          }
+        },
+        "Sensor.State-343f9272-e632-42d3-b0dd-685599fb9fc9": {
+          "$Position": {
+            "$x": 1680,
+            "$y": 1220
+          }
+        },
+        "Action.Nothing-5fddaf42-45bc-4f65-8689-d119b3628fe6": {
+          "$Position": {
+            "$x": 3137,
+            "$y": 1270
+          }
+        },
+        "Structural.InstructionNode-3ba18041-8593-4b92-8b3a-0cec9f710c84": {
+          "$Position": {
+            "$x": 2295,
+            "$y": 1220
+          }
+        },
+        "Sensor.Any-d0eec757-0d42-403e-94ce-1d2e9cf6e587": {
+          "$Position": {
+            "$x": 1950,
+            "$y": 2540
+          }
+        },
+        "Action.SetInteractable-0780ad54-7c9e-4fde-b130-7b388e3a3060": {
+          "$Position": {
+            "$x": 3137,
+            "$y": 2590
+          }
+        },
+        "Structural.InstructionNode-c72e600f-f042-4b04-8e46-54904c269a7f": {
+          "$Position": {
+            "$x": 2295,
+            "$y": 2540
+          }
+        },
+        "Sensor.HasInteracted-62d55d98-7b08-4d2f-8f3e-44458e89b46c": {
+          "$Position": {
+            "$x": 1950,
+            "$y": 3960
+          }
+        },
+        "IEntityFilter.ItemInHand-09e7a9b6-451e-4fb2-9e13-8f8683f0bd3a": {
+          "$Position": {
+            "$x": 3135,
+            "$y": 3885
+          }
+        },
+        "Sensor.Target-8c22b5e6-cce7-4e10-a593-0d80e428c320": {
+          "$Position": {
+            "$x": 3693,
+            "$y": 3860
+          }
+        },
+        "Action.Inventory-05f23b0d-367e-4da7-b949-e30aa9f08fef": {
+          "$Position": {
+            "$x": 5240,
+            "$y": 3910
+          }
+        },
+        "Action.SetInteractable-78407a70-8490-4e5e-a043-22627e757d54": {
+          "$Position": {
+            "$x": 5240,
+            "$y": 4286
+          }
+        },
+        "Action.Role-2362e317-6dc8-46f8-b603-7e718b0d972e": {
+          "$Position": {
+            "$x": 5240,
+            "$y": 4582
+          }
+        },
+        "Structural.InstructionNode-349c953c-794d-4ef4-8c61-5e490ee6f77b": {
+          "$Position": {
+            "$x": 4398,
+            "$y": 3860
+          }
+        },
+        "Action.PlayAnimation-0e9df610-d52a-4853-ae05-f5e572b24c6e": {
+          "$Position": {
+            "$x": 5240,
+            "$y": 5548
+          }
+        },
+        "Action.SpawnParticles-cf766822-44d6-4a22-a081-ae4a4fc170a3": {
+          "$Position": {
+            "$x": 5240,
+            "$y": 5804
+          }
+        },
+        "Structural.InstructionNode-5d434f4a-6d81-4806-b175-cd886688e4cd": {
+          "$Position": {
+            "$x": 4398,
+            "$y": 5498
+          }
+        },
+        "Structural.InstructionNode-058f7a7d-12da-4571-9a5b-b93b118cce28": {
+          "$Position": {
+            "$x": 2295,
+            "$y": 3960
+          }
+        },
+        "Structural.InstructionNode-cce1c336-7c6b-453d-b1f6-ddd41c3d4b52": {
+          "$Position": {
+            "$x": 840,
+            "$y": 1320
+          }
+        },
+        "Action.SetInteractable-977dfaf0-17e7-4c9e-832c-b882669f3d70": {
+          "$Position": {
+            "$x": 1682,
+            "$y": 6868
+          }
+        },
+        "Structural.InstructionNode-4e72c7e0-51cd-46c3-9411-3e53fb1b1d1d": {
+          "$Position": {
+            "$x": 840,
+            "$y": 6818
+          }
+        },
+        "Structural.InstructionNode-55e1cd23-cf23-4d25-b326-bbaca3862847": {
+          "$Position": {
+            "$x": 0,
+            "$y": 0
+          }
+        }
+      },
+      "$FloatingNodes": [],
+      "$Links": {},
+      "$Groups": [],
+      "$Comments": [],
+      "$WorkspaceID": "Instruction"
+    }
+  },
+  "NameTranslationKey": {
+    "Compute": "NameTranslationKey"
+  },
+  "DeathInstruction": {
+    "$NodeId": "Structural.InstructionNode-c2cf7449-55d3-4597-8094-27c0438b195b",
+    "Enabled": true,
+    "ActionsBlocking": false,
+    "ActionsAtomic": false,
+    "Continue": false,
+    "Weight": 1,
+    "TreeMode": false,
+    "InvertTreeModeResult": false,
+    "ResetOnStateChange": true,
+    "ExecuteFor": [
+      1.7976931348623157e+308,
+      1.7976931348623157e+308
+    ],
+    "$NodeEditorMetadata": {
+      "$Nodes": {
+        "Structural.InstructionNode-c2cf7449-55d3-4597-8094-27c0438b195b": {
+          "$Position": {
+            "$x": 796.4872509952978,
+            "$y": 1105.6108491745565
+          }
+        }
+      },
+      "$FloatingNodes": [],
+      "$Links": {},
+      "$Groups": [],
+      "$Comments": [],
+      "$WorkspaceID": "Instruction"
+    }
+  },
+  "$NodeId": "Structural.InstructionListRoot-ea6c618a-3e38-4c73-a120-df0fb31bfd50",
+  "$NodeEditorMetadata": {
+    "$Nodes": {
+      "Structural.InstructionNode-e0791b6b-7651-4165-a525-2aa895e1e992": {
+        "$Position": {
+          "$x": 838,
+          "$y": 884
+        }
+      },
+      "Sensor.InWater-95edba56-9568-47fe-b8d5-c0b93e9571ff": {
+        "$Position": {
+          "$x": 2680,
+          "$y": 3535
+        }
+      },
+      "Sensor.State-6716c308-fd0c-49b6-b72a-da20bbb87bf1": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 3751
+        }
+      },
+      "Sensor.Not-57262463-e158-41a9-a934-ccf23228cac8": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 3751
+        }
+      },
+      "Sensor.And-e62bc3d8-d1f1-4284-b08e-86724f23912a": {
+        "$Position": {
+          "$x": 3025,
+          "$y": 3510
+        }
+      },
+      "Action.State-4eda08d6-dd25-4a5f-a902-d99d867f2b88": {
+        "$Position": {
+          "$x": 4557,
+          "$y": 3560
+        }
+      },
+      "Structural.InstructionNode-d15c109d-4aac-4e1c-b0cc-f0570108e48a": {
+        "$Position": {
+          "$x": 3715,
+          "$y": 3510
+        }
+      },
+      "Structural.InstructionNode-09edb612-ee43-482f-9a55-7451a9eba2e3": {
+        "$Position": {
+          "$x": 838,
+          "$y": 3610
+        }
+      },
+      "Sensor.Any-34335a4c-721b-4379-ae42-e449c3a91bb6": {
+        "$Position": {
+          "$x": 493,
+          "$y": 4967
+        }
+      },
+      "Action.SetAlarm-f3d8e9cc-d95e-47c1-852e-40a3b2b955ac": {
+        "$Position": {
+          "$x": 1680,
+          "$y": 5017
+        }
+      },
+      "Structural.InstructionNode-b219cb67-e1e0-4b3d-907e-8a16f341c3a4": {
+        "$Position": {
+          "$x": 838,
+          "$y": 4967
+        }
+      },
+      "Sensor.Alarm-7734ccb8-9192-48e0-94bb-304e1d779c74": {
+        "$Position": {
+          "$x": 289,
+          "$y": 6308
+        }
+      },
+      "Action.Nothing-12832dc6-6b5e-4868-b79b-b28d1b102847": {
+        "$Position": {
+          "$x": 1680,
+          "$y": 6358
+        }
+      },
+      "Structural.InstructionNode-8192e0b3-0746-4c17-984d-cea715ec3b1e": {
+        "$Position": {
+          "$x": 838,
+          "$y": 6308
+        }
+      },
+      "Sensor.State-1918bc80-3f72-42cc-822a-9c7cae8501fe": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 7749
+        }
+      },
+      "Sensor.Beacon-5e365157-28f8-4e38-b928-77ca0a342e84": {
+        "$Position": {
+          "$x": 3171,
+          "$y": 7649
+        }
+      },
+      "Action.State-34767c85-8a93-407e-ba73-cd6231aa35bb": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 7699
+        }
+      },
+      "Structural.InstructionNode-e9eca5eb-65d2-4b19-9689-b2896b5f769e": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 7649
+        }
+      },
+      "Structural.InstructionReference-b7509c2b-0542-49c4-b1c9-b3fff0d5c132": {
+        "$Position": {
+          "$x": 3135,
+          "$y": 7824
+        }
+      },
+      "Sensor.Reference-c65a6eab-3f3d-4446-af45-d3651357141e": {
+        "$Position": {
+          "$x": 3133,
+          "$y": 9006
+        }
+      },
+      "Action.State-82e23109-a9da-4e00-9bed-9d1c3447d4a3": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 9056
+        }
+      },
+      "Structural.InstructionNode-a4f1b401-91e5-4c83-b397-05f12986095b": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 9006
+        }
+      },
+      "Sensor.Leash-9add8adf-3cad-4735-84cd-b14f208be2c7": {
+        "$Position": {
+          "$x": 3254,
+          "$y": 10347
+        }
+      },
+      "Action.State-75c452d5-a553-4398-a210-ec1784b918a7": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 10397
+        }
+      },
+      "Action.Timeout-3895c1fc-01cf-47d3-aec3-d49781cb7375": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 10653
+        }
+      },
+      "Structural.InstructionNode-715d0ffb-605c-4ad0-bef1-325683cca507": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 10347
+        }
+      },
+      "Sensor.State-12edad02-df76-46e9-a7c2-3aa368be9831": {
+        "$Position": {
+          "$x": 3196,
+          "$y": 11788
+        }
+      },
+      "Sensor.Block-c9f5ef69-d8f4-43e6-9f6e-71e60b3f76c5": {
+        "$Position": {
+          "$x": 4677,
+          "$y": 11713
+        }
+      },
+      "Sensor.DroppedItem-7f714d85-b8c8-47f4-bd20-cc13f846c743": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 12129
+        }
+      },
+      "Sensor.Or-5f6ee947-9745-49b1-9ce7-41d59461ccb0": {
+        "$Position": {
+          "$x": 5290,
+          "$y": 11688
+        }
+      },
+      "BodyMotion.AimCharge-adab33d0-c871-41b0-a9f7-d6e6cccd0468": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 11688
+        }
+      },
+      "Action.PickUpItem-1f913c0b-b75a-4ee1-8a49-7fc7336a9589": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 11864
+        }
+      },
+      "Action.PlayAnimation-a42f28b0-c55b-4015-9ef1-1232a22a7fa0": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 12372
+        }
+      },
+      "Action.Timeout-60193039-ca59-4734-9de1-c9197b85668d": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 12628
+        }
+      },
+      "Structural.InstructionNode-5efce615-24f4-4e93-8ec2-2afc5183e6e1": {
+        "$Position": {
+          "$x": 5980,
+          "$y": 11688
+        }
+      },
+      "Sensor.Block-1364695a-787b-4cc3-9361-8f0289cfbbc8": {
+        "$Position": {
+          "$x": 4677,
+          "$y": 13613
+        }
+      },
+      "Sensor.DroppedItem-5ea23199-1b2a-4969-89e0-c5f8785399c4": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 14029
+        }
+      },
+      "Sensor.Or-3225c3bb-c2a1-49ae-b938-9485683f310e": {
+        "$Position": {
+          "$x": 5290,
+          "$y": 13588
+        }
+      },
+      "BodyMotion.Seek-21a7e2a2-ddcd-4c57-a5d6-296329aa128e": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 13588
+        }
+      },
+      "HeadMotion.Watch-954490f5-77fc-4986-addd-9aadfc20bd1c": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 15292
+        }
+      },
+      "Structural.InstructionNode-69dc6522-8cd2-469e-a1ac-133e1595d161": {
+        "$Position": {
+          "$x": 5980,
+          "$y": 13588
+        }
+      },
+      "Sensor.Any-3173293a-c3dd-4b28-b62b-ea6e6fd91a03": {
+        "$Position": {
+          "$x": 5635,
+          "$y": 16294
+        }
+      },
+      "Action.PlayAnimation-ff9a2fd6-d12f-49dc-ae0d-0ed8c5ec0fa7": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 16088
+        }
+      },
+      "Action.Timeout-cee2a470-fa59-44c9-ad61-ac20e320938b": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 16344
+        }
+      },
+      "Action.ResetBlockSensors-3be8794f-81ba-4657-a3fc-48aa542f9506": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 16684
+        }
+      },
+      "Action.State-a2f83cc3-4535-4ee3-a32c-d743cdfb7e3a": {
+        "$Position": {
+          "$x": 6822,
+          "$y": 16934
+        }
+      },
+      "Structural.InstructionNode-3e225a58-d2bf-4319-a3ce-c243bb90e299": {
+        "$Position": {
+          "$x": 5980,
+          "$y": 16294
+        }
+      },
+      "Structural.InstructionNode-b87dbdfc-4020-460f-be86-954c49f8505b": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 11788
+        }
+      },
+      "Sensor.Alarm-31e64279-4d7c-46c3-829f-8e475a00dce9": {
+        "$Position": {
+          "$x": 3262,
+          "$y": 17810
+        }
+      },
+      "Action.DropItem-0330d179-d246-40b5-bc47-91bb0f39945f": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 17860
+        }
+      },
+      "Action.SetAlarm-02006d93-2e10-4760-8a39-77e6f15b216d": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 18568
+        }
+      },
+      "Structural.InstructionNode-6f0266db-91d8-4dbe-b54d-2fcfbdd1a495": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 17810
+        }
+      },
+      "Sensor.Time-e829f1f7-8927-4b40-8ec7-a76772aa5996": {
+        "$Position": {
+          "$x": 3188,
+          "$y": 19644
+        }
+      },
+      "Action.Crouch-8ff1877d-0fe0-4253-9bdf-1aab2fbcb93e": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 19494
+        }
+      },
+      "Structural.InstructionNode-2fc9a026-82d1-4e5e-bdbb-43d24b7edf4b": {
+        "$Position": {
+          "$x": 5491,
+          "$y": 19444
+        }
+      },
+      "Structural.InstructionReference-91ea0c67-5638-4cba-8cf0-0d6a38e610b7": {
+        "$Position": {
+          "$x": 5493,
+          "$y": 19619
+        }
+      },
+      "BodyMotion.Nothing-832ef765-0e73-474f-a57a-306eff8c8559": {
+        "$Position": {
+          "$x": 7383,
+          "$y": 20764
+        }
+      },
+      "BodyMotion.Timer-1b785d74-c9e7-4b70-9bec-3d8723e469b8": {
+        "$Position": {
+          "$x": 6735,
+          "$y": 20764
+        }
+      },
+      "BodyMotion.WanderInCircle-77e819da-28ee-4c47-9645-4a7a7be94920": {
+        "$Position": {
+          "$x": 7383,
+          "$y": 21024
+        }
+      },
+      "BodyMotion.Timer-01e741d9-934c-47d2-998b-7f7434ff9b73": {
+        "$Position": {
+          "$x": 6735,
+          "$y": 21024
+        }
+      },
+      "BodyMotion.Sequence-c9c1013b-4ded-45fd-b108-90bfe99c7957": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 20764
+        }
+      },
+      "Structural.InstructionNode-93ceb69e-5f70-4579-915e-f5d9ac802d50": {
+        "$Position": {
+          "$x": 5491,
+          "$y": 20764
+        }
+      },
+      "Structural.InstructionNode-0b0f43a3-8802-496c-ba85-36bf6ed1a006": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 19544
+        }
+      },
+      "IEntityFilter.StandingOnBlock-3f2ad376-48ed-4505-a727-30dc1899e420": {
+        "$Position": {
+          "$x": 5491,
+          "$y": 22611
+        }
+      },
+      "Sensor.Self-a9edb927-734b-420e-bbcd-84b103f280a0": {
+        "$Position": {
+          "$x": 6034,
+          "$y": 22586
+        }
+      },
+      "Action.PlayAnimation-5474be28-fcee-4b93-8818-571dd6cb3868": {
+        "$Position": {
+          "$x": 7322,
+          "$y": 22380
+        }
+      },
+      "Action.Timeout-3f9f8709-1edd-45f0-aa01-3dafa59e1904": {
+        "$Position": {
+          "$x": 7322,
+          "$y": 22636
+        }
+      },
+      "Action.PlayAnimation-611fe0a8-aecb-4ae8-b35a-e20b0b3b0944": {
+        "$Position": {
+          "$x": 7322,
+          "$y": 22976
+        }
+      },
+      "Action.ResetInstructions-def33a9f-2660-44a6-a0dd-022adf5265db": {
+        "$Position": {
+          "$x": 7322,
+          "$y": 23232
+        }
+      },
+      "Structural.InstructionNode-ad67705f-706e-442a-9acd-2c33bef23d7a": {
+        "$Position": {
+          "$x": 6480,
+          "$y": 22586
+        }
+      },
+      "Action.ResetInstructions-7df3bbf8-dbf6-4248-8ac8-c9ff08c4392b": {
+        "$Position": {
+          "$x": 7322,
+          "$y": 24152
+        }
+      },
+      "Action.State-69db1ae8-d988-4036-8cca-72fab8aa2eff": {
+        "$Position": {
+          "$x": 7322,
+          "$y": 24402
+        }
+      },
+      "Structural.InstructionNode-48d4dc85-ff57-4843-9920-0ca5417e4b51": {
+        "$Position": {
+          "$x": 6480,
+          "$y": 24102
+        }
+      },
+      "Structural.InstructionNode-cf30152f-2603-4090-bfb4-6aca6c0908e7": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 22686
+        }
+      },
+      "Sensor.DroppedItem-59fed2b4-7e51-48b0-b2d8-1f16a4b36137": {
+        "$Position": {
+          "$x": 5491,
+          "$y": 25468
+        }
+      },
+      "Sensor.Block-23480ceb-9c71-4660-9673-c4306132e280": {
+        "$Position": {
+          "$x": 5517,
+          "$y": 25884
+        }
+      },
+      "Sensor.Or-a5edb99f-bb9e-4190-8f1f-baf79ca27222": {
+        "$Position": {
+          "$x": 6130,
+          "$y": 25443
+        }
+      },
+      "Action.State-3c75aedc-3638-43fe-9039-5f14a36a30f6": {
+        "$Position": {
+          "$x": 7662,
+          "$y": 25493
+        }
+      },
+      "Structural.InstructionNode-30de8e8a-3e36-4a7e-b53d-532dc063be0b": {
+        "$Position": {
+          "$x": 6820,
+          "$y": 25443
+        }
+      },
+      "Structural.InstructionNode-d8cf1755-2106-4e93-b37a-4c6411f6f3ad": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 25543
+        }
+      },
+      "Action.PlayAnimation-6a37d46a-e9f7-4a45-becb-9b570ce40697": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 26920
+        }
+      },
+      "Action.PlayAnimation-90cd814e-f332-468c-bc4d-5cd9ec84f89c": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 27176
+        }
+      },
+      "Action.Timeout-2ace3da8-0f17-44e5-838e-72b8673f2b3c": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 27432
+        }
+      },
+      "Action.ResetInstructions-e3fc6aab-962d-464b-86e4-42dbf6796301": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 27688
+        }
+      },
+      "Structural.InstructionNode-48492fb4-c9aa-4b7d-a302-f8891fb65bbf": {
+        "$Position": {
+          "$x": 5491,
+          "$y": 27126
+        }
+      },
+      "Structural.InstructionNode-e62c65d7-6ed0-4f76-bae7-e4053729ae60": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 27226
+        }
+      },
+      "Action.State-4a99e2a6-671a-4263-a41b-9c7f07503a33": {
+        "$Position": {
+          "$x": 6333,
+          "$y": 28617
+        }
+      },
+      "Structural.InstructionNode-ee080a4a-cb36-4f14-9e70-829410218f5d": {
+        "$Position": {
+          "$x": 5491,
+          "$y": 28567
+        }
+      },
+      "Structural.InstructionNode-f7458327-233a-4ca6-85b3-6fcf3ef15053": {
+        "$Position": {
+          "$x": 4651,
+          "$y": 28667
+        }
+      },
+      "Structural.InstructionNode-dcb412e7-e0bf-4a82-b1ca-1441c52b6d05": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 19644
+        }
+      },
+      "Action.State-5e444e3d-bb1b-4aa6-9fc0-2e770fd004cc": {
+        "$Position": {
+          "$x": 5658,
+          "$y": 30058
+        }
+      },
+      "Action.Sequence-7a97d131-84ce-48f6-82be-61787f112436": {
+        "$Position": {
+          "$x": 5313,
+          "$y": 30058
+        }
+      },
+      "Action.Timeout-33a95659-a657-425d-b359-29e706d6fbeb": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 30058
+        }
+      },
+      "Structural.InstructionNode-1152c8d9-dbb0-44a1-a4e4-a4bacd020874": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 30008
+        }
+      },
+      "Structural.InstructionNode-d6365143-3307-4a7e-9598-26ee13a4b931": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 7749
+        }
+      },
+      "Sensor.State-ba6d6c3e-a29a-46c5-8967-37d90d3d1bda": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 31449
+        }
+      },
+      "Sensor.Beacon-a675ce94-1eb5-485a-ae58-ff8377c13126": {
+        "$Position": {
+          "$x": 3133,
+          "$y": 31349
+        }
+      },
+      "Action.State-267e7a05-d629-4bc0-b72d-d2a1e9c64632": {
+        "$Position": {
+          "$x": 4615,
+          "$y": 31399
+        }
+      },
+      "Structural.InstructionNode-36d33ea6-be0c-45e2-ad04-4fe3c0e01a55": {
+        "$Position": {
+          "$x": 3773,
+          "$y": 31349
+        }
+      },
+      "Sensor.State-c170d70b-453c-4116-8599-c32c5b610ba3": {
+        "$Position": {
+          "$x": 3158,
+          "$y": 32790
+        }
+      },
+      "Sensor.Any-e076c66b-231b-4b23-8347-a703f8efac47": {
+        "$Position": {
+          "$x": 4613,
+          "$y": 32690
+        }
+      },
+      "Action.TimerRestart-a1df1624-7bd2-42b6-8f0d-d1dec83b62b4": {
+        "$Position": {
+          "$x": 5800,
+          "$y": 32740
+        }
+      },
+      "Action.TimerStart-185f6773-e2bb-4f0a-a797-0edec1cb3bf8": {
+        "$Position": {
+          "$x": 5800,
+          "$y": 32956
+        }
+      },
+      "Structural.InstructionNode-fd527ad2-58d7-40ce-bbbe-110a875b23f3": {
+        "$Position": {
+          "$x": 4958,
+          "$y": 32690
+        }
+      },
+      "Structural.InstructionReference-d78a7457-7def-421d-bdf5-85fd68b09c6d": {
+        "$Position": {
+          "$x": 4615,
+          "$y": 32865
+        }
+      },
+      "Structural.InstructionNode-354eb60a-5a7c-4067-8013-d08a9118c4c6": {
+        "$Position": {
+          "$x": 3773,
+          "$y": 32790
+        }
+      },
+      "Structural.InstructionReference-1f351d3e-3477-4089-a3e9-7c5f1563c252": {
+        "$Position": {
+          "$x": 4615,
+          "$y": 34389
+        }
+      },
+      "Structural.InstructionNode-20052976-15ac-4c70-afe9-5b77414066a8": {
+        "$Position": {
+          "$x": 3773,
+          "$y": 34314
+        }
+      },
+      "Structural.InstructionNode-eb9fb797-66b0-4754-aff0-41719dc004e0": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 31449
+        }
+      },
+      "Sensor.State-d2458e8a-1359-4d91-86e3-c798e6b0293e": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 35854
+        }
+      },
+      "Sensor.Any-602bb90a-79ec-40f8-a1f1-7f33dfb0b647": {
+        "$Position": {
+          "$x": 4225,
+          "$y": 35754
+        }
+      },
+      "Action.PlayAnimation-f69dde58-c90c-4b08-a8f0-278e9dce0726": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 35804
+        }
+      },
+      "Action.TimerStart-b0756eb0-7313-4415-81c0-6c5bef0c5deb": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 36060
+        }
+      },
+      "Action.TimerRestart-155df8ed-e557-41ad-b57b-03c3ab24a81d": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 36436
+        }
+      },
+      "Structural.InstructionNode-fbc0daa5-997f-4ff2-9e23-55f51d4d4c8b": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 35754
+        }
+      },
+      "Structural.InstructionReference-a336bb9a-5481-4454-b2c0-f90228f1a44d": {
+        "$Position": {
+          "$x": 3135,
+          "$y": 35929
+        }
+      },
+      "Sensor.Target-193f407a-d6c0-42a1-b89b-c1bd6a06f885": {
+        "$Position": {
+          "$x": 3865,
+          "$y": 37272
+        }
+      },
+      "HeadMotion.Watch-bc6b961f-cdfa-461a-a2bc-d9c75bc48de2": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 37297
+        }
+      },
+      "Structural.InstructionNode-517541ea-ebe5-413b-901b-db5369d8e4a2": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 37272
+        }
+      },
+      "Sensor.State-5aa54fa2-42bf-4a83-9c8c-9e9ef4cfd3c3": {
+        "$Position": {
+          "$x": 3955,
+          "$y": 38713
+        }
+      },
+      "Sensor.Target-d973a7e2-953e-49c8-a0e3-9c095fd8328c": {
+        "$Position": {
+          "$x": 5410,
+          "$y": 38613
+        }
+      },
+      "Action.State-df35a85d-a0d1-43c5-8956-746226b8a085": {
+        "$Position": {
+          "$x": 6957,
+          "$y": 38663
+        }
+      },
+      "Structural.InstructionNode-a3a1c8e0-10e5-4b43-b170-05df897804a0": {
+        "$Position": {
+          "$x": 6115,
+          "$y": 38613
+        }
+      },
+      "Sensor.Target-19da37b8-4132-4462-8724-2a06542bf25e": {
+        "$Position": {
+          "$x": 5410,
+          "$y": 39954
+        }
+      },
+      "Action.State-ec832c31-6cc3-4411-b520-62f3f1a2070b": {
+        "$Position": {
+          "$x": 6957,
+          "$y": 40004
+        }
+      },
+      "Structural.InstructionNode-b360e60b-687a-4421-86b3-74f7d0f70cbb": {
+        "$Position": {
+          "$x": 6115,
+          "$y": 39954
+        }
+      },
+      "Action.State-c0bf6aa9-4e19-4666-a324-7895d91e2ba6": {
+        "$Position": {
+          "$x": 6957,
+          "$y": 41345
+        }
+      },
+      "Structural.InstructionNode-0bfcc45b-d26e-4326-aa5b-696616e7d56c": {
+        "$Position": {
+          "$x": 6115,
+          "$y": 41295
+        }
+      },
+      "Structural.InstructionNode-2f750c51-807f-43fd-bcde-b0c4ee97cf7b": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 38713
+        }
+      },
+      "Sensor.State-dde6295b-4a89-4245-8b37-c12a1fcc2c7f": {
+        "$Position": {
+          "$x": 3955,
+          "$y": 42736
+        }
+      },
+      "Sensor.Target-cdc476c4-d44f-4d7c-ad3b-61b43a3229b1": {
+        "$Position": {
+          "$x": 6511,
+          "$y": 42636
+        }
+      },
+      "Action.OverrideAttitude-fec8208c-f759-4eb9-b279-9ef357a6b1bf": {
+        "$Position": {
+          "$x": 8058,
+          "$y": 42686
+        }
+      },
+      "Action.Timeout-e34c6988-f83b-4d3e-9a62-b12d9fcea746": {
+        "$Position": {
+          "$x": 8058,
+          "$y": 42942
+        }
+      },
+      "Action.State-f964859b-64c8-4a50-9f5b-9fbd9fdae840": {
+        "$Position": {
+          "$x": 8058,
+          "$y": 43198
+        }
+      },
+      "Structural.InstructionNode-13359cc2-88f5-4b45-a080-472f0836eeb5": {
+        "$Position": {
+          "$x": 7216,
+          "$y": 42636
+        }
+      },
+      "IEntityFilter.ItemInHand-5f9809a6-ccbf-4cc4-916b-0a8da2f417de": {
+        "$Position": {
+          "$x": 5953,
+          "$y": 44099
+        }
+      },
+      "IEntityFilter.Attitude-c92ac973-9040-41d1-9c5a-8acda930dabe": {
+        "$Position": {
+          "$x": 5410,
+          "$y": 44355
+        }
+      },
+      "IEntityFilter.Not-0d60c553-fdef-411b-a6e4-261e61fcd72e": {
+        "$Position": {
+          "$x": 6042,
+          "$y": 44355
+        }
+      },
+      "Sensor.Target-021e4503-1a09-4070-84c2-01512c819247": {
+        "$Position": {
+          "$x": 6511,
+          "$y": 44074
+        }
+      },
+      "BodyMotion.Seek-2dd609bd-33d9-45cd-8b01-490266f82257": {
+        "$Position": {
+          "$x": 8058,
+          "$y": 44074
+        }
+      },
+      "Action.PlayAnimation-a51ccd2b-bdfc-4c3c-8a8e-70bfbed8b32f": {
+        "$Position": {
+          "$x": 8058,
+          "$y": 45778
+        }
+      },
+      "Structural.InstructionNode-e2fd7903-d0ee-4f52-b6ee-28f59b45d43b": {
+        "$Position": {
+          "$x": 7216,
+          "$y": 44074
+        }
+      },
+      "Action.State-375ff61c-c2e8-4cba-b281-119af7d653db": {
+        "$Position": {
+          "$x": 8058,
+          "$y": 46704
+        }
+      },
+      "Structural.InstructionNode-7771cdd4-801c-4300-8767-a7729d287bd7": {
+        "$Position": {
+          "$x": 7216,
+          "$y": 46654
+        }
+      },
+      "Structural.InstructionNode-e011e9cd-a26c-455a-bb0d-77b0ef368869": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 42736
+        }
+      },
+      "Sensor.Timer-21948b8f-6eef-49a1-a2ed-8378e920826a": {
+        "$Position": {
+          "$x": 3837,
+          "$y": 47974
+        }
+      },
+      "Action.State-068f3907-074f-463a-81a7-7c270045a8b1": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 48024
+        }
+      },
+      "Structural.InstructionNode-c7f05422-4ffc-4e23-a389-39c0833672e7": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 47974
+        }
+      },
+      "Sensor.Target-dedf1d4d-9617-4fc8-8423-1a3429795a5f": {
+        "$Position": {
+          "$x": 3865,
+          "$y": 49315
+        }
+      },
+      "BodyMotion.Flee-861310bc-4e46-446b-8c81-694c579c27ce": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 49315
+        }
+      },
+      "Structural.InstructionNode-7e363364-9be2-4cf7-8278-91c22b84e9f9": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 49315
+        }
+      },
+      "IEntityFilter.LineOfSight-5887b043-a60d-495e-8abb-0ca29d29b71a": {
+        "$Position": {
+          "$x": 3531,
+          "$y": 52035
+        }
+      },
+      "Sensor.Target-a7b5e703-c418-4070-9e48-7ac89be6fdc1": {
+        "$Position": {
+          "$x": 3865,
+          "$y": 52010
+        }
+      },
+      "IEntityFilter.Attitude-26a49745-43cc-43cd-b4c3-f2b91cb520ad": {
+        "$Position": {
+          "$x": 5574,
+          "$y": 51719
+        }
+      },
+      "IEntityFilter.Combat-35290b11-33f1-4d26-a1bb-91ed6eb30640": {
+        "$Position": {
+          "$x": 5410,
+          "$y": 51935
+        }
+      },
+      "IEntityFilter.ItemInHand-51d9e7d0-41c3-4407-bf14-f8bc76d1ed09": {
+        "$Position": {
+          "$x": 5473,
+          "$y": 52315
+        }
+      },
+      "IEntityFilter.Or-92756aec-d51d-433e-8a62-bfeab41933df": {
+        "$Position": {
+          "$x": 6118,
+          "$y": 51935
+        }
+      },
+      "Sensor.Target-88b61e95-5f31-4636-b422-eb17ba7159a1": {
+        "$Position": {
+          "$x": 6505,
+          "$y": 51935
+        }
+      },
+      "IEntityFilter.MovementState-b072ea8c-090d-4d12-a66a-4816ac6f8fb4": {
+        "$Position": {
+          "$x": 5580,
+          "$y": 52619
+        }
+      },
+      "IEntityFilter.Not-9397a2bc-1738-4265-a61b-b56e3ed59bc9": {
+        "$Position": {
+          "$x": 6121,
+          "$y": 52619
+        }
+      },
+      "Sensor.Target-1872c3ab-a2fd-404b-a7e6-e567a0473435": {
+        "$Position": {
+          "$x": 6505,
+          "$y": 52619
+        }
+      },
+      "Sensor.Or-0df282eb-9941-4a6d-a4f4-b9710d0a3737": {
+        "$Position": {
+          "$x": 7210,
+          "$y": 51910
+        }
+      },
+      "Action.State-ce06a833-bbf6-4c45-81f8-7105560da8ac": {
+        "$Position": {
+          "$x": 8742,
+          "$y": 51960
+        }
+      },
+      "Structural.InstructionNode-82da9ade-67ee-4070-a7a5-d6c0c049ee19": {
+        "$Position": {
+          "$x": 7900,
+          "$y": 51910
+        }
+      },
+      "IEntityFilter.ItemInHand-d4fe4598-44a5-4298-9d3d-f7057d77fcbd": {
+        "$Position": {
+          "$x": 6637,
+          "$y": 53700
+        }
+      },
+      "IEntityFilter.Attitude-5619aba1-5a26-472d-8b08-027fd9dd09a6": {
+        "$Position": {
+          "$x": 6094,
+          "$y": 53956
+        }
+      },
+      "IEntityFilter.Not-168c83f2-2bcb-4868-a561-dac55c8d0b4b": {
+        "$Position": {
+          "$x": 6726,
+          "$y": 53956
+        }
+      },
+      "Sensor.Target-b48680ac-6d9c-4871-a577-fc7c7b6e7e9f": {
+        "$Position": {
+          "$x": 7195,
+          "$y": 53675
+        }
+      },
+      "Sensor.Target-b32b1136-6276-4b27-bbdc-f23ef2c6529f": {
+        "$Position": {
+          "$x": 8740,
+          "$y": 53575
+        }
+      },
+      "Action.SpawnParticles-1ed9e17c-2dc8-422e-b697-e1e76dfb4742": {
+        "$Position": {
+          "$x": 10287,
+          "$y": 53625
+        }
+      },
+      "Action.Timeout-f20a5b2b-b2c8-464e-a4d9-9846530b7f20": {
+        "$Position": {
+          "$x": 10287,
+          "$y": 54001
+        }
+      },
+      "Action.State-b228fcae-a5f0-4f17-ac55-83c8ae74b51d": {
+        "$Position": {
+          "$x": 10287,
+          "$y": 54257
+        }
+      },
+      "Structural.InstructionNode-8368dca5-6bf0-4358-b95e-0034e72a852f": {
+        "$Position": {
+          "$x": 9445,
+          "$y": 53575
+        }
+      },
+      "Sensor.Target-fd854224-9ab8-4968-99c6-ae01039c5255": {
+        "$Position": {
+          "$x": 8740,
+          "$y": 55133
+        }
+      },
+      "Action.Nothing-bddaf927-e363-4233-b780-23f1cf7c1f4d": {
+        "$Position": {
+          "$x": 10287,
+          "$y": 55183
+        }
+      },
+      "Structural.InstructionNode-62736815-9a63-4f06-a1fa-7487cdea374e": {
+        "$Position": {
+          "$x": 9445,
+          "$y": 55133
+        }
+      },
+      "Structural.InstructionNode-149a88d3-10b5-4ffb-80e4-36134079ced3": {
+        "$Position": {
+          "$x": 7900,
+          "$y": 53675
+        }
+      },
+      "Structural.InstructionNode-6f279026-fb5d-46c3-9cc9-3680589fa978": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 52010
+        }
+      },
+      "Sensor.Target-be373b7f-0b49-4438-8479-960f28560c83": {
+        "$Position": {
+          "$x": 3133,
+          "$y": 56478
+        }
+      },
+      "Sensor.Not-f970519a-6949-4632-9c67-9932fdd61170": {
+        "$Position": {
+          "$x": 3838,
+          "$y": 56453
+        }
+      },
+      "Action.State-b24a3a0c-848f-4765-a31e-4dbe08b433e3": {
+        "$Position": {
+          "$x": 5412,
+          "$y": 56503
+        }
+      },
+      "Structural.InstructionNode-aca042c2-f2e0-42b3-9bc5-d4a8fac642c7": {
+        "$Position": {
+          "$x": 4570,
+          "$y": 56453
+        }
+      },
+      "Structural.InstructionNode-d1d9fae2-3efa-408e-bce1-1280bf81086f": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 35854
+        }
+      },
+      "Sensor.State-8a70d11a-2b23-44e0-95c1-48b7202dc690": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 57873
+        }
+      },
+      "Sensor.Beacon-04be2b05-ce7a-41b9-839e-38279f383c43": {
+        "$Position": {
+          "$x": 3171,
+          "$y": 57773
+        }
+      },
+      "Action.State-437334de-15e0-4cc0-aa60-11cfea24606c": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 57823
+        }
+      },
+      "Structural.InstructionNode-ea899bc1-0535-4086-b729-bbf420a9201a": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 57773
+        }
+      },
+      "Structural.InstructionReference-2364b288-df4f-4dea-a385-5342ec616f3f": {
+        "$Position": {
+          "$x": 3135,
+          "$y": 57948
+        }
+      },
+      "Sensor.Reference-0a3acbe1-410a-40b4-9546-6cff696a2218": {
+        "$Position": {
+          "$x": 3133,
+          "$y": 59130
+        }
+      },
+      "Action.State-0f25e54c-5263-4743-bbe6-25b6c2c00b5c": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 59180
+        }
+      },
+      "Structural.InstructionNode-95796d4a-042f-42c4-84a8-bb1aba672736": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 59130
+        }
+      },
+      "Sensor.Leash-04297df5-34ec-4696-941c-df9963585e8f": {
+        "$Position": {
+          "$x": 3254,
+          "$y": 60471
+        }
+      },
+      "BodyMotion.Seek-7423e975-613d-4f85-a646-a281b7ffdce0": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 60471
+        }
+      },
+      "Structural.InstructionNode-b5c67b0b-3687-46b3-aca1-3812106425ef": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 60471
+        }
+      },
+      "Action.SetStat-b47b5a5c-240c-47f6-babc-fca6364980eb": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 62845
+        }
+      },
+      "Action.State-d132055e-f8f0-4d1d-8466-9e639282d218": {
+        "$Position": {
+          "$x": 4653,
+          "$y": 63141
+        }
+      },
+      "Structural.InstructionNode-3821afa1-8313-457d-81d3-01436e1480c2": {
+        "$Position": {
+          "$x": 3811,
+          "$y": 62795
+        }
+      },
+      "Structural.InstructionNode-1876269c-3b02-496d-8399-1434c065f6da": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 57873
+        }
+      },
+      "Sensor.State-b0124794-cc9c-48e5-b806-f5d3194a9b50": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 64215
+        }
+      },
+      "Sensor.Any-47bff58f-1822-4f4c-8da2-268ddbdcf7ae": {
+        "$Position": {
+          "$x": 3493,
+          "$y": 64115
+        }
+      },
+      "Action.FlockBeacon-8b97e93a-6169-425a-80f1-312a6a31d98d": {
+        "$Position": {
+          "$x": 4680,
+          "$y": 64165
+        }
+      },
+      "Structural.InstructionNode-7940f204-8e28-4d16-882d-5a22856d3426": {
+        "$Position": {
+          "$x": 3838,
+          "$y": 64115
+        }
+      },
+      "Structural.InstructionReference-6cee98a1-571c-45ea-bd30-5397a13574df": {
+        "$Position": {
+          "$x": 3135,
+          "$y": 64290
+        }
+      },
+      "Sensor.State-a9a6cd3e-d303-4b9d-8354-ea9dbe5d690c": {
+        "$Position": {
+          "$x": 3223,
+          "$y": 66118
+        }
+      },
+      "Sensor.Target-9453c6c4-415a-4028-bdf7-7d8988648241": {
+        "$Position": {
+          "$x": 4678,
+          "$y": 66018
+        }
+      },
+      "IEntityFilter.ViewSector-94e01789-4cf0-4536-a56b-7ea752c60bc8": {
+        "$Position": {
+          "$x": 6223,
+          "$y": 65943
+        }
+      },
+      "IEntityFilter.Not-0b333da5-0903-4b11-995b-0fb19fc849ac": {
+        "$Position": {
+          "$x": 6648,
+          "$y": 65943
+        }
+      },
+      "Sensor.Target-dcb56cd0-6cf7-421e-91cf-5f2272bd709a": {
+        "$Position": {
+          "$x": 7029,
+          "$y": 65918
+        }
+      },
+      "Action.OverrideAttitude-835675e8-1d2a-4e89-a002-6cc24dfa6181": {
+        "$Position": {
+          "$x": 8576,
+          "$y": 65456
+        }
+      },
+      "Action.PlayAnimation-54e29484-3b8d-4778-bc5c-b0cd90b20b4f": {
+        "$Position": {
+          "$x": 8576,
+          "$y": 65712
+        }
+      },
+      "Action.Timeout-aaf9b775-4948-4342-a937-4f4387fc9d37": {
+        "$Position": {
+          "$x": 8576,
+          "$y": 65968
+        }
+      },
+      "Action.PlayAnimation-38b17232-650a-4d69-8a87-eafc8c946879": {
+        "$Position": {
+          "$x": 8576,
+          "$y": 66308
+        }
+      },
+      "Action.State-9dcfdaa5-21e0-4264-aba1-e44d5dcb33f3": {
+        "$Position": {
+          "$x": 8576,
+          "$y": 66564
+        }
+      },
+      "Structural.InstructionNode-34cc2c21-bb36-4d40-a46b-aea67bbb616f": {
+        "$Position": {
+          "$x": 7734,
+          "$y": 65918
+        }
+      },
+      "Action.State-e938f252-e13b-4b50-84f2-61afd7ad887f": {
+        "$Position": {
+          "$x": 8576,
+          "$y": 67490
+        }
+      },
+      "Structural.InstructionNode-1b1f0959-d90e-44cc-b69c-4d76a308d06c": {
+        "$Position": {
+          "$x": 7734,
+          "$y": 67440
+        }
+      },
+      "Structural.InstructionNode-1c2f140a-5361-453c-a966-89d66745cb95": {
+        "$Position": {
+          "$x": 5383,
+          "$y": 66018
+        }
+      },
+      "Sensor.Target-7a83ffc3-7991-427c-bf34-1e0a0d1fd243": {
+        "$Position": {
+          "$x": 4678,
+          "$y": 68760
+        }
+      },
+      "Action.State-17ef977d-284b-41a8-96d9-94dd0a40d08e": {
+        "$Position": {
+          "$x": 6225,
+          "$y": 68810
+        }
+      },
+      "Structural.InstructionNode-2ee9b547-f18a-4353-bb96-acb8e322a998": {
+        "$Position": {
+          "$x": 5383,
+          "$y": 68760
+        }
+      },
+      "Action.State-28e59169-ecc9-467a-9cef-dde428c697c8": {
+        "$Position": {
+          "$x": 6225,
+          "$y": 70130
+        }
+      },
+      "Structural.InstructionNode-0fc642b0-2a0f-4724-864a-ed503f9a5e4f": {
+        "$Position": {
+          "$x": 5383,
+          "$y": 70080
+        }
+      },
+      "Structural.InstructionNode-7a4f01ca-a078-4833-aa24-e26024571c49": {
+        "$Position": {
+          "$x": 3838,
+          "$y": 66118
+        }
+      },
+      "Sensor.State-a6f344b7-e11c-4f38-b9ad-32961882afbe": {
+        "$Position": {
+          "$x": 3223,
+          "$y": 71400
+        }
+      },
+      "Action.Attack-b8e1a7ad-bfd3-4a6e-b764-9226430c2189": {
+        "$Position": {
+          "$x": 4680,
+          "$y": 71450
+        }
+      },
+      "Action.State-1c089f7b-fc13-4c22-867d-b057cf9ea9cb": {
+        "$Position": {
+          "$x": 5348,
+          "$y": 72274
+        }
+      },
+      "Action.Timeout-730ab744-e464-49bd-bc86-58e0b2e72ba1": {
+        "$Position": {
+          "$x": 4684,
+          "$y": 72274
+        }
+      },
+      "Structural.InstructionNode-785ffb44-1bf0-4b26-9fcd-0bf579001c10": {
+        "$Position": {
+          "$x": 3838,
+          "$y": 71400
+        }
+      },
+      "Sensor.Target-1d5e86dc-e146-4c5d-85b5-8b0764889ddd": {
+        "$Position": {
+          "$x": 3133,
+          "$y": 73234
+        }
+      },
+      "BodyMotion.Flee-279097ba-bfbf-435b-893b-8db6db7b9d5f": {
+        "$Position": {
+          "$x": 4680,
+          "$y": 73234
+        }
+      },
+      "Action.State-bd7bf655-b57f-405d-9ee2-3c762b7a0d4b": {
+        "$Position": {
+          "$x": 5423,
+          "$y": 75018
+        }
+      },
+      "Action.Timeout-446d3024-4961-4169-babe-c161101a3c8e": {
+        "$Position": {
+          "$x": 4721.5,
+          "$y": 75018
+        }
+      },
+      "Structural.InstructionNode-cbad2152-7f95-43ff-b209-16a5947105cb": {
+        "$Position": {
+          "$x": 3838,
+          "$y": 73234
+        }
+      },
+      "Action.State-e57e4832-3aee-48eb-9e60-a98a10b13fa3": {
+        "$Position": {
+          "$x": 5340,
+          "$y": 76028
+        }
+      },
+      "Action.Timeout-ab86d23d-0f75-4891-a47c-ccc6a73455ef": {
+        "$Position": {
+          "$x": 4680,
+          "$y": 76028
+        }
+      },
+      "Structural.InstructionNode-c6635d05-ad5a-4d54-9dec-463ae71894d7": {
+        "$Position": {
+          "$x": 3838,
+          "$y": 75978
+        }
+      },
+      "Structural.InstructionNode-4e3ad795-ac27-45de-bb4a-26d0070e6edc": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 64215
+        }
+      },
+      "Sensor.State-63941a30-1178-480b-af3a-87fb4963df79": {
+        "$Position": {
+          "$x": 1678,
+          "$y": 77398
+        }
+      },
+      "Sensor.Any-8240e1db-cde9-4f80-90b8-5c2aca86267d": {
+        "$Position": {
+          "$x": 3395,
+          "$y": 77298
+        }
+      },
+      "Action.PlayAnimation-299d726b-2f79-4610-9078-ba040c124471": {
+        "$Position": {
+          "$x": 4582,
+          "$y": 77348
+        }
+      },
+      "Structural.InstructionNode-9accecec-65d4-4ce7-8bbb-aee748052c53": {
+        "$Position": {
+          "$x": 3740,
+          "$y": 77298
+        }
+      },
+      "Action.State-db6f1bcd-0513-4b24-ab6d-477b2c9aec2c": {
+        "$Position": {
+          "$x": 5242,
+          "$y": 78668
+        }
+      },
+      "Action.Timeout-fd9966d2-2f96-41e2-b2a1-47aa72293c54": {
+        "$Position": {
+          "$x": 4582,
+          "$y": 78668
+        }
+      },
+      "Structural.InstructionNode-84e95df7-697f-4968-af41-57e7d8ca7304": {
+        "$Position": {
+          "$x": 3740,
+          "$y": 78618
+        }
+      },
+      "Sensor.Damage-63aafdcb-7fb5-4411-9b8d-8de633b0613e": {
+        "$Position": {
+          "$x": 3133,
+          "$y": 79938
+        }
+      },
+      "BodyMotion.Flee-733c373b-b3bf-4cc8-9cc1-877fa61f8178": {
+        "$Position": {
+          "$x": 4582,
+          "$y": 79938
+        }
+      },
+      "Structural.InstructionNode-7807218d-a52b-4e51-aa48-071fef4edb0a": {
+        "$Position": {
+          "$x": 3740,
+          "$y": 79938
+        }
+      },
+      "BodyMotion.WanderInCircle-0c18abec-8e84-435f-b098-84f2b75381a5": {
+        "$Position": {
+          "$x": 4582,
+          "$y": 82342
+        }
+      },
+      "Structural.InstructionNode-623dce2b-e41d-4752-aec8-375acf15fcfa": {
+        "$Position": {
+          "$x": 3740,
+          "$y": 82342
+        }
+      },
+      "Structural.InstructionNode-ea0ff340-9c62-493a-a556-a1db8b5668b9": {
+        "$Position": {
+          "$x": 2293,
+          "$y": 77398
+        }
+      },
+      "Structural.InstructionNode-8ce4e990-eb59-497c-8038-a28739179254": {
+        "$Position": {
+          "$x": 838,
+          "$y": 7849
+        }
+      },
+      "Structural.InstructionListRoot-ea6c618a-3e38-4c73-a120-df0fb31bfd50": {
+        "$Position": {
+          "$x": 0,
+          "$y": 0
+        }
+      }
+    },
+    "$FloatingNodes": [],
+    "$Links": {},
+    "$Groups": [],
+    "$Comments": [],
+    "$WorkspaceID": "Instructions"
+  }
+}

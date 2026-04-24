@@ -45,4 +45,43 @@ describe("node editor session sync", () => {
       },
     ]);
   });
+
+  test("queues auto layout before initial fit when parsed nodes have no saved positions", () => {
+    const session = createNodeEditorSession();
+    const context = workspaceContext({
+      templates: [nodeTemplate("Root")],
+    });
+    const graphDocument: NodeEditorGraphDocument = {
+      workspaceId: "Test Workspace",
+      rootNodeId: "root",
+      nodes: [
+        {
+          id: "root",
+          type: "datanode",
+          position: { x: 0, y: 0 },
+          data: {
+            ...nodeTemplate("Root"),
+          },
+        },
+      ],
+      edges: [],
+    };
+
+    syncSessionFromGraphDocument({
+      session,
+      workspaceContext: context,
+      graphDocument,
+      sourceVersion: 3,
+      shouldQueueInitialFitView: true,
+    });
+
+    expect(session.actionRequests).toEqual([
+      { type: "auto-position-nodes" },
+      {
+        type: "fit-view",
+        duration: 0,
+        maxDistanceToRoot: 10_000,
+      },
+    ]);
+  });
 });

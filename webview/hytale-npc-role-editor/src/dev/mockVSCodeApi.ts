@@ -38,7 +38,7 @@ type DevBootstrapResponse = {
   nodeEditorPlatform: NodeEditorPlatform;
   nodeEditorClipboard: NodeEditorClipboardSelection;
   npcBehaviorGraphContexts: Partial<
-    Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>
+    Record<"Instructions" | "Instruction" | "Sensor" | "StateTransitions", NodeEditorWorkspaceContext>
   >;
   documentPath: string;
   text: string;

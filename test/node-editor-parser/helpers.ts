@@ -26,6 +26,7 @@ export function nodeField(
     localId: schemaKey,
     type,
     isImplicit: true,
+    isSet: false,
     ...overrides,
   };
 }

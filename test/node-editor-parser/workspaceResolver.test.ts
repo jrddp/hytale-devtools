@@ -246,4 +246,46 @@ describe("WorkspaceRuntime", () => {
       previewFeatureKind: "animation",
     });
   });
+
+  test("filters the StateTransitions root context and hydrates unset defaults", () => {
+    const schemaRuntime = new SchemaRuntime(schemaDir, logger);
+    const workspaceRuntime = new WorkspaceRuntime(workspacesRootPath, schemaRuntime, logger);
+
+    const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+      "NPC Behavior",
+      "StateTransitions",
+    );
+
+    expect(context).not.toBeNull();
+    expect(context?.rootTemplateOrVariantId).toBe("Structural.StateTransitionListRoot");
+    expect(Object.keys(context?.templateCategories ?? {}).sort()).toEqual([
+      "Actions",
+      "State Transitions",
+    ]);
+    expect(context?.templateCategories.Actions).toContain("Action.Timeout");
+    expect(context?.templateCategories["State Transitions"]).toEqual([
+      "Structural.StateTransitionNode",
+      "Structural.StateTransitionMappingNode",
+    ]);
+    expect(context?.templateCategories.Sensors).toBeUndefined();
+
+    expect(context?.nodeTemplatesById["Structural.StateTransitionNode"].fieldsBySchemaKey.Enabled).toMatchObject({
+      defaultValue: true,
+      isSet: false,
+      computable: true,
+    });
+    expect(
+      context?.nodeTemplatesById["Structural.StateTransitionMappingNode"].fieldsBySchemaKey.Priority,
+    ).toMatchObject({
+      defaultValue: 0,
+      isSet: false,
+    });
+    expect(
+      context?.nodeTemplatesById["Structural.StateTransitionMappingNode"].fieldsBySchemaKey.Enabled,
+    ).toMatchObject({
+      defaultValue: true,
+      isSet: false,
+      computable: true,
+    });
+  });
 });

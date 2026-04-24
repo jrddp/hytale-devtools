@@ -36,7 +36,7 @@
     computable = false,
   }: NodeField & {
     nodeId?: string;
-    onconfirm: (value: unknown) => void;
+    onconfirm: (value: unknown, options?: { isImplicit?: boolean; isSet?: boolean }) => void;
     parentSchemaKey?: string;
     initialValue?: unknown;
   } = $props();
@@ -119,9 +119,10 @@
       Compute: getInitialComputeExpression(type, value),
     });
   }
+
 </script>
 
-{#snippet computeToggle()}
+{#snippet fieldActions()}
   {#if computable}
     <ComputeToggleButton enabled active={isComputeMode} ontoggle={handleToggleComputeMode} />
   {/if}
@@ -135,7 +136,7 @@
     {inputWidth}
     initialValue={computeExpression}
     autocompleteOptions={computeAutocompleteOptions}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     onconfirm={expression => onconfirm({ Compute: expression })}
   />
 {:else if type === "object"}
@@ -148,7 +149,7 @@
     {description}
     {inputWidth}
     initialValue={value as object}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
     {subfields}
   />
@@ -162,7 +163,7 @@
     {overrideAutocompleteValues}
     {symbolLookup}
     {previewFeatureKind}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else if type === "enum"}
@@ -175,7 +176,7 @@
     overrideAutocompleteValues={overrideAutocompleteValues}
     {symbolLookup}
     {previewFeatureKind}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else if type === "filepath"}
@@ -185,7 +186,7 @@
     {description}
     {inputWidth}
     initialValue={value as string}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else if type === "intslider"}
@@ -195,7 +196,7 @@
     {description}
     {inputWidth}
     initialValue={value as number}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else if type === "checkbox"}
@@ -205,7 +206,7 @@
     {description}
     {inputWidth}
     initialValue={value as boolean}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else if type === "color"}
@@ -215,7 +216,7 @@
     {description}
     {inputWidth}
     initialValue={value as string}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else if type === "int" || type === "float"}
@@ -226,7 +227,7 @@
     {inputWidth}
     initialValue={value as number}
     isFloat={type === "float"}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {:else}
@@ -240,7 +241,7 @@
     {overrideAutocompleteValues}
     {symbolLookup}
     {previewFeatureKind}
-    titleActions={computeToggle}
+    titleActions={fieldActions}
     {onconfirm}
   />
 {/if}

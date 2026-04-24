@@ -44,6 +44,9 @@ export function buildNpcRoleEditorBootstrapMessage(
         workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "Instruction") ??
         undefined,
       Sensor: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "Sensor") ?? undefined,
+      StateTransitions:
+        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "StateTransitions") ??
+        undefined,
     },
   };
 }

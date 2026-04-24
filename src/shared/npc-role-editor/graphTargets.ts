@@ -1,7 +1,7 @@
 import type { GraphRootAdaptationResult } from "../node-editor/workspaceTypes";
 import type { NpcRoleJson } from "./documentTypes";
 
-export type NpcGraphTargetWorkspaceRoot = "Instructions" | "Instruction" | "Sensor";
+export type NpcGraphTargetWorkspaceRoot = "Instructions" | "Instruction" | "Sensor" | "StateTransitions";
 
 export type ResolvedNpcGraphTarget = {
   fieldPath: string;
@@ -62,6 +62,12 @@ export function resolveNpcGraphTarget(
         workspaceRoot: "Instruction",
         value: structuredClone(document.DeathInstruction ?? {}),
       };
+    case "StateTransitions":
+      return {
+        fieldPath,
+        workspaceRoot: "StateTransitions",
+        value: structuredClone(document.StateTransitions ?? []),
+      };
     case "Content": {
       if (document.Type !== "Component") {
         return null;
@@ -98,6 +104,9 @@ export function patchNpcGraphTarget(
     case "DeathInstruction":
       document.DeathInstruction = structuredClone(next.value ?? {});
       return "Instruction";
+    case "StateTransitions":
+      document.StateTransitions = structuredClone(next.value ?? []);
+      return "StateTransitions";
     case "Content":
       if (document.Type !== "Component") {
         return null;

@@ -23,7 +23,9 @@ export type NpcRoleEditorBootstrapMessage = {
   nodeEditorControlScheme: NodeEditorControlScheme;
   nodeEditorPlatform: NodeEditorPlatform;
   nodeEditorClipboard: NodeEditorClipboardSelection;
-  npcBehaviorGraphContexts: Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>;
+  npcBehaviorGraphContexts: Partial<
+    Record<"Instructions" | "Instruction" | "Sensor" | "StateTransitions", NodeEditorWorkspaceContext>
+  >;
 };
 
 export type NpcRoleEditorDocumentUpdateMessage = {

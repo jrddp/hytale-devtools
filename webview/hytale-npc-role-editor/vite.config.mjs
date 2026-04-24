@@ -149,6 +149,7 @@ function fieldsFromContentDefinitions(content = []) {
     const overrideAutocompleteValues = Array.isArray(contentDefinition.Options?.Values)
       ? contentDefinition.Options.Values.filter(value => typeof value === "string")
       : undefined;
+    const defaultValue = contentDefinition.Options?.Default ?? contentDefinition.Options?.DefaultValue;
 
     return {
       schemaKey: contentDefinition.Id,
@@ -156,10 +157,17 @@ function fieldsFromContentDefinitions(content = []) {
       type: contentTypeToFieldComponentType(contentDefinition.Type),
       label: contentDefinition.Options?.Label,
       description: contentDefinition.Description ?? contentDefinition.Options?.Description,
-      value: contentDefinition.Options?.Default ?? contentDefinition.Options?.DefaultValue,
+      value: defaultValue,
+      defaultValue,
+      computable: contentDefinition.Options?.Computable === true,
       isImplicit: true,
+      isSet: false,
       inputWidth: contentDefinition.Options?.Width,
       overrideAutocompleteValues,
+      symbolLookup: contentDefinition.Options?.SymbolLookup,
+      stateAutocompleteKind: contentDefinition.Options?.StateAutocompleteKind,
+      animationAutocompleteKind: contentDefinition.Options?.AnimationAutocompleteKind,
+      previewFeatureKind: contentDefinition.Options?.AnimationAutocompleteKind ? "animation" : undefined,
       subfields: contentDefinition.Options?.Fields
         ? fieldsFromContentDefinitions(contentDefinition.Options.Fields)
         : undefined,
@@ -232,15 +240,18 @@ function templateFromDefinition(definition) {
     }
 
     const outputPin = outputPinsByLocalId[pinId];
-    if (!outputPin) {
+    const inputPin = inputPins.find(pin => pin.localId === pinId);
+    const resolvedPin = outputPin ?? inputPin;
+    if (!resolvedPin) {
       continue;
     }
 
-    outputPin.schemaKey = schemaKey;
+    resolvedPin.schemaKey = schemaKey;
     childSchemas[schemaKey] = {
       schemaKey,
       targetTemplateOrVariantId: variantOrTemplateId,
       serializationType: entry?.SerializationType ?? entry?.serializationType ?? "child",
+      allowComponentReferences: entry?.AllowComponentReferences ?? entry?.allowComponentReferences,
     };
   }
 
@@ -255,6 +266,11 @@ function templateFromDefinition(definition) {
     outputPins: Object.values(outputPinsByLocalId),
     schemaConstants,
     nodeColor: definition.Color,
+    isComponentReference: definition.IsComponentReference === true ? true : undefined,
+    componentReferenceClass: typeof definition.ComponentReferenceClass === "string"
+      ? definition.ComponentReferenceClass
+      : undefined,
+    slotOccupancy: definition.SlotOccupancy,
   };
 }
 
@@ -305,10 +321,24 @@ function buildNpcBehaviorGraphContexts() {
       return undefined;
     }
 
+    const allowedCategories = root.AllowedCategories;
+    const allowedTemplates = root.AllowedTemplates;
+    const templateCategories = Object.fromEntries(
+      Object.entries(workspaceDefinition.NodeCategories ?? {})
+        .filter(([category]) => !allowedCategories || allowedCategories.includes(category))
+        .map(([category, templateIds]) => [
+          category,
+          allowedTemplates
+            ? templateIds.filter(templateId => allowedTemplates.includes(templateId))
+            : templateIds,
+        ])
+        .filter(([, templateIds]) => templateIds.length > 0),
+    );
+
     return {
       nodeTemplatesById: templatesById,
       variantKindsById: workspaceDefinition.Variants ?? {},
-      templateCategories: workspaceDefinition.NodeCategories ?? {},
+      templateCategories,
       rootTemplateOrVariantId: root.RootNodeType,
       rootMenuName: root.MenuName,
       connectionTypesById: resolveConnectionTypes(workspaceDefinition.ConnectionTypes),
@@ -319,6 +349,7 @@ function buildNpcBehaviorGraphContexts() {
     Instructions: createContext("Instructions"),
     Instruction: createContext("Instruction"),
     Sensor: createContext("Sensor"),
+    StateTransitions: createContext("StateTransitions"),
   };
 }
 

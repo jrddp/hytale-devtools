@@ -39,11 +39,8 @@ import {
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
   isRichObjectField,
-  isStateTransitionsField,
   setRichObjectVariantType,
-  syncStateTransitionsFieldPaths,
   syncStructuredFieldPaths,
-  type NpcFieldValue,
   type NpcPropertyField,
   type NpcPropertySection,
 } from "./propertyModel";
@@ -66,19 +63,6 @@ import {
   updateWorkspaceStandardParameterDescription,
   updateWorkspaceStandardParameterEditorType,
 } from "./workspace/actions/parameterActions";
-import {
-  addWorkspaceStateTransition,
-  addWorkspaceStateTransitionEdge,
-  removeWorkspaceStateTransition,
-  removeWorkspaceStateTransitionEdge,
-  reorderWorkspaceStateTransitionEdges,
-  reorderWorkspaceStateTransitions,
-  updateWorkspaceStateTransitionComment,
-  updateWorkspaceStateTransitionEdgeEnabled,
-  updateWorkspaceStateTransitionEdgePriority,
-  updateWorkspaceStateTransitionEdgeStates,
-  updateWorkspaceStateTransitionEnabled,
-} from "./workspace/actions/stateTransitionActions";
 import {
   getWorkspaceComponentReferenceTarget,
   requestWorkspaceComponentReferenceTarget,
@@ -471,10 +455,6 @@ export class Workspace {
       field.preservedData = undefined;
       field.variantType = null;
     }
-    if (field.fieldPath === "StateTransitions" && isStateTransitionsField(field)) {
-      field.transitions = [];
-      syncStateTransitionsFieldPaths(field);
-    }
     recomputeWorkspaceDerivedState(this);
     this.applyDocumentState();
     if (fieldPath === "Reference") {
@@ -604,75 +584,18 @@ export class Workspace {
     );
   }
 
-  addStateTransition(fieldPath: string) {
-    return addWorkspaceStateTransition(this, fieldPath);
-  }
-
-  removeStateTransition(fieldPath: string, transitionId: string) {
-    return removeWorkspaceStateTransition(this, fieldPath, transitionId);
-  }
-
-  reorderStateTransitions(fieldPath: string, transitionIds: string[]) {
-    return reorderWorkspaceStateTransitions(this, fieldPath, transitionIds);
-  }
-
-  updateStateTransitionComment(fieldPath: string, transitionId: string, comment: string) {
-    return updateWorkspaceStateTransitionComment(this, fieldPath, transitionId, comment);
-  }
-
-  updateStateTransitionEnabled(
-    fieldPath: string,
-    transitionId: string,
-    value: NpcFieldValue | undefined,
-  ) {
-    return updateWorkspaceStateTransitionEnabled(this, fieldPath, transitionId, value);
-  }
-
-  addStateTransitionEdge(fieldPath: string, transitionId: string) {
-    return addWorkspaceStateTransitionEdge(this, fieldPath, transitionId);
-  }
-
-  removeStateTransitionEdge(fieldPath: string, transitionId: string, edgeId: string) {
-    return removeWorkspaceStateTransitionEdge(this, fieldPath, transitionId, edgeId);
-  }
-
-  reorderStateTransitionEdges(fieldPath: string, transitionId: string, edgeIds: string[]) {
-    return reorderWorkspaceStateTransitionEdges(this, fieldPath, transitionId, edgeIds);
-  }
-
-  updateStateTransitionEdgeStates(
-    fieldPath: string,
-    transitionId: string,
-    edgeId: string,
-    direction: "from" | "to",
-    values: string[],
-  ) {
-    return updateWorkspaceStateTransitionEdgeStates(
-      this,
-      fieldPath,
-      transitionId,
-      edgeId,
-      direction,
-      values,
-    );
-  }
-
-  updateStateTransitionEdgePriority(
-    fieldPath: string,
-    transitionId: string,
-    edgeId: string,
-    priority: number | undefined,
-  ) {
-    return updateWorkspaceStateTransitionEdgePriority(this, fieldPath, transitionId, edgeId, priority);
-  }
-
-  updateStateTransitionEdgeEnabled(
-    fieldPath: string,
-    transitionId: string,
-    edgeId: string,
-    value: NpcFieldValue | undefined,
-  ) {
-    return updateWorkspaceStateTransitionEdgeEnabled(this, fieldPath, transitionId, edgeId, value);
+  addTopLevelStateTransitionsRoot() {
+    return this.updateFieldValue("StateTransitions", [
+      {
+        States: [
+          {
+            From: [],
+            To: [],
+          },
+        ],
+        Actions: [],
+      },
+    ]);
   }
 
   getAvailableVariantModifyOverrideFields(): NpcPropertyField[] {

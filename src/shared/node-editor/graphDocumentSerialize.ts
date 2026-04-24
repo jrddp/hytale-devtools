@@ -215,6 +215,9 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         }
 
         for (const field of Object.values(node.data.fieldsBySchemaKey)) {
+          if (!field.isSet) {
+            continue;
+          }
           if (field.value === undefined) {
             continue;
           }

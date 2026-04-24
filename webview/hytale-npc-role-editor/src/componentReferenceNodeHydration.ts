@@ -176,7 +176,7 @@ function buildComponentReferenceFields(
     : [];
 
   for (const [schemaKey, field] of Object.entries(node.data.fieldsBySchemaKey)) {
-    if (field.isImplicit || field.value === undefined) {
+    if (!field.isSet || field.isImplicit || field.value === undefined) {
       continue;
     }
 
@@ -214,6 +214,7 @@ function buildComponentReferenceFields(
           : {
               ...field,
               isImplicit: true,
+              isSet: false,
             };
     }
   }
@@ -276,6 +277,7 @@ function createNodeFieldFromNpcField(field: NpcPropertyField, schemaKey: string)
     value: field.value.kind === "compute" ? { Compute: field.value.expression } : structuredClone(field.value.value),
     computable: field.computable === true,
     isImplicit: false,
+    isSet: false,
     overrideAutocompleteValues: field.staticSuggestions ? [...field.staticSuggestions] : undefined,
     symbolLookup: field.symbolRef ? { ...field.symbolRef } : undefined,
     stateAutocompleteKind: field.stateAutocompleteKind,
@@ -295,7 +297,6 @@ function npcFieldKindToNodeFieldType(field: NpcPropertyField): NodeField["type"]
     case "rawJson":
     case "richObject":
     case "graph":
-    case "stateTransitions":
       return "object";
     default:
       return "string";
@@ -328,6 +329,7 @@ function createFallbackModifyField(key: string, value: unknown): NodeField {
     value: structuredClone(value),
     computable: true,
     isImplicit: false,
+    isSet: true,
   };
 }
 
@@ -347,6 +349,7 @@ function createExportStateField(
     description: "Maps this imported component state to a parent state name.",
     value,
     isImplicit,
+    isSet: !isImplicit,
     overrideAutocompleteValues: suggestions.length > 0 ? [...suggestions] : undefined,
   };
 }
@@ -371,6 +374,7 @@ function componentReferenceFieldsEqual(
       leftField.description === rightField.description &&
       leftField.computable === rightField.computable &&
       leftField.isImplicit === rightField.isImplicit &&
+      leftField.isSet === rightField.isSet &&
       JSON.stringify(leftField.value) === JSON.stringify(rightField.value) &&
       JSON.stringify(leftField.overrideAutocompleteValues ?? []) ===
         JSON.stringify(rightField.overrideAutocompleteValues ?? []) &&
@@ -391,6 +395,7 @@ function overrideNodeFieldValue(
     ...field,
     value: structuredClone(value),
     isImplicit,
+    isSet: !isImplicit,
   };
 }
 

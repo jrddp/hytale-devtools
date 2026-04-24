@@ -302,6 +302,41 @@ describe("node editor parseDocument", () => {
     });
   });
 
+  test("keeps fields unset when they are absent from source JSON", () => {
+    const context = workspaceContext({
+      templates: [
+        nodeTemplate("Root", {
+          fieldsBySchemaKey: {
+            Enabled: nodeField("Enabled", "checkbox", {
+              value: true,
+              defaultValue: true,
+              isSet: false,
+            }),
+          },
+          schemaConstants: {
+            Type: "Root",
+          },
+        }),
+      ],
+    });
+
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      context,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    expect(root.data.fieldsBySchemaKey.Enabled).toMatchObject({
+      value: true,
+      defaultValue: true,
+      isImplicit: true,
+      isSet: false,
+    });
+  });
+
   test("assigns parsed edges to the compatible input handle instead of always using the default input", () => {
     const state = parseWorkspaceDocument(
       {

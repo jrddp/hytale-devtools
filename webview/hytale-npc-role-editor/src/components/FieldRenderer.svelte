@@ -7,7 +7,6 @@
   import RawJsonField from "./fields/RawJsonField.svelte";
   import RichObjectField from "./fields/RichObjectField.svelte";
   import ScalarField from "./fields/ScalarField.svelte";
-  import StateTransitionsField from "./fields/StateTransitionsField.svelte";
 
   let {
     field,
@@ -30,8 +29,6 @@
   <RawJsonField {field} {root} {handle} />
 {:else if field.kind === "richObject"}
   <RichObjectField {field} {root} {handle} />
-{:else if field.kind === "stateTransitions"}
-  <StateTransitionsField {field} {root} {handle} />
 {:else}
   <ScalarField {field} />
 {/if}

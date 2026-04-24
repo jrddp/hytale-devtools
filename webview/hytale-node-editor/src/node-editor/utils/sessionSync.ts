@@ -31,14 +31,14 @@ export function syncSessionFromGraphDocument({
   session.actionRequests = [];
   session.isInitialized = true;
 
+  if (workspaceStateNeedsAutoLayout(nodes)) {
+    session.actionRequests.push({ type: "auto-position-nodes" });
+  }
   if (shouldQueueInitialFitView) {
     session.actionRequests.push({
       type: "fit-view",
       duration: 0,
       maxDistanceToRoot: 10_000,
     });
-  }
-  if (workspaceStateNeedsAutoLayout(nodes)) {
-    session.actionRequests.push({ type: "auto-position-nodes" });
   }
 }
