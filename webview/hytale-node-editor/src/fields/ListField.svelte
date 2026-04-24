@@ -4,10 +4,11 @@
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { isObject } from "@node-editor/node-editor/utils/valueUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import { focusNextEditableInNode } from "@node-editor/node-editor/utils/focusNavigation";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { IndexReference } from "@shared/indexTypes";
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import CommitNumberInput from "../../../shared/components/inputs/CommitNumberInput.svelte";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
   import {
@@ -77,11 +78,6 @@
     updateItem(index, nextText);
   }
 
-  function updateNumberItem(index: number, nextText: string) {
-    const parsed = Number(nextText);
-    updateItem(index, Number.isFinite(parsed) ? parsed : 0);
-  }
-
   function updateBooleanItem(index: number, checked: boolean) {
     updateItem(index, checked);
   }
@@ -102,17 +98,6 @@
       return JSON.stringify(item ?? {}, null, 2);
     } catch {
       return "{}";
-    }
-  }
-
-  function handleEnterNavigation(event: KeyboardEvent & { currentTarget: HTMLElement }) {
-    if (!isPlainEnterNavigationEvent(event)) {
-      return;
-    }
-
-    event.preventDefault();
-    if (!focusNextEditableInNode(event.currentTarget)) {
-      event.currentTarget.blur();
     }
   }
 
@@ -199,13 +184,15 @@
                   {...noMousePropogation}
                 />
               {:else if typeof item === "number"}
-                <input
-                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  type="number"
-                  value={item}
-                  onchange={event => updateNumberItem(index, event.currentTarget.value)}
-                  onkeydown={handleEnterNavigation}
-                  {...noMousePropogation}
+                <CommitNumberInput
+                  inputId={buildListItemInputId(inputId, index)}
+                  initialValue={item}
+                  emptyValue={0}
+                  inputClass="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                  enterBehavior="focus-next"
+                  focusRootSelector="[data-node-editor-root]"
+                  stopPointerPropagation
+                  oncommit={nextValue => updateItem(index, nextValue ?? 0)}
                 />
               {:else if isObject(item)}
                 <textarea

@@ -1,9 +1,13 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  addParameterMapListItem,
   coerceParameterMapValue,
   getParameterMapValueType,
   isEmptyParameterMap,
+  removeParameterMapListItem,
+  updateParameterMapListItem,
+  updateParameterMapRangeEndpoint,
 } from "../../src/shared/node-editor/parameterMap";
 
 describe("node-editor parameter maps", () => {
@@ -36,5 +40,38 @@ describe("node-editor parameter maps", () => {
     expect(isEmptyParameterMap({})).toBe(true);
     expect(isEmptyParameterMap({ Range: 6 })).toBe(false);
     expect(isEmptyParameterMap(["not", "a", "map"])).toBe(true);
+  });
+
+  test("mutates expanded string list values", () => {
+    expect(addParameterMapListItem(["Idle"], "stringList")).toEqual(["Idle", ""]);
+    expect(updateParameterMapListItem(["Idle", ""], "stringList", 1, "Alerted")).toEqual([
+      "Idle",
+      "Alerted",
+    ]);
+    expect(removeParameterMapListItem(["Idle", "Alerted"], "stringList", 0)).toEqual([
+      "Alerted",
+    ]);
+  });
+
+  test("mutates expanded number and boolean list values", () => {
+    expect(addParameterMapListItem([1], "numberList")).toEqual([1, 0]);
+    expect(updateParameterMapListItem([1, 0], "numberList", 1, "4")).toEqual([1, 4]);
+    expect(removeParameterMapListItem([1, 4], "numberList", 0)).toEqual([4]);
+
+    expect(addParameterMapListItem([true], "booleanList")).toEqual([true, false]);
+    expect(updateParameterMapListItem([true, false], "booleanList", 1, "true")).toEqual([
+      true,
+      true,
+    ]);
+    expect(removeParameterMapListItem([true, true], "booleanList", 0)).toEqual([true]);
+  });
+
+  test("updates range endpoints without changing unsupported value preservation", () => {
+    expect(updateParameterMapRangeEndpoint([1, 2], 1, 8)).toEqual([1, 8]);
+    expect(updateParameterMapRangeEndpoint([], 0, 3)).toEqual([3, 0]);
+
+    const unsupported = { Nested: true };
+    expect(getParameterMapValueType(unsupported)).toBe("unsupported");
+    expect(coerceParameterMapValue(unsupported, "string")).toBe("");
   });
 });

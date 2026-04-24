@@ -13,14 +13,21 @@
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { IndexReference } from "@shared/indexTypes";
   import {
+    addParameterMapListItem,
     coerceParameterMapValue,
     getParameterMapValueType,
     isComputeParameterMapValue,
     isParameterMap,
     PARAMETER_MAP_TYPE_OPTIONS,
+    removeParameterMapListItem,
+    updateParameterMapListItem,
+    updateParameterMapRangeEndpoint,
+    type ParameterMapListValueType,
     type ParameterMapValueType,
   } from "@shared/node-editor/parameterMap";
   import { cloneJsonLike } from "@shared/jsonClone";
+  import CommitNumberInput from "../../../shared/components/inputs/CommitNumberInput.svelte";
+  import { focusNextEditable } from "../../../shared/components/inputs/inputCommitBehavior";
   import ComputeAutocompleteInput from "../../../shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
   import type { Snippet } from "svelte";
@@ -154,6 +161,10 @@
     return `${inputId}-parameter-value-${index}`;
   }
 
+  function buildListItemInputId(index: number, itemIndex: number) {
+    return `${inputId}-parameter-value-${index}-item-${itemIndex}`;
+  }
+
   function getKeyAutocompleteOptions(itemInputId: string) {
     const values = usesKeyOverrideAutocomplete
       ? (keyOverrideAutocompleteValues ?? [])
@@ -217,6 +228,31 @@
     typeMenu = null;
   }
 
+  function updateNumberEntry(key: string, nextValue: number | undefined) {
+    updateEntry(key, nextValue ?? 0);
+  }
+
+  function updateRangeEntry(key: string, index: 0 | 1, nextValue: number | undefined) {
+    updateEntry(key, updateParameterMapRangeEndpoint(value[key], index, nextValue ?? 0));
+  }
+
+  function addListItem(key: string, listType: ParameterMapListValueType) {
+    updateEntry(key, addParameterMapListItem(value[key], listType));
+  }
+
+  function removeListItem(key: string, listType: ParameterMapListValueType, index: number) {
+    updateEntry(key, removeParameterMapListItem(value[key], listType, index));
+  }
+
+  function updateListItem(
+    key: string,
+    listType: ParameterMapListValueType,
+    index: number,
+    nextItem: string | number | boolean,
+  ) {
+    updateEntry(key, updateParameterMapListItem(value[key], listType, index, nextItem));
+  }
+
   function getUniqueKey(baseKey: string) {
     let key = baseKey;
     let suffix = 2;
@@ -239,52 +275,23 @@
     };
   }
 
-  function sanitizeNumber(value: string) {
-    return value
-      .trim()
-      .replace(/[^\d.-]/g, "")
-      .replace(/(?!^)-/g, "")
-      .replace(/(\..*)\./g, "$1");
-  }
-
-  function updateNumberEntry(key: string, nextText: string) {
-    const parsed = Number(sanitizeNumber(nextText));
-    updateEntry(key, Number.isFinite(parsed) ? parsed : 0);
-  }
-
-  function updateListEntry(
-    key: string,
-    nextText: string,
-    itemType: "string" | "number" | "boolean",
-  ) {
-    try {
-      const parsed = JSON.parse(nextText);
-      if (!Array.isArray(parsed)) {
-        return;
-      }
-      if (itemType === "string" && parsed.every(item => typeof item === "string")) {
-        updateEntry(key, parsed);
-      }
-      if (itemType === "number" && parsed.every(item => typeof item === "number")) {
-        updateEntry(key, parsed);
-      }
-      if (itemType === "boolean" && parsed.every(item => typeof item === "boolean")) {
-        updateEntry(key, parsed);
-      }
-    } catch {
-      // Keep the draft visible until it becomes valid JSON.
-    }
-  }
-
-  function formatListValue(value: unknown) {
-    return JSON.stringify(Array.isArray(value) ? value : []);
-  }
-
   function formatUnsupportedValue(value: unknown) {
     try {
       return JSON.stringify(value);
     } catch {
       return String(value);
+    }
+  }
+
+  function isParameterMapListValueType(
+    type: ParameterMapValueType,
+  ): type is ParameterMapListValueType {
+    return type === "stringList" || type === "numberList" || type === "booleanList";
+  }
+
+  function handleEnterCommit(input: HTMLInputElement) {
+    if (!focusNextEditable(input, "[data-node-editor-root]")) {
+      input.blur();
     }
   }
 </script>
@@ -317,7 +324,7 @@
       <div class="flex flex-col gap-1.5">
         {#each entries as [key, entryValue], index (key)}
           {@const entryType = getParameterMapValueType(entryValue)}
-          <div class="grid grid-cols-[minmax(7rem,0.9fr)_minmax(9rem,1.1fr)_auto] items-center gap-1.5">
+          <div class="grid grid-cols-[minmax(7rem,0.9fr)_minmax(9rem,1.1fr)_auto] items-start gap-1.5">
             <SingleLineAutocompleteInput
               inputId={buildKeyInputId(index)}
               initialValue={key}
@@ -328,6 +335,7 @@
               stopPointerPropagation
               onfocus={() => requestKeyAutocomplete(buildKeyInputId(index))}
               oncommit={nextKey => renameEntry(key, nextKey)}
+              afterEnterPressed={handleEnterCommit}
             />
 
             {#if entryType === "compute" && isComputeParameterMapValue(entryValue)}
@@ -351,62 +359,104 @@
                 {...noMousePropogation}
               />
             {:else if entryType === "number"}
-              <input
-                class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                type="text"
-                inputmode="decimal"
-                value={typeof entryValue === "number" ? String(entryValue) : "0"}
-                onblur={event => updateNumberEntry(key, event.currentTarget.value)}
-                onkeydown={event => {
-                  if (event.key === "Enter" || event.key === "Escape") {
-                    event.preventDefault();
-                    event.currentTarget.blur();
-                  }
-                }}
-                {...noMousePropogation}
+              <CommitNumberInput
+                inputId={buildValueInputId(index)}
+                initialValue={typeof entryValue === "number" ? entryValue : 0}
+                emptyValue={0}
+                inputClass="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                enterBehavior="focus-next"
+                focusRootSelector="[data-node-editor-root]"
+                stopPointerPropagation
+                oncommit={nextValue => updateNumberEntry(key, nextValue)}
               />
             {:else if entryType === "range" && Array.isArray(entryValue)}
               <div class="grid grid-cols-2 gap-1">
-                <input
-                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  type="text"
-                  inputmode="decimal"
-                  value={typeof entryValue[0] === "number" ? String(entryValue[0]) : "0"}
-                  onblur={event => {
-                    const next = [...entryValue] as number[];
-                    const parsed = Number(sanitizeNumber(event.currentTarget.value));
-                    next[0] = Number.isFinite(parsed) ? parsed : 0;
-                    updateEntry(key, next);
-                  }}
-                  {...noMousePropogation}
+                <CommitNumberInput
+                  inputId={`${buildValueInputId(index)}-range-start`}
+                  initialValue={typeof entryValue[0] === "number" ? entryValue[0] : 0}
+                  emptyValue={0}
+                  inputClass="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                  enterBehavior="focus-next"
+                  focusRootSelector="[data-node-editor-root]"
+                  stopPointerPropagation
+                  oncommit={nextValue => updateRangeEntry(key, 0, nextValue)}
                 />
-                <input
-                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  type="text"
-                  inputmode="decimal"
-                  value={typeof entryValue[1] === "number" ? String(entryValue[1]) : "0"}
-                  onblur={event => {
-                    const next = [...entryValue] as number[];
-                    const parsed = Number(sanitizeNumber(event.currentTarget.value));
-                    next[1] = Number.isFinite(parsed) ? parsed : 0;
-                    updateEntry(key, next);
-                  }}
-                  {...noMousePropogation}
+                <CommitNumberInput
+                  inputId={`${buildValueInputId(index)}-range-end`}
+                  initialValue={typeof entryValue[1] === "number" ? entryValue[1] : 0}
+                  emptyValue={0}
+                  inputClass="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                  enterBehavior="focus-next"
+                  focusRootSelector="[data-node-editor-root]"
+                  stopPointerPropagation
+                  oncommit={nextValue => updateRangeEntry(key, 1, nextValue)}
                 />
               </div>
-            {:else if entryType === "stringList" || entryType === "numberList" || entryType === "booleanList"}
-              <input
-                class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 font-mono text-xs text-vsc-input-fg"
-                type="text"
-                value={formatListValue(entryValue)}
-                onblur={event =>
-                  updateListEntry(
-                    key,
-                    event.currentTarget.value,
-                    entryType === "numberList" ? "number" : entryType === "booleanList" ? "boolean" : "string",
-                  )}
-                {...noMousePropogation}
-              />
+            {:else if isParameterMapListValueType(entryType) && Array.isArray(entryValue)}
+              <div class="flex min-w-0 flex-col gap-1">
+                {#if entryValue.length === 0}
+                  <div class="rounded-md border border-dashed border-vsc-editor-widget-border px-2 py-1.5 text-xs text-vsc-muted">
+                    No items
+                  </div>
+                {:else}
+                  {#each entryValue as item, itemIndex (`${key}:${itemIndex}`)}
+                    <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1">
+                      {#if entryType === "stringList"}
+                        <SingleLineAutocompleteInput
+                          inputId={buildListItemInputId(index, itemIndex)}
+                          initialValue={typeof item === "string" ? item : String(item ?? "")}
+                          autocompleteOptions={[]}
+                          inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
+                          listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
+                          optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
+                          stopPointerPropagation
+                          oncommit={nextItem => updateListItem(key, entryType, itemIndex, nextItem)}
+                          afterEnterPressed={handleEnterCommit}
+                        />
+                      {:else if entryType === "numberList"}
+                        <CommitNumberInput
+                          inputId={buildListItemInputId(index, itemIndex)}
+                          initialValue={typeof item === "number" ? item : 0}
+                          emptyValue={0}
+                          inputClass="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
+                          enterBehavior="focus-next"
+                          focusRootSelector="[data-node-editor-root]"
+                          stopPointerPropagation
+                          oncommit={nextItem =>
+                            updateListItem(key, entryType, itemIndex, nextItem ?? 0)}
+                        />
+                      {:else}
+                        <input
+                          class="nodrag h-4 w-4 accent-vsc-activity-bar-badge-bg"
+                          type="checkbox"
+                          checked={item === true}
+                          onchange={event =>
+                            updateListItem(key, entryType, itemIndex, event.currentTarget.checked)}
+                          {...noMousePropogation}
+                        />
+                      {/if}
+
+                      <button
+                        type="button"
+                        class="nodrag inline-flex size-6 items-center justify-center rounded-md text-vsc-muted hover:bg-vsc-list-hover hover:text-vsc-input-fg"
+                        aria-label={`Remove ${key} item ${itemIndex + 1}`}
+                        onclick={() => removeListItem(key, entryType, itemIndex)}
+                      >
+                        <CircleX size={13} />
+                      </button>
+                    </div>
+                  {/each}
+                {/if}
+
+                <button
+                  type="button"
+                  class="nodrag inline-flex items-center gap-1 rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-left text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
+                  onclick={() => addListItem(key, entryType)}
+                >
+                  <Plus size={12} />
+                  Add item
+                </button>
+              </div>
             {:else if entryType === "unsupported"}
               <input
                 class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 font-mono text-xs text-vsc-muted"
@@ -417,18 +467,16 @@
                 {...noMousePropogation}
               />
             {:else}
-              <input
-                class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                type="text"
-                value={typeof entryValue === "string" ? entryValue : ""}
-                onblur={event => updateEntry(key, event.currentTarget.value)}
-                onkeydown={event => {
-                  if (event.key === "Enter" || event.key === "Escape") {
-                    event.preventDefault();
-                    event.currentTarget.blur();
-                  }
-                }}
-                {...noMousePropogation}
+              <SingleLineAutocompleteInput
+                inputId={buildValueInputId(index)}
+                initialValue={typeof entryValue === "string" ? entryValue : ""}
+                autocompleteOptions={[]}
+                inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
+                listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
+                optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
+                stopPointerPropagation
+                oncommit={nextValue => updateEntry(key, nextValue)}
+                afterEnterPressed={handleEnterCommit}
               />
             {/if}
 

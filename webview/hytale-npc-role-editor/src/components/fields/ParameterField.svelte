@@ -5,6 +5,7 @@
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
+  import CommitNumberInput from "@webview-shared/components/inputs/CommitNumberInput.svelte";
   import type { Snippet } from "svelte";
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
   import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
@@ -48,8 +49,6 @@
   let collapsed = $state(false);
   let scalarDraftValue = $state("");
   let rawJsonDraftValue = $state("");
-  let rangeStartDraftValue = $state("");
-  let rangeEndDraftValue = $state("");
   let itemViews = $state<ListItemView[]>([]);
   let draftItemViews = $state<ListItemView[] | null>(null);
   let nextItemId = 0;
@@ -144,18 +143,6 @@
       return;
     }
 
-    if (
-      isRange &&
-      Array.isArray(field.value.value) &&
-      field.value.value.length >= 2
-    ) {
-      rangeStartDraftValue =
-        typeof field.value.value[0] === "number" ? String(field.value.value[0]) : "0";
-      rangeEndDraftValue =
-        typeof field.value.value[1] === "number" ? String(field.value.value[1]) : "0";
-      return;
-    }
-
     if (field.kind === "rawJson" || field.kind === "graph") {
       rawJsonDraftValue = JSON.stringify(field.value.value, null, 2);
       return;
@@ -192,14 +179,6 @@
     workspace.updateFieldComputeExpression(field.fieldPath, expression);
   }
 
-  function sanitizeNumber(value: string) {
-    return value
-      .trim()
-      .replace(/[^\d.-]/g, "")
-      .replace(/(?!^)-/g, "")
-      .replace(/(\..*)\./g, "$1");
-  }
-
   function handleConsideredAnimation(value?: string) {
     if (!field.animationAutocompleteKind) {
       return;
@@ -219,26 +198,6 @@
     }
   });
 
-  function commitNumberValue() {
-    const sanitized = sanitizeNumber(scalarDraftValue);
-    scalarDraftValue = sanitized;
-    if (sanitized === "") {
-      commitValue(0);
-      return;
-    }
-
-    const nextValue = Number(sanitized);
-    if (Number.isNaN(nextValue)) {
-      scalarDraftValue =
-        field.value.kind === "literal" && typeof field.value.value === "number"
-          ? String(field.value.value)
-          : "";
-      return;
-    }
-
-    commitValue(nextValue);
-  }
-
   function commitRawJsonValue() {
     try {
       commitValue(JSON.parse(rawJsonDraftValue));
@@ -247,15 +206,7 @@
     }
   }
 
-  function commitRangeValue(index: 0 | 1) {
-    const sanitized =
-      index === 0 ? sanitizeNumber(rangeStartDraftValue) : sanitizeNumber(rangeEndDraftValue);
-    if (index === 0) {
-      rangeStartDraftValue = sanitized;
-    } else {
-      rangeEndDraftValue = sanitized;
-    }
-
+  function updateRangeValue(index: 0 | 1, value: number | undefined) {
     const currentRange =
       field.value.kind === "literal" && Array.isArray(field.value.value)
         ? field.value.value
@@ -264,24 +215,7 @@
       typeof currentRange[0] === "number" ? currentRange[0] : 0,
       typeof currentRange[1] === "number" ? currentRange[1] : 0,
     ];
-
-    if (sanitized === "") {
-      nextRange[index] = 0;
-      commitValue(nextRange);
-      return;
-    }
-
-    const nextValue = Number(sanitized);
-    if (Number.isNaN(nextValue)) {
-      if (index === 0) {
-        rangeStartDraftValue = String(nextRange[0]);
-      } else {
-        rangeEndDraftValue = String(nextRange[1]);
-      }
-      return;
-    }
-
-    nextRange[index] = nextValue;
+    nextRange[index] = value ?? 0;
     commitValue(nextRange);
   }
 
@@ -415,23 +349,16 @@
       />
     </div>
   {:else if field.kind === "number"}
-    <input
-      type="text"
+    <CommitNumberInput
+      inputId={`npc-parameter-${field.id}`}
+      initialValue={field.value.kind === "literal" && typeof field.value.value === "number"
+        ? field.value.value
+        : undefined}
+      emptyValue={0}
       data-vscode-context={"{}"}
-      class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-      bind:value={scalarDraftValue}
+      inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
       placeholder="Unset"
-      inputmode="decimal"
-      oninput={event => {
-        scalarDraftValue = sanitizeNumber(event.currentTarget.value);
-      }}
-      onblur={commitNumberValue}
-      onkeydown={event => {
-        if (event.key === "Enter" || event.key === "Escape") {
-          event.preventDefault();
-          event.currentTarget.blur();
-        }
-      }}
+      oncommit={value => commitValue(value ?? 0)}
     />
   {:else if field.kind === "string"}
     <SingleLineAutocompleteInput
@@ -464,41 +391,31 @@
     />
   {:else if isRange}
     <div class="grid gap-2 md:grid-cols-2">
-      <input
-        type="text"
+      <CommitNumberInput
+        inputId={`npc-parameter-${field.id}-range-start`}
+        initialValue={field.value.kind === "literal" &&
+          Array.isArray(field.value.value) &&
+          typeof field.value.value[0] === "number"
+          ? field.value.value[0]
+          : 0}
+        emptyValue={0}
         data-vscode-context={"{}"}
-        class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-        bind:value={rangeStartDraftValue}
+        inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
         placeholder="Start"
-        inputmode="decimal"
-        oninput={event => {
-          rangeStartDraftValue = sanitizeNumber(event.currentTarget.value);
-        }}
-        onblur={() => commitRangeValue(0)}
-        onkeydown={event => {
-          if (event.key === "Enter" || event.key === "Escape") {
-            event.preventDefault();
-            event.currentTarget.blur();
-          }
-        }}
+        oncommit={value => updateRangeValue(0, value)}
       />
-      <input
-        type="text"
+      <CommitNumberInput
+        inputId={`npc-parameter-${field.id}-range-end`}
+        initialValue={field.value.kind === "literal" &&
+          Array.isArray(field.value.value) &&
+          typeof field.value.value[1] === "number"
+          ? field.value.value[1]
+          : 0}
+        emptyValue={0}
         data-vscode-context={"{}"}
-        class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-        bind:value={rangeEndDraftValue}
+        inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
         placeholder="End"
-        inputmode="decimal"
-        oninput={event => {
-          rangeEndDraftValue = sanitizeNumber(event.currentTarget.value);
-        }}
-        onblur={() => commitRangeValue(1)}
-        onkeydown={event => {
-          if (event.key === "Enter" || event.key === "Escape") {
-            event.preventDefault();
-            event.currentTarget.blur();
-          }
-        }}
+        oncommit={value => updateRangeValue(1, value)}
       />
     </div>
   {:else if field.kind === "list"}
@@ -548,32 +465,18 @@
                     />
                   </div>
                 {:else if typeof itemView.value === "number"}
-                  <input
-                    type="text"
-                    class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-                    value={String(itemView.value)}
-                    inputmode="decimal"
-                    oninput={event => {
-                      const nextValue = event.currentTarget.value
-                        .trim()
-                        .replace(/[^\d.-]/g, "")
-                        .replace(/(?!^)-/g, "")
-                        .replace(/(\..*)\./g, "$1");
-                      event.currentTarget.value = nextValue;
-                    }}
-                    onblur={event => {
-                      const nextValue = Number(event.currentTarget.value);
-                      if (Number.isNaN(nextValue)) {
-                        event.currentTarget.value = String(itemView.value);
-                        return;
-                      }
-
+                  <CommitNumberInput
+                    inputId={`npc-parameter-${field.id}-${itemView.id}`}
+                    initialValue={itemView.value}
+                    emptyValue={0}
+                    inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
+                    oncommit={value => {
                       commitListItemViews(
                         itemViews.map(item =>
                           item.id === itemView.id
                             ? {
                                 ...item,
-                                value: nextValue,
+                                value: value ?? 0,
                               }
                             : item,
                         ),

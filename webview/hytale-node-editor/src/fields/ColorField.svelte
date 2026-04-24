@@ -2,7 +2,7 @@
   import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "@node-editor/node-editor/utils/focusNavigation";
+  import CommitTextInput from "../../../shared/components/inputs/CommitTextInput.svelte";
   import type { Snippet } from "svelte";
 
   // TODO support rgb format
@@ -39,17 +39,8 @@
     lastCommittedValue = value;
   }
 
-  function handleKeyDown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
-    if (!isPlainEnterNavigationEvent(event)) {
-      return;
-    }
-
-    event.preventDefault();
-    confirmValue();
-    if (!focusNextEditableInNode(event.currentTarget)) {
-      event.currentTarget.blur();
-    }
-  }
+  const textInputClass =
+    "nodrag min-w-0 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg";
 </script>
 
 <FieldLayout {inputId} {label} {description} align="center" {titleActions}>
@@ -62,16 +53,19 @@
       onchange={confirmValue}
       {...noMousePropogation}
     />
-    <input
-      class="nodrag min-w-0 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-      class:flex-1={inputWidth === undefined}
-      type="text"
-      style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
-      bind:value
-      onkeydown={handleKeyDown}
-      onblur={confirmValue}
+    <CommitTextInput
+      inputId={`${inputId}-text`}
+      initialValue={value}
+      inputClass={`${textInputClass} ${inputWidth === undefined ? "flex-1" : ""}`.trim()}
+      style={inputWidth !== undefined ? `width: ${inputWidth}px` : undefined}
+      enterBehavior="focus-next"
+      focusRootSelector="[data-node-editor-root]"
       spellcheck="false"
-      {...noMousePropogation}
+      stopPointerPropagation
+      oncommit={nextValue => {
+        value = nextValue;
+        confirmValue();
+      }}
     />
   </div>
 </FieldLayout>

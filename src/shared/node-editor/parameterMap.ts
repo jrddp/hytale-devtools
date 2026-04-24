@@ -19,6 +19,11 @@ export type ParameterMapValueType =
   | "compute"
   | "unsupported";
 
+export type ParameterMapListValueType = Extract<
+  ParameterMapValueType,
+  "stringList" | "numberList" | "booleanList"
+>;
+
 export type ParameterMap = Record<string, ParameterMapValue>;
 
 export const PARAMETER_MAP_TYPE_OPTIONS: Array<{
@@ -111,6 +116,62 @@ export function isEmptyParameterMap(value: unknown): boolean {
   return !isParameterMap(value) || Object.keys(value).length === 0;
 }
 
+export function getDefaultParameterMapListItem(
+  listType: ParameterMapListValueType,
+): string | number | boolean {
+  switch (listType) {
+    case "numberList":
+      return 0;
+    case "booleanList":
+      return false;
+    case "stringList":
+      return "";
+  }
+}
+
+export function addParameterMapListItem(
+  value: unknown,
+  listType: ParameterMapListValueType,
+): string[] | number[] | boolean[] {
+  const list = coercePrimitiveListForType(value, listType);
+  return [...list, getDefaultParameterMapListItem(listType)] as string[] | number[] | boolean[];
+}
+
+export function removeParameterMapListItem(
+  value: unknown,
+  listType: ParameterMapListValueType,
+  index: number,
+): string[] | number[] | boolean[] {
+  return coercePrimitiveListForType(value, listType).filter(
+    (_item, itemIndex) => itemIndex !== index,
+  ) as string[] | number[] | boolean[];
+}
+
+export function updateParameterMapListItem(
+  value: unknown,
+  listType: ParameterMapListValueType,
+  index: number,
+  nextItem: string | number | boolean,
+): string[] | number[] | boolean[] {
+  const list = coercePrimitiveListForType(value, listType);
+  const nextList = list.slice();
+  nextList[index] = coerceListItemForType(nextItem, listType);
+  return nextList as string[] | number[] | boolean[];
+}
+
+export function updateParameterMapRangeEndpoint(
+  value: unknown,
+  index: 0 | 1,
+  nextEndpoint: number,
+): number[] {
+  const numberList = coercePrimitiveList(value, "number");
+  const first = typeof numberList[0] === "number" ? numberList[0] : 0;
+  const second = typeof numberList[1] === "number" ? numberList[1] : first;
+  const nextRange = [first, second];
+  nextRange[index] = nextEndpoint;
+  return nextRange;
+}
+
 function isPrimitiveListItem(value: unknown): value is string | number | boolean {
   return typeof value === "string" || typeof value === "number" || typeof value === "boolean";
 }
@@ -200,6 +261,34 @@ function coerceListItem(
       return coerceNumber(value);
     case "boolean":
       return coerceBoolean(value);
+  }
+}
+
+function coercePrimitiveListForType(
+  value: unknown,
+  listType: ParameterMapListValueType,
+): Array<string | number | boolean> {
+  switch (listType) {
+    case "stringList":
+      return coercePrimitiveList(value, "string");
+    case "numberList":
+      return coercePrimitiveList(value, "number");
+    case "booleanList":
+      return coercePrimitiveList(value, "boolean");
+  }
+}
+
+function coerceListItemForType(
+  value: string | number | boolean,
+  listType: ParameterMapListValueType,
+): string | number | boolean {
+  switch (listType) {
+    case "stringList":
+      return coerceListItem(value, "string");
+    case "numberList":
+      return coerceListItem(value, "number");
+    case "booleanList":
+      return coerceListItem(value, "boolean");
   }
 }
 

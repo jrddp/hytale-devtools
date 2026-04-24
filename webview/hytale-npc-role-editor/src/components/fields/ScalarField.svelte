@@ -2,6 +2,7 @@
   import { onDestroy } from "svelte";
   import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
+  import CommitNumberInput from "@webview-shared/components/inputs/CommitNumberInput.svelte";
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
   import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
@@ -59,34 +60,6 @@
       scope: "standard",
     }),
   );
-
-  function sanitizeNumber(value: string) {
-    return value
-      .trim()
-      .replace(/[^\d.-]/g, "")
-      .replace(/(?!^)-/g, "")
-      .replace(/(\..*)\./g, "$1");
-  }
-
-  function commitNumberValue() {
-    const sanitized = sanitizeNumber(draftValue);
-    draftValue = sanitized;
-    if (sanitized === "") {
-      workspace.updateFieldValue(field.fieldPath, 0);
-      return;
-    }
-
-    const nextValue = Number(sanitized);
-    if (Number.isNaN(nextValue)) {
-      draftValue =
-        field.value.kind === "literal" && typeof field.value.value === "number"
-          ? String(field.value.value)
-          : "";
-      return;
-    }
-
-    workspace.updateFieldValue(field.fieldPath, nextValue);
-  }
 
   function requestAutocomplete() {
     if (
@@ -163,24 +136,16 @@
       }}
     />
   {:else if field.kind === "number"}
-    <input
-      id={inputId}
-      type="text"
+    <CommitNumberInput
+      {inputId}
+      initialValue={field.value.kind === "literal" && typeof field.value.value === "number"
+        ? field.value.value
+        : undefined}
+      emptyValue={0}
       data-vscode-context={"{}"}
-      class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-      bind:value={draftValue}
+      inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
       placeholder="Unset"
-      inputmode="decimal"
-      oninput={event => {
-        draftValue = sanitizeNumber(event.currentTarget.value);
-      }}
-      onblur={commitNumberValue}
-      onkeydown={event => {
-        if (event.key === "Enter" || event.key === "Escape") {
-          event.preventDefault();
-          event.currentTarget.blur();
-        }
-      }}
+      oncommit={value => workspace.updateFieldValue(field.fieldPath, value ?? 0)}
     />
   {:else}
     <SingleLineAutocompleteInput

@@ -327,7 +327,7 @@
       onmousedown={stopPointerEvent}
       onwheel={handleAutocompleteWheel}
     >
-      {#each visibleAutocompleteOptions as option, index (option.value)}
+      {#each visibleAutocompleteOptions as option, index (`${option.value}:${index}`)}
         <button
           type="button"
           tabindex="-1"

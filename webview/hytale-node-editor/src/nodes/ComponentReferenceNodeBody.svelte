@@ -38,11 +38,24 @@
   const interfacesField = $derived(
     fieldsBySchemaKey.Interfaces ?? createInterfacesField(),
   );
-  const computedInterfaceValues = $derived(
-    Array.isArray(interfacesField?.value)
-      ? interfacesField.value.filter((value): value is string => typeof value === "string")
-      : [],
-  );
+  const computedInterfaceValues = $derived.by(() => {
+    if (!Array.isArray(interfacesField?.value)) {
+      return [];
+    }
+
+    const interfaceKeys: string[] = [];
+    for (const value of interfacesField.value) {
+      if (typeof value !== "string") {
+        continue;
+      }
+      const interfaceKey = value.trim();
+      if (!interfaceKey || interfaceKeys.includes(interfaceKey)) {
+        continue;
+      }
+      interfaceKeys.push(interfaceKey);
+    }
+    return interfaceKeys;
+  });
   const exportStateFields = $derived.by(() =>
     Object.entries(fieldsBySchemaKey)
       .map(([schemaKey, field]) => ({

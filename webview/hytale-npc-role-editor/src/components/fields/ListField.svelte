@@ -5,6 +5,7 @@
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import ComputeAutocompleteInput from "@webview-shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "@webview-shared/components/SingleLineAutocompleteInput.svelte";
+  import CommitNumberInput from "@webview-shared/components/inputs/CommitNumberInput.svelte";
   import { buildNpcComputeAutocompleteOptions } from "../../compute/computeAutocomplete";
   import { getNpcFieldTypeLabel, type NpcPropertyField } from "../../propertyModel";
   import { workspace } from "../../workspace.svelte";
@@ -287,32 +288,18 @@
                   />
                 </div>
               {:else if typeof itemView.value === "number"}
-                <input
-                  type="text"
-                  class="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-                  value={String(itemView.value)}
-                  inputmode="decimal"
-                  oninput={event => {
-                    const nextValue = event.currentTarget.value
-                      .trim()
-                      .replace(/[^\d.-]/g, "")
-                      .replace(/(?!^)-/g, "")
-                      .replace(/(\..*)\./g, "$1");
-                    event.currentTarget.value = nextValue;
-                  }}
-                  onblur={event => {
-                    const nextValue = Number(event.currentTarget.value);
-                    if (Number.isNaN(nextValue)) {
-                      event.currentTarget.value = String(itemView.value);
-                      return;
-                    }
-
+                <CommitNumberInput
+                  inputId={`npc-property-${field.id}-${itemView.id}`}
+                  initialValue={itemView.value}
+                  emptyValue={0}
+                  inputClass="w-full rounded-md border border-vsc-border bg-vsc-input-bg px-3 py-2 text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
+                  oncommit={value => {
                     commitItemViews(
                       itemViews.map(item =>
                         item.id === itemView.id
                           ? {
                               ...item,
-                              value: nextValue,
+                              value: value ?? 0,
                             }
                           : item,
                       ),
