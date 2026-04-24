@@ -14,8 +14,7 @@ export type NpcFieldKind =
   | "list"
   | "rawJson"
   | "graph"
-  | "richObject"
-  | "stateTransitions";
+  | "richObject";
 
 export type NpcSectionId =
   | "parameters"
@@ -36,25 +35,6 @@ export type NpcFieldUiState = {
 
 export type NpcSectionUiState = {
   collapsed?: boolean;
-};
-
-export type NpcStateTransitionEdge = {
-  id: string;
-  from: string[];
-  to: string[];
-  priority?: number;
-  enabled?: NpcFieldValue;
-  preservedData?: Record<string, unknown>;
-};
-
-export type NpcStateTransitionEntry = {
-  id: string;
-  comment?: string;
-  enabled?: NpcFieldValue;
-  edges: NpcStateTransitionEdge[];
-  actionsField: NpcPropertyField;
-  preservedData?: Record<string, unknown>;
-  ui?: NpcFieldUiState;
 };
 
 export type NpcPropertyField = {
@@ -79,7 +59,6 @@ export type NpcPropertyField = {
   required?: boolean;
   isSet?: boolean;
   computable?: boolean;
-  transitions?: NpcStateTransitionEntry[];
   canRename?: boolean;
   canChangeType?: boolean;
   canUnset?: boolean;

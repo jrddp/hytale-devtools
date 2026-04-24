@@ -29,6 +29,14 @@
     "Sensor": {
       "RootNodeType": "SensorVariants",
       "MenuName": "Sensor"
+    },
+    "StateTransitions": {
+      "RootNodeType": "Structural.StateTransitionListRoot",
+      "MenuName": "State Transitions",
+      "AllowedCategories": [
+        "Actions",
+        "State Transitions"
+      ]
     }
   },
   "NodeCategories": {
@@ -108,6 +116,10 @@
       "Action.TriggerSpawnBeacon",
       "Action.TriggerSpawners",
       "WeightedAction.WeightedAction"
+    ],
+    "State Transitions": [
+      "Structural.StateTransitionNode",
+      "Structural.StateTransitionMappingNode"
     ],
     "Body Motion": [
       "BodyMotion.AimCharge",

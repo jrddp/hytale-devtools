@@ -1,5 +1,5 @@
 import type { NpcPropertyField, NpcPropertySection } from "../propertyModel";
-import { isRichObjectField, isStateTransitionsField } from "../propertyModel";
+import { isRichObjectField } from "../propertyModel";
 
 export type NpcFieldLocation = {
   field: NpcPropertyField;
@@ -62,23 +62,6 @@ function findWorkspaceFieldLocationInField(
       arrayParentField,
       arrayIndex,
     };
-  }
-
-  if (isStateTransitionsField(field)) {
-    for (const transition of field.transitions ?? []) {
-      const location = findWorkspaceFieldLocationInField(
-        transition.actionsField,
-        targetFieldPath,
-        section,
-        field,
-        null,
-        null,
-      );
-      if (location) {
-        return location;
-      }
-    }
-    return null;
   }
 
   if (!isRichObjectField(field)) {

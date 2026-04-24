@@ -21,6 +21,14 @@ export function readFixtureText(relativePath: string): string {
   return readFileSync(resolveNpcFixturePath(relativePath), "utf8");
 }
 
+export function resolveTestDataPath(relativePath: string): string {
+  return path.resolve(process.cwd(), "test/test-data", relativePath);
+}
+
+export function readTestDataText(relativePath: string): string {
+  return readFileSync(resolveTestDataPath(relativePath), "utf8");
+}
+
 export function parseJsonText(text: string): unknown {
   return JSON.parse(text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
 }

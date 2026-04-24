@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
   addRichObjectArrayItem,
-  addStateTransition,
   applyNpcPropertySectionDerivedState,
   buildNpcPropertyState,
   setRichObjectVariantType,
@@ -1461,7 +1460,8 @@ describe("npc property model symbol enrichment", () => {
       isSet: false,
     });
     expect(state.sections.find(section => section.id === "stateTransitions")?.fields[0]).toMatchObject({
-      kind: "stateTransitions",
+      kind: "graph",
+      rootType: "StateTransitions",
       fieldPath: "StateTransitions",
       isSet: false,
     });
@@ -1768,46 +1768,26 @@ describe("npc property model symbol enrichment", () => {
     const field = state.sections.find(section => section.id === "stateTransitions")?.fields[0];
 
     expect(field).toMatchObject({
-      kind: "stateTransitions",
+      kind: "graph",
+      rootType: "StateTransitions",
       isSet: true,
-    });
-    expect(field?.transitions?.[0]).toMatchObject({
-      comment: "Alert transition",
-      enabled: {
-        kind: "compute",
-        expression: "CanAlert",
+      value: {
+        kind: "literal",
+        value: document.StateTransitions,
       },
-      preservedData: {
-        UnknownKey: "keep-me",
-      },
-    });
-    expect(field?.transitions?.[0]?.edges).toMatchObject([
-      {
-        from: ["Idle"],
-        to: ["Alerted"],
-        priority: 2,
-        enabled: {
-          kind: "literal",
-          value: true,
-        },
-      },
-      {
-        from: ["Search"],
-        to: ["Idle"],
-      },
-    ]);
-    expect(field?.transitions?.[0]?.actionsField).toMatchObject({
-      kind: "richObject",
-      structureKind: "array",
-      itemShapeKey: "Action",
     });
 
     const serialized = serializeNpcPropertyState(state);
     expect(serialized.StateTransitions).toEqual(document.StateTransitions);
   });
 
-  test("adds default state transitions through the custom field kind", () => {
+  test("falls back to raw JSON when state transitions are not graph-compatible", () => {
     const document = createGenericDocument();
+    document.StateTransitions = [
+      {
+        States: ["invalid"],
+      },
+    ];
 
     const state = buildNpcPropertyState({
       document,
@@ -1816,26 +1796,11 @@ describe("npc property model symbol enrichment", () => {
     });
     const field = state.sections.find(section => section.id === "stateTransitions")?.fields[0];
 
-    expect(field).toBeDefined();
-    expect(addStateTransition(field!, componentContentDescriptors)).toBe(true);
-    expect(field?.transitions).toHaveLength(1);
-    expect(field?.transitions?.[0]?.edges).toEqual([
-      {
-        id: "state-transition-edge-0",
-        from: [],
-        to: [],
-      },
-    ]);
-    expect(serializeNpcPropertyState(state).StateTransitions).toEqual([
-      {
-        States: [
-          {
-            From: [],
-            To: [],
-          },
-        ],
-        Actions: [],
-      },
-    ]);
+    expect(field).toMatchObject({
+      kind: "rawJson",
+      fieldPath: "StateTransitions",
+      isSet: true,
+    });
+    expect(serializeNpcPropertyState(state).StateTransitions).toEqual(document.StateTransitions);
   });
 });

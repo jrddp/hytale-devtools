@@ -1,0 +1,57 @@
+{
+  "Id": "Structural.StateTransitionNode",
+  "Title": "State Transition",
+  "Color": "#2D3746",
+  "Description": "A state transition with one or more state mappings and a shared action list.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "StateTransition",
+      "Color": "#2D3746",
+      "Label": "State Transition"
+    },
+    {
+      "Id": "StatesPin",
+      "Type": "StateTransitionMapping",
+      "Color": "#2D3746",
+      "Label": "States",
+      "Multiple": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ActionsPin",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Actions",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this transition is enabled.",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "States": {
+      "Pin": "StatesPin",
+      "Node": "Structural.StateTransitionMappingNode",
+      "SerializationType": "child"
+    },
+    "Actions": {
+      "Pin": "ActionsPin",
+      "Node": "ActionVariants",
+      "SerializationType": "child",
+      "AllowComponentReferences": true
+    }
+  }
+}

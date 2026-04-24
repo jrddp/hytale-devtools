@@ -7,8 +7,6 @@ export type {
   NpcPropertyState,
   NpcSectionId,
   NpcSectionUiState,
-  NpcStateTransitionEdge,
-  NpcStateTransitionEntry,
 } from "./propertyTypes";
 
 export {
@@ -18,8 +16,6 @@ export {
   coerceFieldValueToEmptyLiteral,
   coerceLiteralValueToComputeExpression,
   createDefaultParameterField,
-  createStateTransitionEdgeId,
-  createStateTransitionEntryId,
   createVariantModifyOverrideFieldFromParent,
   getNpcFieldTypeLabel,
   summarizeNpcFieldValue,
@@ -46,25 +42,10 @@ export { serializeNpcPropertyState, serializeStructuredField } from "./serialize
 export {
   addRichObjectArrayItem,
   addRichObjectProperty,
-  addStateTransition,
-  addStateTransitionEdge,
   createRichObjectField,
-  createStateTransitionsField,
   describeRichObjectShape,
   isContentWrapperShape,
   isRichObjectField,
-  isStateTransitionsField,
-  removeStateTransition,
-  removeStateTransitionEdge,
-  reorderStateTransitionEdges,
-  reorderStateTransitions,
-  serializeStateTransitionsField,
   setRichObjectVariantType,
-  syncStateTransitionsFieldPaths,
   syncStructuredFieldPaths,
-  updateStateTransitionComment,
-  updateStateTransitionEdgeEnabled,
-  updateStateTransitionEdgePriority,
-  updateStateTransitionEdgeStates,
-  updateStateTransitionEnabled,
 } from "./structuredFields";

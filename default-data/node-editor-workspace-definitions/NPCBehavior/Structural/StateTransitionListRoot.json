@@ -1,0 +1,22 @@
+{
+  "Id": "Structural.StateTransitionListRoot",
+  "Title": "State Transitions",
+  "Color": "#2D3746",
+  "Description": "Root wrapper for a list of state transitions.",
+  "Outputs": [
+    {
+      "Id": "StateTransitionsPin",
+      "Type": "StateTransition",
+      "Color": "#2D3746",
+      "Label": "State Transitions",
+      "Multiple": true
+    }
+  ],
+  "Schema": {
+    "StateTransitions": {
+      "Pin": "StateTransitionsPin",
+      "Node": "Structural.StateTransitionNode",
+      "SerializationType": "root"
+    }
+  }
+}

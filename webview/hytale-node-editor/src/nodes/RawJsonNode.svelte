@@ -13,6 +13,7 @@
     localId: "Data",
     label: "Data",
     type: "text",
+    isSet: true,
   };
 
   const { id, ...props }: RawJsonNodeType = $props();

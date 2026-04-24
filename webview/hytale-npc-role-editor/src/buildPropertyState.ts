@@ -36,10 +36,10 @@ import {
 } from "./propertyFieldUtilities";
 import {
   createRichObjectField,
-  createStateTransitionsField,
   describeRichObjectShape,
   isContentWrapperShape,
 } from "./structuredFields";
+import { createStateTransitionsGraphField } from "./stateTransitionsGraphField";
 
 const SECTION_NAMES: Record<NpcPropertySection["id"], string> = {
   parameters: "Parameters",
@@ -91,7 +91,7 @@ export function buildNpcPropertyState({
     sections.push(buildTopLevelInstructionSection(document, "instructions"));
     sections.push(buildTopLevelInstructionSection(document, "interactionInstruction"));
     sections.push(buildTopLevelInstructionSection(document, "deathInstruction"));
-    sections.push(buildStateTransitionsSection(document, descriptors));
+    sections.push(buildStateTransitionsSection(document));
     sections.push(buildMotionControllerListSection(document, descriptors));
   }
 
@@ -321,13 +321,12 @@ function buildMotionControllerListSection(
 
 function buildStateTransitionsSection(
   document: NpcRoleJson,
-  descriptors: NpcDescriptorDocument,
 ): NpcPropertySection {
   return {
     id: "stateTransitions",
     name: SECTION_NAMES.stateTransitions,
     description: "Ordered list of state transitions and the actions that run when they fire.",
-    fields: [createStateTransitionsField(document.StateTransitions, descriptors)],
+    fields: [createStateTransitionsGraphField(document.StateTransitions)],
     ui: {},
   };
 }

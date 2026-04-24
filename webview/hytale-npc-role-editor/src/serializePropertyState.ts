@@ -7,7 +7,6 @@ import type {
 } from "./parsing/documentTypes";
 import type { NpcFieldValue, NpcPropertyField, NpcPropertySection, NpcPropertyState } from "./propertyTypes";
 import { cloneJsonLike, getTypeHintForItemType, serializeFieldValue } from "./propertyFieldUtilities";
-import { serializeStateTransitionsField } from "./structuredFields";
 
 export function serializeNpcPropertyState(state: NpcPropertyState): NpcRoleJson {
   const root = new Map<string, unknown>();
@@ -242,10 +241,6 @@ function serializeSingleSectionField(section: NpcPropertySection): unknown {
 export function serializeStructuredField(field: NpcPropertyField): unknown {
   if (field.isSet === false) {
     return undefined;
-  }
-
-  if (field.kind === "stateTransitions") {
-    return serializeStateTransitionsField(field, serializeStructuredField);
   }
 
   if (field.kind !== "richObject") {

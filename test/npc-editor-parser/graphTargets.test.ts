@@ -64,6 +64,74 @@ describe("npc graph target resolution", () => {
     });
   });
 
+  test("passes StateTransitions through without shape adaptation", () => {
+    const document: NpcRoleJson = {
+      Type: "Generic",
+      StateTransitions: [
+        {
+          States: [
+            {
+              From: ["Idle"],
+              To: ["Alerted"],
+            },
+          ],
+          Actions: [
+            {
+              Type: "Timeout",
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(resolveNpcGraphTarget(document, "StateTransitions")).toEqual({
+      fieldPath: "StateTransitions",
+      workspaceRoot: "StateTransitions",
+      value: [
+        {
+          States: [
+            {
+              From: ["Idle"],
+              To: ["Alerted"],
+            },
+          ],
+          Actions: [
+            {
+              Type: "Timeout",
+            },
+          ],
+        },
+      ],
+    });
+
+    const patchedRoot = patchNpcGraphTarget(document, "StateTransitions", {
+      value: [
+        {
+          States: [
+            {
+              From: ["Search"],
+              To: ["Idle"],
+            },
+          ],
+          Actions: [],
+        },
+      ],
+    });
+
+    expect(patchedRoot).toBe("StateTransitions");
+    expect(document.StateTransitions).toEqual([
+      {
+        States: [
+          {
+            From: ["Search"],
+            To: ["Idle"],
+          },
+        ],
+        Actions: [],
+      },
+    ]);
+  });
+
   test("resolves graph-backed component content roots", () => {
     const instructionComponent: NpcRoleJson = {
       Type: "Component",

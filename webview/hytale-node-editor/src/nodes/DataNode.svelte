@@ -12,17 +12,25 @@
   const { updateNodeData } = useSvelteFlow();
   const workspace = useNodeEditorSession();
 
-  function updateField(schemaKey: string, nextValue: unknown) {
+  function updateField(
+    schemaKey: string,
+    nextValue: unknown,
+    options: { isImplicit?: boolean; isSet?: boolean } = {},
+  ) {
     const previousField = fieldsBySchemaKey[schemaKey];
     const previousValue = previousField?.value;
     const previousIsImplicit = previousField?.isImplicit;
+    const previousIsSet = previousField?.isSet ?? false;
+    const nextIsImplicit = options.isImplicit ?? false;
+    const nextIsSet = options.isSet ?? true;
     updateNodeData(id, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
         [schemaKey]: {
           ...fieldsBySchemaKey[schemaKey],
           value: nextValue,
-          isImplicit: false,
+          isImplicit: nextIsImplicit,
+          isSet: nextIsSet,
         },
       },
     });
@@ -34,7 +42,9 @@
         beforeValue: previousValue,
         afterValue: nextValue,
         beforeIsImplicit: previousIsImplicit,
-        afterIsImplicit: false,
+        afterIsImplicit: nextIsImplicit,
+        beforeIsSet: previousIsSet,
+        afterIsSet: nextIsSet,
       },
     ]);
     if (edit) {

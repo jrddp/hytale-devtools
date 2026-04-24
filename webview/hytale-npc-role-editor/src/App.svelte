@@ -63,7 +63,9 @@
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
   let lastRequestedAppearanceAnimationRequest = $state<AppearancePreviewAnimationRequestState | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
-    Partial<Record<"Instructions" | "Instruction" | "Sensor", NodeEditorWorkspaceContext>>
+    Partial<
+      Record<"Instructions" | "Instruction" | "Sensor" | "StateTransitions", NodeEditorWorkspaceContext>
+    >
   >({});
   let previousActiveGraphSectionId: NpcSectionId | null = null;
 
@@ -532,6 +534,8 @@
         return npcBehaviorGraphContexts.Instruction;
       case "Sensor":
         return npcBehaviorGraphContexts.Sensor;
+      case "StateTransitions":
+        return npcBehaviorGraphContexts.StateTransitions;
       default:
         return undefined;
     }

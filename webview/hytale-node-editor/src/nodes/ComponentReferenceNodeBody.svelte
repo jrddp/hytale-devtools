@@ -57,10 +57,17 @@
       ),
   );
 
-  function updateField(schemaKey: string, nextValue: unknown, nextIsImplicit = false) {
+  function updateField(
+    schemaKey: string,
+    nextValue: unknown,
+    options: { isImplicit?: boolean; isSet?: boolean } = {},
+  ) {
     const previousField = fieldsBySchemaKey[schemaKey];
     const previousValue = previousField?.value;
     const previousIsImplicit = previousField?.isImplicit;
+    const previousIsSet = previousField?.isSet ?? false;
+    const nextIsImplicit = options.isImplicit ?? false;
+    const nextIsSet = options.isSet ?? true;
     updateNodeData(nodeId, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
@@ -68,6 +75,7 @@
           ...fieldsBySchemaKey[schemaKey],
           value: nextValue,
           isImplicit: nextIsImplicit,
+          isSet: nextIsSet,
         },
       },
     });
@@ -80,6 +88,8 @@
         afterValue: nextValue,
         beforeIsImplicit: previousIsImplicit,
         afterIsImplicit: nextIsImplicit,
+        beforeIsSet: previousIsSet,
+        afterIsSet: nextIsSet,
       },
     ]);
     if (edit) {

@@ -31,6 +31,8 @@ export type GraphRootAdaptationResult = {
 export interface NodeEditorWorkspaceRootDefinition {
   RootNodeType: string;
   MenuName: string;
+  AllowedCategories?: string[];
+  AllowedTemplates?: string[];
 }
 
 export interface VariantKindDefinition {
@@ -47,9 +49,12 @@ export interface NodeField {
   label?: string;
   description?: string;
   value?: unknown;
+  defaultValue?: unknown;
   computable?: boolean;
   /** Represents whether a field is implied from an absent value when initially parsed. Used to preserve explicitly empty values. */
   isImplicit?: boolean;
+  /** Whether this field exists explicitly in the serialized document. */
+  isSet: boolean;
   inputWidth?: number;
   overrideAutocompleteValues?: string[];
   subfields?: NodeField[];
