@@ -603,7 +603,6 @@
                   onclick={button.onclick}
                 >
                   <div class="truncate text-sm font-semibold">{button.name}</div>
-                  <div class="text-xs opacity-70">Graph page</div>
                 </button>
               {/each}
             </div>
