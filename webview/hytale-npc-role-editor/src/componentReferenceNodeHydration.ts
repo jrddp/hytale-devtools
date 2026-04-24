@@ -10,6 +10,9 @@ import {
 } from "@shared/npc-role-editor/stateAutocomplete";
 import {
   createComponentReferenceExportStateFieldSchemaKey,
+  createComponentReferenceExportStatesFieldSchemaKey,
+  createComponentReferenceInterfaceParametersFieldSchemaKey,
+  createComponentReferenceModifyMapFieldSchemaKey,
   createComponentReferenceModifyFieldSchemaKey,
   isComponentReferenceNodeTemplate,
   parseComponentReferenceSyntheticFieldSchemaKey,
@@ -25,6 +28,12 @@ import { workspace } from "./workspace.svelte";
 type ComponentReferenceInspection = {
   importStates: string[];
   overrideFields: NodeField[];
+};
+
+type ActiveComponentReferenceValues = {
+  modifyValues: Map<string, unknown>;
+  exportStates: string[];
+  interfaceParameters: Map<string, Record<string, unknown>>;
 };
 
 type HydrateOptions = {
@@ -56,12 +65,13 @@ export function hydrateComponentReferenceNodes({
     const componentClass = node.data.componentReferenceClass;
     const referenceField = node.data.fieldsBySchemaKey.Reference;
     const referenceName = typeof referenceField?.value === "string" ? referenceField.value.trim() : "";
+    const isComputedReference = isComputeValue(referenceField?.value);
     const targetState =
-      componentClass && referenceName
+      componentClass && referenceName && !isComputedReference
         ? workspace.getComponentReferenceTarget(componentClass, referenceName)
         : undefined;
 
-    if (componentClass && referenceName && !targetState) {
+    if (componentClass && referenceName && !isComputedReference && !targetState) {
       workspace.requestComponentReferenceTarget(componentClass, referenceName);
     }
 
@@ -79,6 +89,7 @@ export function hydrateComponentReferenceNodes({
       node as DataNodeType,
       inspection,
       discoveredStateInfo,
+      isComputedReference,
     );
     if (componentReferenceFieldsEqual(node.data.fieldsBySchemaKey, nextFieldsBySchemaKey)) {
       return node;
@@ -124,6 +135,7 @@ function inspectComponentReferenceTarget(
     {
       usagesByParameter: new Map(),
       directTranslationByFieldPath: new Map(),
+      componentReferenceInterfacesByParameter: new Map(),
     },
   );
   const parameterSection = sections.find(section => section.id === "parameters");
@@ -156,45 +168,46 @@ function buildComponentReferenceFields(
   node: DataNodeType,
   inspection: ComponentReferenceInspection | undefined,
   discoveredStateInfo: NpcDiscoveredStateInfo,
+  isComputedReference: boolean,
 ): Record<string, NodeField> {
   const nextFieldsBySchemaKey: Record<string, NodeField> = {};
   const currentReferenceField = node.data.fieldsBySchemaKey.Reference;
   if (currentReferenceField) {
-    nextFieldsBySchemaKey.Reference = currentReferenceField;
+    nextFieldsBySchemaKey.Reference = {
+      ...currentReferenceField,
+      computable: true,
+    };
   }
 
-  const modify = isRecord(node.data.unparsedMetadata?.Modify) ? node.data.unparsedMetadata.Modify : undefined;
-  const activeModifyValues = new Map<string, unknown>();
-  for (const [modifyKey, value] of Object.entries(modify ?? {})) {
-    if (!modifyKey.startsWith("_")) {
-      activeModifyValues.set(modifyKey, structuredClone(value));
+  const activeValues = collectActiveComponentReferenceValues(node);
+  const currentInterfacesField = node.data.fieldsBySchemaKey.Interfaces;
+  const interfaceValues = getStringListValue(currentInterfacesField?.value);
+
+  if (isComputedReference) {
+    nextFieldsBySchemaKey.Nullable = createNullableField(node.data.fieldsBySchemaKey.Nullable);
+    nextFieldsBySchemaKey.Interfaces = createInterfacesField(currentInterfacesField);
+    nextFieldsBySchemaKey[createComponentReferenceExportStatesFieldSchemaKey()] =
+      createExportStatesListField(activeValues.exportStates, discoveredStateInfo);
+    nextFieldsBySchemaKey[createComponentReferenceModifyMapFieldSchemaKey()] =
+      createParameterMapField({
+        schemaKey: createComponentReferenceModifyMapFieldSchemaKey(),
+        label: "Parameters",
+        value: Object.fromEntries(activeValues.modifyValues),
+        interfaceFilter: interfaceValues,
+      });
+    for (const [interfaceKey, parameters] of activeValues.interfaceParameters) {
+      nextFieldsBySchemaKey[
+        createComponentReferenceInterfaceParametersFieldSchemaKey(interfaceKey)
+      ] = createInterfaceParametersField(interfaceKey, parameters);
     }
+    return nextFieldsBySchemaKey;
   }
 
-  const activeExportStates = Array.isArray(modify?._ExportStates)
-    ? modify._ExportStates.map(value => (typeof value === "string" ? value : ""))
-    : [];
-
-  for (const [schemaKey, field] of Object.entries(node.data.fieldsBySchemaKey)) {
-    if (field.isSet === false || field.isImplicit || field.value === undefined) {
-      continue;
-    }
-
-    const syntheticField = parseComponentReferenceSyntheticFieldSchemaKey(schemaKey);
-    if (!syntheticField) {
-      continue;
-    }
-
-    switch (syntheticField.kind) {
-      case "modify":
-        activeModifyValues.set(syntheticField.key, structuredClone(field.value));
-        break;
-      case "export-state":
-        if (typeof field.value === "string") {
-          activeExportStates[syntheticField.index] = field.value;
-        }
-        break;
-    }
+  if (node.data.fieldsBySchemaKey.Nullable) {
+    nextFieldsBySchemaKey.Nullable = node.data.fieldsBySchemaKey.Nullable;
+  }
+  if (currentInterfacesField) {
+    nextFieldsBySchemaKey.Interfaces = currentInterfacesField;
   }
 
   const inspectedFieldsByKey = new Map(
@@ -207,7 +220,7 @@ function buildComponentReferenceFields(
   if (inspection) {
     for (const field of inspection.overrideFields) {
       const modifyKey = String(field.schemaKey).slice(createComponentReferenceModifyFieldSchemaKey("").length);
-      const activeValue = activeModifyValues.get(modifyKey);
+      const activeValue = activeValues.modifyValues.get(modifyKey);
       nextFieldsBySchemaKey[field.schemaKey as string] =
         activeValue !== undefined
           ? overrideNodeFieldValue(field, activeValue, false)
@@ -219,7 +232,7 @@ function buildComponentReferenceFields(
     }
   }
 
-  for (const [modifyKey, activeValue] of activeModifyValues) {
+  for (const [modifyKey, activeValue] of activeValues.modifyValues) {
     const inspectedField = inspectedFieldsByKey.get(modifyKey);
     const schemaKey = createComponentReferenceModifyFieldSchemaKey(modifyKey);
     if (nextFieldsBySchemaKey[schemaKey]) {
@@ -236,23 +249,23 @@ function buildComponentReferenceFields(
         createExportStateField(
           createComponentReferenceExportStateFieldSchemaKey(index),
           importState,
-          activeExportStates[index] ?? "",
+          activeValues.exportStates[index] ?? "",
           discoveredStateInfo,
-          activeExportStates[index] === undefined,
+          activeValues.exportStates[index] === undefined,
         );
     });
-    for (let index = inspection.importStates.length; index < activeExportStates.length; index += 1) {
+    for (let index = inspection.importStates.length; index < activeValues.exportStates.length; index += 1) {
       nextFieldsBySchemaKey[createComponentReferenceExportStateFieldSchemaKey(index)] =
         createExportStateField(
           createComponentReferenceExportStateFieldSchemaKey(index),
           `Export State ${index + 1}`,
-          activeExportStates[index] ?? "",
+          activeValues.exportStates[index] ?? "",
           discoveredStateInfo,
           false,
         );
     }
   } else {
-    activeExportStates.forEach((value, index) => {
+    activeValues.exportStates.forEach((value, index) => {
       nextFieldsBySchemaKey[createComponentReferenceExportStateFieldSchemaKey(index)] =
         createExportStateField(
           createComponentReferenceExportStateFieldSchemaKey(index),
@@ -264,7 +277,89 @@ function buildComponentReferenceFields(
     });
   }
 
+  for (const [interfaceKey, parameters] of activeValues.interfaceParameters) {
+    nextFieldsBySchemaKey[
+      createComponentReferenceInterfaceParametersFieldSchemaKey(interfaceKey)
+    ] = createInterfaceParametersField(interfaceKey, parameters);
+  }
+
   return nextFieldsBySchemaKey;
+}
+
+function collectActiveComponentReferenceValues(node: DataNodeType): ActiveComponentReferenceValues {
+  const modify = isRecord(node.data.unparsedMetadata?.Modify)
+    ? node.data.unparsedMetadata.Modify
+    : undefined;
+  const modifyValues = new Map<string, unknown>();
+  const interfaceParameters = new Map<string, Record<string, unknown>>();
+
+  for (const [modifyKey, value] of Object.entries(modify ?? {})) {
+    if (!modifyKey.startsWith("_")) {
+      modifyValues.set(modifyKey, structuredClone(value));
+    }
+  }
+
+  if (isRecord(modify?._InterfaceParameters)) {
+    for (const [interfaceKey, parameters] of Object.entries(modify._InterfaceParameters)) {
+      if (isRecord(parameters)) {
+        interfaceParameters.set(interfaceKey, structuredClone(parameters));
+      }
+    }
+  }
+
+  const exportStates = Array.isArray(modify?._ExportStates)
+    ? modify._ExportStates.map(value => (typeof value === "string" ? value : ""))
+    : [];
+
+  for (const [schemaKey, field] of Object.entries(node.data.fieldsBySchemaKey)) {
+    if (field.isSet === false || field.isImplicit || field.value === undefined) {
+      continue;
+    }
+
+    const syntheticField = parseComponentReferenceSyntheticFieldSchemaKey(schemaKey);
+    if (!syntheticField) {
+      continue;
+    }
+
+    switch (syntheticField.kind) {
+      case "modify":
+        modifyValues.set(syntheticField.key, structuredClone(field.value));
+        break;
+      case "modify-map":
+        modifyValues.clear();
+        if (isRecord(field.value)) {
+          for (const [key, value] of Object.entries(field.value)) {
+            modifyValues.set(key, structuredClone(value));
+          }
+        }
+        break;
+      case "export-state":
+        if (typeof field.value === "string") {
+          exportStates[syntheticField.index] = field.value;
+        }
+        break;
+      case "export-states":
+        exportStates.splice(
+          0,
+          exportStates.length,
+          ...(Array.isArray(field.value)
+            ? field.value.map(value => (typeof value === "string" ? value : ""))
+            : []),
+        );
+        break;
+      case "interface-parameters":
+        if (isRecord(field.value)) {
+          interfaceParameters.set(syntheticField.interfaceKey, structuredClone(field.value));
+        }
+        break;
+    }
+  }
+
+  return {
+    modifyValues,
+    exportStates,
+    interfaceParameters,
+  };
 }
 
 function createNodeFieldFromNpcField(field: NpcPropertyField, schemaKey: string): NodeField {
@@ -354,6 +449,97 @@ function createExportStateField(
   };
 }
 
+function createNullableField(currentField: NodeField | undefined): NodeField {
+  return {
+    schemaKey: "Nullable",
+    localId: "Nullable",
+    type: "checkbox",
+    label: "Nullable",
+    description: "Allow the computed reference to resolve to no component.",
+    value: currentField?.value === true,
+    isImplicit: currentField?.isImplicit ?? true,
+    isSet: currentField?.isSet ?? false,
+  };
+}
+
+function createInterfacesField(currentField: NodeField | undefined): NodeField {
+  return {
+    schemaKey: "Interfaces",
+    localId: "Interfaces",
+    type: "list",
+    label: "Interfaces",
+    description: "Allowed component interface codes for a computed reference.",
+    value: getStringListValue(currentField?.value),
+    isImplicit: currentField?.isImplicit ?? true,
+    isSet: currentField?.isSet ?? false,
+    symbolLookup: {
+      indexKind: "assetDerived",
+      key: "npcComponentInterfaces",
+    },
+  };
+}
+
+function createExportStatesListField(
+  values: string[],
+  discoveredStateInfo: NpcDiscoveredStateInfo,
+): NodeField {
+  const suggestions = getNpcStateAutocompleteValues(discoveredStateInfo, "role-full");
+  return {
+    schemaKey: createComponentReferenceExportStatesFieldSchemaKey(),
+    localId: createComponentReferenceExportStatesFieldSchemaKey(),
+    type: "list",
+    label: "Export States",
+    description: "Ordered states exported to the resolved component's imported states.",
+    value: values,
+    isImplicit: values.length === 0,
+    isSet: values.length > 0,
+    overrideAutocompleteValues: suggestions.length > 0 ? [...suggestions] : undefined,
+  };
+}
+
+function createParameterMapField({
+  schemaKey,
+  label,
+  value,
+  interfaceFilter,
+}: {
+  schemaKey: string;
+  label: string;
+  value: Record<string, unknown>;
+  interfaceFilter: string[];
+}): NodeField {
+  return {
+    schemaKey,
+    localId: schemaKey,
+    type: "parameterMap",
+    label,
+    value,
+    isImplicit: Object.keys(value).length === 0,
+    isSet: Object.keys(value).length > 0,
+    parameterMapKeySymbolLookup: {
+      indexKind: "assetDerived",
+      key: "npcInterfaceParameters",
+      filter: interfaceFilter.length > 0 ? { npcComponentInterfaces: interfaceFilter } : undefined,
+    },
+  };
+}
+
+function createInterfaceParametersField(
+  interfaceKey: string,
+  value: Record<string, unknown>,
+): NodeField {
+  return {
+    ...createParameterMapField({
+    schemaKey: createComponentReferenceInterfaceParametersFieldSchemaKey(interfaceKey),
+    label: `${interfaceKey} Parameters`,
+    value,
+    interfaceFilter: [interfaceKey],
+    }),
+    isImplicit: false,
+    isSet: true,
+  };
+}
+
 function componentReferenceFieldsEqual(
   left: Record<string, NodeField>,
   right: Record<string, NodeField>,
@@ -379,6 +565,10 @@ function componentReferenceFieldsEqual(
       JSON.stringify(leftField.overrideAutocompleteValues ?? []) ===
         JSON.stringify(rightField.overrideAutocompleteValues ?? []) &&
       JSON.stringify(leftField.symbolLookup ?? null) === JSON.stringify(rightField.symbolLookup ?? null) &&
+      JSON.stringify(leftField.parameterMapKeyOverrideAutocompleteValues ?? []) ===
+        JSON.stringify(rightField.parameterMapKeyOverrideAutocompleteValues ?? []) &&
+      JSON.stringify(leftField.parameterMapKeySymbolLookup ?? null) ===
+        JSON.stringify(rightField.parameterMapKeySymbolLookup ?? null) &&
       leftField.stateAutocompleteKind === rightField.stateAutocompleteKind &&
       leftField.animationAutocompleteKind === rightField.animationAutocompleteKind &&
       leftField.previewFeatureKind === rightField.previewFeatureKind
@@ -401,6 +591,20 @@ function overrideNodeFieldValue(
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isComputeValue(value: unknown): value is { Compute: string } {
+  return (
+    isRecord(value) &&
+    Object.keys(value).length === 1 &&
+    typeof value.Compute === "string"
+  );
+}
+
+function getStringListValue(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
 }
 
 export function overrideNodeFieldAutocomplete(

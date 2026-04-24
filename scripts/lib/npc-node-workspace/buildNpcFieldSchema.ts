@@ -115,6 +115,35 @@ export function buildReferenceField(): NodeContentDefinition {
       Label: "Reference",
       Width: 220,
       Default: "",
+      Computable: true,
+    },
+  };
+}
+
+export function buildReferenceNullableField(): NodeContentDefinition {
+  return {
+    Id: "Nullable",
+    Type: "Checkbox",
+    Description: "Allow the computed reference to resolve to no component.",
+    Options: {
+      Label: "Nullable",
+      Default: false,
+    },
+  };
+}
+
+export function buildReferenceInterfacesField(): NodeContentDefinition {
+  return {
+    Id: "Interfaces",
+    Type: "List",
+    Description: "Allowed component interface codes for a computed reference.",
+    Options: {
+      Label: "Interfaces",
+      DefaultValue: [],
+      SymbolLookup: {
+        indexKind: "assetDerived",
+        key: "npcComponentInterfaces",
+      },
     },
   };
 }

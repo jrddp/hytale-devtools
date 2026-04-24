@@ -4,6 +4,11 @@ import { describe, expect, test } from "vitest";
 import { WorkspaceRuntime } from "../../src/node-editor/workspaceResolver";
 import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import type { NodeEditorWorkspaceContext, NodeTemplate } from "../../src/shared/node-editor/workspaceTypes";
+import {
+  createComponentReferenceExportStatesFieldSchemaKey,
+  createComponentReferenceInterfaceParametersFieldSchemaKey,
+  createComponentReferenceModifyMapFieldSchemaKey,
+} from "../../src/shared/node-editor/componentReferences";
 import type { FlowEdge, FlowNode } from "../../webview/hytale-node-editor/src/common";
 import { parseDocumentText } from "../../webview/hytale-node-editor/src/node-editor/parsing/parseDocument.svelte";
 import {
@@ -136,6 +141,19 @@ describe("NPC behavior component references", () => {
         npcComponentClasses: ["Sensor"],
       },
     });
+    expect(workspace.nodeTemplatesById["Sensor.Reference"].fieldsBySchemaKey.Reference.computable).toBe(true);
+    expect(workspace.nodeTemplatesById["Sensor.Reference"].fieldsBySchemaKey.Nullable).toMatchObject({
+      type: "checkbox",
+      value: false,
+    });
+    expect(workspace.nodeTemplatesById["Sensor.Reference"].fieldsBySchemaKey.Interfaces).toMatchObject({
+      type: "list",
+      value: [],
+      symbolLookup: {
+        indexKind: "assetDerived",
+        key: "npcComponentInterfaces",
+      },
+    });
     expect(
       workspace.nodeTemplatesById["Action.ActionReference"].fieldsBySchemaKey.Reference.symbolLookup,
     ).toMatchObject({
@@ -200,6 +218,203 @@ describe("NPC behavior component references", () => {
       },
     });
     expect(serialized).not.toHaveProperty("Type");
+  });
+
+  test("round-trips a computed instruction reference wrapper at the root", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const documentRoot = {
+      Reference: {
+        Compute: "SelectedInstruction",
+      },
+      Nullable: true,
+      Interfaces: ["Hytale.Test.Component.Seek"],
+      Modify: {
+        Range: 6,
+        Tags: ["Aggro", "Close"],
+        Flags: [true, false],
+        _ExportStates: ["Idle", "Alerted"],
+        _InterfaceParameters: {
+          "Hytale.Test.Component.Seek": {
+            Range: {
+              Compute: "SeekRange",
+            },
+          },
+        },
+      },
+    };
+
+    const parsed = parseDocumentText(JSON.stringify(documentRoot), context);
+    expect(findTemplateNodeIds(parsed.nodes)).toContain("Structural.InstructionReference");
+
+    const serialized = expectSemanticRoundTrip(documentRoot, context);
+    expect(serialized).toMatchObject(documentRoot);
+    expect(serialized).not.toHaveProperty("Type");
+  });
+
+  test("serializes edited computed reference parameter maps to Modify", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const template = context.nodeTemplatesById["Structural.InstructionReference"];
+    const node = createDataNode("computed-ref", template);
+    if (node.type !== "datanode") {
+      throw new Error("Expected data node.");
+    }
+
+    const modifyMapKey = createComponentReferenceModifyMapFieldSchemaKey();
+    const exportStatesKey = createComponentReferenceExportStatesFieldSchemaKey();
+    const interfaceParametersKey =
+      createComponentReferenceInterfaceParametersFieldSchemaKey("Hytale.Test.Component.Seek");
+    node.data.fieldsBySchemaKey = {
+      ...structuredClone(template.fieldsBySchemaKey),
+      Reference: {
+        ...structuredClone(template.fieldsBySchemaKey.Reference),
+        value: {
+          Compute: "SelectedInstruction",
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+      Nullable: {
+        ...structuredClone(template.fieldsBySchemaKey.Nullable),
+        value: true,
+        isImplicit: false,
+        isSet: true,
+      },
+      Interfaces: {
+        ...structuredClone(template.fieldsBySchemaKey.Interfaces),
+        value: ["Hytale.Test.Component.Seek"],
+        isImplicit: false,
+        isSet: true,
+      },
+      [modifyMapKey]: {
+        schemaKey: modifyMapKey,
+        localId: modifyMapKey,
+        type: "parameterMap",
+        label: "Parameters",
+        value: {
+          Range: 6,
+          Tags: ["Aggro", "Close"],
+          Enabled: true,
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+      [exportStatesKey]: {
+        schemaKey: exportStatesKey,
+        localId: exportStatesKey,
+        type: "list",
+        label: "Export States",
+        value: ["Idle"],
+        isImplicit: false,
+        isSet: true,
+      },
+      [interfaceParametersKey]: {
+        schemaKey: interfaceParametersKey,
+        localId: interfaceParametersKey,
+        type: "parameterMap",
+        label: "Hytale.Test.Component.Seek Parameters",
+        value: {
+          Range: {
+            Compute: "SeekRange",
+          },
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+    };
+
+    const serialized = normalizeRoundTripJson(
+      serializeWorkspaceState(
+        {
+          nodes: [node],
+          edges: [],
+          rootNodeId: node.id,
+        },
+        context.rootMenuName,
+      ),
+    );
+
+    expect(serialized).toMatchObject({
+      Reference: {
+        Compute: "SelectedInstruction",
+      },
+      Nullable: true,
+      Interfaces: ["Hytale.Test.Component.Seek"],
+      Modify: {
+        Range: 6,
+        Tags: ["Aggro", "Close"],
+        Enabled: true,
+        _ExportStates: ["Idle"],
+        _InterfaceParameters: {
+          "Hytale.Test.Component.Seek": {
+            Range: {
+              Compute: "SeekRange",
+            },
+          },
+        },
+      },
+    });
+  });
+
+  test("does not serialize hidden computed-only fields while a reference is static", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const template = context.nodeTemplatesById["Structural.InstructionReference"];
+    const node = createDataNode("static-ref", template);
+    if (node.type !== "datanode") {
+      throw new Error("Expected data node.");
+    }
+
+    const interfaceParametersKey =
+      createComponentReferenceInterfaceParametersFieldSchemaKey("Hytale.Test.Component.Seek");
+    node.data.fieldsBySchemaKey = {
+      ...structuredClone(template.fieldsBySchemaKey),
+      Reference: {
+        ...structuredClone(template.fieldsBySchemaKey.Reference),
+        value: "Component_Instruction_Generic_Idle",
+        isImplicit: false,
+        isSet: true,
+      },
+      Nullable: {
+        ...structuredClone(template.fieldsBySchemaKey.Nullable),
+        value: true,
+        isImplicit: false,
+        isSet: true,
+      },
+      Interfaces: {
+        ...structuredClone(template.fieldsBySchemaKey.Interfaces),
+        value: ["Hytale.Test.Component.Seek"],
+        isImplicit: false,
+        isSet: true,
+      },
+      [interfaceParametersKey]: {
+        schemaKey: interfaceParametersKey,
+        localId: interfaceParametersKey,
+        type: "parameterMap",
+        label: "Hytale.Test.Component.Seek Parameters",
+        value: {
+          Range: 6,
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+    };
+
+    const serialized = normalizeRoundTripJson(
+      serializeWorkspaceState(
+        {
+          nodes: [node],
+          edges: [],
+          rootNodeId: node.id,
+        },
+        context.rootMenuName,
+      ),
+    );
+
+    expect(serialized).toMatchObject({
+      Reference: "Component_Instruction_Generic_Idle",
+    });
+    expect(serialized).not.toHaveProperty("Nullable");
+    expect(serialized).not.toHaveProperty("Interfaces");
+    expect(serialized).not.toHaveProperty("Modify");
   });
 
   test("round-trips child component references for sensor, motions, action items, and paths", () => {

@@ -6,6 +6,7 @@
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import ComputeField from "@node-editor/fields/ComputeField.svelte";
   import ObjectField from "@node-editor/fields/ObjectField.svelte";
+  import ParameterMapField from "@node-editor/fields/ParameterMapField.svelte";
   import { buildFieldInputId } from "@node-editor/node-editor/utils/fieldUtils";
   import BooleanField from "./BooleanField.svelte";
   import ColorField from "./ColorField.svelte";
@@ -31,6 +32,8 @@
     onconfirm,
     parentSchemaKey,
     symbolLookup,
+    parameterMapKeyOverrideAutocompleteValues,
+    parameterMapKeySymbolLookup,
     overrideAutocompleteValues,
     previewFeatureKind,
     computable = false,
@@ -80,6 +83,7 @@
       case "list":
         return [];
       case "object":
+      case "parameterMap":
         return {};
       default:
         return "";
@@ -152,6 +156,18 @@
     titleActions={fieldActions}
     {onconfirm}
     {subfields}
+  />
+{:else if type === "parameterMap"}
+  <ParameterMapField
+    {inputId}
+    label={fieldLabel}
+    {description}
+    {inputWidth}
+    initialValue={value as Record<string, unknown>}
+    keyOverrideAutocompleteValues={parameterMapKeyOverrideAutocompleteValues}
+    keySymbolLookup={parameterMapKeySymbolLookup}
+    titleActions={fieldActions}
+    {onconfirm}
   />
 {:else if type === "list"}
   <ListField

@@ -149,6 +149,7 @@ function emptyParameterUsageIndex(): ParameterUsageIndex {
   return {
     usagesByParameter: new Map(),
     directTranslationByFieldPath: new Map(),
+    componentReferenceInterfacesByParameter: new Map(),
   };
 }
 

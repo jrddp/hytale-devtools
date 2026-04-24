@@ -474,6 +474,7 @@ export class WorkspaceRuntime {
       componentReferenceClass &&
       fieldsBySchemaKey.Reference
     ) {
+      fieldsBySchemaKey.Reference.computable = true;
       fieldsBySchemaKey.Reference.symbolLookup = {
         indexKind: "registeredAssets",
         key: "NPCRole",
@@ -561,6 +562,9 @@ export class WorkspaceRuntime {
       const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
         ? content.Options.Values.filter((value): value is string => typeof value === "string")
         : undefined;
+      const parameterMapKeyOverrideAutocompleteValues = Array.isArray(content.Options?.ParameterMapKeyValues)
+        ? content.Options.ParameterMapKeyValues.filter((value): value is string => typeof value === "string")
+        : undefined;
       const defaultValue = content.Options?.Default ?? content.Options?.DefaultValue;
 
       return {
@@ -581,6 +585,10 @@ export class WorkspaceRuntime {
         overrideAutocompleteValues,
         symbolLookup: content.Options?.SymbolLookup
           ? this.cloneIndexReference(content.Options.SymbolLookup)
+          : undefined,
+        parameterMapKeyOverrideAutocompleteValues,
+        parameterMapKeySymbolLookup: content.Options?.ParameterMapKeySymbolLookup
+          ? this.cloneIndexReference(content.Options.ParameterMapKeySymbolLookup)
           : undefined,
         stateAutocompleteKind: content.Options?.StateAutocompleteKind,
         animationAutocompleteKind: content.Options?.AnimationAutocompleteKind,
@@ -614,6 +622,8 @@ export class WorkspaceRuntime {
         return "filepath";
       case "List":
         return "list";
+      case "ParameterMap":
+        return "parameterMap";
       case "Object":
         return "object";
       default:

@@ -200,8 +200,21 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function isStaticComponentReferenceWrapper(value: unknown): value is NodeAssetJson & { Reference: string } {
-  return isObject(value) && typeof value.Reference === "string";
+function isComputeReference(value: unknown): value is { Compute: string } {
+  return (
+    isObject(value) &&
+    Object.keys(value).length === 1 &&
+    typeof value.Compute === "string"
+  );
+}
+
+function isComponentReferenceWrapper(
+  value: unknown,
+): value is NodeAssetJson & { Reference: string | { Compute: string } } {
+  return (
+    isObject(value) &&
+    (typeof value.Reference === "string" || isComputeReference(value.Reference))
+  );
 }
 
 function findCompatibleComponentReferenceTemplate(
@@ -463,7 +476,7 @@ export function parseAssetDocumentToGraphDocument(
           occupancy: "normal-item" | "whole-slot" = "normal-item",
         ) => {
           const referenceTemplate =
-            allowsComponentReferences(slot.childSchema) && isStaticComponentReferenceWrapper(childValue)
+            allowsComponentReferences(slot.childSchema) && isComponentReferenceWrapper(childValue)
               ? findCompatibleComponentReferenceTemplate(
                   workspaceContext,
                   slot.pin.connectionType,
@@ -538,7 +551,7 @@ export function parseAssetDocumentToGraphDocument(
               }
             } else if (
               allowsComponentReferences(slot.childSchema) &&
-              isStaticComponentReferenceWrapper(localRoot[schemaKey])
+              isComponentReferenceWrapper(localRoot[schemaKey])
             ) {
               const wholeSlotTemplate = findCompatibleComponentReferenceTemplate(
                 workspaceContext,
@@ -656,7 +669,7 @@ export function parseAssetDocumentToGraphDocument(
   const rootNodeId = documentHasRootNode
     ? recursiveParseNodes(
         documentRoot,
-        isStaticComponentReferenceWrapper(documentRoot)
+        isComponentReferenceWrapper(documentRoot)
           ? (findCompatibleRootComponentReferenceTemplate(workspaceContext)?.templateId ?? rootTemplateOrVariantId)
           : rootTemplateOrVariantId,
       )

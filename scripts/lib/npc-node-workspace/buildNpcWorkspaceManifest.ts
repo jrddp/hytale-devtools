@@ -13,6 +13,8 @@ import type {
 import {
   buildContentField,
   buildReferenceField,
+  buildReferenceInterfacesField,
+  buildReferenceNullableField,
 } from "./buildNpcFieldSchema";
 import {
   collectOutputAuthoredParentConnectionTypesByChildId,
@@ -64,6 +66,7 @@ export function buildNpcWorkspaceArtifacts(
       outputAuthoredParentConnectionTypesByChildId,
     ),
     buildInstructionListRootTemplate(),
+    ...buildStateTransitionTemplates(),
   ].sort(
     (left, right) =>
       left.directoryName.localeCompare(right.directoryName) ||
@@ -81,13 +84,15 @@ function buildWorkspaceDefinition(
 ): NodeEditorWorkspaceDefinition {
   const templatesByNodeCategory = new Map<string, string[]>();
   for (const output of templateOutputs) {
+    if (output.template.Id === "Structural.StateTransitionListRoot") {
+      continue;
+    }
+
     const categorySegment =
       output.template.Id.startsWith("Structural.")
         ? "Structural"
         : output.template.Id.split(".")[0];
-    const categoryName = NODE_CATEGORY_NAMES[
-      categorySegment as SupportedDescriptorCategory | "Structural"
-    ];
+    const categoryName = getNodeCategoryName(output.template.Id, categorySegment);
     const templateIds = templatesByNodeCategory.get(categoryName) ?? [];
     templateIds.push(output.template.Id);
     templatesByNodeCategory.set(categoryName, templateIds);
@@ -109,13 +114,21 @@ function buildWorkspaceDefinition(
         RootNodeType: "SensorVariants",
         MenuName: "Sensor",
       },
+      StateTransitions: {
+        RootNodeType: "Structural.StateTransitionListRoot",
+        MenuName: "State Transitions",
+        AllowedCategories: [
+          "Actions",
+          "State Transitions",
+        ],
+      },
     },
     NodeCategories: Object.fromEntries(
       Array.from(templatesByNodeCategory.entries())
         .sort(([left], [right]) => left.localeCompare(right))
         .map(([categoryName, templateIds]) => [
           categoryName,
-          templateIds.sort((left, right) => left.localeCompare(right)),
+          sortTemplateIdsForCategory(categoryName, templateIds),
         ]),
     ),
     Variants: {
@@ -138,6 +151,30 @@ function buildWorkspaceDefinition(
       },
     },
   };
+}
+
+function sortTemplateIdsForCategory(categoryName: string, templateIds: string[]): string[] {
+  if (categoryName === "State Transitions") {
+    const order = [
+      "Structural.StateTransitionNode",
+      "Structural.StateTransitionMappingNode",
+    ];
+    return [...templateIds].sort(
+      (left, right) => order.indexOf(left) - order.indexOf(right),
+    );
+  }
+
+  return [...templateIds].sort((left, right) => left.localeCompare(right));
+}
+
+function getNodeCategoryName(templateId: string, categorySegment: string): string {
+  if (templateId.startsWith("Structural.StateTransition")) {
+    return "State Transitions";
+  }
+
+  return NODE_CATEGORY_NAMES[
+    categorySegment as SupportedDescriptorCategory | "Structural"
+  ];
 }
 
 function buildVariantKindDefinition(
@@ -471,9 +508,15 @@ function buildComponentReferenceTemplate(
       Description: `Reference an external ${spec.componentClass} component.`,
       Inputs: inputs.length > 0 ? inputs : undefined,
       Outputs: outputs,
-      Content: [buildReferenceField()],
+      Content: [
+        buildReferenceField(),
+        buildReferenceNullableField(),
+        buildReferenceInterfacesField(),
+      ],
       Schema: {
         Reference: "Reference",
+        Nullable: "Nullable",
+        Interfaces: "Interfaces",
       },
       IsComponentReference: true,
       ComponentReferenceClass: spec.componentClass,
@@ -536,4 +579,163 @@ function buildInstructionListRootTemplate(): TemplateOutput {
       },
     },
   };
+}
+
+function buildStateTransitionTemplates(): TemplateOutput[] {
+  return [
+    {
+      directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+      fileName: "StateTransitionListRoot.json",
+      template: {
+        Id: "Structural.StateTransitionListRoot",
+        Title: "State Transitions",
+        Color: CATEGORY_COLORS.Structural,
+        Description: "Root wrapper for a list of state transitions.",
+        Outputs: [
+          {
+            Id: "StateTransitionsPin",
+            Type: "StateTransition",
+            Color: CATEGORY_COLORS.Structural,
+            Label: "State Transitions",
+            Multiple: true,
+          },
+        ],
+        Schema: {
+          StateTransitions: {
+            Pin: "StateTransitionsPin",
+            Node: "Structural.StateTransitionNode",
+            SerializationType: "root",
+          },
+        },
+      },
+    },
+    {
+      directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+      fileName: "StateTransitionNode.json",
+      template: {
+        Id: "Structural.StateTransitionNode",
+        Title: "State Transition",
+        Color: CATEGORY_COLORS.Structural,
+        Description: "A state transition with one or more state mappings and a shared action list.",
+        Inputs: [
+          {
+            Id: "Input",
+            Type: "StateTransition",
+            Color: CATEGORY_COLORS.Structural,
+            Label: "State Transition",
+          },
+          {
+            Id: "StatesPin",
+            Type: "StateTransitionMapping",
+            Color: CATEGORY_COLORS.Structural,
+            Label: "States",
+            Multiple: true,
+          },
+        ],
+        Outputs: [
+          {
+            Id: "ActionsPin",
+            Type: "ActionListItem",
+            Color: CATEGORY_COLORS.Action,
+            Label: "Actions",
+            Multiple: true,
+          },
+        ],
+        Content: [
+          {
+            Id: "Enabled",
+            Type: "Bool",
+            Description: "Whether this transition is enabled.",
+            Options: {
+              Label: "Enabled",
+              Default: true,
+              Width: 18,
+              Computable: true,
+            },
+          },
+        ],
+        Schema: {
+          Enabled: "Enabled",
+          States: {
+            Pin: "StatesPin",
+            Node: "Structural.StateTransitionMappingNode",
+            SerializationType: "child",
+          },
+          Actions: {
+            Pin: "ActionsPin",
+            Node: "ActionVariants",
+            SerializationType: "child",
+            AllowComponentReferences: true,
+          },
+        },
+      },
+    },
+    {
+      directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+      fileName: "StateTransitionMappingNode.json",
+      template: {
+        Id: "Structural.StateTransitionMappingNode",
+        Title: "State Mapping",
+        Color: CATEGORY_COLORS.Structural,
+        Description: "Maps a list of source states to a list of destination states.",
+        Outputs: [
+          {
+            Id: "Output",
+            Type: "StateTransitionMapping",
+            Color: CATEGORY_COLORS.Structural,
+            Label: "State Mapping",
+          },
+        ],
+        Content: [
+          {
+            Id: "From",
+            Type: "List",
+            Description: "Main states that can trigger this transition mapping.",
+            Options: {
+              Label: "From",
+              Width: 220,
+              StateAutocompleteKind: "role-main",
+            },
+          },
+          {
+            Id: "To",
+            Type: "List",
+            Description: "Main states that this mapping transitions into.",
+            Options: {
+              Label: "To",
+              Width: 220,
+              StateAutocompleteKind: "role-main",
+            },
+          },
+          {
+            Id: "Priority",
+            Type: "Int",
+            Description: "Optional mapping priority override.",
+            Options: {
+              Label: "Priority",
+              Default: 0,
+              Width: 88,
+            },
+          },
+          {
+            Id: "Enabled",
+            Type: "Bool",
+            Description: "Whether this mapping is enabled.",
+            Options: {
+              Label: "Enabled",
+              Default: true,
+              Width: 18,
+              Computable: true,
+            },
+          },
+        ],
+        Schema: {
+          From: "From",
+          To: "To",
+          Priority: "Priority",
+          Enabled: "Enabled",
+        },
+      },
+    },
+  ];
 }

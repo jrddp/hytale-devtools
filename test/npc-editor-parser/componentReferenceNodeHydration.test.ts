@@ -7,6 +7,9 @@ import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
 import {
   createComponentReferenceExportStateFieldSchemaKey,
+  createComponentReferenceExportStatesFieldSchemaKey,
+  createComponentReferenceInterfaceParametersFieldSchemaKey,
+  createComponentReferenceModifyMapFieldSchemaKey,
   createComponentReferenceModifyFieldSchemaKey,
 } from "../../src/shared/node-editor/componentReferences";
 import type { NodeTemplate } from "../../src/shared/node-editor/workspaceTypes";
@@ -45,24 +48,40 @@ function getNpcTemplate(templateId: string): NodeTemplate {
 
 function createReferenceNode(
   templateId: string,
-  referenceName: string,
+  referenceValue: unknown,
   modify: Record<string, unknown>,
+  fieldsBySchemaKey: Record<string, unknown> = {},
 ): FlowNode {
   const template = getNpcTemplate(templateId);
+  const fields = {
+    ...structuredClone(template.fieldsBySchemaKey),
+    ...Object.fromEntries(
+      Object.entries(fieldsBySchemaKey).map(([schemaKey, value]) => [
+        schemaKey,
+        {
+          ...structuredClone(template.fieldsBySchemaKey[schemaKey]),
+          schemaKey,
+          localId: schemaKey,
+          value,
+          isImplicit: false,
+          isSet: true,
+        },
+      ]),
+    ),
+  };
+  fields.Reference = {
+    ...structuredClone(template.fieldsBySchemaKey.Reference),
+    value: referenceValue,
+    isImplicit: false,
+    isSet: true,
+  };
   return {
     id: `${templateId}-node`,
     type: "datanode",
     position: { x: 0, y: 0 },
     data: {
       ...structuredClone(template),
-      fieldsBySchemaKey: {
-        ...structuredClone(template.fieldsBySchemaKey),
-        Reference: {
-          ...structuredClone(template.fieldsBySchemaKey.Reference),
-          value: referenceName,
-          isImplicit: false,
-        },
-      },
+      fieldsBySchemaKey: fields,
       unparsedMetadata: {
         Modify: structuredClone(modify),
       },
@@ -202,6 +221,110 @@ describe("npc component reference node hydration", () => {
       status: "loading",
       componentClass: "Sensor",
       referenceName,
+    });
+  });
+
+  test("hydrates computed reference fields without resolving a static target", () => {
+    const postMessage = vi.fn();
+    workspace.vscode = {
+      postMessage,
+    } as never;
+
+    const [hydratedNode] = hydrateComponentReferenceNodes({
+      nodes: [
+        createReferenceNode(
+          "Structural.InstructionReference",
+          {
+            Compute: "SelectedInstruction",
+          },
+          {
+            Range: 6,
+            _ExportStates: ["Idle"],
+            _InterfaceParameters: {
+              "Hytale.Test.Component.Seek": {
+                Range: {
+                  Compute: "SeekRange",
+                },
+              },
+            },
+          },
+          {
+            Nullable: true,
+            Interfaces: ["Hytale.Test.Component.Seek"],
+          },
+        ),
+      ],
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+    });
+
+    const fields =
+      hydratedNode.type === "datanode" ? hydratedNode.data.fieldsBySchemaKey : {};
+    const exportStatesField = fields[createComponentReferenceExportStatesFieldSchemaKey()];
+    const parametersField = fields[createComponentReferenceModifyMapFieldSchemaKey()];
+    const interfaceParametersField =
+      fields[
+        createComponentReferenceInterfaceParametersFieldSchemaKey(
+          "Hytale.Test.Component.Seek",
+        )
+      ];
+
+    expect(postMessage).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "resolveComponentReferenceTarget",
+      }),
+    );
+    expect(fields.Reference).toMatchObject({
+      value: {
+        Compute: "SelectedInstruction",
+      },
+      computable: true,
+    });
+    expect(fields.Nullable).toMatchObject({
+      type: "checkbox",
+      value: true,
+    });
+    expect(fields.Interfaces).toMatchObject({
+      type: "list",
+      value: ["Hytale.Test.Component.Seek"],
+      symbolLookup: {
+        indexKind: "assetDerived",
+        key: "npcComponentInterfaces",
+      },
+    });
+    expect(exportStatesField).toMatchObject({
+      type: "list",
+      label: "Export States",
+      value: ["Idle"],
+      overrideAutocompleteValues: ["Alerted", "Idle", "Idle.Patrol", "Sleep"],
+    });
+    expect(parametersField).toMatchObject({
+      type: "parameterMap",
+      label: "Parameters",
+      value: {
+        Range: 6,
+      },
+      parameterMapKeySymbolLookup: {
+        indexKind: "assetDerived",
+        key: "npcInterfaceParameters",
+        filter: {
+          npcComponentInterfaces: ["Hytale.Test.Component.Seek"],
+        },
+      },
+    });
+    expect(interfaceParametersField).toMatchObject({
+      type: "parameterMap",
+      label: "Hytale.Test.Component.Seek Parameters",
+      value: {
+        Range: {
+          Compute: "SeekRange",
+        },
+      },
+      parameterMapKeySymbolLookup: {
+        filter: {
+          npcComponentInterfaces: ["Hytale.Test.Component.Seek"],
+        },
+      },
     });
   });
 

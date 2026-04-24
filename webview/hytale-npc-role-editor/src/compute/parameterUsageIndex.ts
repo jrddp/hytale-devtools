@@ -3,17 +3,20 @@ import { isNpcComputeNonParameterIdentifier } from "./computeAutocomplete";
 export type ParameterUsageIndex = {
   usagesByParameter: Map<string, Set<string>>;
   directTranslationByFieldPath: Map<string, string>;
+  componentReferenceInterfacesByParameter: Map<string, Set<string>>;
 };
 
 export function buildParameterUsageIndex(root: Record<string, unknown>): ParameterUsageIndex {
   const usagesByParameter = new Map<string, Set<string>>();
   const directTranslationByFieldPath = new Map<string, string>();
+  const componentReferenceInterfacesByParameter = new Map<string, Set<string>>();
 
   walkValue(root, []);
 
   return {
     usagesByParameter,
     directTranslationByFieldPath,
+    componentReferenceInterfacesByParameter,
   };
 
   function walkValue(value: unknown, pathSegments: string[]) {
@@ -46,6 +49,26 @@ export function buildParameterUsageIndex(root: Record<string, unknown>): Paramet
 
     if (!isRecord(value)) {
       return;
+    }
+
+    const referenceDirectTranslation = isComputeExpression(value.Reference)
+      ? extractDirectTranslationIdentifier(value.Reference.Compute)
+      : null;
+    const interfaces = getStringList(value.Interfaces);
+    if (referenceDirectTranslation && interfaces.length > 0) {
+      let existingInterfaces =
+        componentReferenceInterfacesByParameter.get(referenceDirectTranslation);
+      if (!existingInterfaces) {
+        existingInterfaces = new Set<string>();
+        componentReferenceInterfacesByParameter.set(
+          referenceDirectTranslation,
+          existingInterfaces,
+        );
+      }
+
+      for (const interfaceName of interfaces) {
+        existingInterfaces.add(interfaceName);
+      }
     }
 
     for (const [key, childValue] of Object.entries(value)) {
@@ -93,4 +116,10 @@ function isComputeExpression(value: unknown): value is { Compute: string } {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function getStringList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
 }

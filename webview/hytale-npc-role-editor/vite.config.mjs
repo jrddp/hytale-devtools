@@ -137,6 +137,8 @@ function contentTypeToFieldComponentType(type) {
       return "filepath";
     case "List":
       return "list";
+    case "ParameterMap":
+      return "parameterMap";
     case "Object":
       return "object";
     default:
@@ -148,6 +150,9 @@ function fieldsFromContentDefinitions(content = []) {
   return content.map(contentDefinition => {
     const overrideAutocompleteValues = Array.isArray(contentDefinition.Options?.Values)
       ? contentDefinition.Options.Values.filter(value => typeof value === "string")
+      : undefined;
+    const parameterMapKeyOverrideAutocompleteValues = Array.isArray(contentDefinition.Options?.ParameterMapKeyValues)
+      ? contentDefinition.Options.ParameterMapKeyValues.filter(value => typeof value === "string")
       : undefined;
     const defaultValue = contentDefinition.Options?.Default ?? contentDefinition.Options?.DefaultValue;
 
@@ -165,6 +170,8 @@ function fieldsFromContentDefinitions(content = []) {
       inputWidth: contentDefinition.Options?.Width,
       overrideAutocompleteValues,
       symbolLookup: contentDefinition.Options?.SymbolLookup,
+      parameterMapKeyOverrideAutocompleteValues,
+      parameterMapKeySymbolLookup: contentDefinition.Options?.ParameterMapKeySymbolLookup,
       stateAutocompleteKind: contentDefinition.Options?.StateAutocompleteKind,
       animationAutocompleteKind: contentDefinition.Options?.AnimationAutocompleteKind,
       previewFeatureKind: contentDefinition.Options?.AnimationAutocompleteKind ? "animation" : undefined,

@@ -28,6 +28,7 @@ describe("npc parameter usage index", () => {
         ["Parameters.LinkedName.Value", "DisplayName"],
       ]),
     );
+    expect(usageIndex.componentReferenceInterfacesByParameter.size).toBe(0);
   });
 
   test("ignores identifiers that only appear inside quoted strings", () => {
@@ -37,5 +38,43 @@ describe("npc parameter usage index", () => {
 
     expect(usageIndex.usagesByParameter.size).toBe(0);
     expect(usageIndex.directTranslationByFieldPath.size).toBe(0);
+  });
+
+  test("collects allowed component interfaces for direct computed references", () => {
+    const usageIndex = buildParameterUsageIndex({
+      Type: "Generic",
+      Instructions: [
+        {
+          Reference: {
+            Compute: "SelectedInstruction",
+          },
+          Interfaces: [
+            "Hytale.Test.Component.Seek",
+            "Hytale.Test.Component.Flee",
+          ],
+        },
+        {
+          Reference: {
+            Compute: "SelectedInstruction",
+          },
+          Interfaces: ["Hytale.Test.Component.Hide"],
+        },
+        {
+          Reference: {
+            Compute: "getInstruction()",
+          },
+          Interfaces: ["Hytale.Test.Component.Ignored"],
+        },
+      ],
+    });
+
+    expect(usageIndex.componentReferenceInterfacesByParameter.get("SelectedInstruction")).toEqual(
+      new Set([
+        "Hytale.Test.Component.Seek",
+        "Hytale.Test.Component.Flee",
+        "Hytale.Test.Component.Hide",
+      ]),
+    );
+    expect(usageIndex.componentReferenceInterfacesByParameter.has("getInstruction")).toBe(false);
   });
 });

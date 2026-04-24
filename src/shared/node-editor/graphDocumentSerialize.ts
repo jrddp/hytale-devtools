@@ -12,12 +12,55 @@ import {
   parseComponentReferenceSyntheticFieldSchemaKey,
 } from "./componentReferences";
 import { cloneJsonLike } from "../jsonClone";
+import { isEmptyParameterMap, isParameterMap } from "./parameterMap";
 import { getSiblingSerializedChildSlot } from "./siblingSerialization";
 
 const DEFAULT_COMMENT_FONT_SIZE = 9;
 
 function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isComputeReferenceValue(value: unknown): value is { Compute: string } {
+  return (
+    isObject(value) &&
+    Object.keys(value).length === 1 &&
+    typeof value.Compute === "string"
+  );
+}
+
+function removeRegularComponentModifyKeys(modify: Record<string, unknown>): void {
+  for (const key of Object.keys(modify)) {
+    if (!key.startsWith("_")) {
+      delete modify[key];
+    }
+  }
+}
+
+function normalizeComponentModify(modify: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
+  if (!modify) {
+    return undefined;
+  }
+
+  if (isObject(modify._InterfaceParameters)) {
+    const interfaceParameters = { ...modify._InterfaceParameters };
+    for (const [interfaceKey, parameters] of Object.entries(interfaceParameters)) {
+      if (isEmptyParameterMap(parameters)) {
+        delete interfaceParameters[interfaceKey];
+      }
+    }
+    if (Object.keys(interfaceParameters).length > 0) {
+      modify._InterfaceParameters = interfaceParameters;
+    } else {
+      delete modify._InterfaceParameters;
+    }
+  }
+
+  if (Array.isArray(modify._ExportStates) && modify._ExportStates.length === 0) {
+    delete modify._ExportStates;
+  }
+
+  return Object.keys(modify).length > 0 ? modify : undefined;
 }
 
 function getGraphNodeAbsolutePosition(
@@ -181,6 +224,9 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         const originalUnparsedMetadata = node.data.unparsedMetadata ?? {};
         const hadOriginalComponentModify = Object.hasOwn(originalUnparsedMetadata, "Modify");
         const originalComponentModify = originalUnparsedMetadata.Modify;
+        const isComputedComponentReference =
+          isComponentReferenceNodeTemplate(node.data) &&
+          isComputeReferenceValue(node.data.fieldsBySchemaKey.Reference?.value);
         const preservedUnparsedMetadata =
           isComponentReferenceNodeTemplate(node.data) && hadOriginalComponentModify
             ? Object.fromEntries(
@@ -248,10 +294,20 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
           const schemaKey = field.schemaKey as string;
           if (
             isComponentReferenceNodeTemplate(node.data) &&
+            !isComputedComponentReference &&
+            (schemaKey === "Nullable" || schemaKey === "Interfaces")
+          ) {
+            continue;
+          }
+          if (
+            isComponentReferenceNodeTemplate(node.data) &&
             isComponentReferenceSyntheticFieldSchemaKey(schemaKey)
           ) {
             const syntheticField = parseComponentReferenceSyntheticFieldSchemaKey(schemaKey);
             if (!syntheticField) {
+              continue;
+            }
+            if (!isComputedComponentReference && syntheticField.kind === "interface-parameters") {
               continue;
             }
             componentModify ??= {};
@@ -260,12 +316,43 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
               case "modify":
                 componentModify[syntheticField.key] = cloneJsonLike(field.value);
                 break;
+              case "modify-map":
+                removeRegularComponentModifyKeys(componentModify);
+                if (isParameterMap(field.value)) {
+                  for (const [key, value] of Object.entries(field.value)) {
+                    componentModify[key] = cloneJsonLike(value);
+                  }
+                }
+                break;
               case "export-state": {
                 const exportStates = Array.isArray(componentModify._ExportStates)
                   ? [...componentModify._ExportStates]
                   : [];
                 exportStates[syntheticField.index] = cloneJsonLike(field.value);
                 componentModify._ExportStates = exportStates;
+                break;
+              }
+              case "export-states":
+                if (Array.isArray(field.value) && field.value.length > 0) {
+                  componentModify._ExportStates = cloneJsonLike(field.value);
+                } else {
+                  delete componentModify._ExportStates;
+                }
+                break;
+              case "interface-parameters": {
+                const interfaceParameters = isObject(componentModify._InterfaceParameters)
+                  ? { ...componentModify._InterfaceParameters }
+                  : {};
+                if (isEmptyParameterMap(field.value)) {
+                  delete interfaceParameters[syntheticField.interfaceKey];
+                } else {
+                  interfaceParameters[syntheticField.interfaceKey] = cloneJsonLike(field.value);
+                }
+                if (Object.keys(interfaceParameters).length > 0) {
+                  componentModify._InterfaceParameters = interfaceParameters;
+                } else {
+                  delete componentModify._InterfaceParameters;
+                }
                 break;
               }
             }
@@ -276,9 +363,15 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
         }
 
         if (isComponentReferenceNodeTemplate(node.data) && (hadOriginalComponentModify || componentModify)) {
-          json.Modify =
+          const normalizedComponentModify = normalizeComponentModify(
             componentModify ??
-            (hadOriginalComponentModify ? cloneJsonLike(originalComponentModify) : {});
+              (hadOriginalComponentModify && isObject(originalComponentModify)
+                ? (cloneJsonLike(originalComponentModify) as Record<string, unknown>)
+                : undefined),
+          );
+          if (normalizedComponentModify) {
+            json.Modify = normalizedComponentModify;
+          }
         }
 
         json = {

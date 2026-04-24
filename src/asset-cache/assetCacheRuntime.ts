@@ -8,8 +8,10 @@ import * as yauzl from "yauzl";
 import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
 import { type CachedAssetInstance, type JsonAssetInstance } from "../shared/fieldTypes";
+import type { AssetDerivedIndexShard } from "../shared/indexTypes";
 import { normalizePosixPath } from "../shared/pathUtils";
 import { isObject } from "../shared/typeUtils";
+import { buildAssetDerivedIndexes } from "./assetDerivedIndexes";
 
 export type AssetInstance = CachedAssetInstance;
 
@@ -33,6 +35,7 @@ type IndexedAssetRecord = {
 export class AssetCacheRuntime {
   /** asset type -> asset name -> cached asset instance */
   readonly assetInstances = new Map<string, Map<string, JsonAssetInstance>>();
+  readonly derivedIndexes = new Map<string, AssetDerivedIndexShard>();
   readonly assetsZipPath: string;
   readonly ready: Promise<void>;
   isReady = false;
@@ -139,6 +142,9 @@ export class AssetCacheRuntime {
     }
 
     await this.walkZipEntries();
+    buildAssetDerivedIndexes(this.assetInstances).forEach((shard, key) => {
+      this.derivedIndexes.set(key, shard);
+    });
     const cacheSizeBytes = v8Serialize(this.assetInstances).byteLength;
 
     this.logger.info(

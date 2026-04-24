@@ -117,10 +117,6 @@
       "Action.TriggerSpawners",
       "WeightedAction.WeightedAction"
     ],
-    "State Transitions": [
-      "Structural.StateTransitionNode",
-      "Structural.StateTransitionMappingNode"
-    ],
     "Body Motion": [
       "BodyMotion.AimCharge",
       "BodyMotion.Flee",
@@ -239,6 +235,10 @@
       "Sensor.Timer",
       "Sensor.ValueProviderWrapper",
       "Sensor.Weather"
+    ],
+    "State Transitions": [
+      "Structural.StateTransitionNode",
+      "Structural.StateTransitionMappingNode"
     ],
     "Structural": [
       "Structural.InstructionListRoot",

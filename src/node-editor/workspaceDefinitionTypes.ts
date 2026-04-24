@@ -85,6 +85,7 @@ export type NodeContentDefinitionType =
   | "Enum"
   | "FilePath"
   | "List"
+  | "ParameterMap"
   | "Object";
 
 export interface NodeContentDefinition {
@@ -94,7 +95,7 @@ export interface NodeContentDefinition {
   Options: {
     Description?: string;
     Label?: string;
-    Default?: string | number | boolean;
+    Default?: string | number | boolean | unknown[];
     Width?: number;
     Height?: number;
     Values?: string[];
@@ -107,9 +108,11 @@ export interface NodeContentDefinition {
     Type?: "String" | "Float";
     ArrayElementType?: "DataSettingFlags";
     UseUUID?: boolean;
-    DefaultValue?: string | number | boolean;
+    DefaultValue?: string | number | boolean | unknown[];
     Computable?: boolean;
     SymbolLookup?: IndexReference;
+    ParameterMapKeyValues?: string[];
+    ParameterMapKeySymbolLookup?: IndexReference;
     StateAutocompleteKind?: NpcStateAutocompleteKind;
     AnimationAutocompleteKind?: NpcAnimationAutocompleteKind;
   };

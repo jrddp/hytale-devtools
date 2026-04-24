@@ -9,6 +9,7 @@ export type FieldComponentType =
   | "text" // text is multi-line string
   | "filepath"
   | "list"
+  | "parameterMap"
   | "int"
   | "float"
   | "object"
@@ -60,6 +61,8 @@ export interface NodeField {
   subfields?: NodeField[];
   localId: string;
   symbolLookup?: IndexReference;
+  parameterMapKeyOverrideAutocompleteValues?: string[];
+  parameterMapKeySymbolLookup?: IndexReference;
   stateAutocompleteKind?: NpcStateAutocompleteKind;
   animationAutocompleteKind?: NpcAnimationAutocompleteKind;
   previewFeatureKind?: "animation";

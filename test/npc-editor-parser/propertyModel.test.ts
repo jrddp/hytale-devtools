@@ -325,6 +325,56 @@ describe("npc property model symbol enrichment", () => {
     });
   });
 
+  test("enriches parameters from computed component-reference interfaces", () => {
+    const document = createGenericDocument({
+      structured: {
+        Instructions: [
+          {
+            Reference: {
+              Compute: "SelectedInstruction",
+            },
+            Interfaces: [
+              "Hytale.Test.Component.Seek",
+              "Hytale.Test.Component.Flee",
+            ],
+          },
+        ],
+      },
+      parameters: {
+        SelectedInstruction: {
+          Value: "",
+        },
+      },
+    });
+
+    const state = buildNpcPropertyState({
+      document,
+      topLevelKeyOrder: Object.keys(document),
+      descriptors: [],
+    });
+    applyNpcPropertySectionDerivedState(
+      state.sections,
+      buildParameterUsageIndex(serializeNpcDocument(document)),
+      [],
+    );
+
+    const parameterSection = state.sections.find(section => section.id === "parameters");
+    const selectedInstructionField = parameterSection?.fields.find(
+      field => field.key === "SelectedInstruction",
+    );
+
+    expect(selectedInstructionField?.symbolRef).toEqual({
+      indexKind: "assetDerived",
+      key: "npcComponents",
+      filter: {
+        npcComponentInterfaces: [
+          "Hytale.Test.Component.Flee",
+          "Hytale.Test.Component.Seek",
+        ],
+      },
+    });
+  });
+
   test("does not enrich a parameter when direct translations are ambiguous", () => {
     const document = createGenericDocument({
       roleAttributes: {

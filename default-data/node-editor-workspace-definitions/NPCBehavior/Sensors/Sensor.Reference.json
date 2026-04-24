@@ -19,12 +19,37 @@
       "Options": {
         "Label": "Reference",
         "Width": 220,
-        "Default": ""
+        "Default": "",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Nullable",
+      "Type": "Checkbox",
+      "Description": "Allow the computed reference to resolve to no component.",
+      "Options": {
+        "Label": "Nullable",
+        "Default": false
+      }
+    },
+    {
+      "Id": "Interfaces",
+      "Type": "List",
+      "Description": "Allowed component interface codes for a computed reference.",
+      "Options": {
+        "Label": "Interfaces",
+        "DefaultValue": [],
+        "SymbolLookup": {
+          "indexKind": "assetDerived",
+          "key": "npcComponentInterfaces"
+        }
       }
     }
   ],
   "Schema": {
-    "Reference": "Reference"
+    "Reference": "Reference",
+    "Nullable": "Nullable",
+    "Interfaces": "Interfaces"
   },
   "IsComponentReference": true,
   "ComponentReferenceClass": "Sensor"

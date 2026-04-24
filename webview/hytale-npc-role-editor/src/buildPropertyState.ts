@@ -842,6 +842,18 @@ function resolveParameterSymbolRef(
   roleAttributeSymbolRefsByKey: Map<string, IndexReference>,
   parameterUsageIndex: ParameterUsageIndex,
 ): IndexReference | undefined {
+  const componentReferenceInterfaces =
+    parameterUsageIndex.componentReferenceInterfacesByParameter.get(parameterName);
+  if (componentReferenceInterfaces && componentReferenceInterfaces.size > 0) {
+    return {
+      indexKind: "assetDerived",
+      key: "npcComponents",
+      filter: {
+        npcComponentInterfaces: [...componentReferenceInterfaces].sort(),
+      },
+    };
+  }
+
   const translatedRoleAttributeKeys = [...parameterUsageIndex.directTranslationByFieldPath.entries()]
     .filter(([, directTranslationParameter]) => directTranslationParameter === parameterName)
     .map(([fieldPath]) => resolveRoleAttributeKeyForFieldPath(fieldPath, roleAttributeSymbolRefsByKey))
