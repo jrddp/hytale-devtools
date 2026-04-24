@@ -110,6 +110,7 @@
     ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]";
   const NODE_DRAG_RETARGET_BLOCKER_SELECTOR = `${FLOW_OVERLAY_TARGET_SELECTOR}, .svelte-flow__handle, [data-group-body]`;
   const handlePriority = createHandlePriorityController(FLOW_OVERLAY_TARGET_SELECTOR);
+  let isRootNodeMissing = $derived(workspace.getRootNode() === undefined);
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
   let multiselectModifierPressed = $state(false);
@@ -1311,6 +1312,14 @@
       />
     {/if}
   </SvelteFlow>
+
+  {#if isRootNodeMissing}
+    <div
+      class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6 text-center text-sm font-medium text-vsc-muted"
+    >
+      No root is set. Right click to add the root node.
+    </div>
+  {/if}
 
   {#if addMenuInstance}
     {@const { viewportPosition, connectionFilter } = addMenuInstance}
