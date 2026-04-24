@@ -431,6 +431,7 @@
 
   async function navigateToSection(section: NpcPropertySection) {
     if (isGraphPageSection(section)) {
+      pendingPropertySectionId = null;
       activeGraphSectionId = section.id;
       return;
     }
@@ -449,9 +450,11 @@
     const sectionTop = sectionElement.getBoundingClientRect().top;
 
     scrollRootElement.scrollTo({
-      behavior: "smooth",
+      behavior: "instant",
       top: scrollRootElement.scrollTop + sectionTop - rootTop - OUTLINE_ACTIVE_OFFSET_PX,
     });
+    pendingPropertySectionId = null;
+    updateActivePropertySection();
   }
 
   function updateActivePropertySection() {
