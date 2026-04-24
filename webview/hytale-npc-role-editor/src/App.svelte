@@ -14,6 +14,8 @@
     createEmptyNodeEditorClipboardSelection,
     type NodeEditorClipboardSelection,
   } from "@shared/node-editor/clipboardTypes";
+  import { parseAssetDocumentToGraphDocument } from "@shared/node-editor/graphDocument";
+  import { adaptGraphHostValueToDocumentRoot } from "@shared/npc-role-editor/graphRootAdapter";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
   import { onMount, tick, untrack } from "svelte";
   import type { VSCodeApi } from "./common";
@@ -86,6 +88,7 @@
         name: section.name,
         fieldCount: section.fields.length,
         kind: "graph" as const,
+        subtitle: getGraphNavigationSubtitle(section),
         section,
       })),
   );
@@ -102,11 +105,13 @@
     name: string;
     fieldCount: number;
     kind: "properties" | "graph";
+    subtitle?: string;
   }) => ({
     id: entry.id,
     name: entry.name,
     fieldCount: entry.fieldCount,
     kind: entry.kind,
+    subtitle: entry.subtitle,
     active: entry.id === activeNavigationEntryId,
     onclick: () => {
       const section = getSectionById(entry.id);
@@ -408,6 +413,35 @@
     return field.kind === "graph" ? field : null;
   }
 
+  function getGraphNavigationSubtitle(section: NpcPropertySection): string {
+    const field = getGraphRootField(section);
+    if (!field || field.isSet === false) {
+      return "Not set";
+    }
+
+    const workspaceContext = getGraphWorkspaceContextForSection(section);
+    if (!workspaceContext) {
+      return "Not set";
+    }
+
+    try {
+      const value = field.value.kind === "literal" ? field.value.value : undefined;
+      const graphDocument = parseAssetDocumentToGraphDocument(
+        adaptGraphHostValueToDocumentRoot(value, workspaceContext, field.preservedData),
+        workspaceContext,
+      );
+      const count = graphDocument.nodes.filter(
+        node =>
+          node.id !== graphDocument.rootNodeId &&
+          node.type !== "groupnode" &&
+          node.type !== "comment",
+      ).length;
+      return `${count} ${count === 1 ? "node" : "nodes"}`;
+    } catch {
+      return "Not set";
+    }
+  }
+
   function getGraphWorkspaceContextByRootType(
     rootType: string,
   ): NodeEditorWorkspaceContext | undefined {
@@ -603,6 +637,9 @@
                   onclick={button.onclick}
                 >
                   <div class="truncate text-sm font-semibold">{button.name}</div>
+                  {#if button.subtitle}
+                    <div class="text-xs opacity-70">{button.subtitle}</div>
+                  {/if}
                 </button>
               {/each}
             </div>
