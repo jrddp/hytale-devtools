@@ -3,6 +3,7 @@ import type { FlowEdge, FlowNode } from "@node-editor/common";
 import { COMMENT_NODE_TYPE, DEFAULT_COMMENT_FONT_SIZE, GROUP_NODE_TYPE } from "@node-editor/constants";
 import { asCssColor, resolveComputedColor } from "@node-editor/node-editor/utils/colors";
 import { getAbsolutePosition } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+import { formatRootNodeTitleText } from "@node-editor/node-editor/utils/rootTitle";
 import { type NodeRenderDetailMode, type NodeEditorSession } from "@node-editor/workspace.svelte";
 
 export type LowDetailRenderItem = {
@@ -196,7 +197,13 @@ export class LowDetailController {
       nextCache.push({
         id: node.id,
         kind,
-        title: node.data.titleOverride ?? node.data.defaultTitle,
+        title:
+          kind === "node"
+            ? formatRootNodeTitleText(
+                node.data.titleOverride ?? node.data.defaultTitle,
+                node.id === this.session.rootNodeId,
+              )
+            : node.data.titleOverride ?? node.data.defaultTitle,
         x: position.x,
         y: position.y,
         width: size.width,

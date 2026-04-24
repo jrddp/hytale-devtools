@@ -5,6 +5,7 @@
   import { asCssColor } from "@node-editor/node-editor/utils/colors";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
+  import { shouldShowRootTitlePrefix } from "@node-editor/node-editor/utils/rootTitle";
   import { shouldShowInputPinLabels } from "@shared/node-editor/pinUtils";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { Snippet } from "svelte";
@@ -34,6 +35,8 @@
   // # Title State
   let lastComittedTitle = $derived(titleOverride);
   let effectiveTitle = $derived(titleOverride ?? defaultTitle);
+  const isRootNode = $derived(workspace.rootNodeId === id);
+  const showRootTitlePrefix = $derived(shouldShowRootTitlePrefix(effectiveTitle, isRootNode));
   let titleInputElement = $state<HTMLInputElement>();
   let titleSizerWidth = $state(0);
   let isEditingTitle = $state(false);
@@ -166,11 +169,16 @@
         </div>
       {:else}
         <div
-          class="font-bold text-vsc-input-fg select-none"
+          class="inline-flex items-center gap-1 font-bold text-vsc-input-fg select-none"
           role="presentation"
           ondblclick={() => (isEditingTitle = true)}
         >
-          {effectiveTitle}
+          {#if isRootNode}
+            {#if showRootTitlePrefix}
+              <span class="font-black tracking-wide">[ROOT]</span>
+            {/if}
+          {/if}
+          <span>{effectiveTitle}</span>
         </div>
       {/if}
 
