@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { type AssetCacheRuntime } from "../asset-cache/assetCacheRuntime";
 import { assetCacheRuntime, LOGGER, schemaRuntime } from "../extension";
-import { getValuesByIndexReference } from "../schema/symbolResolver";
+import { getValuesByIndexReferenceAsync } from "../schema/symbolResolver";
 import {
   type AssetEditorBootstrapMessage,
   type AssetEditorExtensionToWebviewMessage,
@@ -265,7 +265,7 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
     const payload: AssetEditorExtensionToWebviewMessage = {
       type: "autocompletionValues",
       fieldId: message.fieldId,
-      values: getValuesByIndexReference(message.symbolLookup),
+      values: await getValuesByIndexReferenceAsync(message.symbolLookup),
     };
     await webview.postMessage(payload);
   }

@@ -10,6 +10,7 @@
   import {
     createFieldValuePropertyChange,
     createNodePropertiesUpdatedEdit,
+    createUnparsedMetadataPropertyChange,
   } from "@node-editor/node-editor/utils/graphDocument";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import { cloneJsonLike } from "@shared/jsonClone";
@@ -18,9 +19,11 @@
   const {
     nodeId,
     fieldsBySchemaKey,
+    unparsedMetadata,
   }: {
     nodeId: string;
     fieldsBySchemaKey: Record<string, NodeField>;
+    unparsedMetadata?: Record<string, unknown>;
   } = $props();
 
   const { updateNodeData } = useSvelteFlow();
@@ -164,6 +167,16 @@
       isImplicit: nextIsImplicit,
       isSet: nextIsSet,
     };
+
+    if (
+      schemaKey === "Reference" &&
+      isComputeReferenceValue(previousField.value) &&
+      !isComputeReferenceValue(nextValue)
+    ) {
+      updateReferenceLeavingCompute(previousFieldSnapshot, nextField);
+      return;
+    }
+
     updateNodeData(nodeId, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
@@ -181,6 +194,85 @@
     if (edit) {
       workspace.applyGraphEdit(edit);
     }
+  }
+
+  function updateReferenceLeavingCompute(
+    previousReferenceField: NodeField | undefined,
+    nextReferenceField: NodeField,
+  ) {
+    const nextFieldsBySchemaKey: Record<string, NodeField> = {};
+    const propertyChanges = [
+      createFieldValuePropertyChange({
+        nodeId,
+        schemaKey: "Reference",
+        beforeField: previousReferenceField,
+        afterField: nextReferenceField,
+      }),
+    ];
+
+    for (const [fieldSchemaKey, field] of Object.entries(fieldsBySchemaKey)) {
+      if (fieldSchemaKey === "Reference") {
+        nextFieldsBySchemaKey.Reference = nextReferenceField;
+        continue;
+      }
+
+      if (isComputedReferenceResetField(fieldSchemaKey)) {
+        propertyChanges.push(
+          createFieldValuePropertyChange({
+            nodeId,
+            schemaKey: fieldSchemaKey,
+            beforeField: cloneJsonLike($state.snapshot(field)),
+            afterField: undefined,
+          }),
+        );
+        continue;
+      }
+
+      nextFieldsBySchemaKey[fieldSchemaKey] = field;
+    }
+
+    const previousUnparsedMetadata = unparsedMetadata
+      ? cloneJsonLike($state.snapshot(unparsedMetadata))
+      : undefined;
+    const nextUnparsedMetadata = omitComponentReferenceModify(previousUnparsedMetadata);
+    if (JSON.stringify(previousUnparsedMetadata ?? null) !== JSON.stringify(nextUnparsedMetadata ?? null)) {
+      propertyChanges.push(
+        createUnparsedMetadataPropertyChange({
+          nodeId,
+          beforeUnparsedMetadata: previousUnparsedMetadata,
+          afterUnparsedMetadata: nextUnparsedMetadata,
+        }),
+      );
+    }
+
+    updateNodeData(nodeId, {
+      fieldsBySchemaKey: nextFieldsBySchemaKey,
+      unparsedMetadata: nextUnparsedMetadata,
+    });
+    const edit = createNodePropertiesUpdatedEdit(propertyChanges);
+    if (edit) {
+      workspace.applyGraphEdit(edit);
+    }
+  }
+
+  function isComputedReferenceResetField(schemaKey: string): boolean {
+    return (
+      schemaKey === "Nullable" ||
+      schemaKey === "Interfaces" ||
+      parseComponentReferenceSyntheticFieldSchemaKey(schemaKey) !== null
+    );
+  }
+
+  function omitComponentReferenceModify(
+    metadata: Record<string, unknown> | undefined,
+  ): Record<string, unknown> | undefined {
+    if (!metadata || !Object.hasOwn(metadata, "Modify")) {
+      return metadata;
+    }
+
+    const nextMetadata = { ...metadata };
+    delete nextMetadata.Modify;
+    return Object.keys(nextMetadata).length > 0 ? nextMetadata : undefined;
   }
 
   function createFallbackField(schemaKey: string): NodeField | null {

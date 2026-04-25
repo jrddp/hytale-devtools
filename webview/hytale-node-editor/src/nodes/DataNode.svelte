@@ -60,6 +60,7 @@
     <ComponentReferenceNodeBody
       nodeId={id}
       {fieldsBySchemaKey}
+      unparsedMetadata={props.data.unparsedMetadata}
     />
   {:else}
     <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">

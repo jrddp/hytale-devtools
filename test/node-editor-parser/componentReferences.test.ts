@@ -7,6 +7,7 @@ import type { NodeEditorWorkspaceContext, NodeTemplate } from "../../src/shared/
 import {
   createComponentReferenceExportStatesFieldSchemaKey,
   createComponentReferenceInterfaceParametersFieldSchemaKey,
+  createComponentReferenceModifyFieldSchemaKey,
   createComponentReferenceModifyMapFieldSchemaKey,
 } from "../../src/shared/node-editor/componentReferences";
 import { serializeGraphDocument } from "../../src/shared/node-editor/graphDocument";
@@ -424,6 +425,182 @@ describe("NPC behavior component references", () => {
     applyNodeEditorGraphEdit(graphDocument, invertNodeEditorGraphEdit(edit));
     expect(graphDocument.nodes[0]?.data.fieldsBySchemaKey).not.toHaveProperty(modifyMapKey);
     expect(normalizeRoundTripJson(serializeGraphDocument(graphDocument))).not.toHaveProperty("Modify");
+  });
+
+  test("graph edits can reset computed-reference fields and unparsed Modify when compute turns off", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const template = context.nodeTemplatesById["Structural.InstructionReference"];
+    const node = createDataNode("computed-ref-reset", template);
+    if (node.type !== "datanode") {
+      throw new Error("Expected data node.");
+    }
+
+    const modifyMapKey = createComponentReferenceModifyMapFieldSchemaKey();
+    const exportStatesKey = createComponentReferenceExportStatesFieldSchemaKey();
+    const interfaceParametersKey =
+      createComponentReferenceInterfaceParametersFieldSchemaKey("Hytale.Test.Component.Seek");
+    const modifyFieldKey = createComponentReferenceModifyFieldSchemaKey("LegacyRange");
+    node.data.unparsedMetadata = {
+      Modify: {
+        LegacyRange: 5,
+        _ExportStates: ["Idle"],
+      },
+      OtherMetadata: true,
+    };
+    node.data.fieldsBySchemaKey = {
+      ...structuredClone(template.fieldsBySchemaKey),
+      Reference: {
+        ...structuredClone(template.fieldsBySchemaKey.Reference),
+        value: {
+          Compute: "SelectedInstruction",
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+      Nullable: {
+        ...structuredClone(template.fieldsBySchemaKey.Nullable),
+        value: true,
+        isImplicit: false,
+        isSet: true,
+      },
+      Interfaces: {
+        ...structuredClone(template.fieldsBySchemaKey.Interfaces),
+        value: ["Hytale.Test.Component.Seek"],
+        isImplicit: false,
+        isSet: true,
+      },
+      [modifyMapKey]: {
+        schemaKey: modifyMapKey,
+        localId: modifyMapKey,
+        type: "parameterMap",
+        label: "Parameters",
+        value: {
+          Range: 6,
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+      [exportStatesKey]: {
+        schemaKey: exportStatesKey,
+        localId: exportStatesKey,
+        type: "list",
+        label: "Export States",
+        value: ["Alerted"],
+        isImplicit: false,
+        isSet: true,
+      },
+      [interfaceParametersKey]: {
+        schemaKey: interfaceParametersKey,
+        localId: interfaceParametersKey,
+        type: "parameterMap",
+        label: "Hytale.Test.Component.Seek Parameters",
+        value: {
+          Range: {
+            Compute: "SeekRange",
+          },
+        },
+        isImplicit: false,
+        isSet: true,
+      },
+      [modifyFieldKey]: {
+        schemaKey: modifyFieldKey,
+        localId: modifyFieldKey,
+        type: "float",
+        label: "Legacy Range",
+        value: 5,
+        isImplicit: false,
+        isSet: true,
+      },
+    };
+
+    const graphDocument = {
+      workspaceId: "Instruction",
+      rootNodeId: node.id,
+      nodes: [node],
+      edges: [],
+    } as never;
+    const previousFields = structuredClone(node.data.fieldsBySchemaKey);
+    const previousUnparsedMetadata = structuredClone(node.data.unparsedMetadata);
+    const nextReferenceField = {
+      ...structuredClone(previousFields.Reference),
+      value: "Component_Instruction_Generic_Idle",
+      isImplicit: false,
+      isSet: true,
+    };
+    const edit = {
+      kind: "node-properties-updated",
+      propertyChanges: [
+        {
+          type: "field-value",
+          nodeId: node.id,
+          schemaKey: "Reference",
+          beforeField: previousFields.Reference,
+          afterField: nextReferenceField,
+          beforeValue: previousFields.Reference.value,
+          afterValue: nextReferenceField.value,
+        },
+        ...[
+          "Nullable",
+          "Interfaces",
+          modifyMapKey,
+          exportStatesKey,
+          interfaceParametersKey,
+          modifyFieldKey,
+        ].map(schemaKey => ({
+          type: "field-value" as const,
+          nodeId: node.id,
+          schemaKey,
+          beforeField: previousFields[schemaKey],
+          afterField: undefined,
+          beforeValue: previousFields[schemaKey]?.value,
+          afterValue: undefined,
+        })),
+        {
+          type: "unparsed-metadata",
+          nodeId: node.id,
+          beforeUnparsedMetadata: previousUnparsedMetadata,
+          afterUnparsedMetadata: {
+            OtherMetadata: true,
+          },
+        },
+      ],
+    } as const;
+
+    applyNodeEditorGraphEdit(graphDocument, edit);
+    const fieldsAfterReset = graphDocument.nodes[0]?.data.fieldsBySchemaKey;
+    expect(fieldsAfterReset).toHaveProperty("Reference");
+    expect(fieldsAfterReset).not.toHaveProperty("Nullable");
+    expect(fieldsAfterReset).not.toHaveProperty("Interfaces");
+    expect(fieldsAfterReset).not.toHaveProperty(modifyMapKey);
+    expect(fieldsAfterReset).not.toHaveProperty(exportStatesKey);
+    expect(fieldsAfterReset).not.toHaveProperty(interfaceParametersKey);
+    expect(fieldsAfterReset).not.toHaveProperty(modifyFieldKey);
+    expect(graphDocument.nodes[0]?.data.unparsedMetadata).toEqual({
+      OtherMetadata: true,
+    });
+    expect(normalizeRoundTripJson(serializeGraphDocument(graphDocument))).not.toHaveProperty("Modify");
+
+    applyNodeEditorGraphEdit(graphDocument, invertNodeEditorGraphEdit(edit));
+    expect(graphDocument.nodes[0]?.data.fieldsBySchemaKey).toMatchObject(previousFields);
+    expect(graphDocument.nodes[0]?.data.unparsedMetadata).toEqual(previousUnparsedMetadata);
+    expect(normalizeRoundTripJson(serializeGraphDocument(graphDocument))).toMatchObject({
+      Reference: {
+        Compute: "SelectedInstruction",
+      },
+      Interfaces: ["Hytale.Test.Component.Seek"],
+      Nullable: true,
+      Modify: {
+        Range: 6,
+        _ExportStates: ["Alerted"],
+        _InterfaceParameters: {
+          "Hytale.Test.Component.Seek": {
+            Range: {
+              Compute: "SeekRange",
+            },
+          },
+        },
+      },
+    });
   });
 
   test("does not serialize hidden computed-only fields while a reference is static", () => {

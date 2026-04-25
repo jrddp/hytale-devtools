@@ -136,22 +136,43 @@ export function createFieldValuePropertyChange({
   nodeId: string;
   schemaKey: string;
   beforeField?: NodeField;
-  afterField: NodeField;
+  afterField?: NodeField;
 }): NodeEditorGraphPropertyChange {
   const clonedBeforeField = beforeField ? cloneJsonLike(beforeField) : undefined;
-  const clonedAfterField = cloneJsonLike(afterField);
+  const clonedAfterField = afterField ? cloneJsonLike(afterField) : undefined;
   return {
     type: "field-value",
     nodeId,
     schemaKey,
     beforeValue: clonedBeforeField?.value,
-    afterValue: clonedAfterField.value,
+    afterValue: clonedAfterField?.value,
     beforeIsImplicit: clonedBeforeField?.isImplicit,
-    afterIsImplicit: clonedAfterField.isImplicit,
+    afterIsImplicit: clonedAfterField?.isImplicit,
     beforeIsSet: clonedBeforeField?.isSet,
-    afterIsSet: clonedAfterField.isSet,
+    afterIsSet: clonedAfterField?.isSet,
     beforeField: clonedBeforeField,
     afterField: clonedAfterField,
+  };
+}
+
+export function createUnparsedMetadataPropertyChange({
+  nodeId,
+  beforeUnparsedMetadata,
+  afterUnparsedMetadata,
+}: {
+  nodeId: string;
+  beforeUnparsedMetadata?: Record<string, unknown>;
+  afterUnparsedMetadata?: Record<string, unknown>;
+}): NodeEditorGraphPropertyChange {
+  return {
+    type: "unparsed-metadata",
+    nodeId,
+    beforeUnparsedMetadata: beforeUnparsedMetadata
+      ? cloneJsonLike(beforeUnparsedMetadata)
+      : undefined,
+    afterUnparsedMetadata: afterUnparsedMetadata
+      ? cloneJsonLike(afterUnparsedMetadata)
+      : undefined,
   };
 }
 
@@ -523,6 +544,20 @@ function applyNodePropertiesUpdatedToWorkspaceState(
             case "raw-json":
               if ("jsonString" in nextNode.data) {
                 nextNode.data.jsonString = change.afterJsonString;
+              }
+              break;
+            case "unparsed-metadata":
+              if (nextNode.type === "datanode") {
+                if (
+                  change.afterUnparsedMetadata &&
+                  Object.keys(change.afterUnparsedMetadata).length > 0
+                ) {
+                  nextNode.data.unparsedMetadata = cloneJsonLike(
+                    change.afterUnparsedMetadata,
+                  );
+                } else {
+                  delete nextNode.data.unparsedMetadata;
+                }
               }
               break;
           }

@@ -31,6 +31,7 @@
   import { focusNextEditable } from "../../../shared/components/inputs/inputCommitBehavior";
   import ComputeAutocompleteInput from "../../../shared/components/ComputeAutocompleteInput.svelte";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
+  import ListItemsEditor from "./ListItemsEditor.svelte";
   import type { Snippet } from "svelte";
 
   type MenuState = {
@@ -173,10 +174,6 @@
 
   function buildValueInputId(index: number) {
     return `${inputId}-parameter-value-${index}`;
-  }
-
-  function buildListItemInputId(index: number, itemIndex: number) {
-    return `${inputId}-parameter-value-${index}-item-${itemIndex}`;
   }
 
   function getKeyAutocompleteOptions(itemInputId: string) {
@@ -424,61 +421,22 @@
                 />
               </div>
             {:else if isParameterMapListValueType(entryType) && Array.isArray(entryValue)}
-              <div class="flex min-w-0 flex-col gap-1">
-                {#if entryValue.length === 0}
-                  <div class="rounded-md border border-dashed border-vsc-editor-widget-border px-2 py-1.5 text-xs text-vsc-muted">
-                    No items
-                  </div>
-                {:else}
-                  {#each entryValue as item, itemIndex (`${key}:${itemIndex}`)}
-                    <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1">
-                      {#if entryType === "stringList"}
-                        <SingleLineAutocompleteInput
-                          inputId={buildListItemInputId(index, itemIndex)}
-                          initialValue={typeof item === "string" ? item : String(item ?? "")}
-                          autocompleteOptions={[]}
-                          inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
-                          listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
-                          optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
-                          stopPointerPropagation
-                          oncommit={nextItem => updateListItem(key, entryType, itemIndex, nextItem)}
-                          afterEnterPressed={handleEnterCommit}
-                        />
-                      {:else}
-                        <CommitNumberInput
-                          inputId={buildListItemInputId(index, itemIndex)}
-                          initialValue={typeof item === "number" ? item : 0}
-                          emptyValue={0}
-                          inputClass="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                          enterBehavior="focus-next"
-                          focusRootSelector="[data-node-editor-root]"
-                          stopPointerPropagation
-                          oncommit={nextItem =>
-                            updateListItem(key, entryType, itemIndex, nextItem ?? 0)}
-                        />
-                      {/if}
-
-                      <button
-                        type="button"
-                        class="nodrag inline-flex size-6 items-center justify-center rounded-md text-vsc-muted hover:bg-vsc-list-hover hover:text-vsc-input-fg"
-                        aria-label={`Remove ${key} item ${itemIndex + 1}`}
-                        onclick={() => removeListItem(key, entryType, itemIndex)}
-                      >
-                        <CircleX size={13} />
-                      </button>
-                    </div>
-                  {/each}
-                {/if}
-
-                <button
-                  type="button"
-                  class="nodrag inline-flex items-center gap-1 rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-left text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
-                  onclick={() => addListItem(key, entryType)}
-                >
-                  <Plus size={12} />
-                  Add item
-                </button>
-              </div>
+              <ListItemsEditor
+                inputId={buildValueInputId(index)}
+                items={entryValue}
+                itemKind={entryType === "stringList" ? "string" : "number"}
+                onadd={() => addListItem(key, entryType)}
+                onremove={itemIndex => removeListItem(key, entryType, itemIndex)}
+                onupdate={(itemIndex, nextItem) =>
+                  updateListItem(
+                    key,
+                    entryType,
+                    itemIndex,
+                    entryType === "numberList" && typeof nextItem === "number"
+                      ? nextItem
+                      : String(nextItem ?? ""),
+                  )}
+              />
             {:else if entryType === "unsupported"}
               <input
                 class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 font-mono text-xs text-vsc-muted"

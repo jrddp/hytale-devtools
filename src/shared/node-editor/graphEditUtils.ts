@@ -152,6 +152,19 @@ function applyNodePropertyChanges(
             target === "before" ? change.beforeJsonString : change.afterJsonString;
         }
         break;
+      case "unparsed-metadata":
+        if (node.type === "datanode") {
+          const nextUnparsedMetadata =
+            target === "before"
+              ? change.beforeUnparsedMetadata
+              : change.afterUnparsedMetadata;
+          if (nextUnparsedMetadata && Object.keys(nextUnparsedMetadata).length > 0) {
+            node.data.unparsedMetadata = cloneJsonLike(nextUnparsedMetadata);
+          } else {
+            delete node.data.unparsedMetadata;
+          }
+        }
+        break;
     }
   }
 }
@@ -264,6 +277,16 @@ export function invertNodeEditorGraphEdit(
                 ...change,
                 beforeJsonString: change.afterJsonString,
                 afterJsonString: change.beforeJsonString,
+              };
+            case "unparsed-metadata":
+              return {
+                ...change,
+                beforeUnparsedMetadata: change.afterUnparsedMetadata
+                  ? cloneJsonLike(change.afterUnparsedMetadata)
+                  : undefined,
+                afterUnparsedMetadata: change.beforeUnparsedMetadata
+                  ? cloneJsonLike(change.beforeUnparsedMetadata)
+                  : undefined,
               };
           }
         }),

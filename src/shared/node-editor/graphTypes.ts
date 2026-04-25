@@ -148,6 +148,12 @@ export type NodeEditorGraphPropertyChange =
       nodeId: string;
       beforeJsonString: string;
       afterJsonString: string;
+    }
+  | {
+      type: "unparsed-metadata";
+      nodeId: string;
+      beforeUnparsedMetadata?: Record<string, unknown>;
+      afterUnparsedMetadata?: Record<string, unknown>;
     };
 
 export type NodeEditorGraphEdit =

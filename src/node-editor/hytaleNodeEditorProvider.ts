@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { LOGGER, workspaceRuntime } from "../extension";
-import { getValuesByIndexReference } from "../schema/symbolResolver";
+import { getValuesByIndexReferenceAsync } from "../schema/symbolResolver";
 import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
@@ -438,7 +438,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     message: Extract<WebviewToExtensionMessage, { type: "autocompleteRequest" }>,
     webview: vscode.Webview,
   ): Promise<void> {
-    const matches = getValuesByIndexReference(message.symbolLookup);
+    const matches = await getValuesByIndexReferenceAsync(message.symbolLookup);
     const payload: ExtensionToWebviewMessage = {
       type: "autocompletionValues",
       fieldId: message.fieldId,

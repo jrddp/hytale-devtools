@@ -82,6 +82,22 @@ export function getValuesByIndexReference(reference: IndexReference): string[] {
   return [];
 }
 
+export async function getValuesByIndexReferenceAsync(
+  reference: IndexReference,
+): Promise<string[]> {
+  if (reference.indexKind === "assetDerived") {
+    try {
+      await assetCacheRuntime?.ready;
+    } catch (error) {
+      LOGGER.error(
+        `Failed to await asset-derived indexes: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return getValuesByIndexReference(reference);
+}
+
 function getAssetDerivedValues(reference: Extract<IndexReference, { indexKind: "assetDerived" }>): string[] {
   const shard = assetCacheRuntime?.derivedIndexes.get(reference.key);
   if (!shard) {

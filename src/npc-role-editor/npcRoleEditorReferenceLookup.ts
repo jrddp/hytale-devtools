@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vscode from "vscode";
 import { assetCacheRuntime, indexes } from "../extension";
-import { getValuesByIndexReference } from "../schema/symbolResolver";
+import { getValuesByIndexReferenceAsync } from "../schema/symbolResolver";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
 import { parseNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import type {
@@ -42,13 +42,13 @@ export async function resolveNpcAutocompleteValues(
   documentUri: vscode.Uri,
 ): Promise<string[]> {
   if (symbolLookup.indexKind !== "registeredAssets" || symbolLookup.key !== "NPCRole") {
-    return getValuesByIndexReference(symbolLookup);
+    return await getValuesByIndexReferenceAsync(symbolLookup);
   }
 
   const requestedRoleTypes = symbolLookup.filter?.npcRoleTypes ?? [];
   const requestedComponentClasses = new Set(symbolLookup.filter?.npcComponentClasses ?? []);
   if (requestedRoleTypes.length === 0 && requestedComponentClasses.size === 0) {
-    return getValuesByIndexReference(symbolLookup);
+    return await getValuesByIndexReferenceAsync(symbolLookup);
   }
 
   const candidatePaths = new Set<string>();
