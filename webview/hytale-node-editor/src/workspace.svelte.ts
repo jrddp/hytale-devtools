@@ -541,11 +541,12 @@ export class NodeEditorSession {
     const clientEditId = this.nextClientEditId + 1;
     this.nextClientEditId = clientEditId;
     this.pendingLocalEditId = clientEditId;
+    const plainEdit = cloneJsonLike($state.snapshot(edit));
     const afterDocument = cloneJsonLike($state.snapshot(beforeDocument));
-    applyNodeEditorGraphEdit(afterDocument, cloneJsonLike($state.snapshot(edit)));
+    applyNodeEditorGraphEdit(afterDocument, plainEdit);
     this.committedGraphDocument = afterDocument;
-    this.queuePostGraphEditActions(edit);
-    this.postGraphEdit(edit, clientEditId);
+    this.queuePostGraphEditActions(plainEdit);
+    this.postGraphEdit(plainEdit, clientEditId);
   }
 
   /** Builds an undoable graph edit from current workspace state and posts it to the active host. */

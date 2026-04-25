@@ -17,6 +17,7 @@
     coerceParameterMapValue,
     getParameterMapValueType,
     isComputeParameterMapValue,
+    isCompatiblePreferredParameterMapValueType,
     isParameterMap,
     PARAMETER_MAP_TYPE_OPTIONS,
     removeParameterMapListItem,
@@ -58,6 +59,7 @@
   let lastSignature = "";
   let typeMenu = $state<MenuState | null>(null);
   let menuElement = $state<HTMLDivElement | null>(null);
+  let preferredTypesByKey = $state<Record<string, ParameterMapValueType>>({});
 
   $effect(() => {
     const nextValue = isParameterMap(initialValue) ? initialValue : {};
@@ -146,6 +148,18 @@
   const entries = $derived(Object.entries(value));
   const usesKeyOverrideAutocomplete = $derived(keyOverrideAutocompleteValues !== undefined);
 
+  $effect(() => {
+    const nextPreferredTypes: Record<string, ParameterMapValueType> = {};
+    for (const [key, preferredType] of Object.entries(preferredTypesByKey)) {
+      if (isCompatiblePreferredParameterMapValueType(value[key], preferredType)) {
+        nextPreferredTypes[key] = preferredType;
+      }
+    }
+    if (JSON.stringify(nextPreferredTypes) !== JSON.stringify(preferredTypesByKey)) {
+      preferredTypesByKey = nextPreferredTypes;
+    }
+  });
+
   function commitValue(nextValue: Record<string, unknown>) {
     const plainValue = cloneJsonLike($state.snapshot(nextValue));
     value = plainValue;
@@ -196,6 +210,9 @@
   function removeEntry(key: string) {
     const nextValue = { ...value };
     delete nextValue[key];
+    const nextPreferredTypes = { ...preferredTypesByKey };
+    delete nextPreferredTypes[key];
+    preferredTypesByKey = nextPreferredTypes;
     commitValue(nextValue);
   }
 
@@ -213,6 +230,12 @@
         nextValue[key] = entryValue;
       }
     }
+    const nextPreferredTypes = { ...preferredTypesByKey };
+    if (Object.hasOwn(nextPreferredTypes, previousKey)) {
+      nextPreferredTypes[normalizedKey] = nextPreferredTypes[previousKey];
+      delete nextPreferredTypes[previousKey];
+      preferredTypesByKey = nextPreferredTypes;
+    }
     commitValue(nextValue);
   }
 
@@ -224,6 +247,10 @@
   }
 
   function changeEntryType(key: string, nextType: Exclude<ParameterMapValueType, "unsupported">) {
+    preferredTypesByKey = {
+      ...preferredTypesByKey,
+      [key]: nextType,
+    };
     updateEntry(key, coerceParameterMapValue(value[key], nextType));
     typeMenu = null;
   }
@@ -248,7 +275,7 @@
     key: string,
     listType: ParameterMapListValueType,
     index: number,
-    nextItem: string | number | boolean,
+    nextItem: string | number,
   ) {
     updateEntry(key, updateParameterMapListItem(value[key], listType, index, nextItem));
   }
@@ -286,7 +313,11 @@
   function isParameterMapListValueType(
     type: ParameterMapValueType,
   ): type is ParameterMapListValueType {
-    return type === "stringList" || type === "numberList" || type === "booleanList";
+    return type === "stringList" || type === "numberList";
+  }
+
+  function getEntryType(key: string, entryValue: unknown): ParameterMapValueType {
+    return getParameterMapValueType(entryValue, preferredTypesByKey[key]);
   }
 
   function handleEnterCommit(input: HTMLInputElement) {
@@ -323,7 +354,7 @@
     {:else}
       <div class="flex flex-col gap-1.5">
         {#each entries as [key, entryValue], index (key)}
-          {@const entryType = getParameterMapValueType(entryValue)}
+          {@const entryType = getEntryType(key, entryValue)}
           <div class="grid grid-cols-[minmax(7rem,0.9fr)_minmax(9rem,1.1fr)_auto] items-start gap-1.5">
             <SingleLineAutocompleteInput
               inputId={buildKeyInputId(index)}
@@ -413,7 +444,7 @@
                           oncommit={nextItem => updateListItem(key, entryType, itemIndex, nextItem)}
                           afterEnterPressed={handleEnterCommit}
                         />
-                      {:else if entryType === "numberList"}
+                      {:else}
                         <CommitNumberInput
                           inputId={buildListItemInputId(index, itemIndex)}
                           initialValue={typeof item === "number" ? item : 0}
@@ -424,15 +455,6 @@
                           stopPointerPropagation
                           oncommit={nextItem =>
                             updateListItem(key, entryType, itemIndex, nextItem ?? 0)}
-                        />
-                      {:else}
-                        <input
-                          class="nodrag h-4 w-4 accent-vsc-activity-bar-badge-bg"
-                          type="checkbox"
-                          checked={item === true}
-                          onchange={event =>
-                            updateListItem(key, entryType, itemIndex, event.currentTarget.checked)}
-                          {...noMousePropogation}
                         />
                       {/if}
 
@@ -515,7 +537,7 @@
 </div>
 
 {#if typeMenu}
-  {@const currentType = getParameterMapValueType(value[typeMenu.key])}
+  {@const currentType = getEntryType(typeMenu.key, value[typeMenu.key])}
   <div
     bind:this={menuElement}
     class="nodrag nowheel fixed z-[3100] min-w-44 overflow-hidden rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg py-1 shadow-lg"

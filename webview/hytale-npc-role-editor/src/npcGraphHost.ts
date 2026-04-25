@@ -14,6 +14,7 @@ import {
   hydrateComponentReferenceNodes,
   overrideNodeFieldAutocomplete,
 } from "./componentReferenceNodeHydration";
+import { cloneJsonLike } from "./propertyFieldUtilities";
 
 export function hydrateNpcGraphSessionNodes({
   session,
@@ -45,6 +46,52 @@ export function hydrateNpcGraphSessionNodes({
   });
   if (hydratedNodes !== session.nodes) {
     session.nodes = hydratedNodes;
+    syncCommittedGraphDocumentFieldsFromSession(session);
+  }
+}
+
+function syncCommittedGraphDocumentFieldsFromSession(session: NodeEditorSession): void {
+  if (!session.committedGraphDocument) {
+    return;
+  }
+
+  const fieldsByNodeId = new Map(
+    session.nodes
+      .filter((node): node is Extract<NodeEditorSession["nodes"][number], { type: "datanode" }> =>
+        node.type === "datanode",
+      )
+      .map(node => [node.id, node.data.fieldsBySchemaKey]),
+  );
+  let didChange = false;
+  const nodes = session.committedGraphDocument.nodes.map(node => {
+    if (node.type !== "datanode") {
+      return node;
+    }
+
+    const fieldsBySchemaKey = fieldsByNodeId.get(node.id);
+    if (!fieldsBySchemaKey) {
+      return node;
+    }
+
+    if (JSON.stringify(node.data.fieldsBySchemaKey) === JSON.stringify(fieldsBySchemaKey)) {
+      return node;
+    }
+
+    didChange = true;
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        fieldsBySchemaKey: cloneJsonLike(fieldsBySchemaKey),
+      },
+    };
+  });
+
+  if (didChange) {
+    session.committedGraphDocument = {
+      ...session.committedGraphDocument,
+      nodes,
+    };
   }
 }
 

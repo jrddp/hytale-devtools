@@ -8,6 +8,7 @@ import type {
   NodeRenameChange,
   NodeResizeChange,
 } from "./graphTypes";
+import { cloneJsonLike } from "../jsonClone";
 
 function indexNodesById(document: NodeEditorGraphDocument): Map<string, NodeEditorGraphNode> {
   return new Map(document.nodes.map(node => [node.id, node]));
@@ -110,8 +111,23 @@ function applyNodePropertyChanges(
 
     switch (change.type) {
       case "field-value":
-        if (node.data.fieldsBySchemaKey?.[change.schemaKey]) {
+        if (node.data.fieldsBySchemaKey) {
+          const hasFieldSnapshots =
+            change.beforeField !== undefined || change.afterField !== undefined;
+          if (hasFieldSnapshots) {
+            const targetField = target === "before" ? change.beforeField : change.afterField;
+            if (targetField) {
+              node.data.fieldsBySchemaKey[change.schemaKey] = cloneJsonLike(targetField);
+            } else {
+              delete node.data.fieldsBySchemaKey[change.schemaKey];
+            }
+            break;
+          }
+
           const field = node.data.fieldsBySchemaKey[change.schemaKey];
+          if (!field) {
+            break;
+          }
           field.value = target === "before" ? change.beforeValue : change.afterValue;
           field.isImplicit =
             target === "before" ? change.beforeIsImplicit : change.afterIsImplicit;
@@ -215,13 +231,21 @@ export function invertNodeEditorGraphEdit(
           switch (change.type) {
             case "field-value":
               return {
-                ...change,
+                type: change.type,
+                nodeId: change.nodeId,
+                schemaKey: change.schemaKey,
                 beforeValue: change.afterValue,
                 afterValue: change.beforeValue,
                 beforeIsImplicit: change.afterIsImplicit,
                 afterIsImplicit: change.beforeIsImplicit,
                 beforeIsSet: change.afterIsSet,
                 afterIsSet: change.beforeIsSet,
+                ...(change.afterField !== undefined
+                  ? { beforeField: cloneJsonLike(change.afterField) }
+                  : {}),
+                ...(change.beforeField !== undefined
+                  ? { afterField: cloneJsonLike(change.beforeField) }
+                  : {}),
               };
             case "comment":
               return {

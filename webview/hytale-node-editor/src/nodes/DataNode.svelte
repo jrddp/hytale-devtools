@@ -1,8 +1,12 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
   import { type DataNodeType } from "@node-editor/common";
-  import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
+  import {
+    createFieldValuePropertyChange,
+    createNodePropertiesUpdatedEdit,
+  } from "@node-editor/node-editor/utils/graphDocument";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
+  import { cloneJsonLike } from "@shared/jsonClone";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
   import ComponentReferenceNodeBody from "./ComponentReferenceNodeBody.svelte";
@@ -18,34 +22,32 @@
     options: { isImplicit?: boolean; isSet?: boolean } = {},
   ) {
     const previousField = fieldsBySchemaKey[schemaKey];
-    const previousValue = previousField?.value;
-    const previousIsImplicit = previousField?.isImplicit;
-    const previousIsSet = previousField?.isSet ?? false;
+    if (!previousField) {
+      return;
+    }
+
     const nextIsImplicit = options.isImplicit ?? false;
     const nextIsSet = options.isSet ?? true;
+    const previousFieldSnapshot = cloneJsonLike($state.snapshot(previousField));
+    const nextField = {
+      ...previousFieldSnapshot,
+      value: cloneJsonLike($state.snapshot(nextValue)),
+      isImplicit: nextIsImplicit,
+      isSet: nextIsSet,
+    };
     updateNodeData(id, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
-        [schemaKey]: {
-          ...fieldsBySchemaKey[schemaKey],
-          value: nextValue,
-          isImplicit: nextIsImplicit,
-          isSet: nextIsSet,
-        },
+        [schemaKey]: nextField,
       },
     });
     const edit = createNodePropertiesUpdatedEdit([
-      {
-        type: "field-value",
+      createFieldValuePropertyChange({
         nodeId: id,
         schemaKey,
-        beforeValue: previousValue,
-        afterValue: nextValue,
-        beforeIsImplicit: previousIsImplicit,
-        afterIsImplicit: nextIsImplicit,
-        beforeIsSet: previousIsSet,
-        afterIsSet: nextIsSet,
-      },
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
     ]);
     if (edit) {
       workspace.applyGraphEdit(edit);

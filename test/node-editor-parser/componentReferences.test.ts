@@ -9,6 +9,11 @@ import {
   createComponentReferenceInterfaceParametersFieldSchemaKey,
   createComponentReferenceModifyMapFieldSchemaKey,
 } from "../../src/shared/node-editor/componentReferences";
+import { serializeGraphDocument } from "../../src/shared/node-editor/graphDocument";
+import {
+  applyNodeEditorGraphEdit,
+  invertNodeEditorGraphEdit,
+} from "../../src/shared/node-editor/graphEditUtils";
 import type { FlowEdge, FlowNode } from "../../webview/hytale-node-editor/src/common";
 import { parseDocumentText } from "../../webview/hytale-node-editor/src/node-editor/parsing/parseDocument.svelte";
 import {
@@ -353,6 +358,72 @@ describe("NPC behavior component references", () => {
         },
       },
     });
+  });
+
+  test("graph edits can create and undo synthetic computed-reference fields", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const template = context.nodeTemplatesById["Structural.InstructionReference"];
+    const node = createDataNode("computed-ref-edit", template);
+    if (node.type !== "datanode") {
+      throw new Error("Expected data node.");
+    }
+
+    node.data.fieldsBySchemaKey.Reference = {
+      ...structuredClone(template.fieldsBySchemaKey.Reference),
+      value: {
+        Compute: "SelectedInstruction",
+      },
+      isImplicit: false,
+      isSet: true,
+    };
+
+    const modifyMapKey = createComponentReferenceModifyMapFieldSchemaKey();
+    const afterField = {
+      schemaKey: modifyMapKey,
+      localId: modifyMapKey,
+      type: "parameterMap",
+      label: "Parameters",
+      value: {
+        Range: 6,
+      },
+      isImplicit: false,
+      isSet: true,
+    } as const;
+    const graphDocument = {
+      workspaceId: "Instruction",
+      rootNodeId: node.id,
+      nodes: [node],
+      edges: [],
+    } as never;
+    const edit = {
+      kind: "node-properties-updated",
+      propertyChanges: [
+        {
+          type: "field-value",
+          nodeId: node.id,
+          schemaKey: modifyMapKey,
+          beforeValue: undefined,
+          afterValue: afterField.value,
+          beforeField: undefined,
+          afterField,
+        },
+      ],
+    } as const;
+
+    applyNodeEditorGraphEdit(graphDocument, edit);
+    expect(graphDocument.nodes[0]?.data.fieldsBySchemaKey[modifyMapKey]).toMatchObject(afterField);
+    expect(normalizeRoundTripJson(serializeGraphDocument(graphDocument))).toMatchObject({
+      Reference: {
+        Compute: "SelectedInstruction",
+      },
+      Modify: {
+        Range: 6,
+      },
+    });
+
+    applyNodeEditorGraphEdit(graphDocument, invertNodeEditorGraphEdit(edit));
+    expect(graphDocument.nodes[0]?.data.fieldsBySchemaKey).not.toHaveProperty(modifyMapKey);
+    expect(normalizeRoundTripJson(serializeGraphDocument(graphDocument))).not.toHaveProperty("Modify");
   });
 
   test("does not serialize hidden computed-only fields while a reference is static", () => {

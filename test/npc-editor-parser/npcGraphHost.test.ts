@@ -226,7 +226,14 @@ describe("npc graph host helpers", () => {
   test("hydrateNpcGraphSessionNodes applies component-reference overlays to session nodes", () => {
     const session = createNodeEditorSession();
     session.isInitialized = true;
-    session.nodes = [createReferenceNode("Sensor.Reference", "Component_Sensor_Sound")] as never;
+    const referenceNode = createReferenceNode("Sensor.Reference", "Component_Sensor_Sound");
+    session.nodes = [referenceNode] as never;
+    session.committedGraphDocument = {
+      workspaceId: "Sensor",
+      rootNodeId: referenceNode.id,
+      nodes: [structuredClone(referenceNode)] as never,
+      edges: [],
+    };
 
     workspace.setComponentReferenceTarget({
       status: "loaded",
@@ -250,6 +257,16 @@ describe("npc graph host helpers", () => {
     expect(
       session.nodes[0]?.type === "datanode"
         ? session.nodes[0].data.fieldsBySchemaKey[
+            createComponentReferenceModifyFieldSchemaKey("Range")
+          ]
+        : undefined,
+    ).toMatchObject({
+      label: "Range",
+      isImplicit: true,
+    });
+    expect(
+      session.committedGraphDocument?.nodes[0]?.type === "datanode"
+        ? session.committedGraphDocument.nodes[0].data.fieldsBySchemaKey[
             createComponentReferenceModifyFieldSchemaKey("Range")
           ]
         : undefined,

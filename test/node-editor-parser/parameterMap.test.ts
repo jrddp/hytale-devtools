@@ -18,10 +18,16 @@ describe("node-editor parameter maps", () => {
     expect(getParameterMapValueType([1, 2])).toBe("range");
     expect(getParameterMapValueType([1, 2, 3])).toBe("numberList");
     expect(getParameterMapValueType(["A", "B"])).toBe("stringList");
-    expect(getParameterMapValueType([true, false])).toBe("booleanList");
+    expect(getParameterMapValueType([true, false])).toBe("unsupported");
     expect(getParameterMapValueType({ Compute: "Range" })).toBe("compute");
     expect(getParameterMapValueType(["A", 2])).toBe("unsupported");
     expect(getParameterMapValueType({ Nested: true })).toBe("unsupported");
+  });
+
+  test("honors compatible preferred value types for ambiguous values", () => {
+    expect(getParameterMapValueType([1, 2])).toBe("range");
+    expect(getParameterMapValueType([1, 2], "numberList")).toBe("numberList");
+    expect(getParameterMapValueType([1, 2, 3], "range")).toBe("numberList");
   });
 
   test("coerces values when changing parameter map row types", () => {
@@ -30,7 +36,6 @@ describe("node-editor parameter maps", () => {
     expect(coerceParameterMapValue(4, "range")).toEqual([4, 4]);
     expect(coerceParameterMapValue("Idle", "stringList")).toEqual(["Idle"]);
     expect(coerceParameterMapValue(["1", 2], "numberList")).toEqual([1, 2]);
-    expect(coerceParameterMapValue(["true", false], "booleanList")).toEqual([true, false]);
     expect(coerceParameterMapValue(["Idle", "Alerted"], "compute")).toEqual({
       Compute: "[\"Idle\",\"Alerted\"]",
     });
@@ -53,17 +58,10 @@ describe("node-editor parameter maps", () => {
     ]);
   });
 
-  test("mutates expanded number and boolean list values", () => {
+  test("mutates expanded number list values", () => {
     expect(addParameterMapListItem([1], "numberList")).toEqual([1, 0]);
     expect(updateParameterMapListItem([1, 0], "numberList", 1, "4")).toEqual([1, 4]);
     expect(removeParameterMapListItem([1, 4], "numberList", 0)).toEqual([4]);
-
-    expect(addParameterMapListItem([true], "booleanList")).toEqual([true, false]);
-    expect(updateParameterMapListItem([true, false], "booleanList", 1, "true")).toEqual([
-      true,
-      true,
-    ]);
-    expect(removeParameterMapListItem([true, true], "booleanList", 0)).toEqual([true]);
   });
 
   test("updates range endpoints without changing unsupported value preservation", () => {

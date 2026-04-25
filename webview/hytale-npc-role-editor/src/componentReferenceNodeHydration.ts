@@ -22,7 +22,7 @@ import type { NpcParametersJson } from "@shared/npc-role-editor/documentTypes";
 import type { NodeField } from "@shared/node-editor/workspaceTypes";
 import { buildNpcPropertySections } from "./buildPropertyState";
 import type { NpcPropertyField } from "./propertyTypes";
-import { humanize } from "./propertyFieldUtilities";
+import { cloneJsonLike, humanize } from "./propertyFieldUtilities";
 import { workspace } from "./workspace.svelte";
 
 type ComponentReferenceInspection = {
@@ -295,14 +295,14 @@ function collectActiveComponentReferenceValues(node: DataNodeType): ActiveCompon
 
   for (const [modifyKey, value] of Object.entries(modify ?? {})) {
     if (!modifyKey.startsWith("_")) {
-      modifyValues.set(modifyKey, structuredClone(value));
+      modifyValues.set(modifyKey, cloneJsonLike(value));
     }
   }
 
   if (isRecord(modify?._InterfaceParameters)) {
     for (const [interfaceKey, parameters] of Object.entries(modify._InterfaceParameters)) {
       if (isRecord(parameters)) {
-        interfaceParameters.set(interfaceKey, structuredClone(parameters));
+        interfaceParameters.set(interfaceKey, cloneJsonLike(parameters));
       }
     }
   }
@@ -323,13 +323,13 @@ function collectActiveComponentReferenceValues(node: DataNodeType): ActiveCompon
 
     switch (syntheticField.kind) {
       case "modify":
-        modifyValues.set(syntheticField.key, structuredClone(field.value));
+        modifyValues.set(syntheticField.key, cloneJsonLike(field.value));
         break;
       case "modify-map":
         modifyValues.clear();
         if (isRecord(field.value)) {
           for (const [key, value] of Object.entries(field.value)) {
-            modifyValues.set(key, structuredClone(value));
+            modifyValues.set(key, cloneJsonLike(value));
           }
         }
         break;
@@ -349,7 +349,7 @@ function collectActiveComponentReferenceValues(node: DataNodeType): ActiveCompon
         break;
       case "interface-parameters":
         if (isRecord(field.value)) {
-          interfaceParameters.set(syntheticField.interfaceKey, structuredClone(field.value));
+          interfaceParameters.set(syntheticField.interfaceKey, cloneJsonLike(field.value));
         }
         break;
     }
@@ -369,7 +369,7 @@ function createNodeFieldFromNpcField(field: NpcPropertyField, schemaKey: string)
     type: npcFieldKindToNodeFieldType(field),
     label: humanize(field.key) ?? field.key,
     description: field.description,
-    value: field.value.kind === "compute" ? { Compute: field.value.expression } : structuredClone(field.value.value),
+    value: field.value.kind === "compute" ? { Compute: field.value.expression } : cloneJsonLike(field.value.value),
     computable: field.computable === true,
     isImplicit: false,
     isSet: false,
@@ -421,7 +421,7 @@ function createFallbackModifyField(key: string, value: unknown): NodeField {
     localId: createComponentReferenceModifyFieldSchemaKey(key),
     type,
     label: humanize(key) ?? key,
-    value: structuredClone(value),
+    value: cloneJsonLike(value),
     computable: true,
     isImplicit: false,
     isSet: true,
@@ -583,7 +583,7 @@ function overrideNodeFieldValue(
 ): NodeField {
   return {
     ...field,
-    value: structuredClone(value),
+    value: cloneJsonLike(value),
     isImplicit,
     isSet: !isImplicit,
   };

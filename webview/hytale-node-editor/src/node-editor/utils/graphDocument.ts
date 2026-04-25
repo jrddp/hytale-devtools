@@ -19,6 +19,8 @@ import type {
   NodeResizeChange,
 } from "@shared/node-editor/graphTypes";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+import { cloneJsonLike } from "@shared/jsonClone";
+import type { NodeField } from "@shared/node-editor/workspaceTypes";
 import type { FlowEdge, FlowNode } from "@node-editor/common";
 import type { WorkspaceState } from "@node-editor/workspace.svelte";
 
@@ -120,9 +122,58 @@ export function createNodePropertiesUpdatedEdit(
 
   return {
     kind: "node-properties-updated",
-    propertyChanges,
+    propertyChanges: propertyChanges.map(cloneNodeEditorGraphPropertyChange),
     resizeChanges: resizeChanges.length > 0 ? resizeChanges : undefined,
   };
+}
+
+export function createFieldValuePropertyChange({
+  nodeId,
+  schemaKey,
+  beforeField,
+  afterField,
+}: {
+  nodeId: string;
+  schemaKey: string;
+  beforeField?: NodeField;
+  afterField: NodeField;
+}): NodeEditorGraphPropertyChange {
+  const clonedBeforeField = beforeField ? cloneJsonLike(beforeField) : undefined;
+  const clonedAfterField = cloneJsonLike(afterField);
+  return {
+    type: "field-value",
+    nodeId,
+    schemaKey,
+    beforeValue: clonedBeforeField?.value,
+    afterValue: clonedAfterField.value,
+    beforeIsImplicit: clonedBeforeField?.isImplicit,
+    afterIsImplicit: clonedAfterField.isImplicit,
+    beforeIsSet: clonedBeforeField?.isSet,
+    afterIsSet: clonedAfterField.isSet,
+    beforeField: clonedBeforeField,
+    afterField: clonedAfterField,
+  };
+}
+
+function cloneNodeEditorGraphPropertyChange(
+  change: NodeEditorGraphPropertyChange,
+): NodeEditorGraphPropertyChange {
+  switch (change.type) {
+    case "field-value":
+      return {
+        ...change,
+        beforeValue: cloneJsonLike(change.beforeValue),
+        afterValue: cloneJsonLike(change.afterValue),
+        ...(change.beforeField !== undefined
+          ? { beforeField: cloneJsonLike(change.beforeField) }
+          : {}),
+        ...(change.afterField !== undefined
+          ? { afterField: cloneJsonLike(change.afterField) }
+          : {}),
+      };
+    default:
+      return cloneJsonLike(change);
+  }
 }
 
 export function buildElementListChangedEdit(
@@ -433,17 +484,31 @@ function applyNodePropertiesUpdatedToWorkspaceState(
         for (const change of propertyChanges) {
           switch (change.type) {
             case "field-value":
-              if (nextNode.data.fieldsBySchemaKey?.[change.schemaKey]) {
+              if (nextNode.data.fieldsBySchemaKey) {
+                const hasFieldSnapshots =
+                  change.beforeField !== undefined || change.afterField !== undefined;
                 nextNode.data.fieldsBySchemaKey = {
                   ...nextNode.data.fieldsBySchemaKey,
-                  [change.schemaKey]: {
-                    ...nextNode.data.fieldsBySchemaKey[change.schemaKey],
-                    value: change.afterValue,
-                    isImplicit: change.afterIsImplicit,
-                    isSet:
-                      change.afterIsSet ??
-                      nextNode.data.fieldsBySchemaKey[change.schemaKey].isSet,
-                  },
+                };
+                if (hasFieldSnapshots) {
+                  if (change.afterField) {
+                    nextNode.data.fieldsBySchemaKey[change.schemaKey] =
+                      cloneJsonLike(change.afterField);
+                  } else {
+                    delete nextNode.data.fieldsBySchemaKey[change.schemaKey];
+                  }
+                  break;
+                }
+
+                const field = nextNode.data.fieldsBySchemaKey[change.schemaKey];
+                if (!field) {
+                  break;
+                }
+                nextNode.data.fieldsBySchemaKey[change.schemaKey] = {
+                  ...field,
+                  value: change.afterValue,
+                  isImplicit: change.afterIsImplicit,
+                  isSet: change.afterIsSet ?? field.isSet,
                 };
               }
               break;

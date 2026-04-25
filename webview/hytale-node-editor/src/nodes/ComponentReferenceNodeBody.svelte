@@ -7,8 +7,12 @@
     parseComponentReferenceSyntheticFieldSchemaKey,
   } from "@shared/node-editor/componentReferences";
   import { useSvelteFlow } from "@xyflow/svelte";
-  import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
+  import {
+    createFieldValuePropertyChange,
+    createNodePropertiesUpdatedEdit,
+  } from "@node-editor/node-editor/utils/graphDocument";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
+  import { cloneJsonLike } from "@shared/jsonClone";
   import FieldEditor from "../fields/FieldEditor.svelte";
 
   const {
@@ -148,34 +152,31 @@
       return;
     }
 
-    const previousValue = previousField?.value;
-    const previousIsImplicit = previousField?.isImplicit;
-    const previousIsSet = previousField?.isSet ?? false;
+    const existingField = fieldsBySchemaKey[schemaKey];
+    const previousFieldSnapshot = existingField
+      ? cloneJsonLike($state.snapshot(existingField))
+      : undefined;
     const nextIsImplicit = options.isImplicit ?? false;
     const nextIsSet = options.isSet ?? true;
+    const nextField = {
+      ...cloneJsonLike($state.snapshot(previousField)),
+      value: cloneJsonLike($state.snapshot(nextValue)),
+      isImplicit: nextIsImplicit,
+      isSet: nextIsSet,
+    };
     updateNodeData(nodeId, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
-        [schemaKey]: {
-          ...previousField,
-          value: nextValue,
-          isImplicit: nextIsImplicit,
-          isSet: nextIsSet,
-        },
+        [schemaKey]: nextField,
       },
     });
     const edit = createNodePropertiesUpdatedEdit([
-      {
-        type: "field-value",
+      createFieldValuePropertyChange({
         nodeId,
         schemaKey,
-        beforeValue: previousValue,
-        afterValue: nextValue,
-        beforeIsImplicit: previousIsImplicit,
-        afterIsImplicit: nextIsImplicit,
-        beforeIsSet: previousIsSet,
-        afterIsSet: nextIsSet,
-      },
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
     ]);
     if (edit) {
       workspace.applyGraphEdit(edit);

@@ -1,4 +1,4 @@
-import type { NodeTemplate } from "./workspaceTypes";
+import type { NodeField, NodeTemplate } from "./workspaceTypes";
 
 export type NodeEditorGraphPosition = {
   x: number;
@@ -128,6 +128,8 @@ export type NodeEditorGraphPropertyChange =
       afterIsImplicit?: boolean;
       beforeIsSet?: boolean;
       afterIsSet?: boolean;
+      beforeField?: NodeField;
+      afterField?: NodeField;
     }
   | {
       type: "comment";

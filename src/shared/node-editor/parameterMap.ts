@@ -4,7 +4,6 @@ export type ParameterMapValue =
   | boolean
   | string[]
   | number[]
-  | boolean[]
   | { Compute: string }
   | unknown;
 
@@ -15,13 +14,12 @@ export type ParameterMapValueType =
   | "range"
   | "stringList"
   | "numberList"
-  | "booleanList"
   | "compute"
   | "unsupported";
 
 export type ParameterMapListValueType = Extract<
   ParameterMapValueType,
-  "stringList" | "numberList" | "booleanList"
+  "stringList" | "numberList"
 >;
 
 export type ParameterMap = Record<string, ParameterMapValue>;
@@ -36,7 +34,6 @@ export const PARAMETER_MAP_TYPE_OPTIONS: Array<{
   { value: "range", label: "Range [min,max]" },
   { value: "stringList", label: "String List" },
   { value: "numberList", label: "Number List" },
-  { value: "booleanList", label: "Boolean List" },
   { value: "compute", label: "Compute" },
 ];
 
@@ -54,7 +51,14 @@ export function isComputeParameterMapValue(value: unknown): value is { Compute: 
   );
 }
 
-export function getParameterMapValueType(value: unknown): ParameterMapValueType {
+export function getParameterMapValueType(
+  value: unknown,
+  preferredType?: ParameterMapValueType,
+): ParameterMapValueType {
+  if (isCompatiblePreferredParameterMapValueType(value, preferredType)) {
+    return preferredType;
+  }
+
   if (isComputeParameterMapValue(value)) {
     return "compute";
   }
@@ -74,18 +78,45 @@ export function getParameterMapValueType(value: unknown): ParameterMapValueType 
     if (value.every(item => typeof item === "number")) {
       return value.length === 2 ? "range" : "numberList";
     }
-    if (value.every(item => typeof item === "boolean")) {
-      return "booleanList";
-    }
   }
 
   return "unsupported";
 }
 
+export function isCompatiblePreferredParameterMapValueType(
+  value: unknown,
+  preferredType: ParameterMapValueType | undefined,
+): preferredType is ParameterMapValueType {
+  if (!preferredType || preferredType === "unsupported") {
+    return false;
+  }
+
+  switch (preferredType) {
+    case "compute":
+      return isComputeParameterMapValue(value);
+    case "string":
+      return typeof value === "string";
+    case "number":
+      return typeof value === "number";
+    case "boolean":
+      return typeof value === "boolean";
+    case "range":
+      return (
+        Array.isArray(value) &&
+        value.length === 2 &&
+        value.every(item => typeof item === "number")
+      );
+    case "stringList":
+      return Array.isArray(value) && value.every(item => typeof item === "string");
+    case "numberList":
+      return Array.isArray(value) && value.every(item => typeof item === "number");
+  }
+}
+
 export function coerceParameterMapValue(
   previousValue: unknown,
   nextType: Exclude<ParameterMapValueType, "unsupported">,
-): string | number | boolean | string[] | number[] | boolean[] | { Compute: string } {
+): string | number | boolean | string[] | number[] | { Compute: string } {
   const scalar = isComputeParameterMapValue(previousValue) ? previousValue.Compute : previousValue;
 
   switch (nextType) {
@@ -105,8 +136,6 @@ export function coerceParameterMapValue(
       return coercePrimitiveList(scalar, "string");
     case "numberList":
       return coercePrimitiveList(scalar, "number");
-    case "booleanList":
-      return coercePrimitiveList(scalar, "boolean");
     case "compute":
       return { Compute: coerceComputeExpression(scalar) };
   }
@@ -118,12 +147,10 @@ export function isEmptyParameterMap(value: unknown): boolean {
 
 export function getDefaultParameterMapListItem(
   listType: ParameterMapListValueType,
-): string | number | boolean {
+): string | number {
   switch (listType) {
     case "numberList":
       return 0;
-    case "booleanList":
-      return false;
     case "stringList":
       return "";
   }
@@ -132,31 +159,31 @@ export function getDefaultParameterMapListItem(
 export function addParameterMapListItem(
   value: unknown,
   listType: ParameterMapListValueType,
-): string[] | number[] | boolean[] {
+): string[] | number[] {
   const list = coercePrimitiveListForType(value, listType);
-  return [...list, getDefaultParameterMapListItem(listType)] as string[] | number[] | boolean[];
+  return [...list, getDefaultParameterMapListItem(listType)] as string[] | number[];
 }
 
 export function removeParameterMapListItem(
   value: unknown,
   listType: ParameterMapListValueType,
   index: number,
-): string[] | number[] | boolean[] {
+): string[] | number[] {
   return coercePrimitiveListForType(value, listType).filter(
     (_item, itemIndex) => itemIndex !== index,
-  ) as string[] | number[] | boolean[];
+  ) as string[] | number[];
 }
 
 export function updateParameterMapListItem(
   value: unknown,
   listType: ParameterMapListValueType,
   index: number,
-  nextItem: string | number | boolean,
-): string[] | number[] | boolean[] {
+  nextItem: string | number,
+): string[] | number[] {
   const list = coercePrimitiveListForType(value, listType);
   const nextList = list.slice();
   nextList[index] = coerceListItemForType(nextItem, listType);
-  return nextList as string[] | number[] | boolean[];
+  return nextList as string[] | number[];
 }
 
 export function updateParameterMapRangeEndpoint(
@@ -267,28 +294,24 @@ function coerceListItem(
 function coercePrimitiveListForType(
   value: unknown,
   listType: ParameterMapListValueType,
-): Array<string | number | boolean> {
+): Array<string | number> {
   switch (listType) {
     case "stringList":
       return coercePrimitiveList(value, "string");
     case "numberList":
       return coercePrimitiveList(value, "number");
-    case "booleanList":
-      return coercePrimitiveList(value, "boolean");
   }
 }
 
 function coerceListItemForType(
-  value: string | number | boolean,
+  value: string | number,
   listType: ParameterMapListValueType,
-): string | number | boolean {
+): string | number {
   switch (listType) {
     case "stringList":
-      return coerceListItem(value, "string");
+      return coerceString(value);
     case "numberList":
-      return coerceListItem(value, "number");
-    case "booleanList":
-      return coerceListItem(value, "boolean");
+      return coerceNumber(value);
   }
 }
 
