@@ -1,7 +1,7 @@
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { getResolvedChildSlots } from "@shared/node-editor/childSlotUtils";
 import {
-  allowsComponentReferences,
+  allowsComponentReferenceTemplate,
   getComponentReferenceSlotOccupancy,
   isComponentReferenceNodeTemplate,
 } from "@shared/node-editor/componentReferences";
@@ -93,7 +93,7 @@ export function isValidConnection(
   if (
     childNode?.type === "datanode" &&
     isComponentReferenceNodeTemplate(childNode.data) &&
-    !allowsComponentReferences(parentSlotConnection.slot.childSchema)
+    !allowsComponentReferenceTemplate(parentSlotConnection.slot.childSchema, childNode.data)
   ) {
     return false;
   }

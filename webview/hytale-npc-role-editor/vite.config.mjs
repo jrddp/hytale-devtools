@@ -353,8 +353,13 @@ function buildNpcBehaviorGraphContexts() {
   };
 
   return {
+    Action: createContext("Action"),
+    ActionList: createContext("ActionList"),
+    BodyMotion: createContext("BodyMotion"),
+    HeadMotion: createContext("HeadMotion"),
     Instructions: createContext("Instructions"),
     Instruction: createContext("Instruction"),
+    Path: createContext("Path"),
     Sensor: createContext("Sensor"),
     StateTransitions: createContext("StateTransitions"),
   };

@@ -46,6 +46,20 @@ export function allowsComponentReferences(
   return childSchema?.allowComponentReferences === true;
 }
 
+export function allowsComponentReferenceTemplate(
+  childSchema:
+    | Pick<NodeChildSchema, "allowComponentReferences" | "componentReferenceSlotOccupancy">
+    | undefined,
+  template: Pick<NodeTemplate, "slotOccupancy"> | undefined,
+): boolean {
+  if (!allowsComponentReferences(childSchema)) {
+    return false;
+  }
+
+  const requiredOccupancy = childSchema?.componentReferenceSlotOccupancy;
+  return !requiredOccupancy || getComponentReferenceSlotOccupancy(template) === requiredOccupancy;
+}
+
 export function createComponentReferenceModifyFieldSchemaKey(key: string): string {
   return `${COMPONENT_REFERENCE_MODIFY_FIELD_PREFIX}${key}`;
 }

@@ -17,7 +17,11 @@
   import { parseAssetDocumentToGraphDocument } from "@shared/node-editor/graphDocument";
   import { adaptGraphHostValueToDocumentRoot } from "@shared/npc-role-editor/graphRootAdapter";
   import { parseNpcRoleDocumentOrThrow } from "@shared/npc-role-editor/graphDocumentRuntime";
-  import { resolveNpcGraphTarget } from "@shared/npc-role-editor/graphTargets";
+  import {
+    resolveNpcComponentContentGraphRoot,
+    resolveNpcGraphTarget,
+    type NpcGraphTargetWorkspaceRoot,
+  } from "@shared/npc-role-editor/graphTargets";
   import type { NpcRoleJson } from "@shared/npc-role-editor/documentTypes";
   import type { NodeEditorGraphNode } from "@shared/node-editor/graphTypes";
   import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
@@ -63,9 +67,7 @@
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
   let lastRequestedAppearanceAnimationRequest = $state<AppearancePreviewAnimationRequestState | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
-    Partial<
-      Record<"Instructions" | "Instruction" | "Sensor" | "StateTransitions", NodeEditorWorkspaceContext>
-    >
+    Partial<Record<NpcGraphTargetWorkspaceRoot, NodeEditorWorkspaceContext>>
   >({});
   let previousActiveGraphSectionId: NpcSectionId | null = null;
 
@@ -512,11 +514,12 @@
       case "Instructions":
       case "InteractionInstruction":
       case "DeathInstruction":
+      case "StateTransitions":
         return Object.prototype.hasOwnProperty.call(document, fieldPath);
       case "Content":
         return (
           document.Type === "Component" &&
-          (document.Class === "Instruction" || document.Class === "Sensor") &&
+          resolveNpcComponentContentGraphRoot(document.Class) !== null &&
           Object.prototype.hasOwnProperty.call(document, "Content")
         );
       default:
@@ -527,18 +530,7 @@
   function getGraphWorkspaceContextByRootType(
     rootType: string,
   ): NodeEditorWorkspaceContext | undefined {
-    switch (rootType) {
-      case "Instructions":
-        return npcBehaviorGraphContexts.Instructions;
-      case "Instruction":
-        return npcBehaviorGraphContexts.Instruction;
-      case "Sensor":
-        return npcBehaviorGraphContexts.Sensor;
-      case "StateTransitions":
-        return npcBehaviorGraphContexts.StateTransitions;
-      default:
-        return undefined;
-    }
+    return npcBehaviorGraphContexts[rootType as NpcGraphTargetWorkspaceRoot];
   }
 
   function getOutlineSectionElement(sectionId: string) {

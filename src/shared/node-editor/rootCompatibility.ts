@@ -62,32 +62,69 @@ export function getRootTemplate(
   );
 }
 
+function getTemplateSelfConnectionType(template: NodeTemplate): string | undefined {
+  return (
+    template.inputPins.find(pin => pin.localId === "Input" || pin.schemaKey === INPUT_HANDLE_ID)?.connectionType ??
+    template.outputPins.find(
+      pin =>
+        pin.multiplicity !== "multiple" &&
+        (pin.localId === SELF_OUTPUT_PIN_LOCAL_ID || pin.schemaKey === SELF_OUTPUT_PIN_LOCAL_ID),
+    )?.connectionType
+  );
+}
+
+export function getRootSelfConnectionTypes(
+  workspaceContext: RootCompatibilityWorkspaceContext,
+): string[] {
+  const rootTemplates = getValidTemplatesForTemplateOrVariantId(
+    workspaceContext,
+    workspaceContext.rootTemplateOrVariantId,
+  );
+
+  return Array.from(
+    new Set(
+      rootTemplates
+        .map(getTemplateSelfConnectionType)
+        .filter((connectionType): connectionType is string => connectionType !== undefined),
+    ),
+  );
+}
+
 export function getRootSelfConnectionType(
   workspaceContext: RootCompatibilityWorkspaceContext,
 ): string | undefined {
-  const rootTemplate = getRootTemplate(workspaceContext);
-  if (!rootTemplate) {
-    return undefined;
-  }
+  return getRootSelfConnectionTypes(workspaceContext)[0];
+}
 
-  return (
-    rootTemplate.inputPins.find(pin => pin.localId === "Input" || pin.schemaKey === INPUT_HANDLE_ID)?.connectionType ??
-    rootTemplate.outputPins.find(
-      pin => pin.localId === SELF_OUTPUT_PIN_LOCAL_ID || pin.schemaKey === SELF_OUTPUT_PIN_LOCAL_ID,
-    )?.connectionType
+export function getCreatableRootTemplates(
+  workspaceContext: RootCompatibilityWorkspaceContext,
+): NodeTemplate[] {
+  const rootTemplates = getValidTemplatesForTemplateOrVariantId(
+    workspaceContext,
+    workspaceContext.rootTemplateOrVariantId,
   );
+  const rootTemplateIds = new Set(rootTemplates.map(template => template.templateId));
+  const compatibleReferences = Object.values(workspaceContext.nodeTemplatesById).filter(
+    template =>
+      !rootTemplateIds.has(template.templateId) &&
+      isRootCompatibleComponentReferenceTemplate(template, workspaceContext),
+  );
+
+  return [...rootTemplates, ...compatibleReferences];
 }
 
 export function findCompatibleRootComponentReferenceTemplate(
   workspaceContext: RootCompatibilityWorkspaceContext,
 ): NodeTemplate | undefined {
-  const rootConnectionType = getRootSelfConnectionType(workspaceContext);
-  if (!rootConnectionType) {
+  const rootConnectionTypes = getRootSelfConnectionTypes(workspaceContext);
+  if (rootConnectionTypes.length === 0) {
     return undefined;
   }
 
   const compatibleTemplates = Object.values(workspaceContext.nodeTemplatesById).filter(template =>
-    isRootCompatibleComponentReferenceTemplate(template, workspaceContext, rootConnectionType),
+    rootConnectionTypes.some(rootConnectionType =>
+      isRootCompatibleComponentReferenceTemplate(template, workspaceContext, rootConnectionType),
+    ),
   );
 
   return compatibleTemplates.length === 1 ? compatibleTemplates[0] : undefined;
@@ -96,10 +133,12 @@ export function findCompatibleRootComponentReferenceTemplate(
 export function isRootCompatibleComponentReferenceTemplate(
   template: NodeTemplate,
   workspaceContext: RootCompatibilityWorkspaceContext,
-  rootConnectionType: string | undefined = getRootSelfConnectionType(workspaceContext),
+  rootConnectionType?: string,
 ): boolean {
   if (!rootConnectionType) {
-    return false;
+    return getRootSelfConnectionTypes(workspaceContext).some(connectionType =>
+      isRootCompatibleComponentReferenceTemplate(template, workspaceContext, connectionType),
+    );
   }
 
   if (!isComponentReferenceNodeTemplate(template)) {

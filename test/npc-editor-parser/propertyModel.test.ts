@@ -3,7 +3,6 @@ import {
   addRichObjectArrayItem,
   applyNpcPropertySectionDerivedState,
   buildNpcPropertyState,
-  setRichObjectVariantType,
   serializeNpcPropertyState,
 } from "../../webview/hytale-npc-role-editor/src/propertyModel";
 import { buildParameterUsageIndex } from "../../webview/hytale-npc-role-editor/src/compute/parameterUsageIndex";
@@ -617,116 +616,6 @@ describe("npc property model symbol enrichment", () => {
     });
   });
 
-  test("assigns component-local autocomplete to component action state fields", () => {
-    const document = createComponentDocument({
-      componentClass: "Action",
-    });
-    document.Content = {
-      Type: "State",
-      State: ".Sleep",
-    };
-
-    const descriptors: NpcDescriptorDocument = [
-      {
-        Name: "State",
-        Category: "Action",
-        Attributes: [
-          {
-            Name: "State",
-            Type: "String",
-            Required: "REQUIRED",
-          },
-        ],
-      },
-    ];
-
-    const state = buildNpcPropertyState({
-      document,
-      topLevelKeyOrder: Object.keys(document),
-      descriptors,
-    });
-    const contentField = state.sections.find(section => section.id === "content")?.fields[0];
-    const stateField = contentField?.childFields?.find(field => field.key === "State");
-
-    expect(stateField).toMatchObject({
-      fieldPath: "Content.State",
-      stateAutocompleteKind: "component-local",
-    });
-  });
-
-  test("assigns component-parent-alias autocomplete to parent state action fields", () => {
-    const document = createComponentDocument({
-      componentClass: "Action",
-    });
-    document.Content = {
-      Type: "ParentState",
-      State: "Idle",
-    };
-
-    const descriptors: NpcDescriptorDocument = [
-      {
-        Name: "ParentState",
-        Category: "Action",
-        Attributes: [
-          {
-            Name: "State",
-            Type: "String",
-            Required: "REQUIRED",
-          },
-        ],
-      },
-    ];
-
-    const state = buildNpcPropertyState({
-      document,
-      topLevelKeyOrder: Object.keys(document),
-      descriptors,
-    });
-    const contentField = state.sections.find(section => section.id === "content")?.fields[0];
-    const stateField = contentField?.childFields?.find(field => field.key === "State");
-
-    expect(stateField).toMatchObject({
-      fieldPath: "Content.State",
-      stateAutocompleteKind: "component-parent-alias",
-    });
-  });
-
-  test("assigns appearance-model animation autocomplete to play animation action fields", () => {
-    const document = createComponentDocument({
-      componentClass: "Action",
-    });
-    document.Content = {
-      Type: "PlayAnimation",
-      Animation: "Idle",
-    };
-
-    const descriptors: NpcDescriptorDocument = [
-      {
-        Name: "PlayAnimation",
-        Category: "Action",
-        Attributes: [
-          {
-            Name: "Animation",
-            Type: "String",
-          },
-        ],
-      },
-    ];
-
-    const state = buildNpcPropertyState({
-      document,
-      topLevelKeyOrder: Object.keys(document),
-      descriptors,
-    });
-    const contentField = state.sections.find(section => section.id === "content")?.fields[0];
-    const animationField = contentField?.childFields?.find(field => field.key === "Animation");
-
-    expect(animationField).toMatchObject({
-      fieldPath: "Content.Animation",
-      animationAutocompleteKind: "appearance-model",
-    });
-  });
-
   test("infers compute-backed role attribute field types from array descriptors and matching parameters", () => {
     const document = createGenericDocument({
       roleAttributes: {
@@ -1228,7 +1117,7 @@ describe("npc property model symbol enrichment", () => {
     });
   });
 
-  test("builds rich object content fields for supported component classes", () => {
+  test("builds graph content fields for behavior component classes", () => {
     const actionDocument: NpcRoleJson = {
       Type: "Component",
       Class: "Action",
@@ -1286,15 +1175,9 @@ describe("npc property model symbol enrichment", () => {
     });
     const actionField = actionState.sections.find(section => section.id === "content")?.fields[0];
     expect(actionField).toMatchObject({
-      kind: "richObject",
-      shapeKey: "Action",
-      structureKind: "object",
-      variantType: "Timeout",
-    });
-    expect(actionField?.childFields?.find(field => field.key === "Action")).toMatchObject({
-      kind: "richObject",
-      label: "Inline Action",
-      shapeKey: "Action",
+      kind: "graph",
+      rootType: "Action",
+      fieldPath: "Content",
     });
     expect(serializeNpcPropertyState(actionState)).toEqual(actionDocument);
 
@@ -1304,10 +1187,9 @@ describe("npc property model symbol enrichment", () => {
       descriptors: componentContentDescriptors,
     });
     expect(actionListState.sections.find(section => section.id === "content")?.fields[0]).toMatchObject({
-      kind: "richObject",
-      shapeKey: "ActionList",
-      structureKind: "array",
-      itemShapeKey: "Action",
+      kind: "graph",
+      rootType: "ActionList",
+      fieldPath: "Content",
     });
     expect(serializeNpcPropertyState(actionListState)).toEqual(actionListDocument);
 
@@ -1317,10 +1199,9 @@ describe("npc property model symbol enrichment", () => {
       descriptors: componentContentDescriptors,
     });
     expect(bodyMotionState.sections.find(section => section.id === "content")?.fields[0]).toMatchObject({
-      kind: "richObject",
-      shapeKey: "BodyMotion",
-      structureKind: "object",
-      variantType: "Wander",
+      kind: "graph",
+      rootType: "BodyMotion",
+      fieldPath: "Content",
     });
     expect(serializeNpcPropertyState(bodyMotionState)).toEqual(bodyMotionDocument);
 
@@ -1331,26 +1212,14 @@ describe("npc property model symbol enrichment", () => {
     });
     const pathField = pathState.sections.find(section => section.id === "content")?.fields[0];
     expect(pathField).toMatchObject({
-      kind: "richObject",
-      shapeKey: "Path",
-      structureKind: "object",
-    });
-    expect(pathField?.childFields?.find(field => field.key === "Waypoints")).toMatchObject({
-      kind: "richObject",
-      structureKind: "array",
-      itemShapeKey: "RelativeWaypointDefinition",
-    });
-    expect(pathField?.childFields?.find(field => field.key === "Scale")).toMatchObject({
-      kind: "number",
-      value: {
-        kind: "compute",
-        expression: "Scale",
-      },
+      kind: "graph",
+      rootType: "Path",
+      fieldPath: "Content",
     });
     expect(serializeNpcPropertyState(pathState)).toEqual(pathDocument);
   });
 
-  test("falls back to raw json content for unknown component classes and wrapper content", () => {
+  test("falls back to raw json content for unknown, role, and unsupported wrapper content", () => {
     const unknownDocument: NpcRoleJson = {
       Type: "Component",
       Class: "UnknownThing",
@@ -1358,9 +1227,16 @@ describe("npc property model symbol enrichment", () => {
         Anything: true,
       },
     };
+    const roleDocument: NpcRoleJson = {
+      Type: "Component",
+      Class: "Role",
+      Content: {
+        Type: "Generic",
+      },
+    };
     const wrappedDocument: NpcRoleJson = {
       Type: "Component",
-      Class: "Action",
+      Class: "ActionList",
       Content: {
         Reference: "Component_ActionList_Sleep",
         Modify: {
@@ -1374,6 +1250,11 @@ describe("npc property model symbol enrichment", () => {
       topLevelKeyOrder: Object.keys(unknownDocument),
       descriptors: componentContentDescriptors,
     });
+    const roleState = buildNpcPropertyState({
+      document: roleDocument,
+      topLevelKeyOrder: Object.keys(roleDocument),
+      descriptors: componentContentDescriptors,
+    });
     const wrappedState = buildNpcPropertyState({
       document: wrappedDocument,
       topLevelKeyOrder: Object.keys(wrappedDocument),
@@ -1381,6 +1262,7 @@ describe("npc property model symbol enrichment", () => {
     });
 
     expect(unknownState.sections.find(section => section.id === "content")?.fields[0]?.kind).toBe("rawJson");
+    expect(roleState.sections.find(section => section.id === "content")?.fields[0]?.kind).toBe("rawJson");
     expect(wrappedState.sections.find(section => section.id === "content")?.fields[0]?.kind).toBe("rawJson");
     expect(serializeNpcPropertyState(wrappedState)).toEqual(wrappedDocument);
   });
@@ -1400,61 +1282,6 @@ describe("npc property model symbol enrichment", () => {
     });
 
     expect(state.sections.some(section => section.id === "roleAttributes")).toBe(false);
-  });
-
-  test("seeds structured defaults for sequence and random action type changes", () => {
-    const document: NpcRoleJson = {
-      Type: "Component",
-      Class: "Action",
-    };
-
-    const state = buildNpcPropertyState({
-      document,
-      topLevelKeyOrder: Object.keys(document),
-      descriptors: componentContentDescriptors,
-    });
-    const field = state.sections.find(section => section.id === "content")?.fields[0];
-    expect(field).toBeDefined();
-
-    expect(setRichObjectVariantType(field!, "Sequence", componentContentDescriptors)).toBe(true);
-    expect(field).toMatchObject({
-      variantType: "Sequence",
-    });
-    expect(field?.childFields?.find(childField => childField.key === "Actions")).toMatchObject({
-      kind: "richObject",
-      structureKind: "array",
-      isSet: true,
-    });
-
-    expect(setRichObjectVariantType(field!, "Random", componentContentDescriptors)).toBe(true);
-    const actionsField = field?.childFields?.find(childField => childField.key === "Actions");
-    expect(actionsField).toMatchObject({
-      kind: "richObject",
-      structureKind: "array",
-      itemShapeKey: "WeightedAction",
-    });
-    const weightedActionItem = actionsField?.childFields?.[0];
-    expect(weightedActionItem).toBeDefined();
-    expect(weightedActionItem?.childFields?.find(childField => childField.key === "Weight")).toMatchObject({
-      value: {
-        kind: "literal",
-        value: 1,
-      },
-    });
-    const inlineActionField = weightedActionItem?.childFields?.find(
-      childField => childField.key === "Action",
-    );
-    expect(inlineActionField).toMatchObject({
-      kind: "richObject",
-      variantType: "State",
-      isSet: true,
-    });
-    expect(inlineActionField?.childFields?.find(childField => childField.key === "State")).toMatchObject({
-      value: {
-        kind: "literal",
-        value: "Idle",
-      },
-    });
   });
 
   test("builds generic structured top-level sections even when unset", () => {

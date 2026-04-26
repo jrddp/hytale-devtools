@@ -65,8 +65,23 @@ describe("NPC node workspace generator builders", () => {
       Instructions: {
         RootNodeType: "Structural.InstructionListRoot",
       },
+      Action: {
+        RootNodeType: "ActionContentVariants",
+      },
+      ActionList: {
+        RootNodeType: "Structural.ActionListRoot",
+      },
+      BodyMotion: {
+        RootNodeType: "BodyMotionVariants",
+      },
+      HeadMotion: {
+        RootNodeType: "HeadMotionVariants",
+      },
       Instruction: {
         RootNodeType: "InstructionVariants",
+      },
+      Path: {
+        RootNodeType: "Path.Path",
       },
       Sensor: {
         RootNodeType: "SensorVariants",
@@ -80,8 +95,16 @@ describe("NPC node workspace generator builders", () => {
         Random: "Structural.RandomInstructionNode",
       },
     });
+    expect(artifacts.workspaceDefinition.Variants?.ActionContentVariants?.Variants).toMatchObject({
+      ActionReference: "Action.ActionReference",
+      Nothing: "Action.Nothing",
+    });
+    expect(
+      artifacts.workspaceDefinition.Variants?.ActionContentVariants?.Variants,
+    ).not.toHaveProperty("ActionListReference");
 
     const templateIds = new Set(artifacts.templateOutputs.map(output => output.template.Id));
+    expect(templateIds.has("Structural.ActionListRoot")).toBe(true);
     expect(templateIds.has("Structural.InstructionReference")).toBe(true);
     expect(templateIds.has("Structural.RandomInstructionNode")).toBe(true);
     expect(templateIds.has("Structural.WeightedInstruction")).toBe(true);
@@ -107,6 +130,18 @@ describe("NPC node workspace generator builders", () => {
       artifacts.templateOutputs.find(output => output.template.Id === "Structural.WeightedInstruction")
         ?.template.Title,
     ).toBe("Weighted Instruction");
+
+    expect(
+      artifacts.templateOutputs.find(output => output.template.Id === "Structural.ActionListRoot")
+        ?.template.Schema,
+    ).toMatchObject({
+      Actions: {
+        Node: "ActionContentVariants",
+        SerializationType: "root",
+        AllowComponentReferences: true,
+        ComponentReferenceSlotOccupancy: "normal-item",
+      },
+    });
   });
 
   test("buildContentField annotates state autocomplete metadata for NPC node fields", () => {

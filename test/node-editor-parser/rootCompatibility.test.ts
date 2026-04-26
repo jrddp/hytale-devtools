@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import {
   canNodeBeSetAsWorkspaceRoot,
+  getCreatableRootTemplates,
   getValidTemplatesForTemplateOrVariantId,
   isTemplateCompatibleWithWorkspaceRoot,
 } from "@shared/node-editor/rootCompatibility";
@@ -67,6 +68,39 @@ describe("node editor root compatibility", () => {
     expect(isTemplateCompatibleWithWorkspaceRoot(other, context)).toBe(false);
   });
 
+  test("accepts compatible root references for variant roots without a default template", () => {
+    const action = nodeTemplate("Action.Nothing", {
+      inputPins: [inputPin("input", "single", { connectionType: "ActionListItem" })],
+    });
+    const otherAction = nodeTemplate("Action.Timeout", {
+      inputPins: [inputPin("input", "single", { connectionType: "ActionListItem" })],
+    });
+    const actionReference = nodeTemplate("Action.Reference", {
+      isComponentReference: true,
+      inputPins: [inputPin("input", "single", { connectionType: "ActionListItem" })],
+    });
+    const incompatibleReference = nodeTemplate("Sensor.Reference", {
+      isComponentReference: true,
+      outputPins: [outputPin("output", "single", { connectionType: "Sensor", localId: "Output" })],
+    });
+    const context = workspaceContext({
+      rootTemplateOrVariantId: "ActionVariants",
+      templates: [action, otherAction, actionReference, incompatibleReference],
+      variantKindsById: {
+        ActionVariants: {
+          VariantFieldName: "Type",
+          Variants: {
+            Nothing: "Action.Nothing",
+            Timeout: "Action.Timeout",
+          },
+        },
+      },
+    });
+
+    expect(isTemplateCompatibleWithWorkspaceRoot(actionReference, context)).toBe(true);
+    expect(isTemplateCompatibleWithWorkspaceRoot(incompatibleReference, context)).toBe(false);
+  });
+
   test("accepts compatible normal-slot component reference templates", () => {
     const root = nodeTemplate("Instruction", {
       inputPins: [inputPin("input", "single", { connectionType: "Instruction" })],
@@ -92,6 +126,44 @@ describe("node editor root compatibility", () => {
     expect(isTemplateCompatibleWithWorkspaceRoot(reference, context)).toBe(true);
     expect(isTemplateCompatibleWithWorkspaceRoot(wholeSlotReference, context)).toBe(false);
     expect(isTemplateCompatibleWithWorkspaceRoot(incompatibleReference, context)).toBe(false);
+  });
+
+  test("includes compatible component references when creating a missing root", () => {
+    const root = nodeTemplate("Instruction", {
+      inputPins: [inputPin("input", "single", { connectionType: "Instruction" })],
+    });
+    const reference = nodeTemplate("InstructionReference", {
+      isComponentReference: true,
+      inputPins: [inputPin("input", "single", { connectionType: "Instruction" })],
+    });
+    const context = workspaceContext({
+      rootTemplateOrVariantId: "Instruction",
+      templates: [root, reference],
+    });
+
+    expect(getCreatableRootTemplates(context).map(template => template.templateId)).toEqual([
+      "Instruction",
+      "InstructionReference",
+    ]);
+  });
+
+  test("does not treat multi-output list wrappers as component-reference root slots", () => {
+    const actionListRoot = nodeTemplate("ActionListRoot", {
+      outputPins: [outputPin("actions", "multiple", { connectionType: "ActionListItem" })],
+    });
+    const actionReference = nodeTemplate("ActionReference", {
+      isComponentReference: true,
+      inputPins: [inputPin("input", "single", { connectionType: "ActionListItem" })],
+    });
+    const context = workspaceContext({
+      rootTemplateOrVariantId: "ActionListRoot",
+      templates: [actionListRoot, actionReference],
+    });
+
+    expect(getCreatableRootTemplates(context).map(template => template.templateId)).toEqual([
+      "ActionListRoot",
+    ]);
+    expect(isTemplateCompatibleWithWorkspaceRoot(actionReference, context)).toBe(false);
   });
 
   test("accepts component references compatible through the root output pin", () => {

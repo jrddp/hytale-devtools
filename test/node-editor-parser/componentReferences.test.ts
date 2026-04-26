@@ -187,6 +187,10 @@ describe("NPC behavior component references", () => {
     expect(workspace.nodeTemplatesById["Action.MakePath"].childSchemas.Path).toMatchObject({
       allowComponentReferences: true,
     });
+    expect(workspace.nodeTemplatesById["Structural.ActionListRoot"].childSchemas.Actions).toMatchObject({
+      allowComponentReferences: true,
+      componentReferenceSlotOccupancy: "normal-item",
+    });
 
     expect(workspace.connectionTypesById.Action.extends).toContain("ActionListItem");
     expect(workspace.connectionTypesById.ActionListReference.extends).toContain("ActionListItem");

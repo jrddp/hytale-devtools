@@ -70,7 +70,7 @@
 
   let availableTemplates = $derived.by(() => {
     if (isRootNodeMissing) {
-      return workspace.getValidTemplates(workspace.context.rootTemplateOrVariantId);
+      return workspace.getCreatableRootTemplates();
     }
     if (connectionFilter !== undefined) {
       const templates = [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];

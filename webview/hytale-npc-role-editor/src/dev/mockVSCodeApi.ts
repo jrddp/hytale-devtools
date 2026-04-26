@@ -4,6 +4,7 @@ import type { NodeEditorControlScheme, NodeEditorPlatform } from "@shared/node-e
 import type { NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
 import type { NpcRoleEditorExtensionToWebviewMessage } from "@shared/npc-role-editor/messageTypes";
 import type { NpcRoleEditorApplyMessage } from "@shared/npc-role-editor/messageTypes";
+import type { NpcGraphTargetWorkspaceRoot } from "@shared/npc-role-editor/graphTargets";
 import type { VSCodeApi } from "src/common";
 
 const mockedThemeVars: Record<string, string> = {
@@ -38,7 +39,7 @@ type DevBootstrapResponse = {
   nodeEditorPlatform: NodeEditorPlatform;
   nodeEditorClipboard: NodeEditorClipboardSelection;
   npcBehaviorGraphContexts: Partial<
-    Record<"Instructions" | "Instruction" | "Sensor" | "StateTransitions", NodeEditorWorkspaceContext>
+    Record<NpcGraphTargetWorkspaceRoot, NodeEditorWorkspaceContext>
   >;
   documentPath: string;
   text: string;

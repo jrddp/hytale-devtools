@@ -1,0 +1,24 @@
+{
+  "Id": "Structural.ActionListRoot",
+  "Title": "Action List",
+  "Color": "#2D3746",
+  "Description": "Root wrapper for a list of NPC actions.",
+  "Outputs": [
+    {
+      "Id": "ActionsPin",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Actions",
+      "Multiple": true
+    }
+  ],
+  "Schema": {
+    "Actions": {
+      "Pin": "ActionsPin",
+      "Node": "ActionContentVariants",
+      "SerializationType": "root",
+      "AllowComponentReferences": true,
+      "ComponentReferenceSlotOccupancy": "normal-item"
+    }
+  }
+}

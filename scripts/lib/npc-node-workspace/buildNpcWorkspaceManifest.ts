@@ -65,6 +65,7 @@ export function buildNpcWorkspaceArtifacts(
       instructionDescriptors,
       outputAuthoredParentConnectionTypesByChildId,
     ),
+    buildActionListRootTemplate(),
     buildInstructionListRootTemplate(),
     ...buildStateTransitionTemplates(),
   ].sort(
@@ -106,9 +107,29 @@ function buildWorkspaceDefinition(
         RootNodeType: "Structural.InstructionListRoot",
         MenuName: "Instructions",
       },
+      Action: {
+        RootNodeType: "ActionContentVariants",
+        MenuName: "Action",
+      },
+      ActionList: {
+        RootNodeType: "Structural.ActionListRoot",
+        MenuName: "Action List",
+      },
+      BodyMotion: {
+        RootNodeType: "BodyMotionVariants",
+        MenuName: "Body Motion",
+      },
+      HeadMotion: {
+        RootNodeType: "HeadMotionVariants",
+        MenuName: "Head Motion",
+      },
       Instruction: {
         RootNodeType: "InstructionVariants",
         MenuName: "Instruction",
+      },
+      Path: {
+        RootNodeType: "Path.Path",
+        MenuName: "Path",
       },
       Sensor: {
         RootNodeType: "SensorVariants",
@@ -134,6 +155,9 @@ function buildWorkspaceDefinition(
     Variants: {
       SensorVariants: buildVariantKindDefinition("Sensor", templateOutputs),
       ActionVariants: buildVariantKindDefinition("Action", templateOutputs),
+      ActionContentVariants: buildVariantKindDefinition("Action", templateOutputs, {
+        excludeTemplateIds: new Set(["Action.ActionListReference"]),
+      }),
       BodyMotionVariants: buildVariantKindDefinition("BodyMotion", templateOutputs),
       HeadMotionVariants: buildVariantKindDefinition("HeadMotion", templateOutputs),
       FilterVariants: buildVariantKindDefinition("IEntityFilter", templateOutputs),
@@ -180,11 +204,15 @@ function getNodeCategoryName(templateId: string, categorySegment: string): strin
 function buildVariantKindDefinition(
   category: VariantBackedDescriptorCategory,
   templateOutputs: TemplateOutput[],
+  options?: {
+    excludeTemplateIds?: ReadonlySet<string>;
+  },
 ) {
   const prefix = `${category}.`;
   const variants = Object.fromEntries(
     templateOutputs
       .filter(output => output.template.Id.startsWith(prefix))
+      .filter(output => !options?.excludeTemplateIds?.has(output.template.Id))
       .map(output => [output.template.Id.slice(prefix.length), output.template.Id])
       .sort(([left], [right]) => left.localeCompare(right)),
   );
@@ -550,6 +578,37 @@ function getInstructionInputPriority(pin: NodePinDefinition): { priority: number
   }
 
   return { priority: 2 };
+}
+
+function buildActionListRootTemplate(): TemplateOutput {
+  return {
+    directoryName: CATEGORY_DIRECTORY_NAMES.Structural,
+    fileName: "ActionListRoot.json",
+    template: {
+      Id: "Structural.ActionListRoot",
+      Title: "Action List",
+      Color: CATEGORY_COLORS.Structural,
+      Description: "Root wrapper for a list of NPC actions.",
+      Outputs: [
+        {
+          Id: "ActionsPin",
+          Type: "ActionListItem",
+          Color: CATEGORY_COLORS.Action,
+          Label: "Actions",
+          Multiple: true,
+        },
+      ],
+      Schema: {
+        Actions: {
+          Pin: "ActionsPin",
+          Node: "ActionContentVariants",
+          SerializationType: "root",
+          AllowComponentReferences: true,
+          ComponentReferenceSlotOccupancy: "normal-item",
+        },
+      },
+    },
+  };
 }
 
 function buildInstructionListRootTemplate(): TemplateOutput {

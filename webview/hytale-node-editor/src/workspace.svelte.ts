@@ -7,6 +7,7 @@ import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { applyNodeEditorGraphEdit } from "@shared/node-editor/graphEditUtils";
 import {
   canNodeBeSetAsWorkspaceRoot,
+  getCreatableRootTemplates,
   getValidTemplatesForTemplateOrVariantId,
 } from "@shared/node-editor/rootCompatibility";
 import {
@@ -352,6 +353,10 @@ export class NodeEditorSession {
 
   getValidTemplates(variantKindOrTemplateId: string | undefined): NodeTemplate[] {
     return getValidTemplatesForTemplateOrVariantId(this.context, variantKindOrTemplateId);
+  }
+
+  getCreatableRootTemplates(): NodeTemplate[] {
+    return getCreatableRootTemplates(this.context);
   }
 
   setRootNode(nodeId: string): boolean {

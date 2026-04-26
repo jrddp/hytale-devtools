@@ -12,6 +12,7 @@ import type {
   NodeEditorPlatform,
 } from "../shared/node-editor/messageTypes";
 import type { NodeEditorClipboardSelection } from "../shared/node-editor/clipboardTypes";
+import { NPC_BEHAVIOR_GRAPH_WORKSPACE_ROOTS } from "../shared/npc-role-editor/graphTargets";
 import { resolveDataRootDirFromContext, resolveDefaultSchemaDataRoot } from "../utils/hytalePaths";
 
 const NPC_DESCRIPTOR_FILE_NAME = "npc_descriptors.json";
@@ -36,18 +37,13 @@ export function buildNpcRoleEditorBootstrapMessage(
     nodeEditorControlScheme: readNodeEditorControlScheme(),
     nodeEditorPlatform: readNodeEditorPlatform(),
     nodeEditorClipboard: clipboard,
-    npcBehaviorGraphContexts: {
-      Instructions:
-        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "Instructions") ??
-        undefined,
-      Instruction:
-        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "Instruction") ??
-        undefined,
-      Sensor: workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "Sensor") ?? undefined,
-      StateTransitions:
-        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", "StateTransitions") ??
-        undefined,
-    },
+    npcBehaviorGraphContexts: Object.fromEntries(
+      NPC_BEHAVIOR_GRAPH_WORKSPACE_ROOTS.map(root => [
+        root,
+        workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", root) ??
+          undefined,
+      ]),
+    ),
   };
 }
 

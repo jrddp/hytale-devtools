@@ -132,31 +132,86 @@ describe("npc graph target resolution", () => {
     ]);
   });
 
-  test("resolves graph-backed component content roots", () => {
-    const instructionComponent: NpcRoleJson = {
+  test("resolves and patches graph-backed component content roots", () => {
+    const cases: Array<{
+      componentClass: string;
+      workspaceRoot: string;
+      initialContent: unknown;
+      nextContent: unknown;
+    }> = [
+      {
+        componentClass: "Action",
+        workspaceRoot: "Action",
+        initialContent: { Type: "Nothing" },
+        nextContent: { Type: "Timeout" },
+      },
+      {
+        componentClass: "ActionList",
+        workspaceRoot: "ActionList",
+        initialContent: [{ Type: "Nothing" }],
+        nextContent: [{ Type: "Timeout" }],
+      },
+      {
+        componentClass: "BodyMotion",
+        workspaceRoot: "BodyMotion",
+        initialContent: { Type: "Nothing" },
+        nextContent: { Type: "Sequence", Motions: [] },
+      },
+      {
+        componentClass: "HeadMotion",
+        workspaceRoot: "HeadMotion",
+        initialContent: { Type: "Nothing" },
+        nextContent: { Type: "Sequence", Motions: [] },
+      },
+      {
+        componentClass: "Instruction",
+        workspaceRoot: "Instruction",
+        initialContent: { Name: "Instruction Content" },
+        nextContent: { Name: "Updated Instruction" },
+      },
+      {
+        componentClass: "Path",
+        workspaceRoot: "Path",
+        initialContent: { Waypoints: [] },
+        nextContent: { Scale: { Compute: "Scale" }, Waypoints: [] },
+      },
+      {
+        componentClass: "Sensor",
+        workspaceRoot: "Sensor",
+        initialContent: { Type: "Any" },
+        nextContent: { Type: "Time" },
+      },
+    ];
+
+    for (const testCase of cases) {
+      const document: NpcRoleJson = {
+        Type: "Component",
+        Class: testCase.componentClass,
+        Content: testCase.initialContent,
+      };
+
+      expect(resolveNpcGraphTarget(document, "Content")).toMatchObject({
+        workspaceRoot: testCase.workspaceRoot,
+        value: testCase.initialContent,
+      });
+      expect(
+        patchNpcGraphTarget(document, "Content", {
+          value: testCase.nextContent,
+        }),
+      ).toBe(testCase.workspaceRoot);
+      expect(document.Content).toEqual(testCase.nextContent);
+    }
+  });
+
+  test("does not treat Role component content as an NPC behavior graph root", () => {
+    const roleComponent: NpcRoleJson = {
       Type: "Component",
-      Class: "Instruction",
-      Content: { Name: "Instruction Content" },
-    };
-    const sensorComponent: NpcRoleJson = {
-      Type: "Component",
-      Class: "Sensor",
-      Content: { Type: "Any" },
-    };
-    const actionComponent: NpcRoleJson = {
-      Type: "Component",
-      Class: "Action",
-      Content: { Type: "Nothing" },
+      Class: "Role",
+      Content: {
+        Type: "Generic",
+      },
     };
 
-    expect(resolveNpcGraphTarget(instructionComponent, "Content")).toMatchObject({
-      workspaceRoot: "Instruction",
-      value: { Name: "Instruction Content" },
-    });
-    expect(resolveNpcGraphTarget(sensorComponent, "Content")).toMatchObject({
-      workspaceRoot: "Sensor",
-      value: { Type: "Any" },
-    });
-    expect(resolveNpcGraphTarget(actionComponent, "Content")).toBeNull();
+    expect(resolveNpcGraphTarget(roleComponent, "Content")).toBeNull();
   });
 });

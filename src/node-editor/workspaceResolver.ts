@@ -16,6 +16,7 @@ import {
   type NodeField,
   type NodePin,
   type NodeSchemaSerializationType,
+  type NodeSlotOccupancy,
   type NodeTemplate,
 } from "../shared/node-editor/workspaceTypes";
 import type { Field, StringField } from "../shared/fieldTypes";
@@ -461,6 +462,7 @@ export class WorkspaceRuntime {
           targetTemplateOrVariantId: variantOrTemplateId,
           serializationType: this.parseSchemaSerializationType(entry),
           allowComponentReferences: this.parseAllowComponentReferences(entry),
+          componentReferenceSlotOccupancy: this.parseComponentReferenceSlotOccupancy(entry),
         };
       }
     }
@@ -534,6 +536,14 @@ export class WorkspaceRuntime {
     const allowComponentReferences =
       entry.AllowComponentReferences ?? entry.allowComponentReferences;
     return allowComponentReferences === true ? true : undefined;
+  }
+
+  private parseComponentReferenceSlotOccupancy(
+    entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
+  ): NodeSlotOccupancy | undefined {
+    const occupancy =
+      entry.ComponentReferenceSlotOccupancy ?? entry.componentReferenceSlotOccupancy;
+    return occupancy === "whole-slot" || occupancy === "normal-item" ? occupancy : undefined;
   }
 
   private removeVariantFieldCollision(

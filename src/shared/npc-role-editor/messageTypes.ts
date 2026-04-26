@@ -13,6 +13,7 @@ import type {
   AnimationPreviewState,
   BaseModelPreviewState,
 } from "../modelPreviewTypes";
+import type { NpcGraphTargetWorkspaceRoot } from "./graphTargets";
 
 export type NpcRoleEditorBootstrapMessage = {
   type: "bootstrap";
@@ -24,7 +25,7 @@ export type NpcRoleEditorBootstrapMessage = {
   nodeEditorPlatform: NodeEditorPlatform;
   nodeEditorClipboard: NodeEditorClipboardSelection;
   npcBehaviorGraphContexts: Partial<
-    Record<"Instructions" | "Instruction" | "Sensor" | "StateTransitions", NodeEditorWorkspaceContext>
+    Record<NpcGraphTargetWorkspaceRoot, NodeEditorWorkspaceContext>
   >;
 };
 

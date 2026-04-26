@@ -8,6 +8,7 @@ import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import { invertNodeEditorGraphEdit } from "../../src/shared/node-editor/graphEditUtils";
 import type { NodeEditorGraphEdit, NodeEditorGraphNode } from "../../src/shared/node-editor/graphTypes";
 import { parseNpcRoleDocumentOrThrow, resolveNpcGraphDocumentFromText } from "../../src/shared/npc-role-editor/graphDocumentRuntime";
+import type { NpcGraphTargetWorkspaceRoot } from "../../src/shared/npc-role-editor/graphTargets";
 import type { NpcRoleJson } from "../../src/shared/npc-role-editor/documentTypes";
 import { reconcileSessionWithGraphUpdate } from "../../webview/hytale-node-editor/src/node-editor/utils/documentUpdates";
 import { syncSessionFromGraphDocument } from "../../webview/hytale-node-editor/src/node-editor/utils/sessionSync";
@@ -31,7 +32,7 @@ function createWorkspaceRuntime(): WorkspaceRuntime {
   return new WorkspaceRuntime(workspacesRootPath, schemaRuntime, logger);
 }
 
-function getNpcBehaviorContext(rootId: "Instructions" | "Instruction" | "Sensor") {
+function getNpcBehaviorContext(rootId: NpcGraphTargetWorkspaceRoot) {
   const workspaceRuntime = createWorkspaceRuntime();
   const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", rootId);
   if (!context) {
@@ -174,6 +175,74 @@ function createSensorComponentDocument(): NpcRoleJson {
   };
 }
 
+function createActionComponentDocument(): NpcRoleJson {
+  return {
+    Type: "Component",
+    Class: "Action",
+    Content: {
+      $NodeId: "Action-11111111-1111-4111-8111-111111111111",
+      Type: "PlayAnimation",
+      Animation: "Idle",
+    },
+  };
+}
+
+function createActionListComponentDocument(): NpcRoleJson {
+  return {
+    Type: "Component",
+    Class: "ActionList",
+    Content: [
+      {
+        $NodeId: "Action-11111111-1111-4111-8111-111111111111",
+        Type: "PlayAnimation",
+        Animation: "Idle",
+      },
+    ],
+  };
+}
+
+function createBodyMotionComponentDocument(): NpcRoleJson {
+  return {
+    Type: "Component",
+    Class: "BodyMotion",
+    Content: {
+      $NodeId: "BodyMotion-11111111-1111-4111-8111-111111111111",
+      Type: "Wander",
+      RelativeSpeed: 1,
+    },
+  };
+}
+
+function createHeadMotionComponentDocument(): NpcRoleJson {
+  return {
+    Type: "Component",
+    Class: "HeadMotion",
+    Content: {
+      $NodeId: "HeadMotion-11111111-1111-4111-8111-111111111111",
+      Type: "Watch",
+      RelativeTurnSpeed: 1,
+    },
+  };
+}
+
+function createPathComponentDocument(): NpcRoleJson {
+  return {
+    Type: "Component",
+    Class: "Path",
+    Content: {
+      $NodeId: "Path-11111111-1111-4111-8111-111111111111",
+      Scale: 1,
+      Waypoints: [
+        {
+          $NodeId: "Waypoint-11111111-1111-4111-8111-111111111111",
+          Rotation: 0,
+          Distance: 4,
+        },
+      ],
+    },
+  };
+}
+
 function findGraphNodeByTemplateId(
   nodes: NodeEditorGraphNode[],
   templateId: string,
@@ -194,6 +263,28 @@ function createOffsetEdit(nodeId: string, afterValue: [number, number, number]):
         nodeId,
         schemaKey: "Offset",
         beforeValue: [0, -1, 0],
+        afterValue,
+        beforeIsImplicit: false,
+        afterIsImplicit: false,
+      },
+    ],
+  };
+}
+
+function createFieldValueEdit(
+  nodeId: string,
+  schemaKey: string,
+  beforeValue: unknown,
+  afterValue: unknown,
+): NodeEditorGraphEdit {
+  return {
+    kind: "node-properties-updated",
+    propertyChanges: [
+      {
+        type: "field-value",
+        nodeId,
+        schemaKey,
+        beforeValue,
         afterValue,
         beforeIsImplicit: false,
         afterIsImplicit: false,
@@ -453,5 +544,96 @@ describe("npc embedded graph round-trip", () => {
     expect(
       ((parsed.Content as Record<string, unknown>).Sensor as Record<string, unknown>).Offset,
     ).toEqual([0, -1, 0]);
+  });
+
+  test("applies graph edits for all behavior component content roots", () => {
+    const cases: Array<{
+      document: NpcRoleJson;
+      workspaceRoot: NpcGraphTargetWorkspaceRoot;
+      templateId: string;
+      schemaKey: string;
+      beforeValue: unknown;
+      afterValue: unknown;
+      getUpdatedValue: (document: NpcRoleJson) => unknown;
+    }> = [
+      {
+        document: createActionComponentDocument(),
+        workspaceRoot: "Action",
+        templateId: "Action.PlayAnimation",
+        schemaKey: "Animation",
+        beforeValue: "Idle",
+        afterValue: "Wave",
+        getUpdatedValue: document => (document.Content as Record<string, unknown>).Animation,
+      },
+      {
+        document: createActionListComponentDocument(),
+        workspaceRoot: "ActionList",
+        templateId: "Action.PlayAnimation",
+        schemaKey: "Animation",
+        beforeValue: "Idle",
+        afterValue: "Wave",
+        getUpdatedValue: document =>
+          ((document.Content as Record<string, unknown>[])[0] as Record<string, unknown>)
+            .Animation,
+      },
+      {
+        document: createBodyMotionComponentDocument(),
+        workspaceRoot: "BodyMotion",
+        templateId: "BodyMotion.Wander",
+        schemaKey: "RelativeSpeed",
+        beforeValue: 1,
+        afterValue: 2,
+        getUpdatedValue: document => (document.Content as Record<string, unknown>).RelativeSpeed,
+      },
+      {
+        document: createHeadMotionComponentDocument(),
+        workspaceRoot: "HeadMotion",
+        templateId: "HeadMotion.Watch",
+        schemaKey: "RelativeTurnSpeed",
+        beforeValue: 1,
+        afterValue: 2,
+        getUpdatedValue: document =>
+          (document.Content as Record<string, unknown>).RelativeTurnSpeed,
+      },
+      {
+        document: createPathComponentDocument(),
+        workspaceRoot: "Path",
+        templateId: "Path.Path",
+        schemaKey: "Scale",
+        beforeValue: 1,
+        afterValue: 3,
+        getUpdatedValue: document => (document.Content as Record<string, unknown>).Scale,
+      },
+    ];
+
+    for (const testCase of cases) {
+      const document = createNpcDocument(testCase.document);
+      const { workspaceRuntime, context } = getNpcBehaviorContext(testCase.workspaceRoot);
+      const initialGraphDocument = resolveNpcGraphDocumentFromText({
+        text: document.text,
+        fieldPath: "Content",
+        workspaceContext: context,
+      });
+      const targetNode = findGraphNodeByTemplateId(
+        initialGraphDocument.nodes,
+        testCase.templateId,
+      );
+      const edit = createFieldValueEdit(
+        targetNode.id,
+        testCase.schemaKey,
+        testCase.beforeValue,
+        testCase.afterValue,
+      );
+
+      applyNpcGraphEditToDocument(document, {
+        fieldPath: "Content",
+        edit,
+        resolveWorkspaceContext: workspaceRoot =>
+          workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", workspaceRoot),
+      });
+
+      const parsed = parseNpcRoleDocumentOrThrow(document.text).document;
+      expect(testCase.getUpdatedValue(parsed)).toEqual(testCase.afterValue);
+    }
   });
 });

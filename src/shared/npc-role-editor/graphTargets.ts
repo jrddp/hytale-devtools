@@ -1,7 +1,40 @@
 import type { GraphRootAdaptationResult } from "../node-editor/workspaceTypes";
-import type { NpcRoleJson } from "./documentTypes";
+import type { NpcComponentClass, NpcRoleJson } from "./documentTypes";
 
-export type NpcGraphTargetWorkspaceRoot = "Instructions" | "Instruction" | "Sensor" | "StateTransitions";
+export type NpcGraphTargetWorkspaceRoot =
+  | "Action"
+  | "ActionList"
+  | "BodyMotion"
+  | "HeadMotion"
+  | "Instruction"
+  | "Instructions"
+  | "Path"
+  | "Sensor"
+  | "StateTransitions";
+
+export const NPC_BEHAVIOR_GRAPH_WORKSPACE_ROOTS = [
+  "Action",
+  "ActionList",
+  "BodyMotion",
+  "HeadMotion",
+  "Instruction",
+  "Instructions",
+  "Path",
+  "Sensor",
+  "StateTransitions",
+] as const satisfies readonly NpcGraphTargetWorkspaceRoot[];
+
+const NPC_COMPONENT_CONTENT_GRAPH_ROOTS: Partial<
+  Record<NpcComponentClass, NpcGraphTargetWorkspaceRoot>
+> = {
+  Action: "Action",
+  ActionList: "ActionList",
+  BodyMotion: "BodyMotion",
+  HeadMotion: "HeadMotion",
+  Instruction: "Instruction",
+  Path: "Path",
+  Sensor: "Sensor",
+};
 
 export type ResolvedNpcGraphTarget = {
   fieldPath: string;
@@ -36,6 +69,26 @@ function patchRootMetadata(
       document[key] = structuredClone(value);
     }
   }
+}
+
+export function resolveNpcComponentContentGraphRoot(
+  componentClass: string | undefined,
+): NpcGraphTargetWorkspaceRoot | null {
+  if (!componentClass) {
+    return null;
+  }
+
+  return NPC_COMPONENT_CONTENT_GRAPH_ROOTS[componentClass as NpcComponentClass] ?? null;
+}
+
+export function getNpcGraphRootDefaultValue(
+  workspaceRoot: NpcGraphTargetWorkspaceRoot,
+): unknown {
+  return workspaceRoot === "ActionList" ||
+    workspaceRoot === "Instructions" ||
+    workspaceRoot === "StateTransitions"
+    ? []
+    : {};
 }
 
 export function resolveNpcGraphTarget(
@@ -73,14 +126,17 @@ export function resolveNpcGraphTarget(
         return null;
       }
 
-      if (document.Class !== "Instruction" && document.Class !== "Sensor") {
+      const workspaceRoot = resolveNpcComponentContentGraphRoot(document.Class);
+      if (!workspaceRoot) {
         return null;
       }
 
       return {
         fieldPath,
-        workspaceRoot: document.Class,
-        value: structuredClone(document.Content ?? {}),
+        workspaceRoot,
+        value: structuredClone(
+          document.Content ?? getNpcGraphRootDefaultValue(workspaceRoot),
+        ),
       };
     }
     default:
@@ -111,11 +167,14 @@ export function patchNpcGraphTarget(
       if (document.Type !== "Component") {
         return null;
       }
-      if (document.Class !== "Instruction" && document.Class !== "Sensor") {
+      const workspaceRoot = resolveNpcComponentContentGraphRoot(document.Class);
+      if (!workspaceRoot) {
         return null;
       }
-      document.Content = structuredClone(next.value ?? {});
-      return document.Class;
+      document.Content = structuredClone(
+        next.value ?? getNpcGraphRootDefaultValue(workspaceRoot),
+      );
+      return workspaceRoot;
     default:
       return null;
   }

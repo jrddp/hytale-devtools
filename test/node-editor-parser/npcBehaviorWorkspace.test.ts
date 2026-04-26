@@ -6,7 +6,9 @@ import { describe, expect, test } from "vitest";
 import { WorkspaceRuntime } from "../../src/node-editor/workspaceResolver";
 import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
+import type { NpcGraphTargetWorkspaceRoot } from "../../src/shared/npc-role-editor/graphTargets";
 import type { NodeEditorWorkspaceContext } from "../../src/shared/node-editor/workspaceTypes";
+import { getCreatableRootTemplates } from "../../src/shared/node-editor/rootCompatibility";
 import {
   adaptGraphDocumentRootToHostValue,
   adaptGraphHostValueToDocumentRoot,
@@ -64,9 +66,7 @@ function mergeAttributes(descriptors: NpcDescriptorDocument): Array<{ Name: stri
   return Array.from(attributesByName.values());
 }
 
-function getNpcBehaviorContext(
-  rootId: "Instructions" | "Instruction" | "Sensor" | "StateTransitions",
-): NodeEditorWorkspaceContext {
+function getNpcBehaviorContext(rootId: NpcGraphTargetWorkspaceRoot): NodeEditorWorkspaceContext {
   const workspaceRuntime = createWorkspaceRuntime();
   const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", rootId);
   expect(context).toBeDefined();
@@ -99,15 +99,29 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace).toBeDefined();
 
     expect(Object.keys(workspace.roots).sort()).toEqual([
+      "Action",
+      "ActionList",
+      "BodyMotion",
+      "HeadMotion",
       "Instruction",
       "Instructions",
+      "Path",
       "Sensor",
       "StateTransitions",
     ]);
+    expect(workspace.roots.Action.RootNodeType).toBe("ActionContentVariants");
+    expect(workspace.roots.ActionList.RootNodeType).toBe("Structural.ActionListRoot");
+    expect(workspace.roots.BodyMotion.RootNodeType).toBe("BodyMotionVariants");
+    expect(workspace.roots.HeadMotion.RootNodeType).toBe("HeadMotionVariants");
     expect(workspace.roots.Instruction.RootNodeType).toBe("InstructionVariants");
     expect(workspace.roots.Instructions.RootNodeType).toBe("Structural.InstructionListRoot");
+    expect(workspace.roots.Path.RootNodeType).toBe("Path.Path");
     expect(workspace.roots.Sensor.RootNodeType).toBe("SensorVariants");
     expect(workspace.roots.StateTransitions.RootNodeType).toBe("Structural.StateTransitionListRoot");
+    expect(workspace.variantKindsById.ActionContentVariants.Variants.ActionReference).toBe(
+      "Action.ActionReference",
+    );
+    expect(workspace.variantKindsById.ActionContentVariants.Variants.ActionListReference).toBeUndefined();
     expect(workspace.variantKindsById.InstructionVariants).toEqual({
       VariantFieldName: "Type",
       DefaultTemplateId: "Structural.InstructionNode",
@@ -117,6 +131,29 @@ describe("NPC Behavior workspace generation", () => {
     });
 
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"]).toBeDefined();
+    expect(
+      getCreatableRootTemplates(getNpcBehaviorContext("Instruction")).map(
+        template => template.templateId,
+      ),
+    ).toEqual([
+      "Structural.InstructionNode",
+      "Structural.RandomInstructionNode",
+      "Structural.InstructionReference",
+    ]);
+    expect(
+      getCreatableRootTemplates(getNpcBehaviorContext("ActionList")).map(
+        template => template.templateId,
+      ),
+    ).toEqual(["Structural.ActionListRoot"]);
+    expect(workspace.nodeTemplatesById["Structural.ActionListRoot"]).toBeDefined();
+    expect(
+      workspace.nodeTemplatesById["Structural.ActionListRoot"].childSchemas.Actions,
+    ).toMatchObject({
+      targetTemplateOrVariantId: "ActionContentVariants",
+      serializationType: "root",
+      allowComponentReferences: true,
+      componentReferenceSlotOccupancy: "normal-item",
+    });
     expect(workspace.nodeTemplatesById["Structural.RandomInstructionNode"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Structural.WeightedInstruction"]).toBeDefined();
     expect(workspace.nodeTemplatesById["Structural.InstructionNode"].nodeColor).toBe(
@@ -820,6 +857,122 @@ describe("NPC Behavior workspace generation", () => {
     expect((serialized.ValueToParameterMappings as unknown[])).toHaveLength(1);
   });
 
+  test("round-trips component behavior content roots", () => {
+    expect(
+      expectSemanticRoundTrip(
+        {
+          $NodeId: "Action-1",
+          Type: "Timeout",
+          Delay: [1, 2],
+          Action: {
+            $NodeId: "Action-2",
+            Type: "Nothing",
+          },
+        },
+        getNpcBehaviorContext("Action"),
+      ),
+    ).toMatchObject({
+      Type: "Timeout",
+      Action: {
+        Type: "Nothing",
+      },
+    });
+
+    expect(
+      expectSemanticRoundTrip(
+        {
+          Actions: [
+            {
+              $NodeId: "Action-1",
+              Reference: "Component_Test_Action_Sequence",
+            },
+            {
+              $NodeId: "Action-2",
+              Type: "PlayAnimation",
+              Animation: "Wave",
+            },
+          ],
+        },
+        getNpcBehaviorContext("ActionList"),
+      ).Actions,
+    ).toHaveLength(2);
+
+    expect(
+      expectSemanticRoundTrip(
+        {
+          $NodeId: "BodyMotion-1",
+          Type: "Sequence",
+          Motions: [
+            {
+              $NodeId: "BodyMotion-2",
+              Type: "Nothing",
+            },
+          ],
+        },
+        getNpcBehaviorContext("BodyMotion"),
+      ),
+    ).toMatchObject({
+      Type: "Sequence",
+      Motions: [
+        {
+          Type: "Nothing",
+        },
+      ],
+    });
+
+    expect(
+      expectSemanticRoundTrip(
+        {
+          $NodeId: "HeadMotion-1",
+          Type: "Sequence",
+          Motions: [
+            {
+              $NodeId: "HeadMotion-2",
+              Type: "Nothing",
+            },
+          ],
+        },
+        getNpcBehaviorContext("HeadMotion"),
+      ),
+    ).toMatchObject({
+      Type: "Sequence",
+      Motions: [
+        {
+          Type: "Nothing",
+        },
+      ],
+    });
+
+    expect(
+      expectSemanticRoundTrip(
+        {
+          $NodeId: "Path-1",
+          Scale: {
+            Compute: "Scale",
+          },
+          Waypoints: [
+            {
+              $NodeId: "Waypoint-1",
+              Distance: 4,
+              Rotation: 90,
+            },
+          ],
+        },
+        getNpcBehaviorContext("Path"),
+      ),
+    ).toMatchObject({
+      Scale: {
+        Compute: "Scale",
+      },
+      Waypoints: [
+        {
+          Distance: 4,
+          Rotation: 90,
+        },
+      ],
+    });
+  });
+
   test("round-trips the Instructions root wrapper with multiple instruction children", () => {
     const context = getNpcBehaviorContext("Instructions");
     const serialized = expectSemanticRoundTrip(
@@ -1001,6 +1154,22 @@ describe("NPC Behavior workspace generation", () => {
           $WorkspaceID: "NPC Behavior",
         },
       },
+    });
+  });
+
+  test("adapts the ActionList root between host value arrays and graph document roots", () => {
+    const context = getNpcBehaviorContext("ActionList");
+
+    const adaptedRoot = adaptGraphHostValueToDocumentRoot(
+      [{ $NodeId: "Action-1", Type: "Nothing" }],
+      context,
+    );
+
+    expect(adaptedRoot).toEqual({
+      Actions: [{ $NodeId: "Action-1", Type: "Nothing" }],
+    });
+    expect(adaptGraphDocumentRootToHostValue(adaptedRoot, context)).toEqual({
+      value: [{ $NodeId: "Action-1", Type: "Nothing" }],
     });
   });
 

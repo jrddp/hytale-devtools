@@ -4,6 +4,10 @@ import type {
   NpcDescriptorDocument,
 } from "@shared/npc-role-editor/descriptorTypes";
 import { resolveNpcDescriptorAssetSymbolLookup } from "@shared/npc-role-editor/assetSymbolLookup";
+import {
+  getNpcGraphRootDefaultValue,
+  resolveNpcComponentContentGraphRoot,
+} from "@shared/npc-role-editor/graphTargets";
 import type { IndexReference } from "@shared/indexTypes";
 import type { NpcStateAutocompleteKind } from "@shared/npc-role-editor/stateAutocomplete";
 import type {
@@ -36,8 +40,6 @@ import {
 } from "./propertyFieldUtilities";
 import {
   createRichObjectField,
-  describeRichObjectShape,
-  isContentWrapperShape,
 } from "./structuredFields";
 import { createStateTransitionsGraphField } from "./stateTransitionsGraphField";
 
@@ -95,7 +97,7 @@ export function buildNpcPropertyState({
     sections.push(buildMotionControllerListSection(document, descriptors));
   }
 
-  const contentSection = buildContentSection(document, descriptors);
+  const contentSection = buildContentSection(document);
   if (contentSection) {
     sections.push(contentSection);
   }
@@ -331,10 +333,7 @@ function buildStateTransitionsSection(
   };
 }
 
-function buildContentSection(
-  document: NpcRoleJson,
-  descriptors: NpcDescriptorDocument,
-): NpcPropertySection | null {
+function buildContentSection(document: NpcRoleJson): NpcPropertySection | null {
   if (document.Type !== "Component") {
     return null;
   }
@@ -344,7 +343,6 @@ function buildContentSection(
   const field = createComponentContentField({
     componentClass,
     value: contentValue,
-    descriptors,
   });
 
   return {
@@ -359,46 +357,42 @@ function buildContentSection(
 function createComponentContentField({
   componentClass,
   value,
-  descriptors,
 }: {
   componentClass?: string;
   value: unknown;
-  descriptors: NpcDescriptorDocument;
 }): NpcPropertyField {
-  if (isContentWrapperShape(value)) {
+  const graphRoot = resolveNpcComponentContentGraphRoot(componentClass);
+  const graphValue = value ?? (graphRoot ? getNpcGraphRootDefaultValue(graphRoot) : {});
+
+  if (graphRoot) {
+    if (graphRoot === "ActionList" && value !== undefined && !Array.isArray(value)) {
+      return createRawJsonContentField({
+        kind: "rawJson",
+        value,
+        description:
+          "ActionList component content references/wrappers are preserved as raw JSON.",
+      });
+    }
+
     return createRawJsonContentField({
-      kind: "rawJson",
-      value,
-      description:
-        "Component content reference/wrapper editing is deferred for now. This value is preserved as raw JSON.",
+      kind: "graph",
+      value: graphValue,
+      rootType: graphRoot,
+      description: "Edit this component content as an NPC behavior graph.",
     });
   }
 
   switch (componentClass) {
-    case "Instruction":
-    case "Sensor":
-      return createRawJsonContentField({
-        kind: "graph",
-        value,
-        rootType: componentClass,
-        description:
-          "This component will eventually use an embedded graph editor. This slice keeps the underlying JSON editable.",
-      });
     case "Action":
     case "ActionList":
     case "BodyMotion":
     case "HeadMotion":
     case "Path":
-      return createRichObjectField({
-        key: "Content",
-        label: "Content",
-        fieldPath: "Content",
-        shapeKey: componentClass,
+      return createRawJsonContentField({
+        kind: "rawJson",
         value,
-        descriptors,
-        description: describeRichObjectShape(componentClass, descriptors),
-        canUnset: false,
-        isSet: value !== undefined,
+        description:
+          "This component content shape is not graph-compatible and is preserved as raw JSON.",
       });
     default:
       return createRawJsonContentField({

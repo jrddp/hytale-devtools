@@ -13,6 +13,7 @@ import type {
 import { getResolvedChildSlots } from "./childSlotUtils";
 import { getSiblingSerializedChildSlot } from "./siblingSerialization";
 import {
+  allowsComponentReferenceTemplate,
   allowsComponentReferences,
   getComponentReferenceSlotOccupancy,
   isComponentReferenceNodeTemplate,
@@ -484,10 +485,15 @@ export function parseAssetDocumentToGraphDocument(
                   slot.side,
                 )
               : undefined;
+          const allowedReferenceTemplate =
+            referenceTemplate &&
+            allowsComponentReferenceTemplate(slot.childSchema, referenceTemplate)
+              ? referenceTemplate
+              : undefined;
 
           return recursiveParseNodes(
             childValue as NodeAssetJson,
-            referenceTemplate?.templateId ?? slot.childSchema.targetTemplateOrVariantId,
+            allowedReferenceTemplate?.templateId ?? slot.childSchema.targetTemplateOrVariantId,
             slot.childSchema.serializationType === "sibling"
               ? {
                   syntheticSiblingParentNodeId: nodeId,
@@ -559,7 +565,10 @@ export function parseAssetDocumentToGraphDocument(
                 "whole-slot",
                 slot.side,
               );
-              if (wholeSlotTemplate) {
+              if (
+                wholeSlotTemplate &&
+                allowsComponentReferenceTemplate(slot.childSchema, wholeSlotTemplate)
+              ) {
                 const childId = recursiveParseNodes(
                   localRoot[schemaKey] as NodeAssetJson,
                   wholeSlotTemplate.templateId,

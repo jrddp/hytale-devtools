@@ -130,11 +130,13 @@ export interface NodeSchemaDefinition {
         Pin?: string;
         SerializationType?: NodeSchemaSerializationType;
         AllowComponentReferences?: boolean;
+        ComponentReferenceSlotOccupancy?: NodeSlotOccupancy;
         // they mix casings in workspaces sometimes.. e.g. ScriptableBrushes Root.json
         node?: string;
         pin?: string;
         serializationType?: NodeSchemaSerializationType;
         allowComponentReferences?: boolean;
+        componentReferenceSlotOccupancy?: NodeSlotOccupancy;
       }
     | string;
 }
