@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { assetCacheRuntime, indexes, LOGGER, workspaceRuntime } from "../extension";
+import { getEffectiveRegisteredAssetsShard } from "../schema/symbolResolver";
 import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
@@ -9,6 +10,7 @@ import { invertNodeEditorGraphEdit } from "../shared/node-editor/graphEditUtils"
 import type { NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import type {
   NpcRoleEditorApplyMessage,
+  NpcRoleEditorAssetIndexUpdateMessage,
   NpcRoleEditorContextActionMessage,
   NpcRoleEditorExtensionToWebviewMessage,
   NpcRoleEditorGraphEditMessage,
@@ -115,6 +117,13 @@ export async function triggerNpcRoleEditorContextAction(
     action,
     parameterName: parameterName ?? undefined,
     fieldPath: fieldPath ?? undefined,
+  });
+}
+
+export async function notifyNpcRoleEditorsAssetIndexUpdated(revision: number): Promise<void> {
+  await activeProvider?.postAssetIndexUpdate({
+    type: "assetIndexUpdate",
+    revision,
   });
 }
 
@@ -281,12 +290,16 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         }
 
         const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
+        const effectiveModelAssetIndex =
+          modelAssetIndex?.indexKind === "registeredAssets"
+            ? getEffectiveRegisteredAssetsShard("ModelAsset", modelAssetIndex)
+            : getEffectiveRegisteredAssetsShard("ModelAsset");
         await postResolvedBasePreview(
           assetName,
           resolveNpcAppearanceBaseState(
             assetName,
             assetCacheRuntime,
-            modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,
+            effectiveModelAssetIndex,
           ),
         );
       };
@@ -309,6 +322,10 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
         }
 
         const modelAssetIndex = indexes.get("registeredAssets")?.get("ModelAsset");
+        const effectiveModelAssetIndex =
+          modelAssetIndex?.indexKind === "registeredAssets"
+            ? getEffectiveRegisteredAssetsShard("ModelAsset", modelAssetIndex)
+            : getEffectiveRegisteredAssetsShard("ModelAsset");
         await postResolvedAnimationPreview(
           assetName,
           animationSetId,
@@ -316,7 +333,7 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
             assetName,
             animationSetId,
             assetCacheRuntime,
-            modelAssetIndex?.indexKind === "registeredAssets" ? modelAssetIndex : undefined,
+            effectiveModelAssetIndex,
           ),
         );
       };
@@ -546,6 +563,13 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     }
 
     await targetPanel.webview.postMessage(message);
+  }
+
+  public async postAssetIndexUpdate(message: NpcRoleEditorAssetIndexUpdateMessage): Promise<void> {
+    const allPanels = Array.from(this.webviewPanelsByDocumentUri.values()).flatMap(panels =>
+      Array.from(panels),
+    );
+    await Promise.all(allPanels.map(panel => panel.webview.postMessage(message)));
   }
 
   private async autocompleteRequest(

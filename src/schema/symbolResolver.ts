@@ -73,11 +73,16 @@ export function getValuesByIndexReference(reference: IndexReference): string[] {
       // TODO special cases
       return [];
     case "registeredAssets":
-      shard = shard as RegisteredAssetsIndexShard;
-      return Object.keys(shard.values);
+      return Object.keys(
+        getEffectiveRegisteredAssetsShard(reference.key, shard as RegisteredAssetsIndexShard)?.values ??
+          (shard as RegisteredAssetsIndexShard).values,
+      );
     case "commonAssetPaths":
-      shard = shard as CommonAssetPathsIndexShard;
-      return getCommonAssetPathValues(shard, reference);
+      return getCommonAssetPathValues(
+        assetCacheRuntime?.getCommonAssetPathsShard(shard as CommonAssetPathsIndexShard) ??
+          (shard as CommonAssetPathsIndexShard),
+        reference,
+      );
   }
   return [];
 }
@@ -85,17 +90,28 @@ export function getValuesByIndexReference(reference: IndexReference): string[] {
 export async function getValuesByIndexReferenceAsync(
   reference: IndexReference,
 ): Promise<string[]> {
-  if (reference.indexKind === "assetDerived") {
+  if (
+    reference.indexKind === "assetDerived" ||
+    reference.indexKind === "registeredAssets" ||
+    reference.indexKind === "commonAssetPaths"
+  ) {
     try {
       await assetCacheRuntime?.ready;
     } catch (error) {
       LOGGER.error(
-        `Failed to await asset-derived indexes: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to await asset indexes: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
 
   return getValuesByIndexReference(reference);
+}
+
+export function getEffectiveRegisteredAssetsShard(
+  assetType: string,
+  fallback?: RegisteredAssetsIndexShard,
+): RegisteredAssetsIndexShard | undefined {
+  return assetCacheRuntime?.getRegisteredAssetsShard(assetType, fallback) ?? fallback;
 }
 
 function getAssetDerivedValues(reference: Extract<IndexReference, { indexKind: "assetDerived" }>): string[] {

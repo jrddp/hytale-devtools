@@ -2,7 +2,10 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vscode from "vscode";
 import { assetCacheRuntime, indexes } from "../extension";
-import { getValuesByIndexReferenceAsync } from "../schema/symbolResolver";
+import {
+  getEffectiveRegisteredAssetsShard,
+  getValuesByIndexReferenceAsync,
+} from "../schema/symbolResolver";
 import type { RegisteredAssetsIndexShard } from "../shared/indexTypes";
 import { parseNpcDocumentText } from "../shared/npc-role-editor/documentParsing";
 import type {
@@ -52,9 +55,10 @@ export async function resolveNpcAutocompleteValues(
   }
 
   const candidatePaths = new Set<string>();
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
+  await assetCacheRuntime.ready;
+  const registeredShard = getNpcRoleRegisteredAssetsShard();
   if (registeredShard?.indexKind === "registeredAssets") {
-    for (const assetName of Object.keys((registeredShard as RegisteredAssetsIndexShard).values)) {
+    for (const assetName of Object.keys(registeredShard.values)) {
       candidatePaths.add(assetName);
     }
   }
@@ -248,9 +252,10 @@ async function loadComponentReferenceDocument(
     }
   }
 
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
+  await assetCacheRuntime.ready;
+  const registeredShard = getNpcRoleRegisteredAssetsShard();
   if (registeredShard?.indexKind === "registeredAssets") {
-    for (const [assetName, metadata] of Object.entries((registeredShard as RegisteredAssetsIndexShard).values)) {
+    for (const [assetName, metadata] of Object.entries(registeredShard.values)) {
       if (!matchesNpcRoleReferenceCandidate(assetName, referenceName)) {
         continue;
       }
@@ -350,10 +355,11 @@ async function loadNpcReferenceDocumentInfo(
     return undefined;
   }
 
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
+  await assetCacheRuntime.ready;
+  const registeredShard = getNpcRoleRegisteredAssetsShard();
   const metadata =
     registeredShard?.indexKind === "registeredAssets"
-      ? (registeredShard as RegisteredAssetsIndexShard).values[referencePath]
+      ? registeredShard.values[referencePath]
       : undefined;
   if (!metadata?.sourcedFromFile) {
     return undefined;
@@ -460,9 +466,10 @@ async function loadVariantReferenceDocument(
     }
   }
 
-  const registeredShard = indexes.get("registeredAssets")?.get("NPCRole");
+  await assetCacheRuntime.ready;
+  const registeredShard = getNpcRoleRegisteredAssetsShard();
   if (registeredShard?.indexKind === "registeredAssets") {
-    for (const [assetName, metadata] of Object.entries((registeredShard as RegisteredAssetsIndexShard).values)) {
+    for (const [assetName, metadata] of Object.entries(registeredShard.values)) {
       if (!matchesNpcRoleReferenceCandidate(assetName, trimmedReferenceName)) {
         continue;
       }
@@ -500,6 +507,13 @@ async function loadVariantReferenceDocument(
   return {
     status: "missing",
   };
+}
+
+function getNpcRoleRegisteredAssetsShard(): RegisteredAssetsIndexShard | undefined {
+  const fallback = indexes.get("registeredAssets")?.get("NPCRole");
+  return fallback?.indexKind === "registeredAssets"
+    ? getEffectiveRegisteredAssetsShard("NPCRole", fallback as RegisteredAssetsIndexShard)
+    : getEffectiveRegisteredAssetsShard("NPCRole");
 }
 
 function toLoadedVariantReferenceResult(

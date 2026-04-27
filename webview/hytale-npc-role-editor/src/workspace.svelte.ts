@@ -297,6 +297,17 @@ export class Workspace {
     setWorkspaceComponentReferenceTarget(this, target);
   }
 
+  clearExternalAssetCaches() {
+    this.componentReferenceTargets = new Map();
+    this.componentReferenceTargetVersion += 1;
+    this.appearanceBasePreviewAssetName = null;
+    this.appearanceBasePreview = undefined;
+    this.appearanceAnimationPreviewCache = new Map();
+    this.appearancePreview = undefined;
+    this.autocompleteField = undefined;
+    this.autocompleteValues = [];
+  }
+
   getComponentReferenceTarget(
     componentClass: string,
     referenceName: string,

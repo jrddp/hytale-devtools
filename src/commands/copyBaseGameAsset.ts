@@ -306,7 +306,7 @@ async function loadNpcRoleAssetInfos(
   const infos = await Promise.all(
     entries.map(async ([value, metadata]): Promise<NpcRoleAssetInfo | undefined> => {
       try {
-        const bytes = await assetCacheRuntime.readAssetBytesByPath(metadata.sourcedFromFile!);
+        const bytes = await assetCacheRuntime.readBaseGameAssetBytesByPath(metadata.sourcedFromFile!);
         if (!bytes) {
           return undefined;
         }
@@ -376,7 +376,7 @@ async function copyAsset(
   assetPath: string,
   destinationPath: string,
 ): Promise<void> {
-  const didCopy = await assetCacheRuntime.copyAssetByPath(assetPath, destinationPath);
+  const didCopy = await assetCacheRuntime.copyBaseGameAssetByPath(assetPath, destinationPath);
   if (!didCopy) {
     throw new Error(`Asset not found in indexed Assets.zip: ${assetPath}`);
   }

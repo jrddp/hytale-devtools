@@ -4,6 +4,7 @@ import { AssetCacheRuntime } from "./asset-cache/assetCacheRuntime";
 import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
 import {
+  notifyNpcRoleEditorsAssetIndexUpdated,
   registerHytaleNpcRoleEditorProvider,
   triggerNpcRoleEditorContextAction,
 } from "./npc-role-editor/hytaleNpcRoleEditorProvider";
@@ -45,6 +46,7 @@ function reloadSchemaData(context: vscode.ExtensionContext, reason: string): voi
     getAssetsZipPath(resolvePatchlineForContext(context)),
     schemaRuntime,
     LOGGER,
+    vscode.workspace.workspaceFolders?.map(folder => folder.uri.fsPath) ?? [],
   );
 
   void assetCacheRuntime.ready.catch(error => {
@@ -167,6 +169,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));
+  context.subscriptions.push(registerAssetCacheWorkspaceWatcher());
 
   if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {
     void ensureHytaleHomeConfiguredOnStartup();
@@ -197,6 +200,56 @@ export async function activate(context: vscode.ExtensionContext) {
   //     }
   //   }),
   // );
+}
+
+function registerAssetCacheWorkspaceWatcher(): vscode.Disposable {
+  const watcher = vscode.workspace.createFileSystemWatcher("**/{Common,Server}/**/*");
+  const disposables: vscode.Disposable[] = [watcher];
+
+  const processFile = (uri: vscode.Uri): void => {
+    if (uri.scheme !== "file") {
+      return;
+    }
+    void assetCacheRuntime.ready
+      .then(async () => {
+        await assetCacheRuntime.processWorkspaceFile(uri.fsPath);
+        await notifyNpcRoleEditorsAssetIndexUpdated(assetCacheRuntime.revision);
+      })
+      .catch(error => {
+        LOGGER.warn(
+          `Failed to update asset cache for ${uri.fsPath}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
+  };
+  const removeFile = (uri: vscode.Uri): void => {
+    if (uri.scheme !== "file") {
+      return;
+    }
+    void assetCacheRuntime.ready
+      .then(async () => {
+        assetCacheRuntime.removeWorkspaceFile(uri.fsPath);
+        await notifyNpcRoleEditorsAssetIndexUpdated(assetCacheRuntime.revision);
+      })
+      .catch(error => {
+        LOGGER.warn(
+          `Failed to remove asset cache source for ${uri.fsPath}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
+  };
+
+  disposables.push(watcher.onDidCreate(processFile));
+  disposables.push(watcher.onDidChange(processFile));
+  disposables.push(watcher.onDidDelete(removeFile));
+
+  return new vscode.Disposable(() => {
+    for (const disposable of disposables) {
+      disposable.dispose();
+    }
+  });
 }
 
 // This method is called when your extension is deactivated

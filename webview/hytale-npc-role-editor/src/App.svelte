@@ -350,6 +350,9 @@
       case "componentReferenceTargetUpdate":
         workspace.setComponentReferenceTarget(message.target);
         return;
+      case "assetIndexUpdate":
+        workspace.clearExternalAssetCaches();
+        return;
       case "appearancePreviewBaseUpdate":
         if (
           !isAppearancePreviewBaseUpdateCurrent({

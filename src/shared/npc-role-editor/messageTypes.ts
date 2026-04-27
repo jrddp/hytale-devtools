@@ -101,6 +101,11 @@ export type NpcRoleEditorContextActionMessage = {
   nodeEditorNodeId?: string;
 };
 
+export type NpcRoleEditorAssetIndexUpdateMessage = {
+  type: "assetIndexUpdate";
+  revision: number;
+};
+
 export type NpcRoleEditorAppearancePreviewBaseUpdateMessage = {
   type: "appearancePreviewBaseUpdate";
   assetName?: string;
@@ -137,6 +142,7 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorVariantReferenceUpdateMessage
   | NpcRoleEditorComponentReferenceTargetUpdateMessage
   | NpcRoleEditorContextActionMessage
+  | NpcRoleEditorAssetIndexUpdateMessage
   | NpcRoleEditorAppearancePreviewBaseUpdateMessage
   | NpcRoleEditorAppearancePreviewAnimationUpdateMessage;
 
