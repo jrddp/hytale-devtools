@@ -320,6 +320,7 @@
   {interactiveInfoTooltip}
   {infoTooltipPinned}
   {hideInfoButton}
+  collapseStateKey={field.fieldPath}
   bind:collapsed
 >
   {#if field.value.kind === "compute"}

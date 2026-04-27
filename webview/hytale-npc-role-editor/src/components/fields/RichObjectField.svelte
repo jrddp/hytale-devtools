@@ -28,10 +28,23 @@
   const FLIP_DURATION_MS = 100;
 
   let variantTypeDraft = $state("");
+  let collapsed = $state(false);
   let draftRowViews = $state<StructuredRowView[] | null>(null);
 
   $effect(() => {
     variantTypeDraft = field.variantType ?? "";
+  });
+
+  $effect(() => {
+    collapsed = field.ui?.collapsed ?? false;
+  });
+
+  $effect(() => {
+    if (!field.ui) {
+      field.ui = {};
+    }
+
+    field.ui.collapsed = collapsed;
   });
 
   const issues = $derived(workspace.getFieldIssues(field.fieldPath));
@@ -295,6 +308,8 @@
     summary={summary}
     {handle}
     vscodeContext={fieldVscodeContext}
+    collapseStateKey={field.fieldPath}
+    bind:collapsed
     onunset={field.canUnset !== false && field.isSet !== false
       ? () => {
           workspace.unsetField(field.fieldPath);

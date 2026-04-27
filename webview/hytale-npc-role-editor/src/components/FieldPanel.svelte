@@ -4,6 +4,7 @@
   import { ChevronDown, ChevronRight, CircleX, Info, TriangleAlert } from "lucide-svelte";
   import type { Snippet } from "svelte";
   import type { NpcEditorIssue } from "../issues";
+  import { getFieldPanelStateContext } from "./fieldPanelStateContext";
 
   type NpcFieldInfoItem = {
     label: string;
@@ -31,6 +32,7 @@
     interactiveInfoTooltip = false,
     infoTooltipPinned = false,
     hideInfoButton = false,
+    collapseStateKey,
     collapsed = $bindable(),
     children,
   }: {
@@ -54,6 +56,7 @@
     interactiveInfoTooltip?: boolean;
     infoTooltipPinned?: boolean;
     hideInfoButton?: boolean;
+    collapseStateKey?: string;
     collapsed?: boolean;
     children: Snippet;
   } = $props();
@@ -65,6 +68,7 @@
   const hasIssues = $derived(issues.length > 0);
   const hasErrorIssues = $derived(issues.some(issue => issue.severity === "error"));
   const issueTooltip = createTooltip();
+  const fieldPanelStateContext = getFieldPanelStateContext();
 
   $effect(() => {
     if (infoTooltipPinned) {
@@ -84,6 +88,13 @@
     }
 
     event.stopPropagation();
+  }
+
+  function toggleCollapsed() {
+    collapsed = !collapsed;
+    if (collapseStateKey) {
+      fieldPanelStateContext.onCollapseChange?.(collapseStateKey, collapsed);
+    }
   }
 </script>
 
@@ -236,12 +247,12 @@
       role="button"
       tabindex={0}
       onclick={event => {
-        collapsed = !collapsed;
+        toggleCollapsed();
         event.preventDefault();
       }}
       onkeydown={event => {
         if (event.key === "Enter" || event.key === " ") {
-          collapsed = !collapsed;
+          toggleCollapsed();
           event.preventDefault();
         }
       }}

@@ -18,6 +18,7 @@
   } = $props();
 
   let draftValue = $state("");
+  let collapsed = $state(false);
 
   $effect(() => {
     draftValue = JSON.stringify(
@@ -25,6 +26,18 @@
       null,
       2,
     );
+  });
+
+  $effect(() => {
+    collapsed = field.ui?.collapsed ?? false;
+  });
+
+  $effect(() => {
+    if (!field.ui) {
+      field.ui = {};
+    }
+
+    field.ui.collapsed = collapsed;
   });
 
   const fieldVscodeContext = $derived(
@@ -93,6 +106,8 @@
     titleActions={computeToggle}
     {handle}
     vscodeContext={fieldVscodeContext}
+    collapseStateKey={field.fieldPath}
+    bind:collapsed
     onunset={field.canUnset !== false && field.isSet !== false
       ? () => {
           workspace.unsetField(field.fieldPath);

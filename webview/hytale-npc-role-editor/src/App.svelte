@@ -39,18 +39,20 @@
   import { resolveDesiredAppearanceAnimationSetId } from "./workspace/appearancePreviewState";
   import PropertySection from "./components/PropertySection.svelte";
   import NpcGraphPage from "./components/NpcGraphPage.svelte";
+  import { setFieldPanelStateContext } from "./components/fieldPanelStateContext";
   import { workspace } from "./workspace.svelte";
+  import {
+    applyCollapsedFieldPathsToSections,
+    ensureWebviewStateForDocument,
+    resolveRestoredActivePage,
+    updateCollapsedFieldPaths,
+    type GraphViewport,
+    type NpcRoleEditorActivePage,
+    type NpcRoleEditorWebviewState,
+  } from "./webviewState";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
   const { vscode }: { vscode: VSCodeApi } = $props();
-  type GraphViewport = {
-    x: number;
-    y: number;
-    zoom: number;
-  };
-  type NpcRoleEditorWebviewState = {
-    graphViewports?: Partial<Record<NpcSectionId, GraphViewport>>;
-  };
   let extensionError = $state("");
   let scrollRootElement = $state<HTMLDivElement>();
   let scrollRootHeight = $state(0);
@@ -70,6 +72,15 @@
     Partial<Record<NpcGraphTargetWorkspaceRoot, NodeEditorWorkspaceContext>>
   >({});
   let previousActiveGraphSectionId: NpcSectionId | null = null;
+  let restoredDocumentPath = $state<string | null>(null);
+  let isRestoringMainScroll = false;
+  let mainScrollPersistFrame: number | null = null;
+
+  setFieldPanelStateContext({
+    onCollapseChange: (fieldPath, collapsed) => {
+      persistFieldCollapseState(fieldPath, collapsed);
+    },
+  });
 
   $effect(() => {
     workspace.vscode = vscode;
@@ -226,6 +237,8 @@
   $effect(() => {
     if (activeGraphSectionId && !activeGraphSection) {
       activeGraphSectionId = null;
+      persistActivePage({ kind: "main" });
+      void restoreMainScrollPosition();
     }
   });
 
@@ -247,6 +260,45 @@
   });
 
   $effect(() => {
+    const sections = workspace.propertySections;
+    const collapsedFieldPaths = localWebviewState.collapsedFieldPaths;
+    untrack(() => {
+      applyCollapsedFieldPathsToSections(sections, collapsedFieldPaths);
+    });
+  });
+
+  $effect(() => {
+    const documentPath = workspace.documentPath;
+    if (!documentPath || workspace.propertySections.length === 0) {
+      return;
+    }
+
+    const stateForDocument = ensureWebviewStateForDocument(localWebviewState, documentPath);
+    if (stateForDocument !== localWebviewState) {
+      persistWebviewState(stateForDocument);
+    }
+
+    if (restoredDocumentPath === documentPath) {
+      return;
+    }
+
+    const restoredPage = resolveRestoredActivePage(
+      stateForDocument,
+      graphNavigationEntries.map(entry => entry.id),
+    );
+    if (restoredPage.kind === "graph") {
+      pendingPropertySectionId = null;
+      activeGraphSectionId = restoredPage.sectionId;
+    } else {
+      activeGraphSectionId = null;
+      activePropertySectionId = visiblePropertySections[0]?.id ?? null;
+      void restoreMainScrollPosition();
+    }
+
+    restoredDocumentPath = documentPath;
+  });
+
+  $effect(() => {
     if (!scrollRootElement || activeGraphSectionId) {
       scrollRootHeight = 0;
       lastOutlineSectionHeight = 0;
@@ -264,6 +316,7 @@
     const handleScroll = () => {
       updateLayoutMetrics();
       updateActivePropertySection();
+      schedulePersistMainScrollTop();
     };
     const handleScrollEnd = () => {
       pendingPropertySectionId = null;
@@ -546,10 +599,12 @@
     if (isGraphPageSection(section)) {
       pendingPropertySectionId = null;
       activeGraphSectionId = section.id;
+      persistActivePage({ kind: "graph", sectionId: section.id });
       return;
     }
 
     activeGraphSectionId = null;
+    persistActivePage({ kind: "main" });
     pendingPropertySectionId = section.id;
     activePropertySectionId = section.id;
 
@@ -603,8 +658,86 @@
   }
 
   function persistWebviewState(nextState: NpcRoleEditorWebviewState) {
-    localWebviewState = nextState;
-    vscode.setState?.(nextState);
+    const stateForDocument = workspace.documentPath
+      ? ensureWebviewStateForDocument(nextState, workspace.documentPath)
+      : nextState;
+    localWebviewState = stateForDocument;
+    vscode.setState?.(stateForDocument);
+  }
+
+  function persistActivePage(activePage: NpcRoleEditorActivePage) {
+    persistWebviewState({
+      ...localWebviewState,
+      activePage,
+    });
+  }
+
+  function schedulePersistMainScrollTop() {
+    if (
+      !scrollRootElement ||
+      activeGraphSectionId ||
+      isRestoringMainScroll ||
+      !workspace.documentPath ||
+      workspace.propertySections.length === 0 ||
+      restoredDocumentPath !== workspace.documentPath
+    ) {
+      return;
+    }
+
+    if (mainScrollPersistFrame !== null) {
+      return;
+    }
+
+    mainScrollPersistFrame = requestAnimationFrame(() => {
+      mainScrollPersistFrame = null;
+      if (!scrollRootElement || activeGraphSectionId) {
+        return;
+      }
+
+      persistWebviewState({
+        ...localWebviewState,
+        activePage: { kind: "main" },
+        mainScrollTop: scrollRootElement.scrollTop,
+      });
+    });
+  }
+
+  async function restoreMainScrollPosition() {
+    isRestoringMainScroll = true;
+    await tick();
+    await new Promise<void>(resolve => {
+      requestAnimationFrame(() => resolve());
+    });
+
+    if (!scrollRootElement || activeGraphSectionId) {
+      isRestoringMainScroll = false;
+      return;
+    }
+
+    scrollRootElement.scrollTop = localWebviewState.mainScrollTop ?? 0;
+    updateActivePropertySection();
+    requestAnimationFrame(() => {
+      isRestoringMainScroll = false;
+    });
+  }
+
+  function persistFieldCollapseState(fieldPath: string, collapsed: boolean) {
+    const nextCollapsedFieldPaths = updateCollapsedFieldPaths(
+      localWebviewState.collapsedFieldPaths,
+      fieldPath,
+      collapsed,
+    );
+    const nextState: NpcRoleEditorWebviewState = {
+      ...localWebviewState,
+    };
+
+    if (nextCollapsedFieldPaths) {
+      nextState.collapsedFieldPaths = nextCollapsedFieldPaths;
+    } else {
+      delete nextState.collapsedFieldPaths;
+    }
+
+    persistWebviewState(nextState);
   }
 
   function persistGraphViewport(sectionId: NpcSectionId, viewport: GraphViewport) {
@@ -631,6 +764,10 @@
     vscode.postMessage({ type: "ready" });
 
     return () => {
+      if (mainScrollPersistFrame !== null) {
+        cancelAnimationFrame(mainScrollPersistFrame);
+        mainScrollPersistFrame = null;
+      }
       window.removeEventListener("message", handleMessage);
     };
   });

@@ -222,6 +222,7 @@
   {summary}
   titleActions={computeToggle}
   vscodeContext={fieldVscodeContext}
+  collapseStateKey={field.fieldPath}
   bind:collapsed
   onunset={field.canUnset !== false && field.isSet !== false
     ? () => {
