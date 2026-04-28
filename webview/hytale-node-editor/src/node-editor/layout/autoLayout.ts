@@ -17,6 +17,14 @@ const PORT_SEPARATION = 24;
 const PORT_SIZE = 1;
 const INPUT_BAND_SEPARATION = 100;
 const INSTRUCTION_TEMPLATE_ID = "Structural.InstructionNode";
+const RANDOM_INSTRUCTION_TEMPLATE_ID = "Structural.RandomInstructionNode";
+const INSTRUCTION_REFERENCE_TEMPLATE_ID = "Structural.InstructionReference";
+const WEIGHTED_INSTRUCTION_TEMPLATE_ID = "Structural.WeightedInstruction";
+const INSTRUCTION_TEMPLATE_IDS = new Set([
+  INSTRUCTION_TEMPLATE_ID,
+  RANDOM_INSTRUCTION_TEMPLATE_ID,
+  INSTRUCTION_REFERENCE_TEMPLATE_ID,
+]);
 
 const elk = new ELK();
 
@@ -262,8 +270,14 @@ function buildInstructionLayoutModel(
       ? session.rootNodeId
       : undefined;
 
-  const hierarchyEdges = sortLayoutEdges(
-    component.edges.filter(edge => isInstructionHierarchyEdge(edge, session)),
+  const weightedInstructionOwnerByNodeId = buildWeightedInstructionOwnerByNodeId(
+    component,
+    instructionIdSet,
+    session,
+  );
+  const hierarchyEdges = buildInstructionHierarchyEdges(
+    component,
+    instructionIdSet,
     session,
   );
 
@@ -316,6 +330,7 @@ function buildInstructionLayoutModel(
     instructionTraversalOrder,
     instructionIdSet,
     rootWrapperId,
+    weightedInstructionOwnerByNodeId,
   );
 
   for (const nodeId of component.nodeIds) {
@@ -367,6 +382,7 @@ function assignNonInstructionOwners(
   instructionTraversalOrder: string[],
   instructionIdSet: Set<string>,
   rootWrapperId?: string,
+  forcedOwnerByNodeId: Map<string, string> = new Map(),
 ): Map<string, string> {
   const neighboringNonInstructionIdsByNodeId = buildNeighboringNonInstructionIdsByNodeId(
     component,
@@ -376,6 +392,16 @@ function assignNonInstructionOwners(
   const ownerByNodeId = new Map<string, string>();
   const distanceByNodeId = new Map<string, number>();
   const queue: Array<{ nodeId: string; ownerId: string; distance: number }> = [];
+
+  for (const [nodeId, ownerId] of forcedOwnerByNodeId) {
+    if (!component.nodeIds.includes(nodeId) || !instructionIdSet.has(ownerId)) {
+      continue;
+    }
+
+    ownerByNodeId.set(nodeId, ownerId);
+    distanceByNodeId.set(nodeId, 0);
+    queue.push({ nodeId, ownerId, distance: 0 });
+  }
 
   for (const instructionId of instructionTraversalOrder) {
     for (const nodeId of neighboringNonInstructionIdsByNodeId.get(instructionId) ?? []) {
@@ -1335,9 +1361,128 @@ function getAbsoluteNodePosition(
     : { x: Number.MAX_SAFE_INTEGER, y: Number.MAX_SAFE_INTEGER };
 }
 
-function isInstructionHierarchyEdge(edge: FlowEdge, session: NodeEditorSession): boolean {
+function buildInstructionHierarchyEdges(
+  component: LayoutComponent,
+  instructionIdSet: Set<string>,
+  session: NodeEditorSession,
+): FlowEdge[] {
+  const directHierarchyEdges = component.edges.filter(edge =>
+    isDirectInstructionHierarchyEdge(edge, session),
+  );
+  const weightedHierarchyEdges = buildWeightedInstructionHierarchyEdges(
+    component,
+    instructionIdSet,
+    session,
+  );
+
+  return sortLayoutEdges([...directHierarchyEdges, ...weightedHierarchyEdges], session);
+}
+
+function buildWeightedInstructionHierarchyEdges(
+  component: LayoutComponent,
+  instructionIdSet: Set<string>,
+  session: NodeEditorSession,
+): FlowEdge[] {
+  const weightedNodeIds = component.nodeIds.filter(nodeId =>
+    isWeightedInstructionNodeId(nodeId, session),
+  );
+  const hierarchyEdges: FlowEdge[] = [];
+
+  for (const weightedNodeId of weightedNodeIds) {
+    const parentEdge = component.edges.find(edge =>
+      isWeightedInstructionParentEdge(edge, weightedNodeId, instructionIdSet, session),
+    );
+    const childEdge = component.edges.find(edge =>
+      isWeightedInstructionChildEdge(edge, weightedNodeId, instructionIdSet, session),
+    );
+
+    if (!parentEdge || !childEdge) {
+      continue;
+    }
+
+    hierarchyEdges.push({
+      ...parentEdge,
+      id: `${parentEdge.id}::${childEdge.id}`,
+      source: parentEdge.source,
+      target: childEdge.target,
+      targetHandle: childEdge.targetHandle,
+    });
+  }
+
+  return hierarchyEdges;
+}
+
+function buildWeightedInstructionOwnerByNodeId(
+  component: LayoutComponent,
+  instructionIdSet: Set<string>,
+  session: NodeEditorSession,
+): Map<string, string> {
+  const ownerByNodeId = new Map<string, string>();
+
+  for (const nodeId of component.nodeIds) {
+    if (!isWeightedInstructionNodeId(nodeId, session)) {
+      continue;
+    }
+
+    const childEdge = component.edges.find(edge =>
+      isWeightedInstructionChildEdge(edge, nodeId, instructionIdSet, session),
+    );
+    if (childEdge) {
+      ownerByNodeId.set(nodeId, childEdge.target);
+    }
+  }
+
+  return ownerByNodeId;
+}
+
+function isWeightedInstructionParentEdge(
+  edge: FlowEdge,
+  weightedNodeId: string,
+  instructionIdSet: Set<string>,
+  session: NodeEditorSession,
+): boolean {
+  if (edge.target !== weightedNodeId || !instructionIdSet.has(edge.source)) {
+    return false;
+  }
+
+  const sourcePin = getSourcePin(edge, session);
+  const targetPin = getTargetPin(edge, session);
+  return sourcePin?.connectionType === "WeightedInstruction" &&
+    targetPin?.connectionType === "WeightedInstruction";
+}
+
+function isWeightedInstructionChildEdge(
+  edge: FlowEdge,
+  weightedNodeId: string,
+  instructionIdSet: Set<string>,
+  session: NodeEditorSession,
+): boolean {
+  if (edge.source !== weightedNodeId || !instructionIdSet.has(edge.target)) {
+    return false;
+  }
+
+  const sourcePin = getSourcePin(edge, session);
+  const targetPin = getTargetPin(edge, session);
+  return sourcePin?.connectionType === "Instruction" &&
+    targetPin?.connectionType === "Instruction";
+}
+
+function getSourcePin(edge: FlowEdge, session: NodeEditorSession) {
+  const sourceNode = session.getNodeById(edge.source);
+  const sourceHandleId =
+    edge.sourceHandle ?? sourceNode?.data.outputPins[0]?.schemaKey;
+  return sourceNode?.data.outputPins.find(pin => pin.schemaKey === sourceHandleId);
+}
+
+function getTargetPin(edge: FlowEdge, session: NodeEditorSession) {
   const targetNode = session.getNodeById(edge.target);
-  if (!targetNode || targetNode.data?.templateId !== INSTRUCTION_TEMPLATE_ID) {
+  const targetHandleId = edge.targetHandle ?? INPUT_HANDLE_ID;
+  return targetNode?.data.inputPins.find(pin => pin.schemaKey === targetHandleId);
+}
+
+function isDirectInstructionHierarchyEdge(edge: FlowEdge, session: NodeEditorSession): boolean {
+  const targetNode = session.getNodeById(edge.target);
+  if (!targetNode || !isInstructionTemplateId(targetNode.data?.templateId)) {
     return false;
   }
 
@@ -1347,7 +1492,15 @@ function isInstructionHierarchyEdge(edge: FlowEdge, session: NodeEditorSession):
 }
 
 function isInstructionNodeId(nodeId: string, session: NodeEditorSession): boolean {
-  return session.getNodeById(nodeId)?.data?.templateId === INSTRUCTION_TEMPLATE_ID;
+  return isInstructionTemplateId(session.getNodeById(nodeId)?.data?.templateId);
+}
+
+function isInstructionTemplateId(templateId: string | undefined): boolean {
+  return templateId !== undefined && INSTRUCTION_TEMPLATE_IDS.has(templateId);
+}
+
+function isWeightedInstructionNodeId(nodeId: string, session: NodeEditorSession): boolean {
+  return session.getNodeById(nodeId)?.data?.templateId === WEIGHTED_INSTRUCTION_TEMPLATE_ID;
 }
 
 function isLayoutableNode(node: FlowNode): boolean {
