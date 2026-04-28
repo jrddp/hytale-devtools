@@ -14,7 +14,7 @@
   "Content": [
     {
       "Id": "OffsetRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The minimum and maximum offset the NPC can be spawned from the target position",
       "Options": {
         "Label": "OffsetRange",
@@ -22,7 +22,9 @@
           0,
           0
         ],
-        "Width": 240
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float"
       }
     },
     {

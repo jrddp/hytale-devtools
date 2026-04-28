@@ -9,12 +9,15 @@ export type FieldComponentType =
   | "text" // text is multi-line string
   | "filepath"
   | "list"
+  | "tuple"
   | "parameterMap"
   | "int"
   | "float"
   | "object"
   | "intslider"
   | "color";
+
+export type NodeTupleItemType = "string" | "int" | "float";
 
 export type NodeSchemaSerializationType = "child" | "root" | "sibling";
 export type NodeSlotOccupancy = "normal-item" | "whole-slot";
@@ -61,6 +64,8 @@ export interface NodeField {
   /** Whether this field exists explicitly in the serialized document. */
   isSet: boolean;
   inputWidth?: number;
+  tupleSize?: number;
+  tupleItemType?: NodeTupleItemType;
   overrideAutocompleteValues?: string[];
   subfields?: NodeField[];
   localId: string;

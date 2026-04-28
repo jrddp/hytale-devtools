@@ -67,7 +67,7 @@
     },
     {
       "Id": "AttackPauseRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Range of minimum pause between attacks",
       "Options": {
         "Label": "AttackPauseRange",
@@ -76,12 +76,14 @@
           0
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "AimingTimeRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "A range from which to pick a random value denoting the max time the NPC will wait for aiming before launching the attack.",
       "Options": {
         "Label": "AimingTimeRange",
@@ -90,6 +92,8 @@
           0
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

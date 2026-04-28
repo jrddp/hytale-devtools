@@ -18,6 +18,7 @@ import {
   type NodeSchemaSerializationType,
   type NodeSlotOccupancy,
   type NodeTemplate,
+  type NodeTupleItemType,
 } from "../shared/node-editor/workspaceTypes";
 import type { Field, StringField } from "../shared/fieldTypes";
 import type { IndexReference } from "../shared/indexTypes";
@@ -594,6 +595,8 @@ export class WorkspaceRuntime {
         isExplicitEmpty: false,
         isSet: false,
         inputWidth: content.Options?.Width,
+        tupleSize: this.resolveTupleSize(content),
+        tupleItemType: this.resolveTupleItemType(content),
         overrideAutocompleteValues,
         symbolLookup: content.Options?.SymbolLookup
           ? this.cloneIndexReference(content.Options.SymbolLookup)
@@ -634,12 +637,44 @@ export class WorkspaceRuntime {
         return "filepath";
       case "List":
         return "list";
+      case "Tuple":
+        return "tuple";
       case "ParameterMap":
         return "parameterMap";
       case "Object":
         return "object";
       default:
         this.logger.warn(`Unknown node template content type: ${type}. Defaulting to string.`);
+        return "string";
+    }
+  }
+
+  private resolveTupleSize(content: NodeContentDefinition): number | undefined {
+    if (content.Type !== "Tuple") {
+      return undefined;
+    }
+
+    const configuredSize = content.Options?.TupleSize;
+    if (typeof configuredSize === "number" && Number.isInteger(configuredSize) && configuredSize >= 0) {
+      return configuredSize;
+    }
+
+    const defaultValue = content.Options?.Default ?? content.Options?.DefaultValue;
+    return Array.isArray(defaultValue) ? defaultValue.length : 0;
+  }
+
+  private resolveTupleItemType(content: NodeContentDefinition): NodeTupleItemType | undefined {
+    if (content.Type !== "Tuple") {
+      return undefined;
+    }
+
+    switch (content.Options?.TupleItemType) {
+      case "Float":
+        return "float";
+      case "Int":
+        return "int";
+      case "String":
+      default:
         return "string";
     }
   }

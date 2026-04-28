@@ -45,7 +45,7 @@
     },
     {
       "Id": "MaxValue",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Set the restart value range the timer can have",
       "Options": {
         "Label": "MaxValue",
@@ -54,6 +54,8 @@
           0
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

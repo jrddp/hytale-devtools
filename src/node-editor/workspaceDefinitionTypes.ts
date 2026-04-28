@@ -85,6 +85,7 @@ export type NodeContentDefinitionType =
   | "Enum"
   | "FilePath"
   | "List"
+  | "Tuple"
   | "ParameterMap"
   | "Object";
 
@@ -107,6 +108,8 @@ export interface NodeContentDefinition {
     TickFrequency?: number;
     Type?: "String" | "Float";
     ArrayElementType?: "DataSettingFlags";
+    TupleSize?: number;
+    TupleItemType?: "String" | "Float" | "Int";
     UseUUID?: boolean;
     DefaultValue?: string | number | boolean | unknown[];
     Computable?: boolean;

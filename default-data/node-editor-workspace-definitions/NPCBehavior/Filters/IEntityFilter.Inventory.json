@@ -40,7 +40,7 @@
     },
     {
       "Id": "CountRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The range of number of items that need to match the patterns",
       "Options": {
         "Label": "CountRange",
@@ -49,12 +49,14 @@
           2147483647
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
         "Computable": true
       }
     },
     {
       "Id": "FreeSlotRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The range designating the number of required free slots",
       "Options": {
         "Label": "FreeSlotRange",
@@ -63,6 +65,8 @@
           2147483647
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
         "Computable": true
       }
     }

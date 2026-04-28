@@ -58,7 +58,7 @@
     },
     {
       "Id": "ThrottleDelayRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Time to delay after no path finding solution found",
       "Options": {
         "Label": "ThrottleDelayRange",
@@ -67,6 +67,8 @@
           5
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
@@ -358,7 +360,7 @@
     },
     {
       "Id": "HoldDirectionTimeRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "How often to change heading",
       "Options": {
         "Label": "HoldDirectionTimeRange",
@@ -367,6 +369,8 @@
           5
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

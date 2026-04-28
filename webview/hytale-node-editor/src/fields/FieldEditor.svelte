@@ -19,6 +19,7 @@
   import NumberField from "./NumberField.svelte";
   import SliderField from "./SliderField.svelte";
   import TextField from "./TextField.svelte";
+  import TupleField from "./TupleField.svelte";
 
   type ComputeValue = {
     Compute: string;
@@ -36,6 +37,8 @@
     onconfirm,
     parentSchemaKey,
     symbolLookup,
+    tupleSize,
+    tupleItemType,
     parameterMapKeyOverrideAutocompleteValues,
     parameterMapKeySymbolLookup,
     overrideAutocompleteValues,
@@ -113,6 +116,7 @@
       case "intslider":
         return 0;
       case "list":
+      case "tuple":
         return [];
       case "object":
       case "parameterMap":
@@ -200,6 +204,23 @@
 
   function confirmListValue(nextValue: unknown[]) {
     if (nextValue.length === 0 && hasDefaultValue) {
+      onconfirm(undefined, {
+        isImplicit: true,
+        isSet: false,
+        isExplicitEmpty: false,
+      });
+      return;
+    }
+
+    onconfirm(nextValue, {
+      isImplicit: false,
+      isSet: true,
+      isExplicitEmpty: false,
+    });
+  }
+
+  function confirmTupleValue(nextValue: unknown[]) {
+    if (nextValue.length === 0) {
       onconfirm(undefined, {
         isImplicit: true,
         isSet: false,
@@ -307,6 +328,19 @@
     {previewFeatureKind}
     titleActions={fieldActions}
     onconfirm={confirmListValue}
+  />
+{:else if type === "tuple"}
+  <TupleField
+    {inputId}
+    label={fieldLabel}
+    {description}
+    {inputWidth}
+    initialValue={getDisplayValue<unknown[]>([])}
+    {defaultValue}
+    tupleSize={tupleSize ?? 0}
+    tupleItemType={tupleItemType ?? "string"}
+    titleActions={fieldActions}
+    onconfirm={confirmTupleValue}
   />
 {:else if type === "enum"}
   <TextField

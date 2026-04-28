@@ -58,11 +58,13 @@
     },
     {
       "Id": "Size",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Check for a certain range of NPCs in the flock",
       "Options": {
         "Label": "Size",
-        "Width": 240
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int"
       }
     },
     {

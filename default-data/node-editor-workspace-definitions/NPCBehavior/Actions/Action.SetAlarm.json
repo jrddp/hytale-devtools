@@ -34,11 +34,13 @@
     },
     {
       "Id": "DurationRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The duration range from which to pick a duration to set the alarm for",
       "Options": {
         "Label": "DurationRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "String",
         "Computable": true
       }
     }

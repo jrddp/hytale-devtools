@@ -43,6 +43,26 @@ const TEST_CONTEXT = workspaceContext({
   ],
 });
 
+const TUPLE_CONTEXT = workspaceContext({
+  templates: [
+    nodeTemplate("Root", {
+      defaultTitle: "Root Node",
+      fieldsBySchemaKey: {
+        Range: nodeField("Range", "tuple", {
+          value: [Number.MAX_VALUE, Number.MAX_VALUE],
+          defaultValue: [Number.MAX_VALUE, Number.MAX_VALUE],
+          tupleSize: 2,
+          tupleItemType: "float",
+          computable: true,
+        }),
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+  ],
+});
+
 const SHARED_SUBTREE_CONTEXT = workspaceContext({
   rootTemplateOrVariantId: "Root",
   rootMenuName: "Shared Subtree Test Workspace",
@@ -472,6 +492,57 @@ describe("node editor serializeDocument", () => {
 
     expect(serialized).not.toHaveProperty("Name");
     expect(serialized).not.toHaveProperty("Preset");
+  });
+
+  test("round-trips tuple array fields without changing their JSON shape", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Range: [1, 2],
+      },
+      TUPLE_CONTEXT,
+    );
+
+    expect(findNodeByBaseId(parsed, "Root-1").data.fieldsBySchemaKey.Range).toMatchObject({
+      type: "tuple",
+      tupleSize: 2,
+      tupleItemType: "float",
+      value: [1, 2],
+      isSet: true,
+    });
+    expect(serializeWorkspace(parsed, TUPLE_CONTEXT.rootMenuName).Range).toEqual([1, 2]);
+  });
+
+  test("omits unset default tuple fields", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      TUPLE_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, TUPLE_CONTEXT.rootMenuName);
+
+    expect(serialized).not.toHaveProperty("Range");
+  });
+
+  test("round-trips computable tuple fields", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Range: {
+          Compute: "randomInRange(1, 3)",
+        },
+      },
+      TUPLE_CONTEXT,
+    );
+
+    expect(serializeWorkspace(parsed, TUPLE_CONTEXT.rootMenuName).Range).toEqual({
+      Compute: "randomInRange(1, 3)",
+    });
   });
 
   test("preserves explicit empty string fields", () => {

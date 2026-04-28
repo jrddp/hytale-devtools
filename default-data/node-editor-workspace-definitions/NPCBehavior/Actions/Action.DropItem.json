@@ -24,7 +24,7 @@
     },
     {
       "Id": "Delay",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Range of time to delay in seconds",
       "Options": {
         "Label": "Delay",
@@ -33,6 +33,8 @@
           1
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
@@ -76,7 +78,7 @@
     },
     {
       "Id": "Distance",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The range from which to pick a distance to throw the item",
       "Options": {
         "Label": "Distance",
@@ -84,12 +86,14 @@
           1,
           1
         ],
-        "Width": 240
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float"
       }
     },
     {
       "Id": "DropSector",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The sector to spread drops in relative to view direction of NPC",
       "Options": {
         "Label": "DropSector",
@@ -97,7 +101,9 @@
           0,
           0
         ],
-        "Width": 240
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float"
       }
     },
     {

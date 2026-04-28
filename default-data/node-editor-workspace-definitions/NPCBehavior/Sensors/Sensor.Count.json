@@ -36,21 +36,25 @@
     },
     {
       "Id": "Count",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Specifies the allowed number of entities (inclusive)",
       "Options": {
         "Label": "Count",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
         "Computable": true
       }
     },
     {
       "Id": "Range",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Range to find entities in (inclusive)",
       "Options": {
         "Label": "Range",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

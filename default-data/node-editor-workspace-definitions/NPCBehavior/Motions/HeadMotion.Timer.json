@@ -23,7 +23,7 @@
   "Content": [
     {
       "Id": "Time",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Range of time from which the random timer length can be chosen",
       "Options": {
         "Label": "Time",
@@ -32,6 +32,8 @@
           1
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

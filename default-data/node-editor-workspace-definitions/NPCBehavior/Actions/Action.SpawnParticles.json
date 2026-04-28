@@ -49,11 +49,13 @@
     },
     {
       "Id": "Offset",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Offset relative to footpoint in view direction of NPC",
       "Options": {
         "Label": "Offset",
         "Width": 240,
+        "TupleSize": 3,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

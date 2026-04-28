@@ -84,11 +84,13 @@
     },
     {
       "Id": "ValueRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The fractional range within which to trigger, with 1 being equal",
       "Options": {
         "Label": "ValueRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

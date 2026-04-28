@@ -36,7 +36,7 @@
     },
     {
       "Id": "LightRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The light intensity percentage range",
       "Options": {
         "Label": "LightRange",
@@ -45,12 +45,14 @@
           100
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "SkyLightRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The sky light percentage range",
       "Options": {
         "Label": "SkyLightRange",
@@ -59,12 +61,14 @@
           100
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "SunlightRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The sunlight percentage range",
       "Options": {
         "Label": "SunlightRange",
@@ -73,12 +77,14 @@
           100
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "RedLightRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The red light percentage range",
       "Options": {
         "Label": "RedLightRange",
@@ -87,12 +93,14 @@
           100
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "GreenLightRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The green light percentage range",
       "Options": {
         "Label": "GreenLightRange",
@@ -101,12 +109,14 @@
           100
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "BlueLightRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The blue light percentage range",
       "Options": {
         "Label": "BlueLightRange",
@@ -115,6 +125,8 @@
           100
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

@@ -75,6 +75,7 @@ describe("WorkspaceRuntime", () => {
               "SchemaStringFallback",
               "ExplicitSymbolLookup",
               "AnimationPreviewField",
+              "TupleField",
             ],
           },
         },
@@ -192,6 +193,34 @@ describe("WorkspaceRuntime", () => {
     );
 
     fs.writeFileSync(
+      path.join(workspaceDir, "TupleField.json"),
+      JSON.stringify(
+        {
+          Id: "TupleField",
+          Title: "Tuple Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "Range",
+              Type: "Tuple",
+              Options: {
+                Label: "Range",
+                Default: [1, 2],
+                TupleSize: 2,
+                TupleItemType: "Float",
+              },
+            },
+          ],
+          Schema: {
+            Range: "Range",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
       path.join(supplementsDir, "TestWorkspace.json"),
       JSON.stringify(
         {
@@ -244,6 +273,14 @@ describe("WorkspaceRuntime", () => {
     ).toMatchObject({
       animationAutocompleteKind: "appearance-model",
       previewFeatureKind: "animation",
+    });
+
+    expect(workspace.nodeTemplatesById.TupleField.fieldsBySchemaKey.Range).toMatchObject({
+      type: "tuple",
+      tupleSize: 2,
+      tupleItemType: "float",
+      defaultValue: [1, 2],
+      isSet: false,
     });
   });
 

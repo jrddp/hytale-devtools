@@ -36,21 +36,25 @@
     },
     {
       "Id": "TrueDurationRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The duration range to pick a random period to return true",
       "Options": {
         "Label": "TrueDurationRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "FalseDurationRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The duration range to pick a random period to return false",
       "Options": {
         "Label": "FalseDurationRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

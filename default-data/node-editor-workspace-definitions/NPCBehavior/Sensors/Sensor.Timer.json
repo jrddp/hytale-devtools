@@ -62,7 +62,7 @@
     },
     {
       "Id": "TimeRemainingRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The acceptable remaining time on the timer.",
       "Options": {
         "Label": "TimeRemainingRange",
@@ -71,6 +71,8 @@
           1.7976931348623157e+308
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

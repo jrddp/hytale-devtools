@@ -34,21 +34,25 @@
     },
     {
       "Id": "StartValueRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The range from which to pick an initial value to start at",
       "Options": {
         "Label": "StartValueRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "RestartValueRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The range from which to pick a value when the timer is restarted",
       "Options": {
         "Label": "RestartValueRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

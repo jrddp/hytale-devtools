@@ -34,6 +34,10 @@ export function buildContentField(
   if (inputWidth !== undefined) {
     options.Width = inputWidth;
   }
+  if (type === "Tuple") {
+    options.TupleSize = attribute.MinSize ?? undefined;
+    options.TupleItemType = resolveTupleItemType(attribute);
+  }
   if (enumValues?.length) {
     options.Values = enumValues;
   }
@@ -176,7 +180,10 @@ function resolveFieldType(
     case "Long":
       return "Int";
     case "Array":
-      return canRenderArrayField(attribute) ? "List" : null;
+      if (!canRenderArrayField(attribute)) {
+        return null;
+      }
+      return isFixedSizeArray(attribute) ? "Tuple" : "List";
     case "ObjectRef":
       return null;
     default:
@@ -191,6 +198,33 @@ function canRenderArrayField(attribute: NpcDescriptorAttribute): boolean {
       typeof attribute.Domain === "string" ? attribute.Domain : undefined,
     ) === undefined
   );
+}
+
+function isFixedSizeArray(attribute: NpcDescriptorAttribute): boolean {
+  return (
+    attribute.Type === "Array" &&
+    typeof attribute.MinSize === "number" &&
+    typeof attribute.MaxSize === "number" &&
+    attribute.MinSize >= 0 &&
+    attribute.MinSize === attribute.MaxSize
+  );
+}
+
+function resolveTupleItemType(attribute: NpcDescriptorAttribute): "String" | "Float" | "Int" {
+  switch (attribute.Domain) {
+    case "Double":
+    case "Float":
+      return "Float";
+    case "integer":
+    case "Int":
+    case "Integer":
+    case "Long":
+      return "Int";
+    case "TemporalAmount":
+    case "String":
+    default:
+      return "String";
+  }
 }
 
 function parseDefaultValue(
@@ -278,6 +312,7 @@ function getInputWidth(type: NodeContentDefinition["Type"]): number | undefined 
     case "Int":
       return 88;
     case "List":
+    case "Tuple":
       return 240;
     default:
       return 220;

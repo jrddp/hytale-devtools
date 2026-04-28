@@ -36,11 +36,13 @@
     },
     {
       "Id": "Period",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The time period to trigger within",
       "Options": {
         "Label": "Period",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

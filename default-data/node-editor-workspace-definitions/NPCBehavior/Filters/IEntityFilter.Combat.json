@@ -40,7 +40,7 @@
     },
     {
       "Id": "TimeElapsedRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The acceptable elapsed time range in seconds.",
       "Options": {
         "Label": "TimeElapsedRange",
@@ -49,6 +49,8 @@
           3.4028234663852886e+38
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

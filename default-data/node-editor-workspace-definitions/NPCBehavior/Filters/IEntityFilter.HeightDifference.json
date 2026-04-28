@@ -26,7 +26,7 @@
     },
     {
       "Id": "HeightDifference",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The height range to test entities in",
       "Options": {
         "Label": "HeightDifference",
@@ -35,6 +35,8 @@
           1.7976931348623157e+308
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

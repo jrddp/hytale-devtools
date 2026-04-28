@@ -57,7 +57,7 @@
     },
     {
       "Id": "DistanceRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Distance from spawner to spawn",
       "Options": {
         "Label": "DistanceRange",
@@ -66,12 +66,14 @@
           1
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "CountRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Number of NPCs to spawn",
       "Options": {
         "Label": "CountRange",
@@ -80,12 +82,14 @@
           5
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
         "Computable": true
       }
     },
     {
       "Id": "DelayRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Time between consecutive spawns in seconds",
       "Options": {
         "Label": "DelayRange",
@@ -94,6 +98,8 @@
           0.25
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

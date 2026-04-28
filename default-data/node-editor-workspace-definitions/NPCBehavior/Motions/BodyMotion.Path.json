@@ -147,7 +147,7 @@
     },
     {
       "Id": "NodePauseScaleRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The range from which to pick a value that defines the portion of the total node pause time that should be spent facing a direction before turning",
       "Options": {
         "Label": "NodePauseScaleRange",
@@ -156,12 +156,14 @@
           0.4
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "NodePauseExtraPercentRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "A range from which to pick the additional percentage of the directional pause time to add to it",
       "Options": {
         "Label": "NodePauseExtraPercentRange",
@@ -170,6 +172,8 @@
           0.2
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

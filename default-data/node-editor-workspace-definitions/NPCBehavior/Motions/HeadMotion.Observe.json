@@ -14,17 +14,19 @@
   "Content": [
     {
       "Id": "AngleRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The angle range to observe in degrees",
       "Options": {
         "Label": "AngleRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "PauseTimeRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "How long to continue looking in a given direction",
       "Options": {
         "Label": "PauseTimeRange",
@@ -33,6 +35,8 @@
           2
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

@@ -24,7 +24,7 @@
     },
     {
       "Id": "Delay",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "Range of time to delay in seconds",
       "Options": {
         "Label": "Delay",
@@ -33,6 +33,8 @@
           1
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },

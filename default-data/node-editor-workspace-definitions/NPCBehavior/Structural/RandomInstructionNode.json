@@ -103,7 +103,7 @@
     },
     {
       "Id": "ExecuteFor",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "How long to execute the chosen instruction before picking another",
       "Options": {
         "Label": "ExecuteFor",
@@ -112,6 +112,8 @@
           1.7976931348623157e+308
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

@@ -44,11 +44,13 @@
     },
     {
       "Id": "Offset",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The offset to apply to the returned position from the sensor",
       "Options": {
         "Label": "Offset",
         "Width": 240,
+        "TupleSize": 3,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

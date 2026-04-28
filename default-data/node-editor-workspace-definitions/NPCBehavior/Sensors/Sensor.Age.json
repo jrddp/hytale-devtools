@@ -36,11 +36,13 @@
     },
     {
       "Id": "AgeRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The age range within which to trigger",
       "Options": {
         "Label": "AgeRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "String",
         "Computable": true
       }
     }

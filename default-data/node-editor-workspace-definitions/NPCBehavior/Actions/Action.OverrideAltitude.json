@@ -24,11 +24,13 @@
     },
     {
       "Id": "DesiredAltitudeRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The desired altitude range",
       "Options": {
         "Label": "DesiredAltitudeRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

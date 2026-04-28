@@ -14,11 +14,13 @@
   "Content": [
     {
       "Id": "DesiredDistanceRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "The desired distance to remain at.",
       "Options": {
         "Label": "DesiredDistanceRange",
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
@@ -79,7 +81,7 @@
     },
     {
       "Id": "StrafingDurationRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "How long to strafe for.",
       "Options": {
         "Label": "StrafingDurationRange",
@@ -88,12 +90,14 @@
           0
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     },
     {
       "Id": "StrafingFrequencyRange",
-      "Type": "List",
+      "Type": "Tuple",
       "Description": "How frequently to execute strafing",
       "Options": {
         "Label": "StrafingFrequencyRange",
@@ -102,6 +106,8 @@
           2
         ],
         "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
         "Computable": true
       }
     }

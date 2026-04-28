@@ -218,6 +218,87 @@ describe("NPC node workspace generator builders", () => {
     });
   });
 
+  test("buildContentField emits tuple fields for fixed-size descriptor arrays", () => {
+    const randomInstructionDescriptor = findDescriptorOrThrow("Instruction", "Random");
+    const executeForAttribute = randomInstructionDescriptor.Attributes?.find(
+      entry => entry.Name === "ExecuteFor",
+    );
+    if (!executeForAttribute) {
+      throw new Error("Attribute ExecuteFor was not found.");
+    }
+
+    const actionSpawnDescriptor = findDescriptorOrThrow("Action", "Spawn");
+    const countRangeAttribute = actionSpawnDescriptor.Attributes?.find(
+      entry => entry.Name === "CountRange",
+    );
+    if (!countRangeAttribute) {
+      throw new Error("Attribute CountRange was not found.");
+    }
+
+    const actionSetAlarmDescriptor = findDescriptorOrThrow("Action", "SetAlarm");
+    const durationRangeAttribute = actionSetAlarmDescriptor.Attributes?.find(
+      entry => entry.Name === "DurationRange",
+    );
+    if (!durationRangeAttribute) {
+      throw new Error("Attribute DurationRange was not found.");
+    }
+
+    const actionSpawnParticlesDescriptor = findDescriptorOrThrow("Action", "SpawnParticles");
+    const offsetAttribute = actionSpawnParticlesDescriptor.Attributes?.find(
+      entry => entry.Name === "Offset",
+    );
+    if (!offsetAttribute) {
+      throw new Error("Attribute Offset was not found.");
+    }
+
+    const altitudeFilterDescriptor = findDescriptorOrThrow("IEntityFilter", "Altitude");
+    const altitudeRangeAttribute = altitudeFilterDescriptor.Attributes?.find(
+      entry => entry.Name === "AltitudeRange",
+    );
+    if (!altitudeRangeAttribute) {
+      throw new Error("Attribute AltitudeRange was not found.");
+    }
+
+    expect(buildContentField(randomInstructionDescriptor, executeForAttribute)).toMatchObject({
+      Id: "ExecuteFor",
+      Type: "Tuple",
+      Options: {
+        TupleSize: 2,
+        TupleItemType: "Float",
+        Computable: true,
+        Default: [Number.MAX_VALUE, Number.MAX_VALUE],
+      },
+    });
+    expect(buildContentField(actionSpawnDescriptor, countRangeAttribute)).toMatchObject({
+      Id: "CountRange",
+      Type: "Tuple",
+      Options: {
+        TupleSize: 2,
+        TupleItemType: "Int",
+      },
+    });
+    expect(buildContentField(actionSetAlarmDescriptor, durationRangeAttribute)).toMatchObject({
+      Id: "DurationRange",
+      Type: "Tuple",
+      Options: {
+        TupleSize: 2,
+        TupleItemType: "String",
+      },
+    });
+    expect(buildContentField(actionSpawnParticlesDescriptor, offsetAttribute)).toMatchObject({
+      Id: "Offset",
+      Type: "Tuple",
+      Options: {
+        TupleSize: 3,
+        TupleItemType: "Float",
+      },
+    });
+    expect(buildContentField(altitudeFilterDescriptor, altitudeRangeAttribute)).toMatchObject({
+      Id: "AltitudeRange",
+      Type: "List",
+    });
+  });
+
   test("buildContentField emits symbol lookups for non-obvious NPC descriptor domains", () => {
     const sensorCountDescriptor = findDescriptorOrThrow("Sensor", "Count");
     const includeGroupsAttribute = sensorCountDescriptor.Attributes?.find(
