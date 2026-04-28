@@ -3,6 +3,7 @@
   import { resolveNpcGraphDocumentFromText } from "@shared/npc-role-editor/graphDocumentRuntime";
   import type { NodeEditorClipboardSelection } from "@shared/node-editor/clipboardTypes";
   import type {
+    ActionRequest,
     NodeEditorControlScheme,
     NodeEditorPlatform,
   } from "@shared/node-editor/messageTypes";
@@ -38,6 +39,7 @@
     autocompleteField,
     autocompleteValues,
     computeAutocompleteOptions,
+    graphAction,
     initialViewport,
     onviewportchange,
     documentText,
@@ -53,6 +55,11 @@
     autocompleteField?: string;
     autocompleteValues: string[];
     computeAutocompleteOptions: ComputeAutocompleteOption[];
+    graphAction?: {
+      request: ActionRequest;
+      allowEditableTarget?: boolean;
+      version: number;
+    } | null;
     initialViewport?: GraphViewport;
     onviewportchange?: (viewport: GraphViewport) => void;
     documentText: string | null;
@@ -68,6 +75,7 @@
   let lastAutoFitFieldPath = $state<string | null>(null);
   let lastHandledSetRootRequestVersion = $state(0);
   let lastHandledSetExplicitEmptyRequestVersion = $state(0);
+  let lastHandledGraphActionVersion = $state(0);
 
   $effect(() => {
     session.embeddedGraphFieldPath = field.fieldPath;
@@ -328,6 +336,20 @@
       schemaKey: workspace.graphFieldExplicitEmptyRequestSchemaKey,
       itemIndex: workspace.graphFieldExplicitEmptyRequestListItemIndex,
     });
+  });
+
+  $effect(() => {
+    if (
+      !graphAction ||
+      graphAction.version === lastHandledGraphActionVersion ||
+      !workspaceContext ||
+      !session.isInitialized
+    ) {
+      return;
+    }
+
+    lastHandledGraphActionVersion = graphAction.version;
+    session.actionRequests.push(graphAction.request);
   });
 
   onDestroy(() => {

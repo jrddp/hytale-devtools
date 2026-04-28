@@ -9,6 +9,9 @@ import { graphEditMessageToGraphEdit } from "../shared/node-editor/graphEditMess
 import { invertNodeEditorGraphEdit } from "../shared/node-editor/graphEditUtils";
 import type { NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import type {
+  NodeEditorQuickActionPayload,
+} from "../shared/node-editor/quickActions";
+import type {
   NpcRoleEditorApplyMessage,
   NpcRoleEditorAssetIndexUpdateMessage,
   NpcRoleEditorContextActionMessage,
@@ -19,6 +22,7 @@ import type {
   NpcRoleEditorWebviewToExtensionMessage,
 } from "../shared/npc-role-editor/messageTypes";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
+import { registerNodeEditorQuickActionCommands } from "../node-editor/nodeEditorQuickActions";
 import { HytaleNpcRoleDocument } from "./hytaleNpcRoleDocument";
 import {
   resolveNpcAppearanceAnimationPreview,
@@ -38,6 +42,8 @@ import {
 } from "./npcRoleEditorReferenceLookup";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNpcRoleEditor";
+const NPC_GRAPH_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.npcRoleEditor.graph.quickAction.";
+const NPC_GRAPH_ACTIVE_CONTEXT_KEY = "hytaleDevtools.npcRoleEditor.graphActive";
 const DEFAULT_EDIT_LABEL = "Edit NPC Role";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
@@ -56,14 +62,21 @@ export function registerHytaleNpcRoleEditorProvider(
     },
     supportsMultipleEditorsPerDocument: true,
   });
+  const quickActionCommandRegistrations = registerNodeEditorQuickActionCommands(context, {
+    commandPrefix: NPC_GRAPH_QUICK_ACTION_COMMAND_PREFIX,
+    logger: LOGGER,
+    postAction: payload => provider.triggerGraphQuickAction(payload),
+  });
 
   return vscode.Disposable.from(
     registration,
     provider,
+    ...quickActionCommandRegistrations,
     new vscode.Disposable(() => {
       if (activeProvider === provider) {
         activeProvider = null;
       }
+      void vscode.commands.executeCommand("setContext", NPC_GRAPH_ACTIVE_CONTEXT_KEY, false);
     }),
   );
 }
@@ -170,10 +183,14 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
   public readonly onDidChangeCustomDocument = this.onDidChangeCustomDocumentEmitter.event;
 
   private readonly webviewPanelsByDocumentUri = new Map<string, Set<vscode.WebviewPanel>>();
+  private readonly graphPageActiveByPanel = new Map<vscode.WebviewPanel, boolean>();
   private activeDocumentUri: string | undefined;
+  private activeWebviewPanel: vscode.WebviewPanel | undefined;
   private copiedSelection: NodeEditorClipboardSelection = createEmptyNodeEditorClipboardSelection();
 
-  constructor(private readonly context: vscode.ExtensionContext) {}
+  constructor(private readonly context: vscode.ExtensionContext) {
+    void vscode.commands.executeCommand("setContext", NPC_GRAPH_ACTIVE_CONTEXT_KEY, false);
+  }
 
   public dispose(): void {
     this.onDidChangeCustomDocumentEmitter.dispose();
@@ -201,6 +218,8 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
 
       if (webviewPanel.active) {
         this.activeDocumentUri = documentUri;
+        this.activeWebviewPanel = webviewPanel;
+        this.updateGraphActiveContext();
       }
 
       webviewPanel.webview.options = {
@@ -231,17 +250,28 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
       const panelViewStateSubscription = webviewPanel.onDidChangeViewState(event => {
         if (event.webviewPanel.active) {
           this.activeDocumentUri = documentUri;
+          this.activeWebviewPanel = webviewPanel;
+          this.updateGraphActiveContext();
         } else if (this.activeDocumentUri === documentUri) {
           this.activeDocumentUri = undefined;
+          if (this.activeWebviewPanel === webviewPanel) {
+            this.activeWebviewPanel = undefined;
+            this.updateGraphActiveContext();
+          }
         }
       });
 
       webviewPanel.onDidDispose(() => {
         isDisposed = true;
         panelViewStateSubscription.dispose();
+        this.graphPageActiveByPanel.delete(webviewPanel);
         this.removePanelForDocument(documentUri, webviewPanel);
         if (this.activeDocumentUri === documentUri) {
           this.activeDocumentUri = undefined;
+        }
+        if (this.activeWebviewPanel === webviewPanel) {
+          this.activeWebviewPanel = undefined;
+          this.updateGraphActiveContext();
         }
       });
 
@@ -371,6 +401,12 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
           case "openKeybindings":
             void this.openNodeEditorKeybindings(message.query);
             return;
+          case "graphPageActive":
+            this.graphPageActiveByPanel.set(webviewPanel, message.active);
+            if (this.activeWebviewPanel === webviewPanel) {
+              this.updateGraphActiveContext();
+            }
+            return;
           case "update-setting":
             void this.updateNodeEditorSetting(message, webviewPanel.webview);
             return;
@@ -472,6 +508,10 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
   }
 
   private resolveTargetWebviewPanel(): vscode.WebviewPanel | undefined {
+    if (this.activeWebviewPanel) {
+      return this.activeWebviewPanel;
+    }
+
     const activePanels = this.activeDocumentUri
       ? this.webviewPanelsByDocumentUri.get(this.activeDocumentUri)
       : undefined;
@@ -496,6 +536,16 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     }
 
     return undefined;
+  }
+
+  private updateGraphActiveContext(): void {
+    void vscode.commands.executeCommand(
+      "setContext",
+      NPC_GRAPH_ACTIVE_CONTEXT_KEY,
+      this.activeWebviewPanel
+        ? this.graphPageActiveByPanel.get(this.activeWebviewPanel) === true
+        : false,
+    );
   }
 
   private async postDocumentUpdate(
@@ -580,6 +630,19 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     }
 
     await targetPanel.webview.postMessage(message);
+  }
+
+  public async triggerGraphQuickAction(payload: NodeEditorQuickActionPayload): Promise<void> {
+    const targetPanel = this.resolveTargetWebviewPanel();
+    if (!targetPanel || this.graphPageActiveByPanel.get(targetPanel) !== true) {
+      return;
+    }
+
+    await targetPanel.webview.postMessage({
+      type: "graphAction",
+      request: payload.request,
+      allowEditableTarget: payload.allowEditableTarget,
+    } satisfies NpcRoleEditorExtensionToWebviewMessage);
   }
 
   public async postAssetIndexUpdate(message: NpcRoleEditorAssetIndexUpdateMessage): Promise<void> {

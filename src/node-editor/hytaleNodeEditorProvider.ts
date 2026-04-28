@@ -13,16 +13,17 @@ import {
 } from "../shared/node-editor/graphEditUtils";
 import { type NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import {
-  type ActionType,
   type ExtensionToWebviewMessage,
   type NodeEditorGraphEditMessage,
   type NodeEditorControlScheme,
   type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
+import type { NodeEditorQuickActionPayload } from "../shared/node-editor/quickActions";
 import { isObject } from "../shared/typeUtils";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { HytaleNodeDocument } from "./hytaleNodeDocument";
+import { registerNodeEditorQuickActionCommands } from "./nodeEditorQuickActions";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
@@ -42,14 +43,11 @@ export function registerHytaleNodeEditorProvider(
       enableFindWidget: true,
     },
   });
-  const quickActionCommandRegistrations = readNodeEditorQuickActionCommandIds(context).map(
-    commandId =>
-      vscode.commands.registerCommand(commandId, () => {
-        void provider.triggerQuickActionByCommandId(
-          getActionTypeFromCommandId(commandId) as ActionType | "go-to-root",
-        );
-      }),
-  );
+  const quickActionCommandRegistrations = registerNodeEditorQuickActionCommands(context, {
+    commandPrefix: NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX,
+    logger: LOGGER,
+    postAction: payload => provider.triggerQuickAction(payload),
+  });
   const setRootContextCommandRegistration = vscode.commands.registerCommand(
     NODE_EDITOR_SET_ROOT_CONTEXT_COMMAND,
     (menuContext: unknown) => {
@@ -271,24 +269,16 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     this.onDidChangeCustomDocumentEmitter.dispose();
   }
 
-  public async triggerQuickActionByCommandId(
-    actionType: ActionType | "go-to-root",
-  ): Promise<void> {
+  public async triggerQuickAction(payload: NodeEditorQuickActionPayload): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
       return;
     }
 
-    if (actionType === "go-to-root") {
-      actionType = "reveal-node";
-    }
-
-    const allowEditableTarget = actionType === "search-nodes";
-
     await targetPanel.webview.postMessage({
       type: "action",
-      request: { type: actionType },
-      allowEditableTarget,
+      request: payload.request,
+      allowEditableTarget: payload.allowEditableTarget,
     });
   }
 
@@ -560,36 +550,6 @@ function readNodeEditorPlatform(): NodeEditorPlatform {
   }
 
   return "win";
-}
-
-function readNodeEditorQuickActionCommandIds(context: vscode.ExtensionContext): string[] {
-  const packageJson = context.extension.packageJSON as any;
-  if (!isObject(packageJson)) {
-    LOGGER.error("Commands unable to be parsed from package.json.");
-    return [];
-  }
-
-  const commands = (packageJson.contributes as any)?.commands ?? [];
-
-  if (!commands) {
-    LOGGER.warn("No commands found in package.json contributes.");
-    return [];
-  }
-
-  const commandIds = commands
-    .map((command: any) => command.command)
-    .filter(
-      (commandId: string) => !!commandId?.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX),
-    );
-  return commandIds;
-}
-
-function getActionTypeFromCommandId(commandId: string): string | undefined {
-  if (commandId.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX)) {
-    return commandId.slice(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX.length);
-  }
-
-  return undefined;
 }
 
 function readNodeEditorNodeIdFromContext(menuContext: unknown): string | undefined {

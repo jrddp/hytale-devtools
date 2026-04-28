@@ -4,6 +4,7 @@ import type { IndexReference } from "../indexTypes";
 import type { NodeEditorClipboardSelection } from "../node-editor/clipboardTypes";
 import type { NodeEditorGraphEdit } from "../node-editor/graphTypes";
 import type {
+  ActionRequest,
   NodeEditorGraphEditMessage,
   NodeEditorControlScheme,
   NodeEditorPlatform,
@@ -104,6 +105,12 @@ export type NpcRoleEditorContextActionMessage = {
   nodeEditorListItemIndex?: number;
 };
 
+export type NpcRoleEditorGraphActionMessage = {
+  type: "graphAction";
+  request: ActionRequest;
+  allowEditableTarget?: boolean;
+};
+
 export type NpcRoleEditorAssetIndexUpdateMessage = {
   type: "assetIndexUpdate";
   revision: number;
@@ -145,6 +152,7 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorVariantReferenceUpdateMessage
   | NpcRoleEditorComponentReferenceTargetUpdateMessage
   | NpcRoleEditorContextActionMessage
+  | NpcRoleEditorGraphActionMessage
   | NpcRoleEditorAssetIndexUpdateMessage
   | NpcRoleEditorAppearancePreviewBaseUpdateMessage
   | NpcRoleEditorAppearancePreviewAnimationUpdateMessage;
@@ -154,6 +162,7 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "openRawJson" }
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | { type: "openKeybindings"; query?: string }
+  | { type: "graphPageActive"; active: boolean }
   | { type: "update-setting"; setting: "controlScheme"; value: NodeEditorControlScheme }
   | { type: "resolveVariantReference"; referenceName: string }
   | { type: "resolveComponentReferenceTarget"; componentClass: string; referenceName: string }

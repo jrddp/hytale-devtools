@@ -5,9 +5,14 @@
     NpcRoleEditorGraphUpdateMessage,
   } from "@shared/npc-role-editor/messageTypes";
   import type {
+    ActionRequest,
     NodeEditorControlScheme,
     NodeEditorPlatform,
   } from "@shared/node-editor/messageTypes";
+  import {
+    EDITABLE_SELECTOR,
+    selectAllActiveEditableText,
+  } from "@node-editor/node-editor/utils/flowKeyboard";
   import DocumentEditorShell from "@webview-shared/components/DocumentEditorShell.svelte";
   import ModelPreviewCard from "@webview-shared/components/ModelPreviewCard.svelte";
   import {
@@ -67,6 +72,12 @@
   );
   let localWebviewState = $state<NpcRoleEditorWebviewState>({});
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
+  let pendingGraphAction = $state<{
+    request: ActionRequest;
+    allowEditableTarget?: boolean;
+    version: number;
+  } | null>(null);
+  let graphActionVersion = 0;
   let lastRequestedAppearanceAnimationRequest = $state<AppearancePreviewAnimationRequestState | null>(null);
   let npcBehaviorGraphContexts = $state.raw<
     Partial<Record<NpcGraphTargetWorkspaceRoot, NodeEditorWorkspaceContext>>
@@ -249,6 +260,13 @@
     }
 
     previousActiveGraphSectionId = activeGraphSectionId;
+  });
+
+  $effect(() => {
+    vscode.postMessage({
+      type: "graphPageActive",
+      active: activeGraphSectionId !== null,
+    });
   });
 
   $effect(() => {
@@ -445,6 +463,20 @@
         return;
       case "contextAction":
         workspace.handleContextAction(message);
+        return;
+      case "graphAction":
+        if (
+          message.allowEditableTarget ||
+          !document.activeElement?.matches(EDITABLE_SELECTOR)
+        ) {
+          pendingGraphAction = {
+            request: message.request,
+            allowEditableTarget: message.allowEditableTarget,
+            version: ++graphActionVersion,
+          };
+        } else if (message.request.type === "select-all") {
+          selectAllActiveEditableText();
+        }
         return;
       default:
         return;
@@ -879,7 +911,8 @@
             clipboard={nodeEditorClipboard}
             autocompleteField={workspace.autocompleteField}
             autocompleteValues={workspace.autocompleteValues}
-          {computeAutocompleteOptions}
+            {computeAutocompleteOptions}
+            graphAction={pendingGraphAction}
             documentText={workspace.documentText}
             initialViewport={activeGraphViewport}
             onviewportchange={viewport => {
