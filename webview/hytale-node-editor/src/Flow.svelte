@@ -96,6 +96,14 @@
       y: screenPosition.y - (rect?.top ?? 0),
     };
   };
+  const getEventClientPosition = (event: MouseEvent | TouchEvent): XYPosition | undefined => {
+    if ("clientX" in event) {
+      return { x: event.clientX, y: event.clientY };
+    }
+
+    const touch = event.changedTouches[0] ?? event.touches[0];
+    return touch ? { x: touch.clientX, y: touch.clientY } : undefined;
+  };
 
   let {
     nodes = $bindable([]),
@@ -1144,6 +1152,8 @@
     },
     // ## On Connect End
     onconnectend: (event, connectionState) => {
+      const dropClientPosition = getEventClientPosition(event);
+
       if (connectionState.toNode === null && connectionPreview.pendingSourceConnection) {
         connectionPreview.previewFixedConflicts();
         const sourcePin = getOutputPin(
@@ -1151,9 +1161,13 @@
           connectionPreview.pendingSourceConnection.sourceHandle,
           workspace,
         );
+        if (!dropClientPosition) {
+          connectionPreview.cancel();
+          return;
+        }
         addMenuInstance = {
-          viewportPosition: toFlowWrapperPosition(connectionState.pointer!),
-          spawnPosition: screenToFlowPosition(connectionState.pointer!),
+          viewportPosition: toFlowWrapperPosition(dropClientPosition),
+          spawnPosition: screenToFlowPosition(dropClientPosition),
           connectionFilter: sourcePin
             ? {
                 draggedFrom: "source",
@@ -1168,9 +1182,13 @@
           connectionPreview.pendingTargetConnection.targetHandle,
           workspace,
         );
+        if (!dropClientPosition) {
+          connectionPreview.cancel();
+          return;
+        }
         addMenuInstance = {
-          viewportPosition: toFlowWrapperPosition(connectionState.pointer!),
-          spawnPosition: screenToFlowPosition(connectionState.pointer!),
+          viewportPosition: toFlowWrapperPosition(dropClientPosition),
+          spawnPosition: screenToFlowPosition(dropClientPosition),
           connectionFilter: targetPin
             ? {
                 draggedFrom: "target",
