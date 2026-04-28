@@ -100,7 +100,7 @@
   {#if handle}
     <div
       {@attach handle.attach}
-      class="relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-80 outline-none transition-[color,opacity] hover:text-vsc-input-fg focus-visible:text-vsc-input-fg focus-visible:ring-2 focus-visible:ring-vsc-focus"
+      class="relative z-10 inline-flex size-6 shrink-0 self-center items-center justify-center rounded-md text-vsc-muted opacity-80 outline-none transition-[color,opacity] hover:text-vsc-input-fg focus-visible:text-vsc-input-fg focus-visible:ring-2 focus-visible:ring-vsc-focus"
       aria-label={handleAriaLabel}
       role="button"
       tabindex={-1}
@@ -221,7 +221,7 @@
         </div>
 
         {#if children}
-          <div class="min-w-0 flex-1">
+          <div class="flex min-w-0 flex-1 items-center self-stretch">
             {@render children()}
           </div>
         {/if}

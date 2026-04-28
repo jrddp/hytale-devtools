@@ -55,7 +55,7 @@
     readOnly={readOnly}
     {readOnlyMessage}
     blockPointerDown={readOnly}
-    class="inline-flex items-center"
+    class="flex items-center"
   >
     <div class="flex items-center gap-2">
       <input
