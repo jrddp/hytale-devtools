@@ -15,7 +15,7 @@
       "Id": "Input",
       "Type": "Instruction",
       "Color": "#2D3746",
-      "Label": "Instruction"
+      "Label": "Parent"
     }
   ],
   "Outputs": [
@@ -23,14 +23,14 @@
       "Id": "BodyMotionPin",
       "Type": "BodyMotion",
       "Color": "#00E7B6",
-      "Label": "BodyMotion",
+      "Label": "Body Motion",
       "Description": "Body motion to be executed"
     },
     {
       "Id": "HeadMotionPin",
       "Type": "HeadMotion",
       "Color": "#B08CE0",
-      "Label": "HeadMotion",
+      "Label": "Head Motion",
       "Description": "Head motion to be executed"
     },
     {

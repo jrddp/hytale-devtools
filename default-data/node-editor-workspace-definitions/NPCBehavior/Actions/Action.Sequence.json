@@ -8,7 +8,7 @@
       "Id": "Input",
       "Type": "ActionListItem",
       "Color": "#CC3361",
-      "Label": "Actions"
+      "Label": "Parent"
     }
   ],
   "Outputs": [

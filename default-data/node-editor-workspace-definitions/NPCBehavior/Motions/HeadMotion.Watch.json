@@ -8,7 +8,7 @@
       "Id": "Input",
       "Type": "HeadMotion",
       "Color": "#B08CE0",
-      "Label": "HeadMotion"
+      "Label": "Parent"
     }
   ],
   "Content": [

@@ -8,7 +8,7 @@
       "Id": "Input",
       "Type": "BodyMotion",
       "Color": "#00E7B6",
-      "Label": "BodyMotion"
+      "Label": "Parent"
     }
   ],
   "Content": [

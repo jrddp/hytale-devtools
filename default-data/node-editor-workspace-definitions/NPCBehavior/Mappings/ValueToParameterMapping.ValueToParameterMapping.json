@@ -9,7 +9,7 @@
       "Id": "Output",
       "Type": "ValueToParameterMapping",
       "Color": "#7091F0",
-      "Label": "Mapping"
+      "Label": "For"
     }
   ],
   "Content": [

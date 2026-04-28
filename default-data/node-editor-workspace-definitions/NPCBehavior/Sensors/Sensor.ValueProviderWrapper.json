@@ -15,7 +15,7 @@
       "Id": "ValueToParameterMappingsPin",
       "Type": "ValueToParameterMapping",
       "Color": "#7091F0",
-      "Label": "ValueToParameterMappings",
+      "Label": "Parameter Mappings",
       "Description": "The mappings of values to override parameters",
       "Multiple": true
     }
@@ -25,7 +25,7 @@
       "Id": "Output",
       "Type": "Sensor",
       "Color": "#7091F0",
-      "Label": "Sensor"
+      "Label": "For"
     }
   ],
   "Content": [

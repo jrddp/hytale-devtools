@@ -8,7 +8,6 @@ import {
   getNpcBehaviorChildPinSide,
   getNpcBehaviorConnectionAuthoringSide,
   getNpcBehaviorConnectionColor,
-  getNpcBehaviorConnectionLabel,
   getNpcBehaviorDescriptorSelfConnectionType,
 } from "../../../src/shared/node-editor/npcBehaviorWorkspaceSemantics";
 import type { NodePinDefinition } from "../../../src/node-editor/workspaceDefinitionTypes";
@@ -113,7 +112,7 @@ export function createSelfOutputPin(connectionType: NpcBehaviorConnectionType): 
     Id: "Output",
     Type: connectionType,
     Color: getNpcBehaviorConnectionColor(connectionType),
-    Label: getNpcBehaviorConnectionLabel(connectionType),
+    Label: "For",
   };
 }
 
@@ -165,7 +164,7 @@ export function createChildPinDefinition(
     Id: `${attribute.Name}Pin`,
     Type: childSpec.connectionType,
     Color: getNpcBehaviorConnectionColor(childSpec.connectionType),
-    Label: attribute.Name,
+    Label: normalizeChildPinLabel(attribute.Name),
     Description: normalizeDescription(attribute.ShortDescription),
     Multiple: childSpec.multiplicity === "multiple" || undefined,
   };
@@ -228,6 +227,19 @@ function createParentCompatibilityInputPin(
     Id: index === 0 ? "Input" : `Input${index}`,
     Type: connectionType,
     Color: getNpcBehaviorConnectionColor(connectionType),
-    Label: label ?? getNpcBehaviorConnectionLabel(connectionType),
+    Label: label ?? "Parent",
   };
+}
+
+function normalizeChildPinLabel(attributeName: string): string {
+  switch (attributeName) {
+    case "BodyMotion":
+      return "Body Motion";
+    case "HeadMotion":
+      return "Head Motion";
+    case "ValueToParameterMappings":
+      return "Parameter Mappings";
+    default:
+      return attributeName;
+  }
 }

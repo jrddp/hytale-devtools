@@ -15,6 +15,18 @@ function findDescriptorOrThrow(category: string, name: string) {
   return descriptor;
 }
 
+function findTemplateOrThrow(
+  artifacts: ReturnType<typeof buildNpcWorkspaceArtifacts>,
+  templateId: string,
+) {
+  const template = artifacts.templateOutputs.find(output => output.template.Id === templateId)
+    ?.template;
+  if (!template) {
+    throw new Error(`Template ${templateId} was not found.`);
+  }
+  return template;
+}
+
 describe("NPC node workspace generator builders", () => {
   test("buildContentField infers enum/computable metadata from real descriptors", () => {
     const bodyMotionPathDescriptor = findDescriptorOrThrow("BodyMotion", "Path");
@@ -142,6 +154,85 @@ describe("NPC node workspace generator builders", () => {
         ComponentReferenceSlotOccupancy: "normal-item",
       },
     });
+  });
+
+  test("buildNpcWorkspaceArtifacts emits user-facing NPC pin labels", () => {
+    const artifacts = buildNpcWorkspaceArtifacts(parseNpcDescriptors());
+
+    const sensorNot = findTemplateOrThrow(artifacts, "Sensor.Not");
+    expect(sensorNot.Outputs?.find(pin => pin.Id === "Output")).toMatchObject({
+      Type: "PositionSensor",
+      Label: "For",
+    });
+    expect(sensorNot.Inputs?.find(pin => pin.Id === "SensorPin")).toMatchObject({
+      Type: "Sensor",
+      Label: "Sensor",
+    });
+
+    const filterNot = findTemplateOrThrow(artifacts, "IEntityFilter.Not");
+    expect(filterNot.Outputs?.find(pin => pin.Id === "Output")).toMatchObject({
+      Type: "IEntityFilter",
+      Label: "For",
+    });
+    expect(filterNot.Inputs?.find(pin => pin.Id === "FilterPin")).toMatchObject({
+      Type: "IEntityFilter",
+      Label: "Filter",
+    });
+
+    const timeout = findTemplateOrThrow(artifacts, "Action.Timeout");
+    expect(timeout.Inputs?.find(pin => pin.Id === "Input")).toMatchObject({
+      Type: "ActionListItem",
+      Label: "Parent",
+    });
+    expect(timeout.Outputs?.find(pin => pin.Id === "ActionPin")).toMatchObject({
+      Type: "Action",
+      Label: "Action",
+    });
+
+    const makePath = findTemplateOrThrow(artifacts, "Action.MakePath");
+    expect(makePath.Inputs?.find(pin => pin.Id === "Input")).toMatchObject({
+      Type: "ActionListItem",
+      Label: "Parent",
+    });
+    expect(makePath.Inputs?.find(pin => pin.Id === "PathPin")).toMatchObject({
+      Type: "Path",
+      Label: "Path",
+    });
+
+    const instruction = findTemplateOrThrow(artifacts, "Structural.InstructionNode");
+    expect(instruction.Inputs?.find(pin => pin.Id === "Input")).toMatchObject({
+      Type: "Instruction",
+      Label: "Parent",
+    });
+    expect(instruction.Inputs?.find(pin => pin.Id === "SensorPin")).toMatchObject({
+      Type: "Sensor",
+      Label: "Sensor",
+    });
+    expect(instruction.Outputs?.find(pin => pin.Id === "InstructionsPin")).toMatchObject({
+      Type: "Instruction",
+      Label: "Instructions",
+    });
+
+    const bodyMotionTimer = findTemplateOrThrow(artifacts, "BodyMotion.Timer");
+    expect(bodyMotionTimer.Outputs?.find(pin => pin.Id === "MotionPin")).toMatchObject({
+      Type: "BodyMotion",
+      Label: "Motion",
+    });
+    expect(instruction.Outputs?.find(pin => pin.Id === "BodyMotionPin")).toMatchObject({
+      Type: "BodyMotion",
+      Label: "Body Motion",
+    });
+    expect(instruction.Outputs?.find(pin => pin.Id === "HeadMotionPin")).toMatchObject({
+      Type: "HeadMotion",
+      Label: "Head Motion",
+    });
+
+    const valueProviderWrapper = findTemplateOrThrow(artifacts, "Sensor.ValueProviderWrapper");
+    expect(valueProviderWrapper.Inputs?.find(pin => pin.Id === "ValueToParameterMappingsPin"))
+      .toMatchObject({
+        Type: "ValueToParameterMapping",
+        Label: "Parameter Mappings",
+      });
   });
 
   test("buildContentField annotates state autocomplete metadata for NPC node fields", () => {

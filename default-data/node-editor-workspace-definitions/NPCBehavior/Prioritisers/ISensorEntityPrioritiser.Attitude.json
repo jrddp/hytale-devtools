@@ -9,7 +9,7 @@
       "Id": "Output",
       "Type": "ISensorEntityPrioritiser",
       "Color": "#7091F0",
-      "Label": "Prioritiser"
+      "Label": "For"
     }
   ],
   "Content": [

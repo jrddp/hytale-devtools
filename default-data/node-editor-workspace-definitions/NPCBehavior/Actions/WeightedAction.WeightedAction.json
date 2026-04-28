@@ -8,7 +8,7 @@
       "Id": "Input",
       "Type": "WeightedAction",
       "Color": "#CC3361",
-      "Label": "Weighted Action"
+      "Label": "Parent"
     }
   ],
   "Outputs": [

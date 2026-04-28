@@ -8,7 +8,7 @@
       "Id": "Input",
       "Type": "ISensorEntityCollector",
       "Color": "#7091F0",
-      "Label": "Collector"
+      "Label": "Parent"
     }
   ],
   "Schema": {

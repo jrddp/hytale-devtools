@@ -15,7 +15,7 @@
       "Id": "Input",
       "Type": "Instruction",
       "Color": "#2D3746",
-      "Label": "Instruction"
+      "Label": "Parent"
     }
   ],
   "Outputs": [
