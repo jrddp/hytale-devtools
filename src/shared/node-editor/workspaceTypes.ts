@@ -64,6 +64,7 @@ export interface NodeField {
   /** Whether this field exists explicitly in the serialized document. */
   isSet: boolean;
   inputWidth?: number;
+  uniqueItems?: boolean;
   tupleSize?: number;
   tupleItemType?: NodeTupleItemType;
   overrideAutocompleteValues?: string[];

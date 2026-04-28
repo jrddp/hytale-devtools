@@ -114,6 +114,7 @@ export interface NodeContentDefinition {
     DefaultValue?: string | number | boolean | unknown[];
     Computable?: boolean;
     AllowExplicitEmpty?: boolean;
+    UniqueItems?: boolean;
     SymbolLookup?: IndexReference;
     ParameterMapKeyValues?: string[];
     ParameterMapKeySymbolLookup?: IndexReference;

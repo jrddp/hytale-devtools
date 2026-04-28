@@ -47,12 +47,17 @@
     },
     {
       "Id": "Attitudes",
-      "Type": "Enum",
+      "Type": "List",
       "Description": "A set of attitudes to match",
       "Options": {
         "Label": "Attitudes",
-        "Default": "[NEUTRAL, FRIENDLY, REVERED]",
-        "Width": 220,
+        "Default": [
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ],
+        "Width": 240,
+        "UniqueItems": true,
         "Values": [
           "IGNORE",
           "HOSTILE",

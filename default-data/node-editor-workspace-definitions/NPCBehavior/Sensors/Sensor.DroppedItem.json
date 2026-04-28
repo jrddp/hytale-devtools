@@ -82,12 +82,13 @@
     },
     {
       "Id": "Attitudes",
-      "Type": "Enum",
+      "Type": "List",
       "Description": "Attitudes to match",
       "Options": {
         "Label": "Attitudes",
-        "Default": "[]",
-        "Width": 220,
+        "Default": [],
+        "Width": 240,
+        "UniqueItems": true,
         "Values": [
           "Ignore",
           "Dislike",

@@ -37,6 +37,7 @@
     onconfirm,
     parentSchemaKey,
     symbolLookup,
+    uniqueItems,
     tupleSize,
     tupleItemType,
     parameterMapKeyOverrideAutocompleteValues,
@@ -325,6 +326,7 @@
     placeholder={defaultPlaceholder}
     {overrideAutocompleteValues}
     {symbolLookup}
+    {uniqueItems}
     {previewFeatureKind}
     titleActions={fieldActions}
     onconfirm={confirmListValue}

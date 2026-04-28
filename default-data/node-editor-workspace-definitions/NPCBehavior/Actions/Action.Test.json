@@ -129,12 +129,16 @@
     },
     {
       "Id": "EnumSet",
-      "Type": "Enum",
+      "Type": "List",
       "Description": "EnumSet Collisions Flock",
       "Options": {
         "Label": "EnumSet",
-        "Default": "[Flock, Collisions]",
-        "Width": 220,
+        "Default": [
+          "Flock",
+          "Collisions"
+        ],
+        "Width": 240,
+        "UniqueItems": true,
         "Values": [
           "TraceFail",
           "TraceSuccess",

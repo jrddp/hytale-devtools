@@ -38,6 +38,9 @@ export function buildContentField(
     options.TupleSize = attribute.MinSize ?? undefined;
     options.TupleItemType = resolveTupleItemType(attribute);
   }
+  if (shouldUseUniqueItems(attribute)) {
+    options.UniqueItems = true;
+  }
   if (enumValues?.length) {
     options.Values = enumValues;
   }
@@ -159,18 +162,18 @@ function resolveFieldType(
   attribute: NpcDescriptorAttribute,
   enumValues: string[] | undefined,
 ): NodeContentDefinition["Type"] | null {
-  if (enumValues?.length) {
-    return "Enum";
-  }
-
   switch (attribute.Type) {
     case "Boolean":
       return "Bool";
     case "Asset":
-    case "Flag":
     case "String":
       return "SmallString";
+    case "Flag":
+      return enumValues?.length ? "Enum" : "SmallString";
     case "AssetArray":
+    case "FlagArray":
+    case "FlagSet":
+    case "StringList":
       return "List";
     case "Float":
     case "Double":
@@ -227,6 +230,20 @@ function resolveTupleItemType(attribute: NpcDescriptorAttribute): "String" | "Fl
   }
 }
 
+function shouldUseUniqueItems(attribute: NpcDescriptorAttribute): boolean {
+  if (attribute.Type === "FlagSet") {
+    return true;
+  }
+
+  return (
+    attribute.Type === "FlagArray" &&
+    typeof attribute.Validator === "object" &&
+    attribute.Validator !== null &&
+    "Type" in attribute.Validator &&
+    attribute.Validator.Type === "EnumArrayNoDuplicates"
+  );
+}
+
 function parseDefaultValue(
   attribute: NpcDescriptorAttribute,
 ): string | number | boolean | unknown[] | undefined {
@@ -257,17 +274,42 @@ function parseDefaultValue(
       const numericValue = Number(trimmed);
       return Number.isFinite(numericValue) ? numericValue : undefined;
     }
-    case "Array":
     case "AssetArray":
+    case "Array":
       try {
         const parsed = JSON.parse(trimmed) as unknown;
         return Array.isArray(parsed) ? parsed : undefined;
       } catch {
         return undefined;
       }
+    case "FlagArray":
+    case "FlagSet":
+    case "StringList":
+      return parseDescriptorStringListDefault(trimmed);
     default:
       return rawValue;
   }
+}
+
+function parseDescriptorStringListDefault(rawValue: string): string[] | undefined {
+  try {
+    const parsed = JSON.parse(rawValue) as unknown;
+    if (Array.isArray(parsed)) {
+      return parsed.filter((value): value is string => typeof value === "string");
+    }
+  } catch {
+    // Descriptor enum defaults are often written as [A, B] rather than JSON strings.
+  }
+
+  if (!rawValue.startsWith("[") || !rawValue.endsWith("]")) {
+    return undefined;
+  }
+
+  return rawValue
+    .slice(1, -1)
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean);
 }
 
 function allowsExplicitEmptyString(attribute: NpcDescriptorAttribute): boolean {

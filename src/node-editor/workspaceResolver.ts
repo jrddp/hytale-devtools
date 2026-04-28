@@ -595,6 +595,7 @@ export class WorkspaceRuntime {
         isExplicitEmpty: false,
         isSet: false,
         inputWidth: content.Options?.Width,
+        uniqueItems: content.Options?.UniqueItems === true,
         tupleSize: this.resolveTupleSize(content),
         tupleItemType: this.resolveTupleItemType(content),
         overrideAutocompleteValues,

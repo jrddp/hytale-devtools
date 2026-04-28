@@ -35,7 +35,7 @@
     itemKind?: ListItemKind;
     emptyLabel?: string;
     addLabel?: string;
-    getAutocompleteOptions?: (itemInputId: string) => AutocompleteOption[];
+    getAutocompleteOptions?: (itemInputId: string, itemIndex: number) => AutocompleteOption[];
     onrequestAutocomplete?: (itemInputId: string) => void;
     onconsider?: (value?: string) => void;
     onadd: () => void;
@@ -144,7 +144,7 @@
           <SingleLineAutocompleteInput
             inputId={getItemInputId(index)}
             initialValue={typeof item === "string" ? item : String(item ?? "")}
-            autocompleteOptions={getAutocompleteOptions(getItemInputId(index))}
+            autocompleteOptions={getAutocompleteOptions(getItemInputId(index), index)}
             inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
             listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
             optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"

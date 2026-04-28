@@ -15,11 +15,12 @@
   "Content": [
     {
       "Id": "AttitudesByPriority",
-      "Type": "Enum",
+      "Type": "List",
       "Description": "A prioritised list of attitudes",
       "Options": {
         "Label": "AttitudesByPriority",
-        "Width": 220,
+        "Width": 240,
+        "UniqueItems": true,
         "Values": [
           "IGNORE",
           "HOSTILE",

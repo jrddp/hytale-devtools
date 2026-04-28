@@ -22,6 +22,7 @@
     placeholder = "",
     overrideAutocompleteValues,
     symbolLookup,
+    uniqueItems,
     previewFeatureKind,
     titleActions,
     onconfirm,
@@ -29,6 +30,7 @@
     placeholder?: string;
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
+    uniqueItems?: boolean;
     previewFeatureKind?: NodeField["previewFeatureKind"];
     titleActions?: Snippet;
   } = $props();
@@ -69,13 +71,16 @@
     confirmValue(nextList);
   }
 
-  function getAutocompleteOptions(itemInputId: string) {
+  function getAutocompleteOptions(itemInputId: string, itemIndex: number) {
     return getListAutocompleteValues({
       itemInputId,
       overrideAutocompleteValues,
       symbolLookup,
       autocompleteField: workspace.autocompleteField,
       autocompleteValues: workspace.autocompleteValues,
+      items: value,
+      currentItemIndex: itemIndex,
+      uniqueItems,
     }).map(value => ({ value }));
   }
 

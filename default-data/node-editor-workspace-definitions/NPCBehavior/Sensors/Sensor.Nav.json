@@ -36,12 +36,13 @@
     },
     {
       "Id": "NavStates",
-      "Type": "Enum",
+      "Type": "List",
       "Description": "Trigger when path finder is in one of the states or empty to match all",
       "Options": {
         "Label": "NavStates",
-        "Default": "[]",
-        "Width": 220,
+        "Default": [],
+        "Width": 240,
+        "UniqueItems": true,
         "Values": [
           "INIT",
           "PROGRESSING",

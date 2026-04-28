@@ -218,6 +218,64 @@ describe("NPC node workspace generator builders", () => {
     });
   });
 
+  test("buildContentField emits list fields for flag and string list descriptor types", () => {
+    const actionTestDescriptor = findDescriptorOrThrow("Action", "Test");
+    const enumSetAttribute = actionTestDescriptor.Attributes?.find(entry => entry.Name === "EnumSet");
+    if (!enumSetAttribute) {
+      throw new Error("Attribute EnumSet was not found.");
+    }
+
+    const prioritiserAttitudeDescriptor = findDescriptorOrThrow(
+      "ISensorEntityPrioritiser",
+      "Attitude",
+    );
+    const attitudesByPriorityAttribute = prioritiserAttitudeDescriptor.Attributes?.find(
+      entry => entry.Name === "AttitudesByPriority",
+    );
+    if (!attitudesByPriorityAttribute) {
+      throw new Error("Attribute AttitudesByPriority was not found.");
+    }
+
+    const stateTransitionEdgesDescriptor = findDescriptorOrThrow(
+      "StateTransitionEdges",
+      "StateTransitionEdges",
+    );
+    const fromAttribute = stateTransitionEdgesDescriptor.Attributes?.find(entry => entry.Name === "From");
+    if (!fromAttribute) {
+      throw new Error("Attribute From was not found.");
+    }
+
+    expect(buildContentField(actionTestDescriptor, enumSetAttribute)).toMatchObject({
+      Id: "EnumSet",
+      Type: "List",
+      Options: {
+        Label: "EnumSet",
+        Default: ["Flock", "Collisions"],
+        UniqueItems: true,
+        Values: expect.arrayContaining(["Flock", "Collisions"]),
+      },
+    });
+    expect(buildContentField(prioritiserAttitudeDescriptor, attitudesByPriorityAttribute)).toMatchObject({
+      Id: "AttitudesByPriority",
+      Type: "List",
+      Options: {
+        Label: "AttitudesByPriority",
+        UniqueItems: true,
+        Values: ["IGNORE", "HOSTILE", "NEUTRAL", "FRIENDLY", "REVERED"],
+      },
+    });
+    expect(buildContentField(stateTransitionEdgesDescriptor, fromAttribute)).toMatchObject({
+      Id: "From",
+      Type: "List",
+      Options: {
+        Label: "From",
+      },
+    });
+    expect(buildContentField(stateTransitionEdgesDescriptor, fromAttribute)?.Options).not.toHaveProperty(
+      "UniqueItems",
+    );
+  });
+
   test("buildContentField emits tuple fields for fixed-size descriptor arrays", () => {
     const randomInstructionDescriptor = findDescriptorOrThrow("Instruction", "Random");
     const executeForAttribute = randomInstructionDescriptor.Attributes?.find(

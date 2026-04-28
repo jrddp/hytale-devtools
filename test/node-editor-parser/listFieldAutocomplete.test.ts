@@ -40,6 +40,49 @@ describe("node editor list field autocomplete helpers", () => {
     ).toEqual(["Sword", "Shield"]);
   });
 
+  test("filters used values for unique static list suggestions while preserving the current row value", () => {
+    expect(
+      getListAutocompleteValues({
+        itemInputId: "field-node-Items-item-1",
+        overrideAutocompleteValues: ["One", "Two", "Three"],
+        autocompleteValues: [],
+        items: ["One", "Two"],
+        currentItemIndex: 1,
+        uniqueItems: true,
+      }),
+    ).toEqual(["Two", "Three"]);
+  });
+
+  test("keeps duplicate suggestions when list items are not unique", () => {
+    expect(
+      getListAutocompleteValues({
+        itemInputId: "field-node-Items-item-1",
+        overrideAutocompleteValues: ["One", "Two", "Three"],
+        autocompleteValues: [],
+        items: ["One", "Two"],
+        currentItemIndex: 1,
+        uniqueItems: false,
+      }),
+    ).toEqual(["One", "Two", "Three"]);
+  });
+
+  test("filters used values for unique symbol-backed list suggestions", () => {
+    expect(
+      getListAutocompleteValues({
+        itemInputId: "field-node-Items-item-0",
+        symbolLookup: {
+          indexKind: "registeredAssets",
+          key: "Item",
+        },
+        autocompleteField: "field-node-Items-item-0",
+        autocompleteValues: ["Sword", "Shield", "Axe"],
+        items: ["Sword", "Shield"],
+        currentItemIndex: 0,
+        uniqueItems: true,
+      }),
+    ).toEqual(["Sword", "Axe"]);
+  });
+
   test("only requests symbol autocomplete when override values are absent", () => {
     expect(
       shouldRequestListAutocomplete(undefined, {

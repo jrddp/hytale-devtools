@@ -26,11 +26,12 @@
     },
     {
       "Id": "Attitudes",
-      "Type": "Enum",
+      "Type": "List",
       "Description": "The attitudes to match",
       "Options": {
         "Label": "Attitudes",
-        "Width": 220,
+        "Width": 240,
+        "UniqueItems": true,
         "Values": [
           "IGNORE",
           "HOSTILE",

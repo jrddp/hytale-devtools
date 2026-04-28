@@ -76,6 +76,7 @@ describe("WorkspaceRuntime", () => {
               "ExplicitSymbolLookup",
               "AnimationPreviewField",
               "TupleField",
+              "UniqueListField",
             ],
           },
         },
@@ -221,6 +222,33 @@ describe("WorkspaceRuntime", () => {
     );
 
     fs.writeFileSync(
+      path.join(workspaceDir, "UniqueListField.json"),
+      JSON.stringify(
+        {
+          Id: "UniqueListField",
+          Title: "Unique List Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "Values",
+              Type: "List",
+              Options: {
+                Label: "Values",
+                UniqueItems: true,
+                Values: ["One", "Two"],
+              },
+            },
+          ],
+          Schema: {
+            Values: "Values",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
       path.join(supplementsDir, "TestWorkspace.json"),
       JSON.stringify(
         {
@@ -280,6 +308,13 @@ describe("WorkspaceRuntime", () => {
       tupleSize: 2,
       tupleItemType: "float",
       defaultValue: [1, 2],
+      isSet: false,
+    });
+
+    expect(workspace.nodeTemplatesById.UniqueListField.fieldsBySchemaKey.Values).toMatchObject({
+      type: "list",
+      uniqueItems: true,
+      overrideAutocompleteValues: ["One", "Two"],
       isSet: false,
     });
   });
