@@ -14,6 +14,7 @@
   } from "@node-editor/node-editor/utils/graphDocument";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import { cloneJsonLike } from "@shared/jsonClone";
+  import type { FieldCommitOptions } from "@node-editor/node-editor/utils/fieldUtils";
   import FieldEditor from "../fields/FieldEditor.svelte";
 
   const {
@@ -148,7 +149,7 @@
   function updateField(
     schemaKey: string,
     nextValue: unknown,
-    options: { isImplicit?: boolean; isSet?: boolean } = {},
+    options: FieldCommitOptions = {},
   ) {
     const previousField = fieldsBySchemaKey[schemaKey] ?? createFallbackField(schemaKey);
     if (!previousField) {
@@ -165,6 +166,7 @@
       ...cloneJsonLike($state.snapshot(previousField)),
       value: cloneJsonLike($state.snapshot(nextValue)),
       isImplicit: nextIsImplicit,
+      isExplicitEmpty: options.isExplicitEmpty ?? false,
       isSet: nextIsSet,
     };
 
@@ -406,7 +408,11 @@
 <div class="flex min-w-[20rem] flex-col gap-3">
   {#if referenceField}
     <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
-      <FieldEditor nodeId={nodeId} {...referenceField} onconfirm={value => updateField("Reference", value)} />
+      <FieldEditor
+        nodeId={nodeId}
+        {...referenceField}
+        onconfirm={(value, options) => updateField("Reference", value, options)}
+      />
     </div>
   {/if}
 
@@ -414,10 +420,18 @@
     {#if nullableField || interfacesField}
       <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
         {#if nullableField}
-          <FieldEditor nodeId={nodeId} {...nullableField} onconfirm={value => updateField("Nullable", value)} />
+          <FieldEditor
+            nodeId={nodeId}
+            {...nullableField}
+            onconfirm={(value, options) => updateField("Nullable", value, options)}
+          />
         {/if}
         {#if interfacesField}
-          <FieldEditor nodeId={nodeId} {...interfacesField} onconfirm={value => updateField("Interfaces", value)} />
+          <FieldEditor
+            nodeId={nodeId}
+            {...interfacesField}
+            onconfirm={(value, options) => updateField("Interfaces", value, options)}
+          />
         {/if}
       </div>
     {/if}
@@ -427,7 +441,7 @@
         <FieldEditor
           nodeId={nodeId}
           {...computedExportStatesField[1]}
-          onconfirm={value => updateField(computedExportStatesField[0], value)}
+          onconfirm={(value, options) => updateField(computedExportStatesField[0], value, options)}
         />
       </div>
     {/if}
@@ -436,12 +450,16 @@
       <FieldEditor
         nodeId={nodeId}
         {...computedParametersField[1]}
-        onconfirm={value => updateField(computedParametersField[0], value)}
+        onconfirm={(value, options) => updateField(computedParametersField[0], value, options)}
       />
     {/if}
 
     {#each interfaceParameterFields as { schemaKey, field } (schemaKey)}
-      <FieldEditor nodeId={nodeId} {...field} onconfirm={value => updateField(schemaKey, value)} />
+      <FieldEditor
+        nodeId={nodeId}
+        {...field}
+        onconfirm={(value, options) => updateField(schemaKey, value, options)}
+      />
     {/each}
 
     {#if missingInterfaceParameterFields.length > 0}
@@ -464,7 +482,11 @@
       </div>
       <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
         {#each exportStateFields as { schemaKey, field } (schemaKey)}
-          <FieldEditor nodeId={nodeId} {...field} onconfirm={value => updateField(schemaKey, value)} />
+          <FieldEditor
+            nodeId={nodeId}
+            {...field}
+            onconfirm={(value, options) => updateField(schemaKey, value, options)}
+          />
         {/each}
       </div>
     </div>
@@ -475,7 +497,11 @@
       <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-vsc-muted">Parameters</div>
       <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
         {#each overrideFields as { schemaKey, field } (schemaKey)}
-          <FieldEditor nodeId={nodeId} {...field} onconfirm={value => updateField(schemaKey, value)} />
+          <FieldEditor
+            nodeId={nodeId}
+            {...field}
+            onconfirm={(value, options) => updateField(schemaKey, value, options)}
+          />
         {/each}
       </div>
     </div>

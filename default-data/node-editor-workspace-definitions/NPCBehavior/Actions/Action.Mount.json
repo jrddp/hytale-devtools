@@ -59,7 +59,8 @@
       "Options": {
         "Label": "MovementConfig",
         "Width": 220,
-        "Computable": true
+        "Computable": true,
+        "AllowExplicitEmpty": true
       }
     }
   ],

@@ -55,8 +55,13 @@
     type NodeRenderDetailMode,
     useNodeEditorSession,
   } from "@node-editor/workspace.svelte";
+  import { cloneJsonLike } from "@shared/jsonClone";
   import { tick, untrack } from "svelte";
   import type { FlowEdge, FlowNode } from "./common";
+  import {
+    createFieldValuePropertyChange,
+    createNodePropertiesUpdatedEdit,
+  } from "./node-editor/utils/graphDocument";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
   const {
@@ -591,6 +596,9 @@
         case "set-root":
           workspace.setRootNode(action.nodeId);
           break;
+        case "set-field-explicit-empty":
+          setFieldExplicitEmpty(action.nodeId, action.schemaKey);
+          break;
         case "document-refresh":
           if (!workspace.areNodesMeasured) {
             retained.push(action);
@@ -886,8 +894,61 @@
   function isSetRootNativeContextTarget(event: Event): boolean {
     return (
       event.target instanceof Element &&
-      event.target.closest("[data-node-editor-set-root-context='true']") !== null
+      (event.target.closest("[data-node-editor-set-root-context='true']") !== null ||
+        event.target.closest("[data-node-editor-field-context='true']") !== null)
     );
+  }
+
+  function setFieldExplicitEmpty(nodeId: string, schemaKey: string) {
+    const node = workspace.getNodeById(nodeId);
+    if (!node || node.type !== "datanode") {
+      return;
+    }
+
+    const field = node.data.fieldsBySchemaKey?.[schemaKey];
+    if (
+      !field ||
+      field.allowsExplicitEmpty !== true ||
+      (field.type !== "string" && field.type !== "text")
+    ) {
+      return;
+    }
+
+    const previousFieldSnapshot = cloneJsonLike($state.snapshot(field));
+    const nextField = {
+      ...previousFieldSnapshot,
+      value: "",
+      isImplicit: false,
+      isExplicitEmpty: true,
+      isSet: true,
+    };
+    const nextFieldsBySchemaKey = {
+      ...node.data.fieldsBySchemaKey,
+      [schemaKey]: nextField,
+    };
+
+    workspace.applyNodeUpdates([
+      [
+        nodeId,
+        {
+          data: {
+            fieldsBySchemaKey: nextFieldsBySchemaKey,
+          },
+        },
+      ],
+    ]);
+
+    const edit = createNodePropertiesUpdatedEdit([
+      createFieldValuePropertyChange({
+        nodeId,
+        schemaKey,
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
+    ]);
+    if (edit) {
+      workspace.applyGraphEdit(edit);
+    }
   }
 
   // In low-detail mode the real node DOM is hidden, so clicks on canvas-rendered nodes still target the pane.

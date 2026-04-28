@@ -253,4 +253,66 @@ describe("NPC node workspace generator builders", () => {
       },
     });
   });
+
+  test("buildContentField marks only empty-valid string fields as explicit-empty capable", () => {
+    const actionModelAttachmentDescriptor = findDescriptorOrThrow("Action", "ModelAttachment");
+    const attachmentAttribute = actionModelAttachmentDescriptor.Attributes?.find(
+      entry => entry.Name === "Attachment",
+    );
+    if (!attachmentAttribute) {
+      throw new Error("Attribute Attachment was not found.");
+    }
+
+    const actionDisplayNameDescriptor = findDescriptorOrThrow("Action", "DisplayName");
+    const displayNameAttribute = actionDisplayNameDescriptor.Attributes?.find(
+      entry => entry.Name === "DisplayName",
+    );
+    if (!displayNameAttribute) {
+      throw new Error("Attribute DisplayName was not found.");
+    }
+
+    const actionSetInteractableDescriptor = findDescriptorOrThrow("Action", "SetInteractable");
+    const hintAttribute = actionSetInteractableDescriptor.Attributes?.find(
+      entry => entry.Name === "Hint",
+    );
+    if (!hintAttribute) {
+      throw new Error("Attribute Hint was not found.");
+    }
+
+    const actionNotifyDescriptor = findDescriptorOrThrow("Action", "Notify");
+    const messageAttribute = actionNotifyDescriptor.Attributes?.find(entry => entry.Name === "Message");
+    if (!messageAttribute) {
+      throw new Error("Attribute Message was not found.");
+    }
+
+    const actionAppearanceDescriptor = findDescriptorOrThrow("Action", "Appearance");
+    const appearanceAttribute = actionAppearanceDescriptor.Attributes?.find(
+      entry => entry.Name === "Appearance",
+    );
+    if (!appearanceAttribute) {
+      throw new Error("Attribute Appearance was not found.");
+    }
+
+    expect(buildContentField(actionModelAttachmentDescriptor, attachmentAttribute)).toMatchObject({
+      Options: {
+        AllowExplicitEmpty: true,
+      },
+    });
+    expect(buildContentField(actionDisplayNameDescriptor, displayNameAttribute)).toMatchObject({
+      Options: {
+        AllowExplicitEmpty: true,
+      },
+    });
+    expect(buildContentField(actionSetInteractableDescriptor, hintAttribute)).toMatchObject({
+      Options: {
+        AllowExplicitEmpty: true,
+      },
+    });
+    expect(buildContentField(actionNotifyDescriptor, messageAttribute)?.Options).not.toHaveProperty(
+      "AllowExplicitEmpty",
+    );
+    expect(buildContentField(actionAppearanceDescriptor, appearanceAttribute)?.Options).not.toHaveProperty(
+      "AllowExplicitEmpty",
+    );
+  });
 });

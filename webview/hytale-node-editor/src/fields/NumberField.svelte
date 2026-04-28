@@ -9,11 +9,17 @@
     label,
     description,
     initialValue,
+    placeholder = "",
+    emptyValue = 0,
+    emptyCommitsUndefined = false,
     inputWidth,
     isFloat = false,
     titleActions,
     onconfirm,
-  }: FieldProps<number> & {
+  }: FieldProps<number | undefined> & {
+    placeholder?: string;
+    emptyValue?: number | undefined;
+    emptyCommitsUndefined?: boolean;
     isFloat?: boolean;
     titleActions?: Snippet;
   } = $props();
@@ -27,12 +33,14 @@
     {inputId}
     initialValue={initialValue}
     integer={!isFloat}
-    emptyValue={0}
+    {emptyValue}
+    {emptyCommitsUndefined}
     inputClass={`${inputClass} ${inputWidth === undefined ? "w-full" : ""}`.trim()}
     style={inputWidth !== undefined ? `width: ${inputWidth}px` : undefined}
+    {placeholder}
     enterBehavior="focus-next"
     focusRootSelector="[data-node-editor-root]"
     stopPointerPropagation
-    oncommit={value => onconfirm(value ?? 0)}
+    oncommit={onconfirm}
   />
 </FieldLayout>

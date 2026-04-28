@@ -12,6 +12,7 @@
     inputId,
     initialValue,
     emptyValue = 0,
+    emptyCommitsUndefined = false,
     inputElement = $bindable(),
     inputClass = "",
     integer = false,
@@ -27,6 +28,7 @@
     inputId: string;
     initialValue?: number | string | null;
     emptyValue?: number | undefined;
+    emptyCommitsUndefined?: boolean;
     inputElement?: HTMLInputElement;
     inputClass?: string;
     integer?: boolean;
@@ -73,7 +75,12 @@
       return false;
     }
 
-    const nextValue = parsed.kind === "empty" ? emptyValue : parsed.value;
+    const nextValue =
+      parsed.kind === "empty"
+        ? emptyCommitsUndefined
+          ? undefined
+          : emptyValue
+        : parsed.value;
     const nextText = formatNumberInputValue(nextValue);
     value = nextText;
 

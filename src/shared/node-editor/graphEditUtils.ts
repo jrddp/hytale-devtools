@@ -131,6 +131,11 @@ function applyNodePropertyChanges(
           field.value = target === "before" ? change.beforeValue : change.afterValue;
           field.isImplicit =
             target === "before" ? change.beforeIsImplicit : change.afterIsImplicit;
+          const nextIsExplicitEmpty =
+            target === "before" ? change.beforeIsExplicitEmpty : change.afterIsExplicitEmpty;
+          if (nextIsExplicitEmpty !== undefined) {
+            field.isExplicitEmpty = nextIsExplicitEmpty;
+          }
           const nextIsSet = target === "before" ? change.beforeIsSet : change.afterIsSet;
           if (nextIsSet !== undefined) {
             field.isSet = nextIsSet;
@@ -251,6 +256,8 @@ export function invertNodeEditorGraphEdit(
                 afterValue: change.beforeValue,
                 beforeIsImplicit: change.afterIsImplicit,
                 afterIsImplicit: change.beforeIsImplicit,
+                beforeIsExplicitEmpty: change.afterIsExplicitEmpty,
+                afterIsExplicitEmpty: change.beforeIsExplicitEmpty,
                 beforeIsSet: change.afterIsSet,
                 afterIsSet: change.beforeIsSet,
                 ...(change.afterField !== undefined

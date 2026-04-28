@@ -64,7 +64,8 @@
       "Options": {
         "Label": "TargetNodeName",
         "Width": 220,
-        "Computable": true
+        "Computable": true,
+        "AllowExplicitEmpty": true
       }
     },
     {

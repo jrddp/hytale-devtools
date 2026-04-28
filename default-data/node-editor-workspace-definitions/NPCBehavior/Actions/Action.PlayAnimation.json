@@ -44,6 +44,7 @@
         "Label": "Animation",
         "Width": 220,
         "Computable": true,
+        "AllowExplicitEmpty": true,
         "AnimationAutocompleteKind": "appearance-model"
       }
     }

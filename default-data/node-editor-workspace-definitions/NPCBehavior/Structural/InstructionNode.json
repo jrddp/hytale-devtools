@@ -57,7 +57,8 @@
       "Description": "Optional name for descriptor",
       "Options": {
         "Label": "Name",
-        "Width": 220
+        "Width": 220,
+        "AllowExplicitEmpty": true
       }
     },
     {

@@ -288,7 +288,7 @@ export function serializeGraphDocument(document: NodeEditorGraphDocument): Asset
           if (field.value === undefined) {
             continue;
           }
-          if (field.value === "" && field.isImplicit) {
+          if (field.value === "" && field.isImplicit && field.isExplicitEmpty !== true) {
             continue;
           }
           const schemaKey = field.schemaKey as string;

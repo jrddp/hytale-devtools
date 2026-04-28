@@ -126,6 +126,8 @@ export type NodeEditorGraphPropertyChange =
       afterValue: unknown;
       beforeIsImplicit?: boolean;
       afterIsImplicit?: boolean;
+      beforeIsExplicitEmpty?: boolean;
+      afterIsExplicitEmpty?: boolean;
       beforeIsSet?: boolean;
       afterIsSet?: boolean;
       beforeField?: NodeField;

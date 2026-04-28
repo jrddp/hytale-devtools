@@ -10,6 +10,7 @@
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
   import ComponentReferenceNodeBody from "./ComponentReferenceNodeBody.svelte";
+  import type { FieldCommitOptions } from "@node-editor/node-editor/utils/fieldUtils";
 
   const { id, ...props }: DataNodeType = $props();
   const fieldsBySchemaKey = $derived(props.data.fieldsBySchemaKey);
@@ -19,7 +20,7 @@
   function updateField(
     schemaKey: string,
     nextValue: unknown,
-    options: { isImplicit?: boolean; isSet?: boolean } = {},
+    options: FieldCommitOptions = {},
   ) {
     const previousField = fieldsBySchemaKey[schemaKey];
     if (!previousField) {
@@ -33,6 +34,7 @@
       ...previousFieldSnapshot,
       value: cloneJsonLike($state.snapshot(nextValue)),
       isImplicit: nextIsImplicit,
+      isExplicitEmpty: options.isExplicitEmpty ?? false,
       isSet: nextIsSet,
     };
     updateNodeData(id, {
@@ -65,7 +67,11 @@
   {:else}
     <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
       {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
-        <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
+        <FieldEditor
+          nodeId={id}
+          {...field}
+          onconfirm={(value, options) => updateField(schemaKey, value, options)}
+        />
       {/each}
     </div>
   {/if}

@@ -166,6 +166,14 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(setNpcGraphRootCommand);
 
+  const setNpcGraphFieldExplicitEmptyCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.setGraphFieldExplicitEmpty",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("setGraphFieldExplicitEmpty", menuContext);
+    },
+  );
+  context.subscriptions.push(setNpcGraphFieldExplicitEmptyCommand);
+
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
   context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));

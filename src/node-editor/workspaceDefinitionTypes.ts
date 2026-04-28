@@ -110,6 +110,7 @@ export interface NodeContentDefinition {
     UseUUID?: boolean;
     DefaultValue?: string | number | boolean | unknown[];
     Computable?: boolean;
+    AllowExplicitEmpty?: boolean;
     SymbolLookup?: IndexReference;
     ParameterMapKeyValues?: string[];
     ParameterMapKeySymbolLookup?: IndexReference;

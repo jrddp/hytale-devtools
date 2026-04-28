@@ -27,6 +27,8 @@ import { HytaleNodeDocument } from "./hytaleNodeDocument";
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
 const NODE_EDITOR_SET_ROOT_CONTEXT_COMMAND = "hytale-devtools.nodeEditor.context.setRoot";
+const NODE_EDITOR_SET_FIELD_EXPLICIT_EMPTY_CONTEXT_COMMAND =
+  "hytale-devtools.nodeEditor.context.setFieldExplicitEmpty";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
 const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
@@ -54,11 +56,18 @@ export function registerHytaleNodeEditorProvider(
       void provider.triggerSetRootContextAction(menuContext);
     },
   );
+  const setFieldExplicitEmptyContextCommandRegistration = vscode.commands.registerCommand(
+    NODE_EDITOR_SET_FIELD_EXPLICIT_EMPTY_CONTEXT_COMMAND,
+    (menuContext: unknown) => {
+      void provider.triggerSetFieldExplicitEmptyContextAction(menuContext);
+    },
+  );
 
   return vscode.Disposable.from(
     providerRegistration,
     provider,
     setRootContextCommandRegistration,
+    setFieldExplicitEmptyContextCommandRegistration,
     ...quickActionCommandRegistrations,
   );
 }
@@ -297,6 +306,25 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     await targetPanel.webview.postMessage({
       type: "action",
       request: { type: "set-root", nodeId },
+      allowEditableTarget: true,
+    } satisfies ExtensionToWebviewMessage);
+  }
+
+  public async triggerSetFieldExplicitEmptyContextAction(menuContext: unknown): Promise<void> {
+    const nodeId = readNodeEditorNodeIdFromContext(menuContext);
+    const schemaKey = readNodeEditorFieldSchemaKeyFromContext(menuContext);
+    if (!nodeId || !schemaKey) {
+      return;
+    }
+
+    const targetPanel = this.resolveTargetWebviewPanel();
+    if (!targetPanel) {
+      return;
+    }
+
+    await targetPanel.webview.postMessage({
+      type: "action",
+      request: { type: "set-field-explicit-empty", nodeId, schemaKey },
       allowEditableTarget: true,
     } satisfies ExtensionToWebviewMessage);
   }
@@ -563,6 +591,12 @@ function getActionTypeFromCommandId(commandId: string): string | undefined {
 function readNodeEditorNodeIdFromContext(menuContext: unknown): string | undefined {
   return isObject(menuContext) && typeof menuContext.nodeEditorNodeId === "string"
     ? menuContext.nodeEditorNodeId
+    : undefined;
+}
+
+function readNodeEditorFieldSchemaKeyFromContext(menuContext: unknown): string | undefined {
+  return isObject(menuContext) && typeof menuContext.nodeEditorFieldSchemaKey === "string"
+    ? menuContext.nodeEditorFieldSchemaKey
     : undefined;
 }
 

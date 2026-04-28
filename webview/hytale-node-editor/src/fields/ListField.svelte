@@ -19,12 +19,14 @@
     description,
     initialValue,
     inputWidth,
+    placeholder = "",
     overrideAutocompleteValues,
     symbolLookup,
     previewFeatureKind,
     titleActions,
     onconfirm,
   }: FieldProps<unknown[]> & {
+    placeholder?: string;
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
     previewFeatureKind?: NodeField["previewFeatureKind"];
@@ -121,6 +123,7 @@
       items={value}
       {inputWidth}
       addLabel="Add item"
+      emptyLabel={placeholder || "No items"}
       {getAutocompleteOptions}
       onrequestAutocomplete={requestAutocomplete}
       onconsider={handleConsideredPreview}

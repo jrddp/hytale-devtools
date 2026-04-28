@@ -81,8 +81,18 @@
         "category": "Hytale NPC Role Editor"
       },
       {
+        "command": "hytale-devtools.npcRoleEditor.context.setGraphFieldExplicitEmpty",
+        "title": "Set as explicitly empty",
+        "category": "Hytale NPC Role Editor"
+      },
+      {
         "command": "hytale-devtools.nodeEditor.context.setRoot",
         "title": "Set Root",
+        "category": "Hytale Node Editor"
+      },
+      {
+        "command": "hytale-devtools.nodeEditor.context.setFieldExplicitEmpty",
+        "title": "Set as explicitly empty",
         "category": "Hytale Node Editor"
       },
       {
@@ -139,6 +149,16 @@
           "command": "hytale-devtools.npcRoleEditor.context.setGraphRoot",
           "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'nodeEditorNode' && nodeEditorCanSetRoot && nodeEditorGraphFieldPath",
           "group": "2_modification@1"
+        },
+        {
+          "command": "hytale-devtools.nodeEditor.context.setFieldExplicitEmpty",
+          "when": "webviewId == 'hytale-devtools.hytaleNodeEditor' && webviewSection == 'nodeEditorField' && nodeEditorCanSetExplicitEmpty",
+          "group": "2_modification@2"
+        },
+        {
+          "command": "hytale-devtools.npcRoleEditor.context.setGraphFieldExplicitEmpty",
+          "when": "webviewId == 'hytale-devtools.hytaleNpcRoleEditor' && webviewSection == 'nodeEditorField' && nodeEditorCanSetExplicitEmpty && nodeEditorGraphFieldPath",
+          "group": "2_modification@2"
         },
         {
           "command": "hytale-devtools.npcRoleEditor.context.renameParameter",
@@ -210,7 +230,15 @@
           "when": "false"
         },
         {
+          "command": "hytale-devtools.npcRoleEditor.context.setGraphFieldExplicitEmpty",
+          "when": "false"
+        },
+        {
           "command": "hytale-devtools.nodeEditor.context.setRoot",
+          "when": "false"
+        },
+        {
+          "command": "hytale-devtools.nodeEditor.context.setFieldExplicitEmpty",
           "when": "false"
         }
       ]

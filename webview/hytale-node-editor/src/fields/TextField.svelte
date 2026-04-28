@@ -15,19 +15,25 @@
     label,
     description,
     initialValue,
+    placeholder = "",
     inputWidth,
     multiline = false,
     overrideAutocompleteValues,
     symbolLookup,
     previewFeatureKind,
     titleActions,
+    vscodeContext,
+    nativeContextTarget,
     onconfirm,
   }: FieldProps<string> & {
+    placeholder?: string;
     multiline?: boolean;
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
     previewFeatureKind?: NodeField["previewFeatureKind"];
     titleActions?: Snippet;
+    vscodeContext?: string;
+    nativeContextTarget?: boolean;
   } = $props();
   const workspace = useNodeEditorSession();
 
@@ -106,6 +112,8 @@
   {description}
   align={multiline ? "start" : "center"}
   {titleActions}
+  {vscodeContext}
+  {nativeContextTarget}
 >
   <div
     class="relative min-w-0"
@@ -118,6 +126,7 @@
         class="nodrag h-20 min-h-10 w-full resize-none rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
         rows="4"
         bind:value
+        {placeholder}
         onblur={confirmValue}
         {...noMousePropogation}
       ></textarea>
@@ -125,6 +134,7 @@
       <SingleLineAutocompleteInput
         {inputId}
         initialValue={value}
+        {placeholder}
         autocompleteOptions={autocompleteOptions}
         inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
         listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"

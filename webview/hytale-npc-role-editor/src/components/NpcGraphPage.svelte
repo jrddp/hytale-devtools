@@ -67,6 +67,7 @@
   let lastSyncedGraphFieldPath = $state<string | null>(null);
   let lastAutoFitFieldPath = $state<string | null>(null);
   let lastHandledSetRootRequestVersion = $state(0);
+  let lastHandledSetExplicitEmptyRequestVersion = $state(0);
 
   $effect(() => {
     session.embeddedGraphFieldPath = field.fieldPath;
@@ -297,6 +298,25 @@
     session.actionRequests.push({
       type: "set-root",
       nodeId: workspace.graphRootSetRequestNodeId,
+    });
+  });
+
+  $effect(() => {
+    const requestVersion = workspace.graphFieldExplicitEmptyRequestVersion;
+    if (
+      requestVersion === lastHandledSetExplicitEmptyRequestVersion ||
+      workspace.graphFieldExplicitEmptyRequestFieldPath !== field.fieldPath ||
+      !workspace.graphFieldExplicitEmptyRequestNodeId ||
+      !workspace.graphFieldExplicitEmptyRequestSchemaKey
+    ) {
+      return;
+    }
+
+    lastHandledSetExplicitEmptyRequestVersion = requestVersion;
+    session.actionRequests.push({
+      type: "set-field-explicit-empty",
+      nodeId: workspace.graphFieldExplicitEmptyRequestNodeId,
+      schemaKey: workspace.graphFieldExplicitEmptyRequestSchemaKey,
     });
   });
 

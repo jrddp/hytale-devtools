@@ -146,6 +146,10 @@ export class Workspace {
   graphRootSetRequestFieldPath = $state<string | null>(null);
   graphRootSetRequestNodeId = $state<string | null>(null);
   graphRootSetRequestVersion = $state(0);
+  graphFieldExplicitEmptyRequestFieldPath = $state<string | null>(null);
+  graphFieldExplicitEmptyRequestNodeId = $state<string | null>(null);
+  graphFieldExplicitEmptyRequestSchemaKey = $state<string | null>(null);
+  graphFieldExplicitEmptyRequestVersion = $state(0);
 
   setDescriptors({
     descriptors,
@@ -677,6 +681,14 @@ export class Workspace {
           this.graphRootSetRequestFieldPath = message.fieldPath;
           this.graphRootSetRequestNodeId = message.nodeEditorNodeId;
           this.graphRootSetRequestVersion += 1;
+        }
+        return;
+      case "setGraphFieldExplicitEmpty":
+        if (message.fieldPath && message.nodeEditorNodeId && message.nodeEditorFieldSchemaKey) {
+          this.graphFieldExplicitEmptyRequestFieldPath = message.fieldPath;
+          this.graphFieldExplicitEmptyRequestNodeId = message.nodeEditorNodeId;
+          this.graphFieldExplicitEmptyRequestSchemaKey = message.nodeEditorFieldSchemaKey;
+          this.graphFieldExplicitEmptyRequestVersion += 1;
         }
         return;
       default:

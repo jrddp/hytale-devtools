@@ -220,7 +220,8 @@
       "Options": {
         "Label": "Debug",
         "Default": "",
-        "Width": 220
+        "Width": 220,
+        "AllowExplicitEmpty": true
       }
     },
     {

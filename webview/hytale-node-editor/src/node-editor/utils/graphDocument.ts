@@ -148,6 +148,8 @@ export function createFieldValuePropertyChange({
     afterValue: clonedAfterField?.value,
     beforeIsImplicit: clonedBeforeField?.isImplicit,
     afterIsImplicit: clonedAfterField?.isImplicit,
+    beforeIsExplicitEmpty: clonedBeforeField?.isExplicitEmpty,
+    afterIsExplicitEmpty: clonedAfterField?.isExplicitEmpty,
     beforeIsSet: clonedBeforeField?.isSet,
     afterIsSet: clonedAfterField?.isSet,
     beforeField: clonedBeforeField,
@@ -529,6 +531,7 @@ function applyNodePropertiesUpdatedToWorkspaceState(
                   ...field,
                   value: change.afterValue,
                   isImplicit: change.afterIsImplicit,
+                  isExplicitEmpty: change.afterIsExplicitEmpty ?? field.isExplicitEmpty,
                   isSet: change.afterIsSet ?? field.isSet,
                 };
               }

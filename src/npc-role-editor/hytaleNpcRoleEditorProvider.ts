@@ -81,13 +81,21 @@ export async function triggerNpcRoleEditorContextAction(
       : null;
   const nodeEditorNodeId =
     isRecord(context) && typeof context.nodeEditorNodeId === "string" ? context.nodeEditorNodeId : null;
+  const nodeEditorFieldSchemaKey =
+    isRecord(context) && typeof context.nodeEditorFieldSchemaKey === "string"
+      ? context.nodeEditorFieldSchemaKey
+      : null;
 
   if (!activeProvider) {
     return;
   }
 
-  if (action === "setGraphRoot") {
+  if (action === "setGraphRoot" || action === "setGraphFieldExplicitEmpty") {
     if (!nodeEditorGraphFieldPath || !nodeEditorNodeId) {
+      return;
+    }
+
+    if (action === "setGraphFieldExplicitEmpty" && !nodeEditorFieldSchemaKey) {
       return;
     }
 
@@ -96,6 +104,7 @@ export async function triggerNpcRoleEditorContextAction(
       action,
       fieldPath: nodeEditorGraphFieldPath,
       nodeEditorNodeId,
+      nodeEditorFieldSchemaKey: nodeEditorFieldSchemaKey ?? undefined,
     });
     return;
   }

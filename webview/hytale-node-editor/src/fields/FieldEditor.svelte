@@ -7,7 +7,11 @@
   import ComputeField from "@node-editor/fields/ComputeField.svelte";
   import ObjectField from "@node-editor/fields/ObjectField.svelte";
   import ParameterMapField from "@node-editor/fields/ParameterMapField.svelte";
-  import { buildFieldInputId } from "@node-editor/node-editor/utils/fieldUtils";
+  import {
+    buildFieldInputId,
+    type FieldCommitOptions,
+  } from "@node-editor/node-editor/utils/fieldUtils";
+  import { formatNodeFieldPlaceholder } from "@node-editor/node-editor/utils/fieldPlaceholders";
   import BooleanField from "./BooleanField.svelte";
   import ColorField from "./ColorField.svelte";
   import FilePathField from "./FilePathField.svelte";
@@ -37,9 +41,12 @@
     overrideAutocompleteValues,
     previewFeatureKind,
     computable = false,
+    defaultValue,
+    isSet,
+    allowsExplicitEmpty = false,
   }: NodeField & {
     nodeId?: string;
-    onconfirm: (value: unknown, options?: { isImplicit?: boolean; isSet?: boolean }) => void;
+    onconfirm: (value: unknown, options?: FieldCommitOptions) => void;
     parentSchemaKey?: string;
     initialValue?: unknown;
   } = $props();
@@ -47,6 +54,31 @@
   const workspace = useNodeEditorSession();
   const fieldLabel = $derived(label ?? schemaKey ?? "Field");
   const inputId = $derived(buildFieldInputId(nodeId, schemaKey, parentSchemaKey));
+  const defaultPlaceholder = $derived(
+    isSet || isEmptyDefaultPlaceholder(defaultValue) ? "" : formatNodeFieldPlaceholder(defaultValue),
+  );
+  const hasDefaultValue = $derived(defaultValue !== undefined);
+  const canSetExplicitEmpty = $derived(
+    allowsExplicitEmpty === true &&
+      hasDefaultValue &&
+      nodeId !== undefined &&
+      schemaKey !== null &&
+      parentSchemaKey === undefined &&
+      (type === "string" || type === "text"),
+  );
+  const explicitEmptyVscodeContext = $derived(
+    canSetExplicitEmpty
+      ? JSON.stringify({
+          webviewSection: "nodeEditorField",
+          nodeEditorNodeId: nodeId,
+          nodeEditorFieldSchemaKey: schemaKey,
+          nodeEditorCanSetExplicitEmpty: true,
+          ...(workspace.embeddedGraphFieldPath
+            ? { nodeEditorGraphFieldPath: workspace.embeddedGraphFieldPath }
+            : {}),
+        })
+      : undefined,
+  );
   const computeAutocompleteOptions = $derived<ComputeAutocompleteOption[]>(
     workspace.computeAutocompleteOptions,
   );
@@ -124,6 +156,99 @@
     });
   }
 
+  function getDisplayValue<T>(fallbackValue: T): T {
+    return isSet ? (value as T) : fallbackValue;
+  }
+
+  function isEmptyDefaultPlaceholder(value: unknown): boolean {
+    return value === undefined || (Array.isArray(value) && value.length === 0);
+  }
+
+  function confirmTextValue(nextValue: string) {
+    if (nextValue === "" && (hasDefaultValue || allowsExplicitEmpty)) {
+      onconfirm(undefined, {
+        isImplicit: true,
+        isSet: false,
+        isExplicitEmpty: false,
+      });
+      return;
+    }
+
+    onconfirm(nextValue, {
+      isImplicit: false,
+      isSet: true,
+      isExplicitEmpty: false,
+    });
+  }
+
+  function confirmNumberValue(nextValue: number | undefined) {
+    if (nextValue === undefined && hasDefaultValue) {
+      onconfirm(undefined, {
+        isImplicit: true,
+        isSet: false,
+        isExplicitEmpty: false,
+      });
+      return;
+    }
+
+    onconfirm(nextValue ?? 0, {
+      isImplicit: false,
+      isSet: true,
+      isExplicitEmpty: false,
+    });
+  }
+
+  function confirmListValue(nextValue: unknown[]) {
+    if (nextValue.length === 0 && hasDefaultValue) {
+      onconfirm(undefined, {
+        isImplicit: true,
+        isSet: false,
+        isExplicitEmpty: false,
+      });
+      return;
+    }
+
+    onconfirm(nextValue, {
+      isImplicit: false,
+      isSet: true,
+      isExplicitEmpty: false,
+    });
+  }
+
+  function confirmBooleanValue(nextValue: boolean) {
+    if (typeof defaultValue === "boolean" && nextValue === defaultValue) {
+      onconfirm(undefined, {
+        isImplicit: true,
+        isSet: false,
+        isExplicitEmpty: false,
+      });
+      return;
+    }
+
+    onconfirm(nextValue, {
+      isImplicit: false,
+      isSet: true,
+      isExplicitEmpty: false,
+    });
+  }
+
+  function confirmSliderValue(nextValue: number) {
+    if (typeof defaultValue === "number" && nextValue === defaultValue) {
+      onconfirm(undefined, {
+        isImplicit: true,
+        isSet: false,
+        isExplicitEmpty: false,
+      });
+      return;
+    }
+
+    onconfirm(nextValue, {
+      isImplicit: false,
+      isSet: true,
+      isExplicitEmpty: false,
+    });
+  }
+
 </script>
 
 {#snippet fieldActions()}
@@ -163,7 +288,7 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as Record<string, unknown>}
+    initialValue={getDisplayValue<Record<string, unknown>>({})}
     keyOverrideAutocompleteValues={parameterMapKeyOverrideAutocompleteValues}
     keySymbolLookup={parameterMapKeySymbolLookup}
     titleActions={fieldActions}
@@ -175,12 +300,13 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as string[]}
+    initialValue={getDisplayValue<unknown[]>([])}
+    placeholder={defaultPlaceholder}
     {overrideAutocompleteValues}
     {symbolLookup}
     {previewFeatureKind}
     titleActions={fieldActions}
-    {onconfirm}
+    onconfirm={confirmListValue}
   />
 {:else if type === "enum"}
   <TextField
@@ -188,12 +314,15 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as string}
+    initialValue={getDisplayValue<string>("")}
+    placeholder={defaultPlaceholder}
     overrideAutocompleteValues={overrideAutocompleteValues}
     {symbolLookup}
     {previewFeatureKind}
     titleActions={fieldActions}
-    {onconfirm}
+    vscodeContext={explicitEmptyVscodeContext}
+    nativeContextTarget={canSetExplicitEmpty}
+    onconfirm={confirmTextValue}
   />
 {:else if type === "filepath"}
   <FilePathField
@@ -201,7 +330,7 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as string}
+    initialValue={getDisplayValue<string>("")}
     titleActions={fieldActions}
     {onconfirm}
   />
@@ -211,9 +340,9 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as number}
+    initialValue={isSet ? (value as number) : typeof defaultValue === "number" ? defaultValue : 0}
     titleActions={fieldActions}
-    {onconfirm}
+    onconfirm={confirmSliderValue}
   />
 {:else if type === "checkbox"}
   <BooleanField
@@ -221,9 +350,9 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as boolean}
+    initialValue={isSet ? (value as boolean) : typeof defaultValue === "boolean" ? defaultValue : false}
     titleActions={fieldActions}
-    {onconfirm}
+    onconfirm={confirmBooleanValue}
   />
 {:else if type === "color"}
   <ColorField
@@ -231,7 +360,7 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as string}
+    initialValue={getDisplayValue<string>("")}
     titleActions={fieldActions}
     {onconfirm}
   />
@@ -241,10 +370,12 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as number}
+    initialValue={isSet ? (value as number) : undefined}
+    placeholder={defaultPlaceholder}
+    emptyCommitsUndefined={hasDefaultValue}
     isFloat={type === "float"}
     titleActions={fieldActions}
-    {onconfirm}
+    onconfirm={confirmNumberValue}
   />
 {:else}
   <TextField
@@ -252,12 +383,15 @@
     label={fieldLabel}
     {description}
     {inputWidth}
-    initialValue={value as string}
+    initialValue={getDisplayValue<string>("")}
+    placeholder={defaultPlaceholder}
     multiline={type === "text"}
     {overrideAutocompleteValues}
     {symbolLookup}
     {previewFeatureKind}
     titleActions={fieldActions}
-    {onconfirm}
+    vscodeContext={explicitEmptyVscodeContext}
+    nativeContextTarget={canSetExplicitEmpty}
+    onconfirm={confirmTextValue}
   />
 {/if}

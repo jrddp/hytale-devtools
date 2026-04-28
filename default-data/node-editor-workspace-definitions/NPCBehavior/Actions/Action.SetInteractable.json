@@ -39,7 +39,8 @@
       "Description": "The interaction hint translation key to show for this player (e.g. 'interactionHints.trade')",
       "Options": {
         "Label": "Hint",
-        "Width": 220
+        "Width": 220,
+        "AllowExplicitEmpty": true
       }
     },
     {

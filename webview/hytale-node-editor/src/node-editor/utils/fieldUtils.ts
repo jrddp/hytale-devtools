@@ -1,10 +1,16 @@
+export type FieldCommitOptions = {
+  isImplicit?: boolean;
+  isSet?: boolean;
+  isExplicitEmpty?: boolean;
+};
+
 export type FieldProps<T> = {
   inputId: string;
   label: string;
   description?: string;
   initialValue: T;
   inputWidth?: number;
-  onconfirm: (value: T) => void;
+  onconfirm: (value: T, options?: FieldCommitOptions) => void;
 };
 
 export function buildFieldInputId(

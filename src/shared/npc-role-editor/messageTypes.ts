@@ -95,10 +95,12 @@ export type NpcRoleEditorContextActionMessage = {
     | "changeParameterType"
     | "editParameterDescription"
     | "logFieldInstance"
-    | "setGraphRoot";
+    | "setGraphRoot"
+    | "setGraphFieldExplicitEmpty";
   parameterName?: string;
   fieldPath?: string;
   nodeEditorNodeId?: string;
+  nodeEditorFieldSchemaKey?: string;
 };
 
 export type NpcRoleEditorAssetIndexUpdateMessage = {

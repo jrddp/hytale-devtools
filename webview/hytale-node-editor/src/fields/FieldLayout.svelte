@@ -8,6 +8,8 @@
     description,
     align = "start",
     titleActions,
+    vscodeContext,
+    nativeContextTarget,
     children,
   }: {
     inputId: string;
@@ -15,6 +17,8 @@
     description?: string;
     align?: "start" | "center";
     titleActions?: Snippet;
+    vscodeContext?: string;
+    nativeContextTarget?: boolean;
     children?: Snippet;
   } = $props();
 
@@ -42,6 +46,10 @@
   </div>
 </HoverTooltip>
 
-<div class={contentClass}>
+<div
+  class={contentClass}
+  data-vscode-context={vscodeContext}
+  data-node-editor-field-context={nativeContextTarget ? "true" : undefined}
+>
   {@render children?.()}
 </div>
