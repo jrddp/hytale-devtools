@@ -40,6 +40,7 @@
     autocompleteValues,
     computeAutocompleteOptions,
     graphAction,
+    ongraphactionhandled,
     initialViewport,
     onviewportchange,
     documentText,
@@ -60,6 +61,7 @@
       allowEditableTarget?: boolean;
       version: number;
     } | null;
+    ongraphactionhandled?: (version: number) => void;
     initialViewport?: GraphViewport;
     onviewportchange?: (viewport: GraphViewport) => void;
     documentText: string | null;
@@ -350,6 +352,7 @@
 
     lastHandledGraphActionVersion = graphAction.version;
     session.actionRequests.push(graphAction.request);
+    ongraphactionhandled?.(graphAction.version);
   });
 
   onDestroy(() => {

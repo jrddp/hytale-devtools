@@ -73,6 +73,7 @@
   let localWebviewState = $state<NpcRoleEditorWebviewState>({});
   let latestGraphUpdate = $state<NpcRoleEditorGraphUpdateMessage | null>(null);
   let pendingGraphAction = $state<{
+    sectionId: NpcSectionId;
     request: ActionRequest;
     allowEditableTarget?: boolean;
     version: number;
@@ -260,6 +261,12 @@
     }
 
     previousActiveGraphSectionId = activeGraphSectionId;
+  });
+
+  $effect(() => {
+    if (pendingGraphAction && pendingGraphAction.sectionId !== activeGraphSectionId) {
+      pendingGraphAction = null;
+    }
   });
 
   $effect(() => {
@@ -465,11 +472,15 @@
         workspace.handleContextAction(message);
         return;
       case "graphAction":
+        if (!activeGraphSectionId) {
+          return;
+        }
         if (
           message.allowEditableTarget ||
           !document.activeElement?.matches(EDITABLE_SELECTOR)
         ) {
           pendingGraphAction = {
+            sectionId: activeGraphSectionId,
             request: message.request,
             allowEditableTarget: message.allowEditableTarget,
             version: ++graphActionVersion,
@@ -912,12 +923,17 @@
             autocompleteField={workspace.autocompleteField}
             autocompleteValues={workspace.autocompleteValues}
             {computeAutocompleteOptions}
-            graphAction={pendingGraphAction}
+            graphAction={pendingGraphAction?.sectionId === activeGraphSectionId ? pendingGraphAction : null}
             documentText={workspace.documentText}
             initialViewport={activeGraphViewport}
             onviewportchange={viewport => {
               if (activeGraphSectionId) {
                 persistGraphViewport(activeGraphSectionId, viewport);
+              }
+            }}
+            ongraphactionhandled={version => {
+              if (pendingGraphAction?.version === version) {
+                pendingGraphAction = null;
               }
             }}
             documentVersion={workspace.documentVersion}

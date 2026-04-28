@@ -36,6 +36,8 @@ const NPC_COMPONENT_CONTENT_GRAPH_ROOTS: Partial<
   Sensor: "Sensor",
 };
 
+const FIELD_GRAPH_METADATA_KEY = "$NodeEditorGraphMetadata";
+
 export type ResolvedNpcGraphTarget = {
   fieldPath: string;
   workspaceRoot: NpcGraphTargetWorkspaceRoot;
@@ -46,6 +48,7 @@ export type ResolvedNpcGraphTarget = {
 function cloneRootMetadata(document: NpcRoleJson): Record<string, unknown> | undefined {
   const preservedEntries = Object.entries(document)
     .filter(([key]) => key.startsWith("$"))
+    .filter(([key]) => key !== FIELD_GRAPH_METADATA_KEY)
     .map(([key, value]) => [key, structuredClone(value)]);
   return preservedEntries.length > 0 ? Object.fromEntries(preservedEntries) : undefined;
 }
@@ -55,7 +58,7 @@ function patchRootMetadata(
   preservedData?: Record<string, unknown>,
 ): void {
   for (const key of Object.keys(document)) {
-    if (key.startsWith("$")) {
+    if (key.startsWith("$") && key !== FIELD_GRAPH_METADATA_KEY) {
       delete document[key];
     }
   }
@@ -69,6 +72,60 @@ function patchRootMetadata(
       document[key] = structuredClone(value);
     }
   }
+}
+
+function cloneFieldGraphMetadata(
+  document: NpcRoleJson,
+  fieldPath: string,
+): Record<string, unknown> | undefined {
+  const metadataByFieldPath = document[FIELD_GRAPH_METADATA_KEY];
+  if (
+    typeof metadataByFieldPath !== "object" ||
+    metadataByFieldPath === null ||
+    Array.isArray(metadataByFieldPath)
+  ) {
+    return undefined;
+  }
+
+  const metadata = (metadataByFieldPath as Record<string, unknown>)[fieldPath];
+  if (typeof metadata !== "object" || metadata === null || Array.isArray(metadata)) {
+    return undefined;
+  }
+
+  return structuredClone(metadata) as Record<string, unknown>;
+}
+
+function shouldStoreGraphMetadataAsFieldSidecar(
+  fieldPath: string,
+  workspaceRoot: NpcGraphTargetWorkspaceRoot,
+): boolean {
+  return fieldPath === "StateTransitions" || (fieldPath === "Content" && workspaceRoot === "ActionList");
+}
+
+function patchFieldGraphMetadata(
+  document: NpcRoleJson,
+  fieldPath: string,
+  preservedData?: Record<string, unknown>,
+): void {
+  const currentMetadata =
+    typeof document[FIELD_GRAPH_METADATA_KEY] === "object" &&
+    document[FIELD_GRAPH_METADATA_KEY] !== null &&
+    !Array.isArray(document[FIELD_GRAPH_METADATA_KEY])
+      ? structuredClone(document[FIELD_GRAPH_METADATA_KEY] as Record<string, unknown>)
+      : {};
+
+  if (preservedData) {
+    currentMetadata[fieldPath] = structuredClone(preservedData);
+  } else {
+    delete currentMetadata[fieldPath];
+  }
+
+  if (Object.keys(currentMetadata).length === 0) {
+    delete document[FIELD_GRAPH_METADATA_KEY];
+    return;
+  }
+
+  document[FIELD_GRAPH_METADATA_KEY] = currentMetadata;
 }
 
 export function resolveNpcComponentContentGraphRoot(
@@ -120,6 +177,7 @@ export function resolveNpcGraphTarget(
         fieldPath,
         workspaceRoot: "StateTransitions",
         value: structuredClone(document.StateTransitions ?? []),
+        preservedData: cloneFieldGraphMetadata(document, fieldPath),
       };
     case "Content": {
       if (document.Type !== "Component") {
@@ -137,6 +195,9 @@ export function resolveNpcGraphTarget(
         value: structuredClone(
           document.Content ?? getNpcGraphRootDefaultValue(workspaceRoot),
         ),
+        preservedData: shouldStoreGraphMetadataAsFieldSidecar(fieldPath, workspaceRoot)
+          ? cloneFieldGraphMetadata(document, fieldPath)
+          : undefined,
       };
     }
     default:
@@ -161,6 +222,7 @@ export function patchNpcGraphTarget(
       document.DeathInstruction = structuredClone(next.value ?? {});
       return "Instruction";
     case "StateTransitions":
+      patchFieldGraphMetadata(document, fieldPath, next.preservedData);
       document.StateTransitions = structuredClone(next.value ?? []);
       return "StateTransitions";
     case "Content":
@@ -171,6 +233,13 @@ export function patchNpcGraphTarget(
       if (!workspaceRoot) {
         return null;
       }
+      patchFieldGraphMetadata(
+        document,
+        fieldPath,
+        shouldStoreGraphMetadataAsFieldSidecar(fieldPath, workspaceRoot)
+          ? next.preservedData
+          : undefined,
+      );
       document.Content = structuredClone(
         next.value ?? getNpcGraphRootDefaultValue(workspaceRoot),
       );

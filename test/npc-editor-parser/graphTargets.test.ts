@@ -15,6 +15,11 @@ describe("npc graph target resolution", () => {
           Name: "Original",
         },
       ],
+      $NodeEditorGraphMetadata: {
+        StateTransitions: {
+          $NodeEditorMetadata: { $Nodes: {} },
+        },
+      },
       $NodeId: "Root-1",
       $Comment: "hello",
     };
@@ -43,6 +48,11 @@ describe("npc graph target resolution", () => {
     expect(document.$NodeId).toBe("Root-2");
     expect(document.$NodeEditorMetadata).toEqual({
       viewport: { x: 1, y: 2, zoom: 3 },
+    });
+    expect(document.$NodeEditorGraphMetadata).toEqual({
+      StateTransitions: {
+        $NodeEditorMetadata: { $Nodes: {} },
+      },
     });
     expect(document.$Comment).toBeUndefined();
   });
@@ -82,6 +92,21 @@ describe("npc graph target resolution", () => {
           ],
         },
       ],
+      $NodeEditorGraphMetadata: {
+        StateTransitions: {
+          $NodeId: "StateTransitionsRoot-1",
+          $NodeEditorMetadata: {
+            $Nodes: {
+              "StateTransition-1": {
+                $Position: { $x: 10, $y: 20 },
+              },
+            },
+          },
+        },
+        Content: {
+          $NodeEditorMetadata: { $Nodes: {} },
+        },
+      },
     };
 
     expect(resolveNpcGraphTarget(document, "StateTransitions")).toEqual({
@@ -102,6 +127,16 @@ describe("npc graph target resolution", () => {
           ],
         },
       ],
+      preservedData: {
+        $NodeId: "StateTransitionsRoot-1",
+        $NodeEditorMetadata: {
+          $Nodes: {
+            "StateTransition-1": {
+              $Position: { $x: 10, $y: 20 },
+            },
+          },
+        },
+      },
     });
 
     const patchedRoot = patchNpcGraphTarget(document, "StateTransitions", {
@@ -116,6 +151,16 @@ describe("npc graph target resolution", () => {
           Actions: [],
         },
       ],
+      preservedData: {
+        $NodeId: "StateTransitionsRoot-2",
+        $NodeEditorMetadata: {
+          $Nodes: {
+            "StateTransition-2": {
+              $Position: { $x: 30, $y: 40 },
+            },
+          },
+        },
+      },
     });
 
     expect(patchedRoot).toBe("StateTransitions");
@@ -130,6 +175,21 @@ describe("npc graph target resolution", () => {
         Actions: [],
       },
     ]);
+    expect(document.$NodeEditorGraphMetadata).toEqual({
+      StateTransitions: {
+        $NodeId: "StateTransitionsRoot-2",
+        $NodeEditorMetadata: {
+          $Nodes: {
+            "StateTransition-2": {
+              $Position: { $x: 30, $y: 40 },
+            },
+          },
+        },
+      },
+      Content: {
+        $NodeEditorMetadata: { $Nodes: {} },
+      },
+    });
   });
 
   test("resolves and patches graph-backed component content roots", () => {
@@ -184,22 +244,92 @@ describe("npc graph target resolution", () => {
     ];
 
     for (const testCase of cases) {
+      const usesSidecar = testCase.workspaceRoot === "ActionList";
       const document: NpcRoleJson = {
         Type: "Component",
         Class: testCase.componentClass,
         Content: testCase.initialContent,
+        ...(usesSidecar
+          ? {
+              $NodeEditorGraphMetadata: {
+                Content: {
+                  $NodeId: "ContentRoot-1",
+                  $NodeEditorMetadata: {
+                    $Nodes: {},
+                  },
+                },
+              },
+            }
+          : {}),
       };
 
-      expect(resolveNpcGraphTarget(document, "Content")).toMatchObject({
+      const target = resolveNpcGraphTarget(document, "Content");
+      expect(target).toMatchObject({
         workspaceRoot: testCase.workspaceRoot,
         value: testCase.initialContent,
       });
+      expect(target?.preservedData).toEqual(
+        usesSidecar
+          ? {
+              $NodeId: "ContentRoot-1",
+              $NodeEditorMetadata: {
+                $Nodes: {},
+              },
+            }
+          : undefined,
+      );
+
+      const nextObjectContent =
+        typeof testCase.nextContent === "object" &&
+        testCase.nextContent !== null &&
+        !Array.isArray(testCase.nextContent)
+          ? {
+              ...testCase.nextContent,
+              $NodeEditorMetadata: {
+                $Nodes: {
+                  "ContentNode-1": {
+                    $Position: { $x: 100, $y: 200 },
+                  },
+                },
+              },
+            }
+          : testCase.nextContent;
+      const nextValue = usesSidecar ? testCase.nextContent : nextObjectContent;
+      const nextPreservedData = usesSidecar
+        ? {
+            $NodeId: "ContentRoot-2",
+            $NodeEditorMetadata: {
+              $Nodes: {
+                "ContentNode-1": {
+                  $Position: { $x: 100, $y: 200 },
+                },
+              },
+            },
+          }
+        : undefined;
       expect(
         patchNpcGraphTarget(document, "Content", {
-          value: testCase.nextContent,
+          value: nextValue,
+          preservedData: nextPreservedData,
         }),
       ).toBe(testCase.workspaceRoot);
-      expect(document.Content).toEqual(testCase.nextContent);
+      expect(document.Content).toEqual(nextValue);
+      expect(document.$NodeEditorGraphMetadata).toEqual(
+        usesSidecar
+          ? {
+              Content: {
+                $NodeId: "ContentRoot-2",
+                $NodeEditorMetadata: {
+                  $Nodes: {
+                    "ContentNode-1": {
+                      $Position: { $x: 100, $y: 200 },
+                    },
+                  },
+                },
+              },
+            }
+          : undefined,
+      );
     }
   });
 

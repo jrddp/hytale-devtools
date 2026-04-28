@@ -46,6 +46,7 @@
     getAbsolutePosition,
     getAllSiblingOrderUpdates,
     getInputPin,
+    getNodeSize,
     getOutputPin,
     isValidConnection,
     recalculateGroupParents,
@@ -482,8 +483,16 @@
             continue;
           }
           const absolutePosition = getAbsolutePosition(node, workspace);
-          const width = node.measured!.width!;
-          const height = node.measured!.height!;
+          const size = getNodeSize(node);
+          if (!size) {
+            retained.push(action);
+            break;
+          }
+          const { width, height } = size;
+          if (width <= 0 || height <= 0) {
+            retained.push(action);
+            break;
+          }
           const { width: viewportWidth, height: viewportHeight } = getViewportSize();
           const maxZoom = Math.min(
             ((viewportWidth || width) / width) * 0.8,
@@ -580,11 +589,16 @@
             }
           }
 
-          const updates = await getAutoPositionNodeUpdates(targetNodes, workspace);
-          if (updates.length > 0) {
-            workspace.applyNodeUpdates(updates);
-            recalculateGroupParents(workspace);
-            workspace.applyDocumentState("nodes-moved");
+          workspace.isAutoPositioning = true;
+          try {
+            const updates = await getAutoPositionNodeUpdates(targetNodes, workspace);
+            if (updates.length > 0) {
+              workspace.applyNodeUpdates(updates);
+              recalculateGroupParents(workspace);
+              workspace.applyDocumentState("nodes-moved");
+            }
+          } finally {
+            workspace.isAutoPositioning = false;
           }
           break;
 
@@ -1476,6 +1490,15 @@
       class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6 text-center text-sm font-medium text-vsc-muted"
     >
       No root is set. Right click to add the root node.
+    </div>
+  {/if}
+
+  {#if workspace.isAutoPositioning}
+    <div
+      class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6 text-center text-sm font-medium text-vsc-muted backdrop-blur-sm"
+      style="background: color-mix(in srgb, var(--vscode-editor-background) 82%, transparent);"
+    >
+      Positioning nodes...
     </div>
   {/if}
 

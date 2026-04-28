@@ -124,6 +124,7 @@ export class NodeEditorSession {
   pendingLocalEditId = $state<number | undefined>();
   nextClientEditId = $state(0);
   areNodesMeasured = $state(false);
+  isAutoPositioning = $state(false);
   hasCompletedInitialMeasurement = $state(false);
   private pendingMeasurementNodeIds = $state.raw<Set<string>>(new Set());
 

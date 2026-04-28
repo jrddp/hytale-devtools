@@ -319,9 +319,24 @@ export function getAbsolutePosition(node: FlowNode, session: NodeEditorSession):
   return { x: parentX + node.position.x, y: parentY + node.position.y };
 }
 
+export function getNodeSize(node: FlowNode): { width: number; height: number } | undefined {
+  const width = node.measured?.width ?? node.width;
+  const height = node.measured?.height ?? node.height;
+  if (
+    typeof width !== "number" ||
+    typeof height !== "number" ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height)
+  ) {
+    return undefined;
+  }
+  return { width, height };
+}
+
 export function getAbsoluteCenterPosition(node: FlowNode, session: NodeEditorSession): XYPosition {
   const { x, y } = getAbsolutePosition(node, session);
-  return { x: x + node.measured.width / 2, y: y + node.measured.height / 2 };
+  const size = getNodeSize(node);
+  return { x: x + (size?.width ?? 0) / 2, y: y + (size?.height ?? 0) / 2 };
 }
 
 // todo optimization: instead of using a distanceLimit, search rbush by bounding box of the max viewport size we would want.
@@ -506,11 +521,9 @@ export function getPositionRelativeTo(
 }
 
 export function getAbsoluteBoundingBox(node: FlowNode, session: NodeEditorSession): BBox | undefined {
-  const { width, height } = node.measured ?? {
-    width: node.width,
-    height: node.height,
-  };
-  if (width == undefined || height == undefined) return undefined;
+  const size = getNodeSize(node);
+  if (!size) return undefined;
+  const { width, height } = size;
   const { x, y } = getAbsolutePosition(node, session);
   return { minX: x, minY: y, maxX: x + width, maxY: y + height };
 }
