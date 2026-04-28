@@ -47,9 +47,6 @@ export function buildContentField(
   if (attribute.Computable === true) {
     options.Computable = true;
   }
-  if (allowsExplicitEmptyString(attribute)) {
-    options.AllowExplicitEmpty = true;
-  }
   const symbolLookup = resolveNpcDescriptorAssetSymbolLookup(attribute);
   if (symbolLookup) {
     options.SymbolLookup = symbolLookup;
@@ -310,28 +307,6 @@ function parseDescriptorStringListDefault(rawValue: string): string[] | undefine
     .split(",")
     .map(value => value.trim())
     .filter(Boolean);
-}
-
-function allowsExplicitEmptyString(attribute: NpcDescriptorAttribute): boolean {
-  if (attribute.Type !== "String") {
-    return false;
-  }
-
-  if (attribute.Validator == null) {
-    return true;
-  }
-
-  if (
-    typeof attribute.Validator === "object" &&
-    attribute.Validator !== null &&
-    "Type" in attribute.Validator &&
-    attribute.Validator.Type === "StateString" &&
-    "AllowEmptyMain" in attribute.Validator
-  ) {
-    return attribute.Validator.AllowEmptyMain === true;
-  }
-
-  return false;
 }
 
 function parseEnumValues(domain: unknown): string[] | undefined {

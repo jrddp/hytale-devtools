@@ -74,8 +74,7 @@
         "Label": "String",
         "Default": "Test",
         "Width": 220,
-        "Computable": true,
-        "AllowExplicitEmpty": true
+        "Computable": true
       }
     },
     {

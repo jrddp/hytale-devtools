@@ -603,7 +603,9 @@ export function parseAssetDocumentToGraphDocument(
           clonedTemplateData.fieldsBySchemaKey[key].value = value;
           clonedTemplateData.fieldsBySchemaKey[key].isImplicit = false;
           clonedTemplateData.fieldsBySchemaKey[key].isExplicitEmpty =
-            value === "" && clonedTemplateData.fieldsBySchemaKey[key].allowsExplicitEmpty === true;
+            value === "" &&
+            (clonedTemplateData.fieldsBySchemaKey[key].type === "string" ||
+              clonedTemplateData.fieldsBySchemaKey[key].type === "text");
           clonedTemplateData.fieldsBySchemaKey[key].isSet = true;
         }
       }

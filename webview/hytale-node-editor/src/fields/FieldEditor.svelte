@@ -47,7 +47,6 @@
     computable = false,
     defaultValue,
     isSet,
-    allowsExplicitEmpty = false,
   }: NodeField & {
     nodeId?: string;
     onconfirm: (value: unknown, options?: FieldCommitOptions) => void;
@@ -63,8 +62,7 @@
   );
   const hasDefaultValue = $derived(defaultValue !== undefined);
   const canSetExplicitEmpty = $derived(
-    allowsExplicitEmpty === true &&
-      hasDefaultValue &&
+    hasDefaultValue &&
       nodeId !== undefined &&
       schemaKey !== null &&
       parentSchemaKey === undefined &&
@@ -170,7 +168,7 @@
   }
 
   function confirmTextValue(nextValue: string) {
-    if (nextValue === "" && (hasDefaultValue || allowsExplicitEmpty)) {
+    if (nextValue === "" && hasDefaultValue) {
       onconfirm(undefined, {
         isImplicit: true,
         isSet: false,
@@ -319,6 +317,9 @@
 {:else if type === "list"}
   <ListField
     {inputId}
+    {nodeId}
+    {schemaKey}
+    {parentSchemaKey}
     label={fieldLabel}
     {description}
     {inputWidth}

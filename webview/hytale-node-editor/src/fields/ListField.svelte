@@ -15,6 +15,9 @@
   // TODO lists can technically be types other than string. definition requires investigation.
   let {
     inputId,
+    nodeId,
+    schemaKey,
+    parentSchemaKey,
     label,
     description,
     initialValue,
@@ -27,6 +30,9 @@
     titleActions,
     onconfirm,
   }: FieldProps<unknown[]> & {
+    nodeId?: string;
+    schemaKey?: string | null;
+    parentSchemaKey?: string;
     placeholder?: string;
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
@@ -35,6 +41,11 @@
     titleActions?: Snippet;
   } = $props();
   const workspace = useNodeEditorSession();
+  const canSetExplicitEmptyItems = $derived(
+    nodeId !== undefined &&
+      schemaKey !== null &&
+      parentSchemaKey === undefined,
+  );
 
   let value = $state<unknown[]>([]);
 
@@ -96,6 +107,23 @@
     });
   }
 
+  function getStringItemVscodeContext(itemIndex: number) {
+    if (!canSetExplicitEmptyItems) {
+      return undefined;
+    }
+
+    return JSON.stringify({
+      webviewSection: "nodeEditorField",
+      nodeEditorNodeId: nodeId,
+      nodeEditorFieldSchemaKey: schemaKey,
+      nodeEditorListItemIndex: itemIndex,
+      nodeEditorCanSetExplicitEmpty: true,
+      ...(workspace.embeddedGraphFieldPath
+        ? { nodeEditorGraphFieldPath: workspace.embeddedGraphFieldPath }
+        : {}),
+    });
+  }
+
   function handleConsideredPreview(value?: string) {
     if (previewFeatureKind !== "animation") {
       return;
@@ -130,6 +158,7 @@
       addLabel="Add item"
       defaultPlaceholder={placeholder}
       {getAutocompleteOptions}
+      {getStringItemVscodeContext}
       onrequestAutocomplete={requestAutocomplete}
       onconsider={handleConsideredPreview}
       onadd={addItem}

@@ -590,7 +590,6 @@ export class WorkspaceRuntime {
         value: defaultValue,
         defaultValue,
         computable: content.Options?.Computable === true,
-        allowsExplicitEmpty: content.Options?.AllowExplicitEmpty === true,
         isImplicit: true,
         isExplicitEmpty: false,
         isSet: false,

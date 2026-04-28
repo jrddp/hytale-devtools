@@ -41,7 +41,6 @@
       "Options": {
         "Label": "State",
         "Width": 220,
-        "AllowExplicitEmpty": true,
         "StateAutocompleteKind": "role-full"
       }
     },

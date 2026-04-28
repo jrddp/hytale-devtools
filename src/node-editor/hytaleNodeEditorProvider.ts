@@ -316,6 +316,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     if (!nodeId || !schemaKey) {
       return;
     }
+    const itemIndex = readNodeEditorListItemIndexFromContext(menuContext);
 
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
@@ -324,7 +325,10 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
 
     await targetPanel.webview.postMessage({
       type: "action",
-      request: { type: "set-field-explicit-empty", nodeId, schemaKey },
+      request:
+        itemIndex === undefined
+          ? { type: "set-field-explicit-empty", nodeId, schemaKey }
+          : { type: "set-list-item-explicit-empty", nodeId, schemaKey, itemIndex },
       allowEditableTarget: true,
     } satisfies ExtensionToWebviewMessage);
   }
@@ -597,6 +601,16 @@ function readNodeEditorNodeIdFromContext(menuContext: unknown): string | undefin
 function readNodeEditorFieldSchemaKeyFromContext(menuContext: unknown): string | undefined {
   return isObject(menuContext) && typeof menuContext.nodeEditorFieldSchemaKey === "string"
     ? menuContext.nodeEditorFieldSchemaKey
+    : undefined;
+}
+
+function readNodeEditorListItemIndexFromContext(menuContext: unknown): number | undefined {
+  if (!isObject(menuContext) || typeof menuContext.nodeEditorListItemIndex !== "number") {
+    return undefined;
+  }
+
+  return Number.isInteger(menuContext.nodeEditorListItemIndex) && menuContext.nodeEditorListItemIndex >= 0
+    ? menuContext.nodeEditorListItemIndex
     : undefined;
 }
 

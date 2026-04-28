@@ -101,6 +101,7 @@ export type NpcRoleEditorContextActionMessage = {
   fieldPath?: string;
   nodeEditorNodeId?: string;
   nodeEditorFieldSchemaKey?: string;
+  nodeEditorListItemIndex?: number;
 };
 
 export type NpcRoleEditorAssetIndexUpdateMessage = {

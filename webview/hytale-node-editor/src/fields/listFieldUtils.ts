@@ -22,8 +22,12 @@ export function shouldAppendStringListItem(value: string): boolean {
   return value.trim().length > 0;
 }
 
-export function shouldRemoveStringListItem(value: string): boolean {
-  return value.trim().length === 0;
+export function shouldRemoveStringListItem(value: string, currentValue: unknown): boolean {
+  return value.trim().length === 0 && currentValue !== "";
+}
+
+export function normalizeCommittedStringListItem(value: string): string {
+  return value.trim().length === 0 ? "" : value;
 }
 
 export function shouldRequestListAutocomplete(

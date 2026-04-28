@@ -29,8 +29,7 @@
       "Options": {
         "Label": "Message",
         "Width": 220,
-        "Computable": true,
-        "AllowExplicitEmpty": true
+        "Computable": true
       }
     }
   ],

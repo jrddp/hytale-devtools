@@ -191,7 +191,6 @@ describe("node field defaults and explicit empty strings", () => {
     }
 
     expect(actionNode.data.fieldsBySchemaKey.DisplayName).toMatchObject({
-      allowsExplicitEmpty: true,
       isExplicitEmpty: true,
       isImplicit: false,
       isSet: true,

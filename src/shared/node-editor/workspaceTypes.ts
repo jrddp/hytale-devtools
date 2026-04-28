@@ -55,8 +55,6 @@ export interface NodeField {
   value?: unknown;
   defaultValue?: unknown;
   computable?: boolean;
-  /** Whether a string field can intentionally serialize as an empty string. */
-  allowsExplicitEmpty?: boolean;
   /** Represents whether a field is implied from an absent value when initially parsed. Used to preserve explicitly empty values. */
   isImplicit?: boolean;
   /** Whether this field was intentionally set to an empty string. */

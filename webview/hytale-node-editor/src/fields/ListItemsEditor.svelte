@@ -6,6 +6,7 @@
   import {
     buildListItemInputId,
     getListAddPlaceholder,
+    normalizeCommittedStringListItem,
     shouldAppendStringListItem,
     shouldRemoveStringListItem,
   } from "@node-editor/fields/listFieldUtils";
@@ -28,6 +29,7 @@
     defaultPlaceholder = "",
     addLabel = "Add item",
     getAutocompleteOptions = () => [],
+    getStringItemVscodeContext = () => undefined,
     onrequestAutocomplete,
     onconsider,
     onadd,
@@ -41,6 +43,7 @@
     defaultPlaceholder?: string;
     addLabel?: string;
     getAutocompleteOptions?: (itemInputId: string, itemIndex: number) => AutocompleteOption[];
+    getStringItemVscodeContext?: (itemIndex: number) => string | undefined;
     onrequestAutocomplete?: (itemInputId: string) => void;
     onconsider?: (value?: string) => void;
     onadd: (value?: unknown) => void;
@@ -155,13 +158,13 @@
     }
   }
 
-  function updateStringItem(index: number, nextItem: string) {
-    if (shouldRemoveStringListItem(nextItem)) {
+  function updateStringItem(index: number, currentItem: unknown, nextItem: string) {
+    if (shouldRemoveStringListItem(nextItem, currentItem)) {
       onremove(index);
       return;
     }
 
-    onupdate(index, nextItem);
+    onupdate(index, normalizeCommittedStringListItem(nextItem));
   }
 
   function updateNumberItem(index: number, nextItem: number | undefined) {
@@ -226,19 +229,25 @@
           {...noMousePropogation}
         ></textarea>
       {:else}
-        <SingleLineAutocompleteInput
-          inputId={getItemInputId(index)}
-          initialValue={typeof item === "string" ? item : String(item ?? "")}
-          autocompleteOptions={getAutocompleteOptions(getItemInputId(index), index)}
-          inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
-          listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
-          optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
-          stopPointerPropagation
-          onfocus={() => onrequestAutocomplete?.(getItemInputId(index))}
-          onconsider={onconsider}
-          oncommit={nextItem => updateStringItem(index, nextItem)}
-          afterEnterPressed={handleStringEnterCommit}
-        />
+        {@const stringItemVscodeContext = getStringItemVscodeContext(index)}
+        <div
+          data-vscode-context={stringItemVscodeContext}
+          data-node-editor-field-context={stringItemVscodeContext ? "true" : undefined}
+        >
+          <SingleLineAutocompleteInput
+            inputId={getItemInputId(index)}
+            initialValue={typeof item === "string" ? item : String(item ?? "")}
+            autocompleteOptions={getAutocompleteOptions(getItemInputId(index), index)}
+            inputClass="w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg nodrag"
+            listClass="nodrag nowheel absolute left-0 right-0 top-full z-40 max-h-32 overflow-auto rounded-t-none rounded-md border border-vsc-input-border bg-vsc-editor-widget-bg shadow-lg"
+            optionClass="block w-full cursor-pointer px-2 py-1 text-left text-xs text-vsc-input-fg hover:bg-vsc-list-hover"
+            stopPointerPropagation
+            onfocus={() => onrequestAutocomplete?.(getItemInputId(index))}
+            onconsider={onconsider}
+            oncommit={nextItem => updateStringItem(index, item, nextItem)}
+            afterEnterPressed={handleStringEnterCommit}
+          />
+        </div>
       {/if}
 
       <button

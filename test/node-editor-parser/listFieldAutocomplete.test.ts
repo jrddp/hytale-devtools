@@ -4,6 +4,7 @@ import {
   buildListItemInputId,
   getListAddPlaceholder,
   getListAutocompleteValues,
+  normalizeCommittedStringListItem,
   shouldAppendStringListItem,
   shouldRemoveStringListItem,
   shouldRequestListAutocomplete,
@@ -111,8 +112,14 @@ describe("node editor list field autocomplete helpers", () => {
   });
 
   test("removes existing string list values when committed blank", () => {
-    expect(shouldRemoveStringListItem("Value")).toBe(false);
-    expect(shouldRemoveStringListItem("  ")).toBe(true);
+    expect(shouldRemoveStringListItem("Value", "Previous")).toBe(false);
+    expect(shouldRemoveStringListItem("  ", "Previous")).toBe(true);
+  });
+
+  test("preserves existing explicit empty string list values when committed blank", () => {
+    expect(shouldRemoveStringListItem("", "")).toBe(false);
+    expect(shouldRemoveStringListItem("  ", "")).toBe(false);
+    expect(normalizeCommittedStringListItem("  ")).toBe("");
   });
 
   test("only requests symbol autocomplete when override values are absent", () => {

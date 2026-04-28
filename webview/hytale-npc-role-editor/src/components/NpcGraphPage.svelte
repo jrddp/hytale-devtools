@@ -313,10 +313,20 @@
     }
 
     lastHandledSetExplicitEmptyRequestVersion = requestVersion;
+    if (workspace.graphFieldExplicitEmptyRequestListItemIndex === null) {
+      session.actionRequests.push({
+        type: "set-field-explicit-empty",
+        nodeId: workspace.graphFieldExplicitEmptyRequestNodeId,
+        schemaKey: workspace.graphFieldExplicitEmptyRequestSchemaKey,
+      });
+      return;
+    }
+
     session.actionRequests.push({
-      type: "set-field-explicit-empty",
+      type: "set-list-item-explicit-empty",
       nodeId: workspace.graphFieldExplicitEmptyRequestNodeId,
       schemaKey: workspace.graphFieldExplicitEmptyRequestSchemaKey,
+      itemIndex: workspace.graphFieldExplicitEmptyRequestListItemIndex,
     });
   });
 

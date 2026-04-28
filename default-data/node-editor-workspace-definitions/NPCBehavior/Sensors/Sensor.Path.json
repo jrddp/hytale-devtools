@@ -41,8 +41,7 @@
       "Options": {
         "Label": "Path",
         "Width": 220,
-        "Computable": true,
-        "AllowExplicitEmpty": true
+        "Computable": true
       }
     },
     {

@@ -149,6 +149,7 @@ export class Workspace {
   graphFieldExplicitEmptyRequestFieldPath = $state<string | null>(null);
   graphFieldExplicitEmptyRequestNodeId = $state<string | null>(null);
   graphFieldExplicitEmptyRequestSchemaKey = $state<string | null>(null);
+  graphFieldExplicitEmptyRequestListItemIndex = $state<number | null>(null);
   graphFieldExplicitEmptyRequestVersion = $state(0);
 
   setDescriptors({
@@ -688,6 +689,10 @@ export class Workspace {
           this.graphFieldExplicitEmptyRequestFieldPath = message.fieldPath;
           this.graphFieldExplicitEmptyRequestNodeId = message.nodeEditorNodeId;
           this.graphFieldExplicitEmptyRequestSchemaKey = message.nodeEditorFieldSchemaKey;
+          this.graphFieldExplicitEmptyRequestListItemIndex =
+            typeof message.nodeEditorListItemIndex === "number"
+              ? message.nodeEditorListItemIndex
+              : null;
           this.graphFieldExplicitEmptyRequestVersion += 1;
         }
         return;

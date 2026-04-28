@@ -29,8 +29,7 @@
       "Options": {
         "Label": "DisplayName",
         "Width": 220,
-        "Computable": true,
-        "AllowExplicitEmpty": true
+        "Computable": true
       }
     }
   ],

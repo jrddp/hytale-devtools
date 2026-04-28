@@ -599,6 +599,9 @@
         case "set-field-explicit-empty":
           setFieldExplicitEmpty(action.nodeId, action.schemaKey);
           break;
+        case "set-list-item-explicit-empty":
+          setListItemExplicitEmpty(action.nodeId, action.schemaKey, action.itemIndex);
+          break;
         case "document-refresh":
           if (!workspace.areNodesMeasured) {
             retained.push(action);
@@ -908,7 +911,6 @@
     const field = node.data.fieldsBySchemaKey?.[schemaKey];
     if (
       !field ||
-      field.allowsExplicitEmpty !== true ||
       (field.type !== "string" && field.type !== "text")
     ) {
       return;
@@ -920,6 +922,67 @@
       value: "",
       isImplicit: false,
       isExplicitEmpty: true,
+      isSet: true,
+    };
+    const nextFieldsBySchemaKey = {
+      ...node.data.fieldsBySchemaKey,
+      [schemaKey]: nextField,
+    };
+
+    workspace.applyNodeUpdates([
+      [
+        nodeId,
+        {
+          data: {
+            fieldsBySchemaKey: nextFieldsBySchemaKey,
+          },
+        },
+      ],
+    ]);
+
+    const edit = createNodePropertiesUpdatedEdit([
+      createFieldValuePropertyChange({
+        nodeId,
+        schemaKey,
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
+    ]);
+    if (edit) {
+      workspace.applyGraphEdit(edit);
+    }
+  }
+
+  function setListItemExplicitEmpty(nodeId: string, schemaKey: string, itemIndex: number) {
+    const node = workspace.getNodeById(nodeId);
+    if (!node || node.type !== "datanode") {
+      return;
+    }
+
+    const field = node.data.fieldsBySchemaKey?.[schemaKey];
+    if (
+      !field ||
+      field.type !== "list" ||
+      !Array.isArray(field.value) ||
+      !Number.isInteger(itemIndex) ||
+      itemIndex < 0 ||
+      itemIndex >= field.value.length ||
+      typeof field.value[itemIndex] !== "string"
+    ) {
+      return;
+    }
+
+    const previousFieldSnapshot = cloneJsonLike($state.snapshot(field));
+    const previousItems = Array.isArray(previousFieldSnapshot.value)
+      ? previousFieldSnapshot.value
+      : [];
+    const nextItems = previousItems.slice();
+    nextItems[itemIndex] = "";
+    const nextField = {
+      ...previousFieldSnapshot,
+      value: nextItems,
+      isImplicit: false,
+      isExplicitEmpty: false,
       isSet: true,
     };
     const nextFieldsBySchemaKey = {

@@ -393,7 +393,7 @@ describe("NPC node workspace generator builders", () => {
     });
   });
 
-  test("buildContentField marks only empty-valid string fields as explicit-empty capable", () => {
+  test("buildContentField treats descriptor strings as plain string fields", () => {
     const actionModelAttachmentDescriptor = findDescriptorOrThrow("Action", "ModelAttachment");
     const attachmentAttribute = actionModelAttachmentDescriptor.Attributes?.find(
       entry => entry.Name === "Attachment",
@@ -433,25 +433,49 @@ describe("NPC node workspace generator builders", () => {
     }
 
     expect(buildContentField(actionModelAttachmentDescriptor, attachmentAttribute)).toMatchObject({
-      Options: {
-        AllowExplicitEmpty: true,
-      },
+      Type: "SmallString",
     });
     expect(buildContentField(actionDisplayNameDescriptor, displayNameAttribute)).toMatchObject({
-      Options: {
-        AllowExplicitEmpty: true,
-      },
+      Type: "SmallString",
     });
     expect(buildContentField(actionSetInteractableDescriptor, hintAttribute)).toMatchObject({
-      Options: {
-        AllowExplicitEmpty: true,
-      },
+      Type: "SmallString",
     });
-    expect(buildContentField(actionNotifyDescriptor, messageAttribute)?.Options).not.toHaveProperty(
-      "AllowExplicitEmpty",
-    );
-    expect(buildContentField(actionAppearanceDescriptor, appearanceAttribute)?.Options).not.toHaveProperty(
-      "AllowExplicitEmpty",
-    );
+    expect(buildContentField(actionNotifyDescriptor, messageAttribute)).toMatchObject({
+      Type: "SmallString",
+    });
+    expect(buildContentField(actionAppearanceDescriptor, appearanceAttribute)).toMatchObject({
+      Type: "SmallString",
+    });
+  });
+
+  test("buildContentField treats descriptor string lists as plain list fields", () => {
+    const genericDescriptor = findDescriptorOrThrow("Role", "Generic");
+    const displayNamesAttribute = genericDescriptor.Attributes?.find(entry => entry.Name === "DisplayNames");
+    const busyStatesAttribute = genericDescriptor.Attributes?.find(entry => entry.Name === "BusyStates");
+    if (!displayNamesAttribute || !busyStatesAttribute) {
+      throw new Error("Expected Generic role list attributes were not found.");
+    }
+
+    expect(buildContentField(genericDescriptor, displayNamesAttribute)).toMatchObject({
+      Type: "List",
+    });
+    expect(buildContentField(genericDescriptor, busyStatesAttribute)).toMatchObject({
+      Type: "List",
+    });
+    expect(
+      buildContentField(genericDescriptor, {
+        ...busyStatesAttribute,
+        Validator: {
+          Type: "StateString",
+          StateParts: null,
+          AllowEmptyMain: true,
+          MainStateOnly: false,
+          AllowNull: false,
+        },
+      }),
+    ).toMatchObject({
+      Type: "List",
+    });
   });
 });

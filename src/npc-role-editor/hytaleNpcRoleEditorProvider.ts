@@ -85,6 +85,13 @@ export async function triggerNpcRoleEditorContextAction(
     isRecord(context) && typeof context.nodeEditorFieldSchemaKey === "string"
       ? context.nodeEditorFieldSchemaKey
       : null;
+  const nodeEditorListItemIndex =
+    isRecord(context) &&
+    typeof context.nodeEditorListItemIndex === "number" &&
+    Number.isInteger(context.nodeEditorListItemIndex) &&
+    context.nodeEditorListItemIndex >= 0
+      ? context.nodeEditorListItemIndex
+      : null;
 
   if (!activeProvider) {
     return;
@@ -105,6 +112,7 @@ export async function triggerNpcRoleEditorContextAction(
       fieldPath: nodeEditorGraphFieldPath,
       nodeEditorNodeId,
       nodeEditorFieldSchemaKey: nodeEditorFieldSchemaKey ?? undefined,
+      nodeEditorListItemIndex: nodeEditorListItemIndex ?? undefined,
     });
     return;
   }

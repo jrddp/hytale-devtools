@@ -113,7 +113,6 @@ export interface NodeContentDefinition {
     UseUUID?: boolean;
     DefaultValue?: string | number | boolean | unknown[];
     Computable?: boolean;
-    AllowExplicitEmpty?: boolean;
     UniqueItems?: boolean;
     SymbolLookup?: IndexReference;
     ParameterMapKeyValues?: string[];
