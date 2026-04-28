@@ -232,6 +232,9 @@ describe("NPC Behavior workspace generation", () => {
     expect(workspace.nodeTemplatesById["Path.Path"]).toBeDefined();
     expect(workspace.nodeTemplatesById["RelativeWaypointDefinition.RelativeWaypointDefinition"]).toBeDefined();
     expect(workspace.nodeTemplatesById["ValueToParameterMapping.ValueToParameterMapping"]).toBeDefined();
+    expect(workspace.nodeTemplatesById["ValueToParameterMapping.ValueToParameterMapping"].description).toBe(
+      "Map a value store entry to a parameter override",
+    );
     expect(
       workspace.nodeTemplatesById["ISensorEntityPrioritiser.Attitude"].outputPins.some(
         pin => pin.localId === "Output" && pin.connectionType === "ISensorEntityPrioritiser",
