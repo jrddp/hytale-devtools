@@ -2,7 +2,10 @@ import { describe, expect, test } from "vitest";
 
 import {
   buildListItemInputId,
+  getListAddPlaceholder,
   getListAutocompleteValues,
+  shouldAppendStringListItem,
+  shouldRemoveStringListItem,
   shouldRequestListAutocomplete,
 } from "../../webview/hytale-node-editor/src/fields/listFieldUtils";
 
@@ -81,6 +84,35 @@ describe("node editor list field autocomplete helpers", () => {
         uniqueItems: true,
       }),
     ).toEqual(["Sword", "Axe"]);
+  });
+
+  test("filters all used values for a unique trailing add row", () => {
+    expect(
+      getListAutocompleteValues({
+        itemInputId: "field-node-Items-item-2",
+        overrideAutocompleteValues: ["One", "Two", "Three"],
+        autocompleteValues: [],
+        items: ["One", "Two"],
+        currentItemIndex: 2,
+        uniqueItems: true,
+      }),
+    ).toEqual(["Three"]);
+  });
+
+  test("formats add-row placeholders from defaults only before items are committed", () => {
+    expect(getListAddPlaceholder({ itemCount: 0, defaultPlaceholder: "[1, 2]" })).toBe("[1, 2]");
+    expect(getListAddPlaceholder({ itemCount: 1, defaultPlaceholder: "[1, 2]" })).toBe("Add item...");
+    expect(getListAddPlaceholder({ itemCount: 0 })).toBe("Add item...");
+  });
+
+  test("only appends non-empty string list values", () => {
+    expect(shouldAppendStringListItem("Value")).toBe(true);
+    expect(shouldAppendStringListItem("  ")).toBe(false);
+  });
+
+  test("removes existing string list values when committed blank", () => {
+    expect(shouldRemoveStringListItem("Value")).toBe(false);
+    expect(shouldRemoveStringListItem("  ")).toBe(true);
   });
 
   test("only requests symbol autocomplete when override values are absent", () => {

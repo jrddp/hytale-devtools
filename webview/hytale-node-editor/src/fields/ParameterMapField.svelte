@@ -260,8 +260,19 @@
     updateEntry(key, updateParameterMapRangeEndpoint(value[key], index, nextValue ?? 0));
   }
 
-  function addListItem(key: string, listType: ParameterMapListValueType) {
-    updateEntry(key, addParameterMapListItem(value[key], listType));
+  function addListItem(
+    key: string,
+    listType: ParameterMapListValueType,
+    nextItem?: unknown,
+  ) {
+    const nextList = addParameterMapListItem(value[key], listType);
+    if (nextItem !== undefined) {
+      nextList[nextList.length - 1] =
+        listType === "numberList" && typeof nextItem === "number"
+          ? nextItem
+          : String(nextItem ?? "");
+    }
+    updateEntry(key, nextList);
   }
 
   function removeListItem(key: string, listType: ParameterMapListValueType, index: number) {
@@ -425,7 +436,7 @@
                 inputId={buildValueInputId(index)}
                 items={entryValue}
                 itemKind={entryType === "stringList" ? "string" : "number"}
-                onadd={() => addListItem(key, entryType)}
+                onadd={nextItem => addListItem(key, entryType, nextItem)}
                 onremove={itemIndex => removeListItem(key, entryType, itemIndex)}
                 onupdate={(itemIndex, nextItem) =>
                   updateListItem(

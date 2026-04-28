@@ -57,8 +57,8 @@
     onconfirm(nextValue);
   }
 
-  function addItem() {
-    confirmValue([...value, ""]);
+  function addItem(nextItem: unknown = "") {
+    confirmValue([...value, nextItem]);
   }
 
   function removeItem(index: number) {
@@ -119,7 +119,7 @@
 <FieldLayout {inputId} {label} {description} align="start" {titleActions}>
   <div
     id={inputId}
-    class="flex min-w-0 flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+    class="flex min-w-0 flex-col gap-1.5"
     class:w-full={inputWidth === undefined}
     style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
   >
@@ -128,7 +128,7 @@
       items={value}
       {inputWidth}
       addLabel="Add item"
-      emptyLabel={placeholder || "No items"}
+      defaultPlaceholder={placeholder}
       {getAutocompleteOptions}
       onrequestAutocomplete={requestAutocomplete}
       onconsider={handleConsideredPreview}

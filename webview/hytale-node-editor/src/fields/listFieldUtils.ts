@@ -4,6 +4,28 @@ export function buildListItemInputId(inputId: string, index: number): string {
   return `${inputId}-item-${index}`;
 }
 
+export function getListAddPlaceholder({
+  itemCount,
+  defaultPlaceholder,
+}: {
+  itemCount: number;
+  defaultPlaceholder?: string;
+}): string {
+  if (itemCount === 0 && defaultPlaceholder && defaultPlaceholder.trim().length > 0) {
+    return defaultPlaceholder;
+  }
+
+  return "Add item...";
+}
+
+export function shouldAppendStringListItem(value: string): boolean {
+  return value.trim().length > 0;
+}
+
+export function shouldRemoveStringListItem(value: string): boolean {
+  return value.trim().length === 0;
+}
+
 export function shouldRequestListAutocomplete(
   overrideAutocompleteValues: string[] | undefined,
   symbolLookup: IndexReference | undefined,
