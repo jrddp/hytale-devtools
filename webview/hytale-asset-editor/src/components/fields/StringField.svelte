@@ -183,7 +183,7 @@
   {handle}
   inline
   {glyphs}
-  onunset={!isLocked && isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
+  onunset={!isLocked && (onunset || isSet) ? (onunset ?? (() => commitValue(undefined))) : undefined}
 >
   <ReadOnlyInputWrapper readOnly={isLocked} {readOnlyMessage} class={readOnlyWrapperClass}>
     {#if isLocked}
@@ -198,6 +198,8 @@
         {placeholder}
         {autocompleteOptions}
         floatingList={isMinimal}
+        resetKey={workspace.documentVersion}
+        cancelDraftOnUndo={isMinimal}
         fitContentWidth={isMinimal}
         considerDebounceMs={field.definesParent ? 100 : undefined}
         sizerClass={inputSizerClass}
@@ -205,7 +207,9 @@
         listClass={autocompleteListClass}
         optionClass="block w-full cursor-pointer whitespace-nowrap px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
         previewClass="z-[160]"
-        onfocus={requestAutocomplete}
+        onfocus={() => {
+          requestAutocomplete();
+        }}
         onconsider={considerValue}
         oncommit={commitValue}
         afterEnterPressed={input => input.blur()}

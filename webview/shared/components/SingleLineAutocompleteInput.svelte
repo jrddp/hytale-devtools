@@ -33,6 +33,8 @@
     floatingList = false,
     floatingListPlacement = "bottom-start",
     floatingListStrategy = "fixed",
+    resetKey,
+    cancelDraftOnUndo = false,
     fitContentWidth = false,
     considerDebounceMs = 75,
     sizerClass = "",
@@ -56,6 +58,8 @@
     floatingList?: boolean;
     floatingListPlacement?: Placement;
     floatingListStrategy?: Strategy;
+    resetKey?: string | number;
+    cancelDraftOnUndo?: boolean;
     fitContentWidth?: boolean;
     considerDebounceMs?: number;
     sizerClass?: string;
@@ -77,6 +81,8 @@
   let inputSizerWidth = $state(0);
   let lastConsideredValue: string | undefined;
   let considerTimeout: ReturnType<typeof setTimeout> | undefined;
+  let lastResetKey = $state<string | number | undefined>();
+  let hasSeenResetKey = false;
 
   const floatingListMiddleware: Middleware[] = [
     offset(0),
@@ -105,6 +111,27 @@
       value = nextInitialValue;
       lastCommittedValue = nextInitialValue;
     }
+  });
+
+  $effect(() => {
+    if (!hasSeenResetKey) {
+      hasSeenResetKey = true;
+      lastResetKey = resetKey;
+      return;
+    }
+
+    if (resetKey === lastResetKey) {
+      return;
+    }
+
+    lastResetKey = resetKey;
+    const nextInitialValue = initialValue ?? "";
+    value = nextInitialValue;
+    lastCommittedValue = nextInitialValue;
+    isFocused = false;
+    isEntireValueSelected = false;
+    activeAutocompleteIndex = -1;
+    inputElement?.blur();
   });
 
   const filteredAutocompleteOptions = $derived(
@@ -283,6 +310,14 @@
     inputElement?.blur();
   }
 
+  function cancelDraft() {
+    value = lastCommittedValue;
+    isFocused = false;
+    isEntireValueSelected = false;
+    activeAutocompleteIndex = -1;
+    inputElement?.blur();
+  }
+
   function handleFocus() {
     isFocused = true;
     queueMicrotask(() => updateSelectionState());
@@ -315,6 +350,20 @@
   }
 
   function handleInputKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
+    if (
+      cancelDraftOnUndo &&
+      (event.metaKey || event.ctrlKey) &&
+      !event.shiftKey &&
+      !event.altKey &&
+      event.key.toLowerCase() === "z" &&
+      value !== lastCommittedValue
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      cancelDraft();
+      return;
+    }
+
     switch (event.key) {
       case "ArrowDown":
         if (!shouldAutocomplete) return;

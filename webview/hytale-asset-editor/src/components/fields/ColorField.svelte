@@ -85,7 +85,7 @@
   {handle}
   summary={field.colorType}
   inline
-  onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
+  onunset={!readOnly && (onunset || isSet) ? (onunset ?? unsetValue) : undefined}
 >
   <ReadOnlyInputWrapper readOnly={readOnly} {readOnlyMessage} class="min-w-0">
     <div class="flex items-center gap-3">

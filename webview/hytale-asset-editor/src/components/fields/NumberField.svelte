@@ -58,7 +58,7 @@
   fieldPanelOverrides={fieldPanelOverrides}
   {handle}
   inline
-  onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
+  onunset={!readOnly && (onunset || isSet) ? (onunset ?? unsetValue) : undefined}
 >
   <ReadOnlyInputWrapper readOnly={readOnly} {readOnlyMessage} class="w-full min-w-0">
     {#if readOnly}

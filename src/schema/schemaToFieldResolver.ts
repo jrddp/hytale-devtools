@@ -214,8 +214,9 @@ function propertyDefinitionToField(
         maxLength: stringDefinition.maxLength,
         enumVals: stringDefinition.enum,
         markdownEnumDescriptions: stringDefinition.enumDescriptions,
-        symbolRef: stringDefinition.hytaleDevtools?.symbolRef,
-        definesSymbol: stringDefinition.hytaleDevtools?.definesSymbol,
+        symbolRef: stringDefinition.hytaleDevtools?.symbolRef ?? definition.hytaleDevtools?.symbolRef,
+        definesSymbol:
+          stringDefinition.hytaleDevtools?.definesSymbol ?? definition.hytaleDevtools?.definesSymbol,
         isLocalizationKey:
           stringDefinition.hytale?.uiEditorComponent?.component === "LocalizationKey",
         localizationKeyTemplate: stringDefinition.hytale?.uiEditorComponent?.keyTemplate,

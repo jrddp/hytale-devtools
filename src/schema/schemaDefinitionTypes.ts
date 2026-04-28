@@ -74,6 +74,7 @@ type PropertyDefinitionBase = {
   doNotSuggest?: boolean;
   hytale?: PropertyHytaleMetadata;
   hytaleAssetRef?: string;
+  hytaleDevtools?: HytaleDevtoolsMetadata;
   hytaleSchemaTypeField?: HytaleSchemaTypeField;
   markdownDescription?: string;
   title?: string;
@@ -87,7 +88,6 @@ export type StringPropertyDefinition = PropertyDefinitionBase & {
   enum?: string[];
   enumDescriptions?: string[];
   markdownEnumDescriptions?: string[];
-  hytaleDevtools?: HytaleDevtoolsMetadata;
   hytaleCommonAsset?: CommonAssetMetadata;
   minLength?: number;
   maxLength?: number;

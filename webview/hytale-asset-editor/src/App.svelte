@@ -156,7 +156,6 @@
     const sectionTop = sectionElement.getBoundingClientRect().top;
 
     scrollRootElement.scrollTo({
-      behavior: "smooth",
       top: scrollRootElement.scrollTop + sectionTop - rootTop - OUTLINE_ACTIVE_OFFSET_PX,
     });
   }
