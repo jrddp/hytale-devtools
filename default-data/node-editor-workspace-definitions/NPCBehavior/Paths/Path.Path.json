@@ -5,20 +5,20 @@
   "Description": "List of transient path points",
   "Inputs": [
     {
+      "Id": "Input",
+      "Type": "Path",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Outputs": [
+    {
       "Id": "WaypointsPin",
       "Type": "RelativeWaypointDefinition",
       "Color": "#CC3361",
       "Label": "Waypoints",
       "Description": "List of transient path points",
       "Multiple": true
-    }
-  ],
-  "Outputs": [
-    {
-      "Id": "Output",
-      "Type": "Path",
-      "Color": "#CC3361",
-      "Label": "For"
     }
   ],
   "Content": [

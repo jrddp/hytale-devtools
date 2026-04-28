@@ -9,7 +9,9 @@
       "Type": "ActionListItem",
       "Color": "#CC3361",
       "Label": "Parent"
-    },
+    }
+  ],
+  "Outputs": [
     {
       "Id": "PathPin",
       "Type": "Path",

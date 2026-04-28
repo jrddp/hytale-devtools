@@ -3,13 +3,12 @@
   "Title": "Waypoint: RelativeWaypointDefinition",
   "Color": "#CC3361",
   "Description": "A simple path waypoint definition where each waypoint is relative to the previous",
-  "Inputs": [],
-  "Outputs": [
+  "Inputs": [
     {
-      "Id": "Output",
+      "Id": "Input",
       "Type": "RelativeWaypointDefinition",
       "Color": "#CC3361",
-      "Label": "For"
+      "Label": "Parent"
     }
   ],
   "Content": [

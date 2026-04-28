@@ -106,12 +106,12 @@ export const NPC_BEHAVIOR_CONNECTION_DEFINITIONS = {
     label: "Instruction",
   },
   Path: {
-    authoringSide: "input",
+    authoringSide: "output",
     color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "Path",
   },
   RelativeWaypointDefinition: {
-    authoringSide: "input",
+    authoringSide: "output",
     color: NPC_BEHAVIOR_REFERENCE_DARK_COLORS.action,
     label: "Waypoint",
   },

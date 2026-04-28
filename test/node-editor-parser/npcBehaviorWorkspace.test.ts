@@ -238,8 +238,8 @@ describe("NPC Behavior workspace generation", () => {
       ),
     ).toBe(true);
     expect(
-      workspace.nodeTemplatesById["Path.Path"].outputPins.some(
-        pin => pin.localId === "Output" && pin.connectionType === "Path",
+      workspace.nodeTemplatesById["Path.Path"].inputPins.some(
+        pin => pin.localId === "Input" && pin.connectionType === "Path",
       ),
     ).toBe(true);
     expect(
@@ -573,14 +573,14 @@ describe("NPC Behavior workspace generation", () => {
 
     const makePathAction = workspace.nodeTemplatesById["Action.MakePath"];
     expect(
-      makePathAction.inputPins.some(pin => pin.schemaKey === "Path" && pin.connectionType === "Path"),
+      makePathAction.outputPins.some(pin => pin.schemaKey === "Path" && pin.connectionType === "Path"),
     ).toBe(true);
-    expect(makePathAction.outputPins.some(pin => pin.schemaKey === "Path")).toBe(false);
+    expect(makePathAction.inputPins.some(pin => pin.schemaKey === "Path")).toBe(false);
 
     const pathTemplate = workspace.nodeTemplatesById["Path.Path"];
-    expect(pathTemplate.inputPins.some(pin => pin.schemaKey === "Waypoints")).toBe(true);
+    expect(pathTemplate.outputPins.some(pin => pin.schemaKey === "Waypoints")).toBe(true);
     expect(
-      pathTemplate.outputPins.some(pin => pin.localId === "Output" && pin.connectionType === "Path"),
+      pathTemplate.inputPins.some(pin => pin.localId === "Input" && pin.connectionType === "Path"),
     ).toBe(true);
 
     const weightedAction = workspace.nodeTemplatesById["WeightedAction.WeightedAction"];

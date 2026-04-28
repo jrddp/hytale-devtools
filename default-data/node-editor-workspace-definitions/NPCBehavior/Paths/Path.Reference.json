@@ -3,12 +3,12 @@
   "Title": "Path Reference",
   "Color": "#CC3361",
   "Description": "Reference an external Path component.",
-  "Outputs": [
+  "Inputs": [
     {
-      "Id": "Output",
+      "Id": "Input",
       "Type": "Path",
       "Color": "#CC3361",
-      "Label": "For"
+      "Label": "Parent"
     }
   ],
   "Content": [

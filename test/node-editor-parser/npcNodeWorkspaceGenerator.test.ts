@@ -194,7 +194,7 @@ describe("NPC node workspace generator builders", () => {
       Type: "ActionListItem",
       Label: "Parent",
     });
-    expect(makePath.Inputs?.find(pin => pin.Id === "PathPin")).toMatchObject({
+    expect(makePath.Outputs?.find(pin => pin.Id === "PathPin")).toMatchObject({
       Type: "Path",
       Label: "Path",
     });
