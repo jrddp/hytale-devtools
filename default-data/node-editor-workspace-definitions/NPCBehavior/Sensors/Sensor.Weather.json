@@ -41,6 +41,7 @@
       "Options": {
         "Label": "Weathers",
         "Width": 240,
+        "Type": "String",
         "Computable": true,
         "SymbolLookup": {
           "indexKind": "registeredAssets",

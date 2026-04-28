@@ -209,6 +209,7 @@ describe("NPC node workspace generator builders", () => {
       Type: "List",
       Options: {
         Label: "Items",
+        Type: "String",
         SymbolLookup: {
           indexKind: "registeredAssets",
           key: "Item",
@@ -250,6 +251,7 @@ describe("NPC node workspace generator builders", () => {
       Type: "List",
       Options: {
         Label: "EnumSet",
+        Type: "String",
         Default: ["Flock", "Collisions"],
         UniqueItems: true,
         Values: expect.arrayContaining(["Flock", "Collisions"]),
@@ -260,6 +262,7 @@ describe("NPC node workspace generator builders", () => {
       Type: "List",
       Options: {
         Label: "AttitudesByPriority",
+        Type: "String",
         UniqueItems: true,
         Values: ["IGNORE", "HOSTILE", "NEUTRAL", "FRIENDLY", "REVERED"],
       },
@@ -269,6 +272,7 @@ describe("NPC node workspace generator builders", () => {
       Type: "List",
       Options: {
         Label: "From",
+        Type: "String",
       },
     });
     expect(buildContentField(stateTransitionEdgesDescriptor, fromAttribute)?.Options).not.toHaveProperty(
@@ -317,6 +321,14 @@ describe("NPC node workspace generator builders", () => {
       throw new Error("Attribute AltitudeRange was not found.");
     }
 
+    const actionTestDescriptor = findDescriptorOrThrow("Action", "Test");
+    const doubleArrayAttribute = actionTestDescriptor.Attributes?.find(
+      entry => entry.Name === "DoubleArray",
+    );
+    if (!doubleArrayAttribute) {
+      throw new Error("Attribute DoubleArray was not found.");
+    }
+
     expect(buildContentField(randomInstructionDescriptor, executeForAttribute)).toMatchObject({
       Id: "ExecuteFor",
       Type: "Tuple",
@@ -354,6 +366,16 @@ describe("NPC node workspace generator builders", () => {
     expect(buildContentField(altitudeFilterDescriptor, altitudeRangeAttribute)).toMatchObject({
       Id: "AltitudeRange",
       Type: "List",
+      Options: {
+        Type: "Float",
+      },
+    });
+    expect(buildContentField(actionTestDescriptor, doubleArrayAttribute)).toMatchObject({
+      Id: "DoubleArray",
+      Type: "List",
+      Options: {
+        Type: "Float",
+      },
     });
   });
 

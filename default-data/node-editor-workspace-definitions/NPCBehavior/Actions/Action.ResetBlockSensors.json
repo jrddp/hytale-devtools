@@ -29,6 +29,7 @@
       "Options": {
         "Label": "BlockSets",
         "Width": 240,
+        "Type": "String",
         "Computable": true,
         "SymbolLookup": {
           "indexKind": "registeredAssets",

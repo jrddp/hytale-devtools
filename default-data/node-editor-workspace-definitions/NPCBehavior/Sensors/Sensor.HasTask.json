@@ -41,6 +41,7 @@
       "Options": {
         "Label": "TasksById",
         "Width": 240,
+        "Type": "String",
         "Computable": true
       }
     }

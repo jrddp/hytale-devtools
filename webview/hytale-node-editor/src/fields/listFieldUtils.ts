@@ -1,4 +1,11 @@
 import type { IndexReference } from "@shared/indexTypes";
+import type { NodeListItemType } from "@shared/node-editor/workspaceTypes";
+
+export type ListItemKind = "auto" | "string" | "number";
+
+export function getListItemEditorKind(listItemType: NodeListItemType | undefined): ListItemKind {
+  return listItemType === "float" || listItemType === "int" ? "number" : "string";
+}
 
 export function buildListItemInputId(inputId: string, index: number): string {
   return `${inputId}-item-${index}`;

@@ -73,6 +73,7 @@
       "Options": {
         "Label": "Items",
         "Width": 240,
+        "Type": "String",
         "Computable": true,
         "SymbolLookup": {
           "indexKind": "registeredAssets",
@@ -88,6 +89,7 @@
         "Label": "Attitudes",
         "Default": [],
         "Width": 240,
+        "Type": "String",
         "UniqueItems": true,
         "Values": [
           "Ignore",

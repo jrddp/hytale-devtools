@@ -38,6 +38,9 @@ export function buildContentField(
     options.TupleSize = attribute.MinSize ?? undefined;
     options.TupleItemType = resolveTupleItemType(attribute);
   }
+  if (type === "List") {
+    options.Type = resolveListItemType(attribute);
+  }
   if (shouldUseUniqueItems(attribute)) {
     options.UniqueItems = true;
   }
@@ -222,6 +225,19 @@ function resolveTupleItemType(attribute: NpcDescriptorAttribute): "String" | "Fl
       return "Int";
     case "TemporalAmount":
     case "String":
+    default:
+      return "String";
+  }
+}
+
+function resolveListItemType(attribute: NpcDescriptorAttribute): "String" | "Float" | "Int" {
+  switch (attribute.Type) {
+    case "Array":
+      return resolveTupleItemType(attribute);
+    case "AssetArray":
+    case "FlagArray":
+    case "FlagSet":
+    case "StringList":
     default:
       return "String";
   }

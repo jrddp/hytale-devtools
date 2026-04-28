@@ -82,6 +82,7 @@
       "Options": {
         "Label": "Items",
         "Width": 240,
+        "Type": "String",
         "Computable": true,
         "SymbolLookup": {
           "indexKind": "registeredAssets",

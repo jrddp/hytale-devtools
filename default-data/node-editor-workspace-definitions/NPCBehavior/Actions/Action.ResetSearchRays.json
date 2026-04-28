@@ -29,6 +29,7 @@
       "Options": {
         "Label": "Names",
         "Width": 240,
+        "Type": "String",
         "Computable": true
       }
     }

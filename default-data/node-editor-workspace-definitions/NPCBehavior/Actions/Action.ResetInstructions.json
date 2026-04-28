@@ -29,6 +29,7 @@
       "Options": {
         "Label": "Instructions",
         "Width": 240,
+        "Type": "String",
         "Computable": true
       }
     }

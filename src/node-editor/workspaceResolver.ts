@@ -14,6 +14,7 @@ import {
   type NodeEditorWorkspaceContext,
   type NodeEditorWorkspaceRootDefinition,
   type NodeField,
+  type NodeListItemType,
   type NodePin,
   type NodeSchemaSerializationType,
   type NodeSlotOccupancy,
@@ -595,6 +596,7 @@ export class WorkspaceRuntime {
         isSet: false,
         inputWidth: content.Options?.Width,
         uniqueItems: content.Options?.UniqueItems === true,
+        listItemType: this.resolveListItemType(content),
         tupleSize: this.resolveTupleSize(content),
         tupleItemType: this.resolveTupleItemType(content),
         overrideAutocompleteValues,
@@ -661,6 +663,22 @@ export class WorkspaceRuntime {
 
     const defaultValue = content.Options?.Default ?? content.Options?.DefaultValue;
     return Array.isArray(defaultValue) ? defaultValue.length : 0;
+  }
+
+  private resolveListItemType(content: NodeContentDefinition): NodeListItemType | undefined {
+    if (content.Type !== "List") {
+      return undefined;
+    }
+
+    switch (content.Options?.Type) {
+      case "Float":
+        return "float";
+      case "Int":
+        return "int";
+      case "String":
+      default:
+        return "string";
+    }
   }
 
   private resolveTupleItemType(content: NodeContentDefinition): NodeTupleItemType | undefined {

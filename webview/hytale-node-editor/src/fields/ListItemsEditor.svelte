@@ -5,6 +5,7 @@
   import { isObject } from "@node-editor/node-editor/utils/valueUtils";
   import {
     buildListItemInputId,
+    type ListItemKind,
     getListAddPlaceholder,
     normalizeCommittedStringListItem,
     shouldAppendStringListItem,
@@ -18,8 +19,6 @@
     value: string;
     markdownDescription?: string;
   };
-
-  type ListItemKind = "auto" | "string" | "number";
 
   let {
     inputId,

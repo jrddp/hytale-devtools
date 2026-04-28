@@ -106,7 +106,7 @@ export interface NodeContentDefinition {
     Min?: number;
     SmallChange?: number;
     TickFrequency?: number;
-    Type?: "String" | "Float";
+    Type?: "String" | "Float" | "Int";
     ArrayElementType?: "DataSettingFlags";
     TupleSize?: number;
     TupleItemType?: "String" | "Float" | "Int";

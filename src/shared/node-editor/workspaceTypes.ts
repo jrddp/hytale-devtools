@@ -18,6 +18,7 @@ export type FieldComponentType =
   | "color";
 
 export type NodeTupleItemType = "string" | "int" | "float";
+export type NodeListItemType = "string" | "int" | "float";
 
 export type NodeSchemaSerializationType = "child" | "root" | "sibling";
 export type NodeSlotOccupancy = "normal-item" | "whole-slot";
@@ -63,6 +64,7 @@ export interface NodeField {
   isSet: boolean;
   inputWidth?: number;
   uniqueItems?: boolean;
+  listItemType?: NodeListItemType;
   tupleSize?: number;
   tupleItemType?: NodeTupleItemType;
   overrideAutocompleteValues?: string[];

@@ -65,6 +65,7 @@
       "Options": {
         "Label": "IncludeGroups",
         "Width": 240,
+        "Type": "String",
         "SymbolLookup": {
           "indexKind": "registeredAssets",
           "key": "NPCGroup"
@@ -78,6 +79,7 @@
       "Options": {
         "Label": "ExcludeGroups",
         "Width": 240,
+        "Type": "String",
         "SymbolLookup": {
           "indexKind": "registeredAssets",
           "key": "NPCGroup"

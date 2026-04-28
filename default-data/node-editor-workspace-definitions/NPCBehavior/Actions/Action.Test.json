@@ -137,6 +137,7 @@
           "Collisions"
         ],
         "Width": 240,
+        "Type": "String",
         "UniqueItems": true,
         "Values": [
           "TraceFail",
@@ -205,6 +206,7 @@
           2
         ],
         "Width": 240,
+        "Type": "Float",
         "Computable": true
       }
     },
@@ -215,6 +217,7 @@
       "Options": {
         "Label": "StringArray",
         "Width": 240,
+        "Type": "String",
         "Computable": true
       }
     }

@@ -20,6 +20,7 @@
       "Options": {
         "Label": "AttitudesByPriority",
         "Width": 240,
+        "Type": "String",
         "UniqueItems": true,
         "Values": [
           "IGNORE",

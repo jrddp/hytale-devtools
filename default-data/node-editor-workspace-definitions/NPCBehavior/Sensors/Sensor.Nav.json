@@ -42,6 +42,7 @@
         "Label": "NavStates",
         "Default": [],
         "Width": 240,
+        "Type": "String",
         "UniqueItems": true,
         "Values": [
           "INIT",

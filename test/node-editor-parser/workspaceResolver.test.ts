@@ -77,6 +77,8 @@ describe("WorkspaceRuntime", () => {
               "AnimationPreviewField",
               "TupleField",
               "UniqueListField",
+              "TypedListField",
+              "NonListTypeOption",
             ],
           },
         },
@@ -249,6 +251,76 @@ describe("WorkspaceRuntime", () => {
     );
 
     fs.writeFileSync(
+      path.join(workspaceDir, "TypedListField.json"),
+      JSON.stringify(
+        {
+          Id: "TypedListField",
+          Title: "Typed List Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "FloatValues",
+              Type: "List",
+              Options: {
+                Label: "FloatValues",
+                Type: "Float",
+              },
+            },
+            {
+              Id: "IntValues",
+              Type: "List",
+              Options: {
+                Label: "IntValues",
+                Type: "Int",
+              },
+            },
+            {
+              Id: "StringValues",
+              Type: "List",
+              Options: {
+                Label: "StringValues",
+                Type: "String",
+              },
+            },
+          ],
+          Schema: {
+            FloatValues: "FloatValues",
+            IntValues: "IntValues",
+            StringValues: "StringValues",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "NonListTypeOption.json"),
+      JSON.stringify(
+        {
+          Id: "NonListTypeOption",
+          Title: "Non List Type Option",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "FloatValue",
+              Type: "Float",
+              Options: {
+                Label: "FloatValue",
+                Type: "Float",
+              },
+            },
+          ],
+          Schema: {
+            FloatValue: "FloatValue",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
       path.join(supplementsDir, "TestWorkspace.json"),
       JSON.stringify(
         {
@@ -313,10 +385,27 @@ describe("WorkspaceRuntime", () => {
 
     expect(workspace.nodeTemplatesById.UniqueListField.fieldsBySchemaKey.Values).toMatchObject({
       type: "list",
+      listItemType: "string",
       uniqueItems: true,
       overrideAutocompleteValues: ["One", "Two"],
       isSet: false,
     });
+
+    expect(workspace.nodeTemplatesById.TypedListField.fieldsBySchemaKey.FloatValues).toMatchObject({
+      type: "list",
+      listItemType: "float",
+    });
+    expect(workspace.nodeTemplatesById.TypedListField.fieldsBySchemaKey.IntValues).toMatchObject({
+      type: "list",
+      listItemType: "int",
+    });
+    expect(workspace.nodeTemplatesById.TypedListField.fieldsBySchemaKey.StringValues).toMatchObject({
+      type: "list",
+      listItemType: "string",
+    });
+    expect(
+      workspace.nodeTemplatesById.NonListTypeOption.fieldsBySchemaKey.FloatValue.listItemType,
+    ).toBeUndefined();
   });
 
   test("filters the StateTransitions root context and hydrates unset defaults", () => {

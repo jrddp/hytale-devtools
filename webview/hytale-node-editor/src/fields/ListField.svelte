@@ -7,6 +7,7 @@
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import type { Snippet } from "svelte";
   import {
+    getListItemEditorKind,
     getListAutocompleteValues,
     shouldRequestListAutocomplete,
   } from "./listFieldUtils";
@@ -26,6 +27,7 @@
     overrideAutocompleteValues,
     symbolLookup,
     uniqueItems,
+    listItemType,
     previewFeatureKind,
     titleActions,
     onconfirm,
@@ -37,6 +39,7 @@
     overrideAutocompleteValues?: string[];
     symbolLookup?: IndexReference;
     uniqueItems?: boolean;
+    listItemType?: NodeField["listItemType"];
     previewFeatureKind?: NodeField["previewFeatureKind"];
     titleActions?: Snippet;
   } = $props();
@@ -46,6 +49,7 @@
       schemaKey !== null &&
       parentSchemaKey === undefined,
   );
+  const itemKind = $derived(getListItemEditorKind(listItemType));
 
   let value = $state<unknown[]>([]);
 
@@ -157,6 +161,7 @@
       {inputWidth}
       addLabel="Add item"
       defaultPlaceholder={placeholder}
+      {itemKind}
       {getAutocompleteOptions}
       {getStringItemVscodeContext}
       onrequestAutocomplete={requestAutocomplete}

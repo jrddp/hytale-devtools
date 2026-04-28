@@ -4,6 +4,7 @@ import {
   buildListItemInputId,
   getListAddPlaceholder,
   getListAutocompleteValues,
+  getListItemEditorKind,
   normalizeCommittedStringListItem,
   shouldAppendStringListItem,
   shouldRemoveStringListItem,
@@ -104,6 +105,13 @@ describe("node editor list field autocomplete helpers", () => {
     expect(getListAddPlaceholder({ itemCount: 0, defaultPlaceholder: "[1, 2]" })).toBe("[1, 2]");
     expect(getListAddPlaceholder({ itemCount: 1, defaultPlaceholder: "[1, 2]" })).toBe("Add item...");
     expect(getListAddPlaceholder({ itemCount: 0 })).toBe("Add item...");
+  });
+
+  test("selects list item editor kind from resolved list item type", () => {
+    expect(getListItemEditorKind("float")).toBe("number");
+    expect(getListItemEditorKind("int")).toBe("number");
+    expect(getListItemEditorKind("string")).toBe("string");
+    expect(getListItemEditorKind(undefined)).toBe("string");
   });
 
   test("only appends non-empty string list values", () => {

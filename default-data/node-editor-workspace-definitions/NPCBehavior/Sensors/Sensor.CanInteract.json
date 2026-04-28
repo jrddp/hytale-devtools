@@ -57,6 +57,7 @@
           "REVERED"
         ],
         "Width": 240,
+        "Type": "String",
         "UniqueItems": true,
         "Values": [
           "IGNORE",
