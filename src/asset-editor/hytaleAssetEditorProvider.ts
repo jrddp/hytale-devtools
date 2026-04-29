@@ -18,6 +18,11 @@ import {
   resolveTexturePathWithModelFallback,
 } from "../shared/modelPreviewResolution";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
+import {
+  readParentName,
+  resolveEffectiveParentData,
+  resolveEffectiveParentDataByName,
+} from "./parentResolution";
 
 const VIEW_TYPE = "hytale-devtools.hytaleAssetEditor";
 
@@ -214,7 +219,12 @@ class HytaleAssetEditorProvider implements vscode.CustomTextEditorProvider {
             return;
           case "resolveParent":
             void sendResolvedParentAndPreview(
-              resolveParentState(assetDefinition, runtime, message.parentName),
+              resolveParentState(
+                assetDefinition,
+                runtime,
+                message.parentName,
+                readDocumentJson(document),
+              ),
             );
             return;
           case "resolvePreview":
@@ -297,21 +307,35 @@ function resolveDocumentParentState(
   runtime: AssetCacheRuntime,
 ): AssetEditorParentState {
   const jsonData = readDocumentJson(document);
-  const parentName = jsonData?.["Parent"] as string | undefined;
-  return resolveParentState(assetDefinition, runtime, parentName);
+  return resolveParentState(assetDefinition, runtime, readParentName(jsonData), jsonData);
 }
 
 function resolveParentState(
   assetDefinition: AssetDefinition,
   runtime: AssetCacheRuntime,
   parentName: string | undefined,
+  documentJson?: unknown,
 ): AssetEditorParentState {
   if (!parentName) {
     return { status: "none" };
   }
   const parentData = runtime.getAsset(assetDefinition.title, parentName);
   if (parentData) {
-    return { status: "loaded", parentName, parentInstance: parentData };
+    return {
+      status: "loaded",
+      parentName,
+      parentInstance: parentData,
+      effectiveParentData: resolveEffectiveParentData({
+        assetType: assetDefinition.title,
+        parentName,
+        lookupParentAsset: (assetType, assetName) => runtime.getAsset(assetType, assetName),
+      }),
+      effectiveParentDataByName: resolveEffectiveParentDataByName({
+        assetType: assetDefinition.title,
+        documentJson,
+        lookupParentAsset: (assetType, assetName) => runtime.getAsset(assetType, assetName),
+      }),
+    };
   }
   if (!runtime.isReady) {
     return { status: "loading", parentName };

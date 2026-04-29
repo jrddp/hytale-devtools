@@ -267,12 +267,28 @@ describe("asset editor serializeDocument", () => {
         meta: {},
         tags: [],
         labels: {},
-        inlineRef: null,
       }),
       rootField,
     });
 
     expect(serializeDocument(root)).toEqual({});
+  });
+
+  test("preserves explicit null values", () => {
+    const rootField = objectField(null, {
+      inlineRef: inlineOrReferenceField("inlineRef", objectField("", { title: stringField("title") })),
+    });
+
+    const root = parseReady({
+      text: JSON.stringify({
+        inlineRef: null,
+      }),
+      rootField,
+    });
+
+    expect(serializeDocument(root)).toEqual({
+      inlineRef: null,
+    });
   });
 
   test("does not drop variant fields whose discriminator is implied by the schema default", () => {

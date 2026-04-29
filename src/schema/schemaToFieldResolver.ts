@@ -47,6 +47,7 @@ function propertyDefinitionToField(
     width: definition.hytale?.uiEditorComponent?.width,
     height: definition.hytale?.uiEditorComponent?.height,
     suffix: definition.hytale?.uiEditorComponent?.suffix,
+    readonly: definition.readOnly,
     collapsedByDefault: true,
     inheritsValue: definition.hytale?.inheritsProperty,
   };

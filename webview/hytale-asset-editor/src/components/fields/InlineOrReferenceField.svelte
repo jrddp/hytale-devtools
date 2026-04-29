@@ -2,6 +2,7 @@
   import type { RenderFieldProps } from "src/common";
   import InlineReferenceToggleButton from "src/components/InlineReferenceToggleButton.svelte";
   import ObjectField from "src/components/fields/ObjectField.svelte";
+  import RawJsonField from "src/components/fields/RawJsonField.svelte";
   import StringField from "src/components/fields/StringField.svelte";
   import VariantField from "src/components/fields/VariantField.svelte";
   import type { InlineOrReferenceFieldInstance } from "../../parsing/fieldInstances";
@@ -94,6 +95,14 @@
     {depth}
     {readOnly}
     {readOnlyMessage}
+    glyphs={modeToggle}
+    {...props}
+  />
+{:else if field.activeField.type === "rawJson"}
+  <RawJsonField
+    field={field.activeField}
+    {depth}
+    {readOnly}
     glyphs={modeToggle}
     {...props}
   />

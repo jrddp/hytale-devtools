@@ -77,6 +77,7 @@ type PropertyDefinitionBase = {
   hytaleDevtools?: HytaleDevtoolsMetadata;
   hytaleSchemaTypeField?: HytaleSchemaTypeField;
   markdownDescription?: string;
+  readOnly?: boolean;
   title?: string;
   type?: JsonType | [JsonType, "null"];
 };

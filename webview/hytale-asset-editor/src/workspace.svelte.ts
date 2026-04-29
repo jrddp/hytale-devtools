@@ -34,6 +34,9 @@ export class Workspace {
   parentStatus = $state<AssetEditorParentState["status"]>("none");
   parentName = $state<string | null>(null);
   parentInstance = $state<AssetEditorParentState["parentInstance"]>(undefined);
+  effectiveParentData = $state<AssetEditorParentState["effectiveParentData"]>(undefined);
+  effectiveParentDataByName =
+    $state<AssetEditorParentState["effectiveParentDataByName"]>(undefined);
   preview = $state<AssetEditorPreview | undefined>(undefined);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
@@ -55,6 +58,8 @@ export class Workspace {
     this.parentStatus = "none";
     this.parentName = null;
     this.parentInstance = undefined;
+    this.effectiveParentData = undefined;
+    this.effectiveParentDataByName = undefined;
     this.preview = undefined;
     this.hasUnserializedLocalState = false;
   }
@@ -91,6 +96,8 @@ export class Workspace {
     this.parentStatus = parent.status;
     this.parentName = parent.parentName ?? null;
     this.parentInstance = parent.parentInstance;
+    this.effectiveParentData = parent.effectiveParentData;
+    this.effectiveParentDataByName = parent.effectiveParentDataByName;
 
     if (this.documentText !== null && !this.hasUnserializedLocalState) {
       this.reparseDocument();
@@ -208,7 +215,12 @@ export class Workspace {
       text: this.documentText,
       assetDefinition: $state.snapshot(this.assetDefinition) as AssetDefinition,
       assetsByRef: $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
-      parentData: $state.snapshot(this.parentInstance)?.rawJson,
+      parentData:
+        ($state.snapshot(this.effectiveParentData) as Record<string, unknown> | undefined) ??
+        $state.snapshot(this.parentInstance)?.rawJson,
+      parentDataByName: $state.snapshot(this.effectiveParentDataByName) as
+        | Record<string, Record<string, unknown>>
+        | undefined,
     });
 
     switch (result.status) {

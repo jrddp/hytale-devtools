@@ -22,6 +22,8 @@ export type AssetEditorParentState = {
   status: "loading" | "none" | "loaded" | "missing";
   parentName?: string;
   parentInstance?: JsonAssetInstance;
+  effectiveParentData?: Record<string, unknown>;
+  effectiveParentDataByName?: Record<string, Record<string, unknown>>;
 };
 
 export type AssetEditorBootstrapMessage = {

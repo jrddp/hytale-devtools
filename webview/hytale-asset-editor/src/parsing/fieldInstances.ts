@@ -37,6 +37,8 @@ export type ScalarFieldInstance =
 export type FieldInstanceBase = {
   readonly?: boolean;
   fieldPath: string;
+  isNull?: boolean;
+  rawFallback?: unknown;
 };
 
 export type StringFieldInstance = FieldInstanceBase &
@@ -60,8 +62,16 @@ export type MapFieldInstance = FieldInstanceBase &
 
 export type InlineOrReferenceFieldInstance = FieldInstanceBase &
   InlineOrReferenceField & {
-    activeField: StringFieldInstance | ObjectFieldInstance | VariantFieldInstance;
-    inheritedActiveField: StringFieldInstance | ObjectFieldInstance | VariantFieldInstance;
+    activeField:
+      | StringFieldInstance
+      | ObjectFieldInstance
+      | VariantFieldInstance
+      | RawJsonFieldInstance;
+    inheritedActiveField:
+      | StringFieldInstance
+      | ObjectFieldInstance
+      | VariantFieldInstance
+      | RawJsonFieldInstance;
   };
 
 export type RawJsonFieldInstance = FieldInstanceBase &

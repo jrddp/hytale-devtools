@@ -12,6 +12,7 @@
     fieldPanelOverrides,
     handle,
     onunset,
+    glyphs,
   }: RenderFieldProps<RawJsonFieldInstance> = $props();
 
   let draftValue = $state("");
@@ -41,6 +42,7 @@
   {fieldPanelOverrides}
   {handle}
   {onunset}
+  {glyphs}
   summary="Raw JSON"
 >
   <textarea

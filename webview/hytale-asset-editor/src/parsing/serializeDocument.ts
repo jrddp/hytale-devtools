@@ -32,6 +32,9 @@ function serializeField(
   if (!field) {
     return undefined;
   }
+  if (field.isNull) {
+    return null;
+  }
 
   switch (field.type) {
     case "string":
@@ -56,8 +59,7 @@ function serializeField(
       if (field.value === undefined) {
         return undefined;
       }
-      const value = JSON.parse(field.value);
-      return value ? value : fallbackToEmptyObject ? {} : undefined;
+      return JSON.parse(field.value);
     case "timeline":
     case "weightedTimeline":
       return field.unparsedData;
@@ -76,7 +78,13 @@ function serializeObjectField(field: ObjectFieldInstance, fallbackToEmptyObject 
     }
   }
 
-  return Object.keys(serialized).length > 0 ? serialized : fallbackToEmptyObject ? {} : undefined;
+  if (Object.keys(serialized).length > 0) {
+    return serialized;
+  }
+  if ("rawFallback" in field) {
+    return field.rawFallback;
+  }
+  return fallbackToEmptyObject ? {} : undefined;
 }
 
 function serializeArrayField(field: ArrayFieldInstance, fallbackToEmptyObject = false): unknown {
@@ -84,7 +92,13 @@ function serializeArrayField(field: ArrayFieldInstance, fallbackToEmptyObject = 
   if (field.isTuple && serialized.every(item => item === null)) {
     return fallbackToEmptyObject ? [] : undefined;
   }
-  return serialized.length > 0 ? serialized : fallbackToEmptyObject ? [] : undefined;
+  if (serialized.length > 0) {
+    return serialized;
+  }
+  if ("rawFallback" in field) {
+    return field.rawFallback;
+  }
+  return fallbackToEmptyObject ? [] : undefined;
 }
 
 function serializeMapField(field: MapFieldInstance, fallbackToEmptyObject = false): unknown {
@@ -95,14 +109,27 @@ function serializeMapField(field: MapFieldInstance, fallbackToEmptyObject = fals
     serialized[key] = value;
   }
 
-  return Object.keys(serialized).length > 0 ? serialized : fallbackToEmptyObject ? {} : undefined;
+  if (Object.keys(serialized).length > 0) {
+    return serialized;
+  }
+  if ("rawFallback" in field) {
+    return field.rawFallback;
+  }
+  return fallbackToEmptyObject ? {} : undefined;
 }
 
 function serializeVariantField(
   field: VariantFieldInstance,
   fallbackToEmptyObject = false,
 ): unknown {
-  return serializeField(field.activeVariant, fallbackToEmptyObject);
+  const serialized = serializeField(field.activeVariant, fallbackToEmptyObject);
+  if (serialized !== undefined) {
+    return serialized;
+  }
+  if ("rawFallback" in field) {
+    return field.rawFallback;
+  }
+  return undefined;
 }
 
 function serializeInlineOrReferenceField(
