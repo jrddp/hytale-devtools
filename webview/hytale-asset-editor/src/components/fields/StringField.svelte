@@ -19,6 +19,7 @@
     readOnlyMessage,
     applyDocumentStateOnCommit = true,
     fieldPanelOverrides,
+    glyphs: externalGlyphs,
     handle,
     inputElement = $bindable(),
     oncommitchange,
@@ -173,6 +174,7 @@
       <div>Assets are being loaded. Parent data will be available soon.</div>
     </TooltipContent>
   {/if}
+  {@render externalGlyphs?.()}
 {/snippet}
 
 <FieldPanel

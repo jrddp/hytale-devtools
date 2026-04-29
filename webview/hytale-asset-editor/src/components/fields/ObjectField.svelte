@@ -22,6 +22,7 @@
     renderSections: renderSectionHeaders = false,
     onSectionsChange,
     handle,
+    glyphs,
     ...props
   }: RenderFieldProps<ObjectFieldInstance> & {
     root?: boolean;
@@ -89,6 +90,7 @@
     {readOnly}
     fieldPanelOverrides={fieldPanelOverrides}
     {handle}
+    {glyphs}
     {onunset}
     summary={`${Object.keys(properties).length} subfields`}
     collapsedByDefault={field.collapsedByDefault ?? true}

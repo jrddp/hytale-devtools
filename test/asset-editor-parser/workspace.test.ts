@@ -89,6 +89,7 @@ describe("asset editor workspace parent parsing", () => {
     );
 
     const afterParent = workspace.documentRootField as ObjectFieldInstance;
+    expect(afterParent).not.toBe(beforeParent);
     expect((afterParent.properties.Name as StringFieldInstance).inheritedValue).toBe(
       "Inherited Name",
     );
@@ -130,5 +131,145 @@ describe("asset editor workspace parent parsing", () => {
     expect(workspace.serializeDocument()).toEqual({
       Tags: ["Inherited"],
     });
+  });
+});
+
+describe("asset editor workspace document updates", () => {
+  test("does not reparse unchanged document updates", () => {
+    const workspace = new Workspace();
+    const definition = assetDefinition(
+      objectField(null, {
+        Name: stringField("Name"),
+      }),
+    );
+
+    workspace.assetsByRef = {};
+    workspace.setAssetDefinition(definition);
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: "{}",
+      version: 1,
+    });
+
+    const root = workspace.documentRootField as ObjectFieldInstance;
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: "{}",
+      version: 2,
+    });
+
+    expect(workspace.documentRootField).toBe(root);
+    expect(workspace.documentVersion).toBe(2);
+  });
+
+  test("does not reparse the extension echo for an edit applied by the webview", () => {
+    const workspace = new Workspace();
+    const definition = assetDefinition(
+      objectField(null, {
+        Name: stringField("Name"),
+      }),
+    );
+    const postedMessages: unknown[] = [];
+
+    workspace.vscode = {
+      postMessage: message => {
+        postedMessages.push(message);
+      },
+    };
+    workspace.assetsByRef = {};
+    workspace.setAssetDefinition(definition);
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: "{}",
+      version: 1,
+    });
+
+    const root = workspace.documentRootField as ObjectFieldInstance;
+    (root.properties.Name as StringFieldInstance).value = "Edited";
+    workspace.applyDocumentState();
+
+    expect(postedMessages).toHaveLength(1);
+    const appliedMessage = postedMessages[0] as { text: string };
+
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: appliedMessage.text,
+      version: 2,
+    });
+
+    expect(workspace.documentRootField).toBe(root);
+    expect(workspace.documentText).toBe(appliedMessage.text);
+    expect(workspace.documentVersion).toBe(2);
+  });
+
+  test("defers parent reparses while an action has only local UI state", () => {
+    const workspace = new Workspace();
+    const definition = assetDefinition(
+      objectField(null, {
+        Name: stringField("Name", { inheritsValue: true }),
+      }),
+    );
+    const postedMessages: unknown[] = [];
+
+    workspace.vscode = {
+      postMessage: message => {
+        postedMessages.push(message);
+      },
+    };
+    workspace.assetsByRef = {};
+    workspace.setAssetDefinition(definition);
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: "{}",
+      version: 1,
+    });
+
+    const root = workspace.documentRootField as ObjectFieldInstance;
+    workspace.applyDocumentState({ preserveUnserializedStateOnNoop: true });
+    workspace.setParentState(
+      loadedParent({
+        Name: "Inherited Name",
+      }),
+    );
+
+    expect(postedMessages).toHaveLength(0);
+    expect(workspace.documentRootField).toBe(root);
+  });
+
+  test("still reparses document updates that do not match a webview-applied edit", () => {
+    const workspace = new Workspace();
+    const definition = assetDefinition(
+      objectField(null, {
+        Name: stringField("Name"),
+      }),
+    );
+    const postedMessages: unknown[] = [];
+
+    workspace.vscode = {
+      postMessage: message => {
+        postedMessages.push(message);
+      },
+    };
+    workspace.assetsByRef = {};
+    workspace.setAssetDefinition(definition);
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: "{}",
+      version: 1,
+    });
+
+    const root = workspace.documentRootField as ObjectFieldInstance;
+    (root.properties.Name as StringFieldInstance).value = "Edited";
+    workspace.applyDocumentState();
+
+    workspace.setDocument({
+      documentPath: "/tmp/TestAsset.json",
+      text: JSON.stringify({ Name: "External" }, null, "\t"),
+      version: 2,
+    });
+
+    const reparsedRoot = workspace.documentRootField as ObjectFieldInstance;
+    expect(reparsedRoot).not.toBe(root);
+    expect((reparsedRoot.properties.Name as StringFieldInstance).value).toBe("External");
   });
 });

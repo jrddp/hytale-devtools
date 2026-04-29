@@ -22,6 +22,7 @@
     root = false,
     onSectionsChange,
     handle,
+    glyphs,
   }: RenderFieldProps<VariantFieldInstance> & {
     root?: boolean;
     onSectionsChange?: (sections: OutlineSection[]) => void;
@@ -74,7 +75,7 @@
 </script>
 
 {#if field.activeVariant}
-  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} {handle} {onunset}>
+  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} {handle} {glyphs} {onunset}>
     <ObjectField
       field={field.activeVariant}
       {depth}
@@ -91,6 +92,7 @@
     {readOnly}
     {fieldPanelOverrides}
     {handle}
+    {glyphs}
     {onunset}
   >
     <StringField

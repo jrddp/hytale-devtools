@@ -41,6 +41,7 @@ export class Workspace {
   collapseAllVersion = $state(0);
   collapseAllTarget = $state<boolean | null>(null);
   hideUnsetFields = $state(false);
+  private hasUnserializedLocalState = false;
 
   setAssetDefinition(assetDefinition: AssetDefinition | null) {
     this.assetDefinition = assetDefinition;
@@ -55,6 +56,7 @@ export class Workspace {
     this.parentName = null;
     this.parentInstance = undefined;
     this.preview = undefined;
+    this.hasUnserializedLocalState = false;
   }
 
   setDocument({
@@ -66,9 +68,17 @@ export class Workspace {
     text: string;
     version: number;
   }) {
+    const previousText = this.documentText;
     this.documentPath = documentPath;
     this.documentText = text;
     this.documentVersion = version;
+
+    if (previousText === text) {
+      this.documentParseError = null;
+      return;
+    }
+
+    this.hasUnserializedLocalState = false;
     this.reparseDocument();
   }
 
@@ -81,7 +91,8 @@ export class Workspace {
     this.parentStatus = parent.status;
     this.parentName = parent.parentName ?? null;
     this.parentInstance = parent.parentInstance;
-    if (this.documentText !== null) {
+
+    if (this.documentText !== null && !this.hasUnserializedLocalState) {
       this.reparseDocument();
     }
   }
@@ -123,13 +134,21 @@ export class Workspace {
     return serializeDocumentText($state.snapshot(this.documentRootField));
   }
 
-  applyDocumentState() {
+  applyDocumentState({ preserveUnserializedStateOnNoop = false } = {}) {
     console.log("Applying document state", this.documentRootField);
     this.syncFieldPaths();
     const text = this.serializeDocumentText();
     if (!text) {
       return;
     }
+
+    if (text === this.documentText) {
+      this.hasUnserializedLocalState = preserveUnserializedStateOnNoop;
+      return;
+    }
+
+    this.hasUnserializedLocalState = false;
+    this.documentText = text;
 
     const payload: Extract<AssetEditorWebviewToExtensionMessage, { type: "apply" }> = {
       type: "apply",

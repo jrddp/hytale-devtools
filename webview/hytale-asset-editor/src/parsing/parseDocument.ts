@@ -542,7 +542,7 @@ function populateInlineOrReferenceActiveField(
   data: unknown,
   parentData: unknown,
   context: ParseContext,
-): StringFieldInstance | ObjectFieldInstance {
+): StringFieldInstance | ObjectFieldInstance | VariantFieldInstance {
   if (data === undefined) {
     return createEmptyFieldInstance(field.stringField, context.assetsByRef);
   }
@@ -561,7 +561,7 @@ function populateInlineOrReferenceActiveField(
       data,
       isObject(parentData) ? parentData : undefined,
       context,
-    ) as ObjectFieldInstance;
+    ) as ObjectFieldInstance | VariantFieldInstance;
   }
 
   return createEmptyFieldInstance(field.stringField, context.assetsByRef);

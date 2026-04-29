@@ -60,8 +60,8 @@ export type MapFieldInstance = FieldInstanceBase &
 
 export type InlineOrReferenceFieldInstance = FieldInstanceBase &
   InlineOrReferenceField & {
-    activeField: StringFieldInstance | ObjectFieldInstance;
-    inheritedActiveField: StringFieldInstance | ObjectFieldInstance;
+    activeField: StringFieldInstance | ObjectFieldInstance | VariantFieldInstance;
+    inheritedActiveField: StringFieldInstance | ObjectFieldInstance | VariantFieldInstance;
   };
 
 export type RawJsonFieldInstance = FieldInstanceBase &
