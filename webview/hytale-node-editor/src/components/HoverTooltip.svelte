@@ -13,23 +13,18 @@
 
   let isVisible = false;
   let hoverTimer;
-  let referenceElement;
-  let tooltipElement;
-  let attachedTooltipElement;
 
   $: tooltipHeadingText = typeof headingText === "string" ? headingText : undefined;
-  $: tooltipText = typeof text === "string" ? text : undefined;
+  $: tooltipText = typeof text === "string" ? stripOfficialDocumentationLink(text) : undefined;
   $: tooltipItalicText = typeof italicText === "string" ? italicText : undefined;
   $: tooltipDelayMs = Number(delayMs) || 0;
-  $: tooltipStyle = readTooltipStyle();
+  $: placementStyle = readPlacementStyle(placement);
   $: if (disabled || !hasTooltipContent()) {
     hideTooltip();
   }
-  $: syncTooltipPortal();
 
   onDestroy(() => {
     clearHoverTimer();
-    detachTooltipElement();
   });
 
   function clearHoverTimer() {
@@ -87,42 +82,18 @@
     return Boolean(tooltipHeadingText || tooltipText || tooltipItalicText);
   }
 
-  function detachTooltipElement() {
-    attachedTooltipElement?.remove();
-    attachedTooltipElement = undefined;
-  }
-
-  function syncTooltipPortal() {
-    if (!tooltipElement) {
-      detachTooltipElement();
-      return;
-    }
-    if (attachedTooltipElement === tooltipElement) {
-      return;
-    }
-
-    detachTooltipElement();
-    attachedTooltipElement = tooltipElement;
-    document.body.appendChild(tooltipElement);
-  }
-
-  function readTooltipStyle() {
-    if (!referenceElement) {
-      return "";
-    }
-
-    const bounds = referenceElement.getBoundingClientRect();
-    switch (placement) {
+  function readPlacementStyle(candidatePlacement) {
+    switch (candidatePlacement) {
       case "top-start":
-        return `left: ${bounds.left}px; top: ${bounds.top}px; transform: translateY(calc(-100% - 6px));`;
+        return "left: 0; bottom: calc(100% + 6px);";
       case "top":
-        return `left: ${bounds.left + bounds.width / 2}px; top: ${bounds.top}px; transform: translate(-50%, calc(-100% - 6px));`;
+        return "left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%);";
       case "right":
-        return `left: ${bounds.right}px; top: ${bounds.top + bounds.height / 2}px; transform: translate(8px, -50%);`;
+        return "left: calc(100% + 8px); top: 50%; transform: translateY(-50%);";
       case "left":
-        return `left: ${bounds.left}px; top: ${bounds.top + bounds.height / 2}px; transform: translate(calc(-100% - 8px), -50%);`;
+        return "right: calc(100% + 8px); top: 50%; transform: translateY(-50%);";
       default:
-        return `left: ${bounds.left + bounds.width / 2}px; top: ${bounds.bottom}px; transform: translate(-50%, 6px);`;
+        return "left: 50%; top: calc(100% + 6px); transform: translateX(-50%);";
     }
   }
 
@@ -133,11 +104,19 @@
   function isWarningLine(line) {
     return line.startsWith("Warning:");
   }
+
+  function stripOfficialDocumentationLink(value) {
+    return value
+      .replace(
+        /\n*\*?\[Official Documentation\]\([^)]+\)\*?/gi,
+        "",
+      )
+      .trim();
+  }
 </script>
 
 <div
   {...$$restProps}
-  bind:this={referenceElement}
   class="relative {wrapperClass}"
   role="group"
   aria-label={groupAriaLabel}
@@ -149,10 +128,9 @@
   <slot />
   {#if isVisible && hasTooltipContent()}
     <div
-      bind:this={tooltipElement}
       role="tooltip"
-      style={tooltipStyle}
-      class="pointer-events-none fixed z-[3002] w-max max-w-80 whitespace-pre-line rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {tooltipClass}"
+      style={placementStyle}
+      class="pointer-events-none absolute z-20 w-max max-w-80 whitespace-pre-line rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {tooltipClass}"
     >
       {#if tooltipHeadingText}
         <strong>{tooltipHeadingText}</strong>
