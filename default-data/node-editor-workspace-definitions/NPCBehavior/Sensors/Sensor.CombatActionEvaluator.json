@@ -40,6 +40,7 @@
       "Description": "Whether to match on target being in or out of range.",
       "Options": {
         "Label": "TargetInRange",
+        "Required": true,
         "Width": 18,
         "Computable": true
       }
@@ -50,6 +51,8 @@
       "Description": "The allowable deviation from the desired attack range",
       "Options": {
         "Label": "AllowableDeviation",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true

@@ -30,6 +30,8 @@
       "Description": "The height range to test entities in",
       "Options": {
         "Label": "HeightDifference",
+        "Min": -1.7976931348623157e+308,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           -1.7976931348623157e+308,
           1.7976931348623157e+308

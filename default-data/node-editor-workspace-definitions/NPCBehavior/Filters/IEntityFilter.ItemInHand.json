@@ -30,6 +30,7 @@
       "Description": "A list of glob item patterns to match",
       "Options": {
         "Label": "Items",
+        "Required": true,
         "Width": 240,
         "Type": "String",
         "Computable": true,

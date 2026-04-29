@@ -18,6 +18,7 @@
       "Description": "Minimum time to wander for a segment.",
       "Options": {
         "Label": "MinWalkTime",
+        "Min": 0,
         "Default": 2,
         "Width": 88,
         "Computable": true
@@ -29,6 +30,8 @@
       "Description": "Maximum time to wander for a segment.",
       "Options": {
         "Label": "MaxWalkTime",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 4,
         "Width": 88,
         "Computable": true
@@ -40,6 +43,8 @@
       "Description": "Approximate minimum heading change between segments",
       "Options": {
         "Label": "MinHeadingChange",
+        "Min": 0,
+        "Max": 180,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -51,6 +56,8 @@
       "Description": "Approximate maximum heading change between segments",
       "Options": {
         "Label": "MaxHeadingChange",
+        "Min": 0,
+        "Max": 180,
         "Default": 90,
         "Width": 88,
         "Computable": true
@@ -73,6 +80,9 @@
       "Description": "Relative wander speed",
       "Options": {
         "Label": "RelativeSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -84,6 +94,8 @@
       "Description": "Minimum distance to move in a segment",
       "Options": {
         "Label": "MinMoveDistance",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -95,6 +107,8 @@
       "Description": "Distance to stop at target",
       "Options": {
         "Label": "StopDistance",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -106,6 +120,8 @@
       "Description": "Direction tests per tick",
       "Options": {
         "Label": "TestsPerTick",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -139,6 +155,8 @@
       "Description": "How much this NPC prefers being within the desired height range",
       "Options": {
         "Label": "DesiredAltitudeWeight",
+        "Min": -1,
+        "Max": 1,
         "Default": -1,
         "Width": 88,
         "Computable": true
@@ -150,6 +168,8 @@
       "Description": "Radius of circle to wander in",
       "Options": {
         "Label": "Radius",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 10,
         "Width": 88,
         "Computable": true

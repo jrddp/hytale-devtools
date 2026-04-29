@@ -40,6 +40,9 @@
       "Description": "The range within which to look",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }
@@ -50,6 +53,8 @@
       "Description": "View sector in which to look",
       "Options": {
         "Label": "ViewSector",
+        "Min": 0,
+        "Max": 360,
         "Default": 0,
         "Width": 88,
         "Computable": true

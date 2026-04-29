@@ -40,6 +40,10 @@
       "Description": "The duration range to pick a random period to return true",
       "Options": {
         "Label": "TrueDurationRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",
@@ -52,6 +56,10 @@
       "Description": "The duration range to pick a random period to return false",
       "Options": {
         "Label": "FalseDurationRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",

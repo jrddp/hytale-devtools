@@ -44,6 +44,7 @@
       "Description": "Internal identifier tag for debugging",
       "Options": {
         "Label": "Tag",
+        "DisallowEmpty": true,
         "Width": 220
       }
     },
@@ -106,6 +107,9 @@
       "Description": "How long to execute the chosen instruction before picking another",
       "Options": {
         "Label": "ExecuteFor",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Default": [
           1.7976931348623157e+308,
           1.7976931348623157e+308

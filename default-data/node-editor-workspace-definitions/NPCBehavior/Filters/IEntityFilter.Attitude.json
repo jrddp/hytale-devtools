@@ -30,6 +30,7 @@
       "Description": "The attitudes to match",
       "Options": {
         "Label": "Attitudes",
+        "Required": true,
         "Width": 240,
         "Type": "String",
         "UniqueItems": true,

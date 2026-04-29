@@ -8,6 +8,7 @@
   } from "@floating-ui/dom";
   import { Check, CircleEllipsis, CircleX, Plus } from "lucide-svelte";
   import HoverTooltip from "@node-editor/components/HoverTooltip.svelte";
+  import DiagnosticIndicator from "@node-editor/components/DiagnosticIndicator.svelte";
   import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
   import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
@@ -41,6 +42,9 @@
 
   let {
     inputId,
+    nodeId,
+    schemaKey,
+    parentSchemaKey,
     label,
     description,
     initialValue,
@@ -50,6 +54,9 @@
     titleActions,
     onconfirm,
   }: FieldProps<Record<string, unknown>> & {
+    nodeId?: string;
+    schemaKey?: string | null;
+    parentSchemaKey?: string;
     keyOverrideAutocompleteValues?: string[];
     keySymbolLookup?: IndexReference;
     titleActions?: Snippet;
@@ -333,6 +340,10 @@
       input.blur();
     }
   }
+
+  function getEntryDiagnostics(key: string) {
+    return workspace.getMapEntryDiagnostics(nodeId, schemaKey, key, parentSchemaKey);
+  }
 </script>
 
 <div class="col-span-2 flex min-w-0 flex-col gap-1.5" class:w-full={inputWidth === undefined}>
@@ -363,6 +374,7 @@
       <div class="flex flex-col gap-1.5">
         {#each entries as [key, entryValue], index (key)}
           {@const entryType = getEntryType(key, entryValue)}
+          {@const entryDiagnostics = getEntryDiagnostics(key)}
           <div class="grid grid-cols-[minmax(7rem,0.9fr)_minmax(9rem,1.1fr)_auto] items-start gap-1.5">
             <SingleLineAutocompleteInput
               inputId={buildKeyInputId(index)}
@@ -472,6 +484,7 @@
             {/if}
 
             <div class="flex items-center gap-0.5">
+              <DiagnosticIndicator diagnostics={entryDiagnostics} />
               <button
                 type="button"
                 class="nodrag inline-flex size-6 items-center justify-center rounded-md text-vsc-muted hover:bg-vsc-list-hover hover:text-vsc-input-fg"

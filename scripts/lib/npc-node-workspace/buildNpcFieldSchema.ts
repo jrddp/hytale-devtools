@@ -26,6 +26,7 @@ export function buildContentField(
   const options: NodeContentDefinition["Options"] = {
     Label: attribute.Name,
   };
+  applyValidationOptions(attribute, type, options);
   const defaultValue = parseDefaultValue(attribute);
   if (defaultValue !== undefined) {
     options.Default = defaultValue;
@@ -255,6 +256,161 @@ function shouldUseUniqueItems(attribute: NpcDescriptorAttribute): boolean {
     "Type" in attribute.Validator &&
     attribute.Validator.Type === "EnumArrayNoDuplicates"
   );
+}
+
+function applyValidationOptions(
+  attribute: NpcDescriptorAttribute,
+  type: NodeContentDefinition["Type"],
+  options: NodeContentDefinition["Options"],
+): void {
+  if (attribute.Required === "REQUIRED") {
+    options.Required = true;
+  }
+
+  if (type === "List" && typeof attribute.MinSize === "number" && attribute.MinSize > 0) {
+    options.MinItems = attribute.MinSize;
+  }
+  if (
+    type === "List" &&
+    typeof attribute.MaxSize === "number" &&
+    attribute.MaxSize >= 0 &&
+    attribute.MaxSize < 2147483647
+  ) {
+    options.MaxItems = attribute.MaxSize;
+  }
+
+  if (type !== "List" && type !== "Tuple" && shouldDisallowEmptyString(attribute)) {
+    options.DisallowEmpty = true;
+  }
+  if ((type === "List" || type === "Tuple") && shouldDisallowEmptyListItems(attribute)) {
+    options.DisallowEmptyItems = true;
+  }
+  if (shouldDisallowEmptyList(attribute)) {
+    options.MinItems = Math.max(options.MinItems ?? 0, 1);
+  }
+
+  const numericBounds = extractNumericBounds(attribute.Validator);
+  if (!numericBounds) {
+    return;
+  }
+
+  if (numericBounds.min !== undefined) {
+    options.Min = numericBounds.min;
+  }
+  if (numericBounds.max !== undefined) {
+    options.Max = numericBounds.max;
+  }
+  if (numericBounds.minExclusive) {
+    options.MinExclusive = true;
+  }
+  if (numericBounds.maxExclusive) {
+    options.MaxExclusive = true;
+  }
+}
+
+function shouldDisallowEmptyString(attribute: NpcDescriptorAttribute): boolean {
+  const validator = getValidatorRecord(attribute.Validator);
+  if (!validator) {
+    return false;
+  }
+
+  if (validator.Type === "StringNotEmpty" || validator.Type === "StringNullOrNotEmpty") {
+    return true;
+  }
+
+  return validator.Type === "StateString" && validator.AllowEmptyMain === false;
+}
+
+function shouldDisallowEmptyListItems(attribute: NpcDescriptorAttribute): boolean {
+  const validator = getValidatorRecord(attribute.Validator);
+  if (!validator) {
+    return false;
+  }
+
+  if (validator.Type === "StringListNoEmptyStrings" || validator.Type === "StringListNotEmpty") {
+    return true;
+  }
+
+  return validator.Type === "StateString" && validator.AllowEmptyMain === false;
+}
+
+function shouldDisallowEmptyList(attribute: NpcDescriptorAttribute): boolean {
+  const validator = getValidatorRecord(attribute.Validator);
+  return validator?.Type === "StringListNotEmpty" || validator?.Type === "ArrayNotEmpty";
+}
+
+type NumericBounds = {
+  min?: number;
+  max?: number;
+  minExclusive?: boolean;
+  maxExclusive?: boolean;
+};
+
+function extractNumericBounds(validator: unknown): NumericBounds | undefined {
+  const record = getValidatorRecord(validator);
+  if (!record) {
+    return undefined;
+  }
+
+  switch (record.Type) {
+    case "Double":
+    case "Int":
+      return extractSingleNumericBound(record);
+    case "DoubleRange":
+    case "IntRange":
+    case "DoubleSequenceValidator":
+    case "IntSequenceValidator":
+      return extractNumericRangeBounds(record);
+    default:
+      return undefined;
+  }
+}
+
+function extractSingleNumericBound(record: Record<string, unknown>): NumericBounds | undefined {
+  const value = typeof record.Value === "number" ? record.Value : undefined;
+  if (value === undefined || typeof record.Relation !== "string") {
+    return undefined;
+  }
+
+  switch (record.Relation) {
+    case "Greater":
+      return { min: value, minExclusive: true };
+    case "GreaterEqual":
+      return { min: value };
+    case "Less":
+      return { max: value, maxExclusive: true };
+    case "LessEqual":
+      return { max: value };
+    case "Equal":
+      return { min: value, max: value };
+    default:
+      return undefined;
+  }
+}
+
+function extractNumericRangeBounds(record: Record<string, unknown>): NumericBounds | undefined {
+  const bounds: NumericBounds = {};
+  const lower = typeof record.Lower === "number" ? record.Lower : undefined;
+  const upper = typeof record.Upper === "number" ? record.Upper : undefined;
+
+  if (lower !== undefined) {
+    bounds.min = lower;
+    bounds.minExclusive = record.RelationLower === "Greater";
+  }
+  if (upper !== undefined) {
+    bounds.max = upper;
+    bounds.maxExclusive = record.RelationUpper === "Less";
+  }
+
+  return bounds.min === undefined && bounds.max === undefined ? undefined : bounds;
+}
+
+function getValidatorRecord(validator: unknown): Record<string, unknown> | undefined {
+  if (typeof validator !== "object" || validator === null || !("Type" in validator)) {
+    return undefined;
+  }
+
+  return validator as Record<string, unknown>;
 }
 
 function parseDefaultValue(

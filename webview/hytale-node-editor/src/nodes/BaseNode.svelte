@@ -8,8 +8,13 @@
   import { shouldShowRootTitlePrefix } from "@node-editor/node-editor/utils/rootTitle";
   import { canNodeBeSetAsWorkspaceRoot } from "@shared/node-editor/rootCompatibility";
   import { shouldShowInputPinLabels } from "@shared/node-editor/pinUtils";
+  import {
+    formatNodeEditorDiagnosticsTooltip,
+    getHighestNodeEditorDiagnosticSeverity,
+  } from "@shared/node-editor/diagnostics";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import type { Snippet } from "svelte";
+  import DiagnosticIndicator from "@node-editor/components/DiagnosticIndicator.svelte";
   import HoverTooltip from "@node-editor/components/HoverTooltip.svelte";
   import NodePinHandle from "./NodePinHandle.svelte";
 
@@ -139,6 +144,24 @@
         break;
     }
   }
+
+  function getPinDiagnostics(pinSchemaKey: string, direction: "input" | "output") {
+    return workspace.getPinDiagnostics(id, pinSchemaKey, direction);
+  }
+
+  function getPinDiagnosticSeverity(pinSchemaKey: string, direction: "input" | "output") {
+    return getHighestNodeEditorDiagnosticSeverity(getPinDiagnostics(pinSchemaKey, direction));
+  }
+
+  function getPinTooltip(pin: { schemaKey: string; description?: string }, direction: "input" | "output") {
+    const diagnosticTooltip = formatNodeEditorDiagnosticsTooltip(
+      getPinDiagnostics(pin.schemaKey, direction),
+    );
+    if (pin.description && diagnosticTooltip) {
+      return `${pin.description}\n\n${diagnosticTooltip}`;
+    }
+    return diagnosticTooltip ?? pin.description;
+  }
 </script>
 
 <div
@@ -238,16 +261,31 @@
     <!-- Input Pins -->
     <div class="flex flex-col gap-2">
       {#each inputPins as pin (pin.localId)}
-        <HoverTooltip text={pin.description} placement="right" wrapperClass={showInputPinLabels ? "w-full" : ""}>
+        {@const pinDiagnostics = getPinDiagnostics(pin.schemaKey, "input")}
+        <HoverTooltip text={getPinTooltip(pin, "input")} placement="right" wrapperClass={showInputPinLabels ? "w-full" : ""}>
           {#if showInputPinLabels}
             <div class="flex items-center gap-2">
-              <NodePinHandle nodeId={id} {pin} type="target" />
+              <NodePinHandle
+                nodeId={id}
+                {pin}
+                type="target"
+                diagnosticSeverity={getPinDiagnosticSeverity(pin.schemaKey, "input")}
+              />
               <div class="text-xs text-vsc-muted whitespace-nowrap">
                 {pin.label}
               </div>
+              <DiagnosticIndicator diagnostics={pinDiagnostics} showTooltip={false} />
             </div>
           {:else}
-            <NodePinHandle nodeId={id} {pin} type="target" />
+            <div class="flex items-center gap-1">
+              <NodePinHandle
+                nodeId={id}
+                {pin}
+                type="target"
+                diagnosticSeverity={getPinDiagnosticSeverity(pin.schemaKey, "input")}
+              />
+              <DiagnosticIndicator diagnostics={pinDiagnostics} showTooltip={false} />
+            </div>
           {/if}
         </HoverTooltip>
       {/each}
@@ -263,12 +301,19 @@
     <!-- Output Pins -->
     <div class="flex flex-col items-end flex-1 gap-2">
       {#each outputPins as pin (pin.localId)}
-        <HoverTooltip text={pin.description} placement="left" wrapperClass="w-full">
+        {@const pinDiagnostics = getPinDiagnostics(pin.schemaKey, "output")}
+        <HoverTooltip text={getPinTooltip(pin, "output")} placement="left" wrapperClass="w-full">
           <div class="flex items-center justify-end gap-2">
+            <DiagnosticIndicator diagnostics={pinDiagnostics} showTooltip={false} />
             <div class="text-xs text-vsc-muted whitespace-nowrap">
               {pin.label}
             </div>
-            <NodePinHandle nodeId={id} {pin} type="source" />
+            <NodePinHandle
+              nodeId={id}
+              {pin}
+              type="source"
+              diagnosticSeverity={getPinDiagnosticSeverity(pin.schemaKey, "output")}
+            />
           </div>
         </HoverTooltip>
       {/each}

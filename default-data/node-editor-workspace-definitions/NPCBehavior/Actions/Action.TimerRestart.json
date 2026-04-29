@@ -28,6 +28,8 @@
       "Description": "The name of the timer",
       "Options": {
         "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

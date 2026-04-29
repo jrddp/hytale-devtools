@@ -14,6 +14,8 @@
   import { focusNextEditable } from "../../../shared/components/inputs/inputCommitBehavior";
   import CommitNumberInput from "../../../shared/components/inputs/CommitNumberInput.svelte";
   import SingleLineAutocompleteInput from "../../../shared/components/SingleLineAutocompleteInput.svelte";
+  import type { NodeEditorDiagnostic } from "@shared/node-editor/diagnostics";
+  import DiagnosticIndicator from "@node-editor/components/DiagnosticIndicator.svelte";
 
   type AutocompleteOption = {
     value: string;
@@ -28,6 +30,7 @@
     defaultPlaceholder = "",
     addLabel = "Add item",
     getAutocompleteOptions = () => [],
+    getItemDiagnostics = () => [],
     getStringItemVscodeContext = () => undefined,
     onrequestAutocomplete,
     onconsider,
@@ -42,6 +45,7 @@
     defaultPlaceholder?: string;
     addLabel?: string;
     getAutocompleteOptions?: (itemInputId: string, itemIndex: number) => AutocompleteOption[];
+    getItemDiagnostics?: (itemIndex: number) => NodeEditorDiagnostic[];
     getStringItemVscodeContext?: (itemIndex: number) => string | undefined;
     onrequestAutocomplete?: (itemInputId: string) => void;
     onconsider?: (value?: string) => void;
@@ -198,7 +202,8 @@
 <div class="flex min-w-0 flex-col gap-1">
   {#each items as item, index (`${inputId}:${index}`)}
     {@const effectiveItemKind = getEffectiveItemKind(item)}
-    <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1">
+    {@const itemDiagnostics = getItemDiagnostics(index)}
+    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1">
       {#if effectiveItemKind === "boolean"}
         <input
           class="nodrag h-4 w-4 accent-vsc-activity-bar-badge-bg"
@@ -248,6 +253,8 @@
           />
         </div>
       {/if}
+
+      <DiagnosticIndicator diagnostics={itemDiagnostics} />
 
       <button
         type="button"

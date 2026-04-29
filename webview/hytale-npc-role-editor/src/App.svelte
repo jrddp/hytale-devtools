@@ -422,6 +422,9 @@
       case "autocompletionValues":
         workspace.setAutocompleteValues(message.fieldId, message.values);
         return;
+      case "indexValues":
+        workspace.setIndexValues(message.requestId, message.values);
+        return;
       case "referenceUpdate":
         workspace.setVariantReferenceState(message.reference);
         return;

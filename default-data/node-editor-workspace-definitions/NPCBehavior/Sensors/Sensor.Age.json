@@ -40,6 +40,7 @@
       "Description": "The age range within which to trigger",
       "Options": {
         "Label": "AgeRange",
+        "Required": true,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "String",

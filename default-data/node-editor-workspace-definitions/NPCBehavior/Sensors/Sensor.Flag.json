@@ -40,6 +40,8 @@
       "Description": "The name of the flag",
       "Options": {
         "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

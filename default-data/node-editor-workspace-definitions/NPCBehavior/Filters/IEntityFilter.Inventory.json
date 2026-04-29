@@ -45,6 +45,8 @@
       "Description": "The range of number of items that need to match the patterns",
       "Options": {
         "Label": "CountRange",
+        "Min": 0,
+        "Max": 2147483647,
         "Default": [
           1,
           2147483647
@@ -61,6 +63,8 @@
       "Description": "The range designating the number of required free slots",
       "Options": {
         "Label": "FreeSlotRange",
+        "Min": 0,
+        "Max": 2147483647,
         "Default": [
           0,
           2147483647

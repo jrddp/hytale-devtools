@@ -201,6 +201,7 @@
       "Description": "DoubleArray [1,2] 0-10",
       "Options": {
         "Label": "DoubleArray",
+        "MaxItems": 10,
         "Default": [
           1,
           2
@@ -216,6 +217,7 @@
       "Description": "StringArray [a,b] 0-10",
       "Options": {
         "Label": "StringArray",
+        "MaxItems": 10,
         "Width": 240,
         "Type": "String",
         "Computable": true

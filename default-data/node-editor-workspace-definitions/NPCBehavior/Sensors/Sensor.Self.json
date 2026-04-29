@@ -10,7 +10,8 @@
       "Color": "#60C8B8",
       "Label": "Filters",
       "Description": "A series of entity filter sensors to test",
-      "Multiple": true
+      "Multiple": true,
+      "Required": true
     }
   ],
   "Outputs": [

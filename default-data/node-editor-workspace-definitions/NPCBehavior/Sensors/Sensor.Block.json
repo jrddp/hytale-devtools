@@ -40,6 +40,10 @@
       "Description": "The range to search for the blocks in",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }
@@ -50,6 +54,9 @@
       "Description": "The vertical range to search for the blocks in",
       "Options": {
         "Label": "MaxHeight",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Default": 4,
         "Width": 88,
         "Computable": true
@@ -61,6 +68,7 @@
       "Description": "The set of blocks to search for",
       "Options": {
         "Label": "Blocks",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

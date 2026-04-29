@@ -40,6 +40,8 @@
       "Description": "The message to listen for",
       "Options": {
         "Label": "Message",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -50,6 +52,8 @@
       "Description": "The max distance beacons should be received from",
       "Options": {
         "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 64,
         "Width": 88,
         "Computable": true
@@ -61,6 +65,7 @@
       "Description": "A slot to store the sender as a target. If omitted no target will be stored",
       "Options": {
         "Label": "TargetSlot",
+        "DisallowEmpty": true,
         "Width": 220
       }
     },

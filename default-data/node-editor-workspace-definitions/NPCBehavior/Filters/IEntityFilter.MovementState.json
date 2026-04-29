@@ -30,6 +30,7 @@
       "Description": "The movement state to check",
       "Options": {
         "Label": "State",
+        "Required": true,
         "Width": 220,
         "Values": [
           "JUMPING",

@@ -591,4 +591,45 @@ describe("NPC node workspace generator builders", () => {
       Type: "List",
     });
   });
+
+  test("buildContentField emits validation metadata from descriptor validators", () => {
+    const actionSpawnDescriptor = findDescriptorOrThrow("Action", "Spawn");
+    const countRangeAttribute = actionSpawnDescriptor.Attributes?.find(entry => entry.Name === "CountRange");
+    const sensorHasTaskDescriptor = findDescriptorOrThrow("Sensor", "HasTask");
+    const tasksAttribute = sensorHasTaskDescriptor.Attributes?.find(entry => entry.Name === "TasksById");
+    const actionParentStateDescriptor = findDescriptorOrThrow("Action", "ParentState");
+    const stateAttribute = actionParentStateDescriptor.Attributes?.find(entry => entry.Name === "State");
+    if (!countRangeAttribute || !tasksAttribute || !stateAttribute) {
+      throw new Error("Expected validation fixture attributes were not found.");
+    }
+
+    expect(buildContentField(actionSpawnDescriptor, countRangeAttribute)).toMatchObject({
+      Type: "Tuple",
+      Options: {
+        TupleSize: 2,
+        TupleItemType: "Int",
+        Min: 0,
+        MinExclusive: true,
+        Max: 100,
+      },
+    });
+
+    expect(buildContentField(sensorHasTaskDescriptor, tasksAttribute)).toMatchObject({
+      Type: "List",
+      Options: {
+        Required: true,
+        Type: "String",
+        DisallowEmptyItems: true,
+        MinItems: 1,
+      },
+    });
+
+    expect(buildContentField(actionParentStateDescriptor, stateAttribute)).toMatchObject({
+      Type: "SmallString",
+      Options: {
+        Required: true,
+        DisallowEmpty: true,
+      },
+    });
+  });
 });

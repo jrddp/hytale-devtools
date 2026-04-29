@@ -39,7 +39,7 @@
   <div class="flex items-center justify-end gap-1 select-none text-right text-xs leading-4 text-vsc-muted">
     <span>{label}</span>
     {#if titleActions}
-      <span class="inline-flex items-center">
+      <span class="inline-flex h-4 items-center gap-1 leading-none">
         {@render titleActions()}
       </span>
     {/if}

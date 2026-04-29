@@ -40,6 +40,8 @@
       "Description": "Motion controller name to test for",
       "Options": {
         "Label": "MotionController",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220
       }
     }

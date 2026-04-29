@@ -18,7 +18,8 @@
       "Color": "#00E7B6",
       "Label": "Motions",
       "Description": "Array of motions",
-      "Multiple": true
+      "Multiple": true,
+      "Required": true
     }
   ],
   "Content": [

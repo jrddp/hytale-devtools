@@ -18,6 +18,9 @@
       "Description": "The desired distance to remain at.",
       "Options": {
         "Label": "DesiredDistanceRange",
+        "Required": true,
+        "Min": -1.7976931348623157e+308,
+        "Max": 1.7976931348623157e+308,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",
@@ -30,6 +33,8 @@
       "Description": "A factor used to decide what distance to move to within the target range.",
       "Options": {
         "Label": "TargetDistanceFactor",
+        "Min": 0,
+        "Max": 1,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -41,6 +46,8 @@
       "Description": "An extra threshold distance on either side of the desired range before the NPC will trigger movement.",
       "Options": {
         "Label": "MoveThreshold",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -52,6 +59,9 @@
       "Description": "Maximum relative speed for the NPC moving forwards",
       "Options": {
         "Label": "RelativeForwardsSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -63,6 +73,9 @@
       "Description": "Maximum relative speed for the NPC moving backwards",
       "Options": {
         "Label": "RelativeBackwardsSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -74,6 +87,7 @@
       "Description": "The distance away from the target stopping point at which the NPC will start to slow down while moving towards the target",
       "Options": {
         "Label": "MoveTowardsSlowdownThreshold",
+        "Min": 0,
         "Default": 2,
         "Width": 88,
         "Computable": true
@@ -85,6 +99,8 @@
       "Description": "How long to strafe for.",
       "Options": {
         "Label": "StrafingDurationRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           0,
           0
@@ -101,6 +117,9 @@
       "Description": "How frequently to execute strafing",
       "Options": {
         "Label": "StrafingFrequencyRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Default": [
           2,
           2

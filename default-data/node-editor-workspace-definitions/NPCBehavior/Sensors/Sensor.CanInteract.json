@@ -40,6 +40,8 @@
       "Description": "View sector to test the player in",
       "Options": {
         "Label": "ViewSector",
+        "Min": 0,
+        "Max": 360,
         "Default": 0,
         "Width": 88,
         "Computable": true

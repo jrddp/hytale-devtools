@@ -28,6 +28,8 @@
       "Description": "The slot to store the position in",
       "Options": {
         "Label": "Slot",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

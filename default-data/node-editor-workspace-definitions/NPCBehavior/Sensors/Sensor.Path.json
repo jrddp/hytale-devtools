@@ -50,6 +50,8 @@
       "Description": "The range to test to nearest waypoint. 0 is unlimited",
       "Options": {
         "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 10,
         "Width": 88,
         "Computable": true

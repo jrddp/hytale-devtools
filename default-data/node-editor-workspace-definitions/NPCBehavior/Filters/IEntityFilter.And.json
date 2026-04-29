@@ -10,7 +10,8 @@
       "Color": "#60C8B8",
       "Label": "Filters",
       "Description": "List of filters",
-      "Multiple": true
+      "Multiple": true,
+      "Required": true
     }
   ],
   "Outputs": [

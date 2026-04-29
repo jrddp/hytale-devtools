@@ -28,6 +28,7 @@
       "Description": "Particle system to spawn",
       "Options": {
         "Label": "ParticleSystem",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {
@@ -42,6 +43,8 @@
       "Description": "Maximum visibility range",
       "Options": {
         "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 75,
         "Width": 88,
         "Computable": true

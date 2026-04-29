@@ -28,6 +28,8 @@
       "Description": "The message to send",
       "Options": {
         "Label": "Message",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -48,6 +50,7 @@
       "Description": "A marked target to send to instead of the target provided by a sensor. Omit to use the target provided by the sensor.",
       "Options": {
         "Label": "UseTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220
       }
     }

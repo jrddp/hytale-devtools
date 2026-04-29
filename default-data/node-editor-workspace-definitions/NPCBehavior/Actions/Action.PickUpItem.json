@@ -28,6 +28,8 @@
       "Description": "Range of time to delay in seconds",
       "Options": {
         "Label": "Delay",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           1,
           1
@@ -44,6 +46,8 @@
       "Description": "The range the item will be picked up from",
       "Options": {
         "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true

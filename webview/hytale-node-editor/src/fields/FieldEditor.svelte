@@ -3,6 +3,7 @@
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import type { ComputeAutocompleteOption } from "../../../shared/components/computeAutocomplete";
   import ComputeToggleButton from "../../../shared/components/ComputeToggleButton.svelte";
+  import DiagnosticIndicator from "@node-editor/components/DiagnosticIndicator.svelte";
   import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import ComputeField from "@node-editor/fields/ComputeField.svelte";
   import ObjectField from "@node-editor/fields/ObjectField.svelte";
@@ -85,6 +86,8 @@
   const computeAutocompleteOptions = $derived<ComputeAutocompleteOption[]>(
     workspace.computeAutocompleteOptions,
   );
+  const fieldDiagnostics = $derived(workspace.getFieldDiagnostics(nodeId, schemaKey, parentSchemaKey));
+  const fieldDescription = $derived(formatFieldDescription(description, fieldDiagnostics));
   const isComputeMode = $derived(isComputeValue(value));
   const computeExpression = $derived(isComputeValue(value) ? value.Compute : "");
 
@@ -270,9 +273,26 @@
     });
   }
 
+  function formatFieldDescription(
+    description: string | undefined,
+    diagnostics: ReturnType<typeof workspace.getFieldDiagnostics>,
+  ): string | undefined {
+    if (diagnostics.length === 0) {
+      return description;
+    }
+
+    const diagnosticText = diagnostics
+      .map(diagnostic => `${diagnostic.severity === "error" ? "Error" : "Warning"}: ${diagnostic.message}`)
+      .join("\n");
+    return description ? `${description}\n\n${diagnosticText}` : diagnosticText;
+  }
+
 </script>
 
 {#snippet fieldActions()}
+  {#if fieldDiagnostics.length > 0}
+    <DiagnosticIndicator diagnostics={fieldDiagnostics} showTooltip={false} />
+  {/if}
   {#if computable}
     <ComputeToggleButton enabled active={isComputeMode} ontoggle={handleToggleComputeMode} />
   {/if}
@@ -282,7 +302,7 @@
   <ComputeField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={computeExpression}
     autocompleteOptions={computeAutocompleteOptions}
@@ -296,7 +316,7 @@
     {parentSchemaKey}
     {schemaKey}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={value as object}
     titleActions={fieldActions}
@@ -306,8 +326,11 @@
 {:else if type === "parameterMap"}
   <ParameterMapField
     {inputId}
+    {nodeId}
+    {schemaKey}
+    {parentSchemaKey}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<Record<string, unknown>>({})}
     keyOverrideAutocompleteValues={parameterMapKeyOverrideAutocompleteValues}
@@ -322,7 +345,7 @@
     {schemaKey}
     {parentSchemaKey}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<unknown[]>([])}
     placeholder={defaultPlaceholder}
@@ -338,7 +361,7 @@
   <TupleField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<unknown[]>([])}
     {defaultValue}
@@ -351,7 +374,7 @@
   <TextField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<string>("")}
     placeholder={defaultPlaceholder}
@@ -367,7 +390,7 @@
   <FilePathField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<string>("")}
     titleActions={fieldActions}
@@ -377,7 +400,7 @@
   <SliderField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={isSet ? (value as number) : typeof defaultValue === "number" ? defaultValue : 0}
     titleActions={fieldActions}
@@ -387,7 +410,7 @@
   <BooleanField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={isSet ? (value as boolean) : typeof defaultValue === "boolean" ? defaultValue : false}
     titleActions={fieldActions}
@@ -397,7 +420,7 @@
   <ColorField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<string>("")}
     titleActions={fieldActions}
@@ -407,7 +430,7 @@
   <NumberField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={isSet ? (value as number) : undefined}
     placeholder={defaultPlaceholder}
@@ -420,7 +443,7 @@
   <TextField
     {inputId}
     label={fieldLabel}
-    {description}
+    description={fieldDescription}
     {inputWidth}
     initialValue={getDisplayValue<string>("")}
     placeholder={defaultPlaceholder}

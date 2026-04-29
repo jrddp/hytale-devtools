@@ -167,7 +167,22 @@ export function createChildPinDefinition(
     Label: normalizeChildPinLabel(attribute.Name),
     Description: normalizeDescription(attribute.ShortDescription),
     Multiple: childSpec.multiplicity === "multiple" || undefined,
+    Required: isRequiredChildAttribute(attribute) || undefined,
   };
+}
+
+function isRequiredChildAttribute(attribute: NpcDescriptorAttribute): boolean {
+  if (attribute.Required === "REQUIRED") {
+    return true;
+  }
+
+  const validator = attribute.Validator;
+  return (
+    typeof validator === "object" &&
+    validator !== null &&
+    "Type" in validator &&
+    (validator as { Type?: unknown }).Type === "ArrayNotEmpty"
+  );
 }
 
 function shouldAllowComponentReferencesForDomain(domain: string): boolean {

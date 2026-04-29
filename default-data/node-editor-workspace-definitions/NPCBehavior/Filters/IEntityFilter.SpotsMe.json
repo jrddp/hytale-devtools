@@ -30,6 +30,8 @@
       "Description": "Angle used for view sector and view cone test",
       "Options": {
         "Label": "ViewAngle",
+        "Min": 0,
+        "Max": 360,
         "Default": 90,
         "Width": 88
       }

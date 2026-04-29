@@ -19,6 +19,7 @@
       "Description": "A prioritised list of attitudes",
       "Options": {
         "Label": "AttitudesByPriority",
+        "Required": true,
         "Width": 240,
         "Type": "String",
         "UniqueItems": true,

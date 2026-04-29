@@ -40,6 +40,7 @@
       "Description": "The glob patterns to match against weather",
       "Options": {
         "Label": "Weathers",
+        "Required": true,
         "Width": 240,
         "Type": "String",
         "Computable": true,

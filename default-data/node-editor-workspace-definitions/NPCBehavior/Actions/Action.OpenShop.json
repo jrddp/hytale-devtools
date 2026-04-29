@@ -28,6 +28,7 @@
       "Description": "The shop to open",
       "Options": {
         "Label": "Shop",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

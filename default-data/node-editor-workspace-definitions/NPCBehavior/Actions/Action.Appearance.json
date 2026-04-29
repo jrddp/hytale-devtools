@@ -28,6 +28,7 @@
       "Description": "Model name to use",
       "Options": {
         "Label": "Appearance",
+        "Required": true,
         "Width": 220,
         "SymbolLookup": {
           "indexKind": "registeredAssets",

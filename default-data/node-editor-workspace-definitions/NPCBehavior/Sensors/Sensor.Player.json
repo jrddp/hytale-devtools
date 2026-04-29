@@ -63,6 +63,7 @@
       "Description": "Minimum range to test entities in",
       "Options": {
         "Label": "MinRange",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -74,6 +75,9 @@
       "Description": "Maximum range to test entities in",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }
@@ -95,6 +99,7 @@
       "Description": "The target slot to use for locking on or unlocking",
       "Options": {
         "Label": "LockedTargetSlot",
+        "DisallowEmpty": true,
         "Default": "LockedTarget",
         "Width": 220,
         "Computable": true
@@ -128,6 +133,7 @@
       "Description": "The target slot to use for ignoring",
       "Options": {
         "Label": "IgnoredTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

@@ -28,6 +28,7 @@
       "Description": "Whether or not to enable the state evaluator",
       "Options": {
         "Label": "Enabled",
+        "Required": true,
         "Width": 18
       }
     }

@@ -18,7 +18,8 @@
       "Color": "#CC3361",
       "Label": "Actions",
       "Description": "List of possible actions",
-      "Multiple": true
+      "Multiple": true,
+      "Required": true
     }
   ],
   "Content": [

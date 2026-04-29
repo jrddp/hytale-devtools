@@ -16,7 +16,8 @@
       "Id": "InstructionPin",
       "Type": "Instruction",
       "Color": "#2D3746",
-      "Label": "Instruction"
+      "Label": "Instruction",
+      "Required": true
     }
   ],
   "Content": [

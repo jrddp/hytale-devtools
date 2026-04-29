@@ -50,6 +50,8 @@
       "Description": "Number of items to add/remove",
       "Options": {
         "Label": "Count",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true

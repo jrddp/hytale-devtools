@@ -40,6 +40,8 @@
       "Description": "The light intensity percentage range",
       "Options": {
         "Label": "LightRange",
+        "Min": 0,
+        "Max": 100,
         "Default": [
           0,
           100
@@ -56,6 +58,8 @@
       "Description": "The sky light percentage range",
       "Options": {
         "Label": "SkyLightRange",
+        "Min": 0,
+        "Max": 100,
         "Default": [
           0,
           100
@@ -72,6 +76,8 @@
       "Description": "The sunlight percentage range",
       "Options": {
         "Label": "SunlightRange",
+        "Min": 0,
+        "Max": 100,
         "Default": [
           0,
           100
@@ -88,6 +94,8 @@
       "Description": "The red light percentage range",
       "Options": {
         "Label": "RedLightRange",
+        "Min": 0,
+        "Max": 100,
         "Default": [
           0,
           100
@@ -104,6 +112,8 @@
       "Description": "The green light percentage range",
       "Options": {
         "Label": "GreenLightRange",
+        "Min": 0,
+        "Max": 100,
         "Default": [
           0,
           100
@@ -120,6 +130,8 @@
       "Description": "The blue light percentage range",
       "Options": {
         "Label": "BlueLightRange",
+        "Min": 0,
+        "Max": 100,
         "Default": [
           0,
           100
@@ -136,6 +148,7 @@
       "Description": "A target slot to check. If omitted, will check self",
       "Options": {
         "Label": "UseTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

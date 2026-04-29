@@ -28,6 +28,7 @@
       "Description": "The attitude to set",
       "Options": {
         "Label": "Attitude",
+        "Required": true,
         "Width": 220,
         "Values": [
           "IGNORE",
@@ -45,6 +46,8 @@
       "Description": "The duration to override for",
       "Options": {
         "Label": "Duration",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 10,
         "Width": 88,
         "Computable": true

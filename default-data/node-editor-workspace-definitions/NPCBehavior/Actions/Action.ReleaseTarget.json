@@ -28,6 +28,7 @@
       "Description": "The target slot to release",
       "Options": {
         "Label": "TargetSlot",
+        "DisallowEmpty": true,
         "Default": "LockedTarget",
         "Width": 220,
         "Computable": true

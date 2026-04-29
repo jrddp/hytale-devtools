@@ -28,6 +28,9 @@
       "Description": "The desired altitude range",
       "Options": {
         "Label": "DesiredAltitudeRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",

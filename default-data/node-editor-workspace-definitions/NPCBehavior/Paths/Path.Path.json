@@ -18,7 +18,8 @@
       "Color": "#CC3361",
       "Label": "Waypoints",
       "Description": "List of transient path points",
-      "Multiple": true
+      "Multiple": true,
+      "Required": true
     }
   ],
   "Content": [
@@ -28,6 +29,8 @@
       "Description": "Overall path scale",
       "Options": {
         "Label": "Scale",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true

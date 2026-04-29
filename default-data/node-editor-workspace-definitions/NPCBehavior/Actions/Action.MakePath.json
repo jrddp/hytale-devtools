@@ -17,7 +17,8 @@
       "Type": "Path",
       "Color": "#CC3361",
       "Label": "Path",
-      "Description": "A transient path definition"
+      "Description": "A transient path definition",
+      "Required": true
     }
   ],
   "Content": [

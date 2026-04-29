@@ -30,6 +30,9 @@
       "Description": "The range above the ground to match",
       "Options": {
         "Label": "AltitudeRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Width": 240,
         "Type": "Float",
         "Computable": true

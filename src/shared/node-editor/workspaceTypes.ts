@@ -62,7 +62,16 @@ export interface NodeField {
   isExplicitEmpty?: boolean;
   /** Whether this field exists explicitly in the serialized document. */
   isSet: boolean;
+  required?: boolean;
   inputWidth?: number;
+  minValue?: number;
+  maxValue?: number;
+  minValueExclusive?: boolean;
+  maxValueExclusive?: boolean;
+  minItems?: number;
+  maxItems?: number;
+  disallowEmpty?: boolean;
+  disallowEmptyItems?: boolean;
   uniqueItems?: boolean;
   listItemType?: NodeListItemType;
   tupleSize?: number;
@@ -86,6 +95,7 @@ export interface NodePin {
   connectionType: string;
   localId: string;
   multiplicity: "single" | "multiple" | "map";
+  required?: boolean;
   fields?: NodeField[];
 }
 

@@ -399,6 +399,7 @@ function buildRandomInstructionTemplate(
         Label: "Instructions",
         Description: normalizeDescription(attribute.ShortDescription),
         Multiple: true,
+        Required: attribute.Required === "REQUIRED" || undefined,
       } satisfies NodePinDefinition;
       outputs.push(pin);
       schema.Instructions = {
@@ -476,6 +477,7 @@ function buildWeightedInstructionTemplate(): TemplateOutput {
           Type: "Instruction",
           Color: CATEGORY_COLORS.Structural,
           Label: "Instruction",
+          Required: true,
         },
       ],
       Content: [

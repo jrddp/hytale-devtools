@@ -17,7 +17,8 @@
       "Type": "HeadMotion",
       "Color": "#B08CE0",
       "Label": "Motion",
-      "Description": "Motion to execute"
+      "Description": "Motion to execute",
+      "Required": true
     }
   ],
   "Content": [
@@ -27,6 +28,8 @@
       "Description": "Range of time from which the random timer length can be chosen",
       "Options": {
         "Label": "Time",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           1,
           1

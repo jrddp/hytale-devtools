@@ -368,6 +368,7 @@ export class WorkspaceRuntime {
             ]?.markdownDescription,
           color: input.Color,
           multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
+          required: input.Required === true,
         };
       }) ?? [];
 
@@ -393,6 +394,7 @@ export class WorkspaceRuntime {
             description: supplementedOutputDescriptions[output.Id] ?? output.Description,
             color: output.Color,
             multiplicity: type,
+            required: output.Required === true,
             fields,
           };
           return map;
@@ -594,7 +596,16 @@ export class WorkspaceRuntime {
         isImplicit: true,
         isExplicitEmpty: false,
         isSet: false,
+        required: content.Options?.Required === true,
         inputWidth: content.Options?.Width,
+        minValue: content.Options?.Min,
+        maxValue: content.Options?.Max,
+        minValueExclusive: content.Options?.MinExclusive === true,
+        maxValueExclusive: content.Options?.MaxExclusive === true,
+        minItems: content.Options?.MinItems,
+        maxItems: content.Options?.MaxItems,
+        disallowEmpty: content.Options?.DisallowEmpty === true,
+        disallowEmptyItems: content.Options?.DisallowEmptyItems === true,
         uniqueItems: content.Options?.UniqueItems === true,
         listItemType: this.resolveListItemType(content),
         tupleSize: this.resolveTupleSize(content),

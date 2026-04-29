@@ -28,6 +28,7 @@
       "Description": "The beacon spawn config ID",
       "Options": {
         "Label": "BeaconSpawn",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {
@@ -42,6 +43,9 @@
       "Description": "The distance to search for a beacon to trigger",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }
@@ -52,6 +56,7 @@
       "Description": "A slot to use as the target for the spawned NPC. If omitted the NPC itself will be used",
       "Options": {
         "Label": "TargetSlot",
+        "DisallowEmpty": true,
         "Width": 220
       }
     }

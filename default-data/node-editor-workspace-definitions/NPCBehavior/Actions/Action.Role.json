@@ -28,6 +28,7 @@
       "Description": "The name of the Role to change to",
       "Options": {
         "Label": "Role",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {
@@ -53,6 +54,7 @@
       "Description": "State name to set",
       "Options": {
         "Label": "State",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

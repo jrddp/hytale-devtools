@@ -28,6 +28,7 @@
       "Description": "The task to start",
       "Options": {
         "Label": "Objective",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

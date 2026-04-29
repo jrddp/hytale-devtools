@@ -413,6 +413,9 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
           case "autocompleteRequest":
             void this.autocompleteRequest(message, document.uri, webviewPanel.webview);
             return;
+          case "indexValuesRequest":
+            void this.indexValuesRequest(message, document.uri, webviewPanel.webview);
+            return;
           case "resolveVariantReference":
             void this.resolveVariantReference(message.referenceName, document.uri, webviewPanel.webview);
             return;
@@ -660,6 +663,18 @@ class HytaleNpcRoleEditorProvider implements vscode.CustomEditorProvider<HytaleN
     await webview.postMessage({
       type: "autocompletionValues",
       fieldId: message.fieldId,
+      values: await resolveNpcAutocompleteValues(message.symbolLookup, documentUri),
+    } satisfies NpcRoleEditorExtensionToWebviewMessage);
+  }
+
+  private async indexValuesRequest(
+    message: Extract<NpcRoleEditorWebviewToExtensionMessage, { type: "indexValuesRequest" }>,
+    documentUri: vscode.Uri,
+    webview: vscode.Webview,
+  ): Promise<void> {
+    await webview.postMessage({
+      type: "indexValues",
+      requestId: message.requestId,
       values: await resolveNpcAutocompleteValues(message.symbolLookup, documentUri),
     } satisfies NpcRoleEditorExtensionToWebviewMessage);
   }
