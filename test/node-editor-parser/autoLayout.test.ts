@@ -395,4 +395,64 @@ describe("node editor auto layout", () => {
     expect(lowerY).toBeTypeOf("number");
     expect(lowerY! - upperY!).toBeGreaterThan(220);
   });
+
+  test("treats random weighted-instruction entries as child instruction subtrees", async () => {
+    const session = createNodeEditorSession();
+
+    const parent = createDataNode("parent", "Structural.InstructionNode", { x: 300, y: 160 }, {
+      outputPins: [outputPin("Instructions", "multiple", { connectionType: "Instruction" })],
+    });
+    const upperChild = createDataNode("upperChild", "Structural.InstructionNode", { x: 900, y: 0 }, {
+      inputPins: [inputPin("Input", "single", { connectionType: "Instruction", label: "Instruction" })],
+    });
+    const random = createDataNode("random", "Structural.RandomInstructionNode", { x: 900, y: 300 }, {
+      inputPins: [inputPin("Input", "single", { connectionType: "Instruction", label: "Instruction" })],
+      outputPins: [
+        outputPin("WeightedInstructions", "multiple", {
+          connectionType: "WeightedInstruction",
+          label: "Instructions",
+        }),
+      ],
+    });
+    const lowerChild = createDataNode("lowerChild", "Structural.InstructionNode", { x: 900, y: 600 }, {
+      inputPins: [inputPin("Input", "single", { connectionType: "Instruction", label: "Instruction" })],
+    });
+    const weighted = createDataNode("weighted", "Structural.WeightedInstruction", { x: 1100, y: 900 }, {
+      inputPins: [
+        inputPin("Input", "single", {
+          connectionType: "WeightedInstruction",
+          label: "Weighted Instruction",
+        }),
+      ],
+      outputPins: [outputPin("Instruction", "single", { connectionType: "Instruction" })],
+    });
+    const nestedChild = createDataNode("nestedChild", "Structural.InstructionNode", { x: 1400, y: 900 }, {
+      inputPins: [inputPin("Input", "single", { connectionType: "Instruction", label: "Instruction" })],
+    });
+
+    session.nodes = [parent, upperChild, random, lowerChild, weighted, nestedChild];
+    session.edges = [
+      createEdge("parent->upper", "parent", "upperChild", "Instructions", "Input"),
+      createEdge("parent->random", "parent", "random", "Instructions", "Input"),
+      createEdge("parent->lower", "parent", "lowerChild", "Instructions", "Input"),
+      createEdge("random->weighted", "random", "weighted", "WeightedInstructions", "Input"),
+      createEdge("weighted->nested", "weighted", "nestedChild", "Instruction", "Input"),
+    ];
+
+    const updates = await getAutoPositionNodeUpdates([parent], session);
+    const positionedNodes = applyUpdates(session.nodes, updates);
+
+    const randomNode = positionedNodes.get("random");
+    const weightedNode = positionedNodes.get("weighted");
+    const nestedNode = positionedNodes.get("nestedChild");
+    const lowerNode = positionedNodes.get("lowerChild");
+
+    expect(randomNode?.position.x).toBeTypeOf("number");
+    expect(weightedNode?.position.x).toBeTypeOf("number");
+    expect(nestedNode?.position.x).toBeTypeOf("number");
+    expect(lowerNode?.position.y).toBeTypeOf("number");
+    expect(weightedNode!.position.x).toBeGreaterThan(randomNode!.position.x);
+    expect(nestedNode!.position.x).toBeGreaterThan(weightedNode!.position.x);
+    expect(nestedNode!.position.y).toBeLessThan(lowerNode!.position.y);
+  });
 });
