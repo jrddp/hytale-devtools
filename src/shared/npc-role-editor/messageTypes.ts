@@ -58,6 +58,12 @@ export type NpcRoleEditorAutocompletionValuesMessage = {
   values: string[];
 };
 
+export type NpcRoleEditorIndexValuesMessage = {
+  type: "indexValues";
+  requestId: string;
+  values: string[];
+};
+
 export type NpcRoleEditorVariantReferenceState = {
   status: "none" | "loading" | "loaded" | "missing" | "error";
   referenceName?: string;
@@ -149,6 +155,7 @@ export type NpcRoleEditorExtensionToWebviewMessage =
   | NpcRoleEditorErrorMessage
   | { type: "clipboard"; clipboard: NodeEditorClipboardSelection }
   | NpcRoleEditorAutocompletionValuesMessage
+  | NpcRoleEditorIndexValuesMessage
   | NpcRoleEditorVariantReferenceUpdateMessage
   | NpcRoleEditorComponentReferenceTargetUpdateMessage
   | NpcRoleEditorContextActionMessage
@@ -169,5 +176,6 @@ export type NpcRoleEditorWebviewToExtensionMessage =
   | { type: "resolveAppearancePreviewBase"; assetName?: string }
   | { type: "resolveAppearancePreviewAnimation"; assetName: string; animationSetId: string }
   | { type: "autocompleteRequest"; symbolLookup: IndexReference; fieldId: string }
+  | { type: "indexValuesRequest"; symbolLookup: IndexReference; requestId: string }
   | NpcRoleEditorGraphEditMessage
   | NpcRoleEditorApplyMessage;

@@ -28,6 +28,8 @@
       "Description": "Message to send to targets",
       "Options": {
         "Label": "Message",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -38,6 +40,7 @@
       "Description": "The marked target slot to send. If omitted, sends own position",
       "Options": {
         "Label": "SendTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220
       }
     },

@@ -28,6 +28,7 @@
       "Description": "Name to display above NPC",
       "Options": {
         "Label": "DisplayName",
+        "Required": true,
         "Width": 220,
         "Computable": true
       }

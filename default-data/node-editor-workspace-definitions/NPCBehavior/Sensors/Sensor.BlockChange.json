@@ -40,6 +40,9 @@
       "Description": "Max range to listen in",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }
@@ -67,6 +70,7 @@
       "Description": "A target slot to place the target in. If omitted, no slot will be used",
       "Options": {
         "Label": "TargetSlot",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -77,6 +81,7 @@
       "Description": "Block set to listen for",
       "Options": {
         "Label": "BlockSet",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

@@ -40,6 +40,8 @@
       "Description": "The context of the interaction",
       "Options": {
         "Label": "Context",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

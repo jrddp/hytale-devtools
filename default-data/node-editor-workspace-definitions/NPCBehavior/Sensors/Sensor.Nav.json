@@ -61,6 +61,7 @@
       "Description": "Minimum time in seconds the path finder isn't able to reach target or 0 to ignore",
       "Options": {
         "Label": "ThrottleDuration",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -72,6 +73,7 @@
       "Description": "Minimum distance target has moved since path was computed or 0 to ignore",
       "Options": {
         "Label": "TargetDelta",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true

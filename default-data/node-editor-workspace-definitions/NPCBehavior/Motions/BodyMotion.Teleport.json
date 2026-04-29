@@ -18,6 +18,8 @@
       "Description": "The minimum and maximum offset the NPC can be spawned from the target position",
       "Options": {
         "Label": "OffsetRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           0,
           0
@@ -33,6 +35,8 @@
       "Description": "Maximum vertical offset from the target position in case of terrain obstacles",
       "Options": {
         "Label": "MaxYOffset",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 5,
         "Width": 88
       }
@@ -43,6 +47,8 @@
       "Description": "The sector around the target in which to teleport to",
       "Options": {
         "Label": "OffsetSector",
+        "Min": 0,
+        "Max": 360,
         "Default": 0,
         "Width": 88
       }

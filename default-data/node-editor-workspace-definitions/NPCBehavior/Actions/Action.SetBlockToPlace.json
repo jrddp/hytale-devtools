@@ -28,6 +28,7 @@
       "Description": "The block item type",
       "Options": {
         "Label": "Block",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

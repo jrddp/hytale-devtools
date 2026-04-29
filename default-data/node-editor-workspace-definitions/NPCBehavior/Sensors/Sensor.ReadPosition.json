@@ -40,6 +40,8 @@
       "Description": "The slot to read the position from",
       "Options": {
         "Label": "Slot",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -50,6 +52,7 @@
       "Description": "Minimum range from stored position",
       "Options": {
         "Label": "MinRange",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -61,6 +64,9 @@
       "Description": "Maximum range from stored position",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }

@@ -9,7 +9,8 @@
       "Type": "PositionSensor",
       "Color": "#7091F0",
       "Label": "Sensor",
-      "Description": "Sensor to wrap"
+      "Description": "Sensor to wrap",
+      "Required": true
     }
   ],
   "Outputs": [
@@ -48,6 +49,7 @@
       "Description": "The offset to apply to the returned position from the sensor",
       "Options": {
         "Label": "Offset",
+        "Required": true,
         "Width": 240,
         "TupleSize": 3,
         "TupleItemType": "Float",

@@ -73,6 +73,8 @@
       "Description": "The amount of time to delay if a placement fails before trying to place something again",
       "Options": {
         "Label": "RetryDelay",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 5,
         "Width": 88,
         "Computable": true

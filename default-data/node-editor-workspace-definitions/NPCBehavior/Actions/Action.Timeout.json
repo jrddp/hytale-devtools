@@ -37,6 +37,8 @@
       "Description": "Range of time to delay in seconds",
       "Options": {
         "Label": "Delay",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           1,
           1

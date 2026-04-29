@@ -9,7 +9,8 @@
       "Type": "Sensor",
       "Color": "#7091F0",
       "Label": "Sensor",
-      "Description": "Sensor to test"
+      "Description": "Sensor to test",
+      "Required": true
     }
   ],
   "Outputs": [
@@ -48,6 +49,7 @@
       "Description": "A locked target slot to feed to action (if available)",
       "Options": {
         "Label": "UseTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -58,6 +60,7 @@
       "Description": "A target slot to unlock when sensor doesn't match anymore",
       "Options": {
         "Label": "AutoUnlockTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

@@ -122,6 +122,9 @@ export class Workspace {
   documentParseError = $state<string | null>(null);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
+  indexValuesByRequestId = $state.raw<Map<string, string[]>>(new Map());
+  pendingIndexValueRequestIds = $state.raw<Set<string>>(new Set());
+  indexValuesVersion = $state(0);
   appearancePreview = $state<ModelPreviewState | undefined>(undefined);
   appearanceBasePreviewAssetName = $state<string | null>(null);
   appearanceBasePreview = $state<BaseModelPreviewState | undefined>(undefined);
@@ -198,6 +201,34 @@ export class Workspace {
   setAutocompleteValues(fieldId: string, values: string[]) {
     this.autocompleteField = fieldId;
     this.autocompleteValues = [...values].sort((left, right) => left.localeCompare(right));
+  }
+
+  requestIndexValues(requestId: string, symbolLookup: IndexReference) {
+    if (this.indexValuesByRequestId.has(requestId) || this.pendingIndexValueRequestIds.has(requestId)) {
+      return;
+    }
+
+    this.pendingIndexValueRequestIds = new Set(this.pendingIndexValueRequestIds).add(requestId);
+    const clonedSymbolLookup = $state.snapshot(symbolLookup) as IndexReference;
+    this.vscode.postMessage({
+      type: "indexValuesRequest",
+      requestId,
+      symbolLookup: clonedSymbolLookup,
+    } satisfies NpcRoleEditorWebviewToExtensionMessage);
+  }
+
+  setIndexValues(requestId: string, values: string[]) {
+    const nextValues = new Map(this.indexValuesByRequestId);
+    nextValues.set(requestId, [...values].sort((left, right) => left.localeCompare(right)));
+    this.indexValuesByRequestId = nextValues;
+    const pendingRequestIds = new Set(this.pendingIndexValueRequestIds);
+    pendingRequestIds.delete(requestId);
+    this.pendingIndexValueRequestIds = pendingRequestIds;
+    this.indexValuesVersion += 1;
+  }
+
+  getIndexValues(requestId: string): string[] | undefined {
+    return this.indexValuesByRequestId.get(requestId);
   }
 
   getStateAutocompleteValues(kind: NpcStateAutocompleteKind | undefined): string[] {
@@ -311,6 +342,9 @@ export class Workspace {
     this.appearancePreview = undefined;
     this.autocompleteField = undefined;
     this.autocompleteValues = [];
+    this.indexValuesByRequestId = new Map();
+    this.pendingIndexValueRequestIds = new Set();
+    this.indexValuesVersion += 1;
   }
 
   getComponentReferenceTarget(

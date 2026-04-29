@@ -30,6 +30,7 @@
       "Description": "The stat value to check",
       "Options": {
         "Label": "Stat",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {
@@ -44,6 +45,7 @@
       "Description": "The stat target",
       "Options": {
         "Label": "StatTarget",
+        "Required": true,
         "Width": 220,
         "Values": [
           "Value",
@@ -59,6 +61,7 @@
       "Description": "The stat value to check against",
       "Options": {
         "Label": "RelativeTo",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {
@@ -73,6 +76,7 @@
       "Description": "The stat target",
       "Options": {
         "Label": "RelativeToTarget",
+        "Required": true,
         "Width": 220,
         "Values": [
           "Value",
@@ -88,6 +92,9 @@
       "Description": "The fractional range within which to trigger, with 1 being equal",
       "Options": {
         "Label": "ValueRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",

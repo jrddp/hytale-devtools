@@ -42,6 +42,9 @@
       "Description": "The range within which to trigger spawn markers",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }
@@ -52,6 +55,7 @@
       "Description": "The number of markers to randomly trigger (0 will trigger all matching validators)",
       "Options": {
         "Label": "Count",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true

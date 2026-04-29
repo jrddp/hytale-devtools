@@ -18,6 +18,9 @@
       "Description": "Maximum relative speed the NPC should move",
       "Options": {
         "Label": "RelativeSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -29,6 +32,9 @@
       "Description": "Maximum relative speed the NPC should move close to waypoints",
       "Options": {
         "Label": "RelativeSpeedWaypoint",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -40,6 +46,8 @@
       "Description": "Radius to slow down around waypoints",
       "Options": {
         "Label": "WaypointRadius",
+        "Min": 0.1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -62,6 +70,8 @@
       "Description": "Time to delay after no path finding solution found",
       "Options": {
         "Label": "ThrottleDelayRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           3,
           5
@@ -78,6 +88,7 @@
       "Description": "How often no valid path solution can be found before throttling delay is applied",
       "Options": {
         "Label": "ThrottleIgnoreCount",
+        "Min": 0,
         "Default": 3,
         "Width": 88,
         "Computable": true
@@ -122,6 +133,8 @@
       "Description": "Relative rotation angle into next waypoint when arriving at current waypoint",
       "Options": {
         "Label": "BlendHeading",
+        "Min": 0,
+        "Max": 1,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -133,6 +146,7 @@
       "Description": "Try to smooth followed path. Larger values smooth more.",
       "Options": {
         "Label": "PathSmoothing",
+        "Min": 0,
         "Default": 2,
         "Width": 88,
         "Computable": true
@@ -144,6 +158,8 @@
       "Description": "Weight of rejection vector pushing entity closer to original path",
       "Options": {
         "Label": "RejectionWeight",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 3,
         "Width": 88,
         "Computable": true
@@ -155,6 +171,7 @@
       "Description": "Minimum length of path required when not able to reach target (should be greater equal 2)",
       "Options": {
         "Label": "MinPathLength",
+        "Min": 0,
         "Default": 2,
         "Width": 88,
         "Computable": true
@@ -177,6 +194,8 @@
       "Description": "Steps per iteration",
       "Options": {
         "Label": "StepsPerTick",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 50,
         "Width": 88,
         "Computable": true
@@ -188,6 +207,8 @@
       "Description": "Max path steps before aborting path finding",
       "Options": {
         "Label": "MaxPathLength",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 200,
         "Width": 88,
         "Computable": true
@@ -199,6 +220,8 @@
       "Description": "Max open nodes before aborting path finding",
       "Options": {
         "Label": "MaxOpenNodes",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 200,
         "Width": 88,
         "Computable": true
@@ -210,6 +233,8 @@
       "Description": "Max total node before aborting path finding",
       "Options": {
         "Label": "MaxTotalNodes",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 900,
         "Width": 88,
         "Computable": true
@@ -231,6 +256,8 @@
       "Description": "How much this NPC prefers being within the desired height range",
       "Options": {
         "Label": "DesiredAltitudeWeight",
+        "Min": -1,
+        "Max": 1,
         "Default": -1,
         "Width": 88,
         "Computable": true
@@ -242,6 +269,9 @@
       "Description": "Minimum distance required",
       "Options": {
         "Label": "Distance",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }

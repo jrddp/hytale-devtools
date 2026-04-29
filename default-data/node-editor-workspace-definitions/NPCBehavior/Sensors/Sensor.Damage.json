@@ -90,6 +90,7 @@
       "Description": "The slot to use for locking on the target if damage is taken. If omitted, target will not be locked",
       "Options": {
         "Label": "TargetSlot",
+        "DisallowEmpty": true,
         "Width": 220
       }
     }

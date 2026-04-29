@@ -47,6 +47,7 @@ export interface NodePinDefinition {
   Color: string;
   Description?: string;
   Label?: string;
+  Required?: boolean;
   Multiple?: boolean;
   IsMap?: boolean;
   Fields?: NodeContentDefinition[];
@@ -103,7 +104,14 @@ export interface NodeContentDefinition {
     Fields?: NodeContentDefinition[];
     LargeChange?: number;
     Max?: number;
+    MaxExclusive?: boolean;
     Min?: number;
+    MinExclusive?: boolean;
+    MinItems?: number;
+    MaxItems?: number;
+    Required?: boolean;
+    DisallowEmpty?: boolean;
+    DisallowEmptyItems?: boolean;
     SmallChange?: number;
     TickFrequency?: number;
     Type?: "String" | "Float" | "Int";

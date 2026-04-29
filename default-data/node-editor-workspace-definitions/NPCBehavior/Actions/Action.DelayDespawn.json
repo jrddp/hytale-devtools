@@ -28,6 +28,9 @@
       "Description": "How long to set the to delay",
       "Options": {
         "Label": "Time",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88
       }
     },

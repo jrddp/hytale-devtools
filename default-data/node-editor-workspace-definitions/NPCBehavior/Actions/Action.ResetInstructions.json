@@ -28,6 +28,7 @@
       "Description": "The instructionList to reset",
       "Options": {
         "Label": "Instructions",
+        "DisallowEmptyItems": true,
         "Width": 240,
         "Type": "String",
         "Computable": true

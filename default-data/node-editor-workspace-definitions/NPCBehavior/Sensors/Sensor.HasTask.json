@@ -40,6 +40,9 @@
       "Description": "Completable tasks to match by name",
       "Options": {
         "Label": "TasksById",
+        "Required": true,
+        "DisallowEmptyItems": true,
+        "MinItems": 1,
         "Width": 240,
         "Type": "String",
         "Computable": true

@@ -19,6 +19,7 @@
       "Description": "The type of the value being mapped",
       "Options": {
         "Label": "ValueType",
+        "Required": true,
         "Width": 220,
         "Values": [
           "String",
@@ -33,6 +34,8 @@
       "Description": "The value to read from the value store",
       "Options": {
         "Label": "FromValue",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220
       }
     },
@@ -42,6 +45,8 @@
       "Description": "The parameter name to override",
       "Options": {
         "Label": "ToParameter",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220
       }
     }

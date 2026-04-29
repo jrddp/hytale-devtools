@@ -28,6 +28,7 @@
       "Description": "The sound event to play",
       "Options": {
         "Label": "SoundEventId",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

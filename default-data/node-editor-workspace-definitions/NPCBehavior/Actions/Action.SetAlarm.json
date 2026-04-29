@@ -28,6 +28,8 @@
       "Description": "The name of the alarm to set",
       "Options": {
         "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -38,6 +40,7 @@
       "Description": "The duration range from which to pick a duration to set the alarm for",
       "Options": {
         "Label": "DurationRange",
+        "Required": true,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "String",

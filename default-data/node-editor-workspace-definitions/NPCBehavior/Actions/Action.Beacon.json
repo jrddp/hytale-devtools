@@ -28,6 +28,8 @@
       "Description": "Message to send to targets",
       "Options": {
         "Label": "Message",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -38,6 +40,8 @@
       "Description": "The maximum range to send the message",
       "Options": {
         "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 64,
         "Width": 88
       }
@@ -48,6 +52,7 @@
       "Description": "The target group(s) to send the message to",
       "Options": {
         "Label": "TargetGroups",
+        "Required": true,
         "Width": 240,
         "Type": "String",
         "Computable": true,
@@ -63,6 +68,7 @@
       "Description": "The target slot of the marked entity to send. Omit to send own position",
       "Options": {
         "Label": "SendTargetSlot",
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

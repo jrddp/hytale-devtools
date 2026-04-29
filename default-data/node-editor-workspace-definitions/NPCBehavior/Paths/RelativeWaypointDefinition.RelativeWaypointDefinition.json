@@ -18,6 +18,10 @@
       "Description": "Rotation to turn from previous waypoint",
       "Options": {
         "Label": "Rotation",
+        "Min": -360,
+        "Max": 360,
+        "MinExclusive": true,
+        "MaxExclusive": true,
         "Default": 0,
         "Width": 88
       }
@@ -28,6 +32,9 @@
       "Description": "A distance to move from the previous waypoint",
       "Options": {
         "Label": "Distance",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88
       }
     }

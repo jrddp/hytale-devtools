@@ -28,6 +28,8 @@
       "Description": "The name of the timer",
       "Options": {
         "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -38,6 +40,7 @@
       "Description": "Add value to the timer",
       "Options": {
         "Label": "AddValue",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -49,6 +52,8 @@
       "Description": "Set the restart value range the timer can have",
       "Options": {
         "Label": "MaxValue",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           0,
           0
@@ -65,6 +70,7 @@
       "Description": "Set the rate at which the timer will decrease",
       "Options": {
         "Label": "Rate",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -76,6 +82,7 @@
       "Description": "Set the value of the timer",
       "Options": {
         "Label": "SetValue",
+        "Min": 0,
         "Default": 0,
         "Width": 88,
         "Computable": true

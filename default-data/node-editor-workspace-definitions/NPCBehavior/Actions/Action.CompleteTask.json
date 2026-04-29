@@ -28,6 +28,7 @@
       "Description": "The animation slot to play on",
       "Options": {
         "Label": "Slot",
+        "Required": true,
         "Width": 220,
         "Values": [
           "Status",

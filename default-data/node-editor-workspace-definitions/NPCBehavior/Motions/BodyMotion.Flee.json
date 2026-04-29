@@ -18,6 +18,9 @@
       "Description": "Maximum relative speed the NPC should move",
       "Options": {
         "Label": "RelativeSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -29,6 +32,9 @@
       "Description": "Maximum relative speed the NPC should move close to waypoints",
       "Options": {
         "Label": "RelativeSpeedWaypoint",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -40,6 +46,8 @@
       "Description": "Radius to slow down around waypoints",
       "Options": {
         "Label": "WaypointRadius",
+        "Min": 0.1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -62,6 +70,8 @@
       "Description": "Time to delay after no path finding solution found",
       "Options": {
         "Label": "ThrottleDelayRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           3,
           5
@@ -78,6 +88,7 @@
       "Description": "How often no valid path solution can be found before throttling delay is applied",
       "Options": {
         "Label": "ThrottleIgnoreCount",
+        "Min": 0,
         "Default": 3,
         "Width": 88,
         "Computable": true
@@ -122,6 +133,8 @@
       "Description": "Relative rotation angle into next waypoint when arriving at current waypoint",
       "Options": {
         "Label": "BlendHeading",
+        "Min": 0,
+        "Max": 1,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -133,6 +146,7 @@
       "Description": "Try to smooth followed path. Larger values smooth more.",
       "Options": {
         "Label": "PathSmoothing",
+        "Min": 0,
         "Default": 2,
         "Width": 88,
         "Computable": true
@@ -144,6 +158,8 @@
       "Description": "Weight of rejection vector pushing entity closer to original path",
       "Options": {
         "Label": "RejectionWeight",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 3,
         "Width": 88,
         "Computable": true
@@ -188,6 +204,7 @@
       "Description": "Minimum length of path required when not able to reach target (should be greater equal 2)",
       "Options": {
         "Label": "MinPathLength",
+        "Min": 0,
         "Default": 2,
         "Width": 88,
         "Computable": true
@@ -210,6 +227,8 @@
       "Description": "Steps per iteration",
       "Options": {
         "Label": "StepsPerTick",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 50,
         "Width": 88,
         "Computable": true
@@ -221,6 +240,8 @@
       "Description": "Max path steps before aborting path finding",
       "Options": {
         "Label": "MaxPathLength",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 200,
         "Width": 88,
         "Computable": true
@@ -232,6 +253,8 @@
       "Description": "Max open nodes before aborting path finding",
       "Options": {
         "Label": "MaxOpenNodes",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 200,
         "Width": 88,
         "Computable": true
@@ -243,6 +266,8 @@
       "Description": "Max total node before aborting path finding",
       "Options": {
         "Label": "MaxTotalNodes",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 900,
         "Width": 88,
         "Computable": true
@@ -264,6 +289,8 @@
       "Description": "How much this NPC prefers being within the desired height range",
       "Options": {
         "Label": "DesiredAltitudeWeight",
+        "Min": -1,
+        "Max": 1,
         "Default": -1,
         "Width": 88,
         "Computable": true
@@ -275,6 +302,8 @@
       "Description": "Minimum distance target needs to move before recomputing path when no path can be found",
       "Options": {
         "Label": "WaitDistance",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true
@@ -286,6 +315,7 @@
       "Description": "Maximum distance target can move before path is recomputed or 0 to supress recomputation",
       "Options": {
         "Label": "RecomputeDistance",
+        "Min": 0,
         "Default": 10,
         "Width": 88,
         "Computable": true
@@ -297,6 +327,7 @@
       "Description": "Maximum distance target can move before position is reprojected",
       "Options": {
         "Label": "ReprojectDistance",
+        "Min": 0,
         "Default": 0.5,
         "Width": 88,
         "Computable": true
@@ -319,6 +350,8 @@
       "Description": "Recompute path when target leaves cone from initial position to target",
       "Options": {
         "Label": "RecomputeConeAngle",
+        "Min": 0,
+        "Max": 360,
         "Default": 0,
         "Width": 88,
         "Computable": true
@@ -330,6 +363,8 @@
       "Description": "Distance from target when NPC should start to slowdown",
       "Options": {
         "Label": "SlowDownDistance",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 8,
         "Width": 88,
         "Computable": true
@@ -341,6 +376,8 @@
       "Description": "Distance from target when NPC should halt",
       "Options": {
         "Label": "StopDistance",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 10,
         "Width": 88,
         "Computable": true
@@ -352,6 +389,8 @@
       "Description": "Rate how fast the slowdown should happen relative to distance",
       "Options": {
         "Label": "Falloff",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 3,
         "Width": 88,
         "Computable": true
@@ -363,6 +402,8 @@
       "Description": "How often to change heading",
       "Options": {
         "Label": "HoldDirectionTimeRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Default": [
           2,
           5
@@ -379,6 +420,8 @@
       "Description": "The view sector the NPC uses to decide if it should switch direction",
       "Options": {
         "Label": "ChangeDirectionViewSector",
+        "Min": 0,
+        "Max": 360,
         "Default": 230,
         "Width": 88,
         "Computable": true
@@ -390,6 +433,8 @@
       "Description": "How much jitter in degrees to add to the heading the NPC uses",
       "Options": {
         "Label": "DirectionJitter",
+        "Min": 0,
+        "Max": 180,
         "Default": 45,
         "Width": 88,
         "Computable": true
@@ -401,6 +446,8 @@
       "Description": "If the player is closer than this distance, the NPC will behave more erratically using the additional jitter parameter",
       "Options": {
         "Label": "ErraticDistance",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 4,
         "Width": 88,
         "Computable": true
@@ -412,6 +459,8 @@
       "Description": "Extra jitter to add to the NPC heading on top of the standard when the target is too close",
       "Options": {
         "Label": "ErraticExtraJitter",
+        "Min": 0,
+        "Max": 180,
         "Default": 45,
         "Width": 88,
         "Computable": true
@@ -423,6 +472,9 @@
       "Description": "A multiplier to decrease the duration between direction changes when the target is too close",
       "Options": {
         "Label": "ErraticChangeDurationMultiplier",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88,
         "Computable": true

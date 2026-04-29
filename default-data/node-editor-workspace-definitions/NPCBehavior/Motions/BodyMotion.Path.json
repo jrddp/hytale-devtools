@@ -28,6 +28,7 @@
       "Description": "Walking corridor width",
       "Options": {
         "Label": "PathWidth",
+        "Min": 0,
         "Default": 0,
         "Width": 88
       }
@@ -38,6 +39,8 @@
       "Description": "Radius of warp point node",
       "Options": {
         "Label": "NodeWidth",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 0.2,
         "Width": 88
       }
@@ -48,6 +51,9 @@
       "Description": "Minimum relative walk speed",
       "Options": {
         "Label": "MinRelSpeed",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88
       }
@@ -58,6 +64,9 @@
       "Description": "Maximum relative walk speed",
       "Options": {
         "Label": "MaxRelSpeed",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
         "Default": 0.5,
         "Width": 88
       }
@@ -68,6 +77,7 @@
       "Description": "Minimum walk distance when PathWidth greater 0",
       "Options": {
         "Label": "MinWalkDistance",
+        "Min": 0,
         "Default": 0,
         "Width": 88
       }
@@ -78,6 +88,7 @@
       "Description": "Maximum walk distance when PathWidth greater 0",
       "Options": {
         "Label": "MaxWalkDistance",
+        "Min": 0,
         "Default": 0,
         "Width": 88
       }
@@ -121,6 +132,7 @@
       "Description": "Minimum resting time at a node",
       "Options": {
         "Label": "MinNodeDelay",
+        "Min": 0,
         "Default": 0,
         "Width": 88
       }
@@ -131,6 +143,7 @@
       "Description": "Maximum resting time at a node",
       "Options": {
         "Label": "MaxNodeDelay",
+        "Min": 0,
         "Default": 0,
         "Width": 88
       }
@@ -151,6 +164,9 @@
       "Description": "The range from which to pick a value that defines the portion of the total node pause time that should be spent facing a direction before turning",
       "Options": {
         "Label": "NodePauseScaleRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
         "Default": [
           0.2,
           0.4
@@ -167,6 +183,8 @@
       "Description": "A range from which to pick the additional percentage of the directional pause time to add to it",
       "Options": {
         "Label": "NodePauseExtraPercentRange",
+        "Min": 0,
+        "Max": 1,
         "Default": [
           0,
           0.2
@@ -193,6 +211,8 @@
       "Description": "The number of distinct segments to stop at when sweeping from left to right using the observation angle",
       "Options": {
         "Label": "ViewSegments",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true

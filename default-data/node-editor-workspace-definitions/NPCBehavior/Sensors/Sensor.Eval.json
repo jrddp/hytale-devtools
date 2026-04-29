@@ -40,6 +40,8 @@
       "Description": "Javascript expression",
       "Options": {
         "Label": "Expression",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220
       }
     }

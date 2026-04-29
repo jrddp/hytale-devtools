@@ -40,6 +40,8 @@
       "Description": "The name of the alarm to check",
       "Options": {
         "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }
@@ -50,6 +52,7 @@
       "Description": "The state to check for",
       "Options": {
         "Label": "State",
+        "Required": true,
         "Width": 220,
         "Values": [
           "SET",

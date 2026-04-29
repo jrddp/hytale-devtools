@@ -49,6 +49,7 @@
       "Description": "The target slot to check",
       "Options": {
         "Label": "TargetSlot",
+        "DisallowEmpty": true,
         "Default": "LockedTarget",
         "Width": 220,
         "Computable": true
@@ -60,6 +61,8 @@
       "Description": "Maximum range of locked target",
       "Options": {
         "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
         "Default": 1.7976931348623157e+308,
         "Width": 88,
         "Computable": true

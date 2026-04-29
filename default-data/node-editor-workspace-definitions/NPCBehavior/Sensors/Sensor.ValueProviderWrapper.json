@@ -9,7 +9,8 @@
       "Type": "Sensor",
       "Color": "#7091F0",
       "Label": "Sensor",
-      "Description": "Sensor to wrap"
+      "Description": "Sensor to wrap",
+      "Required": true
     },
     {
       "Id": "ValueToParameterMappingsPin",
@@ -17,7 +18,8 @@
       "Color": "#7091F0",
       "Label": "Parameter Mappings",
       "Description": "The mappings of values to override parameters",
-      "Multiple": true
+      "Multiple": true,
+      "Required": true
     }
   ],
   "Outputs": [

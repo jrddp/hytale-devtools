@@ -26,6 +26,15 @@ import {
   type NodeEditorWorkspaceContext,
   type NodeTemplate,
 } from "@shared/node-editor/workspaceTypes";
+import {
+  getHighestNodeEditorDiagnosticSeverity,
+  getNodeEditorDiagnosticBorderSeverity,
+  getNodeEditorDiagnosticTargetKey,
+  nodeEditorDiagnosticTargetBelongsToNode,
+  type NodeEditorDiagnostic,
+  type NodeEditorDiagnosticSeverity,
+  type NodeEditorDiagnosticTarget,
+} from "@shared/node-editor/diagnostics";
 import type { ComputeAutocompleteOption } from "../../shared/components/computeAutocomplete";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
@@ -115,6 +124,7 @@ export class NodeEditorSession {
   autocompleteValues = $state<string[]>([]);
   computeAutocompleteOptions = $state<ComputeAutocompleteOption[]>([]);
   consideredPreviewFeature = $state<NodeEditorPreviewFeatureConsideration | null>(null);
+  diagnostics = $state.raw<NodeEditorDiagnostic[]>([]);
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
@@ -189,6 +199,19 @@ export class NodeEditorSession {
     });
     return incomingConnections;
   });
+  private diagnosticsByTargetKey = $derived.by(() => {
+    const diagnosticsByTargetKey = new Map<string, NodeEditorDiagnostic[]>();
+    for (const diagnostic of this.diagnostics) {
+      const targetKey = getNodeEditorDiagnosticTargetKey(diagnostic.target);
+      const targetDiagnostics = diagnosticsByTargetKey.get(targetKey);
+      if (targetDiagnostics) {
+        targetDiagnostics.push(diagnostic);
+      } else {
+        diagnosticsByTargetKey.set(targetKey, [diagnostic]);
+      }
+    }
+    return diagnosticsByTargetKey;
+  });
   /** Spatially indexed nodes for collision searching (e.g. setting group inheritence) */
   private spatialIndex: NodeRBush = $derived.by(() => {
     const spatialIndex = new NodeRBush(this);
@@ -231,6 +254,100 @@ export class NodeEditorSession {
 
   getRootNode(): FlowNode | undefined {
     return this.rootNodeId ? this.getNodeById(this.rootNodeId) : undefined;
+  }
+
+  setDiagnostics(diagnostics: NodeEditorDiagnostic[]): void {
+    this.diagnostics = diagnostics;
+  }
+
+  clearDiagnostics(): void {
+    this.diagnostics = [];
+  }
+
+  getDiagnosticsForTarget(target: NodeEditorDiagnosticTarget): NodeEditorDiagnostic[] {
+    return [...(this.diagnosticsByTargetKey.get(getNodeEditorDiagnosticTargetKey(target)) ?? [])];
+  }
+
+  getFieldDiagnostics(
+    nodeId: string | undefined,
+    schemaKey: string | null | undefined,
+    parentSchemaKey?: string,
+  ): NodeEditorDiagnostic[] {
+    if (!nodeId || !schemaKey) {
+      return [];
+    }
+    return this.getDiagnosticsForTarget({
+      type: "field",
+      nodeId,
+      schemaKey,
+      parentSchemaKey,
+    });
+  }
+
+  getListItemDiagnostics(
+    nodeId: string | undefined,
+    schemaKey: string | null | undefined,
+    itemIndex: number,
+    parentSchemaKey?: string,
+  ): NodeEditorDiagnostic[] {
+    if (!nodeId || !schemaKey) {
+      return [];
+    }
+    return this.getDiagnosticsForTarget({
+      type: "listItem",
+      nodeId,
+      schemaKey,
+      itemIndex,
+      parentSchemaKey,
+    });
+  }
+
+  getMapEntryDiagnostics(
+    nodeId: string | undefined,
+    schemaKey: string | null | undefined,
+    key: string,
+    parentSchemaKey?: string,
+  ): NodeEditorDiagnostic[] {
+    if (!nodeId || !schemaKey) {
+      return [];
+    }
+    return this.getDiagnosticsForTarget({
+      type: "mapEntry",
+      nodeId,
+      schemaKey,
+      key,
+      parentSchemaKey,
+    });
+  }
+
+  getPinDiagnostics(
+    nodeId: string,
+    pinId: string,
+    direction: "input" | "output",
+  ): NodeEditorDiagnostic[] {
+    return this.getDiagnosticsForTarget({
+      type: "pin",
+      nodeId,
+      pinId,
+      direction,
+    });
+  }
+
+  getNodeDiagnostics(nodeId: string): NodeEditorDiagnostic[] {
+    return this.diagnostics.filter(diagnostic =>
+      nodeEditorDiagnosticTargetBelongsToNode(diagnostic.target, nodeId, edgeId => {
+        const edge = this.edges.find(edge => edge.id === edgeId);
+        return edge ? { source: edge.source, target: edge.target } : undefined;
+      }),
+    );
+  }
+
+  getNodeDiagnosticSeverity(nodeId: string): NodeEditorDiagnosticSeverity | undefined {
+    return getHighestNodeEditorDiagnosticSeverity(this.getNodeDiagnostics(nodeId));
+  }
+
+  getNodeDiagnosticBorderSeverity(nodeId: string): NodeEditorDiagnosticSeverity | undefined {
+    return getNodeEditorDiagnosticBorderSeverity(this.getNodeDiagnostics(nodeId));
   }
 
   searchNodesCollidingWith(bbox: BBox) {

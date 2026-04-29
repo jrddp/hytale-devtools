@@ -28,6 +28,7 @@
       "Description": "The X anchor pos",
       "Options": {
         "Label": "AnchorX",
+        "Required": true,
         "Width": 88,
         "Computable": true
       }
@@ -38,6 +39,7 @@
       "Description": "The Y anchor pos",
       "Options": {
         "Label": "AnchorY",
+        "Required": true,
         "Width": 88,
         "Computable": true
       }
@@ -48,6 +50,7 @@
       "Description": "The Z anchor pos",
       "Options": {
         "Label": "AnchorZ",
+        "Required": true,
         "Width": 88,
         "Computable": true
       }
@@ -58,6 +61,7 @@
       "Description": "The MovementConfig to use for this mount",
       "Options": {
         "Label": "MovementConfig",
+        "Required": true,
         "Width": 220,
         "Computable": true
       }

@@ -28,6 +28,8 @@
       "Description": "The alias of the external state to set, as defined by _ImportStates in parameters",
       "Options": {
         "Label": "State",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "StateAutocompleteKind": "component-parent-alias"
       }

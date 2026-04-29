@@ -18,6 +18,9 @@
       "Description": "The relative turn speed modifier",
       "Options": {
         "Label": "RelativeTurnSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
         "Default": 1,
         "Width": 88,
         "Computable": true

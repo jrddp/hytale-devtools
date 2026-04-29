@@ -79,6 +79,7 @@ describe("WorkspaceRuntime", () => {
               "UniqueListField",
               "TypedListField",
               "NonListTypeOption",
+              "ValidationField",
             ],
           },
         },
@@ -321,6 +322,64 @@ describe("WorkspaceRuntime", () => {
     );
 
     fs.writeFileSync(
+      path.join(workspaceDir, "ValidationField.json"),
+      JSON.stringify(
+        {
+          Id: "ValidationField",
+          Title: "Validation Field",
+          Color: "#123456",
+          Inputs: [
+            {
+              Id: "Input",
+              Type: "Value",
+              Color: "#123456",
+              Required: true,
+            },
+          ],
+          Outputs: [
+            {
+              Id: "Output",
+              Type: "Value",
+              Color: "#123456",
+              Required: true,
+            },
+          ],
+          Content: [
+            {
+              Id: "Name",
+              Type: "SmallString",
+              Options: {
+                Label: "Name",
+                Required: true,
+                DisallowEmpty: true,
+                Min: 2,
+                Max: 10,
+                MinExclusive: true,
+                MaxExclusive: true,
+              },
+            },
+            {
+              Id: "Names",
+              Type: "List",
+              Options: {
+                Label: "Names",
+                MinItems: 1,
+                MaxItems: 3,
+                DisallowEmptyItems: true,
+              },
+            },
+          ],
+          Schema: {
+            Name: "Name",
+            Names: "Names",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
       path.join(supplementsDir, "TestWorkspace.json"),
       JSON.stringify(
         {
@@ -406,6 +465,26 @@ describe("WorkspaceRuntime", () => {
     expect(
       workspace.nodeTemplatesById.NonListTypeOption.fieldsBySchemaKey.FloatValue.listItemType,
     ).toBeUndefined();
+
+    expect(workspace.nodeTemplatesById.ValidationField.fieldsBySchemaKey.Name).toMatchObject({
+      required: true,
+      disallowEmpty: true,
+      minValue: 2,
+      maxValue: 10,
+      minValueExclusive: true,
+      maxValueExclusive: true,
+    });
+    expect(workspace.nodeTemplatesById.ValidationField.fieldsBySchemaKey.Names).toMatchObject({
+      minItems: 1,
+      maxItems: 3,
+      disallowEmptyItems: true,
+    });
+    expect(workspace.nodeTemplatesById.ValidationField.inputPins[0]).toMatchObject({
+      required: true,
+    });
+    expect(workspace.nodeTemplatesById.ValidationField.outputPins[0]).toMatchObject({
+      required: true,
+    });
   });
 
   test("filters the StateTransitions root context and hydrates unset defaults", () => {

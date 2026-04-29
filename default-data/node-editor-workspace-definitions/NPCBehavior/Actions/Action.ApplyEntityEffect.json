@@ -28,6 +28,7 @@
       "Description": "The entity effect to apply",
       "Options": {
         "Label": "EntityEffect",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {

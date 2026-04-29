@@ -128,6 +128,10 @@
     });
   }
 
+  function getItemDiagnostics(itemIndex: number) {
+    return workspace.getListItemDiagnostics(nodeId, schemaKey, itemIndex, parentSchemaKey);
+  }
+
   function handleConsideredPreview(value?: string) {
     if (previewFeatureKind !== "animation") {
       return;
@@ -163,6 +167,7 @@
       defaultPlaceholder={placeholder}
       {itemKind}
       {getAutocompleteOptions}
+      {getItemDiagnostics}
       {getStringItemVscodeContext}
       onrequestAutocomplete={requestAutocomplete}
       onconsider={handleConsideredPreview}

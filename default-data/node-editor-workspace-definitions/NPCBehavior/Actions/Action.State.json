@@ -28,6 +28,7 @@
       "Description": "State name to set",
       "Options": {
         "Label": "State",
+        "Required": true,
         "Width": 220,
         "StateAutocompleteKind": "role-full"
       }

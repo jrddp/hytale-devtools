@@ -20,8 +20,10 @@
     resolveNpcGraphPreviewOverrides,
     syncNpcGraphSessionFromDocument,
   } from "../npcGraphHost";
+  import { buildNpcGraphDiagnostics } from "../npcGraphDiagnostics";
   import type { NpcPropertyField } from "../propertyModel";
   import { workspace } from "../workspace.svelte";
+  import { getWorkspaceStandardParameterFields } from "../workspace/actions/parameterActions";
   import GraphFallbackField from "./fields/GraphFallbackField.svelte";
 
   type GraphViewport = {
@@ -250,6 +252,7 @@
 
   $effect(() => {
     if (!workspaceContext || !session.isInitialized) {
+      session.clearDiagnostics();
       workspace.clearAppearanceAutocompleteAnimationOverride();
       workspace.clearAppearanceFocusedAnimationOverride();
       return;
@@ -267,6 +270,38 @@
       appearanceAnimationIds: $state.snapshot(workspace.appearanceAnimationIds),
       roleType: workspace.roleType,
     });
+  });
+
+  $effect(() => {
+    if (!workspaceContext || !session.isInitialized) {
+      session.clearDiagnostics();
+      return;
+    }
+
+    void session.nodes;
+    void session.edges;
+    void session.sourceVersion;
+    void workspace.propertySections;
+    void workspace.indexValuesVersion;
+    void workspace.componentReferenceTargetVersion;
+
+    const availableParameters = new Set(
+      getWorkspaceStandardParameterFields(workspace).map(parameter => parameter.key),
+    );
+    session.setDiagnostics(
+      buildNpcGraphDiagnostics({
+        session,
+        graphFieldPath: field.fieldPath,
+        availableParameters,
+        getIndexValues: requestId => workspace.getIndexValues(requestId),
+        requestIndexValues: (requestId, symbolLookup) =>
+          workspace.requestIndexValues(requestId, symbolLookup),
+        getComponentReferenceTarget: (componentClass, referenceName) =>
+          workspace.getComponentReferenceTarget(componentClass, referenceName),
+        requestComponentReferenceTarget: (componentClass, referenceName) =>
+          workspace.requestComponentReferenceTarget(componentClass, referenceName),
+      }),
+    );
   });
 
   $effect(() => {
@@ -356,6 +391,7 @@
   });
 
   onDestroy(() => {
+    session.clearDiagnostics();
     workspace.clearAppearanceAutocompleteAnimationOverride();
     workspace.clearAppearanceFocusedAnimationOverride();
   });

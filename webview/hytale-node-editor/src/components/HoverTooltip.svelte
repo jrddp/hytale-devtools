@@ -86,6 +86,14 @@
         return "left-1/2 top-full mt-1.5 -translate-x-1/2";
     }
   }
+
+  function isErrorLine(line) {
+    return line.startsWith("Error:");
+  }
+
+  function isWarningLine(line) {
+    return line.startsWith("Warning:");
+  }
 </script>
 
 <div
@@ -104,7 +112,16 @@
       role="tooltip"
       class="pointer-events-none absolute z-20 w-max max-w-80 whitespace-pre-line rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {placementClass} {tooltipClass}"
     >
-      {tooltipText}
+      {#each tooltipText.split("\n") as line, index}
+        {#if index > 0}<br />{/if}
+        {#if isErrorLine(line)}
+          <strong>Error:</strong>{line.slice("Error:".length)}
+        {:else if isWarningLine(line)}
+          <strong>Warning:</strong>{line.slice("Warning:".length)}
+        {:else}
+          {line}
+        {/if}
+      {/each}
     </div>
   {/if}
 </div>

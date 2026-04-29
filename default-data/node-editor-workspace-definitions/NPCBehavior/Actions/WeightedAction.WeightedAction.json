@@ -17,7 +17,8 @@
       "Type": "Action",
       "Color": "#CC3361",
       "Label": "Action",
-      "Description": "The action to run"
+      "Description": "The action to run",
+      "Required": true
     }
   ],
   "Content": [
@@ -27,6 +28,9 @@
       "Description": "The weight representing how likely this action is to run",
       "Options": {
         "Label": "Weight",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
         "Width": 88,
         "Computable": true
       }

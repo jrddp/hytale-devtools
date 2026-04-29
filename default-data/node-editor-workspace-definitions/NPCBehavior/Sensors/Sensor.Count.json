@@ -40,6 +40,9 @@
       "Description": "Specifies the allowed number of entities (inclusive)",
       "Options": {
         "Label": "Count",
+        "Required": true,
+        "Min": 0,
+        "Max": 2147483647,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Int",
@@ -52,6 +55,9 @@
       "Description": "Range to find entities in (inclusive)",
       "Options": {
         "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",

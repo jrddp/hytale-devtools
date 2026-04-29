@@ -1,5 +1,6 @@
 <script lang="ts">
   import { type NodePin } from "@shared/node-editor/workspaceTypes";
+  import type { NodeEditorDiagnosticSeverity } from "@shared/node-editor/diagnostics";
   import { Handle, Position } from "@xyflow/svelte";
   import { PIN_WIDTH_PX } from "@node-editor/constants";
   import { asCssColor } from "../node-editor/utils/colors";
@@ -10,11 +11,13 @@
     nodeId,
     pin,
     type,
+    diagnosticSeverity,
     ...props
   }: {
     nodeId: string;
     pin: NodePin;
     type: "target" | "source";
+    diagnosticSeverity?: NodeEditorDiagnosticSeverity;
     class?: string;
     style?: string;
   } = $props();
@@ -24,6 +27,13 @@
   const side = $derived(type === "source" ? "right" : "left");
 
   const cssColor = $derived(asCssColor(pin.color));
+  const diagnosticRingColor = $derived(
+    diagnosticSeverity === "error"
+      ? "var(--vscode-errorForeground, #f85149)"
+      : diagnosticSeverity === "warning"
+        ? "var(--vscode-editorWarning-foreground, #cca700)"
+        : undefined,
+  );
 
   const clipPath = $derived.by(() => {
     switch (pin.multiplicity) {
@@ -47,6 +57,6 @@
   {type}
   position={side == "left" ? Position.Left : Position.Right}
   style="width: {PIN_WIDTH_PX}px; height: {DIAMETER_PX}px; background-color: {cssColor}; clip-path: {clipPath ||
-    'none'}; {props.style}"
+    'none'}; {diagnosticRingColor ? `box-shadow: 0 0 0 2px ${diagnosticRingColor};` : ''} {props.style}"
   class="relative! top-auto! rounded-none! border-none! transform-none! {props.class}"
 />

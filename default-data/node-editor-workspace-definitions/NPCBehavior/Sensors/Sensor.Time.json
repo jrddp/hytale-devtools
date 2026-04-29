@@ -40,6 +40,9 @@
       "Description": "The time period to trigger within",
       "Options": {
         "Label": "Period",
+        "Required": true,
+        "Min": 0,
+        "Max": 24,
         "Width": 240,
         "TupleSize": 2,
         "TupleItemType": "Float",

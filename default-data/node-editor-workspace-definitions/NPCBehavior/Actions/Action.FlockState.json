@@ -28,6 +28,8 @@
       "Description": "State name to set",
       "Options": {
         "Label": "State",
+        "Required": true,
+        "DisallowEmpty": true,
         "Width": 220,
         "Computable": true
       }

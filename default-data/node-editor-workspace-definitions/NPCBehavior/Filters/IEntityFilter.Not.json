@@ -9,7 +9,8 @@
       "Type": "IEntityFilter",
       "Color": "#60C8B8",
       "Label": "Filter",
-      "Description": "Filter to test"
+      "Description": "Filter to test",
+      "Required": true
     }
   ],
   "Outputs": [

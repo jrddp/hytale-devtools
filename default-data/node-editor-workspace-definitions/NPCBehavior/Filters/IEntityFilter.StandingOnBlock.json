@@ -30,6 +30,7 @@
       "Description": "The BlockSet to match against",
       "Options": {
         "Label": "BlockSet",
+        "Required": true,
         "Width": 220,
         "Computable": true,
         "SymbolLookup": {
