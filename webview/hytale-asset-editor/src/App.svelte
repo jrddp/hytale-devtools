@@ -3,11 +3,17 @@
   import DocumentEditorShell from "@webview-shared/components/DocumentEditorShell.svelte";
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
+  import { setFieldPanelStateContext } from "./components/fieldPanelStateContext";
   import type { OutlineSection } from "./components/fieldHelpers";
   import ObjectField from "./components/fields/ObjectField.svelte";
   import VariantField from "./components/fields/VariantField.svelte";
   import AssetPreview from "./preview/AssetPreview.svelte";
+  import {
+    ensureWebviewStateForDocument,
+    updateFieldCollapseByPath,
+    type AssetEditorWebviewState,
+  } from "./webviewState";
 
   const OUTLINE_ACTIVE_OFFSET_PX = 16;
 
@@ -20,6 +26,17 @@
   let outlineSections = $state<OutlineSection[]>([]);
   let activeOutlineSectionId = $state<string | null>(null);
   let pendingOutlineSectionId = $state<string | null>(null);
+  let localWebviewState = $state<AssetEditorWebviewState>({});
+  let restoredDocumentPath = $state<string | null>(null);
+  let isRestoringMainScroll = false;
+  let mainScrollPersistFrame: number | null = null;
+
+  setFieldPanelStateContext({
+    getCollapsed: fieldPath => localWebviewState.fieldCollapseByPath?.[fieldPath],
+    onCollapseChange: (fieldPath, collapsed, defaultCollapsed) => {
+      persistFieldCollapseState(fieldPath, collapsed, defaultCollapsed);
+    },
+  });
 
   $effect(() => {
     workspace.vscode = vscode;
@@ -43,6 +60,7 @@
     const handleScroll = () => {
       updateLayoutMetrics();
       updateActiveOutlineSection();
+      schedulePersistMainScrollTop();
     };
     const handleScrollEnd = () => {
       pendingOutlineSectionId = null;
@@ -71,6 +89,20 @@
       scrollRootElement?.removeEventListener("scrollend", handleScrollEnd);
       window.removeEventListener("resize", handleScroll);
     };
+  });
+
+  $effect(() => {
+    if (!workspace.documentPath || !workspace.documentRootField) {
+      return;
+    }
+
+    if (restoredDocumentPath === workspace.documentPath) {
+      return;
+    }
+
+    localWebviewState = ensureWebviewStateForDocument(localWebviewState, workspace.documentPath);
+    restoredDocumentPath = workspace.documentPath;
+    void restoreMainScrollPosition();
   });
 
   $effect(() => {
@@ -104,6 +136,10 @@
         return;
       case "update":
         workspace.setDocument(message);
+        localWebviewState = ensureWebviewStateForDocument(
+          localWebviewState,
+          message.documentPath,
+        );
         return;
       case "autocompletionValues":
         workspace.setAutocompleteValues(message.fieldId, message.values);
@@ -156,8 +192,11 @@
     const sectionTop = sectionElement.getBoundingClientRect().top;
 
     scrollRootElement.scrollTo({
+      behavior: "instant",
       top: scrollRootElement.scrollTop + sectionTop - rootTop - OUTLINE_ACTIVE_OFFSET_PX,
     });
+    pendingOutlineSectionId = null;
+    updateActiveOutlineSection();
   }
 
   function updateActiveOutlineSection() {
@@ -188,7 +227,90 @@
     activeOutlineSectionId = nextActiveSectionId;
   }
 
+  function persistWebviewState(nextState: AssetEditorWebviewState) {
+    const stateForDocument = workspace.documentPath
+      ? ensureWebviewStateForDocument(nextState, workspace.documentPath)
+      : nextState;
+    localWebviewState = stateForDocument;
+    vscode.setState?.(stateForDocument);
+  }
+
+  function schedulePersistMainScrollTop() {
+    if (
+      !scrollRootElement ||
+      isRestoringMainScroll ||
+      !workspace.documentPath ||
+      !workspace.documentRootField ||
+      restoredDocumentPath !== workspace.documentPath
+    ) {
+      return;
+    }
+
+    if (mainScrollPersistFrame !== null) {
+      return;
+    }
+
+    mainScrollPersistFrame = requestAnimationFrame(() => {
+      mainScrollPersistFrame = null;
+      if (!scrollRootElement) {
+        return;
+      }
+
+      persistWebviewState({
+        ...localWebviewState,
+        mainScrollTop: scrollRootElement.scrollTop,
+      });
+    });
+  }
+
+  async function restoreMainScrollPosition() {
+    isRestoringMainScroll = true;
+    await tick();
+    await new Promise<void>(resolve => {
+      requestAnimationFrame(() => resolve());
+    });
+
+    if (!scrollRootElement) {
+      isRestoringMainScroll = false;
+      return;
+    }
+
+    scrollRootElement.scrollTop = localWebviewState.mainScrollTop ?? 0;
+    updateActiveOutlineSection();
+    requestAnimationFrame(() => {
+      isRestoringMainScroll = false;
+    });
+  }
+
+  function persistFieldCollapseState(
+    fieldPath: string,
+    collapsed: boolean,
+    defaultCollapsed: boolean,
+  ) {
+    const nextFieldCollapseByPath = updateFieldCollapseByPath(
+      localWebviewState.fieldCollapseByPath,
+      fieldPath,
+      collapsed,
+      defaultCollapsed,
+    );
+    const nextState: AssetEditorWebviewState = {
+      ...localWebviewState,
+    };
+
+    if (nextFieldCollapseByPath) {
+      nextState.fieldCollapseByPath = nextFieldCollapseByPath;
+    } else {
+      delete nextState.fieldCollapseByPath;
+    }
+
+    persistWebviewState(nextState);
+  }
+
   onMount(() => {
+    if (typeof vscode.getState === "function") {
+      localWebviewState = (vscode.getState() as AssetEditorWebviewState | undefined) ?? {};
+    }
+
     window.addEventListener("message", handleMessage);
     vscode.postMessage({ type: "ready" });
 
@@ -197,6 +319,10 @@
     }
 
     return () => {
+      if (mainScrollPersistFrame !== null) {
+        cancelAnimationFrame(mainScrollPersistFrame);
+        mainScrollPersistFrame = null;
+      }
       window.removeEventListener("message", handleMessage);
     };
   });
