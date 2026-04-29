@@ -2,7 +2,7 @@
     "Group": "{{GROUP}}",
     "Name": "{{MOD_NAME_PASCAL}}",
     "Version": "0.0.1",
-    "Description": "An example plugin for Hytale!",
+    "Description": "A Hytale mod created with Hytale Devtools.",
     "Authors": [
         {
             "Name": "{{AUTHOR}}"

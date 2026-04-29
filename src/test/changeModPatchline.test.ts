@@ -4,6 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import {
     detectHytaleModWorkspace,
+    replaceAssetsPathInArg,
     replaceAssetsPatchlineInArg,
     replacePatchlineInGradlePropertiesContent,
     rewriteLaunchArgs
@@ -30,9 +31,22 @@ suite('Change Mod Patchline Test Suite', () => {
         assert.strictEqual(updated.includes('/install/pre-release/package/game/latest/Assets.zip'), true);
     });
 
-    test('rewriteLaunchArgs updates assets patchline and companion mods path', () => {
+    test('replaceAssetsPathInArg swaps the full assets install path', () => {
+        const original = '--assets=/Users/test/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip';
+        const updated = replaceAssetsPathInArg(
+            original,
+            '/Volumes/Hytale/install/pre-release/package/game/latest/Assets.zip'
+        );
+        assert.strictEqual(
+            updated,
+            '--assets=/Volumes/Hytale/install/pre-release/package/game/latest/Assets.zip'
+        );
+    });
+
+    test('rewriteLaunchArgs updates the full assets path and companion mods path', () => {
         const oldCompanionPath = '/tmp/vscode-global-storage/companion/HytaleDevtoolsCompanion/build/libs';
         const desiredCompanionPath = '/Users/test/.vscode/extensions/hytale-devtools/companion-mod/build/libs';
+        const desiredAssetsPath = '/Volumes/Hytale/install/pre-release/package/game/latest/Assets.zip';
         const args = [
             '--allow-op',
             '--assets=/Users/test/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip',
@@ -42,19 +56,40 @@ suite('Change Mod Patchline Test Suite', () => {
 
         const rewritten = rewriteLaunchArgs(
             args,
-            'pre-release',
             desiredCompanionPath,
-            true
+            desiredAssetsPath
         );
 
         assert.strictEqual(rewritten.changed, true);
         assert.strictEqual(
-            rewritten.args.some(arg => arg.includes('/install/pre-release/package/game/latest/Assets.zip')),
+            rewritten.args.includes(`--assets=${desiredAssetsPath}`),
             true
         );
         assert.strictEqual(
             rewritten.args.filter(arg => arg === `--mods=${desiredCompanionPath}`).length,
             1
+        );
+    });
+
+    test('rewriteLaunchArgs removes deprecated workspace src/main mods arg', () => {
+        const args = [
+            '--allow-op',
+            '--mods=${workspaceFolder}/src/main'
+        ];
+
+        const rewritten = rewriteLaunchArgs(
+            args,
+            '/Users/test/.vscode/extensions/hytale-devtools/companion-mod/build/libs',
+            undefined,
+            true,
+            ['--mods=${workspaceFolder}/src/main']
+        );
+
+        assert.strictEqual(rewritten.changed, true);
+        assert.strictEqual(rewritten.args.includes('--mods=${workspaceFolder}/src/main'), false);
+        assert.strictEqual(
+            rewritten.args.includes('--mods=/Users/test/.vscode/extensions/hytale-devtools/companion-mod/build/libs'),
+            true
         );
     });
 

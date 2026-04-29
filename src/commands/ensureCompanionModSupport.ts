@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
+import { getAssetsZipPath, resolvePatchlineFromWorkspace } from '../utils/hytalePaths';
 import { detectHytaleModWorkspace, rewriteLaunchArgs } from './changeModPatchline';
 import { safeParseJSONFile } from '../shared/fileUtils';
 import { isObject } from '../shared/typeUtils';
@@ -45,7 +45,6 @@ export async function ensureCompanionModSupportForWorkspace(
             return;
         }
 
-        const companionModsPath = normalizePathForJson(context.asAbsolutePath(COMPANION_MOD_LIBS_RELATIVE_PATH));
         const patchline = toSupportedPatchline(resolvePatchlineFromWorkspace(workspaceRootPath));
         upsertCompanionConfig(workspaceRootPath, context, patchline);
         await updateLaunchJsonForCompanionSupport(workspaceRootPath, context, patchline);
@@ -78,6 +77,11 @@ async function updateLaunchJsonForCompanionSupport(
     }
 
     const companionModsPath = normalizePathForJson(context.asAbsolutePath(COMPANION_MOD_LIBS_RELATIVE_PATH));
+    const desiredAssetsZipPath = normalizePathForJson(getAssetsZipPath(patchline));
+    const deprecatedWorkspaceModsArgs = [
+        '--mods=${workspaceFolder}/src/main',
+        `--mods=${normalizePathForJson(path.join(workspaceRootPath, 'src', 'main'))}`
+    ];
     const needsCompanionModsAppend = launchConfigurationsNeedCompanionModsAppend(
         parsedDocument.configurations as unknown[],
         companionModsPath
@@ -95,10 +99,10 @@ async function updateLaunchJsonForCompanionSupport(
             : [];
         const rewritten = rewriteLaunchArgs(
             args,
-            patchline,
             companionModsPath,
-            false,
-            allowCompanionModsAppend
+            desiredAssetsZipPath,
+            allowCompanionModsAppend,
+            deprecatedWorkspaceModsArgs
         );
 
         if (rewritten.changed) {
@@ -267,4 +271,3 @@ function toSupportedPatchline(value: string): SupportedPatchline {
 function normalizePathForJson(value: string): string {
     return value.replace(/\\/g, '/');
 }
-

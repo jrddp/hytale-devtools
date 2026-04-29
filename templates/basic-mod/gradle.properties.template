@@ -10,9 +10,13 @@ maven_group={{GROUP}}
 java_version=25
 
 # Determines if your plugin should also be loaded as an asset pack. If your
-# pack contains assets, or you intend to use the in-game asset editor, you
-# want this to be true.
+# pack contains assets, or you intend to use the in-game asset editor, set
+# this to true.
 includes_pack=true
+
+# Optional override for non-standard Hytale installs. Use forward slashes.
+# hytale.home_path=/path/to/Hytale
+{{HYTALE_HOME_PATH_PROPERTY}}
 
 # The release channel your plugin should be built and ran against. This is
 # usually release or pre-release. You can verify your settings in the

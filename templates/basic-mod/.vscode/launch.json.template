@@ -8,8 +8,8 @@
             "mainClass": "com.hypixel.hytale.Main",
             "args": [
                 "--allow-op",
-                "--assets=${userHome}/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip",
-                "--mods=${workspaceFolder}/src/main",
+                "--disable-sentry",
+                "--assets={{ASSETS_ZIP_PATH}}",
                 "--mods={{COMPANION_BUILT_MODS_PATH}}"
             ],
             "cwd": "${workspaceFolder}/run"

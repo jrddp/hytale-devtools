@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { toCamelCase, toPascalCase, toSquashedCase, replaceTokens } from '../utils/stringUtils';
+import { getConfiguredHytaleHomePath, getHytaleHome } from '../utils/hytalePaths';
 
 const TEMPLATE_DIR_NAME = 'templates/basic-mod';
 const COMPANION_MOD_LIBS_RELATIVE_PATH = path.join('companion-mod', 'build', 'libs');
@@ -46,6 +47,8 @@ export async function createMod(context: vscode.ExtensionContext) {
     let author = config.get<string>('defaultAuthor') || '';
     let group = config.get<string>('defaultGroup') || '';
     let website = config.get<string>('defaultWebsite') || '';
+    const hytaleHomePath = getHytaleHome(config);
+    const configuredHytaleHomePath = getConfiguredHytaleHomePath(config);
     const companionBuiltModsPath = context.asAbsolutePath(COMPANION_MOD_LIBS_RELATIVE_PATH);
     const companionExportPath = path.join(context.globalStorageUri.fsPath, 'release');
     if (!fs.existsSync(companionBuiltModsPath)) {
@@ -103,6 +106,12 @@ export async function createMod(context: vscode.ExtensionContext) {
         '{{AUTHOR}}': author,
         '{{GROUP}}': group,
         '{{WEBSITE}}': website,
+        '{{ASSETS_ZIP_PATH}}': normalizePathForTemplate(
+            path.join(hytaleHomePath, 'install', 'release', 'package', 'game', 'latest', 'Assets.zip')
+        ),
+        '{{HYTALE_HOME_PATH_PROPERTY}}': configuredHytaleHomePath
+            ? `hytale.home_path=${normalizePathForTemplate(configuredHytaleHomePath)}`
+            : '',
         '{{COMPANION_BUILT_MODS_PATH}}': normalizePathForTemplate(companionBuiltModsPath),
         '{{COMPANION_EXPORT_PATH}}': normalizePathForTemplate(companionExportPath)
     };

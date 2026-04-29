@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { getHytaleHome, resolvePatchlineFromWorkspace } from "../utils/hytalePaths";
+import { getAssetsZipPath, getHytaleHome, resolvePatchlineFromWorkspace } from "../utils/hytalePaths";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { isObject } from "../shared/typeUtils";
 
@@ -212,6 +212,8 @@ function updateLaunchJson(
   const companionModsPath = normalizePathForJson(
     context.asAbsolutePath(COMPANION_MOD_LIBS_RELATIVE_PATH),
   );
+  const desiredAssetsZipPath = normalizePathForJson(getAssetsZipPath(patchline));
+  const deprecatedWorkspaceModsArgs = getDeprecatedWorkspaceModsArgs(workspaceRootPath);
   let hasChanges = false;
   for (const configuration of parsedDocument.configurations) {
     if (!isObject(configuration) || !Array.isArray(configuration.args)) {
@@ -219,7 +221,13 @@ function updateLaunchJson(
     }
 
     const args = configuration.args.filter((arg): arg is string => typeof arg === "string");
-    const rewritten = rewriteLaunchArgs(args, patchline, companionModsPath, updateAssetsPatchline);
+    const rewritten = rewriteLaunchArgs(
+      args,
+      companionModsPath,
+      updateAssetsPatchline ? desiredAssetsZipPath : undefined,
+      true,
+      deprecatedWorkspaceModsArgs,
+    );
 
     if (rewritten.changed) {
       configuration.args = rewritten.args;
@@ -239,13 +247,14 @@ interface RewriteLaunchArgsResult {
 
 export function rewriteLaunchArgs(
   args: readonly string[],
-  patchline: SupportedPatchline,
   companionModsPath: string,
-  updateAssetsPatchline: boolean,
+  desiredAssetsZipPath?: string,
   appendMissingCompanionModsArg: boolean = true,
+  deprecatedModsArgs: readonly string[] = [],
 ): RewriteLaunchArgsResult {
   const desiredCompanionModsArg = `--mods=${normalizePathForJson(companionModsPath)}`;
   const desiredCompanionModsArgLower = desiredCompanionModsArg.toLowerCase();
+  const deprecatedModsArgsLower = new Set(deprecatedModsArgs.map(arg => normalizePathForJson(arg).toLowerCase()));
 
   let changed = false;
   let hasCompanionModsArg = false;
@@ -253,8 +262,8 @@ export function rewriteLaunchArgs(
 
   for (const arg of args) {
     let rewrittenArg = arg;
-    if (updateAssetsPatchline) {
-      const patchedAssetsArg = replaceAssetsPatchlineInArg(rewrittenArg, patchline);
+    if (desiredAssetsZipPath) {
+      const patchedAssetsArg = replaceAssetsPathInArg(rewrittenArg, desiredAssetsZipPath);
       if (patchedAssetsArg !== rewrittenArg) {
         rewrittenArg = patchedAssetsArg;
         changed = true;
@@ -262,6 +271,11 @@ export function rewriteLaunchArgs(
     }
 
     const normalizedArgLower = normalizePathForJson(rewrittenArg).toLowerCase();
+    if (deprecatedModsArgsLower.has(normalizedArgLower)) {
+      changed = true;
+      continue;
+    }
+
     if (normalizedArgLower === desiredCompanionModsArgLower) {
       if (!hasCompanionModsArg) {
         rewrittenArgs.push(desiredCompanionModsArg);
@@ -297,17 +311,30 @@ export function rewriteLaunchArgs(
 }
 
 export function replaceAssetsPatchlineInArg(arg: string, patchline: SupportedPatchline): string {
+  const normalizedArg = normalizePathForJson(arg);
+  const assetsPathPatchlineRegex =
+    /([\\/](?:install)[\\/])(release|pre-release)([\\/](?:package)[\\/](?:game)[\\/](?:latest)[\\/](?:Assets\.zip))/i;
+  if (!normalizedArg.startsWith("--assets=") || !assetsPathPatchlineRegex.test(normalizedArg)) {
+    return arg;
+  }
+
+  const updatedArg = normalizedArg.replace(assetsPathPatchlineRegex, `$1${patchline}$3`);
+  return normalizedArg === arg ? updatedArg : `--assets=${updatedArg.slice("--assets=".length)}`;
+}
+
+export function replaceAssetsPathInArg(arg: string, desiredAssetsZipPath: string): string {
   if (!arg.startsWith("--assets=")) {
     return arg;
   }
 
   const assetsPathPatchlineRegex =
     /([\\/](?:install)[\\/])(release|pre-release)([\\/](?:package)[\\/](?:game)[\\/](?:latest)[\\/](?:Assets\.zip))/i;
-  if (!assetsPathPatchlineRegex.test(arg)) {
+  const normalizedArg = normalizePathForJson(arg);
+  if (!assetsPathPatchlineRegex.test(normalizedArg)) {
     return arg;
   }
 
-  return arg.replace(assetsPathPatchlineRegex, `$1${patchline}$3`);
+  return `--assets=${normalizePathForJson(desiredAssetsZipPath)}`;
 }
 
 function isLegacyCompanionModsArg(arg: string): boolean {
@@ -340,6 +367,13 @@ export function detectHytaleModWorkspace(workspaceRootPath: string): boolean {
 
 function normalizePathForJson(value: string): string {
   return value.replace(/\\/g, "/");
+}
+
+function getDeprecatedWorkspaceModsArgs(workspaceRootPath: string): string[] {
+  return [
+    "--mods=${workspaceFolder}/src/main",
+    `--mods=${normalizePathForJson(path.join(workspaceRootPath, "src", "main"))}`,
+  ];
 }
 
 interface CompanionConfigLocation {
@@ -410,4 +444,3 @@ function deleteEmptyDirectoriesUpTo(startDirectory: string, stopDirectory: strin
     currentDirectory = path.dirname(currentDirectory);
   }
 }
-

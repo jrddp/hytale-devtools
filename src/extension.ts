@@ -103,31 +103,24 @@ export async function activate(context: vscode.ExtensionContext) {
     void ensureHytaleHomeConfiguredOnStartup();
   }
 
-  // const ensureCompanionSupportForWorkspace = (workspacePath: string): void => {
-  //   const {
-  //     ensureCompanionModSupportForWorkspace,
-  //   } = require("./commands/ensureCompanionModSupport");
-  //   void ensureCompanionModSupportForWorkspace(context, workspacePath);
-  //   if (detectHytaleModWorkspace(workspacePath)) {
-  //     companionSnapshotRuntime.registerWorkspace(workspacePath);
-  //   }
-  // };
+  const ensureCompanionSupportForWorkspace = (workspacePath: string): void => {
+    const {
+      ensureCompanionModSupportForWorkspace,
+    } = require("./commands/ensureCompanionModSupport");
+    void ensureCompanionModSupportForWorkspace(context, workspacePath);
+  };
 
-  // for (const folder of vscode.workspace.workspaceFolders ?? []) {
-  //   ensureCompanionSupportForWorkspace(folder.uri.fsPath);
-  // }
+  for (const folder of vscode.workspace.workspaceFolders ?? []) {
+    ensureCompanionSupportForWorkspace(folder.uri.fsPath);
+  }
 
-  // context.subscriptions.push(
-  //   vscode.workspace.onDidChangeWorkspaceFolders(event => {
-  //     for (const folder of event.added) {
-  //       ensureCompanionSupportForWorkspace(folder.uri.fsPath);
-  //     }
-
-  //     for (const folder of event.removed) {
-  //       companionSnapshotRuntime.unregisterWorkspace(folder.uri.fsPath);
-  //     }
-  //   }),
-  // );
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeWorkspaceFolders(event => {
+      for (const folder of event.added) {
+        ensureCompanionSupportForWorkspace(folder.uri.fsPath);
+      }
+    }),
+  );
 }
 
 // This method is called when your extension is deactivated

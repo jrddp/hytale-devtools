@@ -4,9 +4,12 @@ plugins {
 }
 
 ext {
+    def configuredHytaleHome = findProperty("hytale.home_path") ?: System.getenv("HYTALE_HOME_PATH")
     def os = System.getProperty("os.name").toLowerCase()
     def userHome = System.getProperty("user.home")
-    if (os.contains("win")) {
+    if (configuredHytaleHome) {
+        hytaleHome = configuredHytaleHome.toString()
+    } else if (os.contains("win")) {
         hytaleHome = "${userHome}/AppData/Roaming/Hytale"
     } else if (os.contains("mac")) {
         hytaleHome = "${userHome}/Library/Application Support/Hytale"
@@ -15,6 +18,16 @@ ext {
         def flatpakHytaleHome = "${userHome}/.var/app/com.hypixel.HytaleLauncher/data/Hytale"
         hytaleHome = file(localHytaleHome).exists() ? localHytaleHome : flatpakHytaleHome
     }
+    serverJarPath = file("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar")
+    assetsZipPath = "$hytaleHome/install/$patchline/package/game/latest/Assets.zip"
+}
+
+if (!serverJarPath.exists()) {
+    throw new GradleException(
+        "Failed to find Hytale at the expected location. Please make sure you have installed the game. " +
+        "The expected location can be changed using the hytale.home_path property. " +
+        "Currently looking in '${hytaleHome}'"
+    )
 }
 
 java {
@@ -30,7 +43,7 @@ javadoc {
 // compile against their code. This requires you to have Hytale installed using
 // the official launcher for now.
 dependencies {
-    implementation(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
+    implementation(files(serverJarPath))
 }
 
 // Create the working directory to run the server if it does not already exist.
@@ -66,10 +79,7 @@ idea.project.settings.runConfigurations {
     'HytaleServer'(org.jetbrains.gradle.ext.Application) {
         mainClass = 'com.hypixel.hytale.Main'
         moduleName = project.idea.module.name + '.main'
-        programParameters = "--allow-op --disable-sentry --assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip"
-        if (includes_pack.toBoolean()) {
-            programParameters += " --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
-        }
+        programParameters = "--allow-op --disable-sentry --assets=${assetsZipPath}"
         if (load_user_mods.toBoolean()) {
             programParameters += " --mods=$hytaleHome/UserData/Mods"
         }
