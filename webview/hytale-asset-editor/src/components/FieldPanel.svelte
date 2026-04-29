@@ -218,20 +218,12 @@
   >
     {#if inline}
       <div
-        class="group/inline-field flex min-h-12 gap-1 px-4 py-2"
-        class:items-start={titleOverride}
-        class:items-center={!titleOverride}
+        class="group/inline-field grid min-h-12 grid-cols-[minmax(0,14rem)_minmax(0,1fr)_auto] items-center gap-3 px-4 py-2"
       >
         <div
-          class="relative flex w-56 min-w-0 shrink-0 justify-between gap-1"
-          class:items-start={titleOverride}
-          class:items-center={!titleOverride}
+          class="relative flex min-w-0 items-center justify-between gap-1"
         >
-          <div
-            class="flex min-w-0 gap-1"
-            class:items-start={titleOverride}
-            class:items-center={!titleOverride}
-          >
+          <div class="flex min-w-0 items-center gap-1">
             {@render handleControl()}
             <div class="flex min-w-0 items-center gap-1 truncate">
               {@render title()}
@@ -252,7 +244,7 @@
         </div>
 
         {#if children}
-          <div class="flex min-w-0 flex-1 items-center self-stretch">
+          <div class="flex min-w-0 items-center">
             {@render children()}
           </div>
         {/if}
