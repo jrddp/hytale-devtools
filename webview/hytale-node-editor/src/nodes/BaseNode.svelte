@@ -31,6 +31,7 @@
     outputPins,
     inputConnectionIndex,
     defaultTitle,
+    description,
     titleOverride,
     comment,
   } = $derived(data);
@@ -179,66 +180,75 @@
       class="absolute inset-x-0 top-0 h-1 pointer-events-none"
       style="background-color: {cssColor};"
     ></div>
-    <!-- Title bar -->
-    <div
-      class="flex items-center gap-1 p-1 rounded-t-lg text-vsc-input-fg"
-      class:pb-0={isEditingComment || (currentComment && currentComment.length > 0)}
+    <HoverTooltip
+      headingText={defaultTitle}
+      text={description}
+      italicText="Double click title to edit"
+      placement="top-start"
+      wrapperClass="block"
+      disabled={isEditingTitle}
     >
-      {#if inputConnectionIndex !== undefined}
-        <span class="text-xs font-medium text-vsc-muted">{`[${inputConnectionIndex}]`}</span>
-      {/if}
+      <!-- Title bar -->
+      <div
+        class="flex items-center gap-1 p-1 rounded-t-lg text-vsc-input-fg"
+        class:pb-0={isEditingComment || (currentComment && currentComment.length > 0)}
+      >
+        {#if inputConnectionIndex !== undefined}
+          <span class="text-xs font-medium text-vsc-muted">{`[${inputConnectionIndex}]`}</span>
+        {/if}
 
-      <!-- Title -->
-      {#if isEditingTitle}
-        <input
-          bind:this={titleInputElement}
-          class="font-bold text-vsc-input-fg outline-none!"
-          style="width: {titleSizerWidth}px;"
-          type="text"
-          bind:value={effectiveTitle}
+        <!-- Title -->
+        {#if isEditingTitle}
+          <input
+            bind:this={titleInputElement}
+            class="font-bold text-vsc-input-fg outline-none!"
+            style="width: {titleSizerWidth}px;"
+            type="text"
+            bind:value={effectiveTitle}
+            {...noMousePropogation}
+            onfocus={() => (isEditingTitle = true)}
+            onkeydown={handleTitleInputKeydown}
+            onblur={commitTitle}
+          />
+          <!-- Hidden Sizer to update input width dynamically -->
+          <div
+            class="absolute invisible font-bold whitespace-pre"
+            aria-hidden="true"
+            {@attach el => {
+              void effectiveTitle;
+              titleSizerWidth = el.scrollWidth;
+            }}
+          >
+            {effectiveTitle}
+          </div>
+        {:else}
+          <div
+            class="inline-flex items-center gap-1 font-bold text-vsc-input-fg select-none"
+            role="presentation"
+            ondblclick={() => (isEditingTitle = true)}
+          >
+            {#if isRootNode}
+              {#if showRootTitlePrefix}
+                <span class="font-black tracking-wide">[ROOT]</span>
+              {/if}
+            {/if}
+            <span>{effectiveTitle}</span>
+          </div>
+        {/if}
+
+        <!-- Edit Comment Button -->
+        <button
+          class="inline-flex items-center justify-center ml-auto rounded-md size-4 hover:backdrop-brightness-90"
+          type="button"
           {...noMousePropogation}
-          onfocus={() => (isEditingTitle = true)}
-          onkeydown={handleTitleInputKeydown}
-          onblur={commitTitle}
-        />
-        <!-- Hidden Sizer to update input width dynamically -->
-        <div
-          class="absolute invisible font-bold whitespace-pre"
-          aria-hidden="true"
-          {@attach el => {
-            void effectiveTitle;
-            titleSizerWidth = el.scrollWidth;
+          onclickcapture={() => {
+            isEditingComment = true;
           }}
         >
-          {effectiveTitle}
-        </div>
-      {:else}
-        <div
-          class="inline-flex items-center gap-1 font-bold text-vsc-input-fg select-none"
-          role="presentation"
-          ondblclick={() => (isEditingTitle = true)}
-        >
-          {#if isRootNode}
-            {#if showRootTitlePrefix}
-              <span class="font-black tracking-wide">[ROOT]</span>
-            {/if}
-          {/if}
-          <span>{effectiveTitle}</span>
-        </div>
-      {/if}
-
-      <!-- Edit Comment Button -->
-      <button
-        class="inline-flex items-center justify-center ml-auto rounded-md size-4 hover:backdrop-brightness-90"
-        type="button"
-        {...noMousePropogation}
-        onclickcapture={e => {
-          isEditingComment = true;
-        }}
-      >
-        <MessageCircleMore strokeWidth={2.25} aria-hidden="true" />
-      </button>
-    </div>
+          <MessageCircleMore strokeWidth={2.25} aria-hidden="true" />
+        </button>
+      </div>
+    </HoverTooltip>
 
     <!-- Comment -->
     {#if isEditingComment || (currentComment && currentComment.length > 0)}

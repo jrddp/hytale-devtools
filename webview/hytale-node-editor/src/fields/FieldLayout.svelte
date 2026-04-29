@@ -35,7 +35,7 @@
   );
 </script>
 
-<HoverTooltip text={description} placement="right" wrapperClass={labelWrapperClass}>
+<HoverTooltip text={description} placement="left" wrapperClass={labelWrapperClass}>
   <div class="flex items-center justify-end gap-1 select-none text-right text-xs leading-4 text-vsc-muted">
     <span>{label}</span>
     {#if titleActions}

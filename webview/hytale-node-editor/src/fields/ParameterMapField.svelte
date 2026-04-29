@@ -348,7 +348,7 @@
 
 <div class="col-span-2 flex min-w-0 flex-col gap-1.5" class:w-full={inputWidth === undefined}>
   <div class="flex min-w-0 items-center justify-between gap-2">
-    <HoverTooltip text={description} placement="right" wrapperClass="min-w-0">
+    <HoverTooltip text={description} placement="left" wrapperClass="min-w-0">
       <div class="flex min-w-0 items-center gap-1 select-none text-[10px] font-semibold uppercase tracking-[0.18em] text-vsc-muted">
         <span class="truncate">{label}</span>
         {#if titleActions}

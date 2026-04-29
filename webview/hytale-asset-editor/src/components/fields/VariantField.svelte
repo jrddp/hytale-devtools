@@ -44,6 +44,7 @@
   const outlineSections = $derived.by(() => {
     return buildOutlineSections(sections);
   });
+  let collapsed = $state(true);
 
   function onChangeIdentity() {
     const effectiveIdentity =
@@ -74,8 +75,18 @@
   });
 </script>
 
-{#if field.activeVariant}
-  <FieldPanel {field} {depth} {readOnly} {fieldPanelOverrides} {handle} {glyphs} {onunset}>
+<FieldPanel
+  {field}
+  {depth}
+  {readOnly}
+  {fieldPanelOverrides}
+  {handle}
+  {glyphs}
+  {onunset}
+  collapsedByDefault={field.collapsedByDefault ?? true}
+  bind:collapsed
+>
+  {#if field.activeVariant}
     <ObjectField
       field={field.activeVariant}
       {depth}
@@ -84,17 +95,7 @@
       root={true}
       renderSections={root}
     />
-  </FieldPanel>
-{:else}
-  <FieldPanel
-    field={field.identityField}
-    {depth}
-    {readOnly}
-    {fieldPanelOverrides}
-    {handle}
-    {glyphs}
-    {onunset}
-  >
+  {:else}
     <StringField
       field={field.identityField}
       {depth}
@@ -102,5 +103,5 @@
       {readOnlyMessage}
       oncommitchange={onChangeIdentity}
     />
-  </FieldPanel>
-{/if}
+  {/if}
+</FieldPanel>
