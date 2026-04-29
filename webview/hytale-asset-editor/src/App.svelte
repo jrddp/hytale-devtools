@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { AssetEditorExtensionToWebviewMessage } from "@shared/asset-editor/messageTypes";
+  import DevtoolsAttribution from "@webview-shared/components/DevtoolsAttribution.svelte";
   import DocumentEditorShell from "@webview-shared/components/DocumentEditorShell.svelte";
   import type { VSCodeApi } from "src/common";
   import { workspace } from "src/workspace.svelte";
@@ -438,4 +439,5 @@
         : undefined}
     ></div>
   </DocumentEditorShell>
+  <DevtoolsAttribution class="fixed bottom-2 left-2 z-20" />
 {/if}

@@ -13,6 +13,7 @@
     EDITABLE_SELECTOR,
     selectAllActiveEditableText,
   } from "@node-editor/node-editor/utils/flowKeyboard";
+  import DevtoolsAttribution from "@webview-shared/components/DevtoolsAttribution.svelte";
   import DocumentEditorShell from "@webview-shared/components/DocumentEditorShell.svelte";
   import ModelPreviewCard from "@webview-shared/components/ModelPreviewCard.svelte";
   import {
@@ -959,4 +960,5 @@
       </div>
     {/if}
   </DocumentEditorShell>
+  <DevtoolsAttribution class="fixed bottom-2 left-2 z-20" />
 {/if}

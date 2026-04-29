@@ -10,7 +10,7 @@
     sidebar,
     children,
     scrollRootElement = $bindable(),
-    sidebarClass = "space-y-4 lg:sticky lg:top-4",
+    sidebarClass = "flex min-h-[calc(100vh-7rem)] flex-col lg:sticky lg:top-4",
     mainClass = "min-w-0",
   }: {
     title: string;

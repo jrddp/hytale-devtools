@@ -25,6 +25,7 @@
   import NodeEditorActionMenu from "@node-editor/components/NodeEditorActionMenu.svelte";
   import NodeHelpPanel from "@node-editor/components/NodeHelpPanel.svelte";
   import NodeSearchPanel from "@node-editor/components/NodeSearchPanel.svelte";
+  import DevtoolsAttribution from "@webview-shared/components/DevtoolsAttribution.svelte";
   import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "@node-editor/constants";
   import { getAutoPositionNodeUpdates } from "@node-editor/node-editor/layout/autoLayout";
   import { createConnectionPreviewController } from "@node-editor/node-editor/utils/connectionPreview.svelte";
@@ -1430,6 +1431,7 @@
     selectionOnDrag={true}
     panActivationKey={null}
     minZoom={MIN_FLOW_ZOOM}
+    proOptions={{ hideAttribution: true }}
     onlyRenderVisibleElements={useVisibleElementCulling}
     connectionRadius={CONNECTION_RADIUS}
     isValidConnection={connection => {
@@ -1484,6 +1486,12 @@
       />
     {/if}
   </SvelteFlow>
+
+  {#if !workspace.embeddedGraphFieldPath}
+    <DevtoolsAttribution
+      class="pointer-events-auto absolute bottom-2 left-2 z-10"
+    />
+  {/if}
 
   {#if isRootNodeMissing}
     <div

@@ -25,7 +25,7 @@
   const labelWrapperClass = $derived(
     align === "start"
       ? "justify-self-end self-start pt-1.5"
-      : "flex min-h-8 self-stretch items-center justify-end",
+      : "flex min-h-8 justify-self-end self-center items-center justify-end",
   );
 
   const contentClass = $derived(

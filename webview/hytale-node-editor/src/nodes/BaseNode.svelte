@@ -174,7 +174,7 @@
     : 'none'}; {dragging && 'cursor-grabbing!'}"
 >
   <!-- Node Header -->
-  <div class="bg-vsc-input-bg relative overflow-clip! rounded-t-lg">
+  <div class="bg-vsc-input-bg relative overflow-visible rounded-t-lg">
     <div
       aria-hidden="true"
       class="absolute inset-x-0 top-0 h-1 pointer-events-none"
