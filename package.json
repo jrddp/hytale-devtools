@@ -670,7 +670,7 @@
             "filenamePattern": "**/Server/HytaleGenerator/WorldStructures/**/*.json"
           }
         ],
-        "priority": "option"
+        "priority": "default"
       }
     ]
   },
