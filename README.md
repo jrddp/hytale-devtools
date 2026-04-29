@@ -38,14 +38,6 @@ Use these asset types to open the specialized editors:
 - **Worldgen Editor:** copy a `Biome` asset.
 - **Asset Editor:** create or copy any other supported asset.
 
-## Instantly Create New Mods
-
-Instantly create new fully-configured mods using the "Create New Hytale Mod" command.
-
-## Easily Copy/Create Any Asset
-
-Easily create new assets in their respective folders, override existing assets, or copy existing assets as templates.
-
 ![Copy Asset Demo](media/demo_images/copy-asset-demo.gif)
 
 ## Built-in Worldgen and NPC Node Editor
