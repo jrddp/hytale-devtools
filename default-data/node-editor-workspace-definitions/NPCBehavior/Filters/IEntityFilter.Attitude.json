@@ -1,0 +1,53 @@
+{
+  "Id": "IEntityFilter.Attitude",
+  "Title": "Filter: Attitude",
+  "Color": "#60C8B8",
+  "Description": "Matches the attitude towards the locked target",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Attitudes",
+      "Type": "List",
+      "Description": "The attitudes to match",
+      "Options": {
+        "Label": "Attitudes",
+        "Required": true,
+        "Width": 240,
+        "Type": "String",
+        "UniqueItems": true,
+        "Values": [
+          "IGNORE",
+          "HOSTILE",
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ],
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Attitudes": "Attitudes",
+    "Type": "Attitude"
+  }
+}

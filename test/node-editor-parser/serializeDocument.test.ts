@@ -12,6 +12,7 @@ import {
   normalizeWorkspaceStateForSemanticComparison,
   outputPin,
   parseWorkspaceDocument,
+  selfOutputPin,
   serializeWorkspace,
   workspaceContext,
 } from "./helpers";
@@ -37,6 +38,26 @@ const TEST_CONTEXT = workspaceContext({
       defaultTitle: "Leaf Node",
       fieldsBySchemaKey: {
         Value: nodeField("Value"),
+      },
+    }),
+  ],
+});
+
+const TUPLE_CONTEXT = workspaceContext({
+  templates: [
+    nodeTemplate("Root", {
+      defaultTitle: "Root Node",
+      fieldsBySchemaKey: {
+        Range: nodeField("Range", "tuple", {
+          value: [Number.MAX_VALUE, Number.MAX_VALUE],
+          defaultValue: [Number.MAX_VALUE, Number.MAX_VALUE],
+          tupleSize: 2,
+          tupleItemType: "float",
+          computable: true,
+        }),
+      },
+      schemaConstants: {
+        Type: "Root",
       },
     }),
   ],
@@ -76,6 +97,122 @@ const SHARED_SUBTREE_CONTEXT = workspaceContext({
       inputPins: [inputPin("input", "single", { connectionType: "Gamma", localId: "Input" })],
       fieldsBySchemaKey: {
         Name: nodeField("Name"),
+      },
+    }),
+  ],
+});
+
+const REVERSE_INPUT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Reverse Input Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      inputPins: [
+        inputPin("Sensor", "single", { connectionType: "Sensor", localId: "SensorPin" }),
+        inputPin("Filters", "multiple", {
+          connectionType: "Filter",
+          localId: "FiltersPin",
+        }),
+      ],
+      childSchemas: {
+        Sensor: {
+          schemaKey: "Sensor",
+          targetTemplateOrVariantId: "SensorLeaf",
+          serializationType: "child",
+        },
+        Filters: {
+          schemaKey: "Filters",
+          targetTemplateOrVariantId: "FilterLeaf",
+          serializationType: "child",
+        },
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("SensorLeaf", {
+      outputPins: [selfOutputPin("Sensor")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "SensorLeaf",
+      },
+    }),
+    nodeTemplate("FilterLeaf", {
+      outputPins: [selfOutputPin("Filter")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "FilterLeaf",
+      },
+    }),
+  ],
+});
+
+const DEFAULT_VARIANT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "RootVariants",
+  rootMenuName: "Default Variant Test Workspace",
+  templates: [
+    nodeTemplate("Root.Standard", {
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+    }),
+    nodeTemplate("Root.Special", {
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+      schemaConstants: {
+        Type: "Special",
+      },
+    }),
+  ],
+  variantKindsById: {
+    RootVariants: {
+      VariantFieldName: "Type",
+      DefaultTemplateId: "Root.Standard",
+      Variants: {
+        Special: "Root.Special",
+      },
+    },
+  },
+});
+
+const SIBLING_SERIALIZATION_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Sibling Serialization Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [outputPin("Wrapper")],
+      childTypes: {
+        Wrapper: "Wrapper",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("Wrapper", {
+      fieldsBySchemaKey: {
+        Weight: nodeField("Weight", "float"),
+      },
+      outputPins: [outputPin("Instruction", "single", { connectionType: "Instruction" })],
+      childSchemas: {
+        Instruction: {
+          schemaKey: "Instruction",
+          targetTemplateOrVariantId: "Instruction",
+          serializationType: "sibling",
+        },
+      },
+    }),
+    nodeTemplate("Instruction", {
+      inputPins: [inputPin("input", "single", { connectionType: "Instruction", localId: "Input" })],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "Instruction",
       },
     }),
   ],
@@ -184,6 +321,119 @@ describe("node editor serializeDocument", () => {
     ).toBe(true);
   });
 
+  test("round-trips a default variant root without introducing the variant field", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        Name: "Default Root",
+      },
+      DEFAULT_VARIANT_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, DEFAULT_VARIANT_CONTEXT.rootMenuName);
+    expect(serialized).toMatchObject({
+      Name: "Default Root",
+      $NodeEditorMetadata: expect.any(Object),
+    });
+    expect((serialized as Record<string, unknown>).Type).toBeUndefined();
+  });
+
+  test("omits unset fields and includes them once explicitly set", () => {
+    const context = workspaceContext({
+      templates: [
+        nodeTemplate("Root", {
+          fieldsBySchemaKey: {
+            Enabled: nodeField("Enabled", "checkbox", {
+              value: true,
+              defaultValue: true,
+              isSet: false,
+            }),
+          },
+          schemaConstants: {
+            Type: "Root",
+          },
+        }),
+      ],
+    });
+
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      context,
+    );
+
+    expect(serializeWorkspace(parsed, context.rootMenuName)).toEqual({
+      $NodeId: expect.any(String),
+      Type: "Root",
+      $NodeEditorMetadata: expect.any(Object),
+    });
+
+    const rootNode = findNodeByBaseId(parsed, "Root-1");
+    rootNode.data.fieldsBySchemaKey.Enabled.isSet = true;
+    rootNode.data.fieldsBySchemaKey.Enabled.value = false;
+
+    expect(serializeWorkspace(parsed, context.rootMenuName)).toMatchObject({
+      Type: "Root",
+      Enabled: false,
+    });
+  });
+
+  test("serializes sibling wrapper nodes as flattened objects owned by the wrapper", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Wrapper: {
+          $NodeId: "Wrapper-1",
+          Weight: 2,
+          Type: "Instruction",
+          Name: "Leaf Instruction",
+        },
+        $NodeEditorMetadata: {
+          $WorkspaceID: SIBLING_SERIALIZATION_CONTEXT.rootMenuName,
+          $Nodes: {
+            "Root-1": {
+              $Position: { $x: 0, $y: 0 },
+            },
+            "Wrapper-1": {
+              $Position: { $x: 120, $y: 40 },
+            },
+          },
+        },
+      },
+      SIBLING_SERIALIZATION_CONTEXT,
+    );
+
+    const serialized = normalizeRoundTripJson(
+      serializeWorkspace(parsed, SIBLING_SERIALIZATION_CONTEXT.rootMenuName),
+    ) as Record<string, unknown>;
+    const root = findNodeByBaseId(parsed, "Root-1");
+    const wrapper = findNodeByBaseId(parsed, "Wrapper-1");
+
+    expect(serialized).toEqual({
+      $NodeId: root.id,
+      Type: "Root",
+      Wrapper: {
+        $NodeId: wrapper.id,
+        Weight: 2,
+        Type: "Instruction",
+        Name: "Leaf Instruction",
+      },
+      $NodeEditorMetadata: {
+        $Nodes: {
+          [root.id]: {
+            $Position: { $x: 0, $y: 0 },
+          },
+          [wrapper.id]: {
+            $Position: { $x: 120, $y: 40 },
+          },
+        },
+        $WorkspaceID: SIBLING_SERIALIZATION_CONTEXT.rootMenuName,
+      },
+    });
+  });
+
   test("orders multiple-child outputs by vertical position when serializing", () => {
     const parsed = parseWorkspaceDocument(
       {
@@ -229,7 +479,7 @@ describe("node editor serializeDocument", () => {
     expect(serializedChildren.map(child => child.Value)).toEqual(["Second Value", "First Value"]);
   });
 
-  test("omits implicit empty string fields but preserves non-empty defaults", () => {
+  test("omits unset fields including non-empty defaults", () => {
     const parsed = parseWorkspaceDocument(
       {
         $NodeId: "Root-1",
@@ -241,7 +491,58 @@ describe("node editor serializeDocument", () => {
     const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
 
     expect(serialized).not.toHaveProperty("Name");
-    expect(serialized.Preset).toBe("Default Preset");
+    expect(serialized).not.toHaveProperty("Preset");
+  });
+
+  test("round-trips tuple array fields without changing their JSON shape", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Range: [1, 2],
+      },
+      TUPLE_CONTEXT,
+    );
+
+    expect(findNodeByBaseId(parsed, "Root-1").data.fieldsBySchemaKey.Range).toMatchObject({
+      type: "tuple",
+      tupleSize: 2,
+      tupleItemType: "float",
+      value: [1, 2],
+      isSet: true,
+    });
+    expect(serializeWorkspace(parsed, TUPLE_CONTEXT.rootMenuName).Range).toEqual([1, 2]);
+  });
+
+  test("omits unset default tuple fields", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      TUPLE_CONTEXT,
+    );
+
+    const serialized = serializeWorkspace(parsed, TUPLE_CONTEXT.rootMenuName);
+
+    expect(serialized).not.toHaveProperty("Range");
+  });
+
+  test("round-trips computable tuple fields", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Range: {
+          Compute: "randomInRange(1, 3)",
+        },
+      },
+      TUPLE_CONTEXT,
+    );
+
+    expect(serializeWorkspace(parsed, TUPLE_CONTEXT.rootMenuName).Range).toEqual({
+      Compute: "randomInRange(1, 3)",
+    });
   });
 
   test("preserves explicit empty string fields", () => {
@@ -273,6 +574,7 @@ describe("node editor serializeDocument", () => {
       ...rootNode.data.fieldsBySchemaKey.Name,
       value: "",
       isImplicit: false,
+      isSet: true,
     };
 
     const serialized = serializeWorkspace(parsed, TEST_CONTEXT.rootMenuName);
@@ -313,5 +615,60 @@ describe("node editor serializeDocument", () => {
     expect(right.$NodeId).toBe("SharedLeaf-22222222-2222-4222-8222-222222222222");
     expect(left.Child?.$NodeId).toBe("Grandchild-33333333-3333-4333-8333-333333333333");
     expect(right.Child?.$NodeId).toBe("Grandchild-33333333-3333-4333-8333-333333333333");
+  });
+
+  test("serializes reverse-input child slots back into parent-owned JSON keys", () => {
+    const parsed = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Sensor: {
+          $NodeId: "Sensor-1",
+          Type: "SensorLeaf",
+          Name: "Condition",
+        },
+        Filters: [
+          {
+            $NodeId: "Filter-1",
+            Type: "FilterLeaf",
+            Name: "First",
+          },
+          {
+            $NodeId: "Filter-2",
+            Type: "FilterLeaf",
+            Name: "Second",
+          },
+        ],
+        $NodeEditorMetadata: {
+          $WorkspaceID: REVERSE_INPUT_CONTEXT.rootMenuName,
+          $Nodes: {
+            "Root-1": {
+              $Position: { $x: 400, $y: 200 },
+            },
+            "Sensor-1": {
+              $Position: { $x: 120, $y: 160 },
+            },
+            "Filter-1": {
+              $Position: { $x: 120, $y: 260 },
+            },
+            "Filter-2": {
+              $Position: { $x: 120, $y: 340 },
+            },
+          },
+        },
+      },
+      REVERSE_INPUT_CONTEXT,
+    );
+
+    const serialized = normalizeRoundTripJson(
+      serializeWorkspace(parsed, REVERSE_INPUT_CONTEXT.rootMenuName),
+    ) as Record<string, unknown>;
+
+    expect((serialized.Sensor as Record<string, unknown>).Name).toBe("Condition");
+    expect(serialized.Filters).toBeInstanceOf(Array);
+    expect((serialized.Filters as Record<string, unknown>[]).map(filter => filter.Name)).toEqual([
+      "First",
+      "Second",
+    ]);
   });
 });

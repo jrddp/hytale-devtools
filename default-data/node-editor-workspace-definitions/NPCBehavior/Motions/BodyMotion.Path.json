@@ -1,0 +1,241 @@
+{
+  "Id": "BodyMotion.Path",
+  "Title": "Body Motion: Path",
+  "Color": "#00E7B6",
+  "Description": "Walk along a path",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "StartAtNearestNode",
+      "Type": "Bool",
+      "Description": "Start at closest warp point",
+      "Options": {
+        "Label": "StartAtNearestNode",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "PathWidth",
+      "Type": "Float",
+      "Description": "Walking corridor width",
+      "Options": {
+        "Label": "PathWidth",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "NodeWidth",
+      "Type": "Float",
+      "Description": "Radius of warp point node",
+      "Options": {
+        "Label": "NodeWidth",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 0.2,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MinRelSpeed",
+      "Type": "Float",
+      "Description": "Minimum relative walk speed",
+      "Options": {
+        "Label": "MinRelSpeed",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxRelSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative walk speed",
+      "Options": {
+        "Label": "MaxRelSpeed",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
+        "Default": 0.5,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MinWalkDistance",
+      "Type": "Float",
+      "Description": "Minimum walk distance when PathWidth greater 0",
+      "Options": {
+        "Label": "MinWalkDistance",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxWalkDistance",
+      "Type": "Float",
+      "Description": "Maximum walk distance when PathWidth greater 0",
+      "Options": {
+        "Label": "MaxWalkDistance",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Direction",
+      "Type": "Enum",
+      "Description": "Walking direction relative to order of nodes",
+      "Options": {
+        "Label": "Direction",
+        "Default": "FORWARD",
+        "Width": 220,
+        "Values": [
+          "FORWARD",
+          "BACKWARD",
+          "RANDOM",
+          "ANY"
+        ]
+      }
+    },
+    {
+      "Id": "Shape",
+      "Type": "Enum",
+      "Description": "Shape of Path",
+      "Options": {
+        "Label": "Shape",
+        "Default": "LOOP",
+        "Width": 220,
+        "Values": [
+          "LINE",
+          "LOOP",
+          "POINTS",
+          "CHAIN"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MinNodeDelay",
+      "Type": "Float",
+      "Description": "Minimum resting time at a node",
+      "Options": {
+        "Label": "MinNodeDelay",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "MaxNodeDelay",
+      "Type": "Float",
+      "Description": "Maximum resting time at a node",
+      "Options": {
+        "Label": "MaxNodeDelay",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "UseNodeViewDirection",
+      "Type": "Bool",
+      "Description": "Look into next node direction at node",
+      "Options": {
+        "Label": "UseNodeViewDirection",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "NodePauseScaleRange",
+      "Type": "Tuple",
+      "Description": "The range from which to pick a value that defines the portion of the total node pause time that should be spent facing a direction before turning",
+      "Options": {
+        "Label": "NodePauseScaleRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
+        "Default": [
+          0.2,
+          0.4
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "NodePauseExtraPercentRange",
+      "Type": "Tuple",
+      "Description": "A range from which to pick the additional percentage of the directional pause time to add to it",
+      "Options": {
+        "Label": "NodePauseExtraPercentRange",
+        "Min": 0,
+        "Max": 1,
+        "Default": [
+          0,
+          0.2
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "PickRandomAngle",
+      "Type": "Bool",
+      "Description": "Whether to sweep left and right using the observation angle, or pick a random angle within the sector each time",
+      "Options": {
+        "Label": "PickRandomAngle",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ViewSegments",
+      "Type": "Int",
+      "Description": "The number of distinct segments to stop at when sweeping from left to right using the observation angle",
+      "Options": {
+        "Label": "ViewSegments",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "StartAtNearestNode": "StartAtNearestNode",
+    "PathWidth": "PathWidth",
+    "NodeWidth": "NodeWidth",
+    "MinRelSpeed": "MinRelSpeed",
+    "MaxRelSpeed": "MaxRelSpeed",
+    "MinWalkDistance": "MinWalkDistance",
+    "MaxWalkDistance": "MaxWalkDistance",
+    "Direction": "Direction",
+    "Shape": "Shape",
+    "MinNodeDelay": "MinNodeDelay",
+    "MaxNodeDelay": "MaxNodeDelay",
+    "UseNodeViewDirection": "UseNodeViewDirection",
+    "NodePauseScaleRange": "NodePauseScaleRange",
+    "NodePauseExtraPercentRange": "NodePauseExtraPercentRange",
+    "PickRandomAngle": "PickRandomAngle",
+    "ViewSegments": "ViewSegments",
+    "Type": "Path"
+  }
+}

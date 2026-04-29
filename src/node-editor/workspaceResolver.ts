@@ -4,17 +4,25 @@ import { type SchemaRuntime } from "../schema/schemaLoader";
 import { type BasicLogger } from "../shared/commonTypes";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import { type AssetDocumentShape } from "../shared/node-editor/assetTypes";
+import { resolveConnectionTypes } from "../shared/node-editor/connectionTypes";
 import { INPUT_HANDLE_ID } from "../shared/node-editor/sharedConstants";
 import { toPosixPath } from "../shared/pathUtils";
 import {
   type FieldComponentType,
+  type NodeChildSchema,
   type NodeEditorWorkspace,
   type NodeEditorWorkspaceContext,
   type NodeEditorWorkspaceRootDefinition,
   type NodeField,
+  type NodeListItemType,
   type NodePin,
+  type NodeSchemaSerializationType,
+  type NodeSlotOccupancy,
   type NodeTemplate,
+  type NodeTupleItemType,
 } from "../shared/node-editor/workspaceTypes";
+import type { Field, StringField } from "../shared/fieldTypes";
+import type { IndexReference } from "../shared/indexTypes";
 import { isObject } from "../shared/typeUtils";
 import {
   type NodeContentDefinition,
@@ -126,12 +134,54 @@ export class WorkspaceRuntime {
       }
     }
 
+    return this.createWorkspaceContext(workspace, rootDefinition);
+  }
+
+  resolveWorkspaceContextByWorkspaceRoot(
+    workspaceName: string,
+    rootId: string,
+  ): NodeEditorWorkspaceContext | null {
+    const workspace = this.nodeEditorWorkspaces[workspaceName];
+    if (!workspace) {
+      return null;
+    }
+
+    const rootDefinition = workspace.roots[rootId];
+    if (!rootDefinition) {
+      this.logger.warn(
+        `Root definition "${rootId}" not found in workspace "${workspaceName}".`,
+      );
+      return null;
+    }
+
+    return this.createWorkspaceContext(workspace, rootDefinition);
+  }
+
+  private createWorkspaceContext(
+    workspace: NodeEditorWorkspace,
+    rootDefinition: NodeEditorWorkspaceRootDefinition,
+  ): NodeEditorWorkspaceContext {
+    const allowedCategories = rootDefinition.AllowedCategories;
+    const allowedTemplates = rootDefinition.AllowedTemplates;
+    const templateCategories = Object.fromEntries(
+      Object.entries(workspace.templateCategories)
+        .filter(([category]) => !allowedCategories || allowedCategories.includes(category))
+        .map(([category, templateIds]) => [
+          category,
+          allowedTemplates
+            ? templateIds.filter(templateId => allowedTemplates.includes(templateId))
+            : templateIds,
+        ])
+        .filter(([, templateIds]) => templateIds.length > 0),
+    );
+
     return {
       nodeTemplatesById: workspace.nodeTemplatesById,
       variantKindsById: workspace.variantKindsById,
-      templateCategories: workspace.templateCategories,
+      templateCategories,
       rootTemplateOrVariantId: rootDefinition.RootNodeType,
       rootMenuName: rootDefinition.MenuName,
+      connectionTypesById: workspace.connectionTypesById,
     };
   }
 
@@ -180,7 +230,12 @@ export class WorkspaceRuntime {
             continue;
           }
 
+          if (template.isComponentReference) {
+            continue;
+          }
+
           template.schemaConstants[variantKind.VariantFieldName] = variantValue;
+          this.removeVariantFieldCollision(template, variantKind.VariantFieldName, variantValue);
         }
       }
 
@@ -190,6 +245,14 @@ export class WorkspaceRuntime {
         roots: workspaceDefinition.Roots ?? {},
         nodeTemplatesById: templatesById,
         variantKindsById: workspaceDefinition.Variants ?? {},
+        connectionTypesById: resolveConnectionTypes(
+          workspaceDefinition.ConnectionTypes,
+          connectionPath => {
+            this.logger.warn(
+              `Circular node-editor connection type hierarchy detected: ${connectionPath.join(" -> ")}.`,
+            );
+          },
+        ),
       };
     }
 
@@ -305,6 +368,7 @@ export class WorkspaceRuntime {
             ]?.markdownDescription,
           color: input.Color,
           multiplicity: input.IsMap ? "map" : input.Multiple ? "multiple" : "single",
+          required: input.Required === true,
         };
       }) ?? [];
 
@@ -323,13 +387,14 @@ export class WorkspaceRuntime {
             }
           }
           map[output.Id] = {
-            schemaKey: "",
+            schemaKey: output.Id,
             localId: output.Id,
             connectionType: output.Type,
             label: output.Label,
             description: supplementedOutputDescriptions[output.Id] ?? output.Description,
             color: output.Color,
             multiplicity: type,
+            required: output.Required === true,
             fields,
           };
           return map;
@@ -345,7 +410,7 @@ export class WorkspaceRuntime {
     }
 
     const fieldsBySchemaKey: Record<string, NodeField> = {};
-    const childTypes: Record<string, string> = {};
+    const childSchemas: Record<string, NodeChildSchema> = {};
     const schemaConstants: Record<string, string> = {};
 
     for (let [schemaKey, entry] of Object.entries(definition.Schema ?? {})) {
@@ -361,8 +426,8 @@ export class WorkspaceRuntime {
 
           // hydrate with schema-sourced data
           const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
-          if (schemaField?.type === "string") {
-            nodeField.symbolLookup = schemaField.symbolRef;
+          if (nodeField.symbolLookup === undefined) {
+            nodeField.symbolLookup = this.getSchemaFieldSymbolLookup(schemaField);
           }
           if (schemaField?.type === "color") {
             nodeField.type = "color";
@@ -383,19 +448,47 @@ export class WorkspaceRuntime {
           continue;
         }
         const outputPin = outputPinsByLocalId[pinId];
-        if (!outputPin) {
+        const inputPin = inputPins.find(pin => pin.localId === pinId);
+        const resolvedPin = outputPin ?? inputPin;
+        if (!resolvedPin) {
           this.logger.error(
             `Pin ${pinId} not resolved to local id for schema key ${schemaKey} of template ${definition.Id}`,
           );
           continue;
         }
 
-        outputPin.schemaKey = schemaKey;
+        resolvedPin.schemaKey = schemaKey;
 
         const schemaField = assetObjectFieldDefinition?.properties[schemaKey];
-        outputPin.description = outputPin.description ?? schemaField?.markdownDescription;
-        childTypes[schemaKey] = variantOrTemplateId;
+        resolvedPin.description = resolvedPin.description ?? schemaField?.markdownDescription;
+        childSchemas[schemaKey] = {
+          schemaKey,
+          targetTemplateOrVariantId: variantOrTemplateId,
+          serializationType: this.parseSchemaSerializationType(entry),
+          allowComponentReferences: this.parseAllowComponentReferences(entry),
+          componentReferenceSlotOccupancy: this.parseComponentReferenceSlotOccupancy(entry),
+        };
       }
+    }
+
+    const componentReferenceClass =
+      typeof definition.ComponentReferenceClass === "string"
+        ? definition.ComponentReferenceClass
+        : undefined;
+    if (
+      definition.IsComponentReference === true &&
+      componentReferenceClass &&
+      fieldsBySchemaKey.Reference
+    ) {
+      fieldsBySchemaKey.Reference.computable = true;
+      fieldsBySchemaKey.Reference.symbolLookup = {
+        indexKind: "registeredAssets",
+        key: "NPCRole",
+        filter: {
+          npcRoleTypes: ["Component"],
+          npcComponentClasses: [componentReferenceClass],
+        },
+      };
     }
 
     return {
@@ -403,12 +496,15 @@ export class WorkspaceRuntime {
       defaultTitle: definition.Title,
       description:
         supplement?.Description ?? definition.Description ?? assetFieldDefinition?.markdownDescription,
-      childTypes: childTypes,
+      childSchemas,
       fieldsBySchemaKey: fieldsBySchemaKey,
       inputPins: inputPins,
       outputPins: Object.values(outputPinsByLocalId),
       schemaConstants: schemaConstants,
       nodeColor: definition.Color,
+      isComponentReference: definition.IsComponentReference === true ? true : undefined,
+      componentReferenceClass,
+      slotOccupancy: definition.SlotOccupancy === "whole-slot" ? "whole-slot" : undefined,
     };
   }
 
@@ -428,6 +524,50 @@ export class WorkspaceRuntime {
     );
   }
 
+  private parseSchemaSerializationType(
+    entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
+  ): NodeSchemaSerializationType {
+    const serializationType = entry.SerializationType ?? entry.serializationType;
+    if (serializationType === "root" || serializationType === "sibling") {
+      return serializationType;
+    }
+    return "child";
+  }
+
+  private parseAllowComponentReferences(
+    entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
+  ): boolean | undefined {
+    const allowComponentReferences =
+      entry.AllowComponentReferences ?? entry.allowComponentReferences;
+    return allowComponentReferences === true ? true : undefined;
+  }
+
+  private parseComponentReferenceSlotOccupancy(
+    entry: Extract<NonNullable<NodeTemplateDefinition["Schema"]>[string], Record<string, unknown>>,
+  ): NodeSlotOccupancy | undefined {
+    const occupancy =
+      entry.ComponentReferenceSlotOccupancy ?? entry.componentReferenceSlotOccupancy;
+    return occupancy === "whole-slot" || occupancy === "normal-item" ? occupancy : undefined;
+  }
+
+  private removeVariantFieldCollision(
+    template: NodeTemplate,
+    variantFieldName: string,
+    variantValue: string,
+  ): void {
+    const collidingField = template.fieldsBySchemaKey[variantFieldName];
+    if (!collidingField || collidingField.localId !== variantValue) {
+      return;
+    }
+
+    const canonicalField = template.fieldsBySchemaKey[variantValue];
+    if (canonicalField?.localId === variantValue) {
+      canonicalField.schemaKey = variantValue;
+    }
+
+    delete template.fieldsBySchemaKey[variantFieldName];
+  }
+
   private fieldsFromContentDefinitions(
     content: NodeContentDefinition[],
     supplementedDescriptionsByLocalId: Record<string, string> = {},
@@ -436,6 +576,10 @@ export class WorkspaceRuntime {
       const overrideAutocompleteValues = Array.isArray(content.Options?.Values)
         ? content.Options.Values.filter((value): value is string => typeof value === "string")
         : undefined;
+      const parameterMapKeyOverrideAutocompleteValues = Array.isArray(content.Options?.ParameterMapKeyValues)
+        ? content.Options.ParameterMapKeyValues.filter((value): value is string => typeof value === "string")
+        : undefined;
+      const defaultValue = content.Options?.Default ?? content.Options?.DefaultValue;
 
       return {
         schemaKey: content.Id,
@@ -446,10 +590,37 @@ export class WorkspaceRuntime {
           supplementedDescriptionsByLocalId[content.Id] ??
           content.Description ??
           content.Options.Description,
-        value: content.Options?.Default ?? content.Options?.DefaultValue,
+        value: defaultValue,
+        defaultValue,
+        computable: content.Options?.Computable === true,
         isImplicit: true,
+        isExplicitEmpty: false,
+        isSet: false,
+        required: content.Options?.Required === true,
         inputWidth: content.Options?.Width,
+        minValue: content.Options?.Min,
+        maxValue: content.Options?.Max,
+        minValueExclusive: content.Options?.MinExclusive === true,
+        maxValueExclusive: content.Options?.MaxExclusive === true,
+        minItems: content.Options?.MinItems,
+        maxItems: content.Options?.MaxItems,
+        disallowEmpty: content.Options?.DisallowEmpty === true,
+        disallowEmptyItems: content.Options?.DisallowEmptyItems === true,
+        uniqueItems: content.Options?.UniqueItems === true,
+        listItemType: this.resolveListItemType(content),
+        tupleSize: this.resolveTupleSize(content),
+        tupleItemType: this.resolveTupleItemType(content),
         overrideAutocompleteValues,
+        symbolLookup: content.Options?.SymbolLookup
+          ? this.cloneIndexReference(content.Options.SymbolLookup)
+          : undefined,
+        parameterMapKeyOverrideAutocompleteValues,
+        parameterMapKeySymbolLookup: content.Options?.ParameterMapKeySymbolLookup
+          ? this.cloneIndexReference(content.Options.ParameterMapKeySymbolLookup)
+          : undefined,
+        stateAutocompleteKind: content.Options?.StateAutocompleteKind,
+        animationAutocompleteKind: content.Options?.AnimationAutocompleteKind,
+        previewFeatureKind: content.Options?.AnimationAutocompleteKind ? "animation" : undefined,
         subfields: content.Options?.Fields
           ? this.fieldsFromContentDefinitions(content.Options.Fields)
           : undefined,
@@ -479,11 +650,97 @@ export class WorkspaceRuntime {
         return "filepath";
       case "List":
         return "list";
+      case "Tuple":
+        return "tuple";
+      case "ParameterMap":
+        return "parameterMap";
       case "Object":
         return "object";
       default:
         this.logger.warn(`Unknown node template content type: ${type}. Defaulting to string.`);
         return "string";
     }
+  }
+
+  private resolveTupleSize(content: NodeContentDefinition): number | undefined {
+    if (content.Type !== "Tuple") {
+      return undefined;
+    }
+
+    const configuredSize = content.Options?.TupleSize;
+    if (typeof configuredSize === "number" && Number.isInteger(configuredSize) && configuredSize >= 0) {
+      return configuredSize;
+    }
+
+    const defaultValue = content.Options?.Default ?? content.Options?.DefaultValue;
+    return Array.isArray(defaultValue) ? defaultValue.length : 0;
+  }
+
+  private resolveListItemType(content: NodeContentDefinition): NodeListItemType | undefined {
+    if (content.Type !== "List") {
+      return undefined;
+    }
+
+    switch (content.Options?.Type) {
+      case "Float":
+        return "float";
+      case "Int":
+        return "int";
+      case "String":
+      default:
+        return "string";
+    }
+  }
+
+  private resolveTupleItemType(content: NodeContentDefinition): NodeTupleItemType | undefined {
+    if (content.Type !== "Tuple") {
+      return undefined;
+    }
+
+    switch (content.Options?.TupleItemType) {
+      case "Float":
+        return "float";
+      case "Int":
+        return "int";
+      case "String":
+      default:
+        return "string";
+    }
+  }
+
+  private getSchemaFieldSymbolLookup(schemaField: Field | undefined): IndexReference | undefined {
+    if (!schemaField) {
+      return undefined;
+    }
+
+    if (schemaField.type === "string") {
+      return schemaField.symbolRef ? this.cloneIndexReference(schemaField.symbolRef) : undefined;
+    }
+
+    if (
+      schemaField.type === "array" &&
+      !Array.isArray(schemaField.items) &&
+      schemaField.items.type === "string"
+    ) {
+      const itemField = schemaField.items as StringField;
+      return itemField.symbolRef ? this.cloneIndexReference(itemField.symbolRef) : undefined;
+    }
+
+    return undefined;
+  }
+
+  private cloneIndexReference(reference: IndexReference): IndexReference {
+    if (reference.indexKind === "commonAssetPaths") {
+      return {
+        ...reference,
+        folders: [...reference.folders],
+        filter: reference.filter ? { ...reference.filter } : undefined,
+      };
+    }
+
+    return {
+      ...reference,
+      filter: reference.filter ? { ...reference.filter } : undefined,
+    };
   }
 }

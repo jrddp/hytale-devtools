@@ -1,0 +1,169 @@
+{
+  "Id": "Sensor.Light",
+  "Title": "Sensor: Light",
+  "Color": "#7091F0",
+  "Description": "Check the light levels of the block an entity is standing on",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "LightRange",
+      "Type": "Tuple",
+      "Description": "The light intensity percentage range",
+      "Options": {
+        "Label": "LightRange",
+        "Min": 0,
+        "Max": 100,
+        "Default": [
+          0,
+          100
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SkyLightRange",
+      "Type": "Tuple",
+      "Description": "The sky light percentage range",
+      "Options": {
+        "Label": "SkyLightRange",
+        "Min": 0,
+        "Max": 100,
+        "Default": [
+          0,
+          100
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SunlightRange",
+      "Type": "Tuple",
+      "Description": "The sunlight percentage range",
+      "Options": {
+        "Label": "SunlightRange",
+        "Min": 0,
+        "Max": 100,
+        "Default": [
+          0,
+          100
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RedLightRange",
+      "Type": "Tuple",
+      "Description": "The red light percentage range",
+      "Options": {
+        "Label": "RedLightRange",
+        "Min": 0,
+        "Max": 100,
+        "Default": [
+          0,
+          100
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "GreenLightRange",
+      "Type": "Tuple",
+      "Description": "The green light percentage range",
+      "Options": {
+        "Label": "GreenLightRange",
+        "Min": 0,
+        "Max": 100,
+        "Default": [
+          0,
+          100
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "BlueLightRange",
+      "Type": "Tuple",
+      "Description": "The blue light percentage range",
+      "Options": {
+        "Label": "BlueLightRange",
+        "Min": 0,
+        "Max": 100,
+        "Default": [
+          0,
+          100
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "UseTargetSlot",
+      "Type": "SmallString",
+      "Description": "A target slot to check. If omitted, will check self",
+      "Options": {
+        "Label": "UseTargetSlot",
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "LightRange": "LightRange",
+    "SkyLightRange": "SkyLightRange",
+    "SunlightRange": "SunlightRange",
+    "RedLightRange": "RedLightRange",
+    "GreenLightRange": "GreenLightRange",
+    "BlueLightRange": "BlueLightRange",
+    "UseTargetSlot": "UseTargetSlot",
+    "Type": "Light"
+  }
+}

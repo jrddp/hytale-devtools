@@ -1,0 +1,120 @@
+{
+  "Id": "Sensor.DroppedItem",
+  "Title": "Sensor: DroppedItem",
+  "Color": "#7091F0",
+  "Description": "Triggers if a given item is within a certain range of the NPC.",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The range within which to look",
+      "Options": {
+        "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ViewSector",
+      "Type": "Float",
+      "Description": "View sector in which to look",
+      "Options": {
+        "Label": "ViewSector",
+        "Min": 0,
+        "Max": 360,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "LineOfSight",
+      "Type": "Bool",
+      "Description": "Requires line of sight to item",
+      "Options": {
+        "Label": "LineOfSight",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match. If omitted, will match any item",
+      "Options": {
+        "Label": "Items",
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
+      "Id": "Attitudes",
+      "Type": "List",
+      "Description": "Attitudes to match",
+      "Options": {
+        "Label": "Attitudes",
+        "Default": [],
+        "Width": 240,
+        "Type": "String",
+        "UniqueItems": true,
+        "Values": [
+          "Ignore",
+          "Dislike",
+          "Neutral",
+          "Like",
+          "Love"
+        ],
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Range": "Range",
+    "ViewSector": "ViewSector",
+    "LineOfSight": "LineOfSight",
+    "Items": "Items",
+    "Attitudes": "Attitudes",
+    "Type": "DroppedItem"
+  }
+}

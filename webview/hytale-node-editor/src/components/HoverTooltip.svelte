@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
 
+  export let headingText = undefined;
   export let text;
+  export let italicText = undefined;
   export let delayMs = 300;
   export let disabled = false;
   export let placement = "bottom";
@@ -12,10 +14,12 @@
   let isVisible = false;
   let hoverTimer;
 
-  $: tooltipText = typeof text === "string" ? text : undefined;
+  $: tooltipHeadingText = typeof headingText === "string" ? headingText : undefined;
+  $: tooltipText = typeof text === "string" ? stripOfficialDocumentationLink(text) : undefined;
+  $: tooltipItalicText = typeof italicText === "string" ? italicText : undefined;
   $: tooltipDelayMs = Number(delayMs) || 0;
-  $: placementClass = readPlacementClass(placement);
-  $: if (disabled || !tooltipText) {
+  $: placementStyle = readPlacementStyle(placement);
+  $: if (disabled || !hasTooltipContent()) {
     hideTooltip();
   }
 
@@ -36,7 +40,7 @@
   }
 
   function scheduleTooltip() {
-    if (disabled || !tooltipText) {
+    if (disabled || !hasTooltipContent()) {
       return;
     }
     clearHoverTimer();
@@ -59,7 +63,7 @@
   }
 
   function handleFocusIn() {
-    if (disabled || !tooltipText) {
+    if (disabled || !hasTooltipContent()) {
       return;
     }
     clearHoverTimer();
@@ -74,17 +78,40 @@
     hideTooltip();
   }
 
-  function readPlacementClass(candidatePlacement) {
+  function hasTooltipContent() {
+    return Boolean(tooltipHeadingText || tooltipText || tooltipItalicText);
+  }
+
+  function readPlacementStyle(candidatePlacement) {
     switch (candidatePlacement) {
+      case "top-start":
+        return "left: 0; bottom: calc(100% + 6px);";
       case "top":
-        return "left-1/2 bottom-full mb-1.5 -translate-x-1/2";
+        return "left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%);";
       case "right":
-        return "left-full top-1/2 ml-2 -translate-y-1/2";
+        return "left: calc(100% + 8px); top: 50%; transform: translateY(-50%);";
       case "left":
-        return "right-full top-1/2 mr-2 -translate-y-1/2";
+        return "right: calc(100% + 8px); top: 50%; transform: translateY(-50%);";
       default:
-        return "left-1/2 top-full mt-1.5 -translate-x-1/2";
+        return "left: 50%; top: calc(100% + 6px); transform: translateX(-50%);";
     }
+  }
+
+  function isErrorLine(line) {
+    return line.startsWith("Error:");
+  }
+
+  function isWarningLine(line) {
+    return line.startsWith("Warning:");
+  }
+
+  function stripOfficialDocumentationLink(value) {
+    return value
+      .replace(
+        /\n*\*?\[Official Documentation\]\([^)]+\)\*?/gi,
+        "",
+      )
+      .trim();
   }
 </script>
 
@@ -99,12 +126,32 @@
   onfocusout={handleFocusOut}
 >
   <slot />
-  {#if isVisible && tooltipText}
+  {#if isVisible && hasTooltipContent()}
     <div
       role="tooltip"
-      class="pointer-events-none absolute z-20 w-max max-w-80 whitespace-pre-line rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {placementClass} {tooltipClass}"
+      style={placementStyle}
+      class="pointer-events-none absolute z-20 w-max max-w-80 whitespace-pre-line rounded-md border border-vsc-editor-widget-border bg-vsc-editor-widget-bg px-2 py-1 text-[11px] leading-4 text-vsc-input-fg shadow-lg {tooltipClass}"
     >
-      {tooltipText}
+      {#if tooltipHeadingText}
+        <strong>{tooltipHeadingText}</strong>
+      {/if}
+      {#if tooltipText}
+        {#if tooltipHeadingText}<br />{/if}
+        {#each tooltipText.split("\n") as line, index (index)}
+          {#if index > 0}<br />{/if}
+          {#if isErrorLine(line)}
+            <strong>Error:</strong>{line.slice("Error:".length)}
+          {:else if isWarningLine(line)}
+            <strong>Warning:</strong>{line.slice("Warning:".length)}
+          {:else}
+            {line}
+          {/if}
+        {/each}
+      {/if}
+      {#if tooltipItalicText}
+        {#if tooltipHeadingText || tooltipText}<br /><br />{/if}
+        <em>{tooltipItalicText}</em>
+      {/if}
     </div>
   {/if}
 </div>

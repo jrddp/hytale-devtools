@@ -1,23 +1,23 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
   import { tick } from "svelte";
-  import type { CommentNodeType } from "src/common";
-  import ZoomCompensatedNodeResizer from "src/components/ZoomCompensatedNodeResizer.svelte";
+  import type { CommentNodeType } from "@node-editor/common";
+  import ZoomCompensatedNodeResizer from "@node-editor/components/ZoomCompensatedNodeResizer.svelte";
   import {
     DEFAULT_COMMENT_FONT_SIZE,
     DEFAULT_COMMENT_HEIGHT,
     DEFAULT_COMMENT_WIDTH,
-  } from "src/constants";
+  } from "@node-editor/constants";
   import {
     createNodePropertiesUpdatedEdit,
     createNodeResizeChange,
-  } from "src/node-editor/utils/graphDocument";
+  } from "@node-editor/node-editor/utils/graphDocument";
   import {
     focusNextEditableInNode,
     isPlainEnterNavigationEvent,
-  } from "src/node-editor/utils/focusNavigation";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { applyDocumentState, applyGraphEdit } from "src/workspace.svelte";
+  } from "@node-editor/node-editor/utils/focusNavigation";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
 
   const MIN_FONT_SIZE = 8;
   const MAX_FONT_SIZE = 128;
@@ -27,6 +27,7 @@
   let { id, data, width, height, selected = false, dragging = false }: CommentNodeType = $props();
 
   const { updateNode, updateNodeData } = useSvelteFlow();
+  const workspace = useNodeEditorSession();
 
   let rootElement = $state<HTMLDivElement>();
   let titleInputElement = $state<HTMLInputElement>();
@@ -190,9 +191,9 @@
     const didResize = await resizeNodeToFitContent(currentSize.width, currentSize.height);
 
     if (didChange) {
-      applyDocumentState("node-renamed");
+      workspace.applyDocumentState("node-renamed");
     } else if (didResize) {
-      applyDocumentState("node-resized");
+      workspace.applyDocumentState("node-resized");
     }
 
     isCommittingTitle = false;
@@ -229,10 +230,10 @@
         resizeChange ? [resizeChange] : [],
       );
       if (edit) {
-        applyGraphEdit(edit);
+        workspace.applyGraphEdit(edit);
       }
     } else if (didResize) {
-      applyDocumentState("node-resized");
+      workspace.applyDocumentState("node-resized");
     }
 
     isCommittingComment = false;
@@ -281,10 +282,10 @@
         resizeChange ? [resizeChange] : [],
       );
       if (edit) {
-        applyGraphEdit(edit);
+        workspace.applyGraphEdit(edit);
       }
     } else if (resizeChange) {
-      applyDocumentState("node-resized");
+      workspace.applyDocumentState("node-resized");
     }
 
     isCommittingFontSize = false;
@@ -335,7 +336,7 @@
   }
 
   function handleResizeEnd() {
-    applyDocumentState("node-resized");
+    workspace.applyDocumentState("node-resized");
   }
 
   function handleFontSizeInput(event: Event & { currentTarget: HTMLInputElement }) {

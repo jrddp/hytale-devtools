@@ -5,7 +5,6 @@
   import { dragHandle, dragHandleZone, type DndEvent } from "svelte-dnd-action";
   import { type FieldPanelHandle, type RenderFieldProps } from "src/common";
   import FieldRenderer from "src/components/FieldRenderer.svelte";
-  import { isFieldSet } from "src/components/fieldHelpers";
   import type {
     FieldInstance,
     MapFieldInstance,
@@ -71,7 +70,7 @@
   };
 
   function addEntry() {
-    const key = `Entry ${field.entries.length + 1}`;
+    const key = createUniqueEntryKey("Entry");
     const entryId = `map-field-entry-${key}`;
     const valueField = workspace.createEmptyFieldInstance(field.valueField);
     valueField.schemaKey = key;
@@ -131,16 +130,29 @@
       return;
     }
 
+    if (field.entries.some((entry, index) => index !== entryIndex && entry.key === normalizedKey)) {
+      return false;
+    }
+
     field.entries[entryIndex].key = normalizedKey;
     field.entries[entryIndex].valueField.schemaKey = normalizedKey;
     workspace.syncFieldPaths(field);
-
-    // TODO FIXME we should be persisting empty map entries since we want to ensure we persist their keys
-    if (isFieldSet(field.entries[entryIndex]?.valueField)) {
-      workspace.applyDocumentState();
-    }
+    workspace.applyDocumentState();
 
     return true;
+  }
+
+  function createUniqueEntryKey(prefix: string) {
+    const existingKeys = new Set(field.entries.map(entry => entry.key));
+    let index = field.entries.length + 1;
+    let candidate = `${prefix} ${index}`;
+
+    while (existingKeys.has(candidate)) {
+      index += 1;
+      candidate = `${prefix} ${index}`;
+    }
+
+    return candidate;
   }
 
   function getEntryKeyField(entry: MapEntry) {

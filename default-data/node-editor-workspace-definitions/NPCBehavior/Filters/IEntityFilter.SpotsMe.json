@@ -1,0 +1,72 @@
+{
+  "Id": "IEntityFilter.SpotsMe",
+  "Title": "Filter: SpotsMe",
+  "Color": "#60C8B8",
+  "Description": "Checks if the entity can view the NPC in a given view sector or cone and without obstruction.",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ViewAngle",
+      "Type": "Float",
+      "Description": "Angle used for view sector and view cone test",
+      "Options": {
+        "Label": "ViewAngle",
+        "Min": 0,
+        "Max": 360,
+        "Default": 90,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "ViewTest",
+      "Type": "Enum",
+      "Description": "Check if the entity is in the view cone, view sector, or neither",
+      "Options": {
+        "Label": "ViewTest",
+        "Default": "VIEW_SECTOR",
+        "Width": 220,
+        "Values": [
+          "NONE",
+          "VIEW_SECTOR",
+          "VIEW_CONE"
+        ]
+      }
+    },
+    {
+      "Id": "TestLineOfSight",
+      "Type": "Bool",
+      "Description": "Check if view to the npc is not obstructed",
+      "Options": {
+        "Label": "TestLineOfSight",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "ViewAngle": "ViewAngle",
+    "ViewTest": "ViewTest",
+    "TestLineOfSight": "TestLineOfSight",
+    "Type": "SpotsMe"
+  }
+}

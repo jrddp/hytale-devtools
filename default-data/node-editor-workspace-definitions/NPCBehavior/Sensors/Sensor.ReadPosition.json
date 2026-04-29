@@ -1,0 +1,95 @@
+{
+  "Id": "Sensor.ReadPosition",
+  "Title": "Sensor: ReadPosition",
+  "Color": "#7091F0",
+  "Description": "Read a stored position with some conditions",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "SmallString",
+      "Description": "The slot to read the position from",
+      "Options": {
+        "Label": "Slot",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MinRange",
+      "Type": "Float",
+      "Description": "Minimum range from stored position",
+      "Options": {
+        "Label": "MinRange",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Maximum range from stored position",
+      "Options": {
+        "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "UseMarkedTarget",
+      "Type": "Bool",
+      "Description": "Whether to read from a marked target slot instead of a position slot",
+      "Options": {
+        "Label": "UseMarkedTarget",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Slot": "Slot",
+    "MinRange": "MinRange",
+    "Range": "Range",
+    "UseMarkedTarget": "UseMarkedTarget",
+    "Type": "ReadPosition"
+  }
+}

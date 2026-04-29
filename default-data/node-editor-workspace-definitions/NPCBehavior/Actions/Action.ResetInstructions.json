@@ -1,0 +1,43 @@
+{
+  "Id": "Action.ResetInstructions",
+  "Title": "Action: ResetInstructions",
+  "Color": "#CC3361",
+  "Description": "Force reset instructionList",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Instructions",
+      "Type": "List",
+      "Description": "The instructionList to reset",
+      "Options": {
+        "Label": "Instructions",
+        "DisallowEmptyItems": true,
+        "Width": 240,
+        "Type": "String",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Instructions": "Instructions",
+    "Type": "ResetInstructions"
+  }
+}

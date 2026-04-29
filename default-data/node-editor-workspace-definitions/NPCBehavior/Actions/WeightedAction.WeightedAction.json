@@ -1,0 +1,47 @@
+{
+  "Id": "WeightedAction.WeightedAction",
+  "Title": "Action: Weighted Action",
+  "Color": "#CC3361",
+  "Description": "A wrapped and weighted action intended to be used for Random action lists.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WeightedAction",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ActionPin",
+      "Type": "Action",
+      "Color": "#CC3361",
+      "Label": "Action",
+      "Description": "The action to run",
+      "Required": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Weight",
+      "Type": "Float",
+      "Description": "The weight representing how likely this action is to run",
+      "Options": {
+        "Label": "Weight",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Action": {
+      "Pin": "ActionPin",
+      "Node": "ActionVariants",
+      "AllowComponentReferences": true
+    },
+    "Weight": "Weight"
+  }
+}

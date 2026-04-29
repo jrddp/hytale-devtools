@@ -1,0 +1,43 @@
+{
+  "Id": "Action.ParentState",
+  "Title": "Action: ParentState",
+  "Color": "#CC3361",
+  "Description": "Set the main state of NPC from within a component",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "State",
+      "Type": "SmallString",
+      "Description": "The alias of the external state to set, as defined by _ImportStates in parameters",
+      "Options": {
+        "Label": "State",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "StateAutocompleteKind": "component-parent-alias"
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "State": "State",
+    "Type": "ParentState"
+  }
+}

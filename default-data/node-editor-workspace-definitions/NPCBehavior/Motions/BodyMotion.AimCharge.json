@@ -1,0 +1,34 @@
+{
+  "Id": "BodyMotion.AimCharge",
+  "Title": "Body Motion: AimCharge",
+  "Color": "#00E7B6",
+  "Description": "Aim the NPC at a target position for performing a charge based on aiming information and ensure that the charge is possible before it's executed.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "RelativeTurnSpeed",
+      "Type": "Float",
+      "Description": "The relative turn speed modifier",
+      "Options": {
+        "Label": "RelativeTurnSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "RelativeTurnSpeed": "RelativeTurnSpeed",
+    "Type": "AimCharge"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "Id": "Action.DelayDespawn",
+  "Title": "Action: DelayDespawn",
+  "Color": "#CC3361",
+  "Description": "Delay the despawning cycle for some amount of time",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Time",
+      "Type": "Float",
+      "Description": "How long to set the to delay",
+      "Options": {
+        "Label": "Time",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Shorten",
+      "Type": "Bool",
+      "Description": "Set the delay to either the current delay or the given time. Whatever is smaller.",
+      "Options": {
+        "Label": "Shorten",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Time": "Time",
+    "Shorten": "Shorten",
+    "Type": "DelayDespawn"
+  }
+}

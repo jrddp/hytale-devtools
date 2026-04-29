@@ -1,0 +1,63 @@
+{
+  "Id": "Structural.StateTransitionMappingNode",
+  "Title": "State Mapping",
+  "Color": "#2D3746",
+  "Description": "Maps a list of source states to a list of destination states.",
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "StateTransitionMapping",
+      "Color": "#2D3746",
+      "Label": "State Mapping"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "From",
+      "Type": "List",
+      "Description": "Main states that can trigger this transition mapping.",
+      "Options": {
+        "Label": "From",
+        "Width": 220,
+        "StateAutocompleteKind": "role-main"
+      }
+    },
+    {
+      "Id": "To",
+      "Type": "List",
+      "Description": "Main states that this mapping transitions into.",
+      "Options": {
+        "Label": "To",
+        "Width": 220,
+        "StateAutocompleteKind": "role-main"
+      }
+    },
+    {
+      "Id": "Priority",
+      "Type": "Int",
+      "Description": "Optional mapping priority override.",
+      "Options": {
+        "Label": "Priority",
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this mapping is enabled.",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "From": "From",
+    "To": "To",
+    "Priority": "Priority",
+    "Enabled": "Enabled"
+  }
+}

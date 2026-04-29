@@ -1,0 +1,70 @@
+{
+  "Id": "Action.Role",
+  "Title": "Action: Role",
+  "Color": "#CC3361",
+  "Description": "Change the Role of the NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Role",
+      "Type": "SmallString",
+      "Description": "The name of the Role to change to",
+      "Options": {
+        "Label": "Role",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCRole"
+        }
+      }
+    },
+    {
+      "Id": "ChangeAppearance",
+      "Type": "Bool",
+      "Description": "Whether the appearance of the new Role should be used",
+      "Options": {
+        "Label": "ChangeAppearance",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "State",
+      "Type": "SmallString",
+      "Description": "State name to set",
+      "Options": {
+        "Label": "State",
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Role": "Role",
+    "ChangeAppearance": "ChangeAppearance",
+    "State": "State",
+    "Type": "Role"
+  }
+}

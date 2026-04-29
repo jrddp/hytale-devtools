@@ -1,0 +1,57 @@
+{
+  "Id": "Sensor.Age",
+  "Title": "Sensor: Age",
+  "Color": "#7091F0",
+  "Description": "Triggers when the age of the NPC falls between a certain range",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AgeRange",
+      "Type": "Tuple",
+      "Description": "The age range within which to trigger",
+      "Options": {
+        "Label": "AgeRange",
+        "Required": true,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "String",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "AgeRange": "AgeRange",
+    "Type": "Age"
+  }
+}

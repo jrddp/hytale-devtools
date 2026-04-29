@@ -1,0 +1,55 @@
+{
+  "Id": "Sensor.Kill",
+  "Title": "Sensor: Kill",
+  "Color": "#7091F0",
+  "Description": "Test if NPC made a kill",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to check if killed. If omitted, will accept any entity killed",
+      "Options": {
+        "Label": "TargetSlot",
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "TargetSlot": "TargetSlot",
+    "Type": "Kill"
+  }
+}

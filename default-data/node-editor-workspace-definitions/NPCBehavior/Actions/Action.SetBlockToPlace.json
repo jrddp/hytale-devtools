@@ -1,0 +1,46 @@
+{
+  "Id": "Action.SetBlockToPlace",
+  "Title": "Action: SetBlockToPlace",
+  "Color": "#CC3361",
+  "Description": "Set the block type the NPC will place",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Block",
+      "Type": "SmallString",
+      "Description": "The block item type",
+      "Options": {
+        "Label": "Block",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Block": "Block",
+    "Type": "SetBlockToPlace"
+  }
+}

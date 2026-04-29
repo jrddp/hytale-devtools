@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CommitTextInput from "@webview-shared/components/inputs/CommitTextInput.svelte";
   import type { RenderFieldProps } from "src/common";
   import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
   import { onMount } from "svelte";
@@ -84,7 +85,7 @@
   {handle}
   summary={field.colorType}
   inline
-  onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
+  onunset={!readOnly && (onunset || isSet) ? (onunset ?? unsetValue) : undefined}
 >
   <ReadOnlyInputWrapper readOnly={readOnly} {readOnlyMessage} class="min-w-0">
     <div class="flex items-center gap-3">
@@ -106,21 +107,15 @@
           {inputValue !== "" ? inputValue : placeholder}
         </div>
       {:else}
-        <input
-          id={inputId}
-          type="text"
-          class="flex-1 px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-          bind:value={draftValue}
+        <CommitTextInput
+          {inputId}
+          initialValue={draftValue ?? ""}
+          inputClass={`flex-1 px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 ${!hasFallbackPlaceholder ? "placeholder:italic" : ""}`.trim()}
           {placeholder}
-          class:placeholder:italic={!hasFallbackPlaceholder}
           spellcheck="false"
-          onblur={commitValue}
-          onkeydown={event => {
-            if (event.key === "Enter" || event.key === "Escape") {
-              event.preventDefault();
-              commitValue();
-              event.currentTarget.blur();
-            }
+          oncommit={nextValue => {
+            draftValue = nextValue;
+            commitValue();
           }}
         />
       {/if}

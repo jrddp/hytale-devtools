@@ -1,0 +1,171 @@
+{
+  "Id": "Structural.InstructionNode",
+  "Title": "Instruction",
+  "Color": "#2D3746",
+  "Description": "An instruction with Sensor, and Motions and Actions, or a list of nested instructions.",
+  "Inputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "Sensor",
+      "Description": "Sensor for testing if instruction can be applied"
+    },
+    {
+      "Id": "Input",
+      "Type": "Instruction",
+      "Color": "#2D3746",
+      "Label": "Parent"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "BodyMotionPin",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Body Motion",
+      "Description": "Body motion to be executed"
+    },
+    {
+      "Id": "HeadMotionPin",
+      "Type": "HeadMotion",
+      "Color": "#B08CE0",
+      "Label": "Head Motion",
+      "Description": "Head motion to be executed"
+    },
+    {
+      "Id": "ActionsPin",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Actions",
+      "Description": "Actions to be executed",
+      "Multiple": true
+    },
+    {
+      "Id": "InstructionsPin",
+      "Type": "Instruction",
+      "Color": "#2D3746",
+      "Label": "Instructions",
+      "Description": "Optional nested list of instructions",
+      "Multiple": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "Optional name for descriptor",
+      "Options": {
+        "Label": "Name",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "Tag",
+      "Type": "SmallString",
+      "Description": "Internal identifier tag for debugging",
+      "Options": {
+        "Label": "Tag",
+        "DisallowEmpty": true,
+        "Width": 220
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this instruction should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ActionsBlocking",
+      "Type": "Bool",
+      "Description": "Do not execute an action unless the previous action could execute",
+      "Options": {
+        "Label": "ActionsBlocking",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ActionsAtomic",
+      "Type": "Bool",
+      "Description": "Only execute actions if all actions can be executed",
+      "Options": {
+        "Label": "ActionsAtomic",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Continue",
+      "Type": "Bool",
+      "Description": "Continue after this instruction was executed",
+      "Options": {
+        "Label": "Continue",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TreeMode",
+      "Type": "Bool",
+      "Description": "Whether this instruction and its contents should be treated like a traditional behaviour tree.",
+      "Options": {
+        "Label": "TreeMode",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "InvertTreeModeResult",
+      "Type": "Bool",
+      "Description": "Whether or not to invert the result of TreeMode evaluation when passing up to parent TreeMode instructions",
+      "Options": {
+        "Label": "InvertTreeModeResult",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Name": "Name",
+    "Tag": "Tag",
+    "Enabled": "Enabled",
+    "Sensor": {
+      "Pin": "SensorPin",
+      "Node": "SensorVariants",
+      "AllowComponentReferences": true
+    },
+    "BodyMotion": {
+      "Pin": "BodyMotionPin",
+      "Node": "BodyMotionVariants",
+      "AllowComponentReferences": true
+    },
+    "HeadMotion": {
+      "Pin": "HeadMotionPin",
+      "Node": "HeadMotionVariants",
+      "AllowComponentReferences": true
+    },
+    "Actions": {
+      "Pin": "ActionsPin",
+      "Node": "ActionVariants",
+      "AllowComponentReferences": true
+    },
+    "ActionsBlocking": "ActionsBlocking",
+    "ActionsAtomic": "ActionsAtomic",
+    "Instructions": {
+      "Pin": "InstructionsPin",
+      "Node": "InstructionVariants",
+      "AllowComponentReferences": true
+    },
+    "Continue": "Continue",
+    "TreeMode": "TreeMode",
+    "InvertTreeModeResult": "InvertTreeModeResult"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "Id": "Sensor.Beacon",
+  "Title": "Sensor: Beacon",
+  "Color": "#7091F0",
+  "Description": "Checks to see if any messages have been broadcasted by nearby NPCs",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Message",
+      "Type": "SmallString",
+      "Description": "The message to listen for",
+      "Options": {
+        "Label": "Message",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The max distance beacons should be received from",
+      "Options": {
+        "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 64,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "A slot to store the sender as a target. If omitted no target will be stored",
+      "Options": {
+        "Label": "TargetSlot",
+        "DisallowEmpty": true,
+        "Width": 220
+      }
+    },
+    {
+      "Id": "ConsumeMessage",
+      "Type": "Bool",
+      "Description": "Whether the message should be consumed by this sensor",
+      "Options": {
+        "Label": "ConsumeMessage",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Message": "Message",
+    "Range": "Range",
+    "TargetSlot": "TargetSlot",
+    "ConsumeMessage": "ConsumeMessage",
+    "Type": "Beacon"
+  }
+}

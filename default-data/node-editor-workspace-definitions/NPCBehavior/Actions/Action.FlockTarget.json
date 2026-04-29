@@ -1,0 +1,54 @@
+{
+  "Id": "Action.FlockTarget",
+  "Title": "Action: FlockTarget",
+  "Color": "#CC3361",
+  "Description": "Set or clear locked target for flock.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Clear",
+      "Type": "Bool",
+      "Description": "Clear locked target if true else set.",
+      "Options": {
+        "Label": "Clear",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to use",
+      "Options": {
+        "Label": "TargetSlot",
+        "DisallowEmpty": true,
+        "Default": "LockedTarget",
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Clear": "Clear",
+    "TargetSlot": "TargetSlot",
+    "Type": "FlockTarget"
+  }
+}

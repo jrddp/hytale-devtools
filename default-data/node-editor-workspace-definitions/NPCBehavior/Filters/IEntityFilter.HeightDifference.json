@@ -1,0 +1,63 @@
+{
+  "Id": "IEntityFilter.HeightDifference",
+  "Title": "Filter: HeightDifference",
+  "Color": "#60C8B8",
+  "Description": "Matches entities within the given height range",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "HeightDifference",
+      "Type": "Tuple",
+      "Description": "The height range to test entities in",
+      "Options": {
+        "Label": "HeightDifference",
+        "Min": -1.7976931348623157e+308,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          -1.7976931348623157e+308,
+          1.7976931348623157e+308
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "UseEyePosition",
+      "Type": "Bool",
+      "Description": "Use eye position for height difference checks",
+      "Options": {
+        "Label": "UseEyePosition",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "HeightDifference": "HeightDifference",
+    "UseEyePosition": "UseEyePosition",
+    "Type": "HeightDifference"
+  }
+}

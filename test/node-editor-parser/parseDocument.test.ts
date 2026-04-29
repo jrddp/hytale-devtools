@@ -10,6 +10,7 @@ import {
   nodeTemplate,
   outputPin,
   parseWorkspaceDocument,
+  selfOutputPin,
   workspaceContext,
 } from "./helpers";
 
@@ -101,6 +102,122 @@ const SHARED_SUBTREE_CONTEXT = workspaceContext({
       inputPins: [inputPin("input", "single", { connectionType: "Gamma", localId: "Input" })],
       fieldsBySchemaKey: {
         Name: nodeField("Name"),
+      },
+    }),
+  ],
+});
+
+const REVERSE_INPUT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Reverse Input Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      inputPins: [
+        inputPin("Sensor", "single", { connectionType: "Sensor", localId: "SensorPin" }),
+        inputPin("Filters", "multiple", {
+          connectionType: "Filter",
+          localId: "FiltersPin",
+        }),
+      ],
+      schemaConstants: {
+        Type: "Root",
+      },
+      childSchemas: {
+        Sensor: {
+          schemaKey: "Sensor",
+          targetTemplateOrVariantId: "SensorLeaf",
+          serializationType: "child",
+        },
+        Filters: {
+          schemaKey: "Filters",
+          targetTemplateOrVariantId: "FilterLeaf",
+          serializationType: "child",
+        },
+      },
+    }),
+    nodeTemplate("SensorLeaf", {
+      outputPins: [selfOutputPin("Sensor")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "SensorLeaf",
+      },
+    }),
+    nodeTemplate("FilterLeaf", {
+      outputPins: [selfOutputPin("Filter")],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "FilterLeaf",
+      },
+    }),
+  ],
+});
+
+const DEFAULT_VARIANT_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "RootVariants",
+  rootMenuName: "Default Variant Test Workspace",
+  templates: [
+    nodeTemplate("Root.Standard", {
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+    }),
+    nodeTemplate("Root.Special", {
+      fieldsBySchemaKey: {
+        Value: nodeField("Value"),
+      },
+      schemaConstants: {
+        Type: "Special",
+      },
+    }),
+  ],
+  variantKindsById: {
+    RootVariants: {
+      VariantFieldName: "Type",
+      DefaultTemplateId: "Root.Standard",
+      Variants: {
+        Special: "Root.Special",
+      },
+    },
+  },
+});
+
+const SIBLING_SERIALIZATION_CONTEXT = workspaceContext({
+  rootTemplateOrVariantId: "Root",
+  rootMenuName: "Sibling Serialization Test Workspace",
+  templates: [
+    nodeTemplate("Root", {
+      outputPins: [outputPin("Wrapper")],
+      childTypes: {
+        Wrapper: "Wrapper",
+      },
+      schemaConstants: {
+        Type: "Root",
+      },
+    }),
+    nodeTemplate("Wrapper", {
+      fieldsBySchemaKey: {
+        Weight: nodeField("Weight", "float"),
+      },
+      outputPins: [outputPin("Instruction", "single", { connectionType: "Instruction" })],
+      childSchemas: {
+        Instruction: {
+          schemaKey: "Instruction",
+          targetTemplateOrVariantId: "Instruction",
+          serializationType: "sibling",
+        },
+      },
+    }),
+    nodeTemplate("Instruction", {
+      inputPins: [inputPin("input", "single", { connectionType: "Instruction", localId: "Input" })],
+      fieldsBySchemaKey: {
+        Name: nodeField("Name"),
+      },
+      schemaConstants: {
+        Type: "Instruction",
       },
     }),
   ],
@@ -252,6 +369,96 @@ describe("node editor parseDocument", () => {
     });
   });
 
+  test("uses a variant default template when the variant field is absent", () => {
+    const state = parseWorkspaceDocument(
+      {
+        Name: "Default Root",
+      },
+      DEFAULT_VARIANT_CONTEXT,
+    );
+
+    const root = findNode(state, state.rootNodeId!);
+    expect(root.type).toBe("datanode");
+    expect(root.data.templateId).toBe("Root.Standard");
+    expect(root.data.fieldsBySchemaKey.Name.value).toBe("Default Root");
+  });
+
+  test("does not silently default a variant when the variant field is present but unmapped", () => {
+    const state = parseWorkspaceDocument(
+      {
+        Type: "Unknown",
+        Name: "Fallback Root",
+      },
+      DEFAULT_VARIANT_CONTEXT,
+    );
+
+    const root = findNode(state, state.rootNodeId!);
+    expect(root.type).toBe("rawjson");
+  });
+
+  test("keeps fields unset when they are absent from source JSON", () => {
+    const context = workspaceContext({
+      templates: [
+        nodeTemplate("Root", {
+          fieldsBySchemaKey: {
+            Enabled: nodeField("Enabled", "checkbox", {
+              value: true,
+              defaultValue: true,
+              isSet: false,
+            }),
+          },
+          schemaConstants: {
+            Type: "Root",
+          },
+        }),
+      ],
+    });
+
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+      },
+      context,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    expect(root.data.fieldsBySchemaKey.Enabled).toMatchObject({
+      value: true,
+      defaultValue: true,
+      isImplicit: true,
+      isSet: false,
+    });
+  });
+
+  test("parses sibling-serialized wrapper children from the same source object", () => {
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Wrapper: {
+          $NodeId: "Wrapper-1",
+          Weight: 2,
+          Type: "Instruction",
+          Name: "Leaf Instruction",
+        },
+      },
+      SIBLING_SERIALIZATION_CONTEXT,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    const wrapper = findNodeByBaseId(state, "Wrapper-1");
+    const instruction = state.nodes.find(
+      node => node.type === "datanode" && node.data.templateId === "Instruction",
+    );
+
+    expect(instruction).toBeDefined();
+    expect(wrapper.data.fieldsBySchemaKey.Weight.value).toBe(2);
+    expect(instruction?.data.fieldsBySchemaKey.Name.value).toBe("Leaf Instruction");
+    expect(findEdge(state, `${root.id}:Wrapper-${wrapper.id}`)).toBeDefined();
+    expect(findEdge(state, `${wrapper.id}:Instruction-${instruction?.id}`)).toBeDefined();
+  });
+
   test("assigns parsed edges to the compatible input handle instead of always using the default input", () => {
     const state = parseWorkspaceDocument(
       {
@@ -346,5 +553,58 @@ describe("node editor parseDocument", () => {
         SHARED_SUBTREE_CONTEXT,
       ),
     ).toThrow(/Conflicting serialized payloads/);
+  });
+
+  test("parses reverse-input child slots as edges from child self outputs into parent inputs", () => {
+    const state = parseWorkspaceDocument(
+      {
+        $NodeId: "Root-1",
+        Type: "Root",
+        Sensor: {
+          $NodeId: "Sensor-1",
+          Type: "SensorLeaf",
+          Name: "Condition",
+        },
+        Filters: [
+          {
+            $NodeId: "Filter-1",
+            Type: "FilterLeaf",
+            Name: "First",
+          },
+          {
+            $NodeId: "Filter-2",
+            Type: "FilterLeaf",
+            Name: "Second",
+          },
+        ],
+      },
+      REVERSE_INPUT_CONTEXT,
+    );
+
+    const root = findNodeByBaseId(state, "Root-1");
+    const sensor = findNodeByBaseId(state, "Sensor-1");
+    const firstFilter = findNodeByBaseId(state, "Filter-1");
+    const secondFilter = findNodeByBaseId(state, "Filter-2");
+
+    expect(findEdge(state, `${sensor.id}:output-${root.id}`)).toMatchObject({
+      source: sensor.id,
+      sourceHandle: "output",
+      target: root.id,
+      targetHandle: "Sensor",
+    });
+    expect(findEdge(state, `${firstFilter.id}:output-${root.id}`)).toMatchObject({
+      source: firstFilter.id,
+      sourceHandle: "output",
+      target: root.id,
+      targetHandle: "Filters",
+    });
+    expect(findEdge(state, `${secondFilter.id}:output-${root.id}`)).toMatchObject({
+      source: secondFilter.id,
+      sourceHandle: "output",
+      target: root.id,
+      targetHandle: "Filters",
+    });
+    expect(firstFilter.data.inputConnectionIndex).toBe(0);
+    expect(secondFilter.data.inputConnectionIndex).toBe(1);
   });
 });

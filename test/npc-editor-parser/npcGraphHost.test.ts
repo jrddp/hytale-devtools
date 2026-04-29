@@ -1,0 +1,441 @@
+import path from "node:path";
+import { readFileSync } from "node:fs";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+import { WorkspaceRuntime } from "../../src/node-editor/workspaceResolver";
+import { SchemaRuntime } from "../../src/schema/schemaLoader";
+import type { NpcDescriptorDocument } from "../../src/shared/npc-role-editor/descriptorTypes";
+import {
+  createComponentReferenceModifyFieldSchemaKey,
+} from "../../src/shared/node-editor/componentReferences";
+import type { NodeTemplate } from "../../src/shared/node-editor/workspaceTypes";
+import type { FlowNode } from "../../webview/hytale-node-editor/src/common";
+import { createNodeEditorSession } from "../../webview/hytale-node-editor/src/workspace.svelte";
+import {
+  applyNpcGraphUpdateToSession,
+  hydrateNpcGraphSessionNodes,
+  resolveNpcGraphPreviewOverrides,
+  resolveFocusedNodePreviewOverride,
+  syncNpcGraphSessionFromDocument,
+} from "../../webview/hytale-npc-role-editor/src/npcGraphHost";
+import { workspace } from "../../webview/hytale-npc-role-editor/src/workspace.svelte";
+import { resolveNpcGraphDocumentFromText } from "../../src/shared/npc-role-editor/graphDocumentRuntime";
+
+const schemaDir = path.resolve(process.cwd(), "default-data/export-data/schemas");
+const workspacesRootPath = path.resolve(process.cwd(), "default-data/node-editor-workspace-definitions");
+const descriptorsPath = path.resolve(process.cwd(), "default-data/export-data/npc_descriptors.json");
+
+const logger = {
+  error() {},
+  warn() {},
+  info() {},
+  debug() {},
+};
+
+function createWorkspaceRuntime(): WorkspaceRuntime {
+  const schemaRuntime = new SchemaRuntime(schemaDir, logger);
+  return new WorkspaceRuntime(workspacesRootPath, schemaRuntime, logger);
+}
+
+function parseDescriptors(): NpcDescriptorDocument {
+  return JSON.parse(readFileSync(descriptorsPath, "utf8")) as NpcDescriptorDocument;
+}
+
+function getNpcBehaviorContext(rootId: "Instructions" | "Instruction" | "Sensor") {
+  const workspaceRuntime = createWorkspaceRuntime();
+  const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot("NPC Behavior", rootId);
+  if (!context) {
+    throw new Error(`NPC Behavior workspace root "${rootId}" could not be resolved.`);
+  }
+  return context;
+}
+
+function createInteractionInstructionDocument() {
+  return {
+    Type: "Generic",
+    InteractionInstruction: {
+      $NodeId: "Instruction-11111111-1111-4111-8111-111111111111",
+      Name: "Interaction Name",
+    },
+    DeathInstruction: {
+      $NodeId: "Instruction-22222222-2222-4222-8222-222222222222",
+      Name: "Death Name",
+    },
+  };
+}
+
+function getNpcTemplate(templateId: string): NodeTemplate {
+  const workspaceRuntime = createWorkspaceRuntime();
+  const template = workspaceRuntime.nodeEditorWorkspaces["NPC Behavior"]?.nodeTemplatesById[templateId];
+  if (!template) {
+    throw new Error(`NPC template "${templateId}" could not be resolved.`);
+  }
+  return template;
+}
+
+function createReferenceNode(templateId: string, referenceName: string): FlowNode {
+  const template = getNpcTemplate(templateId);
+  return {
+    id: `${templateId}-node`,
+    type: "datanode",
+    position: { x: 0, y: 0 },
+    data: {
+      ...structuredClone(template),
+      fieldsBySchemaKey: {
+        ...structuredClone(template.fieldsBySchemaKey),
+        Reference: {
+          ...structuredClone(template.fieldsBySchemaKey.Reference),
+          value: referenceName,
+          isImplicit: false,
+        },
+      },
+      unparsedMetadata: {},
+    },
+  } as FlowNode;
+}
+
+beforeEach(() => {
+  workspace.vscode = {
+    postMessage: vi.fn(),
+  } as never;
+  workspace.setDescriptors({
+    descriptors: parseDescriptors(),
+    descriptorPath: descriptorsPath,
+    descriptorSource: "default-data",
+  });
+  workspace.setDocument({
+    documentPath: `/tmp/npc-graph-host-${Math.random().toString(36).slice(2)}.json`,
+    version: 1,
+    text: JSON.stringify({ Type: "Generic" }, null, 2),
+  });
+  workspace.discoveredStateInfo = {
+    roleMainStates: ["Alerted", "Idle"],
+    roleFullStates: ["Alerted", "Idle", "Idle.Patrol"],
+    componentParentAliases: ["ParentIdle"],
+    componentLocalStates: [".LocalIdle", ".LocalSleep"],
+  };
+  workspace.setAppearanceAnimationValues("TestAppearance", ["Alerted", "Idle", "Wake"]);
+  workspace.componentReferenceTargets = new Map();
+});
+
+describe("npc graph host helpers", () => {
+  test("syncNpcGraphSessionFromDocument performs a full sync when the active graph field changes", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const text = JSON.stringify(createInteractionInstructionDocument(), null, 2);
+    const session = createNodeEditorSession();
+
+    const interactionGraphDocument = resolveNpcGraphDocumentFromText({
+      text,
+      fieldPath: "InteractionInstruction",
+      workspaceContext: context,
+    });
+    const deathGraphDocument = resolveNpcGraphDocumentFromText({
+      text,
+      fieldPath: "DeathInstruction",
+      workspaceContext: context,
+    });
+
+    session.context = context;
+    session.nodes = structuredClone(interactionGraphDocument.nodes) as never;
+    session.edges = structuredClone(interactionGraphDocument.edges) as never;
+    session.rootNodeId = interactionGraphDocument.rootNodeId;
+    session.committedGraphDocument = interactionGraphDocument;
+    session.sourceVersion = 1;
+    session.isInitialized = true;
+
+    const didFullSync = syncNpcGraphSessionFromDocument({
+      session,
+      workspaceContext: context,
+      fieldPath: "DeathInstruction",
+      documentText: text,
+      documentVersion: 2,
+      lastSyncedGraphFieldPath: "InteractionInstruction",
+      getFallbackGraphDocument: incomingText =>
+        resolveNpcGraphDocumentFromText({
+          text: incomingText,
+          fieldPath: "DeathInstruction",
+          workspaceContext: context,
+        }),
+      shouldQueueInitialFitView: false,
+    });
+
+    expect(didFullSync).toBe(true);
+    expect(session.sourceVersion).toBe(2);
+    expect(session.rootNodeId).toBe(deathGraphDocument.rootNodeId);
+    expect(session.committedGraphDocument?.nodes[0]?.data.fieldsBySchemaKey.Name?.value).toBe(
+      "Death Name",
+    );
+  });
+
+  test("applyNpcGraphUpdateToSession uses the incremental path for applied edits", () => {
+    const context = getNpcBehaviorContext("Instruction");
+    const session = createNodeEditorSession();
+    session.context = context;
+    session.sourceVersion = 1;
+    session.committedGraphDocument = {
+      workspaceId: "Instruction",
+      rootNodeId: "root",
+      nodes: [
+        {
+          id: "root",
+          type: "datanode",
+          position: { x: 0, y: 0 },
+          data: {
+            ...getNpcTemplate("Structural.InstructionNode"),
+            titleOverride: "Before",
+          },
+        } as never,
+      ],
+      edges: [],
+    };
+    session.nodes = structuredClone(session.committedGraphDocument.nodes) as never;
+    session.edges = [];
+    session.rootNodeId = "root";
+
+    const getFallbackGraphDocument = vi.fn(() => session.committedGraphDocument!);
+
+    const didFullSync = applyNpcGraphUpdateToSession({
+      session,
+      workspaceContext: context,
+      graphUpdate: {
+        type: "graphUpdate",
+        documentPath: "/tmp/TestNpc.json",
+        version: 2,
+        text: "{}",
+        fieldPath: "InteractionInstruction",
+        appliedEdit: {
+          kind: "node-renamed",
+          changes: [
+            {
+              nodeId: "root",
+              beforeTitleOverride: "Before",
+              afterTitleOverride: "After",
+            },
+          ],
+        },
+      },
+      getFallbackGraphDocument,
+      shouldQueueInitialFitView: false,
+    });
+
+    expect(didFullSync).toBe(false);
+    expect(getFallbackGraphDocument).not.toHaveBeenCalled();
+    expect(session.committedGraphDocument?.nodes[0]?.data.titleOverride).toBe("After");
+  });
+
+  test("hydrateNpcGraphSessionNodes applies component-reference overlays to session nodes", () => {
+    const session = createNodeEditorSession();
+    session.isInitialized = true;
+    const referenceNode = createReferenceNode("Sensor.Reference", "Component_Sensor_Sound");
+    session.nodes = [referenceNode] as never;
+    session.committedGraphDocument = {
+      workspaceId: "Sensor",
+      rootNodeId: referenceNode.id,
+      nodes: [structuredClone(referenceNode)] as never,
+      edges: [],
+    };
+
+    workspace.setComponentReferenceTarget({
+      status: "loaded",
+      componentClass: "Sensor",
+      referenceName: "Component_Sensor_Sound",
+      parameters: {
+        Range: {
+          Value: 5,
+        },
+      },
+    });
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
+      roleType: workspace.roleType,
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey[
+            createComponentReferenceModifyFieldSchemaKey("Range")
+          ]
+        : undefined,
+    ).toMatchObject({
+      label: "Range",
+      isImplicit: true,
+    });
+    expect(
+      session.committedGraphDocument?.nodes[0]?.type === "datanode"
+        ? session.committedGraphDocument.nodes[0].data.fieldsBySchemaKey[
+            createComponentReferenceModifyFieldSchemaKey("Range")
+          ]
+        : undefined,
+    ).toMatchObject({
+      label: "Range",
+      isImplicit: true,
+    });
+  });
+
+  test("hydrateNpcGraphSessionNodes applies state autocomplete buckets for NPC node fields", () => {
+    const session = createNodeEditorSession();
+    session.isInitialized = true;
+    session.nodes = [
+      {
+        id: "action-state-node",
+        type: "datanode",
+        position: { x: 0, y: 0 },
+        data: structuredClone(getNpcTemplate("Action.State")),
+      } as FlowNode,
+    ] as never;
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
+      roleType: "Generic",
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey.State
+        : undefined,
+    ).toMatchObject({
+      stateAutocompleteKind: "role-full",
+      overrideAutocompleteValues: ["Alerted", "Idle", "Idle.Patrol"],
+    });
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
+      roleType: "Component",
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey.State
+        : undefined,
+    ).toMatchObject({
+      stateAutocompleteKind: "component-local",
+      overrideAutocompleteValues: [".LocalIdle", ".LocalSleep"],
+    });
+  });
+
+  test("hydrateNpcGraphSessionNodes applies appearance-model animation autocomplete buckets", () => {
+    const session = createNodeEditorSession();
+    session.isInitialized = true;
+    session.nodes = [
+      {
+        id: "play-animation-node",
+        type: "datanode",
+        position: { x: 0, y: 0 },
+        data: structuredClone(getNpcTemplate("Action.PlayAnimation")),
+      } as FlowNode,
+    ] as never;
+
+    hydrateNpcGraphSessionNodes({
+      session,
+      descriptors: parseDescriptors(),
+      discoveredStateInfo: workspace.discoveredStateInfo,
+      appearanceAnimationIds: workspace.appearanceAnimationIds,
+      roleType: "Generic",
+    });
+
+    expect(
+      session.nodes[0]?.type === "datanode"
+        ? session.nodes[0].data.fieldsBySchemaKey.Animation
+        : undefined,
+    ).toMatchObject({
+      animationAutocompleteKind: "appearance-model",
+      previewFeatureKind: "animation",
+      overrideAutocompleteValues: ["Alerted", "Idle", "Wake"],
+    });
+  });
+
+  test("resolveFocusedNodePreviewOverride only uses one directly selected data node", () => {
+    const playAnimationTemplate = structuredClone(getNpcTemplate("Action.PlayAnimation"));
+    const animationField = playAnimationTemplate.fieldsBySchemaKey.Animation;
+    if (!animationField) {
+      throw new Error("Expected Action.PlayAnimation to include an Animation field.");
+    }
+    animationField.value = "Wake";
+    animationField.isImplicit = false;
+
+    const selectedAnimationNode: FlowNode = {
+      id: "play-animation-node",
+      type: "datanode",
+      position: { x: 0, y: 0 },
+      selected: true,
+      data: playAnimationTemplate,
+    } as FlowNode;
+
+    expect(resolveFocusedNodePreviewOverride([selectedAnimationNode])).toBe("Wake");
+    expect(
+      resolveFocusedNodePreviewOverride([
+        selectedAnimationNode,
+        {
+          ...structuredClone(selectedAnimationNode),
+          id: "play-animation-node-2",
+          selected: true,
+        },
+      ]),
+    ).toBeNull();
+    expect(
+      resolveFocusedNodePreviewOverride([
+        {
+          ...structuredClone(selectedAnimationNode),
+          data: {
+            ...structuredClone(playAnimationTemplate),
+            fieldsBySchemaKey: {
+              ...structuredClone(playAnimationTemplate.fieldsBySchemaKey),
+              Animation: {
+                ...structuredClone(animationField),
+                value: { Compute: "Animation" },
+              },
+            },
+          },
+        } as FlowNode,
+      ]),
+    ).toBeNull();
+  });
+
+  test("resolveNpcGraphPreviewOverrides prefers considered autocomplete animation over focused node animation", () => {
+    const session = createNodeEditorSession();
+    const playAnimationTemplate = structuredClone(getNpcTemplate("Action.PlayAnimation"));
+    const animationField = playAnimationTemplate.fieldsBySchemaKey.Animation;
+    if (!animationField) {
+      throw new Error("Expected Action.PlayAnimation to include an Animation field.");
+    }
+
+    animationField.value = "Wake";
+    animationField.isImplicit = false;
+    session.nodes = [
+      {
+        id: "play-animation-node",
+        type: "datanode",
+        position: { x: 0, y: 0 },
+        selected: true,
+        data: playAnimationTemplate,
+      } as FlowNode,
+    ] as never;
+
+    expect(resolveNpcGraphPreviewOverrides(session)).toEqual({
+      autocompleteAnimationOverride: null,
+      focusedAnimationOverride: "Wake",
+    });
+
+    session.setConsideredPreviewFeature("animation", "Alerted");
+    expect(resolveNpcGraphPreviewOverrides(session)).toEqual({
+      autocompleteAnimationOverride: "Alerted",
+      focusedAnimationOverride: "Wake",
+    });
+
+    session.clearConsideredPreviewFeature("animation");
+    expect(resolveNpcGraphPreviewOverrides(session)).toEqual({
+      autocompleteAnimationOverride: null,
+      focusedAnimationOverride: "Wake",
+    });
+  });
+});

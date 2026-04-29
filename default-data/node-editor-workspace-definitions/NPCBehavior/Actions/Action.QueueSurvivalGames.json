@@ -1,0 +1,30 @@
+{
+  "Id": "Action.QueueSurvivalGames",
+  "Title": "Action: QueueSurvivalGames",
+  "Color": "#CC3361",
+  "Description": "Queue the player for Survival Games",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "QueueSurvivalGames"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "Id": "Action.Remove",
+  "Title": "Action: Remove",
+  "Color": "#CC3361",
+  "Description": "Erase the target entity from the world (no death animation).",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "UseTarget",
+      "Type": "Bool",
+      "Description": "Use the sensor-provided target for the action",
+      "Options": {
+        "Label": "UseTarget",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "UseTarget": "UseTarget",
+    "Type": "Remove"
+  }
+}

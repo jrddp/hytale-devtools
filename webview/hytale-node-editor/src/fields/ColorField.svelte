@@ -1,17 +1,27 @@
 <script lang="ts">
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import { noMousePropogation } from "@node-editor/node-editor/utils/fieldUtils";
+  import CommitTextInput from "../../../shared/components/inputs/CommitTextInput.svelte";
+  import type { Snippet } from "svelte";
 
   // TODO support rgb format
   type ColorStringFormat = "hex" | "rgb";
 
-  let { inputId, label, description, initialValue, inputWidth, onconfirm }: FieldProps<string> =
-    $props();
+  let {
+    inputId,
+    label,
+    description,
+    initialValue,
+    inputWidth,
+    titleActions,
+    onconfirm,
+  }: FieldProps<string> & {
+    titleActions?: Snippet;
+  } = $props();
 
   let value = $state("");
-  let lastCommittedValue = $state("");
+  let lastCommittedValue = "";
 
   $effect(() => {
     if (initialValue !== lastCommittedValue) {
@@ -29,20 +39,11 @@
     lastCommittedValue = value;
   }
 
-  function handleKeyDown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
-    if (!isPlainEnterNavigationEvent(event)) {
-      return;
-    }
-
-    event.preventDefault();
-    confirmValue();
-    if (!focusNextEditableInNode(event.currentTarget)) {
-      event.currentTarget.blur();
-    }
-  }
+  const textInputClass =
+    "nodrag min-w-0 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg";
 </script>
 
-<FieldLayout {inputId} {label} {description} align="center">
+<FieldLayout {inputId} {label} {description} align="center" {titleActions}>
   <div class="flex w-full min-w-0 items-center gap-2">
     <input
       id={inputId}
@@ -52,16 +53,19 @@
       onchange={confirmValue}
       {...noMousePropogation}
     />
-    <input
-      class="nodrag min-w-0 rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-      class:flex-1={inputWidth === undefined}
-      type="text"
-      style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
-      bind:value
-      onkeydown={handleKeyDown}
-      onblur={confirmValue}
+    <CommitTextInput
+      inputId={`${inputId}-text`}
+      initialValue={value}
+      inputClass={`${textInputClass} ${inputWidth === undefined ? "flex-1" : ""}`.trim()}
+      style={inputWidth !== undefined ? `width: ${inputWidth}px` : undefined}
+      enterBehavior="focus-next"
+      focusRootSelector="[data-node-editor-root]"
       spellcheck="false"
-      {...noMousePropogation}
+      stopPointerPropagation
+      oncommit={nextValue => {
+        value = nextValue;
+        confirmValue();
+      }}
     />
   </div>
 </FieldLayout>

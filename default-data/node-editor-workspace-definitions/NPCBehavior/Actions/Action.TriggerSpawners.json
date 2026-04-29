@@ -1,0 +1,72 @@
+{
+  "Id": "Action.TriggerSpawners",
+  "Title": "Action: TriggerSpawners",
+  "Color": "#CC3361",
+  "Description": "Trigger all, or up to a certain number of manual spawn markers in a radius around the NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "SpawnMarker",
+      "Type": "SmallString",
+      "Description": "The spawn marker type to trigger",
+      "Options": {
+        "Label": "SpawnMarker",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "SpawnMarker"
+        }
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The range within which to trigger spawn markers",
+      "Options": {
+        "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Count",
+      "Type": "Int",
+      "Description": "The number of markers to randomly trigger (0 will trigger all matching validators)",
+      "Options": {
+        "Label": "Count",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "SpawnMarker": "SpawnMarker",
+    "Range": "Range",
+    "Count": "Count",
+    "Type": "TriggerSpawners"
+  }
+}

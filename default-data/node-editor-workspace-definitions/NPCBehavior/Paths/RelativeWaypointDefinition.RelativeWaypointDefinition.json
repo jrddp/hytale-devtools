@@ -1,0 +1,46 @@
+{
+  "Id": "RelativeWaypointDefinition.RelativeWaypointDefinition",
+  "Title": "Waypoint: RelativeWaypointDefinition",
+  "Color": "#CC3361",
+  "Description": "A simple path waypoint definition where each waypoint is relative to the previous",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "RelativeWaypointDefinition",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Rotation",
+      "Type": "Float",
+      "Description": "Rotation to turn from previous waypoint",
+      "Options": {
+        "Label": "Rotation",
+        "Min": -360,
+        "Max": 360,
+        "MinExclusive": true,
+        "MaxExclusive": true,
+        "Default": 0,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Distance",
+      "Type": "Float",
+      "Description": "A distance to move from the previous waypoint",
+      "Options": {
+        "Label": "Distance",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "Rotation": "Rotation",
+    "Distance": "Distance"
+  }
+}

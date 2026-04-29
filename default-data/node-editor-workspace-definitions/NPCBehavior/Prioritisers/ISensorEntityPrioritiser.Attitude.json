@@ -1,0 +1,41 @@
+{
+  "Id": "ISensorEntityPrioritiser.Attitude",
+  "Title": "Prioritiser: Attitude",
+  "Color": "#7091F0",
+  "Description": "Prioritises return entities by attitude",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "ISensorEntityPrioritiser",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "AttitudesByPriority",
+      "Type": "List",
+      "Description": "A prioritised list of attitudes",
+      "Options": {
+        "Label": "AttitudesByPriority",
+        "Required": true,
+        "Width": 240,
+        "Type": "String",
+        "UniqueItems": true,
+        "Values": [
+          "IGNORE",
+          "HOSTILE",
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ],
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "AttitudesByPriority": "AttitudesByPriority",
+    "Type": "Attitude"
+  }
+}

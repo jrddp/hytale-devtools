@@ -1,0 +1,46 @@
+{
+  "Id": "Action.OverrideAltitude",
+  "Title": "Action: OverrideAltitude",
+  "Color": "#CC3361",
+  "Description": "Temporarily override the preferred altitude of a flying NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "DesiredAltitudeRange",
+      "Type": "Tuple",
+      "Description": "The desired altitude range",
+      "Options": {
+        "Label": "DesiredAltitudeRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "DesiredAltitudeRange": "DesiredAltitudeRange",
+    "Type": "OverrideAltitude"
+  }
+}

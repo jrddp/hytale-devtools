@@ -1,30 +1,35 @@
 import * as vscode from "vscode";
 import { LOGGER, workspaceRuntime } from "../extension";
-import { getValuesByIndexReference } from "../schema/symbolResolver";
+import { getValuesByIndexReferenceAsync } from "../schema/symbolResolver";
 import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "../shared/node-editor/clipboardTypes";
 import type { AssetDocumentShape } from "../shared/node-editor/assetTypes";
 import { parseAssetDocumentToGraphDocument, serializeGraphDocument } from "../shared/node-editor/graphDocument";
+import { graphEditMessageToGraphEdit } from "../shared/node-editor/graphEditMessages";
 import {
   invertNodeEditorGraphEdit,
 } from "../shared/node-editor/graphEditUtils";
 import { type NodeEditorGraphEdit } from "../shared/node-editor/graphTypes";
 import {
-  type ActionType,
   type ExtensionToWebviewMessage,
   type NodeEditorGraphEditMessage,
   type NodeEditorControlScheme,
   type NodeEditorPlatform,
   type WebviewToExtensionMessage,
 } from "../shared/node-editor/messageTypes";
+import type { NodeEditorQuickActionPayload } from "../shared/node-editor/quickActions";
 import { isObject } from "../shared/typeUtils";
 import { buildViteWebviewHtml, resolveWebviewMediaRoot } from "../shared/webview/viteWebview";
 import { HytaleNodeDocument } from "./hytaleNodeDocument";
+import { registerNodeEditorQuickActionCommands } from "./nodeEditorQuickActions";
 
 const VIEW_TYPE = "hytale-devtools.hytaleNodeEditor";
 const NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX = "hytale-devtools.nodeEditor.quickAction.";
+const NODE_EDITOR_SET_ROOT_CONTEXT_COMMAND = "hytale-devtools.nodeEditor.context.setRoot";
+const NODE_EDITOR_SET_FIELD_EXPLICIT_EMPTY_CONTEXT_COMMAND =
+  "hytale-devtools.nodeEditor.context.setFieldExplicitEmpty";
 const EXTENSION_CONFIG_NAMESPACE = "hytale-devtools";
 const NODE_EDITOR_CONTROL_SCHEME_SETTING_KEY = "nodeEditor.controlScheme";
 const DEFAULT_NODE_EDITOR_CONTROL_SCHEME: NodeEditorControlScheme = "mouse";
@@ -38,16 +43,31 @@ export function registerHytaleNodeEditorProvider(
       enableFindWidget: true,
     },
   });
-  const quickActionCommandRegistrations = readNodeEditorQuickActionCommandIds(context).map(
-    commandId =>
-      vscode.commands.registerCommand(commandId, () => {
-        void provider.triggerQuickActionByCommandId(
-          getActionTypeFromCommandId(commandId) as ActionType | "go-to-root",
-        );
-      }),
+  const quickActionCommandRegistrations = registerNodeEditorQuickActionCommands(context, {
+    commandPrefix: NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX,
+    logger: LOGGER,
+    postAction: payload => provider.triggerQuickAction(payload),
+  });
+  const setRootContextCommandRegistration = vscode.commands.registerCommand(
+    NODE_EDITOR_SET_ROOT_CONTEXT_COMMAND,
+    (menuContext: unknown) => {
+      void provider.triggerSetRootContextAction(menuContext);
+    },
+  );
+  const setFieldExplicitEmptyContextCommandRegistration = vscode.commands.registerCommand(
+    NODE_EDITOR_SET_FIELD_EXPLICIT_EMPTY_CONTEXT_COMMAND,
+    (menuContext: unknown) => {
+      void provider.triggerSetFieldExplicitEmptyContextAction(menuContext);
+    },
   );
 
-  return vscode.Disposable.from(providerRegistration, provider, ...quickActionCommandRegistrations);
+  return vscode.Disposable.from(
+    providerRegistration,
+    provider,
+    setRootContextCommandRegistration,
+    setFieldExplicitEmptyContextCommandRegistration,
+    ...quickActionCommandRegistrations,
+  );
 }
 
 class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNodeDocument> {
@@ -249,25 +269,58 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     this.onDidChangeCustomDocumentEmitter.dispose();
   }
 
-  public async triggerQuickActionByCommandId(
-    actionType: ActionType | "go-to-root",
-  ): Promise<void> {
+  public async triggerQuickAction(payload: NodeEditorQuickActionPayload): Promise<void> {
     const targetPanel = this.resolveTargetWebviewPanel();
     if (!targetPanel) {
       return;
     }
 
-    if (actionType === "go-to-root") {
-      actionType = "reveal-node";
+    await targetPanel.webview.postMessage({
+      type: "action",
+      request: payload.request,
+      allowEditableTarget: payload.allowEditableTarget,
+    });
+  }
+
+  public async triggerSetRootContextAction(menuContext: unknown): Promise<void> {
+    const nodeId = readNodeEditorNodeIdFromContext(menuContext);
+    if (!nodeId) {
+      return;
     }
 
-    const allowEditableTarget = actionType === "search-nodes";
+    const targetPanel = this.resolveTargetWebviewPanel();
+    if (!targetPanel) {
+      return;
+    }
 
     await targetPanel.webview.postMessage({
       type: "action",
-      request: { type: actionType },
-      allowEditableTarget,
-    });
+      request: { type: "set-root", nodeId },
+      allowEditableTarget: true,
+    } satisfies ExtensionToWebviewMessage);
+  }
+
+  public async triggerSetFieldExplicitEmptyContextAction(menuContext: unknown): Promise<void> {
+    const nodeId = readNodeEditorNodeIdFromContext(menuContext);
+    const schemaKey = readNodeEditorFieldSchemaKeyFromContext(menuContext);
+    if (!nodeId || !schemaKey) {
+      return;
+    }
+    const itemIndex = readNodeEditorListItemIndexFromContext(menuContext);
+
+    const targetPanel = this.resolveTargetWebviewPanel();
+    if (!targetPanel) {
+      return;
+    }
+
+    await targetPanel.webview.postMessage({
+      type: "action",
+      request:
+        itemIndex === undefined
+          ? { type: "set-field-explicit-empty", nodeId, schemaKey }
+          : { type: "set-list-item-explicit-empty", nodeId, schemaKey, itemIndex },
+      allowEditableTarget: true,
+    } satisfies ExtensionToWebviewMessage);
   }
 
   private getPanelsForDocument(documentUri: string): Set<vscode.WebviewPanel> {
@@ -407,7 +460,7 @@ class HytaleNodeEditorProvider implements vscode.CustomEditorProvider<HytaleNode
     message: Extract<WebviewToExtensionMessage, { type: "autocompleteRequest" }>,
     webview: vscode.Webview,
   ): Promise<void> {
-    const matches = getValuesByIndexReference(message.symbolLookup);
+    const matches = await getValuesByIndexReferenceAsync(message.symbolLookup);
     const payload: ExtensionToWebviewMessage = {
       type: "autocompletionValues",
       fieldId: message.fieldId,
@@ -499,70 +552,26 @@ function readNodeEditorPlatform(): NodeEditorPlatform {
   return "win";
 }
 
-function readNodeEditorQuickActionCommandIds(context: vscode.ExtensionContext): string[] {
-  const packageJson = context.extension.packageJSON as any;
-  if (!isObject(packageJson)) {
-    LOGGER.error("Commands unable to be parsed from package.json.");
-    return [];
-  }
-
-  const commands = (packageJson.contributes as any)?.commands ?? [];
-
-  if (!commands) {
-    LOGGER.warn("No commands found in package.json contributes.");
-    return [];
-  }
-
-  const commandIds = commands
-    .map((command: any) => command.command)
-    .filter(
-      (commandId: string) => !!commandId?.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX),
-    );
-  return commandIds;
+function readNodeEditorNodeIdFromContext(menuContext: unknown): string | undefined {
+  return isObject(menuContext) && typeof menuContext.nodeEditorNodeId === "string"
+    ? menuContext.nodeEditorNodeId
+    : undefined;
 }
 
-function getActionTypeFromCommandId(commandId: string): string | undefined {
-  if (commandId.startsWith(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX)) {
-    return commandId.slice(NODE_EDITOR_QUICK_ACTION_COMMAND_PREFIX.length);
-  }
-
-  return undefined;
+function readNodeEditorFieldSchemaKeyFromContext(menuContext: unknown): string | undefined {
+  return isObject(menuContext) && typeof menuContext.nodeEditorFieldSchemaKey === "string"
+    ? menuContext.nodeEditorFieldSchemaKey
+    : undefined;
 }
 
-function graphEditMessageToGraphEdit(message: NodeEditorGraphEditMessage): NodeEditorGraphEdit {
-  switch (message.kind) {
-    case "element-list-changed":
-      return {
-        kind: message.kind,
-        addedNodes: message.addedNodes,
-        removedNodes: message.removedNodes,
-        addedEdges: message.addedEdges,
-        removedEdges: message.removedEdges,
-        beforeRootNodeId: message.beforeRootNodeId,
-        afterRootNodeId: message.afterRootNodeId,
-      };
-    case "nodes-moved":
-      return {
-        kind: message.kind,
-        changes: message.changes,
-      };
-    case "node-renamed":
-      return {
-        kind: message.kind,
-        changes: message.changes,
-      };
-    case "node-resized":
-      return {
-        kind: message.kind,
-        changes: message.changes,
-      };
-    case "node-properties-updated":
-      return {
-        kind: message.kind,
-        propertyChanges: message.propertyChanges,
-        resizeChanges: message.resizeChanges,
-      };
+function readNodeEditorListItemIndexFromContext(menuContext: unknown): number | undefined {
+  if (!isObject(menuContext) || typeof menuContext.nodeEditorListItemIndex !== "number") {
+    return undefined;
   }
+
+  return Number.isInteger(menuContext.nodeEditorListItemIndex) && menuContext.nodeEditorListItemIndex >= 0
+    ? menuContext.nodeEditorListItemIndex
+    : undefined;
 }
 
 function escapeHtml(value: string): string {

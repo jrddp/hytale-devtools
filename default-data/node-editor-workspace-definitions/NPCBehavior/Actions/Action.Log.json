@@ -1,0 +1,42 @@
+{
+  "Id": "Action.Log",
+  "Title": "Action: Log",
+  "Color": "#CC3361",
+  "Description": "Log a message to console.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Message",
+      "Type": "SmallString",
+      "Description": "Text to print to console.",
+      "Options": {
+        "Label": "Message",
+        "Required": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Message": "Message",
+    "Type": "Log"
+  }
+}

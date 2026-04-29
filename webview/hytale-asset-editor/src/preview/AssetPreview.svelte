@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { BlockymodelPreview, type BlockymodelFile } from "@webview-shared/blockymodel";
+  import ModelPreviewCard from "@webview-shared/components/ModelPreviewCard.svelte";
   import { LoaderCircle } from "lucide-svelte";
   import { workspace } from "../workspace.svelte";
 
@@ -25,7 +25,7 @@
   }
 </script>
 
-{#if workspace.assetDefinition?.preview === "Item" || workspace.assetDefinition?.preview === "Model"}
+{#if workspace.assetDefinition?.preview === "Item"}
   <!-- bg #1F2C3C is the actual in-game hotbar color -->
   <div
     class="overflow-hidden border aspect-square rounded-xl border-vsc-border bg-vsc-panel"
@@ -40,15 +40,6 @@
           style:image-rendering="pixelated"
         />
       </div>
-    {:else if workspace.preview?.type === "Model" && workspace.preview.model}
-      <BlockymodelPreview
-        model={workspace.preview.model as unknown as BlockymodelFile}
-        textureBytes={workspace.preview.texture}
-        orbit={true}
-        scale={1.35}
-        showGrid={false}
-        class="size-full"
-      />
     {:else if workspace.preview?.loading}
       <div
         class="flex flex-col items-center justify-center gap-3 px-6 text-sm font-medium text-center size-full text-vsc-muted"
@@ -64,4 +55,6 @@
       </div>
     {/if}
   </div>
+{:else if workspace.assetDefinition?.preview === "Model"}
+  <ModelPreviewCard preview={workspace.preview?.type === "Model" ? workspace.preview : undefined} />
 {/if}

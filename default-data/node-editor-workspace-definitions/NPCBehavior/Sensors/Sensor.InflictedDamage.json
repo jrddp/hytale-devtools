@@ -1,0 +1,70 @@
+{
+  "Id": "Sensor.InflictedDamage",
+  "Title": "Sensor: InflictedDamage",
+  "Color": "#7091F0",
+  "Description": "Test if an individual or the flock it belongs to inflicted combat damage",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Target",
+      "Type": "Enum",
+      "Description": "Who to check has inflicted damage",
+      "Options": {
+        "Label": "Target",
+        "Default": "Self",
+        "Width": 220,
+        "Values": [
+          "Flock",
+          "FlockLeader",
+          "Self"
+        ]
+      }
+    },
+    {
+      "Id": "FriendlyFire",
+      "Type": "Bool",
+      "Description": "Consider friendly fire too",
+      "Options": {
+        "Label": "FriendlyFire",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Target": "Target",
+    "FriendlyFire": "FriendlyFire",
+    "Type": "InflictedDamage"
+  }
+}

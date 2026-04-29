@@ -1,5 +1,6 @@
 import type { AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import type {
+  NodeConnectionType,
   FieldComponentType,
   NodeEditorWorkspaceContext,
   NodeField,
@@ -25,6 +26,7 @@ export function nodeField(
     localId: schemaKey,
     type,
     isImplicit: true,
+    isSet: false,
     ...overrides,
   };
 }
@@ -39,6 +41,19 @@ export function outputPin(
     connectionType: "Generic",
     localId: schemaKey,
     multiplicity,
+    ...overrides,
+  };
+}
+
+export function selfOutputPin(
+  connectionType: string,
+  overrides: Partial<NodePin> = {},
+): NodePin {
+  return {
+    schemaKey: "output",
+    connectionType,
+    localId: "Output",
+    multiplicity: "single",
     ...overrides,
   };
 }
@@ -59,12 +74,25 @@ export function inputPin(
 
 export function nodeTemplate(
   templateId: string,
-  overrides: Partial<NodeTemplate> = {},
+  overrides: (Partial<NodeTemplate> & { childTypes?: Record<string, string> }) = {},
 ): NodeTemplate {
+  const childSchemas =
+    overrides.childSchemas ??
+    Object.fromEntries(
+      Object.entries(overrides.childTypes ?? {}).map(([schemaKey, targetTemplateOrVariantId]) => [
+        schemaKey,
+        {
+          schemaKey,
+          targetTemplateOrVariantId,
+          serializationType: "child" as const,
+        },
+      ]),
+    );
+
   return {
     templateId,
     defaultTitle: templateId,
-    childTypes: {},
+    childSchemas,
     fieldsBySchemaKey: {},
     inputPins: [],
     outputPins: [],
@@ -79,12 +107,14 @@ export function workspaceContext({
   templates,
   templateCategories,
   variantKindsById = {},
+  connectionTypesById = {},
 }: {
   rootTemplateOrVariantId?: string;
   rootMenuName?: string;
   templates: NodeTemplate[];
   templateCategories?: Record<string, string[]>;
   variantKindsById?: Record<string, VariantKindDefinition>;
+  connectionTypesById?: Record<string, NodeConnectionType>;
 }): NodeEditorWorkspaceContext {
   const nodeTemplatesById = Object.fromEntries(templates.map(template => [template.templateId, template]));
   return {
@@ -96,6 +126,7 @@ export function workspaceContext({
         General: templates.map(template => template.templateId),
       },
     variantKindsById,
+    connectionTypesById,
   };
 }
 
@@ -218,7 +249,12 @@ function normalizeNode(node: FlowNode): Record<string, unknown> {
     id: node.id,
     type: node.type,
     templateId: node.data.templateId,
-    childTypes: node.data.childTypes ?? {},
+    childSchemas: Object.fromEntries(
+      Object.entries(node.data.childSchemas ?? {}).map(([schemaKey, childSchema]) => [
+        schemaKey,
+        childSchema.targetTemplateOrVariantId,
+      ]),
+    ),
     schemaConstants: node.data.schemaConstants ?? {},
     unparsedMetadata: node.data.unparsedMetadata ?? {},
     fieldValuesBySchemaKey,

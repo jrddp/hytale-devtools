@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "fs";
 import path from "path";
 import type * as vscode from "vscode";
-import { indexes, LOGGER } from "../extension";
+import { assetCacheRuntime, indexes, LOGGER } from "../extension";
 import { safeParseJSONFile } from "../shared/fileUtils";
 import {
   type CommonAssetPathsIndexShard,
@@ -46,6 +46,10 @@ export function loadIndexesFromRoot(dataRoot: string): Map<IndexKind, SymbolInde
 }
 
 export function getValuesByIndexReference(reference: IndexReference): string[] {
+  if (reference.indexKind === "assetDerived") {
+    return getAssetDerivedValues(reference);
+  }
+
   const index = indexes.get(reference.indexKind);
   if (!index) {
     LOGGER.error(`Index for ${reference.indexKind} not found`);
@@ -69,13 +73,80 @@ export function getValuesByIndexReference(reference: IndexReference): string[] {
       // TODO special cases
       return [];
     case "registeredAssets":
-      shard = shard as RegisteredAssetsIndexShard;
-      return Object.keys(shard.values);
+      return Object.keys(
+        getEffectiveRegisteredAssetsShard(reference.key, shard as RegisteredAssetsIndexShard)?.values ??
+          (shard as RegisteredAssetsIndexShard).values,
+      );
     case "commonAssetPaths":
-      shard = shard as CommonAssetPathsIndexShard;
-      return getCommonAssetPathValues(shard, reference);
+      return getCommonAssetPathValues(
+        assetCacheRuntime?.getCommonAssetPathsShard(shard as CommonAssetPathsIndexShard) ??
+          (shard as CommonAssetPathsIndexShard),
+        reference,
+      );
   }
   return [];
+}
+
+export async function getValuesByIndexReferenceAsync(
+  reference: IndexReference,
+): Promise<string[]> {
+  if (
+    reference.indexKind === "assetDerived" ||
+    reference.indexKind === "registeredAssets" ||
+    reference.indexKind === "commonAssetPaths"
+  ) {
+    try {
+      await assetCacheRuntime?.ready;
+    } catch (error) {
+      LOGGER.error(
+        `Failed to await asset indexes: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return getValuesByIndexReference(reference);
+}
+
+export function getEffectiveRegisteredAssetsShard(
+  assetType: string,
+  fallback?: RegisteredAssetsIndexShard,
+): RegisteredAssetsIndexShard | undefined {
+  return assetCacheRuntime?.getRegisteredAssetsShard(assetType, fallback) ?? fallback;
+}
+
+function getAssetDerivedValues(reference: Extract<IndexReference, { indexKind: "assetDerived" }>): string[] {
+  const shard = assetCacheRuntime?.derivedIndexes.get(reference.key);
+  if (!shard) {
+    LOGGER.error(`Asset-derived index shard ${reference.key} not found`);
+    return [];
+  }
+
+  const requestedInterfaces = new Set(reference.filter?.npcComponentInterfaces ?? []);
+  const requestedClasses = new Set(reference.filter?.npcComponentClasses ?? []);
+
+  switch (shard.key) {
+    case "npcComponentInterfaces":
+      return Object.keys(shard.values).sort();
+    case "npcComponents":
+      return Object.entries(shard.values)
+        .filter(([, metadata]) => {
+          if (requestedClasses.size > 0 && !requestedClasses.has(metadata.componentClass ?? "")) {
+            return false;
+          }
+          if (requestedInterfaces.size > 0 && !requestedInterfaces.has(metadata.interface ?? "")) {
+            return false;
+          }
+          return true;
+        })
+        .map(([componentName]) => componentName)
+        .sort();
+    case "npcInterfaceParameters": {
+      const interfaceNames =
+        requestedInterfaces.size > 0 ? [...requestedInterfaces] : Object.keys(shard.values);
+      return [...new Set(interfaceNames.flatMap(interfaceName => shard.values[interfaceName] ?? []))]
+        .sort();
+    }
+  }
 }
 
 export function getCommonAssetPathValues(

@@ -1,4 +1,18 @@
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
+import { getResolvedChildSlots } from "@shared/node-editor/childSlotUtils";
+import {
+  allowsComponentReferenceTemplate,
+  getComponentReferenceSlotOccupancy,
+  isComponentReferenceNodeTemplate,
+} from "@shared/node-editor/componentReferences";
+import {
+  areConnectionTypesCompatible,
+  GENERIC_CONNECTION_TYPE,
+  getCompatibleInputHandleId,
+  getCompatibleOutputHandleId,
+  templateHasCompatibleInput,
+  templateHasCompatibleOutput,
+} from "@shared/node-editor/pinUtils";
 import { type NodePin, type NodeTemplate } from "@shared/node-editor/workspaceTypes";
 import { type Connection, type XYPosition } from "@xyflow/svelte";
 import { type BBox } from "rbush";
@@ -8,9 +22,17 @@ import {
   type FlowNode,
   type FlowNodeData,
   type GroupNodeType,
-} from "src/common";
-import { GROUP_NODE_TYPE } from "src/constants";
-import { workspace } from "src/workspace.svelte";
+} from "@node-editor/common";
+import { GROUP_NODE_TYPE } from "@node-editor/constants";
+import type { NodeEditorSession } from "@node-editor/workspace.svelte";
+
+export {
+  areConnectionTypesCompatible,
+  getCompatibleInputHandleId,
+  getCompatibleOutputHandleId,
+  templateHasCompatibleInput,
+  templateHasCompatibleOutput,
+} from "@shared/node-editor/pinUtils";
 
 export type PendingConnection =
   | {
@@ -30,7 +52,6 @@ export type PendingConnection =
 /** [nodeId, dataUpdates] */
 export type NodeDataUpdates = [string, Partial<FlowNodeData>];
 export type NodeUpdates = [string, Partial<FlowNode>];
-export const GENERIC_CONNECTION_TYPE = "Generic";
 
 export function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
   return {
@@ -43,75 +64,202 @@ export function getDefaultInputPin(data?: Partial<NodePin>): NodePin {
   };
 }
 
-export function areConnectionTypesCompatible(sourceType: string, targetType: string): boolean {
-  return (
-    sourceType === GENERIC_CONNECTION_TYPE ||
-    targetType === GENERIC_CONNECTION_TYPE ||
-    sourceType === targetType
-  );
-}
-
-export function templateHasCompatibleInput(template: NodeTemplate, pinType: string): boolean {
-  return template.inputPins.some(pin => areConnectionTypesCompatible(pinType, pin.connectionType));
-}
-
-export function templateHasCompatibleOutput(template: NodeTemplate, pinType: string): boolean {
-  return template.outputPins.some(pin => areConnectionTypesCompatible(pin.connectionType, pinType));
-}
-
-export function getCompatibleInputHandleId(
-  nodeOrTemplate: Pick<DataNodeType["data"], "inputPins"> | NodeTemplate,
-  pinType: string,
-): string | undefined {
-  return (
-    nodeOrTemplate.inputPins.find(pin => pin.connectionType === pinType)?.schemaKey ??
-    nodeOrTemplate.inputPins.find(pin =>
-      areConnectionTypesCompatible(pinType, pin.connectionType),
-    )?.schemaKey
-  );
-}
-
-export function getCompatibleOutputHandleId(
-  nodeOrTemplate: Pick<DataNodeType["data"], "outputPins"> | NodeTemplate,
-  pinType: string,
-): string | undefined {
-  return (
-    nodeOrTemplate.outputPins.find(pin => pin.connectionType === pinType)?.schemaKey ??
-    nodeOrTemplate.outputPins.find(pin =>
-      areConnectionTypesCompatible(pin.connectionType, pinType),
-    )?.schemaKey
-  );
-}
-
-export function isValidConnection(connection: Connection | FlowEdge): boolean {
+export function isValidConnection(
+  connection: Connection | FlowEdge,
+  session: NodeEditorSession,
+): boolean {
   if (!connection.sourceHandle) return false;
-  const sourceNode = workspace.getNodeById(connection.source) as DataNodeType;
-  const targetNode = workspace.getNodeById(connection.target) as DataNodeType;
+  const sourceNode = session.getNodeById(connection.source) as DataNodeType;
+  const targetNode = session.getNodeById(connection.target) as DataNodeType;
   const sourcePin = sourceNode.data.outputPins?.find(pin => pin.schemaKey === connection.sourceHandle);
   const targetPin = targetNode.data.inputPins?.find(pin => pin.schemaKey === connection.targetHandle);
   if (!sourcePin || !targetPin) return false;
-  return areConnectionTypesCompatible(sourcePin.connectionType, targetPin.connectionType);
+  if (
+    !areConnectionTypesCompatible(
+      sourcePin.connectionType,
+      targetPin.connectionType,
+      session.context.connectionTypesById,
+    )
+  ) {
+    return false;
+  }
+
+  const parentSlotConnection = resolveSerializedParentSlotConnection(connection, session);
+  if (!parentSlotConnection) {
+    return true;
+  }
+
+  const childNode = session.getNodeById(parentSlotConnection.childNodeId) as DataNodeType | undefined;
+  if (
+    childNode?.type === "datanode" &&
+    isComponentReferenceNodeTemplate(childNode.data) &&
+    !allowsComponentReferenceTemplate(parentSlotConnection.slot.childSchema, childNode.data)
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
-export function getOutputPin(nodeId: string, handleId: string): NodePin | undefined {
-  const node = workspace.getNodeById(nodeId);
+function resolveSerializedParentSlotConnection(
+  connection: PendingConnection,
+  session: NodeEditorSession,
+):
+  | {
+      parentId: string;
+      parentHandleId: string;
+      childNodeId: string;
+      slot: ReturnType<typeof getResolvedChildSlots>[number];
+    }
+  | undefined {
+  const { source, sourceHandle, target, targetHandle } = connection;
+
+  if (source && sourceHandle) {
+    const sourceNode = session.getNodeById(source) as DataNodeType | undefined;
+    const sourceSlot =
+      sourceNode?.type === "datanode"
+        ? getResolvedChildSlots(sourceNode.data).find(
+            slot => slot.side === "output" && slot.pin.schemaKey === sourceHandle,
+          )
+        : undefined;
+    if (sourceSlot && target) {
+      return {
+        parentId: source,
+        parentHandleId: sourceHandle,
+        childNodeId: target,
+        slot: sourceSlot,
+      };
+    }
+  }
+
+  if (target && targetHandle) {
+    const targetNode = session.getNodeById(target) as DataNodeType | undefined;
+    const targetSlot =
+      targetNode?.type === "datanode"
+        ? getResolvedChildSlots(targetNode.data).find(
+            slot => slot.side === "input" && slot.pin.schemaKey === targetHandle,
+          )
+        : undefined;
+    if (targetSlot && source) {
+      return {
+        parentId: target,
+        parentHandleId: targetHandle,
+        childNodeId: source,
+        slot: targetSlot,
+      };
+    }
+  }
+
+  return undefined;
+}
+
+function getSerializedSiblingEdgesForParentSlot(
+  parentSlotConnection: NonNullable<ReturnType<typeof resolveSerializedParentSlotConnection>>,
+  session: NodeEditorSession,
+): FlowEdge[] {
+  return parentSlotConnection.slot.side === "output"
+    ? session.getOutgoingConnectionsForHandle(
+        parentSlotConnection.parentId,
+        parentSlotConnection.parentHandleId,
+      )
+    : session.getIncomingConnectionsForHandle(
+        parentSlotConnection.parentId,
+        parentSlotConnection.parentHandleId,
+      );
+}
+
+function getSerializedChildNodeIdForParentSlotEdge(
+  edge: FlowEdge,
+  parentSlotConnection: NonNullable<ReturnType<typeof resolveSerializedParentSlotConnection>>,
+): string {
+  return parentSlotConnection.slot.side === "output" ? edge.target : edge.source;
+}
+
+function isWholeSlotOccupantNode(nodeId: string, session: NodeEditorSession): boolean {
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  return node?.type === "datanode" && getComponentReferenceSlotOccupancy(node.data) === "whole-slot";
+}
+
+function getSerializedChildIdsByHandle(
+  nodeId: string,
+  handleId: string,
+  side: "input" | "output",
+  session: NodeEditorSession,
+): string[] {
+  if (side === "output") {
+    return session.getOutgoingConnectionsForHandle(nodeId, handleId).map(edge => edge.target);
+  }
+
+  return session.getIncomingConnectionsForHandle(nodeId, handleId).map(edge => edge.source);
+}
+
+function getSerializedParentConnectionForHandle(
+  nodeId: string,
+  handleId: string,
+  session: NodeEditorSession,
+): { parentId: string; parentHandleId: string } | undefined {
+  const outgoingEdges = session.getOutgoingConnections(nodeId);
+  if (!outgoingEdges) {
+    return undefined;
+  }
+
+  for (const edges of outgoingEdges.values()) {
+    for (const edge of edges) {
+      if (edge.source === edge.target) {
+        continue;
+      }
+
+      const targetNode = session.getNodeById(edge.target) as DataNodeType | undefined;
+      if (!targetNode || targetNode.type !== "datanode") {
+        continue;
+      }
+
+      const resolvedChildSlot = getResolvedChildSlots(targetNode.data).find(
+        slot => slot.side === "input" && slot.pin.schemaKey === edge.targetHandle,
+      );
+      if (!resolvedChildSlot) {
+        continue;
+      }
+
+      if (edge.source === nodeId && handleId === edge.sourceHandle) {
+        return {
+          parentId: edge.target,
+          parentHandleId: edge.targetHandle,
+        };
+      }
+    }
+  }
+
+  return undefined;
+}
+
+export function getOutputPin(
+  nodeId: string,
+  handleId: string,
+  session: NodeEditorSession,
+): NodePin | undefined {
+  const node = session.getNodeById(nodeId);
   return node.data.outputPins?.find(pin => pin.schemaKey === handleId);
 }
 
-export function getInputPin(nodeId: string, handleId: string): NodePin | undefined {
-  const node = workspace.getNodeById(nodeId);
+export function getInputPin(
+  nodeId: string,
+  handleId: string,
+  session: NodeEditorSession,
+): NodePin | undefined {
+  const node = session.getNodeById(nodeId);
   return node.data.inputPins?.find(pin => pin.schemaKey === handleId);
 }
 
-export function recalculateGroupParents() {
-  if (!workspace.areNodesMeasured) {
+export function recalculateGroupParents(session: NodeEditorSession) {
+  if (!session.areNodesMeasured) {
     console.error("recalculateGroupParents called before measurements loaded.");
     return;
   }
   let groupNodes: GroupNodeType[] = [];
   // kept separately so that groups are guaranteed to be first in order (parents must be before children in workspace.nodes array)
   let nonGroupNodes: FlowNode[] = [];
-  workspace.nodes.forEach(node => {
+  session.nodes.forEach(node => {
     if (node.type === GROUP_NODE_TYPE) {
       groupNodes.push(node);
     } else {
@@ -128,7 +276,7 @@ export function recalculateGroupParents() {
   const processedGroupIds = new Set<string>();
 
   for (const parentGroup of groupNodes) {
-    for (const child of workspace.searchNodesCollidingWith(getAbsoluteBoundingBox(parentGroup))) {
+    for (const child of session.searchNodesCollidingWith(getAbsoluteBoundingBox(parentGroup, session))) {
       if (child.id === parentGroup.id) continue; // ignore collision with self
       if (parentRemappings.has(child.id)) continue; // already processed
       // we can't guarentee sizing order when searching the spatial index, so we'll only parent groups that are smaller than their parent
@@ -145,7 +293,8 @@ export function recalculateGroupParents() {
       parentId,
       position: getPositionRelativeTo(
         group,
-        parentId ? workspace.getNodeById(parentId) : undefined,
+        parentId ? session.getNodeById(parentId) : undefined,
+        session,
       ),
     };
   });
@@ -155,24 +304,39 @@ export function recalculateGroupParents() {
     return {
       ...node,
       parentId,
-      position: getPositionRelativeTo(node, parentId ? workspace.getNodeById(parentId) : undefined),
+      position: getPositionRelativeTo(node, parentId ? session.getNodeById(parentId) : undefined, session),
     };
   });
 
   // should now save with largest groups first, since they can parent smaller groups
   groupNodes = groupNodes.reverse();
-  workspace.nodes = [...groupNodes, ...nonGroupNodes];
+  session.nodes = [...groupNodes, ...nonGroupNodes];
 }
 
-export function getAbsolutePosition(node: FlowNode): XYPosition {
+export function getAbsolutePosition(node: FlowNode, session: NodeEditorSession): XYPosition {
   if (!node.parentId) return node.position;
-  const { x: parentX, y: parentY } = getAbsolutePosition(workspace.getNodeById(node.parentId));
+  const { x: parentX, y: parentY } = getAbsolutePosition(session.getNodeById(node.parentId), session);
   return { x: parentX + node.position.x, y: parentY + node.position.y };
 }
 
-export function getAbsoluteCenterPosition(node: FlowNode): XYPosition {
-  const { x, y } = getAbsolutePosition(node);
-  return { x: x + node.measured.width / 2, y: y + node.measured.height / 2 };
+export function getNodeSize(node: FlowNode): { width: number; height: number } | undefined {
+  const width = node.measured?.width ?? node.width;
+  const height = node.measured?.height ?? node.height;
+  if (
+    typeof width !== "number" ||
+    typeof height !== "number" ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height)
+  ) {
+    return undefined;
+  }
+  return { width, height };
+}
+
+export function getAbsoluteCenterPosition(node: FlowNode, session: NodeEditorSession): XYPosition {
+  const { x, y } = getAbsolutePosition(node, session);
+  const size = getNodeSize(node);
+  return { x: x + (size?.width ?? 0) / 2, y: y + (size?.height ?? 0) / 2 };
 }
 
 // todo optimization: instead of using a distanceLimit, search rbush by bounding box of the max viewport size we would want.
@@ -180,10 +344,12 @@ export function resolveFitViewNodeIds({
   nodes,
   rootNodeId,
   maxDistanceToRoot,
+  session,
 }: {
   nodes: readonly FlowNode[];
   rootNodeId: string | undefined;
   maxDistanceToRoot?: number;
+  session: NodeEditorSession;
 }): Array<{ id: string }> {
   if (nodes.length === 0) {
     return [];
@@ -198,10 +364,10 @@ export function resolveFitViewNodeIds({
     return Array.from(nodes, node => ({ id: node.id }));
   }
 
-  const rootCenter = getAbsoluteCenterPosition(rootNode);
+  const rootCenter = getAbsoluteCenterPosition(rootNode, session);
   const fitNodeIdSet = new Set([rootNodeId]);
   for (const node of nodes) {
-    const nodeCenter = getAbsoluteCenterPosition(node);
+    const nodeCenter = getAbsoluteCenterPosition(node, session);
     const dx = nodeCenter.x - rootCenter.x;
     const dy = nodeCenter.y - rootCenter.y;
     if (Math.hypot(dx, dy) <= maxDistanceToRoot) {
@@ -212,160 +378,336 @@ export function resolveFitViewNodeIds({
   return Array.from(fitNodeIdSet, nodeId => ({ id: nodeId }));
 }
 
-/** Checks handles of edges and removes conflicting edges.
- * @returns edges that were removed
- */
-export function pruneConflictingEdges(connection: PendingConnection): FlowEdge[] {
+/** Collects the conflicting edges for a partial or complete pending connection without mutating the session. */
+export function collectConflictingEdges(
+  connection: PendingConnection,
+  session: NodeEditorSession,
+  additionalEdges: FlowEdge[] = [],
+): FlowEdge[] {
   const { source, sourceHandle, target, targetHandle } = connection;
-  const prunedIds = new Set<string>();
-  const prunedEdges: FlowEdge[] = [];
-  const pruneEdge = (edge: FlowEdge | undefined) => {
-    if (!edge || prunedIds.has(edge.id)) {
+  const conflictingIds = new Set<string>();
+  const conflictingEdges: FlowEdge[] = [];
+  const collectEdge = (edge: FlowEdge | undefined) => {
+    if (!edge || conflictingIds.has(edge.id)) {
       return;
     }
 
-    prunedIds.add(edge.id);
-    prunedEdges.push(edge);
+    conflictingIds.add(edge.id);
+    conflictingEdges.push(edge);
+  };
+  const collectEdges = (edges: FlowEdge[] | undefined) => {
+    for (const edge of edges ?? []) {
+      collectEdge(edge);
+    }
+  };
+  const collectAdditionalEdges = (
+    predicate: (edge: FlowEdge) => boolean,
+  ) => {
+    for (const edge of additionalEdges) {
+      if (predicate(edge)) {
+        collectEdge(edge);
+      }
+    }
   };
 
-  const conflictingInput: FlowEdge | undefined =
-    target && targetHandle ? workspace.getIncomingConnection(target, targetHandle) : undefined;
-  pruneEdge(conflictingInput);
+  if (target && targetHandle) {
+    const targetPin = getInputPin(target, targetHandle, session);
+    if (targetPin?.multiplicity === "single") {
+      collectEdges(session.getIncomingConnectionsForHandle(target, targetHandle));
+      collectAdditionalEdges(
+        edge =>
+          edge.target === target &&
+          (edge.targetHandle ?? INPUT_HANDLE_ID) === targetHandle,
+      );
+    }
+  }
 
   if (source && sourceHandle) {
-    const outputPin = (workspace.getNodeById(source) as DataNodeType).data.outputPins?.find(
+    const outputPin = (session.getNodeById(source) as DataNodeType).data.outputPins?.find(
       pin => pin.schemaKey === sourceHandle,
     );
 
     if (outputPin && outputPin.multiplicity === "single") {
-      for (const edge of workspace.getOutgoingConnectionsForHandle(source, sourceHandle) ?? []) {
-        pruneEdge(edge);
+      collectEdges(session.getOutgoingConnectionsForHandle(source, sourceHandle));
+      collectAdditionalEdges(
+        edge => edge.source === source && edge.sourceHandle === sourceHandle,
+      );
+    }
+  }
+
+  const parentSlotConnection = resolveSerializedParentSlotConnection(connection, session);
+  if (parentSlotConnection) {
+    const childNode = session.getNodeById(parentSlotConnection.childNodeId) as DataNodeType | undefined;
+    if (childNode?.type === "datanode") {
+      const childOccupancy = getComponentReferenceSlotOccupancy(childNode.data);
+      const siblingEdges = getSerializedSiblingEdgesForParentSlot(parentSlotConnection, session);
+
+      if (childOccupancy === "whole-slot") {
+        collectEdges(siblingEdges);
+        collectAdditionalEdges(edge => {
+          if (
+            edge.source === parentSlotConnection.parentId &&
+            edge.sourceHandle === parentSlotConnection.parentHandleId
+          ) {
+            return true;
+          }
+
+          return (
+            edge.target === parentSlotConnection.parentId &&
+            (edge.targetHandle ?? INPUT_HANDLE_ID) === parentSlotConnection.parentHandleId
+          );
+        });
+      } else {
+        for (const edge of siblingEdges) {
+          if (
+            isWholeSlotOccupantNode(
+              getSerializedChildNodeIdForParentSlotEdge(edge, parentSlotConnection),
+              session,
+            )
+          ) {
+            collectEdge(edge);
+          }
+        }
+        collectAdditionalEdges(edge => {
+          const siblingNodeId =
+            edge.source === parentSlotConnection.parentId &&
+            edge.sourceHandle === parentSlotConnection.parentHandleId
+              ? edge.target
+              : edge.target === parentSlotConnection.parentId &&
+                  (edge.targetHandle ?? INPUT_HANDLE_ID) === parentSlotConnection.parentHandleId
+                ? edge.source
+                : null;
+          return siblingNodeId ? isWholeSlotOccupantNode(siblingNodeId, session) : false;
+        });
       }
     }
   }
 
-  workspace.edges = workspace.edges.filter(edge => !prunedIds.has(edge.id));
-  return prunedEdges;
+  return conflictingEdges;
 }
 
-export function collectAllDescendentIds(seedNodeIds: string[]): string[] {
+export function collectConflictingEdgeIds(
+  connection: PendingConnection,
+  session: NodeEditorSession,
+): string[] {
+  return collectConflictingEdges(connection, session).map(edge => edge.id);
+}
+
+export function collectAllDescendentIds(
+  seedNodeIds: string[],
+  session: NodeEditorSession,
+): string[] {
   const targetNodeIdSet = new Set<string>();
   const recCollectDescendents = (nodeId: string) => {
     if (targetNodeIdSet.has(nodeId)) {
       return;
     }
     targetNodeIdSet.add(nodeId);
-    const directDescendents = Array.from(workspace.getOutgoingConnections(nodeId).values()).flat();
-    directDescendents.forEach(edge => recCollectDescendents(edge.target));
+    getChildIds(nodeId, session).forEach(childId => recCollectDescendents(childId));
   };
   seedNodeIds.forEach(nodeId => recCollectDescendents(nodeId));
   return Array.from(targetNodeIdSet);
 }
 
-export function getPositionRelativeTo(nodeA: FlowNode, nodeB?: FlowNode): XYPosition {
-  if (!nodeB) return getAbsolutePosition(nodeA);
-  const { x: xA, y: yA } = getAbsolutePosition(nodeA);
-  const { x: xB, y: yB } = getAbsolutePosition(nodeB);
+export function getPositionRelativeTo(
+  nodeA: FlowNode,
+  nodeB: FlowNode | undefined,
+  session: NodeEditorSession,
+): XYPosition {
+  if (!nodeB) return getAbsolutePosition(nodeA, session);
+  const { x: xA, y: yA } = getAbsolutePosition(nodeA, session);
+  const { x: xB, y: yB } = getAbsolutePosition(nodeB, session);
   return { x: xA - xB, y: yA - yB };
 }
 
-export function getAbsoluteBoundingBox(node: FlowNode): BBox | undefined {
-  const { width, height } = node.measured ?? {
-    width: node.width,
-    height: node.height,
-  };
-  if (width == undefined || height == undefined) return undefined;
-  const { x, y } = getAbsolutePosition(node);
+export function getAbsoluteBoundingBox(node: FlowNode, session: NodeEditorSession): BBox | undefined {
+  const size = getNodeSize(node);
+  if (!size) return undefined;
+  const { width, height } = size;
+  const { x, y } = getAbsolutePosition(node, session);
   return { minX: x, minY: y, maxX: x + width, maxY: y + height };
 }
 
 /** Returns all nodes that are not descendents of other nodes in the provided list. */
-export function getRootIds(nodeIds: string[]): string[] {
+export function getRootIds(nodeIds: string[], session: NodeEditorSession): string[] {
   const idSet = new Set(nodeIds);
-  return nodeIds.filter(nodeId => !idSet.has(getParentId(nodeId)));
+  return nodeIds.filter(nodeId => !idSet.has(getParentId(nodeId, session)));
 }
 
-export function getParentId(nodeId: string): string | undefined {
-  return workspace.getIncomingConnection(nodeId)?.source;
+export function getParentId(nodeId: string, session: NodeEditorSession): string | undefined {
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  if (!node || node.type !== "datanode") {
+    return session.getIncomingConnection(nodeId)?.source;
+  }
+
+  for (const pin of node.data.inputPins ?? []) {
+    const directIncoming = session.getIncomingConnection(nodeId, pin.schemaKey);
+    if (
+      directIncoming &&
+      !getResolvedChildSlots(node.data).some(
+        slot => slot.side === "input" && slot.pin.schemaKey === pin.schemaKey,
+      )
+    ) {
+      return directIncoming.source;
+    }
+  }
+
+  for (const pin of node.data.outputPins ?? []) {
+    const parentConnection = getSerializedParentConnectionForHandle(nodeId, pin.schemaKey, session);
+    if (parentConnection) {
+      return parentConnection.parentId;
+    }
+  }
+
+  return undefined;
 }
 
 export function getParentIdWithHandle(
   nodeId: string,
+  session: NodeEditorSession,
 ): { parentId: string; parentHandleId: string } | undefined {
-  const incomingConnection = workspace.getIncomingConnection(nodeId);
-  if (!incomingConnection) {
-    return undefined;
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  if (!node || node.type !== "datanode") {
+    const incomingConnection = session.getIncomingConnection(nodeId);
+    if (!incomingConnection) {
+      return undefined;
+    }
+    return {
+      parentId: incomingConnection.source,
+      parentHandleId: incomingConnection.sourceHandle,
+    };
   }
-  return {
-    parentId: incomingConnection.source,
-    parentHandleId: incomingConnection.sourceHandle,
-  };
+
+  for (const pin of node.data.inputPins ?? []) {
+    const directIncoming = session.getIncomingConnection(nodeId, pin.schemaKey);
+    if (
+      directIncoming &&
+      !getResolvedChildSlots(node.data).some(
+        slot => slot.side === "input" && slot.pin.schemaKey === pin.schemaKey,
+      )
+    ) {
+      return {
+        parentId: directIncoming.source,
+        parentHandleId: directIncoming.sourceHandle,
+      };
+    }
+  }
+
+  for (const pin of node.data.outputPins ?? []) {
+    const parentConnection = getSerializedParentConnectionForHandle(nodeId, pin.schemaKey, session);
+    if (parentConnection) {
+      return parentConnection;
+    }
+  }
+
+  return undefined;
 }
 
-export function getChildIds(nodeId: string): string[] {
-  const connectionMap = workspace.getOutgoingConnections(nodeId);
-  if (!connectionMap) {
+export function getChildIds(nodeId: string, session: NodeEditorSession): string[] {
+  const node = session.getNodeById(nodeId) as DataNodeType | undefined;
+  if (!node || node.type !== "datanode") {
     return [];
   }
-  return Array.from(connectionMap.values())
-    .flat()
-    .map(edge => edge.target);
+
+  return getResolvedChildSlots(node.data).flatMap(slot =>
+    getSerializedChildIdsByHandle(nodeId, slot.pin.schemaKey, slot.side, session),
+  );
 }
 
 export function getNodeSiblingIds(
   nodeId: string,
   scope: "same-parent-handle" | "same-parent-node",
+  session: NodeEditorSession,
 ): string[] {
-  const parentId = getParentId(nodeId);
+  const parentId = getParentId(nodeId, session);
   if (!parentId) {
     return [];
   }
   if (scope === "same-parent-node") {
-    return getChildIds(parentId);
+    return getChildIds(parentId, session);
   }
   if (scope === "same-parent-handle") {
-    const { parentId, parentHandleId } = getParentIdWithHandle(nodeId);
-    return workspace
-      .getOutgoingConnectionsForHandle(parentId, parentHandleId)
-      .map(edge => edge.target);
+    const parentWithHandle = getParentIdWithHandle(nodeId, session);
+    if (!parentWithHandle) {
+      return [];
+    }
+    const parentNode = session.getNodeById(parentWithHandle.parentId) as DataNodeType | undefined;
+    const slot = parentNode?.type === "datanode"
+      ? getResolvedChildSlots(parentNode.data).find(
+          resolvedSlot => resolvedSlot.pin.schemaKey === parentWithHandle.parentHandleId,
+        )
+      : undefined;
+    return slot
+      ? getSerializedChildIdsByHandle(
+          parentWithHandle.parentId,
+          parentWithHandle.parentHandleId,
+          slot.side,
+          session,
+        )
+      : session
+          .getOutgoingConnectionsForHandle(parentWithHandle.parentId, parentWithHandle.parentHandleId)
+          .map(edge => edge.target);
   }
+
+  return [];
 }
 
 /* Currently ordered based on y position. Should be updated. **/
-export function getOrderedChildren(parentId: string): FlowNode[] {
-  const parentNode = workspace.getNodeById(parentId);
+export function getOrderedChildren(parentId: string, session: NodeEditorSession): FlowNode[] {
+  const parentNode = session.getNodeById(parentId) as DataNodeType | undefined;
+  if (!parentNode || parentNode.type !== "datanode") {
+    return [];
+  }
   const children = [];
-  for (const handle of (parentNode.data.outputPins as NodePin[]) ?? []) {
-    children.push(...getOrderedChildrenForHandle(parentId, handle.schemaKey));
+  for (const slot of getResolvedChildSlots(parentNode.data)) {
+    children.push(...getOrderedChildrenForHandle(parentId, slot.pin.schemaKey, session));
   }
   return children;
 }
 
 /* Ordered based on y position (LOWER Y IS HIGHER) **/
-export function getOrderedChildrenForHandle(parentId: string, parentHandleId: string): FlowNode[] {
-  const childIds = workspace
-    .getOutgoingConnectionsForHandle(parentId, parentHandleId)
-    .map(edge => edge.target);
+export function getOrderedChildrenForHandle(
+  parentId: string,
+  parentHandleId: string,
+  session: NodeEditorSession,
+): FlowNode[] {
+  const parentNode = session.getNodeById(parentId) as DataNodeType | undefined;
+  const slot = parentNode?.type === "datanode"
+    ? getResolvedChildSlots(parentNode.data).find(resolvedSlot => resolvedSlot.pin.schemaKey === parentHandleId)
+    : undefined;
+  const childIds = slot
+    ? getSerializedChildIdsByHandle(parentId, parentHandleId, slot.side, session)
+    : session.getOutgoingConnectionsForHandle(parentId, parentHandleId).map(edge => edge.target);
   // y position descending to order nodes
   return childIds
-    .map(childId => workspace.getNodeById(childId))
+    .map(childId => session.getNodeById(childId))
     .sort((a, b) => (a.data.inputConnectionIndex ?? -1) - (b.data.inputConnectionIndex ?? -1));
 }
 
-export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
+export function getAllSiblingOrderUpdates(session: NodeEditorSession): NodeDataUpdates[] {
   const childIdsByHandle = new Map<string, string[]>();
+  const processedHandles = new Set<string>();
 
-  for (const edge of workspace.edges) {
-    if (!edge.sourceHandle) {
+  for (const node of session.nodes) {
+    if (node.type !== "datanode") {
       continue;
     }
 
-    const key = `${edge.source}:${edge.sourceHandle}`;
-    const childIds = childIdsByHandle.get(key);
-    if (childIds) {
-      childIds.push(edge.target);
-  } else {
-      childIdsByHandle.set(key, [edge.target]);
+    for (const slot of getResolvedChildSlots(node.data)) {
+      if (slot.pin.multiplicity === "single") {
+        continue;
+      }
+
+      const key = `${node.id}:${slot.pin.schemaKey}`;
+      if (processedHandles.has(key)) {
+        continue;
+      }
+
+      processedHandles.add(key);
+      childIdsByHandle.set(
+        key,
+        getSerializedChildIdsByHandle(node.id, slot.pin.schemaKey, slot.side, session),
+      );
     }
   }
 
@@ -376,7 +718,7 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
       return cached;
     }
 
-    const absoluteY = getAbsolutePosition(workspace.getNodeById(nodeId)).y;
+    const absoluteY = getAbsolutePosition(session.getNodeById(nodeId), session).y;
     absoluteYByNodeId.set(nodeId, absoluteY);
     return absoluteY;
   };
@@ -392,7 +734,7 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
     childIds.forEach(childId => nodesWithIncomingOrder.add(childId));
 
     if (childIds.length === 1) {
-      const node = workspace.getNodeById(childIds[0]);
+      const node = session.getNodeById(childIds[0]);
       if (node.data.inputConnectionIndex != undefined) {
         updates.push([node.id, { inputConnectionIndex: undefined }]);
       }
@@ -400,17 +742,17 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
     }
 
     const orderedChildren = childIds
-      .map(childId => workspace.getNodeById(childId))
+      .map(childId => session.getNodeById(childId))
       .sort((nodeA, nodeB) => getAbsoluteY(nodeA.id) - getAbsoluteY(nodeB.id));
 
     orderedChildren.forEach((node, index) => {
       if ((node.data.inputConnectionIndex ?? -1) !== index) {
         updates.push([node.id, { inputConnectionIndex: index }]);
       }
-      });
+    });
   }
 
-  for (const node of workspace.nodes) {
+  for (const node of session.nodes) {
     if (!nodesWithIncomingOrder.has(node.id) && node.data.inputConnectionIndex != undefined) {
       updates.push([node.id, { inputConnectionIndex: undefined }]);
     }
@@ -420,10 +762,10 @@ export function getAllSiblingOrderUpdates(): NodeDataUpdates[] {
 }
 
 /** Returns list of node ids for the groups that the provided node is a descendent of, in order of parent to child. */
-export function getGroupList(nodeId: string): string[] {
-  const parentId = workspace.getNodeById(nodeId).parentId;
+export function getGroupList(nodeId: string, session: NodeEditorSession): string[] {
+  const parentId = session.getNodeById(nodeId).parentId;
   if (!parentId) {
     return [];
   }
-  return [...getGroupList(parentId), parentId];
+  return [...getGroupList(parentId, session), parentId];
 }

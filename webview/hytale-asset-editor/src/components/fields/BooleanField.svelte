@@ -49,18 +49,18 @@
   fieldPanelOverrides={fieldPanelOverrides}
   {handle}
   inline
-  onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
+  onunset={!readOnly && (onunset || isSet) ? (onunset ?? unsetValue) : undefined}
 >
   <ReadOnlyInputWrapper
     readOnly={readOnly}
     {readOnlyMessage}
     blockPointerDown={readOnly}
-    class="inline-flex"
+    class="flex items-center"
   >
     <div class="flex items-center gap-2">
       <input
         id={inputId}
-        class="size-6 accent-vsc-activity-bar-badge-bg"
+        class="m-0 block size-6 accent-vsc-activity-bar-badge-bg"
         class:accent-vsc-muted={!isSet}
         class:cursor-default={readOnly}
         class:opacity-70={readOnly}

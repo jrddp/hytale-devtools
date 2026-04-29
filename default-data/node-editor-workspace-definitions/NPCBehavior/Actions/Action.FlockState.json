@@ -1,0 +1,43 @@
+{
+  "Id": "Action.FlockState",
+  "Title": "Action: FlockState",
+  "Color": "#CC3361",
+  "Description": "Set state name for flock.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "State",
+      "Type": "SmallString",
+      "Description": "State name to set",
+      "Options": {
+        "Label": "State",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "State": "State",
+    "Type": "FlockState"
+  }
+}

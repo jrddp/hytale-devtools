@@ -1,0 +1,32 @@
+{
+  "Id": "IEntityFilter.LineOfSight",
+  "Title": "Filter: LineOfSight",
+  "Color": "#60C8B8",
+  "Description": "Matches if there is line of sight to the target",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Type": "LineOfSight"
+  }
+}

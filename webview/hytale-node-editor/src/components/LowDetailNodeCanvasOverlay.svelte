@@ -2,9 +2,9 @@
 <script lang="ts">
   import { useStore, type XYPosition } from "@xyflow/svelte";
   import RBush, { type BBox } from "rbush";
-  import type { FlowEdge, FlowNode } from "src/common";
-  import { DEFAULT_COMMENT_FONT_SIZE } from "src/constants";
-  import { resolveComputedColor } from "src/node-editor/utils/colors";
+  import type { FlowEdge, FlowNode } from "@node-editor/common";
+  import { DEFAULT_COMMENT_FONT_SIZE } from "@node-editor/constants";
+  import { resolveComputedColor } from "@node-editor/node-editor/utils/colors";
   import { onDestroy } from "svelte";
 
   type OverlayItem = {

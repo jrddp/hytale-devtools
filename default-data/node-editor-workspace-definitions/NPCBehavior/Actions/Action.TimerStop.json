@@ -1,0 +1,43 @@
+{
+  "Id": "Action.TimerStop",
+  "Title": "Action: TimerStop",
+  "Color": "#CC3361",
+  "Description": "Stop a timer",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the timer",
+      "Options": {
+        "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "Type": "TimerStop"
+  }
+}

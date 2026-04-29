@@ -1,0 +1,48 @@
+{
+  "Id": "IEntityFilter.InsideBlock",
+  "Title": "Filter: InsideBlock",
+  "Color": "#60C8B8",
+  "Description": "Matches if the entity is inside any of the blocks in the BlockSet",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "BlockSet",
+      "Type": "SmallString",
+      "Description": "The BlockSet to match against",
+      "Options": {
+        "Label": "BlockSet",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "BlockSet": "BlockSet",
+    "Type": "InsideBlock"
+  }
+}

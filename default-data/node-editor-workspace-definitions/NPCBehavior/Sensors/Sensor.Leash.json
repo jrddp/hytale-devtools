@@ -1,0 +1,57 @@
+{
+  "Id": "Sensor.Leash",
+  "Title": "Sensor: Leash",
+  "Color": "#7091F0",
+  "Description": "Triggers when the NPC is outside a specified range from the leash point",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The farthest distance allowed from the leash point",
+      "Options": {
+        "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Range": "Range",
+    "Type": "Leash"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "Id": "Action.OverrideAttitude",
+  "Title": "Action: OverrideAttitude",
+  "Color": "#CC3361",
+  "Description": "Override this NPCs attitude towards the provided target for a given duration",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Attitude",
+      "Type": "Enum",
+      "Description": "The attitude to set",
+      "Options": {
+        "Label": "Attitude",
+        "Required": true,
+        "Width": 220,
+        "Values": [
+          "IGNORE",
+          "HOSTILE",
+          "NEUTRAL",
+          "FRIENDLY",
+          "REVERED"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Duration",
+      "Type": "Float",
+      "Description": "The duration to override for",
+      "Options": {
+        "Label": "Duration",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 10,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Attitude": "Attitude",
+    "Duration": "Duration",
+    "Type": "OverrideAttitude"
+  }
+}

@@ -1,8 +1,8 @@
-import CommentNode from "src/nodes/CommentNode.svelte";
-import DataNode from "src/nodes/DataNode.svelte";
-import GroupNode from "src/nodes/GroupNode.svelte";
-import LinkNode from "src/nodes/LinkNode.svelte";
-import RawJsonNode from "src/nodes/RawJsonNode.svelte";
+import CommentNode from "@node-editor/nodes/CommentNode.svelte";
+import DataNode from "@node-editor/nodes/DataNode.svelte";
+import GroupNode from "@node-editor/nodes/GroupNode.svelte";
+import LinkNode from "@node-editor/nodes/LinkNode.svelte";
+import RawJsonNode from "@node-editor/nodes/RawJsonNode.svelte";
 import type { Component } from "svelte";
 
 export const DEFAULT_COMMENT_WIDTH = 200;

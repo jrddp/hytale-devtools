@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "../../shared/theme.css";
 
+@source "../../shared";
+
 @theme inline {
   --color-vsc-bg: var(--vscode-editor-background);
   --color-vsc-border: var(

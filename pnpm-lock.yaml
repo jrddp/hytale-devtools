@@ -121,9 +121,9 @@ importers:
       '@xyflow/system':
         specifier: ^0.0.75
         version: 0.0.75
-      d3-flextree:
-        specifier: ^2.1.2
-        version: 2.1.2
+      elkjs:
+        specifier: ^0.11.1
+        version: 0.11.1
       lucide-svelte:
         specifier: ^0.564.0
         version: 0.564.0(svelte@5.53.6)
@@ -140,9 +140,6 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.2.1
         version: 4.2.1(vite@7.3.1(@types/node@20.19.35)(jiti@2.6.1)(lightningcss@1.31.1))
-      '@types/d3-flextree':
-        specifier: ^2.1.4
-        version: 2.1.4
       '@types/node':
         specifier: ~20.19.35
         version: 20.19.35
@@ -165,11 +162,48 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@20.19.35)(jiti@2.6.1)(lightningcss@1.31.1)
 
+  webview/hytale-npc-role-editor:
+    dependencies:
+      lucide-svelte:
+        specifier: ^0.564.0
+        version: 0.564.0(svelte@5.53.6)
+      svelte-dnd-action:
+        specifier: ^0.9.69
+        version: 0.9.69(svelte@5.53.6)
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^6.2.4
+        version: 6.2.4(svelte@5.53.6)(vite@7.3.1(@types/node@20.19.35)(jiti@2.6.1)(lightningcss@1.31.1))
+      '@tailwindcss/vite':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@7.3.1(@types/node@20.19.35)(jiti@2.6.1)(lightningcss@1.31.1))
+      '@types/node':
+        specifier: ~20.19.35
+        version: 20.19.35
+      svelte:
+        specifier: ^5.53.6
+        version: 5.53.6
+      svelte-check:
+        specifier: ^4.0.0
+        version: 4.4.5(picomatch@4.0.3)(svelte@5.53.6)(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4.2.1
+        version: 4.2.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(@types/node@20.19.35)(jiti@2.6.1)(lightningcss@1.31.1)
+
   webview/shared:
     dependencies:
       '@floating-ui/dom':
         specifier: ^1.7.6
         version: 1.7.6
+      lucide-svelte:
+        specifier: ^0.564.0
+        version: 0.564.0(svelte@5.53.6)
       marked:
         specifier: ^16.3.0
         version: 16.4.2
@@ -823,12 +857,6 @@ packages:
   '@types/d3-drag@3.0.7':
     resolution: {integrity: sha512-HE3jVKlzU9AaMazNufooRJ5ZpWmLIoc90A37WU2JMmeq28w1FQqCZswHZ3xR+SuxYftzHq6WU6KJHvqxKzTxxQ==}
 
-  '@types/d3-flextree@2.1.4':
-    resolution: {integrity: sha512-VcJAeoG51p0RBese55p/OHarbqe9QvQauzCkRAuORT3t9UOa+LzqCpTBMVYxBahyp4vAe1ML3sgeQKRU7Gv+KA==}
-
-  '@types/d3-hierarchy@3.1.7':
-    resolution: {integrity: sha512-tJFtNoYBtRtkNysX1Xq4sxtjK8YgoWUNpIiUee0/jHGRwqvzYxkq0hGVbbOGSz+JgFxxRu4K8nb3YpG3CMARtg==}
-
   '@types/d3-interpolate@3.0.4':
     resolution: {integrity: sha512-mgLPETlrpVV1YRJIglr4Ez47g7Yxjl1lj7YKsiMCb27VJH9W8NVM6Bb9d8kkpG/uAQS5AmbA48q2IAolKKo1MA==}
 
@@ -1202,12 +1230,6 @@ packages:
     resolution: {integrity: sha512-wR/XK3D3XcLIZwpbvQwQ5fK+8Ykds1ip7A2Txe0yxncXSdq1L9skcG7blcedkOX+ZcgxGAmLX1FrRGbADwzi0w==}
     engines: {node: '>=12'}
 
-  d3-flextree@2.1.2:
-    resolution: {integrity: sha512-gJiHrx5uTTHq44bjyIb3xpbmmdZcWLYPKeO9EPVOq8EylMFOiH2+9sWqKAiQ4DcFuOZTAxPOQyv0Rnmji/g15A==}
-
-  d3-hierarchy@1.1.9:
-    resolution: {integrity: sha512-j8tPxlqh1srJHAtxfvOUwKNYJkQuBFdM1+JAUfq6xqH5eAqf93L7oG1NVqDa4CpFZNvnNKtCYEUC8KY9yEn9lQ==}
-
   d3-interpolate@3.0.1:
     resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
     engines: {node: '>=12'}
@@ -1287,6 +1309,9 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  elkjs@0.11.1:
+    resolution: {integrity: sha512-zxxR9k+rx5ktMwT/FwyLdPCrq7xN6e4VGGHH8hA01vVYKjTFik7nHOxBnAYtrgYUB1RpAiLvA1/U2YraWxyKKg==}
 
   emoji-regex@10.6.0:
     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
@@ -3125,12 +3150,6 @@ snapshots:
     dependencies:
       '@types/d3-selection': 3.0.11
 
-  '@types/d3-flextree@2.1.4':
-    dependencies:
-      '@types/d3-hierarchy': 3.1.7
-
-  '@types/d3-hierarchy@3.1.7': {}
-
   '@types/d3-interpolate@3.0.4':
     dependencies:
       '@types/d3-color': 3.1.3
@@ -3563,12 +3582,6 @@ snapshots:
 
   d3-ease@3.0.1: {}
 
-  d3-flextree@2.1.2:
-    dependencies:
-      d3-hierarchy: 1.1.9
-
-  d3-hierarchy@1.1.9: {}
-
   d3-interpolate@3.0.1:
     dependencies:
       d3-color: 3.1.0
@@ -3649,6 +3662,8 @@ snapshots:
       gopd: 1.2.0
 
   eastasianwidth@0.2.0: {}
+
+  elkjs@0.11.1: {}
 
   emoji-regex@10.6.0: {}
 

@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import { buildBoxGeometry, buildQuadGeometry } from "./geometry";
 import { createMaterialFactory } from "./materials";
+import {
+  createAnimationBinding,
+  createAnimationRig,
+  registerAnimationBinding,
+  type BlockymodelAnimationRig,
+} from "./animationRig";
 import type {
   BlockymodelBoxShape,
   BlockymodelFile,
@@ -11,6 +17,15 @@ import type {
   BlockymodelVector3,
 } from "./blockymodelTypes";
 import type { TextureDimensions } from "./uv";
+
+export interface BuiltBlockymodelScene {
+  root: THREE.Object3D;
+  animationRig: BlockymodelAnimationRig;
+}
+
+interface BuildBlockymodelSceneOptions {
+  isAttachment?: boolean;
+}
 
 function toVector3(value: Partial<BlockymodelVector3> | undefined, fallback = 0): BlockymodelVector3 {
   return {
@@ -92,6 +107,8 @@ function buildNode(
   parentShapeOffset: THREE.Vector3,
   textureSize: TextureDimensions | undefined,
   getMaterial: (mode: BlockymodelShape["shadingMode"], doubleSided: boolean) => THREE.Material,
+  animationRig: BlockymodelAnimationRig,
+  options: BuildBlockymodelSceneOptions,
 ): void {
   const pivot = new THREE.Object3D();
   pivot.name = node.name;
@@ -111,15 +128,26 @@ function buildNode(
   ).normalize();
   parent.add(pivot);
 
+  let mesh: THREE.Mesh | null = null;
   if (node.shape && node.shape.type !== "none") {
-    const mesh = createMeshFromShape(node.shape, textureSize, getMaterial);
+    mesh = createMeshFromShape(node.shape, textureSize, getMaterial);
     if (mesh) {
       mesh.name = `${node.name}_shape`;
       pivot.add(mesh);
     }
   }
+  registerAnimationBinding(
+    animationRig,
+    createAnimationBinding(node.name, node.shape.settings.isPiece === true, pivot, mesh),
+  );
 
-  const shapeOffsetForChildren = node.shape ? toVector3(node.shape.offset, 0) : { x: 0, y: 0, z: 0 };
+  const suppressPieceChildOffset =
+    options.isAttachment && node.shape.settings.isPiece === true;
+  const shapeOffsetForChildren = suppressPieceChildOffset
+    ? { x: 0, y: 0, z: 0 }
+    : node.shape
+      ? toVector3(node.shape.offset, 0)
+      : { x: 0, y: 0, z: 0 };
   const nextParentOffset = new THREE.Vector3(
     shapeOffsetForChildren.x,
     shapeOffsetForChildren.y,
@@ -127,24 +155,33 @@ function buildNode(
   );
 
   for (const child of node.children ?? []) {
-    buildNode(child, pivot, nextParentOffset, textureSize, getMaterial);
+    buildNode(child, pivot, nextParentOffset, textureSize, getMaterial, animationRig, options);
   }
 }
 
-export function buildBlockymodelObject3D(
+export function buildBlockymodelScene(
   model: BlockymodelFile,
   texture?: THREE.Texture,
-): THREE.Object3D {
+  options: BuildBlockymodelSceneOptions = {},
+): BuiltBlockymodelScene {
   const root = new THREE.Group();
   root.name = "BlockymodelRoot";
 
   const getMaterial = createMaterialFactory(texture);
   const textureSize = toTextureDimensions(texture);
   const zeroOffset = new THREE.Vector3(0, 0, 0);
+  const animationRig = createAnimationRig(textureSize);
 
   for (const node of model.nodes ?? []) {
-    buildNode(node, root, zeroOffset, textureSize, getMaterial);
+    buildNode(node, root, zeroOffset, textureSize, getMaterial, animationRig, options);
   }
 
-  return root;
+  return { root, animationRig };
+}
+
+export function buildBlockymodelObject3D(
+  model: BlockymodelFile,
+  texture?: THREE.Texture,
+): THREE.Object3D {
+  return buildBlockymodelScene(model, texture).root;
 }

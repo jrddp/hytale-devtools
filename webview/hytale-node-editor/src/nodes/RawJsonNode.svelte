@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NodeField } from "@shared/node-editor/workspaceTypes";
   import { useSvelteFlow } from "@xyflow/svelte";
-  import { type RawJsonNodeType } from "src/common";
-  import { DEFAULT_RAW_JSON_TEXT } from "src/constants";
-  import { createNodePropertiesUpdatedEdit } from "src/node-editor/utils/graphDocument";
-  import { applyGraphEdit } from "src/workspace.svelte";
+  import { type RawJsonNodeType } from "@node-editor/common";
+  import { DEFAULT_RAW_JSON_TEXT } from "@node-editor/constants";
+  import { createNodePropertiesUpdatedEdit } from "@node-editor/node-editor/utils/graphDocument";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
 
@@ -13,10 +13,12 @@
     localId: "Data",
     label: "Data",
     type: "text",
+    isSet: true,
   };
 
   const { id, ...props }: RawJsonNodeType = $props();
   const { updateNodeData } = useSvelteFlow();
+  const workspace = useNodeEditorSession();
 
   const dataFieldValue = $derived(
     typeof props.data?.jsonString === "string" ? props.data.jsonString : DEFAULT_RAW_JSON_TEXT,
@@ -37,7 +39,7 @@
       },
     ]);
     if (edit) {
-      applyGraphEdit(edit);
+      workspace.applyGraphEdit(edit);
     }
   }
 </script>

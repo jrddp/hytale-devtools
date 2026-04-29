@@ -1,4 +1,4 @@
-import type { NodeTemplate } from "./workspaceTypes";
+import type { NodeField, NodeTemplate } from "./workspaceTypes";
 
 export type NodeEditorGraphPosition = {
   x: number;
@@ -126,6 +126,12 @@ export type NodeEditorGraphPropertyChange =
       afterValue: unknown;
       beforeIsImplicit?: boolean;
       afterIsImplicit?: boolean;
+      beforeIsExplicitEmpty?: boolean;
+      afterIsExplicitEmpty?: boolean;
+      beforeIsSet?: boolean;
+      afterIsSet?: boolean;
+      beforeField?: NodeField;
+      afterField?: NodeField;
     }
   | {
       type: "comment";
@@ -144,6 +150,12 @@ export type NodeEditorGraphPropertyChange =
       nodeId: string;
       beforeJsonString: string;
       afterJsonString: string;
+    }
+  | {
+      type: "unparsed-metadata";
+      nodeId: string;
+      beforeUnparsedMetadata?: Record<string, unknown>;
+      afterUnparsedMetadata?: Record<string, unknown>;
     };
 
 export type NodeEditorGraphEdit =

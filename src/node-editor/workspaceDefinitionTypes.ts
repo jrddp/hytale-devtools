@@ -1,7 +1,13 @@
 import {
+  type NodeConnectionTypeDefinition,
+  type NodeSchemaSerializationType,
+  type NodeSlotOccupancy,
   type NodeEditorWorkspaceRootDefinition,
   type VariantKindDefinition,
 } from "../shared/node-editor/workspaceTypes";
+import type { IndexReference } from "../shared/indexTypes";
+import type { NpcAnimationAutocompleteKind } from "../shared/npc-role-editor/animationAutocomplete";
+import type { NpcStateAutocompleteKind } from "../shared/npc-role-editor/stateAutocomplete";
 
 // definition as its stored in workspace node jsons
 export type NodeTemplateDefinition = {
@@ -14,6 +20,9 @@ export type NodeTemplateDefinition = {
   Inputs?: NodePinDefinition[];
   Schema?: NodeSchemaDefinition;
   IsReference?: true;
+  IsComponentReference?: true;
+  ComponentReferenceClass?: string;
+  SlotOccupancy?: NodeSlotOccupancy;
   FileRefKey?: string;
   FileRefValue?: string;
   ModifyKey?: string;
@@ -38,6 +47,7 @@ export interface NodePinDefinition {
   Color: string;
   Description?: string;
   Label?: string;
+  Required?: boolean;
   Multiple?: boolean;
   IsMap?: boolean;
   Fields?: NodeContentDefinition[];
@@ -49,6 +59,7 @@ export interface NodeEditorWorkspaceDefinition {
   WorkspaceName: string;
   // unsure what this does
   ExportDefaults?: boolean;
+  ConnectionTypes?: Record<string, NodeConnectionTypeDefinition>;
   // roots depend on the asset type, resolved by resource path
   Roots?: Record<string, NodeEditorWorkspaceRootDefinition>;
   // categories for add menu, category -> TemplateIds
@@ -75,6 +86,8 @@ export type NodeContentDefinitionType =
   | "Enum"
   | "FilePath"
   | "List"
+  | "Tuple"
+  | "ParameterMap"
   | "Object";
 
 export interface NodeContentDefinition {
@@ -84,20 +97,36 @@ export interface NodeContentDefinition {
   Options: {
     Description?: string;
     Label?: string;
-    Default?: string | number | boolean;
+    Default?: string | number | boolean | unknown[];
     Width?: number;
     Height?: number;
     Values?: string[];
     Fields?: NodeContentDefinition[];
     LargeChange?: number;
     Max?: number;
+    MaxExclusive?: boolean;
     Min?: number;
+    MinExclusive?: boolean;
+    MinItems?: number;
+    MaxItems?: number;
+    Required?: boolean;
+    DisallowEmpty?: boolean;
+    DisallowEmptyItems?: boolean;
     SmallChange?: number;
     TickFrequency?: number;
-    Type?: "String" | "Float";
+    Type?: "String" | "Float" | "Int";
     ArrayElementType?: "DataSettingFlags";
+    TupleSize?: number;
+    TupleItemType?: "String" | "Float" | "Int";
     UseUUID?: boolean;
-    DefaultValue?: string | number | boolean;
+    DefaultValue?: string | number | boolean | unknown[];
+    Computable?: boolean;
+    UniqueItems?: boolean;
+    SymbolLookup?: IndexReference;
+    ParameterMapKeyValues?: string[];
+    ParameterMapKeySymbolLookup?: IndexReference;
+    StateAutocompleteKind?: NpcStateAutocompleteKind;
+    AnimationAutocompleteKind?: NpcAnimationAutocompleteKind;
   };
 }
 
@@ -111,9 +140,15 @@ export interface NodeSchemaDefinition {
     | {
         Node?: string;
         Pin?: string;
+        SerializationType?: NodeSchemaSerializationType;
+        AllowComponentReferences?: boolean;
+        ComponentReferenceSlotOccupancy?: NodeSlotOccupancy;
         // they mix casings in workspaces sometimes.. e.g. ScriptableBrushes Root.json
         node?: string;
         pin?: string;
+        serializationType?: NodeSchemaSerializationType;
+        allowComponentReferences?: boolean;
+        componentReferenceSlotOccupancy?: NodeSlotOccupancy;
       }
     | string;
 }

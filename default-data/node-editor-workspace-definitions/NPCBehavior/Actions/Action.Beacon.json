@@ -1,0 +1,107 @@
+{
+  "Id": "Action.Beacon",
+  "Title": "Action: Beacon",
+  "Color": "#CC3361",
+  "Description": "Send Beacon Message",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Message",
+      "Type": "SmallString",
+      "Description": "Message to send to targets",
+      "Options": {
+        "Label": "Message",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The maximum range to send the message",
+      "Options": {
+        "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 64,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "TargetGroups",
+      "Type": "List",
+      "Description": "The target group(s) to send the message to",
+      "Options": {
+        "Label": "TargetGroups",
+        "Required": true,
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
+      "Id": "SendTargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot of the marked entity to send. Omit to send own position",
+      "Options": {
+        "Label": "SendTargetSlot",
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ExpirationTime",
+      "Type": "Float",
+      "Description": "The number of seconds that the message should last. -1 represents infinite time.",
+      "Options": {
+        "Label": "ExpirationTime",
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "SendCount",
+      "Type": "Int",
+      "Description": "Tne number of entities to send the message to. -1 will send to all.",
+      "Options": {
+        "Label": "SendCount",
+        "Default": -1,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Message": "Message",
+    "Range": "Range",
+    "TargetGroups": "TargetGroups",
+    "SendTargetSlot": "SendTargetSlot",
+    "ExpirationTime": "ExpirationTime",
+    "SendCount": "SendCount",
+    "Type": "Beacon"
+  }
+}

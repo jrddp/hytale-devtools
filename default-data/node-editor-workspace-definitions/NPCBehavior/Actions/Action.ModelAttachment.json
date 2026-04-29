@@ -1,0 +1,55 @@
+{
+  "Id": "Action.ModelAttachment",
+  "Title": "Action: ModelAttachment",
+  "Color": "#CC3361",
+  "Description": "Set an attachment on the current NPC model",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "SmallString",
+      "Description": "The attachment slot to set",
+      "Options": {
+        "Label": "Slot",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Attachment",
+      "Type": "SmallString",
+      "Description": "The attachment to set, or empty to remove",
+      "Options": {
+        "Label": "Attachment",
+        "Required": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Slot": "Slot",
+    "Attachment": "Attachment",
+    "Type": "ModelAttachment"
+  }
+}

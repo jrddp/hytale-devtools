@@ -3,12 +3,12 @@
   import { isObject } from "@shared/typeUtils";
   import { Panel, type XYPosition } from "@xyflow/svelte";
   import { Search } from "lucide-svelte";
-  import { type FlowNode } from "src/common";
-  import { GROUP_NODE_TYPE } from "src/constants";
-  import { asCssColor } from "src/node-editor/utils/colors";
-  import { buildFieldInputId } from "src/node-editor/utils/fieldUtils";
-  import { getAbsoluteCenterPosition } from "src/node-editor/utils/nodeUtils.svelte";
-  import { workspace } from "src/workspace.svelte";
+  import { type FlowNode } from "@node-editor/common";
+  import { GROUP_NODE_TYPE } from "@node-editor/constants";
+  import { asCssColor } from "@node-editor/node-editor/utils/colors";
+  import { buildFieldInputId } from "@node-editor/node-editor/utils/fieldUtils";
+  import { getAbsoluteCenterPosition } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import { onMount, untrack } from "svelte";
 
   const {
@@ -20,6 +20,7 @@
     onselection: (node: FlowNode, inputId?: string) => void;
     viewportCenter: XYPosition;
   } = $props();
+  const workspace = useNodeEditorSession();
   interface SearchedNode {
     node: FlowNode;
     effectiveTitle: string;
@@ -103,7 +104,7 @@
   const enrichedNodes: SearchedNode[] = $derived.by(() => {
     return allNodes
       .map(node => {
-        const postion = getAbsoluteCenterPosition(node);
+        const postion = getAbsoluteCenterPosition(node, workspace);
         return {
           node,
           effectiveTitle: node.data.titleOverride ?? node.data.defaultTitle,

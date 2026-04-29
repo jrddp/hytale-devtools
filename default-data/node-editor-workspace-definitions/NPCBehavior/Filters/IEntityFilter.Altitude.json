@@ -1,0 +1,47 @@
+{
+  "Id": "IEntityFilter.Altitude",
+  "Title": "Filter: Altitude",
+  "Color": "#60C8B8",
+  "Description": "Matches targets if they're within the defined range above the ground",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AltitudeRange",
+      "Type": "List",
+      "Description": "The range above the ground to match",
+      "Options": {
+        "Label": "AltitudeRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Width": 240,
+        "Type": "Float",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "AltitudeRange": "AltitudeRange",
+    "Type": "Altitude"
+  }
+}

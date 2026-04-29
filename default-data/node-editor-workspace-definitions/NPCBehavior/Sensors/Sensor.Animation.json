@@ -1,0 +1,74 @@
+{
+  "Id": "Sensor.Animation",
+  "Title": "Sensor: Animation",
+  "Color": "#7091F0",
+  "Description": "Check if a given animation is being played",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "Enum",
+      "Description": "The animation slot to check",
+      "Options": {
+        "Label": "Slot",
+        "Required": true,
+        "Width": 220,
+        "Values": [
+          "Status",
+          "Action",
+          "Face"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Animation",
+      "Type": "SmallString",
+      "Description": "The animation ID to check for",
+      "Options": {
+        "Label": "Animation",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true,
+        "AnimationAutocompleteKind": "appearance-model"
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Slot": "Slot",
+    "Animation": "Animation",
+    "Type": "Animation"
+  }
+}

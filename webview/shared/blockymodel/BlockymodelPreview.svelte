@@ -1,7 +1,15 @@
 <script lang="ts">
   import * as THREE from "three";
   import { onMount, untrack } from "svelte";
-  import { buildBlockymodelObject3D } from "./buildBlockymodelObject";
+  import {
+    createBlockyanimController,
+    type BlockyanimController,
+  } from "./blockyanimPlayer";
+  import type { BlockyAnimFile } from "./blockyanimTypes";
+  import {
+    buildCompositeBlockymodelScene,
+    type BuiltCompositeBlockymodelScene,
+  } from "./buildCompositeBlockymodelScene";
   import type { BlockymodelFile } from "./blockymodelTypes";
   import {
     createBlockymodelViewerRuntime,
@@ -12,6 +20,15 @@
     model?: BlockymodelFile | null;
     textureUrl?: string | null;
     textureBytes?: Uint8Array | number[] | null;
+    attachments?: Array<{
+      model: BlockymodelFile;
+      textureUrl?: string | null;
+      textureBytes?: Uint8Array | number[] | null;
+    }>;
+    animation?: BlockyAnimFile | null;
+    playing?: boolean;
+    animationSpeed?: number;
+    animationLooping?: boolean;
     orbit?: boolean;
     /** View angles in degrees. */
     roll?: number;
@@ -26,6 +43,11 @@
     model = null,
     textureUrl = null,
     textureBytes = null,
+    attachments = [],
+    animation = null,
+    playing = true,
+    animationSpeed = 1,
+    animationLooping = undefined,
     orbit = false,
     roll = $bindable(),
     pitch = $bindable(),
@@ -37,22 +59,13 @@
 
   let container = $state<HTMLDivElement | null>(null);
   let runtime = $state<BlockymodelViewerRuntime | null>(null);
-  let currentTexture = $state<THREE.Texture | null>(null);
-  let currentObject = $state<THREE.Object3D | null>(null);
+  let currentTextures = $state<THREE.Texture[]>([]);
+  let currentScene = $state<BuiltCompositeBlockymodelScene | null>(null);
+  let animationController = $state<BlockyanimController | null>(null);
   let rebuildVersion = 0;
   let errorMessage = $state("");
   let loading = $state(false);
   let syncingViewAngles = false;
-
-  const resolvedTextureUrl = $derived.by(() => {
-    if (textureUrl) {
-      return textureUrl;
-    }
-    if (textureBytes && textureBytes.length > 0) {
-      return createPngDataUrl(textureBytes);
-    }
-    return undefined;
-  });
 
   function createPngDataUrl(bytes: Uint8Array | number[]): string {
     const chunkSize = 0x8000;
@@ -64,6 +77,27 @@
 
     return `data:image/png;base64,${btoa(binary)}`;
   }
+
+  function resolveTextureUrl(
+    nextTextureUrl: string | null | undefined,
+    nextTextureBytes: Uint8Array | number[] | null | undefined,
+  ): string | undefined {
+    if (nextTextureUrl) {
+      return nextTextureUrl;
+    }
+    if (nextTextureBytes && nextTextureBytes.length > 0) {
+      return createPngDataUrl(nextTextureBytes);
+    }
+    return undefined;
+  }
+
+  const resolvedTextureUrl = $derived(resolveTextureUrl(textureUrl, textureBytes));
+  const resolvedAttachments = $derived.by(() =>
+    attachments.map(attachment => ({
+      model: attachment.model,
+      textureUrl: resolveTextureUrl(attachment.textureUrl, attachment.textureBytes),
+    })),
+  );
 
   function loadTexture(url: string): Promise<THREE.Texture> {
     const loader = new THREE.TextureLoader();
@@ -114,16 +148,21 @@
   }
 
   function clearCurrentModel(): void {
+    runtime?.setFrameHandler(null);
+    animationController?.dispose();
+    animationController = null;
     runtime?.setModelObject(null);
-    if (currentObject) {
-      disposeObject3D(currentObject);
-      currentObject = null;
+    if (currentScene) {
+      disposeObject3D(currentScene.root);
+      currentScene = null;
     }
   }
 
   function clearCurrentTexture(): void {
-    currentTexture?.dispose();
-    currentTexture = null;
+    for (const texture of currentTextures) {
+      texture.dispose();
+    }
+    currentTextures = [];
   }
 
   function clearCurrentSceneState(): void {
@@ -131,10 +170,36 @@
     clearCurrentTexture();
   }
 
+  function syncAnimationState(): void {
+    if (!runtime || !currentScene) {
+      return;
+    }
+
+    if (!animationController) {
+      animationController = createBlockyanimController(currentScene.animationRig);
+    }
+
+    animationController.setAnimation(animation ?? null);
+    animationController.setPlaying(playing);
+    animationController.setPlaybackRate(animationSpeed);
+    animationController.setLoopingOverride(animationLooping);
+    runtime.setFrameHandler(animation && playing ? deltaSeconds => animationController?.update(deltaSeconds) : null);
+
+    if (!animation) {
+      animationController.resetPose();
+      runtime.requestRender();
+      return;
+    }
+
+    animationController.update(0);
+    runtime.requestRender();
+  }
+
   async function rebuild(
     nextRuntime: BlockymodelViewerRuntime,
     nextModel: BlockymodelFile | null,
     nextTextureUrl: string | undefined,
+    nextAttachments: Array<{ model: BlockymodelFile; textureUrl?: string }>,
   ): Promise<void> {
     if (!nextModel) {
       clearCurrentSceneState();
@@ -144,20 +209,35 @@
     }
 
     const version = ++rebuildVersion;
-    loading = Boolean(nextTextureUrl);
+    loading = Boolean(nextTextureUrl || nextAttachments.some(attachment => attachment.textureUrl));
     errorMessage = "";
 
     try {
-      const nextTexture = nextTextureUrl ? await loadTexture(nextTextureUrl) : null;
+      const nextTextures = await Promise.all([
+        nextTextureUrl ? loadTexture(nextTextureUrl) : Promise.resolve(null),
+        ...nextAttachments.map(attachment =>
+          attachment.textureUrl ? loadTexture(attachment.textureUrl) : Promise.resolve(null),
+        ),
+      ]);
       if (version !== rebuildVersion) {
-        nextTexture?.dispose();
+        for (const texture of nextTextures) {
+          texture?.dispose();
+        }
         return;
       }
 
       clearCurrentSceneState();
-      currentTexture = nextTexture;
-      currentObject = buildBlockymodelObject3D(nextModel, nextTexture ?? undefined);
-      nextRuntime.setModelObject(currentObject);
+      currentTextures = nextTextures.filter((texture): texture is THREE.Texture => Boolean(texture));
+      currentScene = buildCompositeBlockymodelScene(
+        nextModel,
+        nextTextures[0] ?? undefined,
+        nextAttachments.map((attachment, index) => ({
+          model: attachment.model,
+          texture: nextTextures[index + 1] ?? undefined,
+        })),
+      );
+      nextRuntime.setModelObject(currentScene.root);
+      syncAnimationState();
     } catch (error) {
       if (version !== rebuildVersion) {
         return;
@@ -232,14 +312,34 @@
     const nextRuntime = runtime;
     const nextModel = model;
     const nextTextureUrl = resolvedTextureUrl;
+    const nextAttachments = resolvedAttachments;
 
     if (!nextRuntime) {
       return;
     }
 
     untrack(() => {
-      void rebuild(nextRuntime, nextModel, nextTextureUrl);
+      void rebuild(nextRuntime, nextModel, nextTextureUrl, nextAttachments);
     });
+  });
+
+  $effect(() => {
+    const nextRuntime = runtime;
+    const nextScene = currentScene;
+    const nextAnimation = animation;
+    const nextPlaying = playing;
+    const nextAnimationSpeed = animationSpeed;
+    const nextAnimationLooping = animationLooping;
+    void nextAnimation;
+    void nextPlaying;
+    void nextAnimationSpeed;
+    void nextAnimationLooping;
+
+    if (!nextRuntime || !nextScene) {
+      return;
+    }
+
+    syncAnimationState();
   });
 </script>
 

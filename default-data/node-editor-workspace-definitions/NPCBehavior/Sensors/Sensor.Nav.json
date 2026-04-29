@@ -1,0 +1,91 @@
+{
+  "Id": "Sensor.Nav",
+  "Title": "Sensor: Nav",
+  "Color": "#7091F0",
+  "Description": "Queries navigation state",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "NavStates",
+      "Type": "List",
+      "Description": "Trigger when path finder is in one of the states or empty to match all",
+      "Options": {
+        "Label": "NavStates",
+        "Default": [],
+        "Width": 240,
+        "Type": "String",
+        "UniqueItems": true,
+        "Values": [
+          "INIT",
+          "PROGRESSING",
+          "BLOCKED",
+          "DEFER",
+          "AT_GOAL",
+          "ABORTED"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ThrottleDuration",
+      "Type": "Float",
+      "Description": "Minimum time in seconds the path finder isn't able to reach target or 0 to ignore",
+      "Options": {
+        "Label": "ThrottleDuration",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetDelta",
+      "Type": "Float",
+      "Description": "Minimum distance target has moved since path was computed or 0 to ignore",
+      "Options": {
+        "Label": "TargetDelta",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "NavStates": "NavStates",
+    "ThrottleDuration": "ThrottleDuration",
+    "TargetDelta": "TargetDelta",
+    "Type": "Nav"
+  }
+}

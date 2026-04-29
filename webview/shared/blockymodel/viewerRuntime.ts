@@ -13,6 +13,8 @@ export interface BlockymodelViewerRuntime {
   setScale(scale: number): void;
   setViewAngles(angles: Partial<BlockymodelViewAngles>): void;
   setModelObject(object: THREE.Object3D | null): void;
+  setFrameHandler(handler: ((deltaSeconds: number, elapsedSeconds: number) => void) | null): void;
+  requestRender(): void;
   dispose(): void;
 }
 
@@ -104,6 +106,9 @@ export function createBlockymodelViewerRuntime(
 
   let currentObject: THREE.Object3D | null = null;
   let currentScale = options.scale ?? 1;
+  let frameHandler: ((deltaSeconds: number, elapsedSeconds: number) => void) | null = null;
+  let frameHandle = 0;
+  let lastFrameTime = 0;
   let hasCustomViewAngles = false;
   let currentViewAngles: BlockymodelViewAngles = {
     roll: 0,
@@ -165,6 +170,36 @@ export function createBlockymodelViewerRuntime(
   const handleControlsChange = () => {
     syncViewAnglesFromCamera();
     render();
+  };
+
+  const tick = (timestamp = performance.now()) => {
+    if (!frameHandler) {
+      frameHandle = 0;
+      return;
+    }
+
+    const deltaSeconds = lastFrameTime > 0 ? Math.max(0, (timestamp - lastFrameTime) / 1000) : 0;
+    lastFrameTime = timestamp;
+    frameHandler(deltaSeconds, timestamp / 1000);
+    render();
+    frameHandle = requestAnimationFrame(tick);
+  };
+
+  const ensureFrameLoop = () => {
+    if (!frameHandler || frameHandle !== 0) {
+      return;
+    }
+
+    lastFrameTime = 0;
+    frameHandle = requestAnimationFrame(tick);
+  };
+
+  const stopFrameLoop = () => {
+    if (frameHandle !== 0) {
+      cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
+    }
+    lastFrameTime = 0;
   };
 
   controls.addEventListener("change", handleControlsChange);
@@ -252,7 +287,21 @@ export function createBlockymodelViewerRuntime(
         render();
       }
     },
+    setFrameHandler(handler: ((deltaSeconds: number, elapsedSeconds: number) => void) | null): void {
+      frameHandler = handler;
+      if (handler) {
+        ensureFrameLoop();
+        return;
+      }
+
+      stopFrameLoop();
+      render();
+    },
+    requestRender(): void {
+      render();
+    },
     dispose(): void {
+      stopFrameLoop();
       resizeObserver.disconnect();
       controls.removeEventListener("change", handleControlsChange);
       controls.dispose();

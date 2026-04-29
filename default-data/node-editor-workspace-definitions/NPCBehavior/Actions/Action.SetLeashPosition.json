@@ -1,0 +1,52 @@
+{
+  "Id": "Action.SetLeashPosition",
+  "Title": "Action: SetLeashPosition",
+  "Color": "#CC3361",
+  "Description": "Sets the NPCs current position to the spawn/leash position",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ToCurrent",
+      "Type": "Bool",
+      "Description": "Set to the NPCs current position.",
+      "Options": {
+        "Label": "ToCurrent",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ToTarget",
+      "Type": "Bool",
+      "Description": "Set to the target position.",
+      "Options": {
+        "Label": "ToTarget",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "ToCurrent": "ToCurrent",
+    "ToTarget": "ToTarget",
+    "Type": "SetLeashPosition"
+  }
+}

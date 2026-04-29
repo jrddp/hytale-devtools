@@ -1,0 +1,64 @@
+{
+  "Id": "IEntityFilter.NPCGroup",
+  "Title": "Filter: NPCGroup",
+  "Color": "#60C8B8",
+  "Description": "Returns whether the entity matches one of the provided NPCGroups",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "IncludeGroups",
+      "Type": "List",
+      "Description": "A set of NPCGroups to include in the match",
+      "Options": {
+        "Label": "IncludeGroups",
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
+      "Id": "ExcludeGroups",
+      "Type": "List",
+      "Description": "A set of NPCGroups to exclude from the match",
+      "Options": {
+        "Label": "ExcludeGroups",
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "IncludeGroups": "IncludeGroups",
+    "ExcludeGroups": "ExcludeGroups",
+    "Type": "NPCGroup"
+  }
+}

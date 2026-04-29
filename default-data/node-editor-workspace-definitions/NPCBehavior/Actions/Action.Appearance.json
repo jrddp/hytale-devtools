@@ -1,0 +1,45 @@
+{
+  "Id": "Action.Appearance",
+  "Title": "Action: Appearance",
+  "Color": "#CC3361",
+  "Description": "Set model displayed for NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Appearance",
+      "Type": "SmallString",
+      "Description": "Model name to use",
+      "Options": {
+        "Label": "Appearance",
+        "Required": true,
+        "Width": 220,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ModelAsset"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Appearance": "Appearance",
+    "Type": "Appearance"
+  }
+}

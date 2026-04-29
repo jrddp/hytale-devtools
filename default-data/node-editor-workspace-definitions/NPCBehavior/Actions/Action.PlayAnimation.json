@@ -1,0 +1,58 @@
+{
+  "Id": "Action.PlayAnimation",
+  "Title": "Action: PlayAnimation",
+  "Color": "#CC3361",
+  "Description": "Play an animation",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "Enum",
+      "Description": "The animation slot to play on",
+      "Options": {
+        "Label": "Slot",
+        "Required": true,
+        "Width": 220,
+        "Values": [
+          "Status",
+          "Action",
+          "Face"
+        ]
+      }
+    },
+    {
+      "Id": "Animation",
+      "Type": "SmallString",
+      "Description": "The animation ID to play",
+      "Options": {
+        "Label": "Animation",
+        "Width": 220,
+        "Computable": true,
+        "AnimationAutocompleteKind": "appearance-model"
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Slot": "Slot",
+    "Animation": "Animation",
+    "Type": "PlayAnimation"
+  }
+}

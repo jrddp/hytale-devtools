@@ -19,6 +19,7 @@
     readOnlyMessage,
     applyDocumentStateOnCommit = true,
     fieldPanelOverrides,
+    glyphs: externalGlyphs,
     handle,
     inputElement = $bindable(),
     oncommitchange,
@@ -55,6 +56,11 @@
           : ""}`,
   );
   const inputSizerClass = $derived(isMinimal ? "box-border px-2 py-1.5 text-sm font-semibold" : "");
+  const autocompleteListClass = $derived(
+    isMinimal
+      ? "max-h-56 min-w-56 max-w-[min(28rem,calc(100vw-2rem))] overflow-auto rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
+      : "absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg",
+  );
   const readOnlyWrapperClass = $derived(isMinimal ? "min-w-0" : "w-full min-w-0");
   const readOnlyValueClass = $derived(
     isMinimal
@@ -168,6 +174,7 @@
       <div>Assets are being loaded. Parent data will be available soon.</div>
     </TooltipContent>
   {/if}
+  {@render externalGlyphs?.()}
 {/snippet}
 
 <FieldPanel
@@ -178,7 +185,7 @@
   {handle}
   inline
   {glyphs}
-  onunset={!isLocked && isSet ? (onunset ?? (() => commitValue(undefined))) : undefined}
+  onunset={!isLocked && (onunset || isSet) ? (onunset ?? (() => commitValue(undefined))) : undefined}
 >
   <ReadOnlyInputWrapper readOnly={isLocked} {readOnlyMessage} class={readOnlyWrapperClass}>
     {#if isLocked}
@@ -192,14 +199,19 @@
         initialValue={value}
         {placeholder}
         {autocompleteOptions}
+        floatingList={isMinimal}
+        resetKey={workspace.documentVersion}
+        cancelDraftOnUndo={isMinimal}
         fitContentWidth={isMinimal}
         considerDebounceMs={field.definesParent ? 100 : undefined}
         sizerClass={inputSizerClass}
         {inputClass}
-        listClass="absolute left-0 right-0 top-full z-[160] max-h-40 overflow-auto rounded-t-none rounded-md border border-vsc-border bg-vsc-editor-widget-bg shadow-lg"
-        optionClass="block w-full cursor-pointer px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
+        listClass={autocompleteListClass}
+        optionClass="block w-full cursor-pointer whitespace-nowrap px-3 py-2 text-left text-sm text-vsc-input-fg hover:bg-vsc-list-hover"
         previewClass="z-[160]"
-        onfocus={requestAutocomplete}
+        onfocus={() => {
+          requestAutocomplete();
+        }}
         onconsider={considerValue}
         oncommit={commitValue}
         afterEnterPressed={input => input.blur()}

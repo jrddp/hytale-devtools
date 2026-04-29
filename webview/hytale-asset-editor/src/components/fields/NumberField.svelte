@@ -1,7 +1,7 @@
 <script lang="ts">
+  import CommitNumberInput from "@webview-shared/components/inputs/CommitNumberInput.svelte";
   import type { RenderFieldProps } from "src/common";
   import ReadOnlyInputWrapper from "src/components/ReadOnlyInputWrapper.svelte";
-  import { onMount } from "svelte";
   import type { NumberFieldInstance } from "../../parsing/fieldInstances";
   import { workspace } from "../../workspace.svelte";
   import { getFieldPlaceholder } from "../fieldHelpers";
@@ -38,54 +38,16 @@
     return "";
   });
 
-  let draftValue = $state<string>();
-
-  onMount(() => {
-    draftValue = field.value?.toString();
-  });
-
-  function sanitize(value: string) {
-    value = value.trim();
-
-    if (value === "") {
-      return "";
-    }
-
-    if (field.isInteger) {
-      value = value.replace(/[^\d-]/g, "").replace(/(?!^)-/g, "");
-    } else {
-      value = value
-        .replace(/[^\d.-]/g, "")
-        .replace(/(?!^)-/g, "")
-        .replace(/(\..*)\./g, "$1");
-    }
-
-    if (field.maximum !== undefined && Number(value) > field.maximum) {
-      value = field.maximum.toString();
-    }
-
-    if (field.minimum !== undefined && Number(value) < field.minimum) {
-      value = field.minimum.toString();
-    }
-
-    return value;
-  }
-
-  function commitValue() {
-    if (!draftValue) draftValue = undefined;
-    const nextValue = Number(draftValue);
-    if (Number.isNaN(nextValue)) {
-      draftValue = field.value?.toString();
+  function commitValue(nextValue: number | undefined) {
+    if (nextValue === field.value) {
       return;
     }
-    if (nextValue === field.value) return;
     field.value = nextValue;
     workspace.applyDocumentState();
   }
 
   function unsetValue() {
-    draftValue = undefined;
-    commitValue();
+    commitValue(undefined);
   }
 </script>
 
@@ -96,7 +58,7 @@
   fieldPanelOverrides={fieldPanelOverrides}
   {handle}
   inline
-  onunset={!readOnly && isSet ? (onunset ?? unsetValue) : undefined}
+  onunset={!readOnly && (onunset || isSet) ? (onunset ?? unsetValue) : undefined}
 >
   <ReadOnlyInputWrapper readOnly={readOnly} {readOnlyMessage} class="w-full min-w-0">
     {#if readOnly}
@@ -106,26 +68,16 @@
         {resolvedValue !== "" ? resolvedValue : placeholder}
       </div>
     {:else}
-      <input
-        id={inputId}
-        type="text"
-        class="w-full px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100"
-        bind:value={draftValue}
+      <CommitNumberInput
+        {inputId}
+        initialValue={field.value}
+        emptyValue={undefined}
+        inputClass={`w-full px-3 py-2 border rounded-md border-vsc-border bg-vsc-input-bg text-vsc-input-fg placeholder:text-vsc-input-placeholder-fg placeholder:opacity-100 ${!hasFallbackPlaceholder ? "placeholder:italic" : ""}`.trim()}
         {placeholder}
-        class:placeholder:italic={!hasFallbackPlaceholder}
-        inputmode={field.isInteger ? "numeric" : "decimal"}
-        oninput={event => {
-          draftValue = sanitize(event.currentTarget.value);
-        }}
-        onblur={commitValue}
-        onkeydown={event => {
-          if (event.key === "Enter" || event.key === "Escape") {
-            event.preventDefault();
-            commitValue();
-            event.currentTarget.blur();
-            return;
-          }
-        }}
+        integer={field.isInteger}
+        minimum={field.minimum}
+        maximum={field.maximum}
+        oncommit={commitValue}
       />
     {/if}
   </ReadOnlyInputWrapper>

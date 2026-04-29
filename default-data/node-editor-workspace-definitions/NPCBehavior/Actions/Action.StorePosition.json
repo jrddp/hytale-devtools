@@ -1,0 +1,43 @@
+{
+  "Id": "Action.StorePosition",
+  "Title": "Action: StorePosition",
+  "Color": "#CC3361",
+  "Description": "Store the position from the attached sensor",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Slot",
+      "Type": "SmallString",
+      "Description": "The slot to store the position in",
+      "Options": {
+        "Label": "Slot",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Slot": "Slot",
+    "Type": "StorePosition"
+  }
+}

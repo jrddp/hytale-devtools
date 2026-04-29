@@ -1,0 +1,105 @@
+{
+  "Id": "Sensor.Count",
+  "Title": "Sensor: Count",
+  "Color": "#7091F0",
+  "Description": "Check if there is a certain number of NPCs or players within a specific range",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Count",
+      "Type": "Tuple",
+      "Description": "Specifies the allowed number of entities (inclusive)",
+      "Options": {
+        "Label": "Count",
+        "Required": true,
+        "Min": 0,
+        "Max": 2147483647,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Tuple",
+      "Description": "Range to find entities in (inclusive)",
+      "Options": {
+        "Label": "Range",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "IncludeGroups",
+      "Type": "List",
+      "Description": "Match for NPCs in these groups",
+      "Options": {
+        "Label": "IncludeGroups",
+        "Width": 240,
+        "Type": "String",
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    },
+    {
+      "Id": "ExcludeGroups",
+      "Type": "List",
+      "Description": "Never match NPCs in these groups",
+      "Options": {
+        "Label": "ExcludeGroups",
+        "Width": 240,
+        "Type": "String",
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "NPCGroup"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Count": "Count",
+    "Range": "Range",
+    "IncludeGroups": "IncludeGroups",
+    "ExcludeGroups": "ExcludeGroups",
+    "Type": "Count"
+  }
+}

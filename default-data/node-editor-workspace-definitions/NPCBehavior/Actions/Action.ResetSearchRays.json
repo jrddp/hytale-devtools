@@ -1,0 +1,43 @@
+{
+  "Id": "Action.ResetSearchRays",
+  "Title": "Action: ResetSearchRays",
+  "Color": "#CC3361",
+  "Description": "Resets a specific search ray sensor cached position by name, or all search ray sensors",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Names",
+      "Type": "List",
+      "Description": "The search ray sensor ids",
+      "Options": {
+        "Label": "Names",
+        "DisallowEmptyItems": true,
+        "Width": 240,
+        "Type": "String",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Names": "Names",
+    "Type": "ResetSearchRays"
+  }
+}

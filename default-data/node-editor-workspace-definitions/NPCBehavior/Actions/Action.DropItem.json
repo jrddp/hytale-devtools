@@ -1,0 +1,140 @@
+{
+  "Id": "Action.DropItem",
+  "Title": "Action: DropItem",
+  "Color": "#CC3361",
+  "Description": "Drop an item",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Delay",
+      "Type": "Tuple",
+      "Description": "Range of time to delay in seconds",
+      "Options": {
+        "Label": "Delay",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Item",
+      "Type": "SmallString",
+      "Description": "A specific item to drop",
+      "Options": {
+        "Label": "Item",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
+      "Id": "DropList",
+      "Type": "SmallString",
+      "Description": "A reference to an item drop list",
+      "Options": {
+        "Label": "DropList",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ItemDropList"
+        }
+      }
+    },
+    {
+      "Id": "ThrowSpeed",
+      "Type": "Float",
+      "Description": "The throw speed to use",
+      "Options": {
+        "Label": "ThrowSpeed",
+        "Min": 0,
+        "Max": 3.4028234663852886e+38,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "Distance",
+      "Type": "Tuple",
+      "Description": "The range from which to pick a distance to throw the item",
+      "Options": {
+        "Label": "Distance",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float"
+      }
+    },
+    {
+      "Id": "DropSector",
+      "Type": "Tuple",
+      "Description": "The sector to spread drops in relative to view direction of NPC",
+      "Options": {
+        "Label": "DropSector",
+        "Min": -360,
+        "Max": 360,
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float"
+      }
+    },
+    {
+      "Id": "PitchHigh",
+      "Type": "Bool",
+      "Description": "Whether to pitch high or pitch low instead",
+      "Options": {
+        "Label": "PitchHigh",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Delay": "Delay",
+    "Item": "Item",
+    "DropList": "DropList",
+    "ThrowSpeed": "ThrowSpeed",
+    "Distance": "Distance",
+    "DropSector": "DropSector",
+    "PitchHigh": "PitchHigh",
+    "Type": "DropItem"
+  }
+}

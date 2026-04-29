@@ -1,8 +1,7 @@
 import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import { serializeGraphDocument } from "@shared/node-editor/graphDocument";
-import { workspaceStateToGraphDocument } from "src/node-editor/utils/graphDocument";
-import { workspace } from "src/workspace.svelte";
-import type { WorkspaceState } from "../../workspace.svelte";
+import { workspaceStateToGraphDocument } from "@node-editor/node-editor/utils/graphDocument";
+import type { NodeEditorSession, WorkspaceState } from "../../workspace.svelte";
 
 export function serializeWorkspaceState(
   state: WorkspaceState,
@@ -11,13 +10,13 @@ export function serializeWorkspaceState(
   return serializeGraphDocument(workspaceStateToGraphDocument(state, workspaceId));
 }
 
-export function serializeDocument(): AssetDocumentShape {
+export function serializeDocument(session: NodeEditorSession): AssetDocumentShape {
   return serializeWorkspaceState(
     {
-      nodes: workspace.nodes,
-      edges: workspace.edges,
-      rootNodeId: workspace.rootNodeId,
+      nodes: session.nodes,
+      edges: session.edges,
+      rootNodeId: session.rootNodeId,
     },
-    workspace.context.rootMenuName,
+    session.context.rootMenuName,
   );
 }

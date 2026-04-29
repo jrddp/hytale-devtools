@@ -10,7 +10,7 @@ import type {
   LinkNodeType,
   NodeBaseData,
   RawJsonNodeType,
-} from "src/common";
+} from "@node-editor/common";
 import {
   COMMENT_NODE_TYPE,
   DATA_NODE_TYPE,
@@ -25,9 +25,9 @@ import {
   LINK_OUTPUT_HANDLE_ID,
   RAW_JSON_NODE_COLOR,
   RAW_JSON_NODE_TYPE,
-} from "src/constants";
-import { createNodeId, createUuidV4 } from "src/node-editor/utils/idUtils";
-import { getDefaultInputPin } from "src/node-editor/utils/nodeUtils.svelte";
+} from "@node-editor/constants";
+import { createNodeId, createUuidV4 } from "@node-editor/node-editor/utils/idUtils";
+import { getDefaultInputPin } from "@node-editor/node-editor/utils/nodeUtils.svelte";
 
 export const GENERIC_CATEGORY = "Generic";
 export const GROUP_TEMPLATE_ID = "$Group";
@@ -38,7 +38,7 @@ export const LINK_TEMPLATE_ID = "$Link";
 export const GROUP_TEMPLATE: NodeTemplate = {
   templateId: GROUP_TEMPLATE_ID,
   defaultTitle: "Add Group",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [],
   outputPins: [],
@@ -49,7 +49,7 @@ export const GROUP_TEMPLATE: NodeTemplate = {
 export const COMMENT_TEMPLATE: NodeTemplate = {
   templateId: COMMENT_TEMPLATE_ID,
   defaultTitle: "Add Comment",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [],
   outputPins: [],
@@ -60,7 +60,7 @@ export const COMMENT_TEMPLATE: NodeTemplate = {
 export const LINK_TEMPLATE: NodeTemplate = {
   templateId: LINK_TEMPLATE_ID,
   defaultTitle: "Add Link",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [getDefaultInputPin()],
   outputPins: [
@@ -79,7 +79,7 @@ export const LINK_TEMPLATE: NodeTemplate = {
 export const RAW_JSON_TEMPLATE: NodeTemplate = {
   templateId: RAW_JSON_TEMPLATE_ID,
   defaultTitle: "Raw JSON Node",
-  childTypes: {},
+  childSchemas: {},
   fieldsBySchemaKey: {},
   inputPins: [getDefaultInputPin({ color: RAW_JSON_NODE_COLOR })],
   outputPins: [],

@@ -1,0 +1,30 @@
+{
+  "Id": "Action.AddToHostileTargetMemory",
+  "Title": "Action: AddToHostileTargetMemory",
+  "Color": "#CC3361",
+  "Description": "Adds the passed target from the sensor to the hostile target memory",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Type": "AddToHostileTargetMemory"
+  }
+}

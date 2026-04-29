@@ -9,13 +9,18 @@ export default defineConfig({
   resolve: {
     alias: {
       "@shared": path.resolve(currentDir, "src/shared"),
+      "@node-editor": path.resolve(currentDir, "webview/hytale-node-editor/src"),
       src: path.resolve(currentDir, "webview/hytale-node-editor/src"),
     },
   },
   plugins: [svelte()],
   test: {
     environment: "node",
-    include: ["test/node-editor-parser/**/*.test.ts", "test/asset-editor-parser/**/*.test.ts"],
+    include: [
+      "test/node-editor-parser/**/*.test.ts",
+      "test/asset-editor-parser/**/*.test.ts",
+      "test/npc-editor-parser/**/*.test.ts",
+    ],
     exclude: ["**/node_modules/**", "**/dist/**", "**/out/**"],
     server: {
       deps: {

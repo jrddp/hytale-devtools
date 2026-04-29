@@ -1,0 +1,107 @@
+{
+  "Id": "Action.PickUpItem",
+  "Title": "Action: PickUpItem",
+  "Color": "#CC3361",
+  "Description": "Pick up an item",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Delay",
+      "Type": "Tuple",
+      "Description": "Range of time to delay in seconds",
+      "Options": {
+        "Label": "Delay",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "The range the item will be picked up from",
+      "Options": {
+        "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "StorageTarget",
+      "Type": "Enum",
+      "Description": "Where to prioritise putting the item",
+      "Options": {
+        "Label": "StorageTarget",
+        "Default": "Hotbar",
+        "Width": 220,
+        "Values": [
+          "Hotbar",
+          "Inventory",
+          "Destroy"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Hoover",
+      "Type": "Bool",
+      "Description": "Suck up all items in range",
+      "Options": {
+        "Label": "Hoover",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match",
+      "Options": {
+        "Label": "Items",
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Delay": "Delay",
+    "Range": "Range",
+    "StorageTarget": "StorageTarget",
+    "Hoover": "Hoover",
+    "Items": "Items",
+    "Type": "PickUpItem"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "Id": "HeadMotion.Watch",
+  "Title": "Head Motion: Watch",
+  "Color": "#B08CE0",
+  "Description": "Rotate to target",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "HeadMotion",
+      "Color": "#B08CE0",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "RelativeTurnSpeed",
+      "Type": "Float",
+      "Description": "The relative turn speed modifier",
+      "Options": {
+        "Label": "RelativeTurnSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "RelativeTurnSpeed": "RelativeTurnSpeed",
+    "Type": "Watch"
+  }
+}

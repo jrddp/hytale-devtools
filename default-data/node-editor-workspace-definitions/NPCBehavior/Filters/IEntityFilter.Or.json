@@ -1,0 +1,46 @@
+{
+  "Id": "IEntityFilter.Or",
+  "Title": "Filter: Or",
+  "Color": "#60C8B8",
+  "Description": "Logical OR of a list of filters",
+  "Inputs": [
+    {
+      "Id": "FiltersPin",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "Filters",
+      "Description": "List of filters",
+      "Multiple": true,
+      "Required": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Filters": {
+      "Pin": "FiltersPin",
+      "Node": "FilterVariants"
+    },
+    "Type": "Or"
+  }
+}

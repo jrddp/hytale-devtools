@@ -1,0 +1,113 @@
+{
+  "Id": "Action.TimerModify",
+  "Title": "Action: TimerModify",
+  "Color": "#CC3361",
+  "Description": "Modify values of a timer",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the timer",
+      "Options": {
+        "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AddValue",
+      "Type": "Float",
+      "Description": "Add value to the timer",
+      "Options": {
+        "Label": "AddValue",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MaxValue",
+      "Type": "Tuple",
+      "Description": "Set the restart value range the timer can have",
+      "Options": {
+        "Label": "MaxValue",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Rate",
+      "Type": "Float",
+      "Description": "Set the rate at which the timer will decrease",
+      "Options": {
+        "Label": "Rate",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SetValue",
+      "Type": "Float",
+      "Description": "Set the value of the timer",
+      "Options": {
+        "Label": "SetValue",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Repeating",
+      "Type": "Bool",
+      "Description": "Whether to repeat the timer when countdown finishes",
+      "Options": {
+        "Label": "Repeating",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "AddValue": "AddValue",
+    "MaxValue": "MaxValue",
+    "Rate": "Rate",
+    "SetValue": "SetValue",
+    "Repeating": "Repeating",
+    "Type": "TimerModify"
+  }
+}

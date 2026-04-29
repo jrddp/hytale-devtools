@@ -1,0 +1,145 @@
+{
+  "Id": "BodyMotion.MaintainDistance",
+  "Title": "Body Motion: MaintainDistance",
+  "Color": "#00E7B6",
+  "Description": "Maintain distance from a given position",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "DesiredDistanceRange",
+      "Type": "Tuple",
+      "Description": "The desired distance to remain at.",
+      "Options": {
+        "Label": "DesiredDistanceRange",
+        "Required": true,
+        "Min": -1.7976931348623157e+308,
+        "Max": 1.7976931348623157e+308,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetDistanceFactor",
+      "Type": "Float",
+      "Description": "A factor used to decide what distance to move to within the target range.",
+      "Options": {
+        "Label": "TargetDistanceFactor",
+        "Min": 0,
+        "Max": 1,
+        "Default": 0.5,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MoveThreshold",
+      "Type": "Float",
+      "Description": "An extra threshold distance on either side of the desired range before the NPC will trigger movement.",
+      "Options": {
+        "Label": "MoveThreshold",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelativeForwardsSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative speed for the NPC moving forwards",
+      "Options": {
+        "Label": "RelativeForwardsSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelativeBackwardsSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative speed for the NPC moving backwards",
+      "Options": {
+        "Label": "RelativeBackwardsSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MoveTowardsSlowdownThreshold",
+      "Type": "Float",
+      "Description": "The distance away from the target stopping point at which the NPC will start to slow down while moving towards the target",
+      "Options": {
+        "Label": "MoveTowardsSlowdownThreshold",
+        "Min": 0,
+        "Default": 2,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "StrafingDurationRange",
+      "Type": "Tuple",
+      "Description": "How long to strafe for.",
+      "Options": {
+        "Label": "StrafingDurationRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "StrafingFrequencyRange",
+      "Type": "Tuple",
+      "Description": "How frequently to execute strafing",
+      "Options": {
+        "Label": "StrafingFrequencyRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
+        "Default": [
+          2,
+          2
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "DesiredDistanceRange": "DesiredDistanceRange",
+    "TargetDistanceFactor": "TargetDistanceFactor",
+    "MoveThreshold": "MoveThreshold",
+    "RelativeForwardsSpeed": "RelativeForwardsSpeed",
+    "RelativeBackwardsSpeed": "RelativeBackwardsSpeed",
+    "MoveTowardsSlowdownThreshold": "MoveTowardsSlowdownThreshold",
+    "StrafingDurationRange": "StrafingDurationRange",
+    "StrafingFrequencyRange": "StrafingFrequencyRange",
+    "Type": "MaintainDistance"
+  }
+}

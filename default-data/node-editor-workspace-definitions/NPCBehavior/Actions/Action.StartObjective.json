@@ -1,0 +1,46 @@
+{
+  "Id": "Action.StartObjective",
+  "Title": "Action: StartObjective",
+  "Color": "#CC3361",
+  "Description": "Start the given objective for the currently iterated player in the interaction instruction",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Objective",
+      "Type": "SmallString",
+      "Description": "The task to start",
+      "Options": {
+        "Label": "Objective",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ObjectiveAsset"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Objective": "Objective",
+    "Type": "StartObjective"
+  }
+}

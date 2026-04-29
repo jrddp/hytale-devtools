@@ -19,42 +19,51 @@
   import AddNodeMenu, {
     type AddMenuConnectionFilter,
     type AddMenuProps,
-  } from "src/components/AddNodeMenu.svelte";
-  import DebugPanel from "src/components/DebugPanel.svelte";
-  import LowDetailNodeCanvasOverlay from "src/components/LowDetailNodeCanvasOverlay.svelte";
-  import NodeEditorActionMenu from "src/components/NodeEditorActionMenu.svelte";
-  import NodeHelpPanel from "src/components/NodeHelpPanel.svelte";
-  import NodeSearchPanel from "src/components/NodeSearchPanel.svelte";
-  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "src/constants";
-  import { getAutoPositionNodeUpdates } from "src/node-editor/layout/autoLayout";
-  import { createConnectionPreviewController } from "src/node-editor/utils/connectionPreview.svelte";
+  } from "@node-editor/components/AddNodeMenu.svelte";
+  import DebugPanel from "@node-editor/components/DebugPanel.svelte";
+  import LowDetailNodeCanvasOverlay from "@node-editor/components/LowDetailNodeCanvasOverlay.svelte";
+  import NodeEditorActionMenu from "@node-editor/components/NodeEditorActionMenu.svelte";
+  import NodeHelpPanel from "@node-editor/components/NodeHelpPanel.svelte";
+  import NodeSearchPanel from "@node-editor/components/NodeSearchPanel.svelte";
+  import DevtoolsAttribution from "@webview-shared/components/DevtoolsAttribution.svelte";
+  import { CONNECTION_RADIUS, GROUP_NODE_TYPE, MULTISELECT_KEY, nodeTypes } from "@node-editor/constants";
+  import { getAutoPositionNodeUpdates } from "@node-editor/node-editor/layout/autoLayout";
+  import { createConnectionPreviewController } from "@node-editor/node-editor/utils/connectionPreview.svelte";
   import {
     buildIndexedBezierEdgeGeometry,
     createEdgeSelectionBounds,
     edgeGeometryIntersectsRect,
     type IndexedBezierEdgeGeometry,
-  } from "src/node-editor/utils/edgeGeometry";
-  import { isShortcutBlockedByEditableTarget } from "src/node-editor/utils/flowKeyboard";
-  import { createHandlePriorityController } from "src/node-editor/utils/handlePriority.svelte";
-  import { createUuidV4 } from "src/node-editor/utils/idUtils";
-  import { createLowDetailController } from "src/node-editor/utils/lowDetailController.svelte";
+  } from "@node-editor/node-editor/utils/edgeGeometry";
+  import { isShortcutBlockedByEditableTarget } from "@node-editor/node-editor/utils/flowKeyboard";
+  import { createHandlePriorityController } from "@node-editor/node-editor/utils/handlePriority.svelte";
+  import { createUuidV4 } from "@node-editor/node-editor/utils/idUtils";
+  import { createLowDetailController } from "@node-editor/node-editor/utils/lowDetailController.svelte";
   import {
+    collectConflictingEdges,
     getCompatibleInputHandleId,
     getCompatibleOutputHandleId,
     getAbsoluteCenterPosition,
     getAbsolutePosition,
     getAllSiblingOrderUpdates,
     getInputPin,
+    getNodeSize,
     getOutputPin,
     isValidConnection,
-    pruneConflictingEdges,
     recalculateGroupParents,
     resolveFitViewNodeIds,
-  } from "src/node-editor/utils/nodeUtils.svelte";
-  import { applyDocumentState, type NodeRenderDetailMode, workspace } from "src/workspace.svelte";
+  } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+  import {
+    type NodeRenderDetailMode,
+    useNodeEditorSession,
+  } from "@node-editor/workspace.svelte";
+  import { cloneJsonLike } from "@shared/jsonClone";
   import { tick, untrack } from "svelte";
-  import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import type { FlowEdge, FlowNode } from "./common";
+  import {
+    createFieldValuePropertyChange,
+    createNodePropertiesUpdatedEdit,
+  } from "./node-editor/utils/graphDocument";
   import { createNodeFromTemplate } from "./node-editor/utils/nodeFactory.svelte";
 
   const {
@@ -66,14 +75,37 @@
   } = useSvelteFlow();
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
   const liveConnection = useConnection();
-  const connectionPreview = createConnectionPreviewController();
-  const lowDetail = createLowDetailController();
+  const workspace = useNodeEditorSession();
+  const connectionPreview = createConnectionPreviewController(workspace);
+  const lowDetail = createLowDetailController(workspace);
 
   const viewport = useViewport();
-  const getViewportCenter = (viewport: Viewport) => ({
-    x: ((innerWidth.current ?? 0) / 2 - viewport.x) / viewport.zoom,
-    y: ((innerHeight.current ?? 0) / 2 - viewport.y) / viewport.zoom,
+  const getViewportSize = () => ({
+    width: flowStore.width || flowWrapperElement?.clientWidth || 0,
+    height: flowStore.height || flowWrapperElement?.clientHeight || 0,
   });
+  const getViewportCenter = (viewport: Viewport) => {
+    const { width, height } = getViewportSize();
+    return {
+      x: (width / 2 - viewport.x) / viewport.zoom,
+      y: (height / 2 - viewport.y) / viewport.zoom,
+    };
+  };
+  const toFlowWrapperPosition = (screenPosition: XYPosition): XYPosition => {
+    const rect = flowWrapperElement?.getBoundingClientRect();
+    return {
+      x: screenPosition.x - (rect?.left ?? 0),
+      y: screenPosition.y - (rect?.top ?? 0),
+    };
+  };
+  const getEventClientPosition = (event: MouseEvent | TouchEvent): XYPosition | undefined => {
+    if ("clientX" in event) {
+      return { x: event.clientX, y: event.clientY };
+    }
+
+    const touch = event.changedTouches[0] ?? event.touches[0];
+    return touch ? { x: touch.clientX, y: touch.clientY } : undefined;
+  };
 
   let {
     nodes = $bindable([]),
@@ -93,6 +125,7 @@
     ".svelte-flow__panel, [data-add-menu], [data-search-menu], [data-node-help-overlay]";
   const NODE_DRAG_RETARGET_BLOCKER_SELECTOR = `${FLOW_OVERLAY_TARGET_SELECTOR}, .svelte-flow__handle, [data-group-body]`;
   const handlePriority = createHandlePriorityController(FLOW_OVERLAY_TARGET_SELECTOR);
+  let isRootNodeMissing = $derived(workspace.getRootNode() === undefined);
 
   let flowWrapperElement: HTMLDivElement | undefined = undefined;
   let multiselectModifierPressed = $state(false);
@@ -109,7 +142,7 @@
 
   let addMenuInstance:
     | {
-        screenPosition: XYPosition;
+        viewportPosition: XYPosition;
         spawnPosition: XYPosition;
         connectionFilter?: AddMenuConnectionFilter;
       }
@@ -121,6 +154,7 @@
     | undefined = $state();
   let helpMenuOpen = $state(false);
   let showDebugOverlay = $state(false);
+  let isHandlingActionRequests = false;
   const activeRenderDetailMode = $derived(lowDetail.activeRenderDetailMode);
 
   const useCanvasLowDetailOverlay = $derived(
@@ -297,13 +331,17 @@
     void connectionPreview.pendingSourceConnection;
     void connectionPreview.pendingTargetConnection;
     void liveConnection.current;
-    connectionPreview.syncPreview(liveConnection.current);
+    connectionPreview.updateHover(liveConnection.current);
   });
 
   // # Handle actions requests
   $effect(() => {
     void workspace.areNodesMeasured;
-    if (workspace.actionRequests.length > 0) untrack(() => handleActionRequests());
+    if (!isHandlingActionRequests && workspace.actionRequests.length > 0) {
+      untrack(() => {
+        void handleActionRequests();
+      });
+    }
   });
 
   // custom box-selection handling
@@ -345,7 +383,7 @@
         continue;
       }
 
-      const position = getAbsolutePosition(node);
+      const position = getAbsolutePosition(node, workspace);
       const nodeRect = {
         x: position.x,
         y: position.y,
@@ -415,11 +453,21 @@
     applySelectionBoxOverrides(flowStore.selectionRect);
   });
 
-  function handleActionRequests() {
+  async function handleActionRequests() {
+    if (isHandlingActionRequests) {
+      return;
+    }
+
+    isHandlingActionRequests = true;
     // retain any actions that are not able to be processed yet
     const retained = [];
-    for (const action of workspace.actionRequests) {
-      switch (action.type) {
+    const initialActionRequests = workspace.actionRequests;
+    const initialActions = [...initialActionRequests];
+    const initialLength = initialActionRequests.length;
+
+    try {
+      for (const action of initialActions) {
+        switch (action.type) {
         case "reveal-node":
           if (!workspace.areNodesMeasured) {
             retained.push(action);
@@ -435,12 +483,21 @@
             console.warn(`Attempted to reveal node ${targetNodeId} but it was not found.`);
             continue;
           }
-          const absolutePosition = getAbsolutePosition(node);
-          const width = node.measured!.width!;
-          const height = node.measured!.height!;
+          const absolutePosition = getAbsolutePosition(node, workspace);
+          const size = getNodeSize(node);
+          if (!size) {
+            retained.push(action);
+            break;
+          }
+          const { width, height } = size;
+          if (width <= 0 || height <= 0) {
+            retained.push(action);
+            break;
+          }
+          const { width: viewportWidth, height: viewportHeight } = getViewportSize();
           const maxZoom = Math.min(
-            ((innerWidth.current ?? width) / width) * 0.8,
-            ((innerHeight.current ?? height) / height) * 0.8,
+            ((viewportWidth || width) / width) * 0.8,
+            ((viewportHeight || height) / height) * 0.8,
           );
           const previewTransitionToken = searchMenuInstance
             ? lowDetail.beginSearchPreviewTransition()
@@ -467,6 +524,7 @@
             nodes: workspace.nodes,
             rootNodeId: workspace.rootNodeId,
             maxDistanceToRoot: action.maxDistanceToRoot,
+            session: workspace,
           });
           const fitNodeIdSet = new Set(fitNodeIds.map(node => node.id));
           const nodesToFit =
@@ -532,16 +590,23 @@
             }
           }
 
-          const updates = getAutoPositionNodeUpdates(targetNodes);
-          if (updates.length > 0) {
-            workspace.applyNodeUpdates(updates);
-            recalculateGroupParents();
-            applyDocumentState("nodes-moved");
+          workspace.isAutoPositioning = true;
+          try {
+            const updates = await getAutoPositionNodeUpdates(targetNodes, workspace);
+            if (updates.length > 0) {
+              workspace.applyNodeUpdates(updates);
+              recalculateGroupParents(workspace);
+              workspace.applyDocumentState("nodes-moved");
+            }
+          } finally {
+            workspace.isAutoPositioning = false;
           }
           break;
 
         case "view-raw-json":
-          workspace.vscode.postMessage({ type: "openRawJson" });
+          if (workspace.allowOpenRawJson) {
+            workspace.postMessageToHost({ type: "openRawJson" });
+          }
           break;
 
         case "help-and-hotkeys":
@@ -549,7 +614,16 @@
           break;
 
         case "customize-keybinds":
-          workspace.vscode.postMessage({ type: "openKeybindings", query: "Hytale Node Editor" });
+          workspace.postMessageToHost({ type: "openKeybindings", query: "Hytale Node Editor" });
+          break;
+        case "set-root":
+          workspace.setRootNode(action.nodeId);
+          break;
+        case "set-field-explicit-empty":
+          setFieldExplicitEmpty(action.nodeId, action.schemaKey);
+          break;
+        case "set-list-item-explicit-empty":
+          setListItemExplicitEmpty(action.nodeId, action.schemaKey, action.itemIndex);
           break;
         case "document-refresh":
           if (!workspace.areNodesMeasured) {
@@ -557,20 +631,29 @@
             break;
           }
           workspace.applyNodeUpdates(
-            getAllSiblingOrderUpdates().map(([nodeId, data]) => [nodeId, { data }]),
+            getAllSiblingOrderUpdates(workspace).map(([nodeId, data]) => [nodeId, { data }]),
           );
 
-          connectionPreview.clearPendingConnection("both", true);
-          recalculateGroupParents();
+          connectionPreview.cancel();
+          recalculateGroupParents(workspace);
           break;
         case "reveal-selection":
           break;
         default:
           const _exhaustiveCheck: never = action;
+        }
       }
+    } finally {
+      const queuedDuringHandling = workspace.actionRequests.slice(initialLength);
+      const shouldKeepExistingQueue =
+        retained.length === initialLength && queuedDuringHandling.length === 0;
+
+      if (!shouldKeepExistingQueue) {
+        workspace.actionRequests = [...retained, ...queuedDuringHandling];
+      }
+
+      isHandlingActionRequests = false;
     }
-    // length check to avoid trigger reactivity when there is no change
-    if (retained.length !== workspace.actionRequests.length) workspace.actionRequests = retained;
   }
 
   // ! window event
@@ -628,7 +711,7 @@
       maxY = Number.NEGATIVE_INFINITY;
 
     for (const node of nodes) {
-      const position = getAbsoluteCenterPosition(node);
+      const position = getAbsoluteCenterPosition(node, workspace);
       minX = Math.min(minX, position.x);
       minY = Math.min(minY, position.y);
       maxX = Math.max(maxX, position.x);
@@ -640,7 +723,7 @@
     return nodes.map(node => {
       // @ts-ignore - the clone will not have infinite depth.
       const copiedNode = structuredClone($state.snapshot(node)) as FlowNode;
-      const absolutePosition = getAbsolutePosition(node);
+      const absolutePosition = getAbsolutePosition(node, workspace);
       return {
         ...copiedNode,
         position: {
@@ -672,7 +755,7 @@
 
   function updateCopiedSelection(copiedSelection: NodeEditorClipboardSelection) {
     workspace.copiedSelection = copiedSelection;
-    workspace.vscode.postMessage({ type: "clipboard", clipboard: copiedSelection });
+    workspace.postMessageToHost({ type: "clipboard", clipboard: copiedSelection });
   }
 
   function handleWindowCopy(event: ClipboardEvent) {
@@ -749,7 +832,7 @@
     workspace.nodes = [...workspace.nodes, ...pastedNodes];
     workspace.trackMeasurementForNodeIds(pastedNodes.map(node => node.id));
     workspace.addEdges(pastedEdges);
-    applyDocumentState("element-list-changed");
+    workspace.applyDocumentState("element-list-changed");
     event.preventDefault();
     event.stopPropagation();
   }
@@ -787,9 +870,7 @@
     onpointerdown: (event: PointerEvent) => {
       if (!(event.target as HTMLElement)?.closest("[data-add-menu]")) {
         addMenuInstance = undefined;
-        if (connectionPreview.clearPendingConnection("both", false)) {
-          applyDocumentState("element-list-changed");
-        }
+        connectionPreview.cancel();
       }
       if (!(event.target as HTMLElement)?.closest("[data-search-menu]")) {
         searchMenuInstance = undefined;
@@ -815,7 +896,7 @@
         const nodeTarget = event.target.closest(".svelte-flow__node");
         if (!nodeTarget || groupNodeTarget) {
           addMenuInstance = {
-            screenPosition: { x: event.clientX, y: event.clientY },
+            viewportPosition: toFlowWrapperPosition({ x: event.clientX, y: event.clientY }),
             spawnPosition: screenToFlowPosition({ x: event.clientX, y: event.clientY }),
           };
         }
@@ -830,7 +911,130 @@
     if (workspace.controlScheme !== "mouse") {
       return;
     }
+    if (isSetRootNativeContextTarget(event)) {
+      return;
+    }
     event.preventDefault();
+  }
+
+  function isSetRootNativeContextTarget(event: Event): boolean {
+    return (
+      event.target instanceof Element &&
+      (event.target.closest("[data-node-editor-set-root-context='true']") !== null ||
+        event.target.closest("[data-node-editor-field-context='true']") !== null)
+    );
+  }
+
+  function setFieldExplicitEmpty(nodeId: string, schemaKey: string) {
+    const node = workspace.getNodeById(nodeId);
+    if (!node || node.type !== "datanode") {
+      return;
+    }
+
+    const field = node.data.fieldsBySchemaKey?.[schemaKey];
+    if (
+      !field ||
+      (field.type !== "string" && field.type !== "text")
+    ) {
+      return;
+    }
+
+    const previousFieldSnapshot = cloneJsonLike($state.snapshot(field));
+    const nextField = {
+      ...previousFieldSnapshot,
+      value: "",
+      isImplicit: false,
+      isExplicitEmpty: true,
+      isSet: true,
+    };
+    const nextFieldsBySchemaKey = {
+      ...node.data.fieldsBySchemaKey,
+      [schemaKey]: nextField,
+    };
+
+    workspace.applyNodeUpdates([
+      [
+        nodeId,
+        {
+          data: {
+            fieldsBySchemaKey: nextFieldsBySchemaKey,
+          },
+        },
+      ],
+    ]);
+
+    const edit = createNodePropertiesUpdatedEdit([
+      createFieldValuePropertyChange({
+        nodeId,
+        schemaKey,
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
+    ]);
+    if (edit) {
+      workspace.applyGraphEdit(edit);
+    }
+  }
+
+  function setListItemExplicitEmpty(nodeId: string, schemaKey: string, itemIndex: number) {
+    const node = workspace.getNodeById(nodeId);
+    if (!node || node.type !== "datanode") {
+      return;
+    }
+
+    const field = node.data.fieldsBySchemaKey?.[schemaKey];
+    if (
+      !field ||
+      field.type !== "list" ||
+      !Array.isArray(field.value) ||
+      !Number.isInteger(itemIndex) ||
+      itemIndex < 0 ||
+      itemIndex >= field.value.length ||
+      typeof field.value[itemIndex] !== "string"
+    ) {
+      return;
+    }
+
+    const previousFieldSnapshot = cloneJsonLike($state.snapshot(field));
+    const previousItems = Array.isArray(previousFieldSnapshot.value)
+      ? previousFieldSnapshot.value
+      : [];
+    const nextItems = previousItems.slice();
+    nextItems[itemIndex] = "";
+    const nextField = {
+      ...previousFieldSnapshot,
+      value: nextItems,
+      isImplicit: false,
+      isExplicitEmpty: false,
+      isSet: true,
+    };
+    const nextFieldsBySchemaKey = {
+      ...node.data.fieldsBySchemaKey,
+      [schemaKey]: nextField,
+    };
+
+    workspace.applyNodeUpdates([
+      [
+        nodeId,
+        {
+          data: {
+            fieldsBySchemaKey: nextFieldsBySchemaKey,
+          },
+        },
+      ],
+    ]);
+
+    const edit = createNodePropertiesUpdatedEdit([
+      createFieldValuePropertyChange({
+        nodeId,
+        schemaKey,
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
+    ]);
+    if (edit) {
+      workspace.applyGraphEdit(edit);
+    }
   }
 
   // In low-detail mode the real node DOM is hidden, so clicks on canvas-rendered nodes still target the pane.
@@ -922,28 +1126,63 @@
     event.stopPropagation();
   }
 
+  function commitConnection(connection: {
+    source: string;
+    sourceHandle: string;
+    target: string;
+    targetHandle: string;
+  }) {
+    const conflictingEdges = collectConflictingEdges(connection, workspace);
+    if (conflictingEdges.length > 0) {
+      workspace.removeEdgesByIds(conflictingEdges.map(edge => edge.id));
+    }
+    workspace.addEdges([connection]);
+  }
+
   // # Svelte Flow Events
   const svelteFlowEvents: SvelteFlowProps<FlowNode, FlowEdge> = {
     // ## On Connect
     onconnect: connection => {
-      pruneConflictingEdges(connection);
-      workspace.addEdges([connection]);
-      applyDocumentState("element-list-changed");
+      if (!connection.source || !connection.sourceHandle || !connection.target || !connection.targetHandle) {
+        connectionPreview.cancel();
+        return;
+      }
+      commitConnection({
+        source: connection.source,
+        sourceHandle: connection.sourceHandle,
+        target: connection.target,
+        targetHandle: connection.targetHandle,
+      });
+      connectionPreview.commit();
+      workspace.applyDocumentState("element-list-changed");
     },
     // ## On Connect Start
     onconnectstart: (pointerEvent, { nodeId, handleId, handleType }) => {
-      connectionPreview.handleConnectStart(nodeId!, handleId!, handleType);
+      if (handleType === "source") {
+        connectionPreview.beginSourceDrag(nodeId!, handleId!);
+        return;
+      }
+
+      connectionPreview.beginTargetDrag(nodeId!, handleId!);
     },
     // ## On Connect End
     onconnectend: (event, connectionState) => {
+      const dropClientPosition = getEventClientPosition(event);
+
       if (connectionState.toNode === null && connectionPreview.pendingSourceConnection) {
+        connectionPreview.previewFixedConflicts();
         const sourcePin = getOutputPin(
           connectionPreview.pendingSourceConnection.source,
           connectionPreview.pendingSourceConnection.sourceHandle,
+          workspace,
         );
+        if (!dropClientPosition) {
+          connectionPreview.cancel();
+          return;
+        }
         addMenuInstance = {
-          screenPosition: connectionState.pointer!,
-          spawnPosition: screenToFlowPosition(connectionState.pointer!),
+          viewportPosition: toFlowWrapperPosition(dropClientPosition),
+          spawnPosition: screenToFlowPosition(dropClientPosition),
           connectionFilter: sourcePin
             ? {
                 draggedFrom: "source",
@@ -952,13 +1191,19 @@
             : undefined,
         };
       } else if (connectionState.toNode === null && connectionPreview.pendingTargetConnection) {
+        connectionPreview.previewFixedConflicts();
         const targetPin = getInputPin(
           connectionPreview.pendingTargetConnection.target,
           connectionPreview.pendingTargetConnection.targetHandle,
+          workspace,
         );
+        if (!dropClientPosition) {
+          connectionPreview.cancel();
+          return;
+        }
         addMenuInstance = {
-          screenPosition: connectionState.pointer!,
-          spawnPosition: screenToFlowPosition(connectionState.pointer!),
+          viewportPosition: toFlowWrapperPosition(dropClientPosition),
+          spawnPosition: screenToFlowPosition(dropClientPosition),
           connectionFilter: targetPin
             ? {
                 draggedFrom: "target",
@@ -967,18 +1212,22 @@
             : undefined,
         };
       } else {
-        // restore conflicts if invalid
-        connectionPreview.clearPendingConnection("both", !connectionState.isValid);
+        if (connectionState.isValid !== true) {
+          connectionPreview.cancel();
+        }
       }
     },
     // ## On Node Drag Stop
     onnodedragstop: event => {
-      recalculateGroupParents();
-      applyDocumentState("nodes-moved");
+      recalculateGroupParents(workspace);
+      workspace.applyDocumentState("nodes-moved");
     },
     // ## On Node Context Menu
     onnodecontextmenu: ({ event: pointerEvent, node }) => {
       if (workspace.controlScheme === "mouse") {
+        if (isSetRootNativeContextTarget(pointerEvent)) {
+          return;
+        }
         pointerEvent.preventDefault();
         pointerEvent.stopPropagation();
         return;
@@ -991,7 +1240,10 @@
           y: pointerEvent.clientY,
         });
         addMenuInstance = {
-          screenPosition: { x: pointerEvent.clientX, y: pointerEvent.clientY },
+          viewportPosition: toFlowWrapperPosition({
+            x: pointerEvent.clientX,
+            y: pointerEvent.clientY,
+          }),
           spawnPosition: flowPosition,
         };
         pointerEvent.preventDefault();
@@ -1052,7 +1304,7 @@
     onpanecontextmenu: ({ event }) => {
       const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
       addMenuInstance = {
-        screenPosition: { x: event.clientX, y: event.clientY },
+        viewportPosition: toFlowWrapperPosition({ x: event.clientX, y: event.clientY }),
         spawnPosition: flowPosition,
       };
       event.preventDefault();
@@ -1061,7 +1313,7 @@
       if (nodes.some(node => node.id === workspace.rootNodeId)) {
         workspace.rootNodeId = undefined;
       }
-      applyDocumentState("element-list-changed");
+      workspace.applyDocumentState("element-list-changed");
     },
   };
 
@@ -1069,7 +1321,7 @@
   const addMenuEvents: Partial<AddMenuProps> = {
     // ## On Add Menu Cancel
     oncancel: () => {
-      connectionPreview.clearPendingConnection("both", true);
+      connectionPreview.cancel();
       addMenuInstance = undefined;
     },
 
@@ -1086,42 +1338,53 @@
       };
       workspace.nodes = [...workspace.nodes, newNode];
       workspace.trackMeasurementForNodeIds([newNode.id]);
+      let didCreateReplacementConnection = false;
       if (isCreatingRootNode) {
         workspace.rootNodeId = newNode.id;
       } else if (connectionPreview.pendingSourceConnection) {
         const targetHandle = menuInstance.connectionFilter
-          ? getCompatibleInputHandleId(newNode.data, menuInstance.connectionFilter.pinType)
+          ? getCompatibleInputHandleId(
+              newNode.data,
+              menuInstance.connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            )
           : undefined;
         if (targetHandle) {
-          workspace.addEdges([
-            {
-              ...connectionPreview.pendingSourceConnection,
-              target: newNode.id,
-              targetHandle,
-            },
-          ]);
+          commitConnection({
+            ...connectionPreview.pendingSourceConnection,
+            target: newNode.id,
+            targetHandle,
+          });
+          didCreateReplacementConnection = true;
         }
       } else if (connectionPreview.pendingTargetConnection) {
         const sourceHandle = menuInstance.connectionFilter
-          ? getCompatibleOutputHandleId(newNode.data, menuInstance.connectionFilter.pinType)
+          ? getCompatibleOutputHandleId(
+              newNode.data,
+              menuInstance.connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            )
           : undefined;
         if (sourceHandle) {
-          workspace.addEdges([
-            {
-              source: newNode.id,
-              sourceHandle,
-              target: connectionPreview.pendingTargetConnection.target,
-              targetHandle: connectionPreview.pendingTargetConnection.targetHandle,
-            },
-          ]);
+          commitConnection({
+            source: newNode.id,
+            sourceHandle,
+            target: connectionPreview.pendingTargetConnection.target,
+            targetHandle: connectionPreview.pendingTargetConnection.targetHandle,
+          });
+          didCreateReplacementConnection = true;
         }
       }
-      connectionPreview.clearPendingConnection("both", false);
+      if (didCreateReplacementConnection) {
+        connectionPreview.commit();
+      } else {
+        connectionPreview.cancel();
+      }
 
       // this is to recalculate group parents - we can't do it immediately because the node does not yet have dimensions
       workspace.actionRequests.push({ type: "document-refresh" });
       addMenuInstance = undefined;
-      applyDocumentState("element-list-changed");
+      workspace.applyDocumentState("element-list-changed");
     },
   };
 </script>
@@ -1168,10 +1431,11 @@
     selectionOnDrag={true}
     panActivationKey={null}
     minZoom={MIN_FLOW_ZOOM}
+    proOptions={{ hideAttribution: true }}
     onlyRenderVisibleElements={useVisibleElementCulling}
     connectionRadius={CONNECTION_RADIUS}
     isValidConnection={connection => {
-      return isValidConnection(connection);
+      return isValidConnection(connection, workspace);
     }}
     {...svelteFlowEvents}
   >
@@ -1223,9 +1487,37 @@
     {/if}
   </SvelteFlow>
 
+  {#if !workspace.embeddedGraphFieldPath}
+    <DevtoolsAttribution
+      class="pointer-events-auto absolute bottom-2 left-2 z-10"
+    />
+  {/if}
+
+  {#if isRootNodeMissing}
+    <div
+      class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6 text-center text-sm font-medium text-vsc-muted"
+    >
+      No root is set. Right click to add the root node.
+    </div>
+  {/if}
+
+  {#if workspace.isAutoPositioning}
+    <div
+      class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6 text-center text-sm font-medium text-vsc-muted backdrop-blur-sm"
+      style="background: color-mix(in srgb, var(--vscode-editor-background) 82%, transparent);"
+    >
+      Positioning nodes...
+    </div>
+  {/if}
+
   {#if addMenuInstance}
-    {@const { screenPosition, connectionFilter } = addMenuInstance}
-    <AddNodeMenu {connectionFilter} {screenPosition} {...addMenuEvents} />
+    {@const { viewportPosition, connectionFilter } = addMenuInstance}
+    <AddNodeMenu
+      {connectionFilter}
+      {viewportPosition}
+      viewportSize={getViewportSize()}
+      {...addMenuEvents}
+    />
   {/if}
 
   {#if helpMenuOpen}

@@ -1,0 +1,17 @@
+{
+  "Id": "BodyMotion.Nothing",
+  "Title": "Body Motion: Nothing",
+  "Color": "#00E7B6",
+  "Description": "Do nothing",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Schema": {
+    "Type": "Nothing"
+  }
+}

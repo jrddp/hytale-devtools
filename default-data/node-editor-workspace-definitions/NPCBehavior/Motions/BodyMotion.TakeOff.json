@@ -1,0 +1,31 @@
+{
+  "Id": "BodyMotion.TakeOff",
+  "Title": "Body Motion: TakeOff",
+  "Color": "#00E7B6",
+  "Description": "Switch NPC from walking to flying motion controller",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "JumpSpeed",
+      "Type": "Float",
+      "Description": "Speed to jump off",
+      "Options": {
+        "Label": "JumpSpeed",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88
+      }
+    }
+  ],
+  "Schema": {
+    "JumpSpeed": "JumpSpeed",
+    "Type": "TakeOff"
+  }
+}

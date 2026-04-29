@@ -1,0 +1,88 @@
+{
+  "Id": "IEntityFilter.Combat",
+  "Title": "Filter: Combat",
+  "Color": "#60C8B8",
+  "Description": "Check the target's combat state",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Sequence",
+      "Type": "SmallString",
+      "Description": "The attack ID to check for.",
+      "Options": {
+        "Label": "Sequence",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "RootInteraction"
+        }
+      }
+    },
+    {
+      "Id": "TimeElapsedRange",
+      "Type": "Tuple",
+      "Description": "The acceptable elapsed time range in seconds.",
+      "Options": {
+        "Label": "TimeElapsedRange",
+        "Min": 0,
+        "Max": 3.4028234663852886e+38,
+        "Default": [
+          0,
+          3.4028234663852886e+38
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Mode",
+      "Type": "Enum",
+      "Description": "Type of combat to trigger on",
+      "Options": {
+        "Label": "Mode",
+        "Default": "Attacking",
+        "Width": 220,
+        "Values": [
+          "Sequence",
+          "Charging",
+          "Attacking",
+          "Melee",
+          "Ranged",
+          "Blocking",
+          "Any",
+          "None"
+        ],
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Sequence": "Sequence",
+    "TimeElapsedRange": "TimeElapsedRange",
+    "Mode": "Mode",
+    "Type": "Combat"
+  }
+}

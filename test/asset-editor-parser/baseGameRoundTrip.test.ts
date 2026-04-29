@@ -3,6 +3,11 @@ import path from "node:path";
 import { describe, test } from "vitest";
 
 import { AssetCacheRuntime } from "../../src/asset-cache/assetCacheRuntime";
+import {
+  readParentName,
+  resolveEffectiveParentData,
+  resolveEffectiveParentDataByName,
+} from "../../src/asset-editor/parentResolution";
 import { SchemaRuntime } from "../../src/schema/schemaLoader";
 import { parseDocumentText } from "../../webview/hytale-asset-editor/src/parsing/parseDocument";
 import { serializeDocument } from "../../webview/hytale-asset-editor/src/parsing/serializeDocument";
@@ -259,22 +264,16 @@ async function createDirectoryBackedAssetCacheRuntime(
   await runtime.ready;
 
   for (const assetPath of supportedAssetPaths) {
-    const assetDefinition = schemaRuntime.getAssetDefinitionForPath(assetPath);
-    if (!assetDefinition) {
-      continue;
-    }
-
-    const assetName = path.basename(assetPath, path.extname(assetPath));
-    if (!runtime.assetInstances.has(assetDefinition.title)) {
-      runtime.assetInstances.set(assetDefinition.title, new Map());
-    }
-
-    runtime.assetInstances.get(assetDefinition.title)!.set(assetName, {
-      name: assetName,
-      type: assetDefinition.title,
-      path: assetPath,
-      package: "Hytale:Hytale",
-      rawJson: parseJsonText(readFileSync(assetPath, "utf8")) as Record<string, unknown>,
+    runtime.processAssetSource({
+      resourceSubpath: assetPath,
+      sourceKind: "baseGamePackage",
+      packageName: "Hytale:Hytale",
+      contentType: "json",
+      parsedJson: parseJsonText(readFileSync(assetPath, "utf8")),
+      byteSource: {
+        kind: "workspaceFile",
+        fsPath: assetPath,
+      },
     });
   }
 
@@ -325,14 +324,24 @@ describe("asset editor BaseGame round-trip", () => {
 
         try {
           const originalJson = parseJsonText(readFileSync(assetPath, "utf8"));
-          const parentData = readParentName(originalJson)
-            ? assetCacheRuntime.getAsset(assetDefinition.title, readParentName(originalJson)!)?.rawJson
-            : undefined;
+          const parentData = resolveEffectiveParentData({
+            assetType: assetDefinition.title,
+            parentName: readParentName(originalJson),
+            lookupParentAsset: (assetType, assetName) =>
+              assetCacheRuntime.getAsset(assetType, assetName),
+          });
+          const parentDataByName = resolveEffectiveParentDataByName({
+            assetType: assetDefinition.title,
+            documentJson: originalJson,
+            lookupParentAsset: (assetType, assetName) =>
+              assetCacheRuntime.getAsset(assetType, assetName),
+          });
           const result = parseDocumentText({
             text: JSON.stringify(originalJson),
             assetDefinition,
             assetsByRef,
             parentData,
+            parentDataByName,
           });
 
           if (result.status === "error") {

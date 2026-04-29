@@ -19,6 +19,9 @@ export type ActionRequest =
   | { type: "view-raw-json" }
   | { type: "help-and-hotkeys" }
   | { type: "customize-keybinds"; query?: string }
+  | { type: "set-root"; nodeId: string }
+  | { type: "set-field-explicit-empty"; nodeId: string; schemaKey: string }
+  | { type: "set-list-item-explicit-empty"; nodeId: string; schemaKey: string; itemIndex: number }
   | { type: "reveal-selection"; selection: Selection }
   | { type: "document-refresh" }; // recalculates groups, resets pending connections, etc
 

@@ -289,10 +289,10 @@ function resolveWorkspaceMappings(
       return;
     }
 
-    for (const [schemaKey, childVariantOrTemplateId] of Object.entries(template.childTypes)) {
+    for (const [schemaKey, childSchema] of Object.entries(template.childSchemas)) {
       walkTemplate(
         appendSchemaReference(resolution.traversalRef, schemaKey),
-        childVariantOrTemplateId,
+        childSchema.targetTemplateOrVariantId,
       );
     }
   };
@@ -563,7 +563,7 @@ function templateMatchesCandidate(template, objectField) {
       return false;
     }
   }
-  for (const schemaKey of Object.keys(template.childTypes)) {
+  for (const schemaKey of Object.keys(template.childSchemas)) {
     if (!(schemaKey in objectField.properties)) {
       return false;
     }

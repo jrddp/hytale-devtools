@@ -1,0 +1,114 @@
+{
+  "Id": "IEntityFilter.Stat",
+  "Title": "Filter: Stat",
+  "Color": "#60C8B8",
+  "Description": "Match stat values of the entity",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Stat",
+      "Type": "SmallString",
+      "Description": "The stat value to check",
+      "Options": {
+        "Label": "Stat",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "EntityStatType"
+        }
+      }
+    },
+    {
+      "Id": "StatTarget",
+      "Type": "Enum",
+      "Description": "The stat target",
+      "Options": {
+        "Label": "StatTarget",
+        "Required": true,
+        "Width": 220,
+        "Values": [
+          "Value",
+          "Min",
+          "Max"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelativeTo",
+      "Type": "SmallString",
+      "Description": "The stat value to check against",
+      "Options": {
+        "Label": "RelativeTo",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "EntityStatType"
+        }
+      }
+    },
+    {
+      "Id": "RelativeToTarget",
+      "Type": "Enum",
+      "Description": "The stat target",
+      "Options": {
+        "Label": "RelativeToTarget",
+        "Required": true,
+        "Width": 220,
+        "Values": [
+          "Value",
+          "Min",
+          "Max"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ValueRange",
+      "Type": "Tuple",
+      "Description": "The fractional range within which to trigger, with 1 being equal",
+      "Options": {
+        "Label": "ValueRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Stat": "Stat",
+    "StatTarget": "StatTarget",
+    "RelativeTo": "RelativeTo",
+    "RelativeToTarget": "RelativeToTarget",
+    "ValueRange": "ValueRange",
+    "Type": "Stat"
+  }
+}

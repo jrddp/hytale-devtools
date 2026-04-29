@@ -1,4 +1,15 @@
 <script lang="ts">
+  import {
+    autoUpdate,
+    computePosition,
+    flip,
+    offset,
+    shift,
+    size,
+    type Middleware,
+    type Placement,
+    type Strategy,
+  } from "@floating-ui/dom";
   import { marked } from "marked";
   import type { HTMLInputAttributes } from "svelte/elements";
   import FloatingMarkdownPreviewCard from "./FloatingMarkdownPreviewCard.svelte";
@@ -19,6 +30,11 @@
     listClass = "",
     optionClass = "",
     previewClass = "",
+    floatingList = false,
+    floatingListPlacement = "bottom-start",
+    floatingListStrategy = "fixed",
+    resetKey,
+    cancelDraftOnUndo = false,
     fitContentWidth = false,
     considerDebounceMs = 75,
     sizerClass = "",
@@ -39,6 +55,11 @@
     listClass?: string;
     optionClass?: string;
     previewClass?: string;
+    floatingList?: boolean;
+    floatingListPlacement?: Placement;
+    floatingListStrategy?: Strategy;
+    resetKey?: string | number;
+    cancelDraftOnUndo?: boolean;
     fitContentWidth?: boolean;
     considerDebounceMs?: number;
     sizerClass?: string;
@@ -51,7 +72,7 @@
     $props();
 
   let value = $state("");
-  let lastCommittedValue = $state("");
+  let lastCommittedValue = "";
   let isFocused = $state(false);
   let isEntireValueSelected = $state(false);
   let activeAutocompleteIndex = $state(-1);
@@ -60,6 +81,22 @@
   let inputSizerWidth = $state(0);
   let lastConsideredValue: string | undefined;
   let considerTimeout: ReturnType<typeof setTimeout> | undefined;
+  let lastResetKey = $state<string | number | undefined>();
+  let hasSeenResetKey = false;
+
+  const floatingListMiddleware: Middleware[] = [
+    offset(0),
+    flip({ padding: 8 }),
+    shift({ padding: 8 }),
+    size({
+      padding: 8,
+      apply({ rects, elements }) {
+        Object.assign(elements.floating.style, {
+          minWidth: `${rects.reference.width}px`,
+        });
+      },
+    }),
+  ];
 
   $effect(() => {
     void value;
@@ -69,10 +106,32 @@
   });
 
   $effect(() => {
-    if (initialValue !== lastCommittedValue) {
-      value = initialValue ?? "";
-      lastCommittedValue = initialValue ?? "";
+    const nextInitialValue = initialValue ?? "";
+    if (nextInitialValue !== lastCommittedValue) {
+      value = nextInitialValue;
+      lastCommittedValue = nextInitialValue;
     }
+  });
+
+  $effect(() => {
+    if (!hasSeenResetKey) {
+      hasSeenResetKey = true;
+      lastResetKey = resetKey;
+      return;
+    }
+
+    if (resetKey === lastResetKey) {
+      return;
+    }
+
+    lastResetKey = resetKey;
+    const nextInitialValue = initialValue ?? "";
+    value = nextInitialValue;
+    lastCommittedValue = nextInitialValue;
+    isFocused = false;
+    isEntireValueSelected = false;
+    activeAutocompleteIndex = -1;
+    inputElement?.blur();
   });
 
   const filteredAutocompleteOptions = $derived(
@@ -143,6 +202,58 @@
     });
   });
 
+  async function updateFloatingListPosition() {
+    if (!inputElement || !autocompleteListElement) {
+      return;
+    }
+
+    const { x, y } = await computePosition(inputElement, autocompleteListElement, {
+      placement: floatingListPlacement,
+      strategy: floatingListStrategy,
+      middleware: floatingListMiddleware,
+    });
+
+    Object.assign(autocompleteListElement.style, {
+      position: floatingListStrategy,
+      left: `${x}px`,
+      top: `${y}px`,
+    });
+  }
+
+  $effect(() => {
+    if (!floatingList || !shouldAutocomplete || !inputElement || !autocompleteListElement) {
+      return;
+    }
+
+    const element = autocompleteListElement;
+    document.body.appendChild(element);
+
+    Object.assign(element.style, {
+      position: floatingListStrategy,
+      left: "0px",
+      top: "0px",
+      zIndex: "3001",
+    });
+
+    void updateFloatingListPosition();
+
+    const cleanup = autoUpdate(inputElement, element, updateFloatingListPosition);
+    return () => {
+      cleanup();
+      element.remove();
+    };
+  });
+
+  $effect(() => {
+    if (!floatingList || !shouldAutocomplete || !autocompleteListElement) {
+      return;
+    }
+
+    void visibleAutocompleteOptions.length;
+    void value;
+    queueMicrotask(() => void updateFloatingListPosition());
+  });
+
   function stopPointerEvent(event: MouseEvent | PointerEvent) {
     if (stopPointerPropagation) {
       event.stopPropagation();
@@ -199,6 +310,14 @@
     inputElement?.blur();
   }
 
+  function cancelDraft() {
+    value = lastCommittedValue;
+    isFocused = false;
+    isEntireValueSelected = false;
+    activeAutocompleteIndex = -1;
+    inputElement?.blur();
+  }
+
   function handleFocus() {
     isFocused = true;
     queueMicrotask(() => updateSelectionState());
@@ -231,6 +350,20 @@
   }
 
   function handleInputKeydown(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
+    if (
+      cancelDraftOnUndo &&
+      (event.metaKey || event.ctrlKey) &&
+      !event.shiftKey &&
+      !event.altKey &&
+      event.key.toLowerCase() === "z" &&
+      value !== lastCommittedValue
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      cancelDraft();
+      return;
+    }
+
     switch (event.key) {
       case "ArrowDown":
         if (!shouldAutocomplete) return;
@@ -270,6 +403,10 @@
       default:
         return;
     }
+  }
+
+  function handleAutocompleteWheel(event: WheelEvent) {
+    event.stopPropagation();
   }
 </script>
 
@@ -320,8 +457,9 @@
       class={listClass}
       onpointerdown={stopPointerEvent}
       onmousedown={stopPointerEvent}
+      onwheel={handleAutocompleteWheel}
     >
-      {#each visibleAutocompleteOptions as option, index (option.value)}
+      {#each visibleAutocompleteOptions as option, index (`${option.value}:${index}`)}
         <button
           type="button"
           tabindex="-1"

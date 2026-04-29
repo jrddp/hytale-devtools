@@ -1,50 +1,78 @@
 <script lang="ts">
   import { useSvelteFlow } from "@xyflow/svelte";
-  import { type DataNodeType } from "src/common";
-  import { createNodePropertiesUpdatedEdit } from "src/node-editor/utils/graphDocument";
-  import { applyGraphEdit } from "src/workspace.svelte";
+  import { type DataNodeType } from "@node-editor/common";
+  import {
+    createFieldValuePropertyChange,
+    createNodePropertiesUpdatedEdit,
+  } from "@node-editor/node-editor/utils/graphDocument";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
+  import { cloneJsonLike } from "@shared/jsonClone";
   import FieldEditor from "../fields/FieldEditor.svelte";
   import BaseNode from "./BaseNode.svelte";
+  import ComponentReferenceNodeBody from "./ComponentReferenceNodeBody.svelte";
+  import type { FieldCommitOptions } from "@node-editor/node-editor/utils/fieldUtils";
 
   const { id, ...props }: DataNodeType = $props();
   const fieldsBySchemaKey = $derived(props.data.fieldsBySchemaKey);
   const { updateNodeData } = useSvelteFlow();
+  const workspace = useNodeEditorSession();
 
-  function updateField(schemaKey: string, nextValue: unknown) {
+  function updateField(
+    schemaKey: string,
+    nextValue: unknown,
+    options: FieldCommitOptions = {},
+  ) {
     const previousField = fieldsBySchemaKey[schemaKey];
-    const previousValue = previousField?.value;
-    const previousIsImplicit = previousField?.isImplicit;
+    if (!previousField) {
+      return;
+    }
+
+    const nextIsImplicit = options.isImplicit ?? false;
+    const nextIsSet = options.isSet ?? true;
+    const previousFieldSnapshot = cloneJsonLike($state.snapshot(previousField));
+    const nextField = {
+      ...previousFieldSnapshot,
+      value: cloneJsonLike($state.snapshot(nextValue)),
+      isImplicit: nextIsImplicit,
+      isExplicitEmpty: options.isExplicitEmpty ?? false,
+      isSet: nextIsSet,
+    };
     updateNodeData(id, {
       fieldsBySchemaKey: {
         ...fieldsBySchemaKey,
-        [schemaKey]: {
-          ...fieldsBySchemaKey[schemaKey],
-          value: nextValue,
-          isImplicit: false,
-        },
+        [schemaKey]: nextField,
       },
     });
     const edit = createNodePropertiesUpdatedEdit([
-      {
-        type: "field-value",
+      createFieldValuePropertyChange({
         nodeId: id,
         schemaKey,
-        beforeValue: previousValue,
-        afterValue: nextValue,
-        beforeIsImplicit: previousIsImplicit,
-        afterIsImplicit: false,
-      },
+        beforeField: previousFieldSnapshot,
+        afterField: nextField,
+      }),
     ]);
     if (edit) {
-      applyGraphEdit(edit);
+      workspace.applyGraphEdit(edit);
     }
   }
 </script>
 
 <BaseNode {id} {...props}>
-  <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
-    {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
-      <FieldEditor nodeId={id} {...field} onconfirm={value => updateField(schemaKey, value)} />
-    {/each}
-  </div>
+  {#if props.data.isComponentReference}
+    <ComponentReferenceNodeBody
+      nodeId={id}
+      {fieldsBySchemaKey}
+      unparsedMetadata={props.data.unparsedMetadata}
+    />
+  {:else}
+    <div class="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
+      {#each Object.entries(fieldsBySchemaKey) as [schemaKey, field] (schemaKey)}
+        <FieldEditor
+          nodeId={id}
+          {...field}
+          onconfirm={(value, options) => updateField(schemaKey, value, options)}
+        />
+      {/each}
+    </div>
+  {/if}
 </BaseNode>

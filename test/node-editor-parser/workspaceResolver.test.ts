@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -15,9 +17,14 @@ const logger = {
   debug() {},
 };
 
+const tempDirectories: string[] = [];
+
 describe("WorkspaceRuntime", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    for (const directory of tempDirectories.splice(0)) {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   test("resolves workspace context for Windows-style asset paths", () => {
@@ -40,5 +47,485 @@ describe("WorkspaceRuntime", () => {
     expect(workspaceContext).not.toBeNull();
     expect(workspaceContext?.rootMenuName).toBe("HytaleGenerator - Biome");
     expect(workspaceContext?.rootTemplateOrVariantId).toBe("Biome");
+  });
+
+  test("hydrates workspace symbol lookups and schema fallback symbol refs for scalar and list fields", () => {
+    const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "workspace-runtime-test-"));
+    tempDirectories.push(workspaceRoot);
+    const workspacesDir = path.join(workspaceRoot, "workspaces");
+    const supplementsDir = path.join(workspaceRoot, "supplements");
+    const workspaceDir = path.join(workspacesDir, "TestWorkspace");
+    fs.mkdirSync(workspaceDir, { recursive: true });
+    fs.mkdirSync(supplementsDir, { recursive: true });
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "_Workspace.json"),
+      JSON.stringify(
+        {
+          WorkspaceName: "Test Workspace",
+          Roots: {
+            Root: {
+              RootNodeType: "SchemaListFallback",
+              MenuName: "Test Workspace",
+            },
+          },
+          NodeCategories: {
+            General: [
+              "SchemaListFallback",
+              "SchemaStringFallback",
+              "ExplicitSymbolLookup",
+              "AnimationPreviewField",
+              "TupleField",
+              "UniqueListField",
+              "TypedListField",
+              "NonListTypeOption",
+              "ValidationField",
+            ],
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "SchemaListFallback.json"),
+      JSON.stringify(
+        {
+          Id: "SchemaListFallback",
+          Title: "Schema List Fallback",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "ObjectiveIds",
+              Type: "List",
+              Options: {
+                Label: "ObjectiveIds",
+              },
+            },
+          ],
+          Schema: {
+            ObjectiveIds: "ObjectiveIds",
+            Type: "ObjectiveLineAsset",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "SchemaStringFallback.json"),
+      JSON.stringify(
+        {
+          Id: "SchemaStringFallback",
+          Title: "Schema String Fallback",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "WorldRemovalSoundEventId",
+              Type: "SmallString",
+              Options: {
+                Label: "WorldRemovalSoundEventId",
+              },
+            },
+          ],
+          Schema: {
+            WorldRemovalSoundEventId: "WorldRemovalSoundEventId",
+            Type: "EntityEffect",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "ExplicitSymbolLookup.json"),
+      JSON.stringify(
+        {
+          Id: "ExplicitSymbolLookup",
+          Title: "Explicit Symbol Lookup",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "ObjectiveIds",
+              Type: "List",
+              Options: {
+                Label: "ObjectiveIds",
+                SymbolLookup: {
+                  indexKind: "registeredAssets",
+                  key: "Item",
+                },
+              },
+            },
+          ],
+          Schema: {
+            ObjectiveIds: "ObjectiveIds",
+            Type: "ObjectiveLineAsset",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "AnimationPreviewField.json"),
+      JSON.stringify(
+        {
+          Id: "AnimationPreviewField",
+          Title: "Animation Preview Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "Animation",
+              Type: "SmallString",
+              Options: {
+                Label: "Animation",
+                AnimationAutocompleteKind: "appearance-model",
+              },
+            },
+          ],
+          Schema: {
+            Animation: "Animation",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "TupleField.json"),
+      JSON.stringify(
+        {
+          Id: "TupleField",
+          Title: "Tuple Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "Range",
+              Type: "Tuple",
+              Options: {
+                Label: "Range",
+                Default: [1, 2],
+                TupleSize: 2,
+                TupleItemType: "Float",
+              },
+            },
+          ],
+          Schema: {
+            Range: "Range",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "UniqueListField.json"),
+      JSON.stringify(
+        {
+          Id: "UniqueListField",
+          Title: "Unique List Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "Values",
+              Type: "List",
+              Options: {
+                Label: "Values",
+                UniqueItems: true,
+                Values: ["One", "Two"],
+              },
+            },
+          ],
+          Schema: {
+            Values: "Values",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "TypedListField.json"),
+      JSON.stringify(
+        {
+          Id: "TypedListField",
+          Title: "Typed List Field",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "FloatValues",
+              Type: "List",
+              Options: {
+                Label: "FloatValues",
+                Type: "Float",
+              },
+            },
+            {
+              Id: "IntValues",
+              Type: "List",
+              Options: {
+                Label: "IntValues",
+                Type: "Int",
+              },
+            },
+            {
+              Id: "StringValues",
+              Type: "List",
+              Options: {
+                Label: "StringValues",
+                Type: "String",
+              },
+            },
+          ],
+          Schema: {
+            FloatValues: "FloatValues",
+            IntValues: "IntValues",
+            StringValues: "StringValues",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "NonListTypeOption.json"),
+      JSON.stringify(
+        {
+          Id: "NonListTypeOption",
+          Title: "Non List Type Option",
+          Color: "#123456",
+          Content: [
+            {
+              Id: "FloatValue",
+              Type: "Float",
+              Options: {
+                Label: "FloatValue",
+                Type: "Float",
+              },
+            },
+          ],
+          Schema: {
+            FloatValue: "FloatValue",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(workspaceDir, "ValidationField.json"),
+      JSON.stringify(
+        {
+          Id: "ValidationField",
+          Title: "Validation Field",
+          Color: "#123456",
+          Inputs: [
+            {
+              Id: "Input",
+              Type: "Value",
+              Color: "#123456",
+              Required: true,
+            },
+          ],
+          Outputs: [
+            {
+              Id: "Output",
+              Type: "Value",
+              Color: "#123456",
+              Required: true,
+            },
+          ],
+          Content: [
+            {
+              Id: "Name",
+              Type: "SmallString",
+              Options: {
+                Label: "Name",
+                Required: true,
+                DisallowEmpty: true,
+                Min: 2,
+                Max: 10,
+                MinExclusive: true,
+                MaxExclusive: true,
+              },
+            },
+            {
+              Id: "Names",
+              Type: "List",
+              Options: {
+                Label: "Names",
+                MinItems: 1,
+                MaxItems: 3,
+                DisallowEmptyItems: true,
+              },
+            },
+          ],
+          Schema: {
+            Name: "Name",
+            Names: "Names",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    fs.writeFileSync(
+      path.join(supplementsDir, "TestWorkspace.json"),
+      JSON.stringify(
+        {
+          SchemaListFallback: {
+            $ref: "ObjectiveLineAsset.json#",
+          },
+          SchemaStringFallback: {
+            $ref: "EntityEffect.json#",
+          },
+          ExplicitSymbolLookup: {
+            $ref: "ObjectiveLineAsset.json#",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+
+    const schemaRuntime = new SchemaRuntime(schemaDir, logger);
+    const workspaceRuntime = new WorkspaceRuntime(workspacesDir, schemaRuntime, logger, supplementsDir);
+    const workspace = workspaceRuntime.nodeEditorWorkspaces["Test Workspace"];
+    if (!workspace) {
+      throw new Error("Expected test workspace to load.");
+    }
+
+    expect(
+      workspace.nodeTemplatesById.SchemaListFallback.fieldsBySchemaKey.ObjectiveIds.symbolLookup,
+    ).toEqual({
+      indexKind: "registeredAssets",
+      key: "ObjectiveAsset",
+    });
+
+    expect(
+      workspace.nodeTemplatesById.SchemaStringFallback.fieldsBySchemaKey.WorldRemovalSoundEventId
+        .symbolLookup,
+    ).toEqual({
+      indexKind: "registeredAssets",
+      key: "SoundEvent",
+    });
+
+    expect(
+      workspace.nodeTemplatesById.ExplicitSymbolLookup.fieldsBySchemaKey.ObjectiveIds.symbolLookup,
+    ).toEqual({
+      indexKind: "registeredAssets",
+      key: "Item",
+    });
+
+    expect(
+      workspace.nodeTemplatesById.AnimationPreviewField.fieldsBySchemaKey.Animation,
+    ).toMatchObject({
+      animationAutocompleteKind: "appearance-model",
+      previewFeatureKind: "animation",
+    });
+
+    expect(workspace.nodeTemplatesById.TupleField.fieldsBySchemaKey.Range).toMatchObject({
+      type: "tuple",
+      tupleSize: 2,
+      tupleItemType: "float",
+      defaultValue: [1, 2],
+      isSet: false,
+    });
+
+    expect(workspace.nodeTemplatesById.UniqueListField.fieldsBySchemaKey.Values).toMatchObject({
+      type: "list",
+      listItemType: "string",
+      uniqueItems: true,
+      overrideAutocompleteValues: ["One", "Two"],
+      isSet: false,
+    });
+
+    expect(workspace.nodeTemplatesById.TypedListField.fieldsBySchemaKey.FloatValues).toMatchObject({
+      type: "list",
+      listItemType: "float",
+    });
+    expect(workspace.nodeTemplatesById.TypedListField.fieldsBySchemaKey.IntValues).toMatchObject({
+      type: "list",
+      listItemType: "int",
+    });
+    expect(workspace.nodeTemplatesById.TypedListField.fieldsBySchemaKey.StringValues).toMatchObject({
+      type: "list",
+      listItemType: "string",
+    });
+    expect(
+      workspace.nodeTemplatesById.NonListTypeOption.fieldsBySchemaKey.FloatValue.listItemType,
+    ).toBeUndefined();
+
+    expect(workspace.nodeTemplatesById.ValidationField.fieldsBySchemaKey.Name).toMatchObject({
+      required: true,
+      disallowEmpty: true,
+      minValue: 2,
+      maxValue: 10,
+      minValueExclusive: true,
+      maxValueExclusive: true,
+    });
+    expect(workspace.nodeTemplatesById.ValidationField.fieldsBySchemaKey.Names).toMatchObject({
+      minItems: 1,
+      maxItems: 3,
+      disallowEmptyItems: true,
+    });
+    expect(workspace.nodeTemplatesById.ValidationField.inputPins[0]).toMatchObject({
+      required: true,
+    });
+    expect(workspace.nodeTemplatesById.ValidationField.outputPins[0]).toMatchObject({
+      required: true,
+    });
+  });
+
+  test("filters the StateTransitions root context and hydrates unset defaults", () => {
+    const schemaRuntime = new SchemaRuntime(schemaDir, logger);
+    const workspaceRuntime = new WorkspaceRuntime(workspacesRootPath, schemaRuntime, logger);
+
+    const context = workspaceRuntime.resolveWorkspaceContextByWorkspaceRoot(
+      "NPC Behavior",
+      "StateTransitions",
+    );
+
+    expect(context).not.toBeNull();
+    expect(context?.rootTemplateOrVariantId).toBe("Structural.StateTransitionListRoot");
+    expect(Object.keys(context?.templateCategories ?? {}).sort()).toEqual([
+      "Actions",
+      "State Transitions",
+    ]);
+    expect(context?.templateCategories.Actions).toContain("Action.Timeout");
+    expect(context?.templateCategories["State Transitions"]).toEqual([
+      "Structural.StateTransitionNode",
+      "Structural.StateTransitionMappingNode",
+    ]);
+    expect(context?.templateCategories.Sensors).toBeUndefined();
+
+    expect(context?.nodeTemplatesById["Structural.StateTransitionNode"].fieldsBySchemaKey.Enabled).toMatchObject({
+      defaultValue: true,
+      isSet: false,
+      computable: true,
+    });
+    expect(
+      context?.nodeTemplatesById["Structural.StateTransitionMappingNode"].fieldsBySchemaKey.Priority,
+    ).toMatchObject({
+      defaultValue: 0,
+      isSet: false,
+    });
+    expect(
+      context?.nodeTemplatesById["Structural.StateTransitionMappingNode"].fieldsBySchemaKey.Enabled,
+    ).toMatchObject({
+      defaultValue: true,
+      isSet: false,
+      computable: true,
+    });
   });
 });

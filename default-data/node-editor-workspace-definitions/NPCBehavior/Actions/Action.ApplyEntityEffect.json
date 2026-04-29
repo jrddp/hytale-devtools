@@ -1,0 +1,58 @@
+{
+  "Id": "Action.ApplyEntityEffect",
+  "Title": "Action: ApplyEntityEffect",
+  "Color": "#CC3361",
+  "Description": "Applies an entity effect to the target or self",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "EntityEffect",
+      "Type": "SmallString",
+      "Description": "The entity effect to apply",
+      "Options": {
+        "Label": "EntityEffect",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "EntityEffect"
+        }
+      }
+    },
+    {
+      "Id": "UseTarget",
+      "Type": "Bool",
+      "Description": "Use the sensor-provided target for the action, self otherwise",
+      "Options": {
+        "Label": "UseTarget",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "EntityEffect": "EntityEffect",
+    "UseTarget": "UseTarget",
+    "Type": "ApplyEntityEffect"
+  }
+}

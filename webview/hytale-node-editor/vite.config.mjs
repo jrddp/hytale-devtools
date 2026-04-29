@@ -13,6 +13,7 @@ export default defineConfig({
     alias: {
       "@shared": path.resolve(currentDir, "../../src/shared"),
       "@webview-shared": path.resolve(currentDir, "../shared"),
+      "@node-editor": path.resolve(currentDir, "src"),
       src: path.resolve(currentDir, "src"),
     },
   },

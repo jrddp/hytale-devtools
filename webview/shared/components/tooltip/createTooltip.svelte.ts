@@ -20,6 +20,7 @@ export function createTooltip({
   let isOpen = $state(false);
   let isPointerOverTrigger = false;
   let isPointerOverContent = false;
+  let isPinned = $state(false);
 
   const virtualReference: VirtualElement = {
     getBoundingClientRect() {
@@ -43,12 +44,17 @@ export function createTooltip({
   function forceClose() {
     isPointerOverTrigger = false;
     isPointerOverContent = false;
+    isPinned = false;
     hasPointerPosition = false;
     referenceVersion += 1;
     isOpen = false;
   }
 
   function close() {
+    if (isPinned) {
+      return;
+    }
+
     if (interactive && (isPointerOverTrigger || isPointerOverContent)) {
       return;
     }
@@ -103,6 +109,16 @@ export function createTooltip({
     close();
   }
 
+  function pin() {
+    isPinned = true;
+    open();
+  }
+
+  function unpin() {
+    isPinned = false;
+    close();
+  }
+
   $effect(() => {
     if (!isOpen || typeof window === "undefined") return;
 
@@ -149,9 +165,12 @@ export function createTooltip({
       followCursor && hasPointerPosition ? virtualReference : referenceElement,
     getReferenceVersion: () => referenceVersion,
     usesVirtualReference: () => followCursor && hasPointerPosition,
+    isPinned: () => isPinned,
     handleContentPointerEnter,
     handleContentPointerLeave,
     open,
     close,
+    pin,
+    unpin,
   };
 }

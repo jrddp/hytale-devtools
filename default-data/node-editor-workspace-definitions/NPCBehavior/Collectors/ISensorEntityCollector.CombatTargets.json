@@ -1,0 +1,17 @@
+{
+  "Id": "ISensorEntityCollector.CombatTargets",
+  "Title": "Collector: CombatTargets",
+  "Color": "#7091F0",
+  "Description": "A collector which processes matched friendly and hostile targets and adds them to the NPC's short-term combat memory.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ISensorEntityCollector",
+      "Color": "#7091F0",
+      "Label": "Parent"
+    }
+  ],
+  "Schema": {
+    "Type": "CombatTargets"
+  }
+}

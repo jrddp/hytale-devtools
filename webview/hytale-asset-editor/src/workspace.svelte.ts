@@ -34,6 +34,9 @@ export class Workspace {
   parentStatus = $state<AssetEditorParentState["status"]>("none");
   parentName = $state<string | null>(null);
   parentInstance = $state<AssetEditorParentState["parentInstance"]>(undefined);
+  effectiveParentData = $state<AssetEditorParentState["effectiveParentData"]>(undefined);
+  effectiveParentDataByName =
+    $state<AssetEditorParentState["effectiveParentDataByName"]>(undefined);
   preview = $state<AssetEditorPreview | undefined>(undefined);
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
@@ -41,6 +44,7 @@ export class Workspace {
   collapseAllVersion = $state(0);
   collapseAllTarget = $state<boolean | null>(null);
   hideUnsetFields = $state(false);
+  private hasUnserializedLocalState = false;
 
   setAssetDefinition(assetDefinition: AssetDefinition | null) {
     this.assetDefinition = assetDefinition;
@@ -54,7 +58,10 @@ export class Workspace {
     this.parentStatus = "none";
     this.parentName = null;
     this.parentInstance = undefined;
+    this.effectiveParentData = undefined;
+    this.effectiveParentDataByName = undefined;
     this.preview = undefined;
+    this.hasUnserializedLocalState = false;
   }
 
   setDocument({
@@ -66,9 +73,17 @@ export class Workspace {
     text: string;
     version: number;
   }) {
+    const previousText = this.documentText;
     this.documentPath = documentPath;
     this.documentText = text;
     this.documentVersion = version;
+
+    if (previousText === text) {
+      this.documentParseError = null;
+      return;
+    }
+
+    this.hasUnserializedLocalState = false;
     this.reparseDocument();
   }
 
@@ -81,7 +96,10 @@ export class Workspace {
     this.parentStatus = parent.status;
     this.parentName = parent.parentName ?? null;
     this.parentInstance = parent.parentInstance;
-    if (this.documentText !== null) {
+    this.effectiveParentData = parent.effectiveParentData;
+    this.effectiveParentDataByName = parent.effectiveParentDataByName;
+
+    if (this.documentText !== null && !this.hasUnserializedLocalState) {
       this.reparseDocument();
     }
   }
@@ -123,13 +141,21 @@ export class Workspace {
     return serializeDocumentText($state.snapshot(this.documentRootField));
   }
 
-  applyDocumentState() {
+  applyDocumentState({ preserveUnserializedStateOnNoop = false } = {}) {
     console.log("Applying document state", this.documentRootField);
     this.syncFieldPaths();
     const text = this.serializeDocumentText();
     if (!text) {
       return;
     }
+
+    if (text === this.documentText) {
+      this.hasUnserializedLocalState = preserveUnserializedStateOnNoop;
+      return;
+    }
+
+    this.hasUnserializedLocalState = false;
+    this.documentText = text;
 
     const payload: Extract<AssetEditorWebviewToExtensionMessage, { type: "apply" }> = {
       type: "apply",
@@ -141,7 +167,16 @@ export class Workspace {
 
   /** @param overrides - record of pointer to override value, e.g. overriding "Icon" with a specific preview. */
   requestResolvedPreview(overrides: Partial<Record<PreviewPointer, string | undefined>> = {}) {
-    const request = buildPreviewRequest(this.assetDefinition?.preview, this.documentRootField, overrides);
+    const serializedDocument = this.documentRootField
+      ? serializeDocument($state.snapshot(this.documentRootField))
+      : null;
+    const request = buildPreviewRequest(
+      this.assetDefinition?.preview,
+      this.assetDefinition?.title,
+      this.documentRootField,
+      serializedDocument,
+      overrides,
+    );
     if (!request) {
       return;
     }
@@ -180,7 +215,12 @@ export class Workspace {
       text: this.documentText,
       assetDefinition: $state.snapshot(this.assetDefinition) as AssetDefinition,
       assetsByRef: $state.snapshot(this.assetsByRef) as Record<string, AssetDefinition>,
-      parentData: $state.snapshot(this.parentInstance)?.rawJson,
+      parentData:
+        ($state.snapshot(this.effectiveParentData) as Record<string, unknown> | undefined) ??
+        $state.snapshot(this.parentInstance)?.rawJson,
+      parentDataByName: $state.snapshot(this.effectiveParentDataByName) as
+        | Record<string, Record<string, unknown>>
+        | undefined,
     });
 
     switch (result.status) {

@@ -1,0 +1,43 @@
+{
+  "Id": "Action.SetMarkedTarget",
+  "Title": "Action: SetMarkedTarget",
+  "Color": "#CC3361",
+  "Description": "Explicitly sets a marked target in a given slot.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to set a target to.",
+      "Options": {
+        "Label": "TargetSlot",
+        "DisallowEmpty": true,
+        "Default": "LockedTarget",
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "TargetSlot": "TargetSlot",
+    "Type": "SetMarkedTarget"
+  }
+}

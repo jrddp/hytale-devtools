@@ -1,0 +1,71 @@
+{
+  "Id": "Sensor.AdjustPosition",
+  "Title": "Sensor: AdjustPosition",
+  "Color": "#7091F0",
+  "Description": "Perform adjustments to the wrapped sensor's returned position",
+  "Inputs": [
+    {
+      "Id": "SensorPin",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "Sensor",
+      "Description": "Sensor to wrap",
+      "Required": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "PositionSensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Offset",
+      "Type": "Tuple",
+      "Description": "The offset to apply to the returned position from the sensor",
+      "Options": {
+        "Label": "Offset",
+        "Required": true,
+        "Width": 240,
+        "TupleSize": 3,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Sensor": {
+      "Pin": "SensorPin",
+      "Node": "SensorVariants",
+      "AllowComponentReferences": true
+    },
+    "Offset": "Offset",
+    "Type": "AdjustPosition"
+  }
+}

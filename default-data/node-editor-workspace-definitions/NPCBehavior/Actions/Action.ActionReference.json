@@ -1,0 +1,56 @@
+{
+  "Id": "Action.ActionReference",
+  "Title": "Action Reference",
+  "Color": "#CC3361",
+  "Description": "Reference an external Action component.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Reference",
+      "Type": "SmallString",
+      "Description": "Referenced component asset name.",
+      "Options": {
+        "Label": "Reference",
+        "Width": 220,
+        "Default": "",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Nullable",
+      "Type": "Checkbox",
+      "Description": "Allow the computed reference to resolve to no component.",
+      "Options": {
+        "Label": "Nullable",
+        "Default": false
+      }
+    },
+    {
+      "Id": "Interfaces",
+      "Type": "List",
+      "Description": "Allowed component interface codes for a computed reference.",
+      "Options": {
+        "Label": "Interfaces",
+        "DefaultValue": [],
+        "SymbolLookup": {
+          "indexKind": "assetDerived",
+          "key": "npcComponentInterfaces"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Reference": "Reference",
+    "Nullable": "Nullable",
+    "Interfaces": "Interfaces"
+  },
+  "IsComponentReference": true,
+  "ComponentReferenceClass": "Action"
+}

@@ -1,0 +1,89 @@
+{
+  "Id": "IEntityFilter.Flock",
+  "Title": "Filter: Flock",
+  "Color": "#60C8B8",
+  "Description": "Test for flock membership and related properties",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "FlockStatus",
+      "Type": "Enum",
+      "Description": "Test for NPC status in relation to flock",
+      "Options": {
+        "Label": "FlockStatus",
+        "Default": "Any",
+        "Width": 220,
+        "Values": [
+          "Leader",
+          "Follower",
+          "Member",
+          "NotMember",
+          "Any"
+        ]
+      }
+    },
+    {
+      "Id": "FlockPlayerStatus",
+      "Type": "Enum",
+      "Description": "Test for Player status for flock NPC is member",
+      "Options": {
+        "Label": "FlockPlayerStatus",
+        "Default": "Any",
+        "Width": 220,
+        "Values": [
+          "Member",
+          "NotMember",
+          "Any"
+        ]
+      }
+    },
+    {
+      "Id": "Size",
+      "Type": "Tuple",
+      "Description": "Check for a certain range of NPCs in the flock",
+      "Options": {
+        "Label": "Size",
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int"
+      }
+    },
+    {
+      "Id": "CheckCanJoin",
+      "Type": "Bool",
+      "Description": "If true, will filter entities in a flock the executor can join",
+      "Options": {
+        "Label": "CheckCanJoin",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "FlockStatus": "FlockStatus",
+    "FlockPlayerStatus": "FlockPlayerStatus",
+    "Size": "Size",
+    "CheckCanJoin": "CheckCanJoin",
+    "Type": "Flock"
+  }
+}

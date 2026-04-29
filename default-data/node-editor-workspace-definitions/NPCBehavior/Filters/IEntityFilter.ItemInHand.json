@@ -1,0 +1,66 @@
+{
+  "Id": "IEntityFilter.ItemInHand",
+  "Title": "Filter: ItemInHand",
+  "Color": "#60C8B8",
+  "Description": "Check if entity is holding an item",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match",
+      "Options": {
+        "Label": "Items",
+        "Required": true,
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
+      "Id": "Hand",
+      "Type": "Enum",
+      "Description": "Which hand to check",
+      "Options": {
+        "Label": "Hand",
+        "Default": "Both",
+        "Width": 220,
+        "Values": [
+          "Main",
+          "OffHand",
+          "Both"
+        ],
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Items": "Items",
+    "Hand": "Hand",
+    "Type": "ItemInHand"
+  }
+}

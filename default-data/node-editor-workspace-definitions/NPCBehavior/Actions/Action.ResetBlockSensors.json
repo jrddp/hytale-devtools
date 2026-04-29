@@ -1,0 +1,46 @@
+{
+  "Id": "Action.ResetBlockSensors",
+  "Title": "Action: ResetBlockSensors",
+  "Color": "#CC3361",
+  "Description": "Resets a specific block sensor by name, or all block sensors",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "BlockSets",
+      "Type": "List",
+      "Description": "The searched blocksets to reset block sensors for",
+      "Options": {
+        "Label": "BlockSets",
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "BlockSet"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "BlockSets": "BlockSets",
+    "Type": "ResetBlockSensors"
+  }
+}

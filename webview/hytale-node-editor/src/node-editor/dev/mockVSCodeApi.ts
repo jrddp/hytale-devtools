@@ -6,10 +6,41 @@ import {
 } from "@shared/node-editor/messageTypes";
 import { type AssetDocumentShape } from "@shared/node-editor/assetTypes";
 import { type NodeEditorWorkspaceContext } from "@shared/node-editor/workspaceTypes";
-import { type VSCodeApi } from "src/common";
-import { mockedThemeVars } from "src/node-editor/dev/mockVSCodeTheme";
+import { type VSCodeApi } from "@node-editor/common";
+import { mockedThemeVars } from "@node-editor/node-editor/dev/mockVSCodeTheme";
 import basicBiomeAsset from "./Basic.json";
 import mockedWorkspaceContext from "./mockedWorkspaceContext.json";
+
+function normalizeMockedWorkspaceContext(
+  context: NodeEditorWorkspaceContext,
+): NodeEditorWorkspaceContext {
+  return {
+    ...context,
+    connectionTypesById: context.connectionTypesById ?? {},
+    nodeTemplatesById: Object.fromEntries(
+      Object.entries(context.nodeTemplatesById ?? {}).map(([templateId, template]) => [
+        templateId,
+        {
+          ...template,
+          childSchemas:
+            template.childSchemas ??
+            Object.fromEntries(
+              Object.entries((template as { childTypes?: Record<string, string> }).childTypes ?? {}).map(
+                ([schemaKey, targetTemplateOrVariantId]) => [
+                  schemaKey,
+                  {
+                    schemaKey,
+                    targetTemplateOrVariantId,
+                    serializationType: "child",
+                  },
+                ],
+              ),
+            ),
+        },
+      ]),
+    ),
+  };
+}
 
 export class MockVSCodeApi implements VSCodeApi {
   constructor() {
@@ -25,7 +56,9 @@ export class MockVSCodeApi implements VSCodeApi {
   postMessage(message: WebviewToExtensionMessage) {
     switch (message.type) {
       case "ready":
-        const workspaceContext = mockedWorkspaceContext as unknown as NodeEditorWorkspaceContext;
+        const workspaceContext = normalizeMockedWorkspaceContext(
+          mockedWorkspaceContext as unknown as NodeEditorWorkspaceContext,
+        );
         const graphDocument = parseAssetDocumentToGraphDocument(
           basicBiomeAsset as AssetDocumentShape,
           workspaceContext,

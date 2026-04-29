@@ -1,28 +1,70 @@
 <script lang="ts">
-  import FieldLayout from "src/fields/FieldLayout.svelte";
-  import type { FieldProps } from "src/node-editor/utils/fieldUtils";
-  import { isObject } from "src/node-editor/utils/valueUtils";
-  import { noMousePropogation } from "src/node-editor/utils/fieldUtils";
-  import { focusNextEditableInNode, isPlainEnterNavigationEvent } from "src/node-editor/utils/focusNavigation";
+  import { onDestroy } from "svelte";
+  import FieldLayout from "@node-editor/fields/FieldLayout.svelte";
+  import type { FieldProps } from "@node-editor/node-editor/utils/fieldUtils";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
+  import type { IndexReference } from "@shared/indexTypes";
+  import type { NodeField } from "@shared/node-editor/workspaceTypes";
+  import type { Snippet } from "svelte";
+  import {
+    getListItemEditorKind,
+    getListAutocompleteValues,
+    shouldRequestListAutocomplete,
+  } from "./listFieldUtils";
+  import ListItemsEditor from "./ListItemsEditor.svelte";
 
   // TODO lists can technically be types other than string. definition requires investigation.
   let {
     inputId,
+    nodeId,
+    schemaKey,
+    parentSchemaKey,
     label,
     description,
     initialValue,
     inputWidth,
+    placeholder = "",
+    overrideAutocompleteValues,
+    symbolLookup,
+    uniqueItems,
+    listItemType,
+    previewFeatureKind,
+    titleActions,
     onconfirm,
-  }: FieldProps<unknown[]> = $props();
-
-  const DEFAULT_ITEM_WIDTH = 160;
+  }: FieldProps<unknown[]> & {
+    nodeId?: string;
+    schemaKey?: string | null;
+    parentSchemaKey?: string;
+    placeholder?: string;
+    overrideAutocompleteValues?: string[];
+    symbolLookup?: IndexReference;
+    uniqueItems?: boolean;
+    listItemType?: NodeField["listItemType"];
+    previewFeatureKind?: NodeField["previewFeatureKind"];
+    titleActions?: Snippet;
+  } = $props();
+  const workspace = useNodeEditorSession();
+  const canSetExplicitEmptyItems = $derived(
+    nodeId !== undefined &&
+      schemaKey !== null &&
+      parentSchemaKey === undefined,
+  );
+  const itemKind = $derived(getListItemEditorKind(listItemType));
 
   let value = $state<unknown[]>([]);
 
   $effect(() => {
-    if (initialValue) {
+    if (Array.isArray(initialValue)) {
       value = initialValue.slice();
+      return;
     }
+
+    if (initialValue === undefined || initialValue === null) {
+      value = [];
+      return;
+    }
+
+    value = [initialValue];
   });
 
   function confirmValue(nextValue: unknown[]) {
@@ -30,8 +72,8 @@
     onconfirm(nextValue);
   }
 
-  function addItem() {
-    confirmValue([...value, ""]);
+  function addItem(nextItem: unknown = "") {
+    confirmValue([...value, nextItem]);
   }
 
   function removeItem(index: number) {
@@ -44,122 +86,94 @@
     confirmValue(nextList);
   }
 
-  function updateTextItem(index: number, nextText: string) {
-    updateItem(index, nextText);
+  function getAutocompleteOptions(itemInputId: string, itemIndex: number) {
+    return getListAutocompleteValues({
+      itemInputId,
+      overrideAutocompleteValues,
+      symbolLookup,
+      autocompleteField: workspace.autocompleteField,
+      autocompleteValues: workspace.autocompleteValues,
+      items: value,
+      currentItemIndex: itemIndex,
+      uniqueItems,
+    }).map(value => ({ value }));
   }
 
-  function updateNumberItem(index: number, nextText: string) {
-    const parsed = Number(nextText);
-    updateItem(index, Number.isFinite(parsed) ? parsed : 0);
-  }
-
-  function updateBooleanItem(index: number, checked: boolean) {
-    updateItem(index, checked);
-  }
-
-  function updateObjectItem(index: number, nextText: string) {
-    try {
-      const parsed = JSON.parse(nextText);
-      if (isObject(parsed)) {
-        updateItem(index, parsed);
-      }
-    } catch {
-      // wait until json is valid
-    }
-  }
-
-  function formatObjectValue(item: unknown) {
-    try {
-      return JSON.stringify(item ?? {}, null, 2);
-    } catch {
-      return "{}";
-    }
-  }
-
-  function handleEnterNavigation(event: KeyboardEvent & { currentTarget: HTMLElement }) {
-    if (!isPlainEnterNavigationEvent(event)) {
+  function requestAutocomplete(itemInputId: string) {
+    if (!shouldRequestListAutocomplete(overrideAutocompleteValues, symbolLookup) || !symbolLookup) {
       return;
     }
 
-    event.preventDefault();
-    if (!focusNextEditableInNode(event.currentTarget)) {
-      event.currentTarget.blur();
-    }
+    workspace.postMessageToHost({
+      type: "autocompleteRequest",
+      symbolLookup,
+      fieldId: itemInputId,
+    });
   }
+
+  function getStringItemVscodeContext(itemIndex: number) {
+    if (!canSetExplicitEmptyItems) {
+      return undefined;
+    }
+
+    return JSON.stringify({
+      webviewSection: "nodeEditorField",
+      nodeEditorNodeId: nodeId,
+      nodeEditorFieldSchemaKey: schemaKey,
+      nodeEditorListItemIndex: itemIndex,
+      nodeEditorCanSetExplicitEmpty: true,
+      ...(workspace.embeddedGraphFieldPath
+        ? { nodeEditorGraphFieldPath: workspace.embeddedGraphFieldPath }
+        : {}),
+    });
+  }
+
+  function getItemDiagnostics(itemIndex: number) {
+    return workspace.getListItemDiagnostics(nodeId, schemaKey, itemIndex, parentSchemaKey);
+  }
+
+  function handleConsideredPreview(value?: string) {
+    if (previewFeatureKind !== "animation") {
+      return;
+    }
+
+    if (value === undefined) {
+      workspace.clearConsideredPreviewFeature("animation");
+      return;
+    }
+
+    workspace.setConsideredPreviewFeature("animation", value);
+  }
+
+  onDestroy(() => {
+    if (previewFeatureKind === "animation") {
+      workspace.clearConsideredPreviewFeature("animation");
+    }
+  });
 </script>
 
-<FieldLayout {inputId} {label} {description} align="start">
+<FieldLayout {inputId} {label} {description} align="start" {titleActions}>
   <div
     id={inputId}
-    class="flex min-w-0 flex-col gap-1.5 rounded-md border border-dashed border-vsc-editor-widget-border p-2"
+    class="flex min-w-0 flex-col gap-1.5"
     class:w-full={inputWidth === undefined}
+    style:width={inputWidth !== undefined ? `${inputWidth}px` : undefined}
   >
-    <div class="flex items-center justify-end gap-2">
-      <button
-        class="rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
-        type="button"
-        onclick={addItem}
-      >
-        Add
-      </button>
-    </div>
-
-    {#if value.length === 0}
-      <div class="text-xs text-vsc-muted">No items</div>
-    {:else}
-      <div class="flex flex-col gap-1.5">
-        {#each value as item, index}
-          <div class="flex flex-wrap items-start gap-1.5">
-            <div
-              class="min-w-0 shrink-0"
-              style:width={typeof item === "boolean" ? undefined : `${inputWidth ?? DEFAULT_ITEM_WIDTH}px`}
-            >
-              {#if typeof item === "boolean"}
-                <input
-                  class="h-4 w-4 nodrag"
-                  type="checkbox"
-                  checked={item}
-                  onchange={event => updateBooleanItem(index, event.currentTarget.checked)}
-                  {...noMousePropogation}
-                />
-              {:else if typeof item === "number"}
-                <input
-                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  type="number"
-                  value={item}
-                  onchange={event => updateNumberItem(index, event.currentTarget.value)}
-                  onkeydown={handleEnterNavigation}
-                  {...noMousePropogation}
-                />
-              {:else if isObject(item)}
-                <textarea
-                  class="nodrag min-h-10 w-full resize-y rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  rows="3"
-                  value={formatObjectValue(item)}
-                  onchange={event => updateObjectItem(index, event.currentTarget.value)}
-                  {...noMousePropogation}
-                ></textarea>
-              {:else}
-                <input
-                  class="nodrag w-full rounded-md border border-vsc-input-border bg-vsc-input-bg px-2 py-1.5 text-xs text-vsc-input-fg"
-                  type="text"
-                  value={typeof item === "string" ? item : String(item ?? "")}
-                  onchange={event => updateTextItem(index, event.currentTarget.value)}
-                  onkeydown={handleEnterNavigation}
-                  {...noMousePropogation}
-                />
-              {/if}
-            </div>
-            <button
-              class="rounded-md border border-vsc-button-border bg-vsc-button-secondary-bg px-2 py-1 text-xs text-vsc-button-secondary-fg hover:bg-vsc-button-secondary-hover"
-              type="button"
-              onclick={() => removeItem(index)}
-            >
-              Remove
-            </button>
-          </div>
-        {/each}
-      </div>
-    {/if}
+    <ListItemsEditor
+      {inputId}
+      items={value}
+      {inputWidth}
+      addLabel="Add item"
+      defaultPlaceholder={placeholder}
+      {itemKind}
+      {getAutocompleteOptions}
+      {getItemDiagnostics}
+      {getStringItemVscodeContext}
+      onrequestAutocomplete={requestAutocomplete}
+      onconsider={handleConsideredPreview}
+      onadd={addItem}
+      onremove={removeItem}
+      onupdate={updateItem}
+    />
   </div>
 </FieldLayout>

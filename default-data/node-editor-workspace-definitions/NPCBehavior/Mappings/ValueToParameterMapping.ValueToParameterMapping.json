@@ -1,0 +1,59 @@
+{
+  "Id": "ValueToParameterMapping.ValueToParameterMapping",
+  "Title": "Mapping: ValueToParameterMapping",
+  "Color": "#7091F0",
+  "Description": "An entry containing a list of actions to execute when moving from one state to another",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "ValueToParameterMapping",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "ValueType",
+      "Type": "Enum",
+      "Description": "The type of the value being mapped",
+      "Options": {
+        "Label": "ValueType",
+        "Required": true,
+        "Width": 220,
+        "Values": [
+          "String",
+          "Int",
+          "Double"
+        ]
+      }
+    },
+    {
+      "Id": "FromValue",
+      "Type": "SmallString",
+      "Description": "The value to read from the value store",
+      "Options": {
+        "Label": "FromValue",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220
+      }
+    },
+    {
+      "Id": "ToParameter",
+      "Type": "SmallString",
+      "Description": "The parameter name to override",
+      "Options": {
+        "Label": "ToParameter",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220
+      }
+    }
+  ],
+  "Schema": {
+    "ValueType": "ValueType",
+    "FromValue": "FromValue",
+    "ToParameter": "ToParameter"
+  }
+}

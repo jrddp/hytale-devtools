@@ -1,0 +1,70 @@
+{
+  "Id": "Action.SetStat",
+  "Title": "Action: SetStat",
+  "Color": "#CC3361",
+  "Description": "Sets (or adds to) an entity stat on the NPC.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Stat",
+      "Type": "SmallString",
+      "Description": "The entity stat to affect.",
+      "Options": {
+        "Label": "Stat",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "EntityStatType"
+        }
+      }
+    },
+    {
+      "Id": "Value",
+      "Type": "Float",
+      "Description": "The value to set the stat to.",
+      "Options": {
+        "Label": "Value",
+        "Required": true,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Add",
+      "Type": "Bool",
+      "Description": "Add the value to the existing value instead of setting it.",
+      "Options": {
+        "Label": "Add",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Stat": "Stat",
+    "Value": "Value",
+    "Add": "Add",
+    "Type": "SetStat"
+  }
+}

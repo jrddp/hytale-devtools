@@ -1,0 +1,230 @@
+{
+  "Id": "Action.Spawn",
+  "Title": "Action: Spawn",
+  "Color": "#CC3361",
+  "Description": "Spawn an NPC",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "SpawnDirection",
+      "Type": "Float",
+      "Description": "Direction of spawn cone relative to view direction (in degrees)",
+      "Options": {
+        "Label": "SpawnDirection",
+        "Min": -180,
+        "Max": 180,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SpawnAngle",
+      "Type": "Float",
+      "Description": "Cone width of spawn direction (in degrees)",
+      "Options": {
+        "Label": "SpawnAngle",
+        "Min": 0,
+        "Max": 360,
+        "Default": 360,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "FanOut",
+      "Type": "Bool",
+      "Description": "Fan NPCs out equally over angle",
+      "Options": {
+        "Label": "FanOut",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "DistanceRange",
+      "Type": "Tuple",
+      "Description": "Distance from spawner to spawn",
+      "Options": {
+        "Label": "DistanceRange",
+        "Min": 0,
+        "Max": 128,
+        "MinExclusive": true,
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "CountRange",
+      "Type": "Tuple",
+      "Description": "Number of NPCs to spawn",
+      "Options": {
+        "Label": "CountRange",
+        "Min": 0,
+        "Max": 100,
+        "MinExclusive": true,
+        "Default": [
+          5,
+          5
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "DelayRange",
+      "Type": "Tuple",
+      "Description": "Time between consecutive spawns in seconds",
+      "Options": {
+        "Label": "DelayRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          0.25,
+          0.25
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Kind",
+      "Type": "SmallString",
+      "Description": "NPC role to spawn",
+      "Options": {
+        "Label": "Kind",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Flock",
+      "Type": "SmallString",
+      "Description": "Flock definition to spawn",
+      "Options": {
+        "Label": "Flock",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "FlockAsset"
+        }
+      }
+    },
+    {
+      "Id": "LaunchAtTarget",
+      "Type": "Bool",
+      "Description": "Launch the spawned NPC at target position/entity",
+      "Options": {
+        "Label": "LaunchAtTarget",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "PitchHigh",
+      "Type": "Bool",
+      "Description": "If launching at a target, use high pitch",
+      "Options": {
+        "Label": "PitchHigh",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "LaunchSpread",
+      "Type": "Float",
+      "Description": "The radius of the circle centred on the target within which to spread thrown NPCs",
+      "Options": {
+        "Label": "LaunchSpread",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "JoinFlock",
+      "Type": "Bool",
+      "Description": "Whether to join the parent NPC's flock",
+      "Options": {
+        "Label": "JoinFlock",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SpawnState",
+      "Type": "SmallString",
+      "Description": "An optional state to set on the spawned NPC if it exists",
+      "Options": {
+        "Label": "SpawnState",
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "SpawnSubState",
+      "Type": "SmallString",
+      "Description": "An optional substate to set on the spawned NPC if it exists",
+      "Options": {
+        "Label": "SpawnSubState",
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "SpawnDirection": "SpawnDirection",
+    "SpawnAngle": "SpawnAngle",
+    "FanOut": "FanOut",
+    "DistanceRange": "DistanceRange",
+    "CountRange": "CountRange",
+    "DelayRange": "DelayRange",
+    "Kind": "Kind",
+    "Flock": "Flock",
+    "LaunchAtTarget": "LaunchAtTarget",
+    "PitchHigh": "PitchHigh",
+    "LaunchSpread": "LaunchSpread",
+    "JoinFlock": "JoinFlock",
+    "SpawnState": "SpawnState",
+    "SpawnSubState": "SpawnSubState",
+    "Type": "Spawn"
+  }
+}

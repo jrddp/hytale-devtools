@@ -1,0 +1,203 @@
+{
+  "Id": "Action.Attack",
+  "Title": "Action: Attack",
+  "Color": "#CC3361",
+  "Description": "Starts attack",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Attack",
+      "Type": "SmallString",
+      "Description": "Attack pattern to use",
+      "Options": {
+        "Label": "Attack",
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "RootInteraction"
+        }
+      }
+    },
+    {
+      "Id": "AttackType",
+      "Type": "Enum",
+      "Description": "The interaction type to use",
+      "Options": {
+        "Label": "AttackType",
+        "Default": "Primary",
+        "Width": 220,
+        "Values": [
+          "Primary",
+          "Secondary",
+          "Ability1",
+          "Ability2",
+          "Ability3"
+        ],
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ChargeFor",
+      "Type": "Float",
+      "Description": "How long to charge for",
+      "Options": {
+        "Label": "ChargeFor",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AttackPauseRange",
+      "Type": "Tuple",
+      "Description": "Range of minimum pause between attacks",
+      "Options": {
+        "Label": "AttackPauseRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AimingTimeRange",
+      "Type": "Tuple",
+      "Description": "A range from which to pick a random value denoting the max time the NPC will wait for aiming before launching the attack.",
+      "Options": {
+        "Label": "AimingTimeRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          0,
+          0
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "LineOfSight",
+      "Type": "Bool",
+      "Description": "Check Line of Sight before firing",
+      "Options": {
+        "Label": "LineOfSight",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "AvoidFriendlyFire",
+      "Type": "Bool",
+      "Description": "Tries to avoid friendly fire if true",
+      "Options": {
+        "Label": "AvoidFriendlyFire",
+        "Default": true,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "BallisticMode",
+      "Type": "Enum",
+      "Description": "Trajectory to use",
+      "Options": {
+        "Label": "BallisticMode",
+        "Default": "Short",
+        "Width": 220,
+        "Values": [
+          "Short",
+          "Long",
+          "Alternate",
+          "Random"
+        ]
+      }
+    },
+    {
+      "Id": "MeleeConeAngle",
+      "Type": "Float",
+      "Description": "Cone angle considered for on target for melee",
+      "Options": {
+        "Label": "MeleeConeAngle",
+        "Min": 0,
+        "Max": 360,
+        "MinExclusive": true,
+        "Default": 30,
+        "Width": 88
+      }
+    },
+    {
+      "Id": "DamageFriendlies",
+      "Type": "Bool",
+      "Description": "Whether this attack should bypass ignored damage groups and deal damage to the target",
+      "Options": {
+        "Label": "DamageFriendlies",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "SkipAiming",
+      "Type": "Bool",
+      "Description": "Whether aiming should be skipped an the attack just executed immediately.",
+      "Options": {
+        "Label": "SkipAiming",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ChargeDistance",
+      "Type": "Float",
+      "Description": "If this is a charge attack, the distance required for the charge",
+      "Options": {
+        "Label": "ChargeDistance",
+        "Min": 0,
+        "Default": 0,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Attack": "Attack",
+    "AttackType": "AttackType",
+    "ChargeFor": "ChargeFor",
+    "AttackPauseRange": "AttackPauseRange",
+    "AimingTimeRange": "AimingTimeRange",
+    "LineOfSight": "LineOfSight",
+    "AvoidFriendlyFire": "AvoidFriendlyFire",
+    "BallisticMode": "BallisticMode",
+    "MeleeConeAngle": "MeleeConeAngle",
+    "DamageFriendlies": "DamageFriendlies",
+    "SkipAiming": "SkipAiming",
+    "ChargeDistance": "ChargeDistance",
+    "Type": "Attack"
+  }
+}

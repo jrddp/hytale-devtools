@@ -1,0 +1,74 @@
+{
+  "Id": "Action.Timeout",
+  "Title": "Action: Timeout",
+  "Color": "#CC3361",
+  "Description": "Delay an action, or insert a delay in a sequence of actions",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "ActionPin",
+      "Type": "Action",
+      "Color": "#CC3361",
+      "Label": "Action",
+      "Description": "Optional action to delay"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Delay",
+      "Type": "Tuple",
+      "Description": "Range of time to delay in seconds",
+      "Options": {
+        "Label": "Delay",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          1,
+          1
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "DelayAfter",
+      "Type": "Bool",
+      "Description": "Delay after executing the action",
+      "Options": {
+        "Label": "DelayAfter",
+        "Default": false,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Delay": "Delay",
+    "DelayAfter": "DelayAfter",
+    "Action": {
+      "Pin": "ActionPin",
+      "Node": "ActionVariants",
+      "AllowComponentReferences": true
+    },
+    "Type": "Timeout"
+  }
+}

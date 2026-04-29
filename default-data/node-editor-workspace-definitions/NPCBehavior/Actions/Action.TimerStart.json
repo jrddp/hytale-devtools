@@ -1,0 +1,103 @@
+{
+  "Id": "Action.TimerStart",
+  "Title": "Action: TimerStart",
+  "Color": "#CC3361",
+  "Description": "Start a timer",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Name",
+      "Type": "SmallString",
+      "Description": "The name of the timer",
+      "Options": {
+        "Label": "Name",
+        "Required": true,
+        "DisallowEmpty": true,
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "StartValueRange",
+      "Type": "Tuple",
+      "Description": "The range from which to pick an initial value to start at",
+      "Options": {
+        "Label": "StartValueRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RestartValueRange",
+      "Type": "Tuple",
+      "Description": "The range from which to pick a value when the timer is restarted",
+      "Options": {
+        "Label": "RestartValueRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Rate",
+      "Type": "Float",
+      "Description": "The rate at which the timer will decrease",
+      "Options": {
+        "Label": "Rate",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Repeating",
+      "Type": "Bool",
+      "Description": "Whether to repeat the timer when countdown finishes",
+      "Options": {
+        "Label": "Repeating",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Name": "Name",
+    "StartValueRange": "StartValueRange",
+    "RestartValueRange": "RestartValueRange",
+    "Rate": "Rate",
+    "Repeating": "Repeating",
+    "Type": "TimerStart"
+  }
+}

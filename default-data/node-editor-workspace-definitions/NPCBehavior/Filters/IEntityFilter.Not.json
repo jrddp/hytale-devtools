@@ -1,0 +1,45 @@
+{
+  "Id": "IEntityFilter.Not",
+  "Title": "Filter: Not",
+  "Color": "#60C8B8",
+  "Description": "Invert filter test",
+  "Inputs": [
+    {
+      "Id": "FilterPin",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "Filter",
+      "Description": "Filter to test",
+      "Required": true
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Filter": {
+      "Pin": "FilterPin",
+      "Node": "FilterVariants"
+    },
+    "Type": "Not"
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "Id": "BodyMotion.Leave",
+  "Title": "Body Motion: Leave",
+  "Color": "#00E7B6",
+  "Description": "Leave place",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "BodyMotion",
+      "Color": "#00E7B6",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "RelativeSpeed",
+      "Type": "Float",
+      "Description": "Maximum relative speed the NPC should move",
+      "Options": {
+        "Label": "RelativeSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelativeSpeedWaypoint",
+      "Type": "Float",
+      "Description": "Maximum relative speed the NPC should move close to waypoints",
+      "Options": {
+        "Label": "RelativeSpeedWaypoint",
+        "Min": 0,
+        "Max": 1,
+        "MinExclusive": true,
+        "Default": 0.5,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "WaypointRadius",
+      "Type": "Float",
+      "Description": "Radius to slow down around waypoints",
+      "Options": {
+        "Label": "WaypointRadius",
+        "Min": 0.1,
+        "MinExclusive": true,
+        "Default": 0.5,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "UseBestPath",
+      "Type": "Bool",
+      "Description": "Use best partial path if goal can't be reached",
+      "Options": {
+        "Label": "UseBestPath",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ThrottleDelayRange",
+      "Type": "Tuple",
+      "Description": "Time to delay after no path finding solution found",
+      "Options": {
+        "Label": "ThrottleDelayRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          3,
+          5
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ThrottleIgnoreCount",
+      "Type": "Int",
+      "Description": "How often no valid path solution can be found before throttling delay is applied",
+      "Options": {
+        "Label": "ThrottleIgnoreCount",
+        "Min": 0,
+        "Default": 3,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "BuildOptimisedPath",
+      "Type": "Bool",
+      "Description": "Try to reduce number of nodes of generated path",
+      "Options": {
+        "Label": "BuildOptimisedPath",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AvoidBlockDamage",
+      "Type": "Bool",
+      "Description": "Should avoid environmental damage from blocks",
+      "Options": {
+        "Label": "AvoidBlockDamage",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelaxedMoveConstraints",
+      "Type": "Bool",
+      "Description": "NPC can do movements like wading (depends on motion controller type)",
+      "Options": {
+        "Label": "RelaxedMoveConstraints",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "BlendHeading",
+      "Type": "Float",
+      "Description": "Relative rotation angle into next waypoint when arriving at current waypoint",
+      "Options": {
+        "Label": "BlendHeading",
+        "Min": 0,
+        "Max": 1,
+        "Default": 0.5,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "PathSmoothing",
+      "Type": "Int",
+      "Description": "Try to smooth followed path. Larger values smooth more.",
+      "Options": {
+        "Label": "PathSmoothing",
+        "Min": 0,
+        "Default": 2,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RejectionWeight",
+      "Type": "Float",
+      "Description": "Weight of rejection vector pushing entity closer to original path",
+      "Options": {
+        "Label": "RejectionWeight",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 3,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MinPathLength",
+      "Type": "Float",
+      "Description": "Minimum length of path required when not able to reach target (should be greater equal 2)",
+      "Options": {
+        "Label": "MinPathLength",
+        "Min": 0,
+        "Default": 2,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "DiagonalMoves",
+      "Type": "Bool",
+      "Description": "Allow diagonal moves",
+      "Options": {
+        "Label": "DiagonalMoves",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "StepsPerTick",
+      "Type": "Int",
+      "Description": "Steps per iteration",
+      "Options": {
+        "Label": "StepsPerTick",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 50,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MaxPathLength",
+      "Type": "Int",
+      "Description": "Max path steps before aborting path finding",
+      "Options": {
+        "Label": "MaxPathLength",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 200,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MaxOpenNodes",
+      "Type": "Int",
+      "Description": "Max open nodes before aborting path finding",
+      "Options": {
+        "Label": "MaxOpenNodes",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 200,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "MaxTotalNodes",
+      "Type": "Int",
+      "Description": "Max total node before aborting path finding",
+      "Options": {
+        "Label": "MaxTotalNodes",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 900,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Debug",
+      "Type": "SmallString",
+      "Description": "Debugging flags",
+      "Options": {
+        "Label": "Debug",
+        "Default": "",
+        "Width": 220
+      }
+    },
+    {
+      "Id": "DesiredAltitudeWeight",
+      "Type": "Float",
+      "Description": "How much this NPC prefers being within the desired height range",
+      "Options": {
+        "Label": "DesiredAltitudeWeight",
+        "Min": -1,
+        "Max": 1,
+        "Default": -1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Distance",
+      "Type": "Float",
+      "Description": "Minimum distance required",
+      "Options": {
+        "Label": "Distance",
+        "Required": true,
+        "Min": 0,
+        "MinExclusive": true,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "RelativeSpeed": "RelativeSpeed",
+    "RelativeSpeedWaypoint": "RelativeSpeedWaypoint",
+    "WaypointRadius": "WaypointRadius",
+    "UseBestPath": "UseBestPath",
+    "ThrottleDelayRange": "ThrottleDelayRange",
+    "ThrottleIgnoreCount": "ThrottleIgnoreCount",
+    "BuildOptimisedPath": "BuildOptimisedPath",
+    "AvoidBlockDamage": "AvoidBlockDamage",
+    "RelaxedMoveConstraints": "RelaxedMoveConstraints",
+    "BlendHeading": "BlendHeading",
+    "PathSmoothing": "PathSmoothing",
+    "RejectionWeight": "RejectionWeight",
+    "MinPathLength": "MinPathLength",
+    "DiagonalMoves": "DiagonalMoves",
+    "StepsPerTick": "StepsPerTick",
+    "MaxPathLength": "MaxPathLength",
+    "MaxOpenNodes": "MaxOpenNodes",
+    "MaxTotalNodes": "MaxTotalNodes",
+    "Debug": "Debug",
+    "DesiredAltitudeWeight": "DesiredAltitudeWeight",
+    "Distance": "Distance",
+    "Type": "Leave"
+  }
+}

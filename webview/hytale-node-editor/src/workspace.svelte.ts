@@ -2,12 +2,19 @@ import {
   createEmptyNodeEditorClipboardSelection,
   type NodeEditorClipboardSelection,
 } from "@shared/node-editor/clipboardTypes";
+import { createContext } from "svelte";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
 import { applyNodeEditorGraphEdit } from "@shared/node-editor/graphEditUtils";
+import {
+  canNodeBeSetAsWorkspaceRoot,
+  getCreatableRootTemplates,
+  getValidTemplatesForTemplateOrVariantId,
+} from "@shared/node-editor/rootCompatibility";
 import {
   type NodeEditorGraphDocument,
   type NodeEditorGraphEdit,
 } from "@shared/node-editor/graphTypes";
+import { cloneJsonLike } from "@shared/jsonClone";
 import {
   type ActionRequest,
   type NodeEditorControlScheme,
@@ -19,23 +26,37 @@ import {
   type NodeEditorWorkspaceContext,
   type NodeTemplate,
 } from "@shared/node-editor/workspaceTypes";
+import {
+  getHighestNodeEditorDiagnosticSeverity,
+  getNodeEditorDiagnosticBorderSeverity,
+  getNodeEditorDiagnosticTargetKey,
+  nodeEditorDiagnosticTargetBelongsToNode,
+  type NodeEditorDiagnostic,
+  type NodeEditorDiagnosticSeverity,
+  type NodeEditorDiagnosticTarget,
+} from "@shared/node-editor/diagnostics";
+import type { ComputeAutocompleteOption } from "../../shared/components/computeAutocomplete";
 import { addEdge, type Connection } from "@xyflow/svelte";
 import RBush, { type BBox } from "rbush";
-import { type FlowEdge, type FlowNode, type FlowNodeData, type VSCodeApi } from "src/common";
+import { type FlowEdge, type FlowNode, type FlowNodeData } from "@node-editor/common";
 import {
   buildElementListChangedEdit,
   buildNodeRenamedEdit,
   buildNodeResizedEdit,
   buildNodesMovedEdit,
   graphEditRequiresDocumentRefresh,
-} from "src/node-editor/utils/graphDocument";
-import { getAbsolutePosition } from "src/node-editor/utils/nodeUtils.svelte";
+} from "@node-editor/node-editor/utils/graphDocument";
+import { getAbsolutePosition } from "@node-editor/node-editor/utils/nodeUtils.svelte";
 
 export type SelectionType = "replace" | "add";
 export type WorkspaceNodeUpdate = [
   string,
   Omit<Partial<FlowNode>, "data"> & { data?: Partial<FlowNodeData> },
 ];
+export interface RemovedFlowEdge {
+  edge: FlowEdge;
+  index: number;
+}
 
 export interface WorkspaceState {
   nodes: FlowNode[];
@@ -56,6 +77,15 @@ export interface NodeEditorDebugState {
   lowDetailCanvasEdgeBaseWidth: number;
 }
 
+export interface NodeEditorHostBridge {
+  postMessage(message: WebviewToExtensionMessage): void | PromiseLike<boolean>;
+}
+
+export type NodeEditorPreviewFeatureConsideration = {
+  kind: "animation";
+  value: string;
+};
+
 function hasRenderableNodeSize(node: FlowNode) {
   const width = node.measured?.width ?? node.width;
   const height = node.measured?.height ?? node.height;
@@ -63,8 +93,13 @@ function hasRenderableNodeSize(node: FlowNode) {
 }
 
 class NodeRBush extends RBush<FlowNode> {
+  constructor(private readonly session: NodeEditorSession) {
+    super();
+    this.toBBox = this.toBBox.bind(this);
+  }
+
   toBBox(node: FlowNode) {
-    const { x, y } = getAbsolutePosition(node);
+    const { x, y } = getAbsolutePosition(node, this.session);
     const { width, height } = node.measured ?? {
       width: node.width,
       height: node.height,
@@ -74,26 +109,32 @@ class NodeRBush extends RBush<FlowNode> {
   }
 }
 
-export class Workspace {
+export class NodeEditorSession {
   isInitialized = $state(false);
   controlScheme = $state<NodeEditorControlScheme>("mouse");
   platform = $state<NodeEditorPlatform>("win");
   context = $state<NodeEditorWorkspaceContext>();
+  hostBridge = $state<NodeEditorHostBridge | undefined>();
+  allowOpenRawJson = $state(true);
+  embeddedGraphFieldPath = $state<string | undefined>();
 
   actionRequests = $state<ActionRequest[]>([]);
 
   autocompleteField = $state<string>();
   autocompleteValues = $state<string[]>([]);
+  computeAutocompleteOptions = $state<ComputeAutocompleteOption[]>([]);
+  consideredPreviewFeature = $state<NodeEditorPreviewFeatureConsideration | null>(null);
+  diagnostics = $state.raw<NodeEditorDiagnostic[]>([]);
 
   nodes = $state.raw<FlowNode[]>([]);
   edges = $state.raw<FlowEdge[]>([]);
   rootNodeId = $state<string | undefined>();
-  vscode = $state<VSCodeApi>() as VSCodeApi;
   sourceVersion = $state(-1);
   committedGraphDocument = $state.raw<NodeEditorGraphDocument | undefined>(undefined);
   pendingLocalEditId = $state<number | undefined>();
   nextClientEditId = $state(0);
   areNodesMeasured = $state(false);
+  isAutoPositioning = $state(false);
   hasCompletedInitialMeasurement = $state(false);
   private pendingMeasurementNodeIds = $state.raw<Set<string>>(new Set());
 
@@ -143,20 +184,37 @@ export class Workspace {
     });
     return outgoingConnections;
   });
-  /** childId -> targetHandleId -> edge */
-  private incomingConnections: Map<string, Map<string, FlowEdge>> = $derived.by(() => {
-    const incomingConnections: Map<string, Map<string, FlowEdge>> = new Map();
+  /** childId -> targetHandleId -> edges */
+  private incomingConnections: Map<string, Map<string, FlowEdge[]>> = $derived.by(() => {
+    const incomingConnections: Map<string, Map<string, FlowEdge[]>> = new Map();
     this.edges.forEach(edge => {
       if (!incomingConnections.has(edge.target)) {
         incomingConnections.set(edge.target, new Map());
       }
-      incomingConnections.get(edge.target)!.set(edge.targetHandle ?? INPUT_HANDLE_ID, edge);
+      const targetHandleId = edge.targetHandle ?? INPUT_HANDLE_ID;
+      if (!incomingConnections.get(edge.target)!.has(targetHandleId)) {
+        incomingConnections.get(edge.target)!.set(targetHandleId, []);
+      }
+      incomingConnections.get(edge.target)!.get(targetHandleId)!.push(edge);
     });
     return incomingConnections;
   });
+  private diagnosticsByTargetKey = $derived.by(() => {
+    const diagnosticsByTargetKey = new Map<string, NodeEditorDiagnostic[]>();
+    for (const diagnostic of this.diagnostics) {
+      const targetKey = getNodeEditorDiagnosticTargetKey(diagnostic.target);
+      const targetDiagnostics = diagnosticsByTargetKey.get(targetKey);
+      if (targetDiagnostics) {
+        targetDiagnostics.push(diagnostic);
+      } else {
+        diagnosticsByTargetKey.set(targetKey, [diagnostic]);
+      }
+    }
+    return diagnosticsByTargetKey;
+  });
   /** Spatially indexed nodes for collision searching (e.g. setting group inheritence) */
   private spatialIndex: NodeRBush = $derived.by(() => {
-    const spatialIndex = new NodeRBush();
+    const spatialIndex = new NodeRBush(this);
     spatialIndex.load(this.nodes.filter(node => hasRenderableNodeSize(node)));
     return spatialIndex;
   });
@@ -165,8 +223,131 @@ export class Workspace {
     return this.nodesById.get(nodeId);
   }
 
+  setConsideredPreviewFeature(
+    kind: NodeEditorPreviewFeatureConsideration["kind"],
+    value: string | null | undefined,
+  ) {
+    const trimmedValue = value?.trim();
+    if (!trimmedValue) {
+      this.clearConsideredPreviewFeature(kind);
+      return;
+    }
+
+    if (
+      this.consideredPreviewFeature?.kind === kind &&
+      this.consideredPreviewFeature.value === trimmedValue
+    ) {
+      return;
+    }
+
+    this.consideredPreviewFeature = {
+      kind,
+      value: trimmedValue,
+    };
+  }
+
+  clearConsideredPreviewFeature(kind?: NodeEditorPreviewFeatureConsideration["kind"]) {
+    if (!kind || this.consideredPreviewFeature?.kind === kind) {
+      this.consideredPreviewFeature = null;
+    }
+  }
+
   getRootNode(): FlowNode | undefined {
     return this.rootNodeId ? this.getNodeById(this.rootNodeId) : undefined;
+  }
+
+  setDiagnostics(diagnostics: NodeEditorDiagnostic[]): void {
+    this.diagnostics = diagnostics;
+  }
+
+  clearDiagnostics(): void {
+    this.diagnostics = [];
+  }
+
+  getDiagnosticsForTarget(target: NodeEditorDiagnosticTarget): NodeEditorDiagnostic[] {
+    return [...(this.diagnosticsByTargetKey.get(getNodeEditorDiagnosticTargetKey(target)) ?? [])];
+  }
+
+  getFieldDiagnostics(
+    nodeId: string | undefined,
+    schemaKey: string | null | undefined,
+    parentSchemaKey?: string,
+  ): NodeEditorDiagnostic[] {
+    if (!nodeId || !schemaKey) {
+      return [];
+    }
+    return this.getDiagnosticsForTarget({
+      type: "field",
+      nodeId,
+      schemaKey,
+      parentSchemaKey,
+    });
+  }
+
+  getListItemDiagnostics(
+    nodeId: string | undefined,
+    schemaKey: string | null | undefined,
+    itemIndex: number,
+    parentSchemaKey?: string,
+  ): NodeEditorDiagnostic[] {
+    if (!nodeId || !schemaKey) {
+      return [];
+    }
+    return this.getDiagnosticsForTarget({
+      type: "listItem",
+      nodeId,
+      schemaKey,
+      itemIndex,
+      parentSchemaKey,
+    });
+  }
+
+  getMapEntryDiagnostics(
+    nodeId: string | undefined,
+    schemaKey: string | null | undefined,
+    key: string,
+    parentSchemaKey?: string,
+  ): NodeEditorDiagnostic[] {
+    if (!nodeId || !schemaKey) {
+      return [];
+    }
+    return this.getDiagnosticsForTarget({
+      type: "mapEntry",
+      nodeId,
+      schemaKey,
+      key,
+      parentSchemaKey,
+    });
+  }
+
+  getPinDiagnostics(
+    nodeId: string,
+    pinId: string,
+    direction: "input" | "output",
+  ): NodeEditorDiagnostic[] {
+    return this.getDiagnosticsForTarget({
+      type: "pin",
+      nodeId,
+      pinId,
+      direction,
+    });
+  }
+
+  getNodeDiagnostics(nodeId: string): NodeEditorDiagnostic[] {
+    return this.diagnostics.filter(diagnostic =>
+      nodeEditorDiagnosticTargetBelongsToNode(diagnostic.target, nodeId, edgeId => {
+        const edge = this.edges.find(edge => edge.id === edgeId);
+        return edge ? { source: edge.source, target: edge.target } : undefined;
+      }),
+    );
+  }
+
+  getNodeDiagnosticSeverity(nodeId: string): NodeEditorDiagnosticSeverity | undefined {
+    return getHighestNodeEditorDiagnosticSeverity(this.getNodeDiagnostics(nodeId));
+  }
+
+  getNodeDiagnosticBorderSeverity(nodeId: string): NodeEditorDiagnosticSeverity | undefined {
+    return getNodeEditorDiagnosticBorderSeverity(this.getNodeDiagnostics(nodeId));
   }
 
   searchNodesCollidingWith(bbox: BBox) {
@@ -276,25 +457,44 @@ export class Workspace {
     }
 
     if (handleId !== undefined) {
-      return incomingConnections.get(handleId);
+      return incomingConnections.get(handleId)?.[0];
     }
 
     // Legacy callers still ask for a single "parent" edge without specifying a handle.
     // Prefer the default input when present, otherwise fall back to the first incoming edge.
-    return incomingConnections.get(INPUT_HANDLE_ID) ?? incomingConnections.values().next().value;
+    return incomingConnections.get(INPUT_HANDLE_ID)?.[0] ?? incomingConnections.values().next().value?.[0];
+  }
+
+  getIncomingConnectionsForHandle(nodeId: string, handleId: string): FlowEdge[] {
+    return [...(this.incomingConnections.get(nodeId)?.get(handleId) ?? [])];
   }
 
   getValidTemplates(variantKindOrTemplateId: string | undefined): NodeTemplate[] {
-    const variantKind = this.context.variantKindsById[variantKindOrTemplateId];
-    if (variantKind) {
-      return Object.values(variantKind.Variants).map(
-        templateId => this.context.nodeTemplatesById[templateId],
-      );
+    return getValidTemplatesForTemplateOrVariantId(this.context, variantKindOrTemplateId);
+  }
+
+  getCreatableRootTemplates(): NodeTemplate[] {
+    return getCreatableRootTemplates(this.context);
+  }
+
+  setRootNode(nodeId: string): boolean {
+    const node = this.getNodeById(nodeId);
+    if (
+      !node ||
+      !canNodeBeSetAsWorkspaceRoot({
+        nodeId,
+        currentRootNodeId: this.rootNodeId,
+        nodeType: node.type,
+        template: node.data,
+        workspaceContext: this.context,
+      })
+    ) {
+      return false;
     }
-    if (variantKindOrTemplateId) {
-      return [this.context.nodeTemplatesById[variantKindOrTemplateId]];
-    }
-    return [];
+
+    this.rootNodeId = nodeId;
+    this.applyDocumentState("element-list-changed");
+    return true;
   }
 
   selectNode(nodeId: string, selectionType: SelectionType): void {
@@ -318,6 +518,50 @@ export class Workspace {
       newEdges = addEdge(edge, newEdges);
     }
     this.edges = newEdges;
+  }
+
+  removeEdgesByIds(edgeIds: Iterable<string>): RemovedFlowEdge[] {
+    const removedEdges: RemovedFlowEdge[] = [];
+    const edgeIdSet = new Set(edgeIds);
+    if (edgeIdSet.size === 0) {
+      return removedEdges;
+    }
+
+    this.edges = this.edges.filter((edge, index) => {
+      if (!edgeIdSet.has(edge.id)) {
+        return true;
+      }
+
+      removedEdges.push({ edge, index });
+      return false;
+    });
+
+    return removedEdges;
+  }
+
+  restoreRemovedEdges(removedEdges: RemovedFlowEdge[]): void {
+    if (removedEdges.length === 0) {
+      return;
+    }
+
+    const nextEdges = [...this.edges];
+    const existingEdgeIds = new Set(nextEdges.map(edge => edge.id));
+    const sortedRemovedEdges = [...removedEdges].sort((left, right) => left.index - right.index);
+    let didChange = false;
+
+    for (const removedEdge of sortedRemovedEdges) {
+      if (existingEdgeIds.has(removedEdge.edge.id)) {
+        continue;
+      }
+
+      nextEdges.splice(Math.min(removedEdge.index, nextEdges.length), 0, removedEdge.edge);
+      existingEdgeIds.add(removedEdge.edge.id);
+      didChange = true;
+    }
+
+    if (didChange) {
+      this.edges = nextEdges;
+    }
   }
 
   selectNodes(nodeIds: string[], selectionType: SelectionType): void {
@@ -387,6 +631,10 @@ export class Workspace {
     }
   }
 
+  postMessageToHost(message: WebviewToExtensionMessage): void {
+    this.hostBridge?.postMessage(message);
+  }
+
   updateControlSchemeSetting(controlScheme: NodeEditorControlScheme): void {
     if (this.controlScheme === controlScheme) {
       return;
@@ -399,7 +647,7 @@ export class Workspace {
       setting: "controlScheme",
       value: controlScheme,
     };
-    this.vscode.postMessage(payload);
+    this.postMessageToHost(payload);
   }
 
   updateViewportZoom(zoom: number): void {
@@ -407,123 +655,128 @@ export class Workspace {
       this.viewportZoom = zoom;
     }
   }
-}
+  applyGraphEdit(edit: NodeEditorGraphEdit) {
+    const beforeDocument = this.committedGraphDocument;
+    if (!beforeDocument) {
+      throw new Error("Cannot create an undoable edit before the document has been initialized.");
+    }
 
-export const workspace = new Workspace();
-
-export function applyGraphEdit(edit: NodeEditorGraphEdit) {
-  const beforeDocument = workspace.committedGraphDocument;
-  if (!beforeDocument) {
-    throw new Error("Cannot create an undoable edit before the document has been initialized.");
+    const clientEditId = this.nextClientEditId + 1;
+    this.nextClientEditId = clientEditId;
+    this.pendingLocalEditId = clientEditId;
+    const plainEdit = cloneJsonLike($state.snapshot(edit));
+    const afterDocument = cloneJsonLike($state.snapshot(beforeDocument));
+    applyNodeEditorGraphEdit(afterDocument, plainEdit);
+    this.committedGraphDocument = afterDocument;
+    this.queuePostGraphEditActions(plainEdit);
+    this.postGraphEdit(plainEdit, clientEditId);
   }
 
-  const clientEditId = workspace.nextClientEditId + 1;
-  workspace.nextClientEditId = clientEditId;
-  workspace.pendingLocalEditId = clientEditId;
-  const afterDocument = structuredClone(beforeDocument);
-  applyNodeEditorGraphEdit(afterDocument, edit);
-  workspace.committedGraphDocument = afterDocument;
-  queuePostGraphEditActions(edit);
-  postGraphEdit(edit, clientEditId);
-}
+  /** Builds an undoable graph edit from current workspace state and posts it to the active host. */
+  applyDocumentState(reason: NodeEditorGraphEdit["kind"]) {
+    const beforeDocument = this.committedGraphDocument;
+    if (!beforeDocument) {
+      throw new Error("Cannot create an undoable edit before the document has been initialized.");
+    }
 
-/** Builds an undoable graph edit from current workspace state and posts it to VS Code. */
-export function applyDocumentState(reason: NodeEditorGraphEdit["kind"]) {
-  const beforeDocument = workspace.committedGraphDocument;
-  if (!beforeDocument) {
-    throw new Error("Cannot create an undoable edit before the document has been initialized.");
-  }
-
-  const graphEdit = buildGraphEdit(reason, beforeDocument);
-  if (!graphEdit) {
-    return;
-  }
-
-  applyGraphEdit(graphEdit);
-}
-
-function buildGraphEdit(
-  reason: NodeEditorGraphEdit["kind"],
-  beforeDocument: NodeEditorGraphDocument,
-): NodeEditorGraphEdit | undefined {
-  switch (reason) {
-    case "element-list-changed":
-      return buildElementListChangedEdit(
-        beforeDocument,
-        {
-          nodes: workspace.nodes,
-          edges: workspace.edges,
-          rootNodeId: workspace.rootNodeId,
-        },
-        workspace.context.rootMenuName,
-      );
-    case "nodes-moved":
-      return buildNodesMovedEdit(beforeDocument, workspace.nodes);
-    case "node-renamed":
-      return buildNodeRenamedEdit(beforeDocument, workspace.nodes);
-    case "node-resized":
-      return buildNodeResizedEdit(beforeDocument, workspace.nodes);
-  }
-}
-
-function postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {
-  switch (edit.kind) {
-    case "element-list-changed":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        addedNodes: edit.addedNodes,
-        removedNodes: edit.removedNodes,
-        addedEdges: edit.addedEdges,
-        removedEdges: edit.removedEdges,
-        beforeRootNodeId: edit.beforeRootNodeId,
-        afterRootNodeId: edit.afterRootNodeId,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
+    const graphEdit = this.buildGraphEdit(reason, beforeDocument);
+    if (!graphEdit) {
       return;
-    case "nodes-moved":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        changes: edit.changes,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "node-renamed":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        changes: edit.changes,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "node-resized":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        changes: edit.changes,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
-    case "node-properties-updated":
-      workspace.vscode.postMessage({
-        type: "edit",
-        kind: edit.kind,
-        propertyChanges: edit.propertyChanges,
-        resizeChanges: edit.resizeChanges,
-        sourceVersion: workspace.sourceVersion,
-        clientEditId,
-      } satisfies NodeEditorGraphEditMessage);
-      return;
+    }
+
+    this.applyGraphEdit(graphEdit);
+  }
+
+  private buildGraphEdit(
+    reason: NodeEditorGraphEdit["kind"],
+    beforeDocument: NodeEditorGraphDocument,
+  ): NodeEditorGraphEdit | undefined {
+    switch (reason) {
+      case "element-list-changed":
+        return buildElementListChangedEdit(
+          beforeDocument,
+          {
+            nodes: this.nodes,
+            edges: this.edges,
+            rootNodeId: this.rootNodeId,
+          },
+          this.context.rootMenuName,
+        );
+      case "nodes-moved":
+        return buildNodesMovedEdit(beforeDocument, this.nodes);
+      case "node-renamed":
+        return buildNodeRenamedEdit(beforeDocument, this.nodes);
+      case "node-resized":
+        return buildNodeResizedEdit(beforeDocument, this.nodes);
+    }
+  }
+
+  private postGraphEdit(edit: NodeEditorGraphEdit, clientEditId: number): void {
+    switch (edit.kind) {
+      case "element-list-changed":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          addedNodes: edit.addedNodes,
+          removedNodes: edit.removedNodes,
+          addedEdges: edit.addedEdges,
+          removedEdges: edit.removedEdges,
+          beforeRootNodeId: edit.beforeRootNodeId,
+          afterRootNodeId: edit.afterRootNodeId,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "nodes-moved":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          changes: edit.changes,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "node-renamed":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          changes: edit.changes,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "node-resized":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          changes: edit.changes,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+      case "node-properties-updated":
+        this.postMessageToHost({
+          type: "edit",
+          kind: edit.kind,
+          propertyChanges: edit.propertyChanges,
+          resizeChanges: edit.resizeChanges,
+          sourceVersion: this.sourceVersion,
+          clientEditId,
+        } satisfies NodeEditorGraphEditMessage);
+        return;
+    }
+  }
+
+  private queuePostGraphEditActions(edit: NodeEditorGraphEdit): void {
+    if (graphEditRequiresDocumentRefresh(edit)) {
+      this.actionRequests.push({ type: "document-refresh" });
+    }
   }
 }
 
-function queuePostGraphEditActions(edit: NodeEditorGraphEdit): void {
-  if (graphEditRequiresDocumentRefresh(edit)) {
-    workspace.actionRequests.push({ type: "document-refresh" });
-  }
+export function createNodeEditorSession(): NodeEditorSession {
+  return new NodeEditorSession();
 }
+
+const [useNodeEditorSession, setNodeEditorSessionContext] = createContext<NodeEditorSession>();
+export { useNodeEditorSession, setNodeEditorSessionContext };

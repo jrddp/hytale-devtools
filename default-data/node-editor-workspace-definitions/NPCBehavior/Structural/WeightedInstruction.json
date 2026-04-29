@@ -1,0 +1,45 @@
+{
+  "Id": "Structural.WeightedInstruction",
+  "Title": "Weighted Instruction",
+  "Color": "#2D3746",
+  "Description": "A weighted wrapper for a random instruction entry.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "WeightedInstruction",
+      "Color": "#2D3746",
+      "Label": "Weighted Instruction"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "InstructionPin",
+      "Type": "Instruction",
+      "Color": "#2D3746",
+      "Label": "Instruction",
+      "Required": true
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Weight",
+      "Type": "Float",
+      "Description": "Weighted chance of picking this instruction in a random instruction",
+      "Options": {
+        "Label": "Weight",
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Weight": "Weight",
+    "Instruction": {
+      "Pin": "InstructionPin",
+      "Node": "InstructionVariants",
+      "SerializationType": "sibling",
+      "AllowComponentReferences": true
+    }
+  }
+}

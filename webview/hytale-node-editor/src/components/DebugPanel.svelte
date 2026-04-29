@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Panel, useStore } from "@xyflow/svelte";
   import { onDestroy } from "svelte";
-  import type { FlowEdge, FlowNode } from "src/common";
-  import { GROUP_NODE_TYPE } from "src/constants";
-  import { workspace } from "src/workspace.svelte";
+  import type { FlowEdge, FlowNode } from "@node-editor/common";
+  import { GROUP_NODE_TYPE } from "@node-editor/constants";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
 
   const FRAME_SAMPLE_WINDOW_MS = 1000;
   const FRAME_STATS_REFRESH_MS = 250;
@@ -15,6 +15,7 @@
   const EDGE_WIDTH_STEP = 0.25;
 
   const flowStore = $derived(useStore<FlowNode, FlowEdge>());
+  const workspace = useNodeEditorSession();
   const nonGroupNodes = $derived.by(() =>
     workspace.nodes.filter(node => node.type !== GROUP_NODE_TYPE),
   );

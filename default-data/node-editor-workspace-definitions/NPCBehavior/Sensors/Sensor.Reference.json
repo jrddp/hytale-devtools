@@ -1,0 +1,56 @@
+{
+  "Id": "Sensor.Reference",
+  "Title": "Sensor Reference",
+  "Color": "#7091F0",
+  "Description": "Reference an external Sensor component.",
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Reference",
+      "Type": "SmallString",
+      "Description": "Referenced component asset name.",
+      "Options": {
+        "Label": "Reference",
+        "Width": 220,
+        "Default": "",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Nullable",
+      "Type": "Checkbox",
+      "Description": "Allow the computed reference to resolve to no component.",
+      "Options": {
+        "Label": "Nullable",
+        "Default": false
+      }
+    },
+    {
+      "Id": "Interfaces",
+      "Type": "List",
+      "Description": "Allowed component interface codes for a computed reference.",
+      "Options": {
+        "Label": "Interfaces",
+        "DefaultValue": [],
+        "SymbolLookup": {
+          "indexKind": "assetDerived",
+          "key": "npcComponentInterfaces"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Reference": "Reference",
+    "Nullable": "Nullable",
+    "Interfaces": "Interfaces"
+  },
+  "IsComponentReference": true,
+  "ComponentReferenceClass": "Sensor"
+}

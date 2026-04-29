@@ -1,12 +1,14 @@
 <script lang="ts">
+  import { createTooltip } from "@webview-shared/components/tooltip/createTooltip.svelte";
+  import TooltipContent from "@webview-shared/components/tooltip/TooltipContent.svelte";
+  import type { IndexReference } from "@shared/indexTypes";
   import { ChevronDown, ChevronRight, CircleX, Info } from "lucide-svelte";
   import { marked } from "marked";
   import type { RenderFieldProps } from "src/common";
   import { workspace } from "src/workspace.svelte";
-  import { createTooltip } from "../../../shared/components/tooltip/createTooltip.svelte";
-  import TooltipContent from "../../../shared/components/tooltip/TooltipContent.svelte";
   import { createStickyHeader } from "./createStickyHeader.svelte";
   import { getFieldPanelId } from "./fieldEditorIds";
+  import { getFieldPanelStateContext } from "./fieldPanelStateContext";
   import { getFieldLabel, humanize } from "./fieldHelpers";
   import type { FieldInstance } from "../parsing/fieldInstances";
 
@@ -37,22 +39,35 @@
   } = $props();
 
   const infoTooltip = createTooltip();
+  const fieldPanelStateContext = getFieldPanelStateContext();
   const stickyHeader = createStickyHeader({
     enabled: () => !inline && !collapsed,
     top: () => depth * STICKY_HEADER_HEIGHT_PX,
   });
+
+  let restoredCollapsePath = "";
 
   const isMinimal = $derived(fieldPanelOverrides?.minimal === true);
   const titleOverride = $derived(fieldPanelOverrides?.title);
   const label = $derived(getFieldLabel(field));
   const panelId = $derived(getFieldPanelId(field));
   const fieldValue = $derived(getFieldDataValue(field));
+  const fieldTypeLabel = $derived(getFieldTypeLabel(field));
   const descriptionHtml = $derived(
     field.markdownDescription ? marked(field.markdownDescription) : undefined,
   );
   const stickyTop = $derived(depth * STICKY_HEADER_HEIGHT_PX);
   const isStickyEnabled = $derived(!inline && !collapsed);
   const handleAriaLabel = $derived(handle?.ariaLabel ?? `Reorder ${label}`);
+
+  $effect(() => {
+    if (inline || !collapseEnabled || field.fieldPath === restoredCollapsePath) {
+      return;
+    }
+
+    restoredCollapsePath = field.fieldPath;
+    collapsed = fieldPanelStateContext.getCollapsed?.(field.fieldPath) ?? collapsedByDefault;
+  });
 
   // respond to workspace-level collapse all command
   $effect(() => {
@@ -61,6 +76,7 @@
 
     if (inline || commandVersion === 0 || nextCollapsed === null) return;
     collapsed = nextCollapsed;
+    fieldPanelStateContext.onCollapseChange?.(field.fieldPath, collapsed, collapsedByDefault);
   });
 
   function stopHeaderInteraction(event: Event) {
@@ -81,6 +97,11 @@
     onunset?.();
   }
 
+  function toggleCollapsed() {
+    collapsed = !collapsed;
+    fieldPanelStateContext.onCollapseChange?.(field.fieldPath, collapsed, collapsedByDefault);
+  }
+
   function getFieldDataValue(field: FieldInstance): string | undefined {
     switch (field.type) {
       case "string":
@@ -94,13 +115,29 @@
         return undefined;
     }
   }
+
+  function getFieldTypeLabel(field: FieldInstance): string {
+    if (field.type === "string" && field.symbolRef) {
+      return `${getSymbolReferenceLabel(field.symbolRef)} Reference`;
+    }
+
+    return humanize(field.type) ?? field.type;
+  }
+
+  function getSymbolReferenceLabel(symbolRef: IndexReference): string {
+    if (symbolRef.indexKind === "commonAssetPaths") {
+      return "Asset Path";
+    }
+
+    return humanize(symbolRef.key) ?? symbolRef.key;
+  }
 </script>
 
 {#snippet handleControl()}
   {#if handle}
     <div
       {@attach handle.attach}
-      class="relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-80 outline-none transition-[color,opacity] hover:text-vsc-input-fg focus-visible:text-vsc-input-fg focus-visible:ring-2 focus-visible:ring-vsc-focus"
+      class="relative z-10 inline-flex size-6 shrink-0 self-center items-center justify-center rounded-md text-vsc-muted opacity-80 outline-none transition-[color,opacity] hover:text-vsc-input-fg focus-visible:text-vsc-input-fg focus-visible:ring-2 focus-visible:ring-vsc-focus"
       aria-label={handleAriaLabel}
       role="button"
       tabindex={-1}
@@ -147,9 +184,11 @@
       class="z-50 max-w-lg p-2 text-xs text-left border rounded-md shadow-lg border-vsc-border bg-vsc-tooltip-bg text-vsc-tooltip-fg"
     >
       <div class="space-y-1">
-        <div class="font-semibold">{field.schemaKey} ({humanize(field.type)})</div>
+        <div class="font-semibold">{field.schemaKey} ({fieldTypeLabel})</div>
         {@html descriptionHtml}
-        <div>Can inherit? {field.inheritsValue}</div>
+        {#if field.inheritsValue}
+          <div class="italic text-vsc-muted">Inheritable from parent</div>
+        {/if}
       </div>
     </TooltipContent>
   </button>
@@ -178,8 +217,12 @@
     data-value={fieldValue}
   >
     {#if inline}
-      <div class="group/inline-field flex min-h-12 items-center gap-1 px-4 py-2">
-        <div class="relative flex w-56 min-w-0 shrink-0 items-center justify-between gap-1">
+      <div
+        class="group/inline-field grid min-h-12 grid-cols-[minmax(0,14rem)_minmax(0,1fr)_auto] items-center gap-3 px-4 py-2"
+      >
+        <div
+          class="relative flex min-w-0 items-center justify-between gap-1"
+        >
           <div class="flex min-w-0 items-center gap-1">
             {@render handleControl()}
             <div class="flex min-w-0 items-center gap-1 truncate">
@@ -191,7 +234,7 @@
           {#if onunset && !readOnly}
             <button
               type="button"
-              class="pointer-events-none inline-flex size-0 shrink-0 items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/inline-field:size-6 group-hover/inline-field:pointer-events-auto group-hover/inline-field:opacity-100 group-focus-within/inline-field:pointer-events-auto group-focus-within/inline-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
+              class="pointer-events-none inline-flex size-0 shrink-0 self-center items-center justify-center rounded-md text-vsc-muted opacity-0 transition-[opacity,color] group-hover/inline-field:size-6 group-hover/inline-field:pointer-events-auto group-hover/inline-field:opacity-100 group-focus-within/inline-field:pointer-events-auto group-focus-within/inline-field:opacity-100 hover:text-vsc-input-fg focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vsc-focus"
               aria-label={`Unset ${label}`}
               onclick={handleUnsetClick}
             >
@@ -201,7 +244,7 @@
         </div>
 
         {#if children}
-          <div class="min-w-0 flex-1">
+          <div class="flex min-w-0 items-center">
             {@render children()}
           </div>
         {/if}
@@ -237,7 +280,7 @@
             return;
           }
 
-          collapsed = !collapsed;
+          toggleCollapsed();
           event.preventDefault();
         }}
         onkeydown={event => {
@@ -246,7 +289,7 @@
           }
 
           if (event.key === "Enter" || event.key === " ") {
-            collapsed = !collapsed;
+            toggleCollapsed();
             event.preventDefault();
           }
         }}

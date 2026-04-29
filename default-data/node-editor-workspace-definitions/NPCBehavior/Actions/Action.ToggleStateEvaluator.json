@@ -1,0 +1,41 @@
+{
+  "Id": "Action.ToggleStateEvaluator",
+  "Title": "Action: ToggleStateEvaluator",
+  "Color": "#CC3361",
+  "Description": "Enable or disable the NPC's state evaluator",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether or not to enable the state evaluator",
+      "Options": {
+        "Label": "Enabled",
+        "Required": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "Type": "ToggleStateEvaluator"
+  }
+}

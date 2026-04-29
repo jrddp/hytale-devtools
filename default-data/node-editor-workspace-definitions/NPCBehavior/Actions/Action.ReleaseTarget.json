@@ -1,0 +1,43 @@
+{
+  "Id": "Action.ReleaseTarget",
+  "Title": "Action: ReleaseTarget",
+  "Color": "#CC3361",
+  "Description": "Clear locked target",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "TargetSlot",
+      "Type": "SmallString",
+      "Description": "The target slot to release",
+      "Options": {
+        "Label": "TargetSlot",
+        "DisallowEmpty": true,
+        "Default": "LockedTarget",
+        "Width": 220,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "TargetSlot": "TargetSlot",
+    "Type": "ReleaseTarget"
+  }
+}

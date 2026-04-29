@@ -19,8 +19,10 @@ import type {
   NodeResizeChange,
 } from "@shared/node-editor/graphTypes";
 import { INPUT_HANDLE_ID } from "@shared/node-editor/sharedConstants";
-import type { FlowEdge, FlowNode } from "src/common";
-import type { WorkspaceState } from "src/workspace.svelte";
+import { cloneJsonLike } from "@shared/jsonClone";
+import type { NodeField } from "@shared/node-editor/workspaceTypes";
+import type { FlowEdge, FlowNode } from "@node-editor/common";
+import type { WorkspaceState } from "@node-editor/workspace.svelte";
 
 function cloneGraphEdge(edge: NodeEditorGraphEdge): NodeEditorGraphEdge {
   return { ...edge };
@@ -120,9 +122,81 @@ export function createNodePropertiesUpdatedEdit(
 
   return {
     kind: "node-properties-updated",
-    propertyChanges,
+    propertyChanges: propertyChanges.map(cloneNodeEditorGraphPropertyChange),
     resizeChanges: resizeChanges.length > 0 ? resizeChanges : undefined,
   };
+}
+
+export function createFieldValuePropertyChange({
+  nodeId,
+  schemaKey,
+  beforeField,
+  afterField,
+}: {
+  nodeId: string;
+  schemaKey: string;
+  beforeField?: NodeField;
+  afterField?: NodeField;
+}): NodeEditorGraphPropertyChange {
+  const clonedBeforeField = beforeField ? cloneJsonLike(beforeField) : undefined;
+  const clonedAfterField = afterField ? cloneJsonLike(afterField) : undefined;
+  return {
+    type: "field-value",
+    nodeId,
+    schemaKey,
+    beforeValue: clonedBeforeField?.value,
+    afterValue: clonedAfterField?.value,
+    beforeIsImplicit: clonedBeforeField?.isImplicit,
+    afterIsImplicit: clonedAfterField?.isImplicit,
+    beforeIsExplicitEmpty: clonedBeforeField?.isExplicitEmpty,
+    afterIsExplicitEmpty: clonedAfterField?.isExplicitEmpty,
+    beforeIsSet: clonedBeforeField?.isSet,
+    afterIsSet: clonedAfterField?.isSet,
+    beforeField: clonedBeforeField,
+    afterField: clonedAfterField,
+  };
+}
+
+export function createUnparsedMetadataPropertyChange({
+  nodeId,
+  beforeUnparsedMetadata,
+  afterUnparsedMetadata,
+}: {
+  nodeId: string;
+  beforeUnparsedMetadata?: Record<string, unknown>;
+  afterUnparsedMetadata?: Record<string, unknown>;
+}): NodeEditorGraphPropertyChange {
+  return {
+    type: "unparsed-metadata",
+    nodeId,
+    beforeUnparsedMetadata: beforeUnparsedMetadata
+      ? cloneJsonLike(beforeUnparsedMetadata)
+      : undefined,
+    afterUnparsedMetadata: afterUnparsedMetadata
+      ? cloneJsonLike(afterUnparsedMetadata)
+      : undefined,
+  };
+}
+
+function cloneNodeEditorGraphPropertyChange(
+  change: NodeEditorGraphPropertyChange,
+): NodeEditorGraphPropertyChange {
+  switch (change.type) {
+    case "field-value":
+      return {
+        ...change,
+        beforeValue: cloneJsonLike(change.beforeValue),
+        afterValue: cloneJsonLike(change.afterValue),
+        ...(change.beforeField !== undefined
+          ? { beforeField: cloneJsonLike(change.beforeField) }
+          : {}),
+        ...(change.afterField !== undefined
+          ? { afterField: cloneJsonLike(change.afterField) }
+          : {}),
+      };
+    default:
+      return cloneJsonLike(change);
+  }
 }
 
 export function buildElementListChangedEdit(
@@ -176,6 +250,10 @@ export function graphDocumentToWorkspaceState(document: NodeEditorGraphDocument)
     edges: document.edges.map(cloneGraphEdge) as FlowEdge[],
     rootNodeId: document.rootNodeId,
   };
+}
+
+export function workspaceStateNeedsAutoLayout(nodes: FlowNode[]): boolean {
+  return nodes.every(node => node.position.x === 0 && node.position.y === 0);
 }
 
 export function workspaceStateToGraphDocument(state: WorkspaceState, workspaceId?: string): NodeEditorGraphDocument {
@@ -429,14 +507,32 @@ function applyNodePropertiesUpdatedToWorkspaceState(
         for (const change of propertyChanges) {
           switch (change.type) {
             case "field-value":
-              if (nextNode.data.fieldsBySchemaKey?.[change.schemaKey]) {
+              if (nextNode.data.fieldsBySchemaKey) {
+                const hasFieldSnapshots =
+                  change.beforeField !== undefined || change.afterField !== undefined;
                 nextNode.data.fieldsBySchemaKey = {
                   ...nextNode.data.fieldsBySchemaKey,
-                  [change.schemaKey]: {
-                    ...nextNode.data.fieldsBySchemaKey[change.schemaKey],
-                    value: change.afterValue,
-                    isImplicit: change.afterIsImplicit,
-                  },
+                };
+                if (hasFieldSnapshots) {
+                  if (change.afterField) {
+                    nextNode.data.fieldsBySchemaKey[change.schemaKey] =
+                      cloneJsonLike(change.afterField);
+                  } else {
+                    delete nextNode.data.fieldsBySchemaKey[change.schemaKey];
+                  }
+                  break;
+                }
+
+                const field = nextNode.data.fieldsBySchemaKey[change.schemaKey];
+                if (!field) {
+                  break;
+                }
+                nextNode.data.fieldsBySchemaKey[change.schemaKey] = {
+                  ...field,
+                  value: change.afterValue,
+                  isImplicit: change.afterIsImplicit,
+                  isExplicitEmpty: change.afterIsExplicitEmpty ?? field.isExplicitEmpty,
+                  isSet: change.afterIsSet ?? field.isSet,
                 };
               }
               break;
@@ -451,6 +547,20 @@ function applyNodePropertiesUpdatedToWorkspaceState(
             case "raw-json":
               if ("jsonString" in nextNode.data) {
                 nextNode.data.jsonString = change.afterJsonString;
+              }
+              break;
+            case "unparsed-metadata":
+              if (nextNode.type === "datanode") {
+                if (
+                  change.afterUnparsedMetadata &&
+                  Object.keys(change.afterUnparsedMetadata).length > 0
+                ) {
+                  nextNode.data.unparsedMetadata = cloneJsonLike(
+                    change.afterUnparsedMetadata,
+                  );
+                } else {
+                  delete nextNode.data.unparsedMetadata;
+                }
               }
               break;
           }

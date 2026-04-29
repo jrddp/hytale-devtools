@@ -1,0 +1,86 @@
+{
+  "Id": "IEntityFilter.Inventory",
+  "Title": "Filter: Inventory",
+  "Color": "#60C8B8",
+  "Description": "Test various conditions relating to entity inventory",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "IEntityFilter",
+      "Color": "#60C8B8",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this entity filter should be enabled",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Items",
+      "Type": "List",
+      "Description": "A list of glob item patterns to match",
+      "Options": {
+        "Label": "Items",
+        "Width": 240,
+        "Type": "String",
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "Item"
+        }
+      }
+    },
+    {
+      "Id": "CountRange",
+      "Type": "Tuple",
+      "Description": "The range of number of items that need to match the patterns",
+      "Options": {
+        "Label": "CountRange",
+        "Min": 0,
+        "Max": 2147483647,
+        "Default": [
+          1,
+          2147483647
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "FreeSlotRange",
+      "Type": "Tuple",
+      "Description": "The range designating the number of required free slots",
+      "Options": {
+        "Label": "FreeSlotRange",
+        "Min": 0,
+        "Max": 2147483647,
+        "Default": [
+          0,
+          2147483647
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Int",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Enabled": "Enabled",
+    "Items": "Items",
+    "CountRange": "CountRange",
+    "FreeSlotRange": "FreeSlotRange",
+    "Type": "Inventory"
+  }
+}

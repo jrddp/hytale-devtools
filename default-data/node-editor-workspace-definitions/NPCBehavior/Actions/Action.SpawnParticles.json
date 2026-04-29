@@ -1,0 +1,96 @@
+{
+  "Id": "Action.SpawnParticles",
+  "Title": "Action: SpawnParticles",
+  "Color": "#CC3361",
+  "Description": "Spawn particle system visible within a given range with an offset relative to npc heading",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "ParticleSystem",
+      "Type": "SmallString",
+      "Description": "Particle system to spawn",
+      "Options": {
+        "Label": "ParticleSystem",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ParticleSystem"
+        }
+      }
+    },
+    {
+      "Id": "Range",
+      "Type": "Float",
+      "Description": "Maximum visibility range",
+      "Options": {
+        "Label": "Range",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 75,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "Offset",
+      "Type": "Tuple",
+      "Description": "Offset relative to footpoint in view direction of NPC",
+      "Options": {
+        "Label": "Offset",
+        "Width": 240,
+        "TupleSize": 3,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetNodeName",
+      "Type": "SmallString",
+      "Description": "Target node name to position particles at",
+      "Options": {
+        "Label": "TargetNodeName",
+        "Width": 220,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "IsDetachedFromModel",
+      "Type": "Bool",
+      "Description": "Whether to attach particles to the model",
+      "Options": {
+        "Label": "IsDetachedFromModel",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "ParticleSystem": "ParticleSystem",
+    "Range": "Range",
+    "Offset": "Offset",
+    "TargetNodeName": "TargetNodeName",
+    "IsDetachedFromModel": "IsDetachedFromModel",
+    "Type": "SpawnParticles"
+  }
+}

@@ -1,20 +1,34 @@
 export type IndexKind =
   | "commonAssetPaths"
+  | "assetDerived"
   | "registeredAssets"
   | "uiDataSet"
   | "exportFamily"
   | "referenceBundle";
 
+export type IndexReferenceFilter = {
+  npcRoleTypes?: string[];
+  npcComponentClasses?: string[];
+  npcComponentInterfaces?: string[];
+};
+
 export type IndexReference =
   | {
-      indexKind: Exclude<IndexKind, "commonAssetPaths">;
+      indexKind: Exclude<IndexKind, "commonAssetPaths" | "assetDerived">;
       key: string;
+      filter?: IndexReferenceFilter;
+    }
+  | {
+      indexKind: "assetDerived";
+      key: string;
+      filter?: IndexReferenceFilter;
     }
   | {
       indexKind: "commonAssetPaths";
       key: "all";
       folders: string[];
       extension?: string;
+      filter?: IndexReferenceFilter;
     };
 
 type IndexShardBase = {
@@ -50,6 +64,42 @@ export type RegisteredAssetsIndexShard = IndexShardBase & {
     }
   >;
 };
+
+export type AssetDerivedNpcComponentMetadata = {
+  sourcedFromFile?: string;
+  package?: string;
+  componentClass?: string;
+  interface?: string;
+  parameterNames?: string[];
+  importStates?: string[];
+};
+
+export type AssetDerivedIndexShard = IndexShardBase &
+  (
+    | {
+        indexKind: "assetDerived";
+        key: "npcComponentInterfaces";
+        values: Record<
+          string,
+          {
+            componentCount: number;
+            componentClasses: string[];
+            parameterNames: string[];
+            importStates: string[];
+          }
+        >;
+      }
+    | {
+        indexKind: "assetDerived";
+        key: "npcComponents";
+        values: Record<string, AssetDerivedNpcComponentMetadata>;
+      }
+    | {
+        indexKind: "assetDerived";
+        key: "npcInterfaceParameters";
+        values: Record<string, string[]>;
+      }
+  );
 
 export type ExportFamilyIndexShard = IndexShardBase & {
   indexKind: "exportFamily";
@@ -95,6 +145,7 @@ export type UIDataSetIndexShard = IndexShardBase &
 
 export type IndexShard =
   | CommonAssetPathsIndexShard
+  | AssetDerivedIndexShard
   | RegisteredAssetsIndexShard
   | ExportFamilyIndexShard
   | ReferenceBundleIndexShard

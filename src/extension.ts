@@ -3,6 +3,11 @@ import * as vscode from "vscode";
 import { AssetCacheRuntime } from "./asset-cache/assetCacheRuntime";
 import { registerHytaleAssetEditorProvider } from "./asset-editor/hytaleAssetEditorProvider";
 import { registerHytaleNodeEditorProvider } from "./node-editor/hytaleNodeEditorProvider";
+import {
+  notifyNpcRoleEditorsAssetIndexUpdated,
+  registerHytaleNpcRoleEditorProvider,
+  triggerNpcRoleEditorContextAction,
+} from "./npc-role-editor/hytaleNpcRoleEditorProvider";
 import { WorkspaceRuntime } from "./node-editor/workspaceResolver";
 import { SchemaRuntime } from "./schema/schemaLoader";
 import { createSchemaWatcherRuntime } from "./schema/schemaWatcher";
@@ -41,6 +46,7 @@ function reloadSchemaData(context: vscode.ExtensionContext, reason: string): voi
     getAssetsZipPath(resolvePatchlineForContext(context)),
     schemaRuntime,
     LOGGER,
+    vscode.workspace.workspaceFolders?.map(folder => folder.uri.fsPath) ?? [],
   );
 
   void assetCacheRuntime.ready.catch(error => {
@@ -96,8 +102,82 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(changeModPatchlineCommand);
 
+  const renameNpcParameterCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.renameParameter",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("renameParameter", menuContext);
+    },
+  );
+  context.subscriptions.push(renameNpcParameterCommand);
+
+  const deleteNpcParameterCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.deleteParameter",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("deleteParameter", menuContext);
+    },
+  );
+  context.subscriptions.push(deleteNpcParameterCommand);
+
+  const deleteNpcFieldCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.deleteField",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("deleteField", menuContext);
+    },
+  );
+  context.subscriptions.push(deleteNpcFieldCommand);
+
+  const editNpcParameterDescriptionCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.editParameterDescription",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("editParameterDescription", menuContext);
+    },
+  );
+  context.subscriptions.push(editNpcParameterDescriptionCommand);
+
+  const addNpcParameterDescriptionCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.addParameterDescription",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("editParameterDescription", menuContext);
+    },
+  );
+  context.subscriptions.push(addNpcParameterDescriptionCommand);
+
+  const changeNpcParameterTypeCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.changeParameterType",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("changeParameterType", menuContext);
+    },
+  );
+  context.subscriptions.push(changeNpcParameterTypeCommand);
+
+  const logNpcFieldInstanceCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.logFieldInstance",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("logFieldInstance", menuContext);
+    },
+  );
+  context.subscriptions.push(logNpcFieldInstanceCommand);
+
+  const setNpcGraphRootCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.setGraphRoot",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("setGraphRoot", menuContext);
+    },
+  );
+  context.subscriptions.push(setNpcGraphRootCommand);
+
+  const setNpcGraphFieldExplicitEmptyCommand = vscode.commands.registerCommand(
+    "hytale-devtools.npcRoleEditor.context.setGraphFieldExplicitEmpty",
+    (menuContext: unknown) => {
+      void triggerNpcRoleEditorContextAction("setGraphFieldExplicitEmpty", menuContext);
+    },
+  );
+  context.subscriptions.push(setNpcGraphFieldExplicitEmptyCommand);
+
   context.subscriptions.push(registerHytaleNodeEditorProvider(context));
   context.subscriptions.push(registerHytaleAssetEditorProvider(context));
+  context.subscriptions.push(registerHytaleNpcRoleEditorProvider(context));
+  context.subscriptions.push(registerAssetCacheWorkspaceWatcher());
 
   if ((vscode.workspace.workspaceFolders?.length ?? 0) > 0) {
     void ensureHytaleHomeConfiguredOnStartup();
@@ -121,6 +201,56 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     }),
   );
+}
+
+function registerAssetCacheWorkspaceWatcher(): vscode.Disposable {
+  const watcher = vscode.workspace.createFileSystemWatcher("**/{Common,Server}/**/*");
+  const disposables: vscode.Disposable[] = [watcher];
+
+  const processFile = (uri: vscode.Uri): void => {
+    if (uri.scheme !== "file") {
+      return;
+    }
+    void assetCacheRuntime.ready
+      .then(async () => {
+        await assetCacheRuntime.processWorkspaceFile(uri.fsPath);
+        await notifyNpcRoleEditorsAssetIndexUpdated(assetCacheRuntime.revision);
+      })
+      .catch(error => {
+        LOGGER.warn(
+          `Failed to update asset cache for ${uri.fsPath}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
+  };
+  const removeFile = (uri: vscode.Uri): void => {
+    if (uri.scheme !== "file") {
+      return;
+    }
+    void assetCacheRuntime.ready
+      .then(async () => {
+        assetCacheRuntime.removeWorkspaceFile(uri.fsPath);
+        await notifyNpcRoleEditorsAssetIndexUpdated(assetCacheRuntime.revision);
+      })
+      .catch(error => {
+        LOGGER.warn(
+          `Failed to remove asset cache source for ${uri.fsPath}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
+  };
+
+  disposables.push(watcher.onDidCreate(processFile));
+  disposables.push(watcher.onDidChange(processFile));
+  disposables.push(watcher.onDidDelete(removeFile));
+
+  return new vscode.Disposable(() => {
+    for (const disposable of disposables) {
+      disposable.dispose();
+    }
+  });
 }
 
 // This method is called when your extension is deactivated

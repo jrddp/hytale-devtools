@@ -2,15 +2,14 @@
   import { type NodeTemplate } from "@shared/node-editor/workspaceTypes";
   import { type XYPosition } from "@xyflow/svelte";
   import { marked } from "marked";
-  import { asCssColor } from "src/node-editor/utils/colors";
-  import { GENERIC_TEMPLATES } from "src/node-editor/utils/nodeFactory.svelte";
+  import { asCssColor } from "@node-editor/node-editor/utils/colors";
+  import { GENERIC_TEMPLATES } from "@node-editor/node-editor/utils/nodeFactory.svelte";
   import {
     templateHasCompatibleInput,
     templateHasCompatibleOutput,
-  } from "src/node-editor/utils/nodeUtils.svelte";
-  import { workspace } from "src/workspace.svelte";
+  } from "@node-editor/node-editor/utils/nodeUtils.svelte";
+  import { useNodeEditorSession } from "@node-editor/workspace.svelte";
   import { onMount } from "svelte";
-  import { innerHeight, innerWidth } from "svelte/reactivity/window";
   import MarkdownPreviewCard from "../../../shared/components/MarkdownPreviewCard.svelte";
 
   export type AddMenuConnectionFilter = {
@@ -19,13 +18,16 @@
   };
 
   export type AddMenuProps = {
-    screenPosition: XYPosition;
+    viewportPosition: XYPosition;
+    viewportSize: { width: number; height: number };
     connectionFilter: AddMenuConnectionFilter | undefined;
     oncancel?: () => void;
     onselection?: (template: NodeTemplate) => void;
   };
 
-  const { screenPosition, connectionFilter, oncancel, onselection }: AddMenuProps = $props();
+  const { viewportPosition, viewportSize, connectionFilter, oncancel, onselection }: AddMenuProps =
+    $props();
+  const workspace = useNodeEditorSession();
 
   let containerElement = $state<HTMLDivElement>();
   const DESCRIPTION_PANEL_WIDTH_PX = 248;
@@ -38,16 +40,20 @@
   let searchInput: HTMLInputElement | undefined = $state();
   let resultListElement: HTMLElement | undefined = $state();
   let containerHeight = $derived.by(() => {
-    const spaceBelowCursor = innerHeight.current - screenPosition.y - VIEWPORT_PADDING_PX;
-    return Math.min(Math.max(MIN_CONTAINER_HEIGHT_PX, spaceBelowCursor));
+    const spaceBelowCursor =
+      Math.max(0, viewportSize.height) - viewportPosition.y - VIEWPORT_PADDING_PX;
+    return Math.max(MIN_CONTAINER_HEIGHT_PX, spaceBelowCursor);
   });
   let containerWidth = $derived(containerElement?.getBoundingClientRect().width ?? 0);
   let top = $derived(
     Math.max(
       VIEWPORT_PADDING_PX,
       Math.min(
-        screenPosition.y + MENU_CURSOR_OFFSET_PX,
-        innerHeight.current - containerHeight - VIEWPORT_PADDING_PX,
+        viewportPosition.y + MENU_CURSOR_OFFSET_PX,
+        Math.max(
+          VIEWPORT_PADDING_PX,
+          viewportSize.height - containerHeight - VIEWPORT_PADDING_PX,
+        ),
       ),
     ),
   );
@@ -55,8 +61,8 @@
     Math.max(
       VIEWPORT_PADDING_PX,
       Math.min(
-        screenPosition.x + MENU_CURSOR_OFFSET_PX,
-        innerWidth.current - containerWidth - VIEWPORT_PADDING_PX,
+        viewportPosition.x + MENU_CURSOR_OFFSET_PX,
+        Math.max(VIEWPORT_PADDING_PX, viewportSize.width - containerWidth - VIEWPORT_PADDING_PX),
       ),
     ),
   );
@@ -64,14 +70,22 @@
 
   let availableTemplates = $derived.by(() => {
     if (isRootNodeMissing) {
-      return workspace.getValidTemplates(workspace.context.rootTemplateOrVariantId);
+      return workspace.getCreatableRootTemplates();
     }
     if (connectionFilter !== undefined) {
       const templates = [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];
       return templates.filter(template =>
         connectionFilter.draggedFrom === "source"
-          ? templateHasCompatibleInput(template, connectionFilter.pinType)
-          : templateHasCompatibleOutput(template, connectionFilter.pinType),
+          ? templateHasCompatibleInput(
+              template,
+              connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            )
+          : templateHasCompatibleOutput(
+              template,
+              connectionFilter.pinType,
+              workspace.context.connectionTypesById,
+            ),
       );
     } else {
       return [...GENERIC_TEMPLATES, ...Object.values(workspace.context.nodeTemplatesById)];
@@ -114,7 +128,7 @@
   );
 
   let showDescriptionOnLeft = $derived(
-    left + containerWidth + DESCRIPTION_PANEL_WIDTH_PX + VIEWPORT_PADDING_PX > innerWidth.current,
+    left + containerWidth + DESCRIPTION_PANEL_WIDTH_PX + VIEWPORT_PADDING_PX > viewportSize.width,
   );
 
   // reset index any time searchQuery changes

@@ -1,0 +1,69 @@
+{
+  "Id": "Sensor.CombatActionEvaluator",
+  "Title": "Sensor: CombatActionEvaluator",
+  "Color": "#7091F0",
+  "Description": "A sensor which handles funnelling information to actions and motions from the combat action evaluator.",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TargetInRange",
+      "Type": "Bool",
+      "Description": "Whether to match on target being in or out of range.",
+      "Options": {
+        "Label": "TargetInRange",
+        "Required": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "AllowableDeviation",
+      "Type": "Float",
+      "Description": "The allowable deviation from the desired attack range",
+      "Options": {
+        "Label": "AllowableDeviation",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 0.5,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "TargetInRange": "TargetInRange",
+    "AllowableDeviation": "AllowableDeviation",
+    "Type": "CombatActionEvaluator"
+  }
+}

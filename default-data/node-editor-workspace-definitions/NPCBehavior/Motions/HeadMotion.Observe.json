@@ -1,0 +1,95 @@
+{
+  "Id": "HeadMotion.Observe",
+  "Title": "Head Motion: Observe",
+  "Color": "#B08CE0",
+  "Description": "Observe surroundings in various ways.",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "HeadMotion",
+      "Color": "#B08CE0",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "AngleRange",
+      "Type": "Tuple",
+      "Description": "The angle range to observe in degrees",
+      "Options": {
+        "Label": "AngleRange",
+        "Required": true,
+        "Min": -180,
+        "Max": 180,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "PauseTimeRange",
+      "Type": "Tuple",
+      "Description": "How long to continue looking in a given direction",
+      "Options": {
+        "Label": "PauseTimeRange",
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "Default": [
+          2,
+          2
+        ],
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "PickRandomAngle",
+      "Type": "Bool",
+      "Description": "Whether to pick random angles within the range",
+      "Options": {
+        "Label": "PickRandomAngle",
+        "Default": false,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "ViewSegments",
+      "Type": "Int",
+      "Description": "The number of distinct segments to stop at when sweeping from left to right",
+      "Options": {
+        "Label": "ViewSegments",
+        "Min": 0,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "RelativeTurnSpeed",
+      "Type": "Float",
+      "Description": "The relative turn speed modifier",
+      "Options": {
+        "Label": "RelativeTurnSpeed",
+        "Min": 0,
+        "Max": 2,
+        "MinExclusive": true,
+        "Default": 1,
+        "Width": 88,
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "AngleRange": "AngleRange",
+    "PauseTimeRange": "PauseTimeRange",
+    "PickRandomAngle": "PickRandomAngle",
+    "ViewSegments": "ViewSegments",
+    "RelativeTurnSpeed": "RelativeTurnSpeed",
+    "Type": "Observe"
+  }
+}

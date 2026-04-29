@@ -1,4 +1,4 @@
-import { MockVSCodeApi } from "src/node-editor/dev/mockVSCodeApi";
+import { MockVSCodeApi } from "@node-editor/node-editor/dev/mockVSCodeApi";
 import { mount } from "svelte";
 import App from "./App.svelte";
 import "./app.css";

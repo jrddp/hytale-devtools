@@ -1,0 +1,77 @@
+{
+  "Id": "Sensor.Random",
+  "Title": "Sensor: Random",
+  "Color": "#7091F0",
+  "Description": "Alternates between returning true and false for specified random durations",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "TrueDurationRange",
+      "Type": "Tuple",
+      "Description": "The duration range to pick a random period to return true",
+      "Options": {
+        "Label": "TrueDurationRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    },
+    {
+      "Id": "FalseDurationRange",
+      "Type": "Tuple",
+      "Description": "The duration range to pick a random period to return false",
+      "Options": {
+        "Label": "FalseDurationRange",
+        "Required": true,
+        "Min": 0,
+        "Max": 1.7976931348623157e+308,
+        "MinExclusive": true,
+        "Width": 240,
+        "TupleSize": 2,
+        "TupleItemType": "Float",
+        "Computable": true
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "TrueDurationRange": "TrueDurationRange",
+    "FalseDurationRange": "FalseDurationRange",
+    "Type": "Random"
+  }
+}

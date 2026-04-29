@@ -1,0 +1,54 @@
+{
+  "Id": "Sensor.FlockCombatDamage",
+  "Title": "Sensor: FlockCombatDamage",
+  "Color": "#7091F0",
+  "Description": "Test if flock with NPC received combat damage",
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "Output",
+      "Type": "Sensor",
+      "Color": "#7091F0",
+      "Label": "For"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Sensor only triggers once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Enabled",
+      "Type": "Bool",
+      "Description": "Whether this sensor should be enabled on the NPC",
+      "Options": {
+        "Label": "Enabled",
+        "Default": true,
+        "Width": 18,
+        "Computable": true
+      }
+    },
+    {
+      "Id": "LeaderOnly",
+      "Type": "Bool",
+      "Description": "Only test for damage to flock leader",
+      "Options": {
+        "Label": "LeaderOnly",
+        "Default": true,
+        "Width": 18
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Enabled": "Enabled",
+    "LeaderOnly": "LeaderOnly",
+    "Type": "FlockCombatDamage"
+  }
+}

@@ -2,9 +2,9 @@ import { readFileSync } from "fs";
 
 export function safeParseJSONFile(filePath: string) {
   const content = readFileSync(filePath, "utf-8");
-  return JSON.parse(stripBom(content));
+  return JSON.parse(stripBomText(content));
 }
 
-function stripBom(text: string): string {
+export function stripBomText(text: string): string {
   return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
 }

@@ -1,0 +1,46 @@
+{
+  "Id": "Action.OpenShop",
+  "Title": "Action: OpenShop",
+  "Color": "#CC3361",
+  "Description": "Open the shop UI for the current player",
+  "Inputs": [
+    {
+      "Id": "Input",
+      "Type": "ActionListItem",
+      "Color": "#CC3361",
+      "Label": "Parent"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Once",
+      "Type": "Bool",
+      "Description": "Execute only once",
+      "Options": {
+        "Label": "Once",
+        "Default": false,
+        "Width": 18
+      }
+    },
+    {
+      "Id": "Shop",
+      "Type": "SmallString",
+      "Description": "The shop to open",
+      "Options": {
+        "Label": "Shop",
+        "Required": true,
+        "Width": 220,
+        "Computable": true,
+        "SymbolLookup": {
+          "indexKind": "registeredAssets",
+          "key": "ShopAsset"
+        }
+      }
+    }
+  ],
+  "Schema": {
+    "Once": "Once",
+    "Shop": "Shop",
+    "Type": "OpenShop"
+  }
+}
