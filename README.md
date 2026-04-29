@@ -1,5 +1,43 @@
 # Hytale Devtools
 
+## Getting Started
+
+### Install the Extension
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/).
+2. Open the Extensions view in VS Code.
+3. Search for "Hytale Devtools" and install it.
+4. Install the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) so VS Code can build and run Hytale mods.
+
+### Create a New Hytale Mod
+
+1. Open the command palette with `Ctrl+Shift+P` on Windows/Linux or `Cmd+Shift+P` on macOS.
+   - You can also press `Ctrl+P` or `Cmd+P`, type `>`, then search for the command.
+2. Search for and run "Hytale Devtools: Create New Hytale Mod".
+3. Choose where to create the mod workspace and follow the prompts.
+
+### Run Your Mod
+
+1. Open the generated mod workspace in VS Code.
+2. Open the Run and Debug view.
+3. Select "Run Hytale Server" if it is not already selected, then click the green run arrow.
+4. Read the server terminal instructions to authenticate with Hytale the first time you run it.
+5. In Hytale, connect to `localhost:5520`.
+
+The generated launch config uses Hytale's default server port, `5520`. If you later customize the server `--bind` argument, connect to that custom port instead.
+
+### Create or Copy Assets
+
+1. Open the command palette with `Ctrl+Shift+P` on Windows/Linux or `Cmd+Shift+P` on macOS.
+2. Search for and run "Hytale Devtools: Copy Base Game Asset".
+3. Pick the base game asset you want to copy, then choose the destination for your mod.
+
+Use these asset types to open the specialized editors:
+
+- **NPC Editor:** copy an `NPCRole` asset.
+- **Worldgen Editor:** copy a `Biome` asset.
+- **Asset Editor:** create or copy any other supported asset.
+
 ## Instantly Create New Mods
 
 Instantly create new fully-configured mods using the "Create New Hytale Mod" command.
@@ -10,13 +48,13 @@ Easily create new assets in their respective folders, override existing assets, 
 
 ![Copy Asset Demo](media/demo_images/copy-asset-demo.gif)
 
-## Built-in WorldGen V2 Node Editor
+## Built-in Worldgen and NPC Node Editor
 
-This extension includes a custom node editor for modifying World Generation + Scriptable Brush files, including several improvements and new features over the original.
+This extension includes a custom node editor for modifying World Generation, Scriptable Brush, and NPC Role files, including several improvements and new features over the original editors.
 
 ### Fully Cross-Platform
 
-Mac + Windows users can now participate in Worldgen development with full cross-platform support!
+macOS, Windows, and Linux users can now participate in Worldgen and NPC development with full cross-platform support!
 
 ### Autocomplete, Documentation Tooltips, and Color Picker
 
@@ -66,7 +104,6 @@ Managing large workspaces becomes easy when organizing with groups. No matter ho
 ## Future Planned Features
 
 - Custom key-value editor similar to the base game's asset editor to show and edit the full list of available properties and inherited values of an asset.
-- Custom NPC editor
 
 ## Attribution
 - The base template used for creating new mods is based on Build-9's [Hytale Example Project](https://github.com/Build-9/Hytale-Example-Project).
